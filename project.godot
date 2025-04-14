@@ -77,6 +77,9 @@ focus={
 2d_physics/layer_1="Terrain"
 2d_physics/layer_2="Objects"
 2d_physics/layer_5="Player"
+2d_physics/layer_6="Enemies"
+2d_physics/layer_9="Player Bullets"
+2d_physics/layer_10="Enemy Bullets"
 
 [rendering]
 

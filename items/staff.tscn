@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://3guvi1efm75n"]
+
+[ext_resource type="Script" uid="uid://ddx6c05niwg61" path="res://items/staff.gd" id="1_ijccv"]
+[ext_resource type="PackedScene" uid="uid://babyx8ub5np0j" path="res://items/bullet.tscn" id="2_3yxu7"]
+
+[node name="Staff" type="Node2D"]
+script = ExtResource("1_ijccv")
+bullet_scene = ExtResource("2_3yxu7")
