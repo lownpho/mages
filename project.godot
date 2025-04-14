@@ -24,6 +24,12 @@ window/size/window_height_override=720
 window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
 
+[layer_names]
+
+2d_physics/layer_1="Terrain"
+2d_physics/layer_2="Objects"
+2d_physics/layer_5="Player"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
