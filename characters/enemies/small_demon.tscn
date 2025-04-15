@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://dvri3pbaf2jes"]
+
+[ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="1_1jq6x"]
+[ext_resource type="Script" uid="uid://bithug1lqpbp4" path="res://characters/enemies/small_demon.gd" id="1_d7rb8"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_3sbbp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3sbbp"]
+radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d7rb8"]
+atlas = ExtResource("1_1jq6x")
+region = Rect2(384, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ad34"]
+atlas = ExtResource("1_1jq6x")
+region = Rect2(368, 64, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5jc0s"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d7rb8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ad34")
+}],
+"loop": true,
+"name": &"default",
+"speed": 3.0
+}]
+
+[node name="SmallDemon" type="CharacterBody2D"]
+collision_layer = 32
+collision_mask = 49
+motion_mode = 1
+script = ExtResource("1_d7rb8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_3sbbp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_5jc0s")
+autoplay = "default"
+frame_progress = 0.538043
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." instance=ExtResource("2_3sbbp")]
+collision_mask = 256
