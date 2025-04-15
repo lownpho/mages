@@ -27,7 +27,11 @@ func fire(direction: Vector2) -> void:
 	bullet.damage = bullet_damage
 	bullet.lifetime = bullet_lifetime
 	bullet.speed = bullet_speed
-	
+
+	# Player bullet layer
+	# Done here because the bullets it's instanced in code
+	bullet.collision_layer |= 1 << 8
+
 	bullet.position = position
 	bullet.direction = direction.normalized()
 	
