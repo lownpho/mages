@@ -34,3 +34,6 @@ func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
 
 func _on_lifetime_timeout() -> void:
 	queue_free()
+
+func get_damage() -> int:
+	return damage
