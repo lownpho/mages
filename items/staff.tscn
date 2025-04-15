@@ -6,3 +6,4 @@
 [node name="Staff" type="Node2D"]
 script = ExtResource("1_ijccv")
 bullet_scene = ExtResource("2_3yxu7")
+bullet_damage = 33

@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cqjpouw1xepax"]
+[gd_scene load_steps=6 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="2_5dc8e"]
 [ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://items/staff.tscn" id="2_exd8k"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
 
@@ -12,6 +13,10 @@ collision_layer = 16
 collision_mask = 513
 motion_mode = 1
 script = ExtResource("1_xxgcw")
+
+[node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
+initial_state = "Idle"
+state_names = Array[String](["Idle", "Move"])
 
 [node name="Staff" parent="." instance=ExtResource("2_exd8k")]
 
