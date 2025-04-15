@@ -9,6 +9,7 @@
 [node name="Player" parent="." instance=ExtResource("1_nnsk1")]
 z_index = 1
 position = Vector2(164, 111)
+collision_mask = 513
 
 [node name="Ground" type="TileMapLayer" parent="."]
 z_index = -1
