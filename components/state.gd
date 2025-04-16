@@ -8,12 +8,12 @@ signal on_update(delta: float)
 signal on_physics_update(delta: float)
 signal on_input(event: InputEvent)
 
+# This could actually be like the global event singleton, just a list of signals
+# that are emitted from the FSM...
 func emit_enter() -> void:
-	print("Entering state: ", name)
 	on_enter.emit()
 
 func emit_exit() -> void:
-	print("Exiting state: ", name)
 	on_exit.emit()
 
 func emit_update(delta: float) -> void:

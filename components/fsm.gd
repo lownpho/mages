@@ -22,8 +22,6 @@ func _ready() -> void:
 		if child is State:
 			states[child.name] = child
 
-	print("FSM initialized with states: ", states.keys())
-	
 	# Set initial state if specified, otherwise use first state
 	if auto_start:
 		if initial_state != "" and states.has(initial_state):
@@ -46,14 +44,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		current_state.emit_input(event)
 
 func transition_to(state_name: String) -> void:
-	print("Transitioning to state: ", state_name)
-
 	if not state_name in states:
 		print("State not found: ", state_name)
 		return
 		
 	if current_state:
-		print("Exiting state: ", current_state.name)
 		current_state.emit_exit()
 		
 	var previous_state = current_state
@@ -61,4 +56,3 @@ func transition_to(state_name: String) -> void:
 	current_state.emit_enter()
 	
 	emit_signal("state_changed", previous_state, current_state)
-	print("Current state: ", current_state.name)
