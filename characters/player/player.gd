@@ -26,6 +26,7 @@ func _on_idle_physics_update(delta: float) -> void:
 		fsm.transition_to("Move")
 		return
 		
+	# This is a workaround for the fact that move_and_slide() doesn't stop the character
 	velocity.x = move_toward(velocity.x, 0, SPEED)
 	velocity.y = move_toward(velocity.y, 0, SPEED)
 	move_and_slide()
@@ -42,6 +43,8 @@ func _on_move_physics_update(delta: float) -> void:
 		
 	velocity = direction * SPEED
 	move_and_slide()
+
+	GlobalEvent.emit_signal("player_position_changed", position)
 	
 	_handle_staff_input()
 
