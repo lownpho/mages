@@ -16,6 +16,7 @@ script = ExtResource("1_xxgcw")
 
 [node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"
+auto_start = true
 state_names = Array[String](["Idle", "Move"])
 
 [node name="Staff" parent="." instance=ExtResource("2_exd8k")]

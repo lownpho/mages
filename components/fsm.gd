@@ -4,11 +4,18 @@ class_name FSM
 signal state_changed(previous_state, new_state)
 
 @export var initial_state: String = ""
-@export var auto_start: bool = true
+@export var auto_start: bool = false
 @export var state_names: Array[String] = []
 
 var current_state: State
 var states: Dictionary = {}
+
+func start() -> void:
+	if initial_state != "" and states.has(initial_state):
+		transition_to(initial_state)
+	elif states.size() > 0:
+		current_state = states.values()[0]
+		current_state.emit_enter()
 
 func _ready() -> void:
 	# Initialize states
@@ -24,11 +31,7 @@ func _ready() -> void:
 
 	# Set initial state if specified, otherwise use first state
 	if auto_start:
-		if initial_state != "" and states.has(initial_state):
-			transition_to(initial_state)
-		elif states.size() > 0:
-			current_state = states.values()[0]
-			current_state.emit_enter()
+		start()
 
 
 func _process(delta: float) -> void:
