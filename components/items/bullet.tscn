@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://babyx8ub5np0j"]
 
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="1_25jbo"]
-[ext_resource type="Script" uid="uid://csrof5fw2p1s1" path="res://items/bullet.gd" id="1_rllah"]
+[ext_resource type="Script" uid="uid://csrof5fw2p1s1" path="res://components/items/bullet.gd" id="1_rllah"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rllah"]
 radius = 4.0
