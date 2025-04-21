@@ -83,7 +83,7 @@ func _on_attack_physics_update(_delta: float) -> void:
 	attack_probe.look_at(player_position)
 
 	var attack_collider = attack_probe.get_collider()
-	if attack_collider and attack_collider.name == "Player":
+	if attack_collider and attack_collider.name == "Player" and weapon.can_fire:
 		var player_direction = (player_position - global_position).normalized()
 		weapon.fire(player_direction, power)
 	else:

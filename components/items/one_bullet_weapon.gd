@@ -4,6 +4,7 @@ extends Node2D
 @export var bullet_config: BulletConfig
 @export var fire_cooldown: float = 0.5
 @export var power_scaling: float = 1
+@export var mana_cost: int = 1
 
 var can_fire: bool = true
 var fire_timer: Timer
