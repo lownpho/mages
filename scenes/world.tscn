@@ -1,15 +1,26 @@
-[gd_scene load_steps=5 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=9 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
 [ext_resource type="TileSet" uid="uid://qvvs2lwd2gyo" path="res://tilemaps/walls.tres" id="2_rwgxs"]
 [ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon.tscn" id="4_k0juu"]
+[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="5_71j4m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_71j4m"]
+bg_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qfnet"]
+bg_color = Color(0, 0, 1, 1)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_i7141"]
+size = Vector2(8, 8)
 
 [node name="World" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource("1_nnsk1")]
 z_index = 1
 position = Vector2(164, 111)
+power = 100
 
 [node name="Ground" type="TileMapLayer" parent="."]
 z_index = -1
@@ -30,3 +41,126 @@ position = Vector2(84, 208)
 
 [node name="SmallDemon3" parent="." instance=ExtResource("4_k0juu")]
 position = Vector2(299, 51)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -128.0
+offset_top = -36.0
+offset_right = 128.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 4
+theme = ExtResource("5_71j4m")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/MarginContainer"]
+layout_mode = 2
+
+[node name="Bars" type="VBoxContainer" parent="UI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.64
+
+[node name="HealthBar" type="ProgressBar" parent="UI/MarginContainer/HBoxContainer/Bars"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_styles/fill = SubResource("StyleBoxFlat_71j4m")
+step = 1.0
+value = 33.0
+rounded = true
+
+[node name="ManaBar" type="ProgressBar" parent="UI/MarginContainer/HBoxContainer/Bars"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_styles/fill = SubResource("StyleBoxFlat_qfnet")
+step = 1.0
+value = 33.0
+rounded = true
+
+[node name="VBoxContainer" type="GridContainer" parent="UI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+columns = 2
+
+[node name="PowerLabel" type="Label" parent="UI/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Skill: "
+
+[node name="SpeedValue" type="Label" parent="UI/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "69"
+
+[node name="SpeedLabel" type="Label" parent="UI/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Speed: "
+
+[node name="PowerValue" type="Label" parent="UI/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "69"
+
+[node name="GridContainer" type="GridContainer" parent="UI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+size_flags_stretch_ratio = 3.25
+columns = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer/PanelContainer"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer2" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer/PanelContainer2"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer3" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer/PanelContainer3"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="GridContainer2" type="GridContainer" parent="UI/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+columns = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer2/PanelContainer"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer2" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer2/PanelContainer2"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer3" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer2/PanelContainer3"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer4" type="PanelContainer" parent="UI/MarginContainer/HBoxContainer/GridContainer2"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/HBoxContainer/GridContainer2/PanelContainer4"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")

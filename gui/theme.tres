@@ -1,0 +1,38 @@
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://b1ys22w5kvbpd"]
+
+[ext_resource type="FontFile" uid="uid://kkmwqdvog3u7" path="res://gui/m3x6.ttf" id="1_qgmjj"]
+[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="2_jlndv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jlndv"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a8th1"]
+texture = ExtResource("2_jlndv")
+texture_margin_left = 3.0
+texture_margin_top = 3.0
+texture_margin_right = 3.0
+texture_margin_bottom = 3.0
+region_rect = Rect2(80, 104, 24, 24)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jlndv"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8th1"]
+bg_color = Color(0, 1, 0, 1)
+
+[resource]
+Label/colors/font_color = Color(1, 1, 1, 1)
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/colors/font_shadow_color = Color(0, 0, 0, 0)
+Label/constants/line_spacing = 3
+Label/constants/outline_size = 0
+Label/constants/shadow_offset_x = 1
+Label/constants/shadow_offset_y = 1
+Label/constants/shadow_outline_size = 1
+Label/font_sizes/font_size = 16
+Label/fonts/font = ExtResource("1_qgmjj")
+Label/styles/normal = SubResource("StyleBoxEmpty_jlndv")
+MarginContainer/constants/margin_bottom = 4
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_a8th1")
+ProgressBar/fonts/font = ExtResource("1_qgmjj")
+ProgressBar/styles/background = SubResource("StyleBoxFlat_jlndv")
+ProgressBar/styles/fill = SubResource("StyleBoxFlat_a8th1")
