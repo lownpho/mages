@@ -6,4 +6,3 @@
 [node name="OneBulletWeapon" type="Node2D"]
 script = ExtResource("1_y34hh")
 bullet_scene = ExtResource("2_0yjv0")
-bullet_damage = 33

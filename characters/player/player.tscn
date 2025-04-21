@@ -1,16 +1,24 @@
-[gd_scene load_steps=6 format=3 uid="uid://cqjpouw1xepax"]
+[gd_scene load_steps=8 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="2_5dc8e"]
 [ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://components/items/one_bullet_weapon.tscn" id="2_exd8k"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
+[ext_resource type="Script" uid="uid://ch0lhb8q64snl" path="res://components/items/bullet_config.gd" id="4_ixbpm"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 7.0
 
+[sub_resource type="Resource" id="Resource_c6leb"]
+script = ExtResource("4_ixbpm")
+speed = 128.0
+damage = 33
+distance = 128.0
+collision_layer = 256
+metadata/_custom_type_script = "uid://ch0lhb8q64snl"
+
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 16
-collision_mask = 513
 motion_mode = 1
 script = ExtResource("1_xxgcw")
 
@@ -32,6 +40,7 @@ drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
 [node name="Weapon" parent="." instance=ExtResource("2_exd8k")]
+bullet_config = SubResource("Resource_c6leb")
 
 [node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"

@@ -1,13 +1,8 @@
 extends Node2D
 
 @export var bullet_scene: PackedScene
+@export var bullet_config: BulletConfig
 @export var fire_cooldown: float = 0.5
-
-@export var bullet_speed: float = 200.0
-@export var range: float = 128.0
-@export var bullet_damage: int = 10
-
-var bullet_lifetime: float = range / bullet_speed
 
 var can_fire: bool = true
 var fire_timer: Timer
@@ -24,21 +19,24 @@ func fire(direction: Vector2) -> void:
 		return
 		
 	var bullet = bullet_scene.instantiate()
-	bullet.damage = bullet_damage
-	bullet.lifetime = bullet_lifetime
-	bullet.speed = bullet_speed
-
-	# Player bullet layer
-	# Done here because the bullets it's instanced in code
-	bullet.collision_layer |= 1 << 8
-
-	bullet.position = position
-	bullet.direction = direction.normalized()
+	configure_bullet(bullet)
+	bullet.position = global_position
+	bullet.direction = direction
 	
-	add_child(bullet)
+	get_tree().root.add_child(bullet)
 
 	can_fire = false
 	fire_timer.start()
+
+func configure_bullet(bullet: Node2D) -> void:
+	if not bullet_config:
+		print("No bullet configuration set!")
+		return
+		
+	bullet.damage = bullet_config.damage
+	bullet.distance = bullet_config.distance
+	bullet.speed = bullet_config.speed
+	bullet.collision_layer = bullet_config.collision_layer
 
 func _on_fire_timer_timeout() -> void:
 	can_fire = true
@@ -46,6 +44,3 @@ func _on_fire_timer_timeout() -> void:
 func set_cooldown(time: float) -> void:
 	fire_cooldown = time
 	fire_timer.wait_time = time
-
-func set_bullet_speed(speed: float) -> void:
-	bullet_speed = speed

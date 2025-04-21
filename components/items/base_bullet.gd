@@ -1,12 +1,9 @@
 extends CharacterBody2D
 
-const DEFAULT_DIRECTION = Vector2.UP
-
-# Set by the parent, find a better way to do this
-var speed: float
-var damage: int
-var lifetime: float
-var direction: Vector2
+var speed: float = 128.0
+var damage: int = 1
+var distance: float = 32.0
+var direction: Vector2 = Vector2.UP
 
 var lifetime_timer: Timer
 
@@ -15,7 +12,7 @@ var lifetime_timer: Timer
 func _ready() -> void:
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
-	lifetime_timer.wait_time = lifetime
+	lifetime_timer.wait_time = distance / speed
 	lifetime_timer.autostart = true
 	lifetime_timer.timeout.connect(_on_lifetime_timeout)
 	add_child(lifetime_timer)
