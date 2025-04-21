@@ -1,7 +1,8 @@
 extends CharacterBody2D
 
-@export var max_health: int = 100  # Maximum health
-var health: int  # Current health
+@export var max_health: int = 100 
+var health: int
+@export var power: int = 0
 @export var speed: float = 16.0
 
 @onready var hurtbox = $Hurtbox
@@ -84,7 +85,7 @@ func _on_attack_physics_update(_delta: float) -> void:
 	var attack_collider = attack_probe.get_collider()
 	if attack_collider and attack_collider.name == "Player":
 		var player_direction = (player_position - global_position).normalized()
-		weapon.fire(player_direction)
+		weapon.fire(player_direction, power)
 	else:
 		fsm.transition_to("Chase")
 

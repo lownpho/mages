@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-const SPEED = 80.0
-
 @export var max_health: int = 100
+@export var power: int = 25
+@export var speed: int = 80
 
 @onready var hurtbox = $Hurtbox
 @onready var weapon = $Weapon
@@ -29,7 +29,7 @@ func _handle_weapon_input() -> void:
 	if Input.is_action_pressed("weapon"):
 		var mouse_position = get_global_mouse_position()
 		var fire_direction = (mouse_position - position).normalized()
-		weapon.fire(fire_direction)
+		weapon.fire(fire_direction, power)  # Pass the power stat
 
 func _on_idle_physics_update(_delta: float) -> void:
 	var direction = get_input_direction()
@@ -40,8 +40,8 @@ func _on_idle_physics_update(_delta: float) -> void:
 		return
 		
 	# This is a workaround for the fact that move_and_slide() doesn't stop the character
-	velocity.x = move_toward(velocity.x, 0, SPEED)
-	velocity.y = move_toward(velocity.y, 0, SPEED)
+	velocity.x = move_toward(velocity.x, 0, speed)
+	velocity.y = move_toward(velocity.y, 0, speed)
 	move_and_slide()
 	
 	_handle_weapon_input()
@@ -54,7 +54,7 @@ func _on_move_physics_update(_delta: float) -> void:
 		fsm.transition_to("Idle")
 		return
 		
-	velocity = direction * SPEED
+	velocity = direction * speed
 	move_and_slide()
 
 	GlobalEvent.emit_signal("player_position_changed", position)

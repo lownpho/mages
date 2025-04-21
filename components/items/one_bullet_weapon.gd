@@ -3,6 +3,7 @@ extends Node2D
 @export var bullet_scene: PackedScene
 @export var bullet_config: BulletConfig
 @export var fire_cooldown: float = 0.5
+@export var power_scaling: float = 1
 
 var can_fire: bool = true
 var fire_timer: Timer
@@ -14,12 +15,12 @@ func _ready() -> void:
 	fire_timer.timeout.connect(_on_fire_timer_timeout)
 	add_child(fire_timer)
 
-func fire(direction: Vector2) -> void:
+func fire(direction: Vector2, power: int) -> void:
 	if not can_fire or not bullet_scene:
 		return
 		
 	var bullet = bullet_scene.instantiate()
-	configure_bullet(bullet)
+	configure_bullet(bullet, power)
 	bullet.position = global_position
 	bullet.direction = direction
 	
@@ -28,12 +29,12 @@ func fire(direction: Vector2) -> void:
 	can_fire = false
 	fire_timer.start()
 
-func configure_bullet(bullet: Node2D) -> void:
+func configure_bullet(bullet: Node2D, power: int) -> void:
 	if not bullet_config:
 		print("No bullet configuration set!")
 		return
 		
-	bullet.damage = bullet_config.damage
+	bullet.damage = bullet_config.damage + power_scaling * power
 	bullet.distance = bullet_config.distance
 	bullet.speed = bullet_config.speed
 	bullet.collision_layer = bullet_config.collision_layer
