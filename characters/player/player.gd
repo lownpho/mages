@@ -2,23 +2,36 @@ extends CharacterBody2D
 
 const SPEED = 80.0
 
+@export var max_health: int = 100
+
+@onready var hurtbox = $Hurtbox
 @onready var weapon = $Weapon
 @onready var fsm: FSM = $FSM
+
+var health: int
 
 func _ready() -> void:
 	# Connect to state signals
 	var idle_state = $FSM/Idle
 	idle_state.on_physics_update.connect(_on_idle_physics_update)
-	
 	var move_state = $FSM/Move
 	move_state.on_physics_update.connect(_on_move_physics_update)
+
+	hurtbox.hurt.connect(_on_hurt)
+	health = max_health
 
 func get_input_direction() -> Vector2:
 	var direction_x := Input.get_axis("left", "right")
 	var direction_y := Input.get_axis("up", "down")
 	return Vector2(direction_x, direction_y).normalized()
 
-func _on_idle_physics_update(delta: float) -> void:
+func _handle_weapon_input() -> void:
+	if Input.is_action_pressed("weapon"):
+		var mouse_position = get_global_mouse_position()
+		var fire_direction = (mouse_position - position).normalized()
+		weapon.fire(fire_direction)
+
+func _on_idle_physics_update(_delta: float) -> void:
 	var direction = get_input_direction()
 	
 	if direction != Vector2.ZERO:
@@ -33,7 +46,7 @@ func _on_idle_physics_update(delta: float) -> void:
 	
 	_handle_weapon_input()
 
-func _on_move_physics_update(delta: float) -> void:
+func _on_move_physics_update(_delta: float) -> void:
 	var direction = get_input_direction()
 	
 	if direction == Vector2.ZERO:
@@ -48,8 +61,11 @@ func _on_move_physics_update(delta: float) -> void:
 	
 	_handle_weapon_input()
 
-func _handle_weapon_input() -> void:
-	if Input.is_action_pressed("weapon"):
-		var mouse_position = get_global_mouse_position()
-		var fire_direction = (mouse_position - position).normalized()
-		weapon.fire(fire_direction)
+func _die() -> void:
+	queue_free()
+
+func _on_hurt(damage: int) -> void:
+	health -= damage
+	
+	if health <= 0:
+		_die()

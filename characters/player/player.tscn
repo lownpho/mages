@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://cqjpouw1xepax"]
+[gd_scene load_steps=9 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="2_5dc8e"]
 [ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://components/items/one_bullet_weapon.tscn" id="2_exd8k"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
 [ext_resource type="Script" uid="uid://ch0lhb8q64snl" path="res://components/items/bullet_config.gd" id="4_ixbpm"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/generic/hurtbox.tscn" id="5_c6leb"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 7.0
@@ -41,6 +42,9 @@ drag_vertical_enabled = true
 
 [node name="Weapon" parent="." instance=ExtResource("2_exd8k")]
 bullet_config = SubResource("Resource_c6leb")
+
+[node name="Hurtbox" parent="." instance=ExtResource("5_c6leb")]
+collision_mask = 512
 
 [node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"

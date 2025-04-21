@@ -88,6 +88,9 @@ func _on_attack_physics_update(_delta: float) -> void:
 	else:
 		fsm.transition_to("Chase")
 
+func die() -> void:
+	queue_free()
+
 func _on_hurt(damage: int) -> void:
 	health -= damage
 	print(name, "hurt: ", damage, " remaining health: ", health)
@@ -97,6 +100,3 @@ func _on_hurt(damage: int) -> void:
 
 func _on_player_position_changed(pos: Vector2) -> void:
 	player_position = pos
-
-func die() -> void:
-	queue_free()  # Remove enemy from scene
