@@ -1,17 +1,17 @@
 [gd_scene load_steps=4 format=3 uid="uid://babyx8ub5np0j"]
 
-[ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="1_25jbo"]
-[ext_resource type="Script" uid="uid://csrof5fw2p1s1" path="res://components/items/bullet.gd" id="1_rllah"]
+[ext_resource type="Script" uid="uid://csrof5fw2p1s1" path="res://components/items/base_bullet.gd" id="1_81c7v"]
+[ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_skfav"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rllah"]
 radius = 4.0
 
 [node name="Bullet" type="CharacterBody2D" groups=["bullets"]]
 collision_layer = 0
-script = ExtResource("1_rllah")
+script = ExtResource("1_81c7v")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_25jbo")
+texture = ExtResource("2_skfav")
 offset = Vector2(0, -2)
 region_enabled = true
 region_rect = Rect2(288, 432, 16, 16)

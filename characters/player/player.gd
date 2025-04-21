@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 const SPEED = 80.0
 
-@onready var staff = $Staff
+@onready var weapon = $Weapon
 @onready var fsm: FSM = $FSM
 
 func _ready() -> void:
@@ -31,7 +31,7 @@ func _on_idle_physics_update(delta: float) -> void:
 	velocity.y = move_toward(velocity.y, 0, SPEED)
 	move_and_slide()
 	
-	_handle_staff_input()
+	_handle_weapon_input()
 
 func _on_move_physics_update(delta: float) -> void:
 	var direction = get_input_direction()
@@ -46,10 +46,10 @@ func _on_move_physics_update(delta: float) -> void:
 
 	GlobalEvent.emit_signal("player_position_changed", position)
 	
-	_handle_staff_input()
+	_handle_weapon_input()
 
-func _handle_staff_input() -> void:
-	if Input.is_action_pressed("staff"):
+func _handle_weapon_input() -> void:
+	if Input.is_action_pressed("weapon"):
 		var mouse_position = get_global_mouse_position()
 		var fire_direction = (mouse_position - position).normalized()
-		staff.fire(fire_direction)
+		weapon.fire(fire_direction)

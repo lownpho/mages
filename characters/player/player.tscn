@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="2_5dc8e"]
-[ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://components/items/staff.tscn" id="2_exd8k"]
+[ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://components/items/one_bullet_weapon.tscn" id="2_exd8k"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
@@ -13,13 +13,6 @@ collision_layer = 16
 collision_mask = 513
 motion_mode = 1
 script = ExtResource("1_xxgcw")
-
-[node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
-initial_state = "Idle"
-auto_start = true
-state_names = Array[String](["Idle", "Move"])
-
-[node name="Staff" parent="." instance=ExtResource("2_exd8k")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_e5uuo")
@@ -37,3 +30,10 @@ position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
+
+[node name="Weapon" parent="." instance=ExtResource("2_exd8k")]
+
+[node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
+initial_state = "Idle"
+auto_start = true
+state_names = Array[String](["Idle", "Move"])
