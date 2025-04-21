@@ -9,6 +9,7 @@ var health: int  # Current health
 @onready var detect_probe = $DetectProbe
 @onready var chase_probe = $ChaseProbe
 @onready var attack_probe = $AttackProbe
+@onready var weapon = $Weapon
 
 var player_position: Vector2 = Vector2.ZERO
 
@@ -82,14 +83,14 @@ func _on_attack_physics_update(_delta: float) -> void:
 
 	var attack_collider = attack_probe.get_collider()
 	if attack_collider and attack_collider.name == "Player":
-		# Attack logic here
-		print("Attacking player")
+		var player_direction = (player_position - global_position).normalized()
+		weapon.fire(player_direction)
 	else:
 		fsm.transition_to("Chase")
 
 func _on_hurt(damage: int) -> void:
 	health -= damage
-	print("hurt: ", damage, " health: ", health)
+	print(name, "hurt: ", damage, " remaining health: ", health)
 	
 	if health <= 0:
 		die()
