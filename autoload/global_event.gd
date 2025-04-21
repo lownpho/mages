@@ -4,3 +4,11 @@ extends Node
 # and emitting them when necessary
 
 signal player_position_changed(position: Vector2)
+
+# There is a better way for sure...
+signal player_max_health_changed(max_health: int)
+signal player_health_changed(health: int)
+signal player_max_mana_changed(max_mana: int)
+signal player_mana_changed(mana: int)
+signal player_skill_changed(skill: int)
+signal player_speed_changed(speed: int)

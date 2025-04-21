@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 @export var max_health: int = 100
 @export var max_mana: int = 10
-@export var power: int = 25
+@export var skill: int = 25
 @export var speed: int = 80
 @export var focus_mana_recover: int = 1
 
@@ -28,6 +28,13 @@ func _ready() -> void:
 	health = max_health
 	mana = max_mana
 
+	GlobalEvent.emit_signal("player_max_health_changed", max_health)
+	GlobalEvent.emit_signal("player_health_changed", health)
+	GlobalEvent.emit_signal("player_max_mana_changed", max_mana)
+	GlobalEvent.emit_signal("player_mana_changed", mana)
+	GlobalEvent.emit_signal("player_skill_changed", skill)
+	GlobalEvent.emit_signal("player_speed_changed", speed)
+
 func get_input_direction() -> Vector2:
 	var direction_x := Input.get_axis("left", "right")
 	var direction_y := Input.get_axis("up", "down")
@@ -39,7 +46,8 @@ func _handle_weapon_input() -> void:
 		var fire_direction = (mouse_position - position).normalized()
 
 		mana -= weapon.mana_cost
-		weapon.fire(fire_direction, power)
+		GlobalEvent.emit_signal("player_mana_changed", mana)
+		weapon.fire(fire_direction, skill)
 
 func _on_idle_physics_update(_delta: float) -> void:
 	if Input.is_action_just_pressed("focus"):
@@ -77,6 +85,7 @@ func _on_move_physics_update(_delta: float) -> void:
 
 func _recover_mana() -> void:
 	mana = min(mana + focus_mana_recover, max_mana)
+	GlobalEvent.emit_signal("player_mana_changed", mana)
 	if Input.is_action_pressed("focus"):
 		var timer = get_tree().create_timer(1.0)
 		timer.timeout.connect(_recover_mana)
@@ -94,6 +103,7 @@ func _die() -> void:
 
 func _on_hurt(damage: int) -> void:
 	health -= damage
+	GlobalEvent.emit_signal("player_health_changed", health)
 	
 	if health <= 0:
 		_die()
