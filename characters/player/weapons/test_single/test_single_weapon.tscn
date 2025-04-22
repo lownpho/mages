@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://1ist7gluut4v"]
+
+[ext_resource type="Script" path="res://components/items/weapons/one_bullet_weapon.gd" id="1_u1a8l"]
+[ext_resource type="PackedScene" uid="uid://ftnhy7o3y6kt" path="res://characters/player/weapons/test_multiple/test_multiple_bullet.tscn" id="2_xw35v"]
+
+[node name="TestSingleWeapon" type="Node2D"]
+script = ExtResource("1_u1a8l")
+bullet_scene = ExtResource("2_xw35v")

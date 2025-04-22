@@ -5,16 +5,20 @@ extends CharacterBody2D
 @export var skill: int = 25
 @export var speed: int = 80
 @export var focus_mana_recover: int = 1
+@export var weapon_scene: PackedScene
 
 @onready var hurtbox = $Hurtbox
-@onready var weapon = $Weapon
 @onready var fsm: FSM = $FSM
 @onready var focus_timer = $FocusTimer
 
 var health: int
 var mana: int
+var weapon
 
 func _ready() -> void:
+	weapon = weapon_scene.instantiate()
+	add_child(weapon)
+	
 	var idle_state = $FSM/Idle
 	idle_state.on_physics_update.connect(_on_idle_physics_update)
 	var move_state = $FSM/Move

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfprbr6vp5rv6"]
+
+[ext_resource type="Script" uid="uid://5buivloftli8" path="res://components/items/weapons/ring_bullet_weapon.gd" id="1_elayg"]
+[ext_resource type="PackedScene" uid="uid://ftnhy7o3y6kt" path="res://characters/player/weapons/test_multiple/test_multiple_bullet.tscn" id="2_5gaw6"]
+
+[node name="RingBulletWeapon" type="Node2D"]
+script = ExtResource("1_elayg")
+num_bullets = 6
+bullet_scene = ExtResource("2_5gaw6")
+fire_cooldown = 2.0
+mana_cost = 2

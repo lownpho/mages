@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://cqjpouw1xepax"]
+[gd_scene load_steps=9 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="2_5dc8e"]
+[ext_resource type="PackedScene" uid="uid://cfprbr6vp5rv6" path="res://characters/player/weapons/test_multiple/test_multiple_weapon.tscn" id="2_dirf7"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://kaln6ihe6bem" path="res://components/items/weapons/ring_bullet_weapon.tscn" id="3_dirf7"]
 [ext_resource type="PackedScene" uid="uid://babyx8ub5np0j" path="res://components/items/bullets/base_bullet.tscn" id="4_idpv6"]
@@ -14,6 +15,7 @@ radius = 7.0
 collision_layer = 16
 motion_mode = 1
 script = ExtResource("1_xxgcw")
+weapon_scene = ExtResource("2_dirf7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_e5uuo")

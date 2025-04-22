@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dwyc8mocpjihh"]
+
+[ext_resource type="Script" uid="uid://ddx6c05niwg61" path="res://components/items/weapons/one_bullet_weapon.gd" id="1_yw8k5"]
+[ext_resource type="PackedScene" uid="uid://cta4rjbkui58t" path="res://characters/enemies/small_demon/test_bullet.tscn" id="2_ii00m"]
+
+[node name="OneBulletWeapon" type="Node2D"]
+script = ExtResource("1_yw8k5")
+bullet_scene = ExtResource("2_ii00m")
+fire_cooldown = 1.0
+mana_cost = 0

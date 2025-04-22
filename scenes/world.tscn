@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
 [ext_resource type="TileSet" uid="uid://qvvs2lwd2gyo" path="res://tilemaps/walls.tres" id="2_rwgxs"]
-[ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon.tscn" id="4_k0juu"]
+[ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon/small_demon.tscn" id="4_k0juu"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 
 [node name="World" type="Node2D"]

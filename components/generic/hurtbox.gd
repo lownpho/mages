@@ -17,4 +17,4 @@ func _on_body_entered(body: Node2D) -> void:
 		
 	 # This logic should be in the bullet
 	if body.is_in_group("bullets"):
-		body.queue_free()
+		body.reached_hurtbox()

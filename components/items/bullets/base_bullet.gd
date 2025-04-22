@@ -36,3 +36,6 @@ func _on_lifetime_timeout() -> void:
 
 func get_damage() -> int:
 	return round(base_damage + skill * skill_scaling)
+
+func reached_hurtbox() -> void:
+	queue_free()
