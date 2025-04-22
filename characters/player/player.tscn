@@ -51,6 +51,9 @@ mana_cost = 2
 [node name="Hurtbox" parent="." instance=ExtResource("5_c6leb")]
 collision_mask = 512
 
+[node name="FocusTimer" type="Timer" parent="."]
+one_shot = true
+
 [node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"
 auto_start = true

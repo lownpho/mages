@@ -9,11 +9,10 @@ extends CharacterBody2D
 @onready var hurtbox = $Hurtbox
 @onready var weapon = $Weapon
 @onready var fsm: FSM = $FSM
+@onready var focus_timer = $FocusTimer
 
 var health: int
 var mana: int
-var focus_delay: float = 1.0
-var is_recovering_mana: bool = false
 
 func _ready() -> void:
 	var idle_state = $FSM/Idle
@@ -23,10 +22,13 @@ func _ready() -> void:
 	var focus_state = $FSM/Focus
 	focus_state.on_physics_update.connect(_on_focus_physics_update)
 	focus_state.on_enter.connect(_on_focus_enter)
+	focus_state.on_exit.connect(_on_focus_exit)
 
 	hurtbox.hurt.connect(_on_hurt)
 	health = max_health
 	mana = max_mana
+
+	focus_timer.timeout.connect(_recover_mana)
 
 	GlobalEvent.emit_signal("player_max_health_changed", max_health)
 	GlobalEvent.emit_signal("player_health_changed", health)
@@ -86,13 +88,13 @@ func _on_move_physics_update(_delta: float) -> void:
 func _recover_mana() -> void:
 	mana = min(mana + focus_mana_recover, max_mana)
 	GlobalEvent.emit_signal("player_mana_changed", mana)
-	if Input.is_action_pressed("focus"):
-		var timer = get_tree().create_timer(1.0)
-		timer.timeout.connect(_recover_mana)
+	focus_timer.start()
 
 func _on_focus_enter() -> void:
-	var timer = get_tree().create_timer(focus_delay)
-	timer.timeout.connect(_recover_mana)
+	focus_timer.start()
+
+func _on_focus_exit() -> void:
+	focus_timer.stop()
 
 func _on_focus_physics_update(_delta: float) -> void:
 	if Input.is_action_just_released("focus"):
