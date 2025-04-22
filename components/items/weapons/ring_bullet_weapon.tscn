@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://kaln6ihe6bem"]
+
+[ext_resource type="Script" uid="uid://5buivloftli8" path="res://components/items/weapons/ring_bullet_weapon.gd" id="1_twb37"]
+
+[node name="RingBulletWeapon" type="Node2D"]
+script = ExtResource("1_twb37")
