@@ -3,9 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="1_1jq6x"]
 [ext_resource type="Script" uid="uid://bithug1lqpbp4" path="res://characters/enemies/small_demon.gd" id="1_d7rb8"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/generic/hurtbox.tscn" id="2_3sbbp"]
-[ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://components/items/one_bullet_weapon.tscn" id="4_5jc0s"]
+[ext_resource type="PackedScene" uid="uid://3guvi1efm75n" path="res://components/items/weapons/one_bullet_weapon.tscn" id="4_5jc0s"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="4_8ad34"]
-[ext_resource type="Script" uid="uid://ch0lhb8q64snl" path="res://components/items/bullet_config.gd" id="5_0r1ru"]
+[ext_resource type="Script" uid="uid://ch0lhb8q64snl" path="res://components/items/bullets/bullet_config.gd" id="5_0r1ru"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3sbbp"]
 radius = 6.0
