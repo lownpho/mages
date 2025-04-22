@@ -41,7 +41,7 @@ func get_input_direction() -> Vector2:
 	return Vector2(direction_x, direction_y).normalized()
 
 func _handle_weapon_input() -> void:
-	if Input.is_action_pressed("weapon") and mana > 0 and weapon.can_fire:
+	if Input.is_action_pressed("weapon") and mana >= weapon.mana_cost and weapon.can_fire:
 		var mouse_position = get_global_mouse_position()
 		var fire_direction = (mouse_position - position).normalized()
 
