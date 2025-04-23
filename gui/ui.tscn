@@ -21,12 +21,12 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -128.0
+offset_left = -162.0
 offset_top = -36.0
-offset_right = 128.0
+offset_right = 162.0
 grow_horizontal = 2
 grow_vertical = 0
-size_flags_horizontal = 4
+size_flags_vertical = 8
 theme = ExtResource("2_cemxd")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
@@ -35,7 +35,7 @@ layout_mode = 2
 [node name="Bars" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 1.64
+size_flags_vertical = 4
 
 [node name="HealthBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/Bars"]
 unique_name_in_owner = true
@@ -55,87 +55,131 @@ step = 1.0
 value = 33.0
 rounded = true
 
-[node name="VBoxContainer" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+[node name="Stats" type="GridContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 4
 columns = 2
 
-[node name="SkillLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="SkillLabel" type="Label" parent="MarginContainer/HBoxContainer/Stats"]
 layout_mode = 2
 text = "Skill: "
 
-[node name="SkillValue" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="SkillValue" type="Label" parent="MarginContainer/HBoxContainer/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "69"
 
-[node name="SpeedLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="SpeedLabel" type="Label" parent="MarginContainer/HBoxContainer/Stats"]
 layout_mode = 2
 text = "Speed: "
 
-[node name="SpeedValue" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="SpeedValue" type="Label" parent="MarginContainer/HBoxContainer/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "69"
 
-[node name="GridContainer" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+[node name="EquipItems" type="GridContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 4
-size_flags_stretch_ratio = 3.25
+size_flags_horizontal = 6
 columns = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipItems"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer/PanelContainer"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipItems/PanelContainer"]
 layout_mode = 2
 texture = SubResource("PlaceholderTexture2D_i7141")
 
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipItems"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer/PanelContainer2"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipItems/PanelContainer2"]
 layout_mode = 2
 texture = SubResource("PlaceholderTexture2D_i7141")
 
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipItems"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer/PanelContainer3"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipItems/PanelContainer3"]
 layout_mode = 2
 texture = SubResource("PlaceholderTexture2D_i7141")
 
-[node name="GridContainer2" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+[node name="EquipSpells" type="GridContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 10
-size_flags_vertical = 4
+size_flags_horizontal = 6
 columns = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer2"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer2/PanelContainer"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer2"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer2/PanelContainer2"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer"]
 layout_mode = 2
 texture = SubResource("PlaceholderTexture2D_i7141")
 
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer2"]
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer2/PanelContainer3"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer2"]
 layout_mode = 2
 texture = SubResource("PlaceholderTexture2D_i7141")
 
-[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/HBoxContainer/GridContainer2"]
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/GridContainer2/PanelContainer4"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer3"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer4"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="Inventory" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+columns = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer2"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer3"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer4"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer5" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer5"]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_i7141")
+
+[node name="PanelContainer6" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer6"]
 layout_mode = 2
 texture = SubResource("PlaceholderTexture2D_i7141")
