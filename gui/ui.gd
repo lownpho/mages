@@ -28,10 +28,10 @@ func _on_player_skill_changed(skill: int) -> void:
 func _on_player_speed_changed(speed: int) -> void:
 	%SpeedValue.text = str(speed)
 
-func _on_item_picked_up(node_name, _type, _scene: PackedScene, texture: Texture2D) -> void:
+func _on_item_picked_up(node_name, type, _scene: PackedScene, texture: Texture2D) -> void:
 	var slots = %Inventory.get_children()
 	for slot in slots:
 		if slot.empty:
-			slot.set_item(texture)
+			slot.set_item(texture, type)
 			GlobalEvent.item_added_to_inventory.emit(node_name)
 			return

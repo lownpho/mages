@@ -1,12 +1,16 @@
 extends PanelContainer
 
+@export var type: GlobalDefs.ItemType
+
 var empty: bool = true
+var holding_type: GlobalDefs.ItemType = GlobalDefs.ItemType.UNDEFINED
 var item_texture = null
 var dragging = false
 var drag_preview = null
 
-func set_item(texture: Texture2D) -> void:
+func set_item(texture: Texture2D, rcv_type: GlobalDefs.ItemType) -> void:
 	empty = false
+	holding_type = rcv_type
 	item_texture = texture
 	$TextureRect.texture = texture
 
@@ -32,26 +36,27 @@ func _get_drag_data(_position: Vector2):
 	return self
 
 func _can_drop_data(_position: Vector2, data) -> bool:
-	# This is going to change to accomodate multiple item types
-	return data is PanelContainer
+	if not (data is PanelContainer):
+		return false
+	return type == GlobalDefs.ItemType.UNDEFINED or data.holding_type == GlobalDefs.ItemType.UNDEFINED or type == data.holding_type
 
 func _drop_data(_position: Vector2, data) -> void:
 	if data == self:
 		return
-		
-	# Swap items between slots
+	
 	var temp_texture = item_texture
 	var temp_empty = empty
+	var temp_type = holding_type
 	
 	if !data.empty:
-		set_item(data.item_texture)
+		set_item(data.item_texture, data.holding_type)
 	else:
 		clear_item()
 		
 	if temp_empty:
 		data.clear_item()
 	else:
-		data.set_item(temp_texture)
+		data.set_item(temp_texture, temp_type)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
