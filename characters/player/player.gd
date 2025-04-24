@@ -33,7 +33,10 @@ func _ready() -> void:
 	mana = max_mana
 
 	focus_timer.timeout.connect(_recover_mana)
+	
+	GlobalEvent.item_picked_up.connect(_on_item_pickup)
 
+	# Change format here!
 	GlobalEvent.emit_signal("player_max_health_changed", max_health)
 	GlobalEvent.emit_signal("player_health_changed", health)
 	GlobalEvent.emit_signal("player_max_mana_changed", max_mana)
@@ -113,3 +116,12 @@ func _on_hurt(damage: int) -> void:
 	
 	if health <= 0:
 		_die()
+
+func _on_item_pickup(item_name: String, item_type: GlobalDefs.ItemType, scene: PackedScene) -> void:
+	print(name, " picked up ", item_name, " of type ", item_type, " : ", scene)
+	match item_type:
+		GlobalDefs.ItemType.WEAPON:
+			weapon.queue_free()
+			weapon = scene.instantiate()
+			weapon.name = "Weapon"
+			add_child(weapon)

@@ -5,6 +5,8 @@ extends Node
 
 signal player_position_changed(position: Vector2)
 
+signal item_picked_up(item_name: String, item_type: GlobalDefs.ItemType, scene: PackedScene)
+
 # There is a better way for sure...
 signal player_max_health_changed(max_health: int)
 signal player_health_changed(health: int)
