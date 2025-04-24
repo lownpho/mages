@@ -118,7 +118,6 @@ func _on_hurt(damage: int) -> void:
 		_die()
 
 func _on_item_pickup(item_name: String, item_type: GlobalDefs.ItemType, scene: PackedScene) -> void:
-	print(name, " picked up ", item_name, " of type ", item_type, " : ", scene)
 	match item_type:
 		GlobalDefs.ItemType.WEAPON:
 			weapon.queue_free()

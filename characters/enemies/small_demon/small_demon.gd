@@ -94,7 +94,6 @@ func die() -> void:
 
 func _on_hurt(damage: int) -> void:
 	health -= damage
-	print(name, "hurt: ", damage, " remaining health: ", health)
 	
 	if health <= 0:
 		die()

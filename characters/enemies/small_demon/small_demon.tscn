@@ -33,7 +33,7 @@ animations = [{
 
 [node name="SmallDemon" type="CharacterBody2D"]
 collision_layer = 32
-collision_mask = 49
+collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_d7rb8")
 
