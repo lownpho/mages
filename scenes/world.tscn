@@ -50,6 +50,15 @@ position = Vector2(163, 48)
 [node name="TestSinglePickup3" parent="pickups" instance=ExtResource("6_qfnet")]
 position = Vector2(-325, 93)
 
+[node name="TestSinglePickup4" parent="pickups" instance=ExtResource("6_qfnet")]
+position = Vector2(-331, 63)
+
+[node name="TestSinglePickup5" parent="pickups" instance=ExtResource("6_qfnet")]
+position = Vector2(-344, 114)
+
+[node name="TestSinglePickup6" parent="pickups" instance=ExtResource("6_qfnet")]
+position = Vector2(-310, 68)
+
 [node name="TestMultiplePickup" parent="pickups" instance=ExtResource("7_i7141")]
 position = Vector2(-33, 148)
 
@@ -58,3 +67,9 @@ position = Vector2(177, -100)
 
 [node name="TestMultiplePickup3" parent="pickups" instance=ExtResource("7_i7141")]
 position = Vector2(-290, 235)
+
+[node name="TestMultiplePickup4" parent="pickups" instance=ExtResource("7_i7141")]
+position = Vector2(-300, 184)
+
+[node name="TestMultiplePickup5" parent="pickups" instance=ExtResource("7_i7141")]
+position = Vector2(-305, 269)

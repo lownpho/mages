@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://damb0ttdu4w2i"]
+
+[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="1_opkb6"]
+[ext_resource type="Script" uid="uid://q2lh52otucii" path="res://gui/slot.gd" id="2_ob47t"]
+
+[node name="Slot" type="PanelContainer"]
+theme = ExtResource("1_opkb6")
+script = ExtResource("2_ob47t")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "?"

@@ -5,7 +5,8 @@ extends Node
 
 signal player_position_changed(position: Vector2)
 
-signal item_picked_up(item_name: String, item_type: GlobalDefs.ItemType, scene: PackedScene)
+signal item_picked_up(item_name: String, item_type: GlobalDefs.ItemType, scene: PackedScene, texture: Texture2D)
+signal item_added_to_inventory(node_name: String)
 
 # There is a better way for sure...
 signal player_max_health_changed(max_health: int)

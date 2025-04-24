@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c8ng02rmb8ktf"]
+[gd_scene load_steps=6 format=3 uid="uid://c8ng02rmb8ktf"]
 
 [ext_resource type="Script" uid="uid://diux2k5rv6r8v" path="res://components/items/pickup_item.gd" id="1_ai3v2"]
 [ext_resource type="PackedScene" uid="uid://cfprbr6vp5rv6" path="res://characters/player/weapons/test_multiple/test_multiple_weapon.tscn" id="2_agids"]
@@ -6,6 +6,10 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p6t4b"]
 radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ai3v2"]
+atlas = ExtResource("3_4rwbd")
+region = Rect2(16, 0, 16, 16)
 
 [node name="TestMultiplePickup" type="Area2D"]
 collision_layer = 0
@@ -19,6 +23,5 @@ item = ExtResource("2_agids")
 shape = SubResource("CircleShape2D_p6t4b")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("3_4rwbd")
-region_enabled = true
+texture = SubResource("AtlasTexture_ai3v2")
 region_rect = Rect2(16, 0, 16, 16)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c6nropxss6wq4"]
+[gd_scene load_steps=6 format=3 uid="uid://c6nropxss6wq4"]
 
 [ext_resource type="Script" uid="uid://diux2k5rv6r8v" path="res://components/items/pickup_item.gd" id="1_21v3p"]
 [ext_resource type="PackedScene" uid="uid://1ist7gluut4v" path="res://characters/player/weapons/test_single/test_single_weapon.tscn" id="2_40804"]
@@ -6,6 +6,10 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p6t4b"]
 radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_40804"]
+atlas = ExtResource("2_cmci7")
+region = Rect2(0, 0, 16, 16)
 
 [node name="TestSinglePickup" type="Area2D"]
 collision_layer = 0
@@ -19,6 +23,5 @@ item = ExtResource("2_40804")
 shape = SubResource("CircleShape2D_p6t4b")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_cmci7")
-region_enabled = true
+texture = SubResource("AtlasTexture_40804")
 region_rect = Rect2(0, 0, 16, 16)

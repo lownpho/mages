@@ -2,15 +2,13 @@
 
 [ext_resource type="Script" uid="uid://q6uj6kirlhfq" path="res://gui/ui.gd" id="1_v62dg"]
 [ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="2_cemxd"]
+[ext_resource type="PackedScene" uid="uid://damb0ttdu4w2i" path="res://gui/slot.tscn" id="3_cemxd"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_71j4m"]
 bg_color = Color(1, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qfnet"]
 bg_color = Color(0, 0, 1, 1)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_i7141"]
-size = Vector2(8, 8)
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_v62dg")
@@ -57,7 +55,8 @@ rounded = true
 
 [node name="Stats" type="GridContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
+size_flags_vertical = 4
 columns = 2
 
 [node name="SkillLabel" type="Label" parent="MarginContainer/HBoxContainer/Stats"]
@@ -83,103 +82,65 @@ layout_mode = 2
 size_flags_horizontal = 6
 columns = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipItems"]
+[node name="HatSlot" parent="MarginContainer/HBoxContainer/EquipItems" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipItems/PanelContainer"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipItems"]
+[node name="RobeSlot" parent="MarginContainer/HBoxContainer/EquipItems" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipItems/PanelContainer2"]
+[node name="WeaponSlot" parent="MarginContainer/HBoxContainer/EquipItems" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipItems"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipItems/PanelContainer3"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
 
 [node name="EquipSpells" type="GridContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
 columns = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
+[node name="SpellSlot" parent="MarginContainer/HBoxContainer/EquipSpells" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
+[node name="SpellSlot2" parent="MarginContainer/HBoxContainer/EquipSpells" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer2"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
+[node name="SpellSlot3" parent="MarginContainer/HBoxContainer/EquipSpells" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer3"]
+[node name="SpellSlot4" parent="MarginContainer/HBoxContainer/EquipSpells" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/HBoxContainer/EquipSpells"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/EquipSpells/PanelContainer4"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
 
 [node name="Inventory" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 columns = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+[node name="InventorySlot" parent="MarginContainer/HBoxContainer/Inventory" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+[node name="InventorySlot2" parent="MarginContainer/HBoxContainer/Inventory" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer2"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+[node name="InventorySlot3" parent="MarginContainer/HBoxContainer/Inventory" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer3"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+[node name="InventorySlot4" parent="MarginContainer/HBoxContainer/Inventory" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer4"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer5" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
+[node name="InventorySlot5" parent="MarginContainer/HBoxContainer/Inventory" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer5"]
+[node name="InventorySlot6" parent="MarginContainer/HBoxContainer/Inventory" instance=ExtResource("3_cemxd")]
+unique_name_in_owner = true
 layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
-
-[node name="PanelContainer6" type="PanelContainer" parent="MarginContainer/HBoxContainer/Inventory"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/Inventory/PanelContainer6"]
-layout_mode = 2
-texture = SubResource("PlaceholderTexture2D_i7141")
