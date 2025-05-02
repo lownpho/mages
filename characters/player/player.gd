@@ -5,7 +5,6 @@ extends CharacterBody2D
 @export var skill: int = 25
 @export var speed: int = 80
 @export var focus_mana_recover: int = 1
-@export var weapon_scene: PackedScene
 
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
@@ -17,9 +16,6 @@ var weapon
 var ui_dragging: bool = false
 
 func _ready() -> void:
-	weapon = weapon_scene.instantiate()
-	add_child(weapon)
-	
 	var idle_state = $FSM/Idle
 	idle_state.on_physics_update.connect(_on_idle_physics_update)
 	var move_state = $FSM/Move
@@ -34,7 +30,10 @@ func _ready() -> void:
 	mana = max_mana
 
 	focus_timer.timeout.connect(_recover_mana)
+
 	GlobalEvent.drag_state_changed.connect(_on_drag_state_changed)
+	GlobalEvent.item_equipped.connect(_change_item)
+	GlobalEvent.item_unequipped.connect(_remove_item)
 
 	# Change format here!
 	GlobalEvent.emit_signal("player_max_health_changed", max_health)
@@ -50,6 +49,9 @@ func get_input_direction() -> Vector2:
 	return Vector2(direction_x, direction_y).normalized()
 
 func _handle_weapon_input() -> void:
+	if !weapon:
+		return
+
 	# The fact that the first fire goes off even when ui_dragging it's not a bug but a feature
 	if Input.is_action_pressed("weapon") and mana >= weapon.mana_cost and weapon.can_fire and !ui_dragging:
 		var mouse_position = get_global_mouse_position()
@@ -118,11 +120,25 @@ func _on_hurt(damage: int) -> void:
 	if health <= 0:
 		_die()
 
-func change_weapon(new_weapon: PackedScene) -> void:
-	weapon.queue_free()
+func _remove_weapon() -> void:
+	if weapon:
+		weapon.queue_free()
+
+func _change_weapon(new_weapon: PackedScene) -> void:
+	_remove_weapon()
 	weapon = new_weapon.instantiate()
 	weapon.name = "Weapon"
 	add_child(weapon)
+
+func _change_item(item_scene: PackedScene, item_type: GlobalDefs.ItemType) -> void:
+	if item_type == GlobalDefs.ItemType.WEAPON:
+		_change_weapon(item_scene)
+		return
+
+func _remove_item(item_type: GlobalDefs.ItemType) -> void:
+	if item_type == GlobalDefs.ItemType.WEAPON:
+		_remove_weapon()
+		return
 
 func _on_drag_state_changed(is_dragging: bool) -> void:
 	ui_dragging = is_dragging
