@@ -1,3 +1,3 @@
 extends Node
 
-enum ItemType {UNDEFINED, WEAPON, ROBE, HAT, SPELL, OTHER}
+enum ItemType {BAG, WEAPON, ROBE, HAT, SPELL, OTHER}

@@ -5,11 +5,9 @@ extends Area2D
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
-	GlobalEvent.item_added_to_inventory.connect(_on_item_added_to_inventory)
 
 func _on_body_entered(_body: Node2D) -> void:
-	GlobalEvent.item_picked_up.emit(name, type, item, $Sprite2D.texture)
-
-func _on_item_added_to_inventory(node_name: String) -> void:
-	if node_name == name:
+	# Let's see if copy and reference hold here...
+	var item_data = GlobalInventory.ItemData.new(type, item, $Sprite2D.texture)
+	if GlobalInventory.add_item_to_bag(item_data):
 		queue_free()

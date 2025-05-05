@@ -126,9 +126,10 @@ func _remove_weapon() -> void:
 
 func _change_weapon(new_weapon: PackedScene) -> void:
 	_remove_weapon()
-	weapon = new_weapon.instantiate()
-	weapon.name = "Weapon"
-	add_child(weapon)
+	if new_weapon:
+		weapon = new_weapon.instantiate()
+		weapon.name = "Weapon"
+		add_child(weapon)
 
 func _change_item(item_scene: PackedScene, item_type: GlobalDefs.ItemType) -> void:
 	if item_type == GlobalDefs.ItemType.WEAPON:
