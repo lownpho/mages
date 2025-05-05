@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 GlobalEvent="*res://autoload/global_event.gd"
 GlobalDefs="*res://autoload/global_defs.gd"
+GlobalInventory="*res://autoload/global_inventory.gd"
 
 [display]
 
