@@ -45,24 +45,25 @@ func _ready() -> void:
 func is_array_slot(type: GlobalDefs.ItemType) -> bool:
 	return type in [GlobalDefs.ItemType.BAG, GlobalDefs.ItemType.SPELL]
 
-func get_item_at(slot: SlotPosition) -> ItemData:
-	if is_array_slot(slot.type):
-		var array = slots[slot.type]
-		return array[slot.index] if slot.index < array.size() else null
-	return slots[slot.type]
-
 func can_place_item(item: ItemData, slot: SlotPosition) -> bool:
-	if not item:
+	# be liberal in what you accept, conservative in what you do. I guess...
+	if item  == null:
 		return true
-		
+	
 	if is_array_slot(slot.type):
 		var max_size = SLOT_SIZES[slot.type]
 		if slot.type == GlobalDefs.ItemType.SPELL:
 			return slot.index < max_size && item.type == GlobalDefs.ItemType.SPELL
 		# Allow everything in bag slots
 		return slot.index < max_size
-		
+	
 	return item.type == slot.type
+
+func get_item_at(slot: SlotPosition) -> ItemData:
+	if is_array_slot(slot.type):
+		var array = slots[slot.type]
+		return array[slot.index] if slot.index < array.size() else null
+	return slots[slot.type]
 
 # Use sparingly. This erases the item at position.
 # There are dedicated functions to equip or swap items
@@ -80,10 +81,13 @@ func set_item(item: ItemData, slot: SlotPosition) -> void:
 			slots[slot.type] = item
 	GlobalEvent.inventory_updated.emit(slot)
 
-# Allows swaps with null items
+# Allow swaps with null items destination
 func swap_items(from_slot: SlotPosition, to_slot: SlotPosition) -> bool:
 	var from_item = get_item_at(from_slot)
 	var to_item = get_item_at(to_slot)
+
+	if from_item == null:
+		return false
 	
 	if not can_place_item(from_item, to_slot) or not can_place_item(to_item, from_slot):
 		return false
@@ -94,26 +98,53 @@ func swap_items(from_slot: SlotPosition, to_slot: SlotPosition) -> bool:
 
 	return true
 
-# UNTESTED WITH SPELL SLOTS
-func equip_item(from_slot: SlotPosition, to_slot: SlotPosition) -> bool:
-	var from_item = get_item_at(from_slot)
+# Try to equip/unequip items between bag and active slots
+# This is complete bullshit
+func swap_bag_and_active(to_slot: SlotPosition, from_slot: SlotPosition) -> bool:
 	var to_item = get_item_at(to_slot)
-	if not can_place_item(from_item, to_slot) or not can_place_item(to_item, from_slot):
-		return false
+	var from_item = get_item_at(from_slot)
+
+	var bag_slot
+	var active_slot
+	var bag_item
+	var active_item
 	
-	if from_item and not to_item:
-		swap_items(from_slot, to_slot)
-		GlobalEvent.item_equipped.emit(from_item.scene, to_slot.type)
-		return true
-	elif from_item and to_item:
-		swap_items(from_slot, to_slot)
-		GlobalEvent.item_equipped.emit(from_item.scene, to_slot.type)
-		return true
-	elif to_item and not from_item:
-		swap_items(from_slot, to_slot)
-		GlobalEvent.item_unequipped.emit(to_slot.type)
-		return true
+	# Validate slot types and assign active and bag slots/items
+	# at least one of the slots must be a bag but not both
+	if from_slot.type == GlobalDefs.ItemType.BAG:
+		bag_slot = from_slot
+		active_slot = to_slot
+		bag_item = from_item
+		active_item = to_item
+	elif to_slot.type == GlobalDefs.ItemType.BAG:
+		bag_slot = to_slot
+		active_slot = from_slot
+		bag_item = to_item
+		active_item = from_item
+	else:
+		return false
+		
+	# Handle different cases:
+	# 1. Unequip: Active slot has item, bag slot empty
+	# 2. Equip: Active slot empty, bag has item
+	# 3. Swap: Both slots have items
+	if active_item and not bag_item:
+		# Working around the swap_items checks... :(
+		var result = swap_items(active_slot, bag_slot)
+		GlobalEvent.item_unequipped.emit(bag_slot)
+		return result
+	elif not active_item and bag_item:
+		var result = swap_items(bag_slot, active_slot)
+		GlobalEvent.item_equipped.emit(active_slot)
+		return result
+	elif active_item and bag_item:
+		var result = swap_items(bag_slot, active_slot)
+		GlobalEvent.item_unequipped.emit(bag_slot)
+		GlobalEvent.item_equipped.emit(active_slot)
+		return result
+		
 	return false
+
 
 func add_item_to_bag(item: ItemData) -> bool:
 	# Try to find first empty bag slot

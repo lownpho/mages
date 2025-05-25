@@ -21,5 +21,5 @@ signal drag_state_changed(is_dragging: bool)
 # Everyone has access to inventory
 signal inventory_updated(slot: GlobalInventory.SlotPosition)
 # Separate signal for spells?
-signal item_equipped(weapon_scene: PackedScene, type: GlobalDefs.ItemType)
-signal item_unequipped(type: GlobalDefs.ItemType)
+signal item_equipped(slot: GlobalInventory.SlotPosition)
+signal item_unequipped(slot: GlobalInventory.SlotPosition)

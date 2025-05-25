@@ -131,13 +131,15 @@ func _change_weapon(new_weapon: PackedScene) -> void:
 		weapon.name = "Weapon"
 		add_child(weapon)
 
-func _change_item(item_scene: PackedScene, item_type: GlobalDefs.ItemType) -> void:
-	if item_type == GlobalDefs.ItemType.WEAPON:
-		_change_weapon(item_scene)
+func _change_item(slot: GlobalInventory.SlotPosition) -> void:
+	var item = GlobalInventory.get_item_at(slot)
+	if item.type == GlobalDefs.ItemType.WEAPON:
+		_change_weapon(item.scene)
 		return
 
-func _remove_item(item_type: GlobalDefs.ItemType) -> void:
-	if item_type == GlobalDefs.ItemType.WEAPON:
+func _remove_item(slot: GlobalInventory.SlotPosition) -> void:
+	var item = GlobalInventory.get_item_at(slot)
+	if item.type == GlobalDefs.ItemType.WEAPON:
 		_remove_weapon()
 		return
 

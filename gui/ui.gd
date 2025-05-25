@@ -13,13 +13,13 @@ func _ready() -> void:
 	# but it works for now. No idea how to do this better at the moment.
 	var slots = %Bag.get_children()
 	for i in range(GlobalInventory.MAX_BAG_SIZE):
-		slots[i].item_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.BAG, i)
+		slots[i].slot_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.BAG, i)
 	slots = %EquipSpells.get_children()
 	for i in range(GlobalInventory.MAX_SPELL_SLOT_SIZE):
-		slots[i].item_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.SPELL, i)
-	%HatSlot.item_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.HAT, 0)
-	%RobeSlot.item_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.ROBE, 0)
-	%WeaponSlot.item_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.WEAPON, 0)
+		slots[i].slot_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.SPELL, i)
+	%HatSlot.slot_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.HAT, 0)
+	%RobeSlot.slot_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.ROBE, 0)
+	%WeaponSlot.slot_position = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.WEAPON, 0)
 
 	GlobalEvent.inventory_updated.connect(_on_inventory_updated)
 
@@ -61,24 +61,3 @@ func _on_inventory_updated(slot: GlobalInventory.SlotPosition) -> void:
 		GlobalDefs.ItemType.WEAPON:
 			%WeaponSlot.update(slot)
 	
-
-# Debug
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_accept"):
-		# # Test item swap
-		# var from_slot = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.BAG, randi_range(0, 5))
-		# var to_slot = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.BAG, randi_range(0, 5))
-		# print("Swapping items from ", from_slot.index, " to ", to_slot.index)
-		# if GlobalInventory.swap_items(from_slot, to_slot):
-		# 	print("Swapped items successfully!")
-		# else:
-		# 	print("Failed to swap items.")
-
-		# equip/unequip item
-		var from_slot = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.BAG, randi_range(0, 5))
-		var to_slot = GlobalInventory.SlotPosition.new(GlobalDefs.ItemType.WEAPON, 0)
-		print("Equipping item from ", from_slot.index, " to ", to_slot.index)
-		if GlobalInventory.equip_item(from_slot, to_slot):
-			print("Equipped item successfully!")
-		else:
-			print("Failed to equip item.")
