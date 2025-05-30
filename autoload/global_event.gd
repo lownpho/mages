@@ -18,8 +18,6 @@ signal player_speed_changed(speed: int)
 signal drag_state_changed(is_dragging: bool)
 
 # Inventory signals
-# Everyone has access to inventory
-signal inventory_updated(slot: GlobalInventory.SlotPosition)
-# Separate signal for spells?
-signal item_equipped(slot: GlobalInventory.SlotPosition)
-signal item_unequipped(slot: GlobalInventory.SlotPosition)
+# This should be enough for add and remove from bag, equipping (just check the slot)
+signal slot_updated(slot: GlobalInventory.Slot)
+signal item_picked_up(slot: GlobalInventory.Slot)

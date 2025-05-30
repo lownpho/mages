@@ -32,8 +32,7 @@ func _ready() -> void:
 	focus_timer.timeout.connect(_recover_mana)
 
 	GlobalEvent.drag_state_changed.connect(_on_drag_state_changed)
-	GlobalEvent.item_equipped.connect(_change_item)
-	GlobalEvent.item_unequipped.connect(_remove_item)
+	GlobalEvent.slot_updated.connect(_change_item)
 
 	# Change format here!
 	GlobalEvent.emit_signal("player_max_health_changed", max_health)
@@ -120,28 +119,17 @@ func _on_hurt(damage: int) -> void:
 	if health <= 0:
 		_die()
 
-func _remove_weapon() -> void:
-	if weapon:
-		weapon.queue_free()
-
-func _change_weapon(new_weapon: PackedScene) -> void:
-	_remove_weapon()
-	if new_weapon:
-		weapon = new_weapon.instantiate()
-		weapon.name = "Weapon"
-		add_child(weapon)
-
-func _change_item(slot: GlobalInventory.SlotPosition) -> void:
-	var item = GlobalInventory.get_item_at(slot)
-	if item.type == GlobalDefs.ItemType.WEAPON:
-		_change_weapon(item.scene)
-		return
-
-func _remove_item(slot: GlobalInventory.SlotPosition) -> void:
-	var item = GlobalInventory.get_item_at(slot)
-	if item.type == GlobalDefs.ItemType.WEAPON:
-		_remove_weapon()
-		return
+func _change_item(slot: GlobalInventory.Slot) -> void:
+	
+	if slot.type == GlobalInventory.ItemType.WEAPON:
+		# Stats should be updated here when implemented
+		# Signals to update stats should be also emitted here
+		if weapon:
+			weapon.queue_free()  # Remove the old weapon if it exists
+		if slot.item:
+			weapon = slot.item.scene.instantiate()
+			weapon.name = "Weapon"
+			add_child(weapon)
 
 func _on_drag_state_changed(is_dragging: bool) -> void:
 	ui_dragging = is_dragging

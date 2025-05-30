@@ -1,6 +1,6 @@
 extends Area2D
 
-@export var type: GlobalDefs.ItemType
+@export var type: GlobalInventory.ItemType
 @export var item: PackedScene
 
 func _ready() -> void:
@@ -9,5 +9,7 @@ func _ready() -> void:
 func _on_body_entered(_body: Node2D) -> void:
 	# Let's see if copy and reference hold here...
 	var item_data = GlobalInventory.ItemData.new(type, item, $Sprite2D.texture)
-	if GlobalInventory.add_item_to_bag(item_data):
+	var slot = GlobalInventory.bag_slots.add_at_first_empty(item_data)
+	if slot:
+		GlobalEvent.item_picked_up.emit(slot)
 		queue_free()
