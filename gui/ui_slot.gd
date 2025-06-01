@@ -23,7 +23,7 @@ func _get_drag_data(_position):
 
 func _can_drop_data(_position, data) -> bool:
 	# data is the ui_slot we are dropping from
-	return slot.can_place_item(data.slot.item)
+	return slot.can_place_item(data.slot.item) and (not slot.item or data.slot.can_place_item(slot.item))
 	
 func _drop_data(_position, data) -> void:
 	# position is some coordinates...
