@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ld2y2u7w8ybk"]
+
+[ext_resource type="Script" uid="uid://bxhrrd0yaogw7" path="res://components/items/base_item.gd" id="1_tepnj"]
+
+[node name="SkillHat" type="Node2D"]
+script = ExtResource("1_tepnj")
+skill_modifier = 50

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=11 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="PackedScene" uid="uid://c6nropxss6wq4" path="res://characters/player/weapons/test_single/test_single_pickup.tscn" id="6_qfnet"]
 [ext_resource type="PackedScene" uid="uid://c8ng02rmb8ktf" path="res://characters/player/weapons/test_multiple/test_multiple_pickup.tscn" id="7_i7141"]
+[ext_resource type="PackedScene" uid="uid://dddu4mmpnmkuf" path="res://characters/player/hats/wisdom/wisdom_pickup.tscn" id="8_4mrxx"]
+[ext_resource type="PackedScene" uid="uid://b12qhcco1d0rb" path="res://characters/player/hats/skill/skill_pickup.tscn" id="9_7r4gi"]
+[ext_resource type="PackedScene" uid="uid://bt8df80edhewc" path="res://characters/player/hats/speed/speed_pickup.tscn" id="10_w7kh3"]
 
 [node name="World" type="Node2D"]
 
@@ -75,3 +78,18 @@ position = Vector2(-300, 184)
 
 [node name="TestMultiplePickup5" parent="pickups" instance=ExtResource("7_i7141")]
 position = Vector2(-305, 269)
+
+[node name="WisdomPickup" parent="pickups" instance=ExtResource("8_4mrxx")]
+position = Vector2(-239, 224)
+
+[node name="WisdomPickup2" parent="pickups" instance=ExtResource("8_4mrxx")]
+position = Vector2(-174, 200)
+
+[node name="SkillPickup" parent="pickups" instance=ExtResource("9_7r4gi")]
+position = Vector2(-168, 131)
+
+[node name="SkillPickup2" parent="pickups" instance=ExtResource("9_7r4gi")]
+position = Vector2(-83, 117)
+
+[node name="WisdomPickup3" parent="pickups" instance=ExtResource("10_w7kh3")]
+position = Vector2(-158, 77)

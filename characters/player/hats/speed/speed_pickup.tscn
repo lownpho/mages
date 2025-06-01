@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://bt8df80edhewc"]
+
+[ext_resource type="Script" uid="uid://diux2k5rv6r8v" path="res://components/items/pickup_item.gd" id="1_8b2o4"]
+[ext_resource type="PackedScene" uid="uid://cgfo5fi58xnht" path="res://characters/player/hats/speed/speed_hat.tscn" id="2_27hrl"]
+[ext_resource type="Texture2D" uid="uid://cur7g42go5wec" path="res://characters/player/hats/hats.png" id="3_5i33s"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_p6t4b"]
+radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_18bhd"]
+atlas = ExtResource("3_5i33s")
+region = Rect2(32, 0, 16, 16)
+
+[node name="SpeedPickup" type="Area2D"]
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+script = ExtResource("1_8b2o4")
+type = 3
+item = ExtResource("2_27hrl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_p6t4b")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("AtlasTexture_18bhd")
+region_enabled = true
+region_rect = Rect2(0, 0, 16, 16)

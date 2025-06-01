@@ -13,6 +13,7 @@ extends CharacterBody2D
 var health: int
 var mana: int
 var weapon
+var hat
 var ui_dragging: bool = false
 
 func _ready() -> void:
@@ -137,7 +138,15 @@ func _change_item(slot: GlobalInventory.Slot) -> void:
 				weapon = slot.item.scene.instantiate()
 				weapon.name = "Weapon"
 				item_node = weapon
-		# Add other item types here following the same pattern
+		GlobalInventory.ItemType.HAT:  # Add hat handling
+			if hat:
+				hat.remove_stats(self)
+				_broadcast_stats()
+				hat.queue_free()
+			if slot.item:
+				hat = slot.item.scene.instantiate()
+				hat.name = "Hat"
+				item_node = hat
 	
 	if item_node:
 		add_child(item_node)

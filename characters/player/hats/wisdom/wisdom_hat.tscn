@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhxeul7c4ho7x"]
+
+[ext_resource type="Script" uid="uid://bxhrrd0yaogw7" path="res://components/items/base_item.gd" id="1_b7k22"]
+
+[node name="WisdomHat" type="Node2D"]
+script = ExtResource("1_b7k22")
+max_mana_modifier = 100
