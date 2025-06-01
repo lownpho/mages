@@ -21,6 +21,16 @@ GlobalEvent="*res://autoload/global_event.gd"
 GlobalDefs="*res://autoload/global_defs.gd"
 GlobalInventory="*res://autoload/global_inventory.gd"
 
+[debug]
+
+gdscript/warnings/unused_variable=2
+gdscript/warnings/unused_local_constant=2
+gdscript/warnings/unused_private_class_variable=2
+gdscript/warnings/unused_parameter=2
+gdscript/warnings/unused_signal=0
+gdscript/warnings/return_value_discarded=1
+gdscript/warnings/function_used_as_property=2
+
 [display]
 
 window/size/viewport_width=480
