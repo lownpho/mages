@@ -119,17 +119,30 @@ func _on_hurt(damage: int) -> void:
 	if health <= 0:
 		_die()
 
+func _broadcast_stats() -> void:
+	GlobalEvent.emit_signal("player_max_health_changed", max_health)
+	GlobalEvent.emit_signal("player_max_mana_changed", max_mana)
+	GlobalEvent.emit_signal("player_skill_changed", skill)
+	GlobalEvent.emit_signal("player_speed_changed", speed)
+
 func _change_item(slot: GlobalInventory.Slot) -> void:
+	var item_node = null
+	match slot.type:
+		GlobalInventory.ItemType.WEAPON:
+			if weapon:
+				weapon.remove_stats(self)
+				_broadcast_stats()
+				weapon.queue_free()
+			if slot.item:
+				weapon = slot.item.scene.instantiate()
+				weapon.name = "Weapon"
+				item_node = weapon
+		# Add other item types here following the same pattern
 	
-	if slot.type == GlobalInventory.ItemType.WEAPON:
-		# Stats should be updated here when implemented
-		# Signals to update stats should be also emitted here
-		if weapon:
-			weapon.queue_free()  # Remove the old weapon if it exists
-		if slot.item:
-			weapon = slot.item.scene.instantiate()
-			weapon.name = "Weapon"
-			add_child(weapon)
+	if item_node:
+		add_child(item_node)
+		item_node.apply_stats(self)
+		_broadcast_stats()
 
 func _on_drag_state_changed(is_dragging: bool) -> void:
 	ui_dragging = is_dragging

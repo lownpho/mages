@@ -6,3 +6,4 @@
 [node name="TestSingleWeapon" type="Node2D"]
 script = ExtResource("1_u1a8l")
 bullet_scene = ExtResource("2_xw35v")
+skill_modifier = 10

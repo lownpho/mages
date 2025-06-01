@@ -1,4 +1,4 @@
-extends Node2D
+extends BaseItem
 class_name BaseWeapon
 
 @export var bullet_scene: PackedScene

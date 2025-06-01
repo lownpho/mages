@@ -9,3 +9,4 @@ num_bullets = 6
 bullet_scene = ExtResource("2_5gaw6")
 fire_cooldown = 2.0
 mana_cost = 2
+skill_modifier = 5
