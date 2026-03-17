@@ -1,12 +1,12 @@
 extends CanvasLayer
 
 func _ready() -> void:
-	GlobalEvent.connect("player_max_health_changed", _on_player_max_health_changed)
-	GlobalEvent.connect("player_health_changed", _on_player_health_changed)
-	GlobalEvent.connect("player_max_mana_changed", _on_player_max_mana_changed)
-	GlobalEvent.connect("player_mana_changed", _on_player_mana_changed)
-	GlobalEvent.connect("player_skill_changed", _on_player_skill_changed)
-	GlobalEvent.connect("player_speed_changed", _on_player_speed_changed)
+	GlobalEvent.player_max_health_changed.connect(_on_player_max_health_changed)
+	GlobalEvent.player_health_changed.connect(_on_player_health_changed)
+	GlobalEvent.player_max_mana_changed.connect(_on_player_max_mana_changed)
+	GlobalEvent.player_mana_changed.connect(_on_player_mana_changed)
+	GlobalEvent.player_skill_changed.connect(_on_player_skill_changed)
+	GlobalEvent.player_speed_changed.connect(_on_player_speed_changed)
 
 	# Debug
 	GlobalEvent.slot_updated.connect(_on_slot_updated)

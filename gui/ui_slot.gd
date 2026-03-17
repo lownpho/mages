@@ -20,29 +20,18 @@ func _get_drag_data(_position):
 		return self
 	return null
 
-
 func _can_drop_data(_position, data) -> bool:
-	# data is the ui_slot we are dropping from
 	return slot.can_place_item(data.slot.item) and (not slot.item or data.slot.can_place_item(slot.item))
-	
-func _drop_data(_position, data) -> void:
-	# position is some coordinates...
-	# data is the ui_slot we are dropping from
-	if slot.item:
-		var tmp_item = data.slot.item
-		var tmp_index = data.slot.index
-		data.slot.set_item(slot.item, slot.index)
-		slot.set_item(tmp_item, tmp_index)
-		data.update_texture()
-		update_texture()
 
+func _drop_data(_position, data) -> void:
+	if slot.item:
+		GlobalInventory.swap_items(slot, data.slot)
 	else:
-		slot.set_item(data.slot.item, data.slot.index)
+		slot.set_item(data.slot.item)
 		data.slot.clear_item()
-		data.update_texture()
-		update_texture()
+	data.update_texture()
+	update_texture()
 
 func _on_item_pickup(p_slot: GlobalInventory.Slot) -> void:
-	# Making this reference mess it's useful sometimes
 	if slot == p_slot:
-		update_texture()		
+		update_texture()
