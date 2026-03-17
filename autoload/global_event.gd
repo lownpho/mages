@@ -13,9 +13,6 @@ signal player_mana_changed(mana: int)
 signal player_skill_changed(skill: int)
 signal player_speed_changed(speed: int)
 
-# UI global signals
-signal drag_state_changed(is_dragging: bool)
-
 # Inventory signals
 signal slot_updated(slot: GlobalInventory.Slot)
 signal item_picked_up(slot: GlobalInventory.Slot)

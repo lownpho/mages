@@ -22,7 +22,7 @@ var speed: int
 
 var weapon: BaseWeapon
 var hat: BaseItem
-var ui_dragging: bool = false
+var weapon_held: bool = false
 
 func _ready() -> void:
 	var idle_state = $FSM/Idle
@@ -37,13 +37,18 @@ func _ready() -> void:
 	hurtbox.hurt.connect(_on_hurt)
 	focus_timer.timeout.connect(_recover_mana)
 
-	GlobalEvent.drag_state_changed.connect(_on_drag_state_changed)
 	GlobalEvent.equipment_changed.connect(_on_equipment_changed)
 
 	_recompute_stats()
 	health = max_health
 	mana = max_mana
 	_broadcast_stats()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("weapon"):
+		weapon_held = true
+	elif event.is_action_released("weapon"):
+		weapon_held = false
 
 func get_input_direction() -> Vector2:
 	var direction_x := Input.get_axis("left", "right")
@@ -54,8 +59,7 @@ func _handle_weapon_input() -> void:
 	if not weapon:
 		return
 
-	# The fact that the first fire goes off even when ui_dragging it's not a bug but a feature
-	if Input.is_action_pressed("weapon") and mana >= weapon.mana_cost and weapon.can_fire and not ui_dragging:
+	if weapon_held and mana >= weapon.mana_cost and weapon.can_fire:
 		var mouse_position = get_global_mouse_position()
 		var fire_direction = (mouse_position - position).normalized()
 
@@ -171,5 +175,3 @@ func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
 	_recompute_stats()
 	_broadcast_stats()
 
-func _on_drag_state_changed(is_dragging: bool) -> void:
-	ui_dragging = is_dragging
