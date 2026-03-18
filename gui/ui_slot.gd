@@ -10,7 +10,7 @@ func update_texture() -> void:
 		$TextureRect.texture = null
 
 func _ready() -> void:
-	GlobalEvent.item_picked_up.connect(_on_item_pickup)
+	GlobalEvent.slot_updated.connect(_on_slot_updated)
 
 func _get_drag_data(_position):
 	if slot.item:
@@ -32,6 +32,6 @@ func _drop_data(_position, data) -> void:
 	data.update_texture()
 	update_texture()
 
-func _on_item_pickup(p_slot: GlobalInventory.Slot) -> void:
+func _on_slot_updated(p_slot: GlobalInventory.Slot) -> void:
 	if slot == p_slot:
 		update_texture()
