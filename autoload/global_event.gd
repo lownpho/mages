@@ -4,8 +4,6 @@ extends Node
 # and emitting them when necessary
 
 # Player signals
-signal player_position_changed(position: Vector2)
-
 signal player_max_health_changed(max_health: int)
 signal player_health_changed(health: int)
 signal player_max_mana_changed(max_mana: int)

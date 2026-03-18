@@ -25,6 +25,8 @@ var hat: BaseItem
 var weapon_held: bool = false
 
 func _ready() -> void:
+	add_to_group("player")
+
 	var idle_state = $FSM/Idle
 	idle_state.on_physics_update.connect(_on_idle_physics_update)
 	var move_state = $FSM/Move
@@ -93,8 +95,6 @@ func _on_move_physics_update(_delta: float) -> void:
 
 	velocity = direction * speed
 	move_and_slide()
-
-	GlobalEvent.player_position_changed.emit(position)
 
 	_handle_weapon_input()
 

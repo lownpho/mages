@@ -12,13 +12,9 @@ var health: int
 @onready var attack_probe = $AttackProbe
 @onready var weapon = $Weapon
 
-var player_position: Vector2 = Vector2.ZERO
-
 func _ready() -> void:
-	health = max_health 
+	health = max_health
 	hurtbox.hurt.connect(_on_hurt)
-
-	GlobalEvent.connect("player_position_changed", _on_player_position_changed)
 
 	var idle_state = $FSM/Idle
 	idle_state.on_enter.connect(_on_idle_enter)
@@ -36,6 +32,12 @@ func _ready() -> void:
 	# FSM started here to avoid missing the first enter call
 	$FSM.start()
 
+func _get_player_position() -> Vector2:
+	var players = get_tree().get_nodes_in_group("player")
+	if players.is_empty():
+		return global_position
+	return players[0].global_position
+
 func _on_idle_enter() -> void:
 	detect_probe.enabled = true
 
@@ -43,7 +45,7 @@ func _on_idle_exit() -> void:
 	detect_probe.enabled = false
 
 func _on_idle_physics_update(_delta: float) -> void:
-	detect_probe.look_at(player_position)
+	detect_probe.look_at(_get_player_position())
 
 	var detect_collider = detect_probe.get_collider()
 	if detect_collider and detect_collider.name == "Player":
@@ -58,10 +60,11 @@ func _on_chase_exit() -> void:
 	attack_probe.enabled = false
 
 func _on_chase_physics_update(_delta: float) -> void:
-	var player_direction = player_position - global_position
-	
-	chase_probe.look_at(player_position)
-	attack_probe.look_at(player_position)
+	var player_pos = _get_player_position()
+	var player_direction = player_pos - global_position
+
+	chase_probe.look_at(player_pos)
+	attack_probe.look_at(player_pos)
 
 	var attack_collider = attack_probe.get_collider()
 	var chase_collider = chase_probe.get_collider()
@@ -80,11 +83,11 @@ func _on_attack_exit() -> void:
 	attack_probe.enabled = false
 
 func _on_attack_physics_update(_delta: float) -> void:
-	attack_probe.look_at(player_position)
+	attack_probe.look_at(_get_player_position())
 
 	var attack_collider = attack_probe.get_collider()
 	if attack_collider and attack_collider.name == "Player" and weapon.can_fire:
-		var player_direction = (player_position - global_position).normalized()
+		var player_direction = (_get_player_position() - global_position).normalized()
 		weapon.fire(player_direction, skill)
 	else:
 		fsm.transition_to("Chase")
@@ -97,6 +100,3 @@ func _on_hurt(damage: int) -> void:
 	
 	if health <= 0:
 		die()
-
-func _on_player_position_changed(pos: Vector2) -> void:
-	player_position = pos
