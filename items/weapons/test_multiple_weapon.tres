@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponResource" load_steps=5 format=3 uid="uid://c6chypxhn47ph"]
+
+[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapon_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://items/weapons/weapons.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://ftnhy7o3y6kt" path="res://items/bullets/test_multiple_bullet.tscn" id="3_bullet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(16, 0, 16, 16)
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = 1
+bullet_scene = ExtResource("3_bullet")
+fire_cooldown = 2.0
+mana_cost = 2
+num_bullets = 6
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 5
+speed_modifier = 0
+max_health_modifier = 0
+max_mana_modifier = 0

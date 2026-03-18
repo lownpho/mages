@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WeaponResource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://items/weapon_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cta4rjbkui58t" path="res://items/bullets/demon_bullet.tscn" id="2_bullet"]
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = 0
+bullet_scene = ExtResource("2_bullet")
+fire_cooldown = 1.0
+mana_cost = 0

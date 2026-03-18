@@ -10,11 +10,14 @@ var health: int
 @onready var detect_probe = $DetectProbe
 @onready var chase_probe = $ChaseProbe
 @onready var attack_probe = $AttackProbe
-@onready var weapon = $Weapon
+@export var weapon_data: WeaponResource
+@onready var weapon: WeaponNode = $Weapon
 
 func _ready() -> void:
 	health = max_health
 	hurtbox.hurt.connect(_on_hurt)
+	if weapon_data:
+		weapon.setup(weapon_data)
 
 	var idle_state = $FSM/Idle
 	idle_state.on_enter.connect(_on_idle_enter)

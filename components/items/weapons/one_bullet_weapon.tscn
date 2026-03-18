@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://batjxprdyftq"]
-
-[ext_resource type="Script" path="res://components/items/weapons/one_bullet_weapon.gd" id="1_y34hh"]
-
-[node name="OneBulletWeapon" type="Node2D"]
-script = ExtResource("1_y34hh")

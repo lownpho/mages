@@ -3,22 +3,12 @@ extends Node
 const BAG_SIZE = 6
 const SPELL_SLOT_SIZE = 4
 
-# ItemType.BAG is used as the slot category for bag slots — no ItemData should ever have type BAG
+# ItemType.BAG is used as the slot category for bag slots — no item should ever have type BAG
 enum ItemType {BAG, WEAPON, ROBE, HAT, SPELL, OTHER}
-
-class ItemData:
-	var type: ItemType
-	var scene: PackedScene
-	var texture: Texture2D
-
-	func _init(p_type: ItemType, p_scene: PackedScene, p_texture: Texture2D):
-		type = p_type
-		scene = p_scene
-		texture = p_texture
 
 class Slot:
 	var type: ItemType
-	var item: ItemData
+	var item: ItemResource
 	var compatibility_list: Array[ItemType] = []
 
 	func _init(p_type: ItemType, p_compatibility_list: Array[ItemType] = [p_type]):
@@ -26,10 +16,10 @@ class Slot:
 		compatibility_list = p_compatibility_list
 		item = null
 
-	func can_place_item(p_item: ItemData) -> bool:
-		return p_item.type in compatibility_list
+	func can_place_item(p_item: ItemResource) -> bool:
+		return p_item.get_item_type() in compatibility_list
 
-	func set_item(p_item: ItemData) -> bool:
+	func set_item(p_item: ItemResource) -> bool:
 		if not can_place_item(p_item):
 			return false
 		item = p_item
@@ -65,7 +55,7 @@ class ArraySlot:
 			return null
 		return slots[p_index]
 
-	func add_at_first_empty(p_item: ItemData) -> Slot:
+	func add_at_first_empty(p_item: ItemResource) -> Slot:
 		var index = first_empty()
 		if index == -1:
 			return null
@@ -73,7 +63,7 @@ class ArraySlot:
 			return slots[index]
 		return null
 
-	func add_at(p_index: int, p_item: ItemData) -> bool:
+	func add_at(p_index: int, p_item: ItemResource) -> bool:
 		if at(p_index) == null:
 			return false
 		return slots[p_index].set_item(p_item)
@@ -108,15 +98,15 @@ func swap_items(slot_a: Slot, slot_b: Slot) -> void:
 
 func get_inventory_status() -> String:
 	var output = ""
-	output += "Weapon Slot: " + (str(weapon_slot.item.texture.resource_path) if weapon_slot.item else "Empty") + "\n"
-	output += "Robe Slot: " + (str(robe_slot.item.texture.resource_path) if robe_slot.item else "Empty") + "\n"
-	output += "Hat Slot: " + (str(hat_slot.item.texture.resource_path) if hat_slot.item else "Empty") + "\n"
+	output += "Weapon Slot: " + (str(weapon_slot.item.icon.resource_path) if weapon_slot.item else "Empty") + "\n"
+	output += "Robe Slot: " + (str(robe_slot.item.icon.resource_path) if robe_slot.item else "Empty") + "\n"
+	output += "Hat Slot: " + (str(hat_slot.item.icon.resource_path) if hat_slot.item else "Empty") + "\n"
 	output += "Bag Slots:\n"
 	for i in range(bag_slots.slots.size()):
 		var slot = bag_slots.slots[i]
-		output += "  Slot " + str(i) + ": " + (str(slot.item.texture.resource_path) if slot.item else "Empty") + "\n"
+		output += "  Slot " + str(i) + ": " + (str(slot.item.icon.resource_path) if slot.item else "Empty") + "\n"
 	output += "Spell Slots:\n"
 	for i in range(spell_slots.slots.size()):
 		var slot = spell_slots.slots[i]
-		output += "  Slot " + str(i) + ": " + (str(slot.item.texture.resource_path) if slot.item else "Empty") + "\n"
+		output += "  Slot " + str(i) + ": " + (str(slot.item.icon.resource_path) if slot.item else "Empty") + "\n"
 	return output

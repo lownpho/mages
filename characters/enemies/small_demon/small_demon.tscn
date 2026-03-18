@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://dvri3pbaf2jes"]
+[gd_scene load_steps=11 format=3 uid="uid://dvri3pbaf2jes"]
 
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="1_1jq6x"]
 [ext_resource type="Script" uid="uid://bithug1lqpbp4" path="res://characters/enemies/small_demon/small_demon.gd" id="1_d7rb8"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/generic/hurtbox.tscn" id="2_3sbbp"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="4_8ad34"]
-[ext_resource type="PackedScene" uid="uid://dwyc8mocpjihh" path="res://characters/enemies/small_demon/test_weapon.tscn" id="4_bth6n"]
+[ext_resource type="PackedScene" uid="uid://c0weaponnode1" path="res://items/weapons/weapon_node.tscn" id="4_bth6n"]
+[ext_resource type="Resource" path="res://items/weapons/demon_weapon.tres" id="5_demon"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3sbbp"]
 radius = 6.0
@@ -36,6 +37,7 @@ collision_layer = 32
 collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_d7rb8")
+weapon_data = ExtResource("5_demon")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_3sbbp")

@@ -20,8 +20,8 @@ var max_mana: int
 var skill: int
 var speed: int
 
-var weapon: BaseWeapon
-var hat: BaseItem
+var weapon: WeaponNode
+var hat: ItemResource
 var weapon_held: bool = false
 
 func _ready() -> void:
@@ -132,11 +132,11 @@ func _recompute_stats() -> void:
 	skill = base_skill
 	speed = base_speed
 
-	if weapon:
-		max_health += weapon.max_health_modifier
-		max_mana += weapon.max_mana_modifier
-		skill += weapon.skill_modifier
-		speed += weapon.speed_modifier
+	if weapon and weapon.data:
+		max_health += weapon.data.max_health_modifier
+		max_mana += weapon.data.max_mana_modifier
+		skill += weapon.data.skill_modifier
+		speed += weapon.data.speed_modifier
 	if hat:
 		max_health += hat.max_health_modifier
 		max_mana += hat.max_mana_modifier
@@ -161,16 +161,11 @@ func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
 				weapon.queue_free()
 				weapon = null
 			if slot.item:
-				weapon = slot.item.scene.instantiate()
+				weapon = WeaponNode.new()
 				weapon.name = "Weapon"
 				add_child(weapon)
+				weapon.setup(slot.item as WeaponResource)
 		GlobalInventory.ItemType.HAT:
-			if hat:
-				hat.queue_free()
-				hat = null
-			if slot.item:
-				hat = slot.item.scene.instantiate()
-				hat.name = "Hat"
-				add_child(hat)
+			hat = slot.item
 	_recompute_stats()
 	_broadcast_stats()

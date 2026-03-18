@@ -5,7 +5,7 @@ var slot: GlobalInventory.Slot = null
 
 func update_texture() -> void:
 	if slot.item:
-		$TextureRect.texture = slot.item.texture
+		$TextureRect.texture = slot.item.icon
 	else:
 		$TextureRect.texture = null
 
@@ -15,7 +15,7 @@ func _ready() -> void:
 func _get_drag_data(_position):
 	if slot.item:
 		var preview = TextureRect.new()
-		preview.texture = slot.item.texture
+		preview.texture = slot.item.icon
 		set_drag_preview(preview)
 		return self
 	return null
