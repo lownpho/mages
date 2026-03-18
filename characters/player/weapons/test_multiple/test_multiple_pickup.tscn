@@ -18,6 +18,7 @@ monitorable = false
 script = ExtResource("1_ai3v2")
 type = 1
 item = ExtResource("2_agids")
+icon = SubResource("AtlasTexture_ai3v2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_p6t4b")

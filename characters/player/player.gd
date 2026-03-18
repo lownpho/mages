@@ -174,4 +174,3 @@ func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
 				add_child(hat)
 	_recompute_stats()
 	_broadcast_stats()
-
