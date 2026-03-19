@@ -23,6 +23,7 @@ var speed: int
 var weapon: WeaponNode
 var hat: ItemResource
 var robe: ItemResource
+var weapon_input_held: bool = false
 
 func _ready() -> void:
 	add_to_group("player")
@@ -51,11 +52,17 @@ func get_input_direction() -> Vector2:
 	var direction_y := Input.get_axis("up", "down")
 	return Vector2(direction_x, direction_y).normalized()
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("weapon"):
+		weapon_input_held = true
+	elif event.is_action_released("weapon"):
+		weapon_input_held = false
+
 func _handle_weapon_input() -> void:
 	if not weapon:
 		return
 
-	if Input.is_action_pressed("weapon") and mana >= weapon.mana_cost and weapon.can_fire:
+	if weapon_input_held and mana >= weapon.mana_cost and weapon.can_fire:
 		var mouse_position = get_global_mouse_position()
 		var fire_direction = (mouse_position - global_position).normalized()
 
