@@ -1,8 +1,12 @@
-[gd_resource type="Resource" script_class="WeaponResource" load_steps=5 format=3 uid="uid://7fr3g0gekvcx"]
+[gd_resource type="Resource" script_class="WeaponResource" load_steps=7 format=3 uid="uid://7fr3g0gekvcx"]
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://items/weapons/weapons.png" id="2_atlas"]
-[ext_resource type="PackedScene" path="res://items/staff_bullet_5.tscn" id="3_bullet"]
+[ext_resource type="PackedScene" path="res://items/bullets/staff_bullet_5.tscn" id="3_bullet"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="4_pattern"]
+
+[sub_resource type="Resource" id="SinglePattern_1"]
+script = ExtResource("4_pattern")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
@@ -10,11 +14,10 @@ region = Rect2(64, 16, 16, 16)
 
 [resource]
 script = ExtResource("1_script")
-fire_pattern = 0
+fire_pattern = SubResource("SinglePattern_1")
 bullet_scene = ExtResource("3_bullet")
 fire_cooldown = 0.5
 mana_cost = 4
-num_bullets = 1
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 0
 speed_modifier = 0

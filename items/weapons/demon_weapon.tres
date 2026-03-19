@@ -1,11 +1,19 @@
-[gd_resource type="Resource" script_class="WeaponResource" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="WeaponResource" load_steps=5 format=3 uid="uid://p7i1gf773t0w"]
 
-[ext_resource type="Script" path="res://items/weapon_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapon_resource.gd" id="1_script"]
 [ext_resource type="PackedScene" uid="uid://cta4rjbkui58t" path="res://items/bullets/demon_bullet.tscn" id="2_bullet"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="3_pattern"]
+
+[sub_resource type="Resource" id="SinglePattern_1"]
+script = ExtResource("3_pattern")
 
 [resource]
 script = ExtResource("1_script")
-fire_pattern = 0
+fire_pattern = SubResource("SinglePattern_1")
 bullet_scene = ExtResource("2_bullet")
 fire_cooldown = 1.0
 mana_cost = 0
+skill_modifier = 0
+speed_modifier = 0
+max_health_modifier = 0
+max_mana_modifier = 0

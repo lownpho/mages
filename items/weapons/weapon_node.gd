@@ -17,23 +17,12 @@ func setup(weapon_data: WeaponResource) -> void:
 	add_child(fire_timer)
 
 func fire(direction: Vector2, skill: int) -> void:
-	if not can_fire or not data or not data.bullet_scene:
+	if not can_fire or not data or not data.bullet_scene or not data.fire_pattern:
 		return
-	match data.fire_pattern:
-		WeaponResource.FirePattern.SINGLE:
-			_spawn_bullet(direction, skill)
-		WeaponResource.FirePattern.RING:
-			_fire_ring(direction, skill)
+	for dir in data.fire_pattern.get_directions(direction):
+		_spawn_bullet(dir, skill)
 	can_fire = false
 	fire_timer.start()
-
-func _fire_ring(direction: Vector2, skill: int) -> void:
-	var initial_angle = direction.angle()
-	var angle_step = 2 * PI / data.num_bullets
-	for i in range(data.num_bullets):
-		var angle = initial_angle + angle_step * i
-		var bullet_direction = Vector2(cos(angle), sin(angle))
-		_spawn_bullet(bullet_direction, skill)
 
 func _spawn_bullet(direction: Vector2, skill: int) -> void:
 	var bullet = data.bullet_scene.instantiate()
