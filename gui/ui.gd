@@ -8,9 +8,6 @@ func _ready() -> void:
 	GlobalEvent.player_skill_changed.connect(_on_player_skill_changed)
 	GlobalEvent.player_speed_changed.connect(_on_player_speed_changed)
 
-	# Debug
-	GlobalEvent.slot_updated.connect(_on_slot_updated)
-
 	# Assign the ui_slots to the ui_slots
 	var ui_slots = %Bag.get_children()
 	for i in range(GlobalInventory.BAG_SIZE):
@@ -40,5 +37,3 @@ func _on_player_skill_changed(skill: int) -> void:
 func _on_player_speed_changed(speed: int) -> void:
 	%SpeedValue.text = str(speed)
 
-func _on_slot_updated(_slot: GlobalInventory.Slot) -> void:
-	$DebugLabel.text = GlobalInventory.get_inventory_status()

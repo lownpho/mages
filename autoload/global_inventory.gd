@@ -95,18 +95,3 @@ func swap_items(slot_a: Slot, slot_b: Slot) -> void:
 	slot_b.item = tmp
 	slot_a._emit_changed()
 	slot_b._emit_changed()
-
-func get_inventory_status() -> String:
-	var output = ""
-	output += "Weapon Slot: " + (str(weapon_slot.item.icon.resource_path) if weapon_slot.item else "Empty") + "\n"
-	output += "Robe Slot: " + (str(robe_slot.item.icon.resource_path) if robe_slot.item else "Empty") + "\n"
-	output += "Hat Slot: " + (str(hat_slot.item.icon.resource_path) if hat_slot.item else "Empty") + "\n"
-	output += "Bag Slots:\n"
-	for i in range(bag_slots.slots.size()):
-		var slot = bag_slots.slots[i]
-		output += "  Slot " + str(i) + ": " + (str(slot.item.icon.resource_path) if slot.item else "Empty") + "\n"
-	output += "Spell Slots:\n"
-	for i in range(spell_slots.slots.size()):
-		var slot = spell_slots.slots[i]
-		output += "  Slot " + str(i) + ": " + (str(slot.item.icon.resource_path) if slot.item else "Empty") + "\n"
-	return output
