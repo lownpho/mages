@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=13 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
@@ -11,6 +11,7 @@
 [ext_resource type="Resource" uid="uid://bwrb1hnnvg1am" path="res://items/hats/wisdom_hat.tres" id="9_wisdom"]
 [ext_resource type="Resource" uid="uid://uyyts546hn7y" path="res://items/hats/skill_hat.tres" id="10_skill"]
 [ext_resource type="Resource" uid="uid://dlduudm00h82w" path="res://items/hats/speed_hat.tres" id="11_speed"]
+[ext_resource type="Resource" uid="uid://eifq8vyxv5w0" path="res://items/robes/test_robe.tres" id="12_robe"]
 
 [node name="World" type="Node2D"]
 
@@ -110,3 +111,11 @@ item = ExtResource("10_skill")
 [node name="SpeedPickup" parent="pickups" instance=ExtResource("6_pickup")]
 position = Vector2(-158, 77)
 item = ExtResource("11_speed")
+
+[node name="TestRobePickup" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-120, 160)
+item = ExtResource("12_robe")
+
+[node name="TestRobePickup2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-120, 160)
+item = ExtResource("12_robe")

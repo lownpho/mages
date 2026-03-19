@@ -22,6 +22,7 @@ var speed: int
 
 var weapon: WeaponNode
 var hat: ItemResource
+var robe: ItemResource
 
 func _ready() -> void:
 	add_to_group("player")
@@ -135,6 +136,11 @@ func _recompute_stats() -> void:
 		max_mana += hat.max_mana_modifier
 		skill += hat.skill_modifier
 		speed += hat.speed_modifier
+	if robe:
+		max_health += robe.max_health_modifier
+		max_mana += robe.max_mana_modifier
+		skill += robe.skill_modifier
+		speed += robe.speed_modifier
 
 	health = clamp(health, 0, max_health)
 	mana = clamp(mana, 0, max_mana)
@@ -160,5 +166,7 @@ func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
 				weapon.setup(slot.item as WeaponResource)
 		GlobalInventory.ItemType.HAT:
 			hat = slot.item
+		GlobalInventory.ItemType.ROBE:
+			robe = slot.item
 	_recompute_stats()
 	_broadcast_stats()
