@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=43 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon/small_demon.tscn" id="4_k0juu"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="PackedScene" uid="uid://dix81e2eu2yg1" path="res://items/pickup_item.tscn" id="6_pickup"]
+[ext_resource type="Script" uid="uid://cgpcj6mm1cmkg" path="res://scenes/world.gd" id="7_world"]
 [ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://items/hats/hat.tres" id="h_hat1"]
 [ext_resource type="Resource" uid="uid://cybxgtfevdcv0" path="res://items/hats/nice_hat.tres" id="h_hat2"]
 [ext_resource type="Resource" uid="uid://c6pbysjtf8bk8" path="res://items/hats/nicer_hat.tres" id="h_hat3"]
@@ -36,8 +37,14 @@
 [ext_resource type="Resource" uid="uid://cb3l8ekaaojcj" path="res://items/robes/even_better_vesture.tres" id="r_vest3"]
 [ext_resource type="Resource" uid="uid://cieg4jelwbflw" path="res://items/robes/fancy_vesture.tres" id="r_vest4"]
 [ext_resource type="Resource" uid="uid://doiaeiflr7i6j" path="res://items/robes/ultimate_vesture.tres" id="r_vest5"]
+[ext_resource type="Resource" uid="uid://cjmpm744t7n6h" path="res://items/weapons/staff.tres" id="w_staff1"]
+[ext_resource type="Resource" uid="uid://kibm2fmic8nm" path="res://items/weapons/good_staff.tres" id="w_staff2"]
+[ext_resource type="Resource" uid="uid://c311ajkwxyv2o" path="res://items/weapons/better_staff.tres" id="w_staff3"]
+[ext_resource type="Resource" uid="uid://pcy3t7h6yis1" path="res://items/weapons/even_better_staff.tres" id="w_staff4"]
+[ext_resource type="Resource" uid="uid://7fr3g0gekvcx" path="res://items/weapons/ultimate_staff.tres" id="w_staff5"]
 
 [node name="World" type="Node2D"]
+script = ExtResource("7_world")
 
 [node name="UI" parent="." instance=ExtResource("5_71j4m")]
 
@@ -191,3 +198,23 @@ item = ExtResource("r_vest4")
 [node name="Vesture5" parent="pickups" instance=ExtResource("6_pickup")]
 position = Vector2(-260, 210)
 item = ExtResource("r_vest5")
+
+[node name="Staff1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 240)
+item = ExtResource("w_staff1")
+
+[node name="Staff2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 240)
+item = ExtResource("w_staff2")
+
+[node name="Staff3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 240)
+item = ExtResource("w_staff3")
+
+[node name="Staff4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 240)
+item = ExtResource("w_staff4")
+
+[node name="Staff5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 240)
+item = ExtResource("w_staff5")

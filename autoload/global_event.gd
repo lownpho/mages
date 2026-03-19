@@ -16,3 +16,5 @@ signal slot_updated(slot: GlobalInventory.Slot)
 signal item_picked_up(slot: GlobalInventory.Slot)
 # Emitted only for weapon/hat/robe slots — players and characters connect here
 signal equipment_changed(slot: GlobalInventory.Slot)
+# Emitted when a player drops an item from the inventory to the ground
+signal item_dropped(item: ItemResource)
