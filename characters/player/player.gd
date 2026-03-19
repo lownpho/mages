@@ -22,7 +22,6 @@ var speed: int
 
 var weapon: WeaponNode
 var hat: ItemResource
-var weapon_held: bool = false
 
 func _ready() -> void:
 	add_to_group("player")
@@ -46,12 +45,6 @@ func _ready() -> void:
 	mana = max_mana
 	_broadcast_stats()
 
-# Press detected via _unhandled_input so GUI clicks don't trigger weapon fire.
-# Release detected by polling in _handle_weapon_input so it's never missed.
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("weapon"):
-		weapon_held = true
-
 func get_input_direction() -> Vector2:
 	var direction_x := Input.get_axis("left", "right")
 	var direction_y := Input.get_axis("up", "down")
@@ -61,12 +54,9 @@ func _handle_weapon_input() -> void:
 	if not weapon:
 		return
 
-	if not Input.is_action_pressed("weapon"):
-		weapon_held = false
-
-	if weapon_held and mana >= weapon.mana_cost and weapon.can_fire:
+	if Input.is_action_pressed("weapon") and mana >= weapon.mana_cost and weapon.can_fire:
 		var mouse_position = get_global_mouse_position()
-		var fire_direction = (mouse_position - position).normalized()
+		var fire_direction = (mouse_position - global_position).normalized()
 
 		mana -= weapon.mana_cost
 		GlobalEvent.player_mana_changed.emit(mana)
