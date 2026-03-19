@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=37 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
@@ -6,12 +6,36 @@
 [ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon/small_demon.tscn" id="4_k0juu"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="PackedScene" uid="uid://dix81e2eu2yg1" path="res://items/pickup_item.tscn" id="6_pickup"]
-[ext_resource type="Resource" uid="uid://d0d3b8hdskycr" path="res://items/weapons/test_single_weapon.tres" id="7_single"]
-[ext_resource type="Resource" uid="uid://c6chypxhn47ph" path="res://items/weapons/test_multiple_weapon.tres" id="8_multi"]
-[ext_resource type="Resource" uid="uid://bwrb1hnnvg1am" path="res://items/hats/wisdom_hat.tres" id="9_wisdom"]
-[ext_resource type="Resource" uid="uid://uyyts546hn7y" path="res://items/hats/skill_hat.tres" id="10_skill"]
-[ext_resource type="Resource" uid="uid://dlduudm00h82w" path="res://items/hats/speed_hat.tres" id="11_speed"]
-[ext_resource type="Resource" uid="uid://eifq8vyxv5w0" path="res://items/robes/test_robe.tres" id="12_robe"]
+[ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://items/hats/hat.tres" id="h_hat1"]
+[ext_resource type="Resource" uid="uid://cybxgtfevdcv0" path="res://items/hats/nice_hat.tres" id="h_hat2"]
+[ext_resource type="Resource" uid="uid://c6pbysjtf8bk8" path="res://items/hats/nicer_hat.tres" id="h_hat3"]
+[ext_resource type="Resource" uid="uid://b1mlsgp1y3n7i" path="res://items/hats/fancy_hat.tres" id="h_hat4"]
+[ext_resource type="Resource" uid="uid://f3ihvndquq1f" path="res://items/hats/ultimate_hat.tres" id="h_hat5"]
+[ext_resource type="Resource" uid="uid://du4t3d15ikqlb" path="res://items/hats/headband.tres" id="h_hb1"]
+[ext_resource type="Resource" uid="uid://s56r0u7hy3j1" path="res://items/hats/nice_headband.tres" id="h_hb2"]
+[ext_resource type="Resource" uid="uid://llv8isi8qxql" path="res://items/hats/nicer_headband.tres" id="h_hb3"]
+[ext_resource type="Resource" uid="uid://cux4j1lb2txvr" path="res://items/hats/fancy_headband.tres" id="h_hb4"]
+[ext_resource type="Resource" uid="uid://b6cga1byepbpk" path="res://items/hats/ultimate_headband.tres" id="h_hb5"]
+[ext_resource type="Resource" uid="uid://cpx41nk5op8nh" path="res://items/hats/hood.tres" id="h_hood1"]
+[ext_resource type="Resource" uid="uid://cyi1rk8pa62ml" path="res://items/hats/nice_hood.tres" id="h_hood2"]
+[ext_resource type="Resource" uid="uid://dtywkv8g3g4tj" path="res://items/hats/nicer_hood.tres" id="h_hood3"]
+[ext_resource type="Resource" uid="uid://ug837noaw311" path="res://items/hats/fancy_hood.tres" id="h_hood4"]
+[ext_resource type="Resource" uid="uid://d0dslcxit0i88" path="res://items/hats/ultimate_hood.tres" id="h_hood5"]
+[ext_resource type="Resource" uid="uid://cjjw1tt65rpt3" path="res://items/robes/mantle.tres" id="r_mantle1"]
+[ext_resource type="Resource" uid="uid://cwno4busamnwu" path="res://items/robes/better_mantle.tres" id="r_mantle2"]
+[ext_resource type="Resource" uid="uid://ccv3ju0vppfe4" path="res://items/robes/even_better_mantle.tres" id="r_mantle3"]
+[ext_resource type="Resource" uid="uid://b8pv7i4qccfv1" path="res://items/robes/fancy_mantle.tres" id="r_mantle4"]
+[ext_resource type="Resource" uid="uid://ck2idwgfo805k" path="res://items/robes/ultimate_mantle.tres" id="r_mantle5"]
+[ext_resource type="Resource" uid="uid://352xjqpwi7bq" path="res://items/robes/robe.tres" id="r_robe1"]
+[ext_resource type="Resource" uid="uid://2ngpr2jvvg8v" path="res://items/robes/better_robe.tres" id="r_robe2"]
+[ext_resource type="Resource" uid="uid://wmuw8mpiq47d" path="res://items/robes/even_better_robe.tres" id="r_robe3"]
+[ext_resource type="Resource" uid="uid://i3tyqmdyaqd4" path="res://items/robes/fancy_robe.tres" id="r_robe4"]
+[ext_resource type="Resource" uid="uid://s0q8r2bm51bm" path="res://items/robes/ultimate_robe.tres" id="r_robe5"]
+[ext_resource type="Resource" uid="uid://cwfnrdhpbacx5" path="res://items/robes/vesture.tres" id="r_vest1"]
+[ext_resource type="Resource" uid="uid://dgjf7ruii4vvy" path="res://items/robes/better_vesture.tres" id="r_vest2"]
+[ext_resource type="Resource" uid="uid://cb3l8ekaaojcj" path="res://items/robes/even_better_vesture.tres" id="r_vest3"]
+[ext_resource type="Resource" uid="uid://cieg4jelwbflw" path="res://items/robes/fancy_vesture.tres" id="r_vest4"]
+[ext_resource type="Resource" uid="uid://doiaeiflr7i6j" path="res://items/robes/ultimate_vesture.tres" id="r_vest5"]
 
 [node name="World" type="Node2D"]
 
@@ -19,7 +43,7 @@
 
 [node name="Player" parent="." instance=ExtResource("1_nnsk1")]
 z_index = 1
-position = Vector2(-46, 135)
+position = Vector2(330, 279)
 
 [node name="Ground" type="TileMapLayer" parent="."]
 z_index = -1
@@ -46,76 +70,124 @@ position = Vector2(84, 208)
 position = Vector2(299, 51)
 
 [node name="pickups" type="Node2D" parent="."]
-position = Vector2(299, 51)
+position = Vector2(727, 196)
 
-[node name="TestSinglePickup" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-228, -28)
-item = ExtResource("7_single")
+[node name="Hat1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 100)
+item = ExtResource("h_hat1")
 
-[node name="TestSinglePickup2" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(163, 48)
-item = ExtResource("7_single")
+[node name="Hat2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 100)
+item = ExtResource("h_hat2")
 
-[node name="TestSinglePickup3" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-325, 93)
-item = ExtResource("7_single")
+[node name="Hat3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 100)
+item = ExtResource("h_hat3")
 
-[node name="TestSinglePickup4" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-331, 63)
-item = ExtResource("7_single")
+[node name="Hat4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 100)
+item = ExtResource("h_hat4")
 
-[node name="TestSinglePickup5" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-344, 114)
-item = ExtResource("7_single")
+[node name="Hat5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 100)
+item = ExtResource("h_hat5")
 
-[node name="TestSinglePickup6" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-310, 68)
-item = ExtResource("7_single")
+[node name="Headband1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 120)
+item = ExtResource("h_hb1")
 
-[node name="TestMultiplePickup" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-33, 148)
-item = ExtResource("8_multi")
+[node name="Headband2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 120)
+item = ExtResource("h_hb2")
 
-[node name="TestMultiplePickup2" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(177, -100)
-item = ExtResource("8_multi")
+[node name="Headband3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 120)
+item = ExtResource("h_hb3")
 
-[node name="TestMultiplePickup3" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-290, 235)
-item = ExtResource("8_multi")
+[node name="Headband4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 120)
+item = ExtResource("h_hb4")
 
-[node name="TestMultiplePickup4" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-300, 184)
-item = ExtResource("8_multi")
+[node name="Headband5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 120)
+item = ExtResource("h_hb5")
 
-[node name="TestMultiplePickup5" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-305, 269)
-item = ExtResource("8_multi")
+[node name="Hood1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 140)
+item = ExtResource("h_hood1")
 
-[node name="WisdomPickup" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-239, 224)
-item = ExtResource("9_wisdom")
+[node name="Hood2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 140)
+item = ExtResource("h_hood2")
 
-[node name="WisdomPickup2" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-174, 200)
-item = ExtResource("9_wisdom")
+[node name="Hood3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 140)
+item = ExtResource("h_hood3")
 
-[node name="SkillPickup" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-168, 131)
-item = ExtResource("10_skill")
+[node name="Hood4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 140)
+item = ExtResource("h_hood4")
 
-[node name="SkillPickup2" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-83, 117)
-item = ExtResource("10_skill")
+[node name="Hood5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 140)
+item = ExtResource("h_hood5")
 
-[node name="SpeedPickup" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-158, 77)
-item = ExtResource("11_speed")
+[node name="Mantle1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 170)
+item = ExtResource("r_mantle1")
 
-[node name="TestRobePickup" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-120, 160)
-item = ExtResource("12_robe")
+[node name="Mantle2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 170)
+item = ExtResource("r_mantle2")
 
-[node name="TestRobePickup2" parent="pickups" instance=ExtResource("6_pickup")]
-position = Vector2(-120, 160)
-item = ExtResource("12_robe")
+[node name="Mantle3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 170)
+item = ExtResource("r_mantle3")
+
+[node name="Mantle4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 170)
+item = ExtResource("r_mantle4")
+
+[node name="Mantle5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 170)
+item = ExtResource("r_mantle5")
+
+[node name="Robe1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 190)
+item = ExtResource("r_robe1")
+
+[node name="Robe2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 190)
+item = ExtResource("r_robe2")
+
+[node name="Robe3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 190)
+item = ExtResource("r_robe3")
+
+[node name="Robe4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 190)
+item = ExtResource("r_robe4")
+
+[node name="Robe5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 190)
+item = ExtResource("r_robe5")
+
+[node name="Vesture1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 210)
+item = ExtResource("r_vest1")
+
+[node name="Vesture2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 210)
+item = ExtResource("r_vest2")
+
+[node name="Vesture3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 210)
+item = ExtResource("r_vest3")
+
+[node name="Vesture4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 210)
+item = ExtResource("r_vest4")
+
+[node name="Vesture5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 210)
+item = ExtResource("r_vest5")
