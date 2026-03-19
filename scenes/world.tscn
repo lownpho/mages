@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=48 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
@@ -37,6 +37,11 @@
 [ext_resource type="Resource" uid="uid://cb3l8ekaaojcj" path="res://items/robes/even_better_vesture.tres" id="r_vest3"]
 [ext_resource type="Resource" uid="uid://cieg4jelwbflw" path="res://items/robes/fancy_vesture.tres" id="r_vest4"]
 [ext_resource type="Resource" uid="uid://doiaeiflr7i6j" path="res://items/robes/ultimate_vesture.tres" id="r_vest5"]
+[ext_resource type="Resource" uid="uid://bxug2rgcxxfmt" path="res://items/weapons/rune.tres" id="w_rune1"]
+[ext_resource type="Resource" uid="uid://dvfshusanglit" path="res://items/weapons/good_rune.tres" id="w_rune2"]
+[ext_resource type="Resource" uid="uid://nubulf42ogb1" path="res://items/weapons/better_rune.tres" id="w_rune3"]
+[ext_resource type="Resource" uid="uid://b7ktlcr8ocg81" path="res://items/weapons/even_better_rune.tres" id="w_rune4"]
+[ext_resource type="Resource" uid="uid://jdft2slnoj4n" path="res://items/weapons/ultimate_rune.tres" id="w_rune5"]
 [ext_resource type="Resource" uid="uid://cjmpm744t7n6h" path="res://items/weapons/staff.tres" id="w_staff1"]
 [ext_resource type="Resource" uid="uid://kibm2fmic8nm" path="res://items/weapons/good_staff.tres" id="w_staff2"]
 [ext_resource type="Resource" uid="uid://c311ajkwxyv2o" path="res://items/weapons/better_staff.tres" id="w_staff3"]
@@ -218,3 +223,23 @@ item = ExtResource("w_staff4")
 [node name="Staff5" parent="pickups" instance=ExtResource("6_pickup")]
 position = Vector2(-260, 240)
 item = ExtResource("w_staff5")
+
+[node name="Rune1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 260)
+item = ExtResource("w_rune1")
+
+[node name="Rune2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 260)
+item = ExtResource("w_rune2")
+
+[node name="Rune3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 260)
+item = ExtResource("w_rune3")
+
+[node name="Rune4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 260)
+item = ExtResource("w_rune4")
+
+[node name="Rune5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 260)
+item = ExtResource("w_rune5")

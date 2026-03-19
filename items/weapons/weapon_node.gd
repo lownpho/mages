@@ -26,7 +26,8 @@ func fire(direction: Vector2, skill: int) -> void:
 
 func _spawn_bullet(direction: Vector2, skill: int) -> void:
 	var bullet = data.bullet_scene.instantiate()
-	bullet.position = global_position
+	var offset = randf() * data.fire_pattern.spawn_offset
+	bullet.position = global_position + direction * offset
 	bullet.base_direction = direction
 	bullet.skill = skill
 	get_tree().root.add_child(bullet)

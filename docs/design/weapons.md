@@ -49,13 +49,13 @@ need skill — they need mana to keep channeling.
 Shotgun pattern that homes to the nearest enemy. Short range, high variability, slow fire rate.
 The only weapon that gives +HP. The tank weapon.
 
-| Tier | Base damage | Variability | Range | Fire rate | Mana cost | Skill scaling | +Skill | +HP |
-|------|-----------|-------------|-------|-----------|-----------|---------------|--------|-----|
-| Rune | 6 | 35 | 4 | 2.0 | 2 | 1.0 | 0 | 5 |
-| Good Rune | 9 | 35 | 4 | 2.0 | 3 | 1.0 | 10 | 15 |
-| Better Rune | 15 | 35 | 4 | 2.0 | 4 | 1.0 | 15 | 30 |
-| Even Better Rune | 21 | 35 | 4 | 2.0 | 5 | 1.0 | 25 | 50 |
-| Ultimate Rune | 30 | 35 | 4 | 2.0 | 6 | 1.0 | 40 | 80 |
+| Tier | Base damage | Variability | Range | Fire rate | Mana cost | Skill scaling | Angle | +Skill | +HP |
+|------|-----------|-------------|-------|-----------|-----------|---------------|-------|--------|-----|
+| Rune | 6 | 35 | 4 | 2.0 | 2 | 1.0 | 60 | 0 | 5 |
+| Good Rune | 9 | 35 | 4 | 2.0 | 3 | 1.0 | 56 | 10 | 15 |
+| Better Rune | 15 | 35 | 4 | 2.0 | 4 | 1.0 | 52 | 15 | 30 |
+| Even Better Rune | 21 | 35 | 4 | 2.0 | 5 | 1.0 | 48 | 25 | 50 |
+| Ultimate Rune | 30 | 35 | 4 | 2.0 | 6 | 1.0 | 45 | 40 | 80 |
 
 **Design idea:** Tanky build weapon. Base tier fires a shotgun pattern; higher tiers home to
 nearest enemy.
