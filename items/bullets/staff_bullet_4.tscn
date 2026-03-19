@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://byw1c3yb6epsq"]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" uid="uid://csrof5fw2p1s1" path="res://items/bullets/base_bullet.gd" id="1_a5af1"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_ky54h"]
@@ -10,9 +10,10 @@ radius = 4.0
 collision_layer = 256
 motion_mode = 1
 script = ExtResource("1_a5af1")
-base_damage = 10.0
-distance = 160
+base_damage = 60.0
+distance = 96
 speed = 256
+skill_scaling = 0.5
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_ky54h")
