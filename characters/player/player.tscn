@@ -1,9 +1,14 @@
-[gd_scene load_steps=6 format=3 uid="uid://cqjpouw1xepax"]
+[gd_scene load_steps=8 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="2_5dc8e"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/generic/hurtbox.tscn" id="5_c6leb"]
+[ext_resource type="Script" uid="uid://bmxs3j2w8r52a" path="res://characters/player/debug_focus_glow.gd" id="6_debug"]
+
+[sub_resource type="Curve" id="Curve_5dc8e"]
+_data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 7.0
@@ -12,6 +17,9 @@ radius = 7.0
 collision_layer = 16
 motion_mode = 1
 script = ExtResource("1_xxgcw")
+focus_mana_per_second = 10.0
+focus_ramp_time = 5.0
+focus_curve = SubResource("Curve_5dc8e")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_e5uuo")
@@ -33,10 +41,10 @@ drag_vertical_enabled = true
 [node name="Hurtbox" parent="." instance=ExtResource("5_c6leb")]
 collision_mask = 512
 
-[node name="FocusTimer" type="Timer" parent="."]
-one_shot = true
-
 [node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"
 auto_start = true
 state_names = Array[String](["Idle", "Move", "Focus"])
+
+[node name="DebugFocusGlow" type="Node" parent="."]
+script = ExtResource("6_debug")

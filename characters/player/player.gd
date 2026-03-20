@@ -4,11 +4,12 @@ extends CharacterBody2D
 @export var base_max_mana: int = 10
 @export var base_skill: int = 25
 @export var base_speed: int = 80
-@export var focus_mana_recover: int = 1
+@export var focus_mana_per_second: float = 5.0
+@export var focus_ramp_time: float = 3.0
+@export var focus_curve: Curve
 
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
-@onready var focus_timer = $FocusTimer
 
 var health: int
 var mana: int
@@ -24,6 +25,8 @@ var weapon: WeaponNode
 var hat: ItemResource
 var robe: ItemResource
 var weapon_input_held: bool = false
+var focus_time: float = 0.0
+var focus_mana_remainder: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -38,7 +41,6 @@ func _ready() -> void:
 	focus_state.on_exit.connect(_on_focus_exit)
 
 	hurtbox.hurt.connect(_on_hurt)
-	focus_timer.timeout.connect(_recover_mana)
 
 	GlobalEvent.equipment_changed.connect(_on_equipment_changed)
 
@@ -99,20 +101,28 @@ func _on_move_physics_update(_delta: float) -> void:
 
 	_handle_weapon_input()
 
-func _recover_mana() -> void:
-	mana = min(mana + focus_mana_recover, max_mana)
-	GlobalEvent.player_mana_changed.emit(mana)
-	focus_timer.start()
-
 func _on_focus_enter() -> void:
-	focus_timer.start()
+	focus_time = 0.0
+	focus_mana_remainder = 0.0
 
 func _on_focus_exit() -> void:
-	focus_timer.stop()
+	pass
 
-func _on_focus_physics_update(_delta: float) -> void:
+func _on_focus_physics_update(delta: float) -> void:
 	if Input.is_action_just_released("focus"):
 		fsm.transition_to("Idle")
+		return
+
+	focus_time += delta
+	var t = clampf(focus_time / focus_ramp_time, 0.0, 1.0)
+	var rate = focus_curve.sample(t) * focus_mana_per_second if focus_curve else t * focus_mana_per_second
+
+	focus_mana_remainder += rate * delta
+	var whole = int(focus_mana_remainder)
+	if whole > 0 and mana < max_mana:
+		focus_mana_remainder -= whole
+		mana = mini(mana + whole, max_mana)
+		GlobalEvent.player_mana_changed.emit(mana)
 
 func _die() -> void:
 	queue_free()
