@@ -11,13 +11,13 @@ var health: int
 @onready var chase_probe = $ChaseProbe
 @onready var attack_probe = $AttackProbe
 @export var weapon_data: WeaponResource
-@onready var weapon: WeaponNode = $Weapon
+@onready var weapon: EnemyWeapon = $Weapon
 
 func _ready() -> void:
 	health = max_health
 	hurtbox.hurt.connect(_on_hurt)
 	if weapon_data:
-		weapon.setup(weapon_data)
+		weapon.setup_for_enemy(weapon_data)
 
 	var idle_state = $FSM/Idle
 	idle_state.on_enter.connect(_on_idle_enter)
@@ -89,9 +89,8 @@ func _on_attack_physics_update(_delta: float) -> void:
 	attack_probe.look_at(_get_player_position())
 
 	var attack_collider = attack_probe.get_collider()
-	if attack_collider and attack_collider.name == "Player" and weapon.can_fire:
-		var player_direction = (_get_player_position() - global_position).normalized()
-		weapon.fire(player_direction, skill)
+	if attack_collider and attack_collider.name == "Player":
+		weapon.try_fire(global_position, _get_player_position(), skill)
 	else:
 		fsm.transition_to("Chase")
 

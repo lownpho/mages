@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://items/bullets/homing_bullet.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_atlas"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 4.0
+
+[node name="Bullet" type="CharacterBody2D" groups=["bullets"]]
+collision_layer = 256
+motion_mode = 1
+script = ExtResource("1_script")
+base_damage = 10.0
+distance = 160
+speed = 256
+skill_scaling = 1.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_atlas")
+offset = Vector2(0, -2)
+region_enabled = true
+region_rect = Rect2(288, 432, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")

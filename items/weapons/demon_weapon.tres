@@ -6,6 +6,7 @@
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("3_pattern")
+spawn_offset = 0.0
 
 [resource]
 script = ExtResource("1_script")

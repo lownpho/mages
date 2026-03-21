@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=4 uid="uid://csw2alambl3eb"]
+[gd_scene load_steps=53 format=4 uid="uid://csw2alambl3eb"]
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="TileSet" uid="uid://lnp31c8lttjb" path="res://tilemaps/ground.tres" id="2_4wyf3"]
@@ -47,6 +47,11 @@
 [ext_resource type="Resource" uid="uid://c311ajkwxyv2o" path="res://items/weapons/better_staff.tres" id="w_staff3"]
 [ext_resource type="Resource" uid="uid://pcy3t7h6yis1" path="res://items/weapons/even_better_staff.tres" id="w_staff4"]
 [ext_resource type="Resource" uid="uid://7fr3g0gekvcx" path="res://items/weapons/ultimate_staff.tres" id="w_staff5"]
+[ext_resource type="Resource" uid="uid://dwu1df0pnwqj3" path="res://items/weapons/wand.tres" id="w_wand1"]
+[ext_resource type="Resource" uid="uid://dolinsrr4k2tp" path="res://items/weapons/good_wand.tres" id="w_wand2"]
+[ext_resource type="Resource" uid="uid://n827e0c1261k" path="res://items/weapons/better_wand.tres" id="w_wand3"]
+[ext_resource type="Resource" uid="uid://ds0synwa2cl7" path="res://items/weapons/even_better_wand.tres" id="w_wand4"]
+[ext_resource type="Resource" uid="uid://c6ag76r6rx1fe" path="res://items/weapons/ultimate_wand.tres" id="w_wand5"]
 
 [node name="World" type="Node2D"]
 script = ExtResource("7_world")
@@ -55,7 +60,7 @@ script = ExtResource("7_world")
 
 [node name="Player" parent="." instance=ExtResource("1_nnsk1")]
 z_index = 1
-position = Vector2(330, 279)
+position = Vector2(474, 666)
 
 [node name="Ground" type="TileMapLayer" parent="."]
 z_index = -1
@@ -82,7 +87,7 @@ position = Vector2(84, 208)
 position = Vector2(299, 51)
 
 [node name="pickups" type="Node2D" parent="."]
-position = Vector2(727, 196)
+position = Vector2(852, 359)
 
 [node name="Hat1" parent="pickups" instance=ExtResource("6_pickup")]
 position = Vector2(-340, 100)
@@ -243,3 +248,23 @@ item = ExtResource("w_rune4")
 [node name="Rune5" parent="pickups" instance=ExtResource("6_pickup")]
 position = Vector2(-260, 260)
 item = ExtResource("w_rune5")
+
+[node name="Wand1" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 280)
+item = ExtResource("w_wand1")
+
+[node name="Wand2" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 280)
+item = ExtResource("w_wand2")
+
+[node name="Wand3" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 280)
+item = ExtResource("w_wand3")
+
+[node name="Wand4" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 280)
+item = ExtResource("w_wand4")
+
+[node name="Wand5" parent="pickups" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 280)
+item = ExtResource("w_wand5")

@@ -21,10 +21,10 @@ var max_mana: int
 var skill: int
 var speed: int
 
-var weapon: WeaponNode
+var weapon: PlayerWeapon
 var hat: ItemResource
 var robe: ItemResource
-var weapon_input_held: bool = false
+var can_use_weapon: bool = true
 var focus_time: float = 0.0
 var focus_mana_remainder: float = 0.0
 
@@ -54,24 +54,6 @@ func get_input_direction() -> Vector2:
 	var direction_y := Input.get_axis("up", "down")
 	return Vector2(direction_x, direction_y).normalized()
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("weapon"):
-		weapon_input_held = true
-	elif event.is_action_released("weapon"):
-		weapon_input_held = false
-
-func _handle_weapon_input() -> void:
-	if not weapon:
-		return
-
-	if weapon_input_held and mana >= weapon.mana_cost and weapon.can_fire:
-		var mouse_position = get_global_mouse_position()
-		var fire_direction = (mouse_position - global_position).normalized()
-
-		mana -= weapon.mana_cost
-		GlobalEvent.player_mana_changed.emit(mana)
-		weapon.fire(fire_direction, skill)
-
 func _on_idle_physics_update(_delta: float) -> void:
 	if Input.is_action_just_pressed("focus"):
 		fsm.transition_to("Focus")
@@ -87,8 +69,6 @@ func _on_idle_physics_update(_delta: float) -> void:
 	velocity.y = move_toward(velocity.y, 0, speed)
 	move_and_slide()
 
-	_handle_weapon_input()
-
 func _on_move_physics_update(_delta: float) -> void:
 	var direction = get_input_direction()
 
@@ -99,14 +79,13 @@ func _on_move_physics_update(_delta: float) -> void:
 	velocity = direction * speed
 	move_and_slide()
 
-	_handle_weapon_input()
-
 func _on_focus_enter() -> void:
+	can_use_weapon = false
 	focus_time = 0.0
 	focus_mana_remainder = 0.0
 
 func _on_focus_exit() -> void:
-	pass
+	can_use_weapon = true
 
 func _on_focus_physics_update(delta: float) -> void:
 	if Input.is_action_just_released("focus"):
@@ -177,10 +156,10 @@ func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
 				weapon.queue_free()
 				weapon = null
 			if slot.item:
-				weapon = WeaponNode.new()
+				weapon = PlayerWeapon.new()
 				weapon.name = "Weapon"
 				add_child(weapon)
-				weapon.setup(slot.item as WeaponResource)
+				weapon.setup_for_player(slot.item as WeaponResource, self)
 		GlobalInventory.ItemType.HAT:
 			hat = slot.item
 		GlobalInventory.ItemType.ROBE:

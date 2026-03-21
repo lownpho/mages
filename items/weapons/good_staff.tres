@@ -7,6 +7,7 @@
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")
+spawn_offset = 0.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
