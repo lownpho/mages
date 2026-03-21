@@ -1,13 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://dix81e2eu2yg1"]
+[gd_scene load_steps=7 format=3 uid="uid://dix81e2eu2yg1"]
 
 [ext_resource type="Script" uid="uid://diux2k5rv6r8v" path="res://items/pickup_item.gd" id="1_gc0r4"]
 [ext_resource type="Texture2D" uid="uid://ch4trsuidtq7m" path="res://items/drop_indicator.png" id="2_edkex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p6t4b"]
 radius = 6.0
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_27y4t"]
-size = Vector2(16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bklxq"]
 atlas = ExtResource("2_edkex")
@@ -41,7 +38,6 @@ script = ExtResource("1_gc0r4")
 shape = SubResource("CircleShape2D_p6t4b")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("PlaceholderTexture2D_27y4t")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_d61ir")

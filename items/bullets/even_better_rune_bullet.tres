@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="BulletResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+base_damage = 21.0
+distance = 64
+speed = 256

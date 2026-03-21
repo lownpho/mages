@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export var base_max_health: int = 100
-@export var base_max_mana: int = 10
+@export var base_max_mana: int = 100
 @export var base_skill: int = 25
 @export var base_speed: int = 80
 @export var focus_mana_per_second: float = 5.0

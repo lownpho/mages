@@ -2,6 +2,7 @@ extends WeaponNode
 class_name EnemyWeapon
 
 func setup_for_enemy(weapon_data: WeaponResource) -> void:
+	bullet_collision_layer = 512
 	setup(weapon_data)
 	target_finder = _find_player
 

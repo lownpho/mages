@@ -3,7 +3,7 @@ class_name WeaponResource
 
 @export_group("Weapon")
 @export var fire_pattern: FirePattern
-@export var bullet_scene: PackedScene
+@export var bullet_data: BulletResource
 @export var fire_cooldown: float = 0.5
 @export var mana_cost: int = 1
 

@@ -6,6 +6,7 @@ var weapon_input_held: bool = false
 
 func setup_for_player(weapon_data: WeaponResource, player: CharacterBody2D) -> void:
 	owner_ref = player
+	bullet_collision_layer = 256
 	setup(weapon_data)
 	target_finder = _find_closest_enemy_to_mouse
 
