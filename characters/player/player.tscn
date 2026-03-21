@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
-[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/generic/fsm.tscn" id="2_5dc8e"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="2_5dc8e"]
 [ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
-[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/generic/hurtbox.tscn" id="5_c6leb"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
 [ext_resource type="Script" uid="uid://bmxs3j2w8r52a" path="res://characters/player/debug_focus_glow.gd" id="6_debug"]
 
 [sub_resource type="Curve" id="Curve_5dc8e"]

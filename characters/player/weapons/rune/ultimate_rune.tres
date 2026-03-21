@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="WeaponResource" load_steps=7 format=3 uid="uid://jdft2slnoj4n"]
+
+[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/weapons/weapons.png" id="2_atlas"]
+[ext_resource type="Resource" path="res://characters/player/weapons/rune/ultimate_rune_bullet.tres" id="3_bullet"]
+[ext_resource type="Script" uid="uid://d3hnuqjbp2epb" path="res://items/weapons/shotgun_pattern.gd" id="4_pattern"]
+
+[sub_resource type="Resource" id="ShotgunPattern_1"]
+script = ExtResource("4_pattern")
+num_pellets = 5
+spread_angle = 45.0
+spawn_offset = 8.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(64, 32, 16, 16)
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("ShotgunPattern_1")
+bullet_data = ExtResource("3_bullet")
+fire_cooldown = 2.0
+mana_cost = 6
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 40
+speed_modifier = 0
+max_health_modifier = 80
+max_mana_modifier = 0
