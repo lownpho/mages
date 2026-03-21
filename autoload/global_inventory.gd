@@ -87,6 +87,16 @@ func _ready() -> void:
 	bag_slots = ArraySlot.new(ItemType.BAG, BAG_SIZE, [ItemType.BAG, ItemType.WEAPON, ItemType.ROBE, ItemType.HAT, ItemType.SPELL])
 	spell_slots = ArraySlot.new(ItemType.SPELL, SPELL_SLOT_SIZE)
 
+func get_equipment_slot_for_item(item: ItemResource) -> Slot:
+	match item.get_item_type():
+		ItemType.WEAPON: return weapon_slot
+		ItemType.ROBE: return robe_slot
+		ItemType.HAT: return hat_slot
+		ItemType.SPELL:
+			var idx = spell_slots.first_empty()
+			return spell_slots.at(idx if idx != -1 else 0)
+	return null
+
 # Swaps items between two slots atomically: both slot_updated (and equipment_changed
 # if applicable) signals fire only after the swap is complete.
 func swap_items(slot_a: Slot, slot_b: Slot) -> void:

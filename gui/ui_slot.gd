@@ -46,6 +46,13 @@ func _notification(what: int) -> void:
 		GlobalEvent.item_dropped.emit(dropped_item)
 		_drag_source = null
 
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.double_click and event.button_index == MOUSE_BUTTON_LEFT:
+		if slot.item and slot.type == GlobalInventory.ItemType.BAG:
+			var target = GlobalInventory.get_equipment_slot_for_item(slot.item)
+			if target:
+				GlobalInventory.swap_items(slot, target)
+
 func _on_slot_updated(p_slot: GlobalInventory.Slot) -> void:
 	if slot == p_slot:
 		update_texture()
