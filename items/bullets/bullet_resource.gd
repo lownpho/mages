@@ -1,6 +1,7 @@
 extends Resource
 class_name BulletResource
 
+@export var icon: Texture2D
 @export var base_damage: float = 1
 @export var distance: int = 16
 @export var speed: int = 128

@@ -10,3 +10,4 @@ func _physics_process(delta: float) -> void:
 		var desired = global_position.direction_to(target.global_position)
 		velocity = velocity.lerp(desired * speed, homing_weight * delta).normalized() * speed
 	super(delta)
+	rotation = velocity.angle() + PI / 2

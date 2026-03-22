@@ -1,10 +1,18 @@
-[gd_resource type="Resource" script_class="BulletResource" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="BulletResource" load_steps=4 format=3 uid="uid://bay8pwivs3lfu"]
 
-[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("2")
+region = Rect2(0, 16, 16, 16)
 
 [resource]
 script = ExtResource("1")
+icon = SubResource("AtlasTexture_1")
 base_damage = 15.0
 distance = 96
 speed = 256
 skill_scaling = 0.5
+homing = false
+homing_weight = 5.0

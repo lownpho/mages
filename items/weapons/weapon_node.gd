@@ -57,4 +57,6 @@ func _spawn_bullet(direction: Vector2, skill: int, target: Node2D) -> void:
 	if target and bullet is HomingBullet:
 		bullet.homing_weight = data.bullet_data.homing_weight
 		bullet.target = target
+	if data.bullet_data.icon:
+		bullet.get_node("Sprite2D").texture = data.bullet_data.icon
 	get_tree().root.add_child(bullet)

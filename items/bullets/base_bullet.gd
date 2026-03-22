@@ -21,6 +21,7 @@ func _ready() -> void:
 	add_child(lifetime_timer)
 	
 	velocity = base_direction * speed
+	rotation = velocity.angle() + PI / 2
 
 func _physics_process(delta: float) -> void:
 	var collision = move_and_collide(velocity * delta)
