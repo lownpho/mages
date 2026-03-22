@@ -19,11 +19,11 @@ distance, with +mana to fuel expensive spells.
 <!-- data:staff -->
 | Tier              | Base damage | Range | Fire rate | Mana cost | Skill scaling | +Mana |
 |-------------------|-------------|-------|-----------|-----------|---------------|-------|
-| Staff             | 20          | 10    | 0.7       | 2         | 0.7           | 0     |
-| Good Staff        | 30          | 10    | 0.8       | 3         | 0.7           | 5     |
-| Better Staff      | 50          | 10    | 0.8       | 3         | 0.7           | 10    |
-| Even Better Staff | 80          | 10    | 0.9       | 4         | 0.7           | 20    |
-| Ultimate Staff    | 120         | 10    | 1.0       | 5         | 0.7           | 35    |
+| Staff             | 20          | 12    | 0.7       | 2         | 0.7           | 0     |
+| Good Staff        | 30          | 12    | 0.8       | 3         | 0.7           | 5     |
+| Better Staff      | 50          | 12    | 0.8       | 3         | 0.7           | 10    |
+| Even Better Staff | 80          | 12    | 0.9       | 4         | 0.7           | 20    |
+| Ultimate Staff    | 120         | 12    | 1.0       | 5         | 0.7           | 35    |
 <!-- end:staff -->
 
 **Design idea:** Far-range weapon. High base damage means each shot counts. Slow fire
@@ -42,11 +42,11 @@ low mana cost, full skill scaling. The mid-range weapon — constant damage outp
 <!-- data:wand -->
 | Tier             | Base damage | Range | Fire rate | Mana cost | Skill scaling | +Skill |
 |------------------|-------------|-------|-----------|-----------|---------------|--------|
-| Wand             | 8           | 10    | 1.2       | 1         | 1.0           | 0      |
-| Good Wand        | 12          | 10    | 1.5       | 2         | 1.0           | 10     |
-| Better Wand      | 18          | 10    | 1.8       | 2         | 1.0           | 15     |
-| Even Better Wand | 28          | 10    | 2.0       | 3         | 1.0           | 25     |
-| Ultimate Wand    | 40          | 10    | 2.5       | 4         | 1.0           | 40     |
+| Wand             | 8           | 8     | 1.2       | 1         | 1.0           | 0      |
+| Good Wand        | 12          | 8     | 1.5       | 2         | 1.0           | 10     |
+| Better Wand      | 18          | 8     | 1.8       | 2         | 1.0           | 15     |
+| Even Better Wand | 28          | 8     | 2.0       | 3         | 1.0           | 25     |
+| Ultimate Wand    | 40          | 8     | 2.5       | 4         | 1.0           | 40     |
 <!-- end:wand -->
 
 **Design idea:** Mid-range DPS weapon. Fire rate scales with tier (1.2–2.5 shots/sec),
@@ -60,9 +60,8 @@ burns 10 mana/sec.
 
 ## Rune
 
-Shotgun pattern that homes to the nearest enemy. Short range, slow fire rate. The only
-weapon that gives +HP. The close-range weapon — burst damage up close with
-survivability to match.
+Shotgun pattern. Short range, slow fire rate. The only weapon that gives +HP.
+The close-range weapon — burst damage up close with survivability to match.
 
 <!-- data:rune -->
 | Tier             | Damage/bullet | Bullets | Range | Fire rate | Mana cost | Skill scaling | Angle | +Skill | +HP |
@@ -76,6 +75,5 @@ survivability to match.
 
 **Design idea:** Close-range weapon. 5-bullet shotgun (0.6–1.0 bursts/sec) for massive
 burst at point blank. At range 4, all bullets hit the same target — at distance, they
-spread across the arc. Base tier fires a radial shotgun pattern; higher tiers home to
-nearest enemy. The +HP is unique among weapons and defines the close-range build path.
+spread across the arc. The +HP is unique among weapons and defines the close-range build path.
 High mana cost means frequent Focus, but high HP makes Focus safe.

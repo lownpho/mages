@@ -5,14 +5,14 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1"]
 atlas = ExtResource("2")
-region = Rect2(32, 0, 16, 16)
+region = Rect2(16, 16, 16, 16)
 
 [resource]
 script = ExtResource("1")
 icon = SubResource("AtlasTexture_1")
-base_damage = 15.0
-distance = 160
+base_damage = 30.0
+distance = 192
 speed = 256
-skill_scaling = 1.0
+skill_scaling = 0.7
 homing = true
 homing_weight = 5.0
