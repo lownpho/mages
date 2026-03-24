@@ -1,10 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cqjpouw1xepax"]
+[gd_scene load_steps=16 format=3 uid="uid://cqjpouw1xepax"]
 
 [ext_resource type="Script" uid="uid://b2onc5amgnybm" path="res://characters/player/player.gd" id="1_xxgcw"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="2_5dc8e"]
-[ext_resource type="Texture2D" uid="uid://cj2fu8oh0evtu" path="res://tilemaps/tile_atlas.png" id="2_xxgcw"]
+[ext_resource type="Texture2D" uid="uid://qk6ppf56p74n" path="res://characters/player/player.png" id="2_c6leb"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
-[ext_resource type="Script" uid="uid://bmxs3j2w8r52a" path="res://characters/player/debug_focus_glow.gd" id="6_debug"]
 
 [sub_resource type="Curve" id="Curve_5dc8e"]
 _data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -12,6 +11,85 @@ point_count = 2
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 7.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dirf7"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(64, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idpv6"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(80, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rpf03"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(96, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x5dtk"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(112, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3t07l"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(0, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_on558"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(16, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqopd"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(32, 0, 16, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icpky"]
+atlas = ExtResource("2_c6leb")
+region = Rect2(48, 0, 16, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_58jvb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dirf7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idpv6")
+}],
+"loop": true,
+"name": &"channel",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rpf03")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x5dtk")
+}],
+"loop": true,
+"name": &"focus",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3t07l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_on558")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqopd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_icpky")
+}],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}]
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 16
@@ -22,15 +100,14 @@ focus_ramp_time = 5.0
 focus_curve = SubResource("Curve_5dc8e")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
 shape = SubResource("CircleShape2D_e5uuo")
-metadata/_edit_lock_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture_filter = 1
-texture = ExtResource("2_xxgcw")
-offset = Vector2(0, -8)
-region_enabled = true
-region_rect = Rect2(128, 160, 16, 32)
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_58jvb")
+animation = &"run"
+autoplay = "idle"
+frame_progress = 0.424855
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true
@@ -39,12 +116,10 @@ drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
 [node name="Hurtbox" parent="." instance=ExtResource("5_c6leb")]
+position = Vector2(0, 5)
 collision_mask = 512
 
 [node name="FSM" parent="." instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"
 auto_start = true
 state_names = Array[String](["Idle", "Move", "Focus"])
-
-[node name="DebugFocusGlow" type="Node" parent="."]
-script = ExtResource("6_debug")

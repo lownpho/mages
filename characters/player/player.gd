@@ -10,6 +10,7 @@ extends CharacterBody2D
 
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 var health: int
 var mana: int
@@ -32,8 +33,10 @@ func _ready() -> void:
 	add_to_group("player")
 
 	var idle_state = $FSM/Idle
+	idle_state.on_enter.connect(func(): animated_sprite.play("idle"))
 	idle_state.on_physics_update.connect(_on_idle_physics_update)
 	var move_state = $FSM/Move
+	move_state.on_enter.connect(func(): animated_sprite.play("run"))
 	move_state.on_physics_update.connect(_on_move_physics_update)
 	var focus_state = $FSM/Focus
 	focus_state.on_physics_update.connect(_on_focus_physics_update)
@@ -76,6 +79,8 @@ func _on_move_physics_update(_delta: float) -> void:
 		fsm.transition_to("Idle")
 		return
 
+	if direction.x != 0:
+		animated_sprite.flip_h = direction.x < 0
 	velocity = direction * speed
 	move_and_slide()
 
@@ -83,6 +88,7 @@ func _on_focus_enter() -> void:
 	can_use_weapon = false
 	focus_time = 0.0
 	focus_mana_remainder = 0.0
+	animated_sprite.play("focus")
 
 func _on_focus_exit() -> void:
 	can_use_weapon = true
