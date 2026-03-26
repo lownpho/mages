@@ -78,25 +78,25 @@ No homing — aim matters. Damage is per projectile.
 | 3   | 2   | 1     |
 <!-- end:piercing_lights_fit -->
 
-### Eruption
+### Frost Burst
 
-Channeled. Target a point on the ground. The longer you channel, the bigger and more
-powerful the explosion when you release. High risk/reward — stand still longer for a
-bigger payoff.
+Channeled. Target a point on the ground. The longer you channel, the more ice builds
+up — and the bigger the burst of ice shards when you release. High risk/reward — stand
+still longer for a bigger payoff.
 
-<!-- data:eruption -->
-| Tier       | Flavour   | Cost   | Cooldown | Cast time | 1s damage | 2s damage | 3s+ damage | Scaling | 1s radius | 2s radius | 3s+ radius |
-|------------|-----------|--------|----------|-----------|-----------|-----------|------------|---------|-----------|-----------|------------|
-| Eruption   | Rumble    | 8/sec  | 8s       | instant   | 20        | 50        | 90         | 0.5     | 2         | 3         | 5          |
-| Eruption 2 | Tremor    | 14/sec | 8s       | instant   | 40        | 85        | 150        | 0.8     | 3         | 4         | 6          |
-| Eruption 3 | Cataclysm | 20/sec | 8s       | instant   | 65        | 130       | 220        | 1.2     | 3         | 5         | 8          |
-<!-- end:eruption -->
+<!-- data:frost_burst -->
+| Tier          | Flavour        | Cost   | Cooldown | Cast time | 1s damage | 2s damage | 3s+ damage | Scaling | 1s radius | 2s radius | 3s+ radius |
+|---------------|----------------|--------|----------|-----------|-----------|-----------|------------|---------|-----------|-----------|------------|
+| Frost Burst   | Chill          | 8/sec  | 8s       | instant   | 20        | 50        | 90         | 0.5     | 2         | 3         | 5          |
+| Frost Burst 2 | Deep Freeze    | 14/sec | 8s       | instant   | 40        | 85        | 150        | 0.8     | 3         | 4         | 6          |
+| Frost Burst 3 | Absolute Zero  | 20/sec | 8s       | instant   | 65        | 130       | 220        | 1.2     | 3         | 5         | 8          |
+<!-- end:frost_burst -->
 
-<!-- data:eruption_fit -->
+<!-- data:frost_burst_fit -->
 | Far | Mid | Close |
 |-----|-----|-------|
 | 3   | 2   | 2     |
-<!-- end:eruption_fit -->
+<!-- end:frost_burst_fit -->
 
 ### Chain Lightning
 
@@ -138,8 +138,9 @@ travels until it hits a wall. Sustained DPS that can sweep across the room.
 
 ### Charge Blast
 
-Channeled piercing beam that charges up in ticks. Dies on walls. Higher tiers charge more
-ticks for bigger blasts. Quick commitment — 1.5 to 2.5 seconds of channeling for a burst.
+Hold to charge a projectile that grows larger with each tick — release to fire. Pierces
+through enemies, dies on walls. You can move freely while charging. Higher tiers charge
+more ticks for bigger blasts. Quick commitment — 1.5 to 2.5 seconds to full charge.
 
 <!-- data:charge_blast -->
 | Tier           | Flavour       | Cost   | Cooldown | Charge time | Damage/tick | Scaling | Max ticks |

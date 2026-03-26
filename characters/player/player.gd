@@ -147,6 +147,9 @@ func _recompute_stats() -> void:
 	health = clamp(health, 0, max_health)
 	mana = clamp(mana, 0, max_mana)
 
+	if weapon:
+		weapon.update_fire_rate(float(speed) / float(base_speed))
+
 func _broadcast_stats() -> void:
 	GlobalEvent.player_max_health_changed.emit(max_health)
 	GlobalEvent.player_health_changed.emit(health)

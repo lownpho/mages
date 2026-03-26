@@ -30,6 +30,9 @@ func setup(weapon_data: WeaponResource) -> void:
 	_is_homing = data.bullet_data.homing
 	_homing_range = data.bullet_data.distance if _is_homing else 0
 
+func update_fire_rate(speed_scale: float) -> void:
+	fire_timer.wait_time = data.fire_cooldown / speed_scale
+
 func fire(direction: Vector2, skill: int) -> void:
 	if not can_fire or not data or not data.bullet_data or not data.fire_pattern:
 		return

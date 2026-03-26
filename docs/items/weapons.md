@@ -8,6 +8,8 @@ decision — it determines where you fight and what stats matter most.
 
 Damage formula: `base_damage + skill × skill_scaling`
 
+Fire rate is the weapon's base shots/sec, scaled by the player's speed stat. Higher speed means faster firing.
+
 ---
 
 ## Staff
@@ -49,12 +51,12 @@ low mana cost, full skill scaling. The mid-range weapon — constant damage outp
 | Ultimate Wand    | 40          | 8     | 2.5       | 4         | 1.0           | 40     |
 <!-- end:wand -->
 
-**Design idea:** Mid-range DPS weapon. Fire rate scales with tier (1.2–2.5 shots/sec),
-making higher-tier Wands feel noticeably faster. Full 1.0 skill scaling means every point
-of skill pays off on every shot. Low base damage — the Wand's power comes from skill
-stacking and fire rate, not raw stats. The +skill reinforces the DPS build. Mana-efficient
-early but costs climb at higher tiers — Ultimate Wand at 2.5 shots/sec and 4 mana/shot
-burns 10 mana/sec.
+**Design idea:** Mid-range DPS weapon. Base fire rate scales with tier (1.2–2.5 shots/sec),
+and speed further increases it — making speed a direct DPS stat for Wand builds. Full 1.0
+skill scaling means every point of skill pays off on every shot. Low base damage — the
+Wand's power comes from skill stacking and fire rate, not raw stats. The +skill reinforces
+the DPS build. Mana-efficient early but costs climb at higher tiers — Ultimate Wand at
+2.5 shots/sec base and 4 mana/shot burns fast at high speed.
 
 ---
 

@@ -16,7 +16,7 @@ The game is focused around spells — cooldowns are generally low so you're cast
 | HP    | 100  | Passive defense. Survive hits, Focus safely under fire.     |
 | Mana  | 30   | Fuel. More shots, more casts, longer channels before Focus. |
 | Skill | 10   | Offense. Damage scaling on weapons and all damage spells.   |
-| Speed | 80   | Active defense. Outrun threats, reposition between casts.   |
+| Speed | 80   | Active defense and offense. Outrun threats, reposition between casts, and increase weapon fire rate. |
 <!-- end:player_stats -->
 
 Low base mana means spells are real commitments — a single Fireball (15 mana) costs half

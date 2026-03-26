@@ -11,7 +11,7 @@ region = Rect2(64, 0, 16, 16)
 script = ExtResource("1")
 icon = SubResource("AtlasTexture_1")
 base_damage = 40.0
-distance = 128
+
 speed = 256
 skill_scaling = 1.0
 homing = true

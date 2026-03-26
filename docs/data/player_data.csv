@@ -3,7 +3,7 @@ Stat,Base,Role
 HP,100,"Passive defense. Survive hits, Focus safely under fire."
 Mana,30,"Fuel. More shots, more casts, longer channels before Focus."
 Skill,10,Offense. Damage scaling on weapons and all damage spells.
-Speed,80,"Active defense. Outrun threats, reposition between casts."
+Speed,80,"Active defense and offense. Outrun threats, reposition between casts, and increase weapon fire rate."
 
 --- staff
 Tier,Base damage,Range,Fire rate,Mana cost,Skill scaling,+Mana
@@ -167,13 +167,13 @@ Piercing Lights 3,Peeew Peeew,70,6s,0.5s,45,0.4,20
 Far,Mid,Close
 3,2,1
 
---- eruption
+--- frost_burst
 Tier,Flavour,Cost,Cooldown,Cast time,1s damage,2s damage,3s+ damage,Scaling,1s radius,2s radius,3s+ radius
-Eruption,Rumble,8/sec,8s,instant,20,50,90,0.5,2,3,5
-Eruption 2,Tremor,14/sec,8s,instant,40,85,150,0.8,3,4,6
-Eruption 3,Cataclysm,20/sec,8s,instant,65,130,220,1.2,3,5,8
+Frost Burst,Chill,8/sec,8s,instant,20,50,90,0.5,2,3,5
+Frost Burst 2,Deep Freeze,14/sec,8s,instant,40,85,150,0.8,3,4,6
+Frost Burst 3,Absolute Zero,20/sec,8s,instant,65,130,220,1.2,3,5,8
 
---- eruption_fit
+--- frost_burst_fit
 Far,Mid,Close
 3,2,2
 
