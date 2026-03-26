@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/weapons/weapons.png" id="2_atlas"]
-[ext_resource type="Resource" uid="uid://bmtp47tife8u8" path="res://characters/player/weapons/staff/good_staff_bullet.tres" id="3_bullet"]
+[ext_resource type="Resource" uid="uid://d2i01861c6dmp" path="res://characters/player/weapons/wand/good_wand_bullet.tres" id="3_bullet"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="4_pattern"]
 
 [sub_resource type="Resource" id="SinglePattern_1"]

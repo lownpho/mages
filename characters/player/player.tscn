@@ -107,7 +107,7 @@ shape = SubResource("CircleShape2D_e5uuo")
 sprite_frames = SubResource("SpriteFrames_58jvb")
 animation = &"run"
 autoplay = "idle"
-frame_progress = 0.424855
+frame_progress = 0.738043
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true
