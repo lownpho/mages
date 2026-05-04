@@ -100,7 +100,7 @@ focus_ramp_time = 5.0
 focus_curve = SubResource("Curve_5dc8e")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 5)
+position = Vector2(0, 8)
 shape = SubResource("CircleShape2D_e5uuo")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
