@@ -1,47 +1,76 @@
-[gd_scene load_steps=7 format=3 uid="uid://dix81e2eu2yg1"]
+[gd_scene format=3 uid="uid://dix81e2eu2yg1"]
 
 [ext_resource type="Script" uid="uid://diux2k5rv6r8v" path="res://items/pickup_item.gd" id="1_gc0r4"]
 [ext_resource type="Texture2D" uid="uid://ch4trsuidtq7m" path="res://items/drop_indicator.png" id="2_edkex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p6t4b"]
-radius = 6.0
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_edkex"]
+atlas = ExtResource("2_edkex")
+region = Rect2(0, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bklxq"]
 atlas = ExtResource("2_edkex")
-region = Rect2(0, 0, 16, 16)
+region = Rect2(8, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v852d"]
 atlas = ExtResource("2_edkex")
-region = Rect2(16, 0, 16, 16)
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d61ir"]
+atlas = ExtResource("2_edkex")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uosow"]
+atlas = ExtResource("2_edkex")
+region = Rect2(32, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pv4yu"]
+atlas = ExtResource("2_edkex")
+region = Rect2(40, 0, 8, 8)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_d61ir"]
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_edkex")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_bklxq")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_v852d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d61ir")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uosow")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pv4yu")
 }],
 "loop": true,
 "name": &"default",
-"speed": 2.0
+"speed": 6.0
 }]
 
-[node name="PickupItem" type="Area2D"]
+[node name="PickupItem" type="Area2D" unique_id=1941827906]
 z_index = 1
 collision_layer = 0
 collision_mask = 16
 monitorable = false
 script = ExtResource("1_gc0r4")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1611404840]
 shape = SubResource("CircleShape2D_p6t4b")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=318903887]
+z_index = 1
+region_rect = Rect2(0, 0, 40, 24)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-z_index = -1
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=508956712]
 sprite_frames = SubResource("SpriteFrames_d61ir")
 autoplay = "default"
-frame_progress = 0.210235
+frame_progress = 0.18658957

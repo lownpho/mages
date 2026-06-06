@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BulletResource" format=3 uid="uid://cuigwjv27iddg"]
+
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("2")
+region = Rect2(0, 8, 8, 8)
+
+[resource]
+script = ExtResource("1")
+icon = SubResource("AtlasTexture_1")
+base_damage = 20.0
+speed = 256
+skill_scaling = 0.7

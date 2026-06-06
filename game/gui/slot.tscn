@@ -1,17 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://damb0ttdu4w2i"]
+[gd_scene format=3 uid="uid://damb0ttdu4w2i"]
 
-[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="1_opkb6"]
 [ext_resource type="Script" uid="uid://q2lh52otucii" path="res://gui/ui_slot.gd" id="2_ob47t"]
+[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="3_0xs3l"]
 
-[node name="Slot" type="PanelContainer"]
-theme = ExtResource("1_opkb6")
+[sub_resource type="AtlasTexture" id="AtlasTexture_16h80"]
+atlas = ExtResource("3_0xs3l")
+region = Rect2(8, 0, 8, 8)
+
+[node name="Slot" type="MarginContainer" unique_id=268193221]
+offset_right = 8.0
+offset_bottom = 8.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
 script = ExtResource("2_ob47t")
 
-[node name="TextureRect" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="."]
+[node name="ItemTexture" type="TextureRect" parent="." unique_id=1267026170]
+z_index = 1
+custom_minimum_size = Vector2(8, 8)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "?"
+size_flags_vertical = 4
+stretch_mode = 2
+
+[node name="SlotTexture" type="TextureRect" parent="." unique_id=198441593]
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+texture = SubResource("AtlasTexture_16h80")
+stretch_mode = 2

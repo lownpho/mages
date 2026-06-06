@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="HatResource" format=3 uid="uid://hcpris5c5rbg"]
+
+[ext_resource type="Script" uid="uid://ldue3p76yhlu" path="res://characters/player/hats/hat_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cur7g42go5wec" path="res://characters/player/hats/hats.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(24, 16, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 60
+max_health_modifier = 20
+max_mana_modifier = 20

@@ -1,6 +1,6 @@
 extends Node
 
-const BAG_SIZE = 6
+const BAG_SIZE = 9
 const SPELL_SLOT_SIZE = 4
 
 # ItemType.BAG is used as the slot category for bag slots — no item should ever have type BAG

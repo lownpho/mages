@@ -1,25 +1,34 @@
-extends PanelContainer
+extends MarginContainer
+
+@export var slot_texture: AtlasTexture
 
 # YES THIS IS A REFERENCE, OBJECTS ARE PASSED BY REFERENCE!
 var slot: GlobalInventory.Slot = null
 
-static var _drag_source: PanelContainer = null
+static var _drag_source: MarginContainer = null
 static var _drag_accepted: bool = false
 
 func update_texture() -> void:
 	if slot.item:
-		$TextureRect.texture = slot.item.icon
+		$ItemTexture.texture = slot.item.icon
 	else:
-		$TextureRect.texture = null
+		$ItemTexture.texture = null
 
 func _ready() -> void:
+	if slot_texture:
+		$SlotTexture.texture = slot_texture
 	GlobalEvent.slot_updated.connect(_on_slot_updated)
 
 func _get_drag_data(_position):
 	if slot.item:
 		var preview = TextureRect.new()
 		preview.texture = slot.item.icon
-		set_drag_preview(preview)
+		preview.custom_minimum_size = Vector2(8, 8)
+		preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		preview.position = -_position
+		var wrapper = Control.new()
+		wrapper.add_child(preview)
+		set_drag_preview(wrapper)
 		_drag_source = self
 		_drag_accepted = false
 		return self

@@ -32,8 +32,7 @@ func _on_player_mana_changed(mana: int) -> void:
 	%ManaBar.value = mana
 
 func _on_player_skill_changed(skill: int) -> void:
-	%SkillValue.text = str(skill)
+	%SkillValue.value = skill
 
 func _on_player_speed_changed(speed: int) -> void:
-	%SpeedValue.text = str(speed)
-
+	%SpeedValue.value = speed
