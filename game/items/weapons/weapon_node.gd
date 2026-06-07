@@ -26,7 +26,9 @@ func setup(weapon_data: WeaponResource) -> void:
 	add_child(fire_timer)
 
 func update_fire_rate(speed_scale: float) -> void:
-	fire_timer.wait_time = data.fire_cooldown / speed_scale
+	# Guard against a zero/negative speed scale (e.g. speed reduced to 0 by
+	# modifiers), which would make wait_time infinite or invalid.
+	fire_timer.wait_time = data.fire_cooldown / maxf(speed_scale, 0.01)
 
 func fire(direction: Vector2, skill: int) -> void:
 	if not can_fire or not data or not data.bullet_data or not data.fire_pattern:

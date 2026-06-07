@@ -43,6 +43,7 @@ func _get_player_position() -> Vector2:
 
 func _on_idle_enter() -> void:
 	detect_probe.enabled = true
+	$AnimatedSprite2D.play("idle")
 
 func _on_idle_exit() -> void:
 	detect_probe.enabled = false
@@ -51,12 +52,13 @@ func _on_idle_physics_update(_delta: float) -> void:
 	detect_probe.look_at(_get_player_position())
 
 	var detect_collider = detect_probe.get_collider()
-	if detect_collider and detect_collider.name == "Player":
+	if detect_collider and detect_collider.is_in_group("player"):
 		fsm.transition_to("Chase")
 
 func _on_chase_enter() -> void:
 	chase_probe.enabled = true
 	attack_probe.enabled = true
+	$AnimatedSprite2D.play("run")
 
 func _on_chase_exit() -> void:
 	chase_probe.enabled = false
@@ -71,15 +73,16 @@ func _on_chase_physics_update(_delta: float) -> void:
 
 	var attack_collider = attack_probe.get_collider()
 	var chase_collider = chase_probe.get_collider()
-	if attack_collider and attack_collider.name == "Player":
+	if attack_collider and attack_collider.is_in_group("player"):
 		fsm.transition_to("Attack")
-	elif chase_collider and chase_collider.name == "Player":
+	elif chase_collider and chase_collider.is_in_group("player"):
 		velocity = player_direction.normalized() * speed
+		move_and_slide()
 	else:
 		fsm.transition_to("Idle")
-	move_and_slide()
 
 func _on_attack_enter() -> void:
+	$AnimatedSprite2D.play("idle")
 	attack_probe.enabled = true
 
 func _on_attack_exit() -> void:
@@ -89,7 +92,7 @@ func _on_attack_physics_update(_delta: float) -> void:
 	attack_probe.look_at(_get_player_position())
 
 	var attack_collider = attack_probe.get_collider()
-	if attack_collider and attack_collider.name == "Player":
+	if attack_collider and attack_collider.is_in_group("player"):
 		weapon.try_fire(global_position, _get_player_position(), skill)
 	else:
 		fsm.transition_to("Chase")

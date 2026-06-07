@@ -14,9 +14,17 @@ func _speed() -> float:
 	return data.speed_tiles * GameConstants.PX_PER_TILE
 
 func _ready() -> void:
+	# A bullet with no forward speed or no range can't travel — it would also make
+	# the lifetime (range / speed) zero or divide by zero, which is an invalid
+	# Timer.wait_time. Discard it rather than spawn a degenerate bullet.
+	var lifetime := float(data.range_tiles) / data.speed_tiles if data.speed_tiles > 0 else 0.0
+	if lifetime <= 0.0:
+		queue_free()
+		return
+
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
-	lifetime_timer.wait_time = float(data.range_tiles) / data.speed_tiles
+	lifetime_timer.wait_time = lifetime
 	lifetime_timer.autostart = true
 	lifetime_timer.timeout.connect(queue_free)
 	add_child(lifetime_timer)

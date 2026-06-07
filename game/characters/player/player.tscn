@@ -145,6 +145,7 @@ lookahead_distance = 32.0
 lookahead_smoothing = 1.0
 
 [node name="Hurtbox" parent="." unique_id=1632214819 instance=ExtResource("5_c6leb")]
+collision_mask = 512
 radius = 4.0
 
 [node name="FSM" parent="." unique_id=890434761 instance=ExtResource("2_5dc8e")]
