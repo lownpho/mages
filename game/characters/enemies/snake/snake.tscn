@@ -1,0 +1,119 @@
+[gd_scene format=3 uid="uid://dwdmelhkmivh8"]
+
+[ext_resource type="Script" uid="uid://bmbffj373ald8" path="res://characters/enemies/snake/snake.gd" id="1_snk"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_3sbbp"]
+[ext_resource type="Texture2D" uid="uid://bw8eycv5es5bb" path="res://characters/enemies/snake/snake.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_8ad34"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="4_bth6n"]
+[ext_resource type="Resource" uid="uid://tmk35vg7fjkd" path="res://characters/enemies/snake/snake_weapon.tres" id="5_snake"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_snk"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_838dm"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qoa0q"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_anjvo"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7kulo"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5fcis"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xxixs"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5rhqr"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wo1ol"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_snk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_838dm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qoa0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_anjvo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7kulo")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5fcis")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xxixs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5rhqr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wo1ol")
+}],
+"loop": true,
+"name": &"run",
+"speed": 8.0
+}]
+
+[node name="Snake" type="CharacterBody2D" unique_id=354279121 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_snk")
+max_health = 40
+weapon_data = ExtResource("5_snake")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1155471603]
+shape = SubResource("CircleShape2D_snk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2093443727]
+sprite_frames = SubResource("SpriteFrames_snk")
+animation = &"idle"
+autoplay = "idle"
+frame = 3
+frame_progress = 0.03145603
+
+[node name="Hurtbox" parent="." unique_id=204232172 instance=ExtResource("2_3sbbp")]
+collision_mask = 256
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=2063070683]
+target_position = Vector2(64, 0)
+collision_mask = 17
+
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=791324223]
+target_position = Vector2(96, 0)
+collision_mask = 17
+
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=1111093513]
+target_position = Vector2(16, 0)
+collision_mask = 17
+
+[node name="Weapon" parent="." unique_id=1750859881 instance=ExtResource("4_bth6n")]
+
+[node name="FSM" parent="." unique_id=1399209731 instance=ExtResource("4_8ad34")]
+initial_state = "Idle"
+state_names = Array[String](["Idle", "Chase", "Attack"])

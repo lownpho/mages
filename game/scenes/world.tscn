@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon/small_demon.tscn" id="4_k0juu"]
+[ext_resource type="PackedScene" uid="uid://dwdmelhkmivh8" path="res://characters/enemies/snake/snake.tscn" id="4_snake"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://characters/player/hats/skill_hat1.tres" id="6_8u370"]
 [ext_resource type="PackedScene" uid="uid://dix81e2eu2yg1" path="res://items/pickup_item.tscn" id="6_pickup"]
@@ -463,19 +464,31 @@ script = ExtResource("7_world")
 
 [node name="Player" parent="." unique_id=543459 instance=ExtResource("1_nnsk1")]
 z_index = 1
-position = Vector2(630, 625)
+position = Vector2(602, 393)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=814364381]
 position = Vector2(232, 318)
 
 [node name="SmallDemon" parent="Enemies" unique_id=1323986911 instance=ExtResource("4_k0juu")]
-position = Vector2(362, 70)
+position = Vector2(274, 67)
 
 [node name="SmallDemon2" parent="Enemies" unique_id=1509114867 instance=ExtResource("4_k0juu")]
 position = Vector2(246, 90)
 
 [node name="SmallDemon3" parent="Enemies" unique_id=481221959 instance=ExtResource("4_k0juu")]
-position = Vector2(477, 112)
+position = Vector2(304, 78)
+
+[node name="SmallDemon4" parent="Enemies" unique_id=815925206 instance=ExtResource("4_k0juu")]
+position = Vector2(262, 48)
+
+[node name="SmallDemon5" parent="Enemies" unique_id=2046612822 instance=ExtResource("4_k0juu")]
+position = Vector2(146, 68)
+
+[node name="SmallDemon6" parent="Enemies" unique_id=2037058906 instance=ExtResource("4_k0juu")]
+position = Vector2(275, 104)
+
+[node name="Snake" parent="Enemies" unique_id=1392320736 instance=ExtResource("4_snake")]
+position = Vector2(227, 48)
 
 [node name="pickups" type="Node2D" parent="." unique_id=947830532]
 position = Vector2(852, 359)

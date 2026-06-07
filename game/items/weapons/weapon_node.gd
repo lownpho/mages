@@ -37,17 +37,20 @@ func fire(direction: Vector2, skill: int) -> void:
 	var target: Node2D = null
 	if target_finder and data.bullet_data.homing:
 		target = target_finder.call()
-	for dir in data.fire_pattern.get_directions(direction):
-		_spawn_bullet(dir, skill, target)
+	var dirs := data.fire_pattern.get_directions(direction)
+	var offsets := data.fire_pattern.get_offsets(direction)
+	for i in dirs.size():
+		var lateral: Vector2 = offsets[i] if i < offsets.size() else Vector2.ZERO
+		_spawn_bullet(dirs[i], skill, target, lateral)
 	can_fire = false
 	fire_timer.start()
 
-func _spawn_bullet(direction: Vector2, skill: int, target: Node2D) -> void:
+func _spawn_bullet(direction: Vector2, skill: int, target: Node2D, lateral: Vector2 = Vector2.ZERO) -> void:
 	var bullet = _BulletScene.instantiate()
 	bullet.data = data.bullet_data
 	bullet.collision_layer = bullet_collision_layer
 	var offset = randf() * data.fire_pattern.spawn_offset
-	bullet.position = global_position + direction * offset
+	bullet.position = global_position + direction * offset + lateral
 	bullet.base_direction = direction
 	bullet.skill = skill
 	bullet.target = target

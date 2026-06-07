@@ -1,10 +1,18 @@
 extends CharacterBody2D
 
-@export var max_health: int = 100 
+@export var max_health: int = 100
 var health: int
 @export var skill: int = 0
 @export var speed: float = 16.0
-@export var wander_speed: float = 12.0 ## Speed of the occasional idle stroll.
+@export var weave_frequency: float = 2.0 # Sideways oscillation rate of the S-pattern.
+@export var weave_amplitude: float = 1.3 # Sideways sway strength relative to forward speed.
+
+@export var wander_speed: float = 14.0 ## Speed of the occasional idle stroll.
+
+# Drives the S-pattern weave during chase.
+var _weave_time: float = 0.0
+var _weave_phase: float = 0.0
+var _weave_retarget: float = 0.0
 
 # Idle wander: alternates between pausing and strolling a random direction.
 var _wander_dir: Vector2 = Vector2.ZERO
@@ -87,6 +95,8 @@ func _wander(delta: float) -> void:
 func _on_chase_enter() -> void:
 	chase_probe.enabled = true
 	attack_probe.enabled = true
+	_weave_time = 0.0
+	_weave_retarget = 0.0
 	$AnimatedSprite2D.play("run")
 
 func _on_chase_exit() -> void:
@@ -106,10 +116,24 @@ func _on_chase_physics_update(_delta: float) -> void:
 	if attack_collider and attack_collider.is_in_group("player"):
 		fsm.transition_to("Attack")
 	elif chase_collider and chase_collider.is_in_group("player"):
-		velocity = player_direction.normalized() * speed
+		velocity = _weave_velocity(player_direction, _delta)
 		move_and_slide()
 	else:
 		fsm.transition_to("Idle")
+
+# Builds an S-pattern velocity: forward toward the player plus a perpendicular
+# sine sway. The phase is re-rolled at random intervals so the snake darts
+# quick and unpredictably instead of tracing a clean, readable sine.
+func _weave_velocity(to_player: Vector2, delta: float) -> Vector2:
+	_weave_time += delta
+	_weave_retarget -= delta
+	if _weave_retarget <= 0.0:
+		_weave_retarget = randf_range(0.3, 0.9)
+		_weave_phase = randf_range(-PI, PI)
+	var forward := to_player.normalized()
+	var perp := Vector2(-forward.y, forward.x)
+	var sway := sin(_weave_time * weave_frequency + _weave_phase) * weave_amplitude
+	return (forward + perp * sway) * speed
 
 func _on_attack_enter() -> void:
 	$AnimatedSprite2D.play("idle")
@@ -131,7 +155,8 @@ func _on_attack_physics_update(_delta: float) -> void:
 
 # Faces the sprite toward horizontal movement/target. Sprites default to facing
 # right, so flip when the target is to the left. Ignores near-vertical headings
-# to avoid flicker.
+# to avoid flicker. Uses the heading (not the weaving velocity) so the S-pattern
+# sway doesn't cause rapid flip jitter.
 func _update_facing(dir_x: float) -> void:
 	if absf(dir_x) > 0.01:
 		$AnimatedSprite2D.flip_h = dir_x < 0.0
@@ -141,6 +166,6 @@ func die() -> void:
 
 func _on_hurt(damage: int) -> void:
 	health -= damage
-	
+
 	if health <= 0:
 		die()
