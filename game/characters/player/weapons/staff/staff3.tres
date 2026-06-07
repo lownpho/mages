@@ -15,7 +15,7 @@ script = ExtResource("50_bres")
 icon = SubResource("AtlasTexture_1")
 base_damage = 18.0
 range_tiles = 12
-speed_tiles = 32
+speed_tiles = 24
 homing = true
 homing_weight = 1.0
 
