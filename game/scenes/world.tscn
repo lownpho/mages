@@ -463,19 +463,19 @@ script = ExtResource("7_world")
 
 [node name="Player" parent="." unique_id=543459 instance=ExtResource("1_nnsk1")]
 z_index = 1
-position = Vector2(494, 623)
+position = Vector2(630, 625)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=814364381]
 position = Vector2(232, 318)
 
 [node name="SmallDemon" parent="Enemies" unique_id=1323986911 instance=ExtResource("4_k0juu")]
-position = Vector2(203, 58)
+position = Vector2(362, 70)
 
 [node name="SmallDemon2" parent="Enemies" unique_id=1509114867 instance=ExtResource("4_k0juu")]
-position = Vector2(84, 208)
+position = Vector2(246, 90)
 
 [node name="SmallDemon3" parent="Enemies" unique_id=481221959 instance=ExtResource("4_k0juu")]
-position = Vector2(299, 51)
+position = Vector2(477, 112)
 
 [node name="pickups" type="Node2D" parent="." unique_id=947830532]
 position = Vector2(852, 359)

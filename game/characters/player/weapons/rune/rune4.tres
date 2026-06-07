@@ -2,13 +2,26 @@
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/weapons/weapons.png" id="2_atlas"]
-[ext_resource type="Resource" uid="uid://ctons5sywfsdl" path="res://characters/player/weapons/rune/rune4_bullet.tres" id="3_bullet"]
 [ext_resource type="Script" uid="uid://d3hnuqjbp2epb" path="res://items/weapons/shotgun_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="51_btex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("51_btex")
+region = Rect2(24, 16, 8, 8)
+
+[sub_resource type="Resource" id="BulletData_1"]
+script = ExtResource("50_bres")
+icon = SubResource("AtlasTexture_1")
+base_damage = 18.0
+range_tiles = 3
+speed_tiles = 16
+homing_weight = 0.0
 
 [sub_resource type="Resource" id="ShotgunPattern_1"]
 script = ExtResource("4_pattern")
-spread_angle = 48.0
-spawn_offset = 8.0
+num_pellets = 4
+spawn_offset = 4.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
@@ -17,9 +30,9 @@ region = Rect2(24, 16, 8, 8)
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("ShotgunPattern_1")
-bullet_data = ExtResource("3_bullet")
-fire_cooldown = 1.25
-mana_cost = 7
+bullet_data = SubResource("BulletData_1")
+fire_cooldown = 1.1
+mana_cost = 4
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 25
 max_health_modifier = 50

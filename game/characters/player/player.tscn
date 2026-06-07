@@ -10,7 +10,7 @@ _data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
-radius = 4.0
+radius = 3.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icpky"]
 atlas = ExtResource("2_c6leb")
@@ -125,8 +125,8 @@ collision_layer = 16
 motion_mode = 1
 script = ExtResource("1_xxgcw")
 base_speed = 40
-focus_mana_per_second = 10.0
-focus_ramp_time = 5.0
+focus_mana_per_second = 20.0
+focus_ramp_time = 2.0
 focus_curve = SubResource("Curve_5dc8e")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1775160487]
@@ -141,6 +141,10 @@ metadata/_edit_lock_ = true
 [node name="Camera2D" type="Camera2D" parent="." unique_id=832949489]
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
+drag_left_margin = 0.4
+drag_top_margin = 0.4
+drag_right_margin = 0.4
+drag_bottom_margin = 0.4
 
 [node name="Hurtbox" parent="." unique_id=1632214819 instance=ExtResource("5_c6leb")]
 radius = 4.0

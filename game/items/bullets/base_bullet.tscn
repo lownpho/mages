@@ -1,17 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://babyx8ub5np0j"]
+[gd_scene format=3 uid="uid://babyx8ub5np0j"]
 
 [ext_resource type="Script" uid="uid://csrof5fw2p1s1" path="res://items/bullets/base_bullet.gd" id="1_81c7v"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rllah"]
-radius = 4.0
+radius = 1.0
 
-[node name="Bullet" type="CharacterBody2D" groups=["bullets"]]
+[node name="Bullet" type="CharacterBody2D" unique_id=1735415621 groups=["bullets"]]
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("1_81c7v")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2111957139]
 offset = Vector2(0, -2)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1487108810]
 shape = SubResource("CircleShape2D_rllah")

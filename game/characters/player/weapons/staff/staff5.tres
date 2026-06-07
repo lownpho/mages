@@ -2,8 +2,22 @@
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/weapons/weapons.png" id="2_atlas"]
-[ext_resource type="Resource" uid="uid://cm0gql2rkujc4" path="res://characters/player/weapons/staff/staff5_bullet.tres" id="3_bullet"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="51_btex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("51_btex")
+region = Rect2(32, 0, 8, 8)
+
+[sub_resource type="Resource" id="BulletData_1"]
+script = ExtResource("50_bres")
+icon = SubResource("AtlasTexture_1")
+base_damage = 40.0
+range_tiles = 12
+speed_tiles = 32
+homing = true
+homing_weight = 1.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")
@@ -15,8 +29,7 @@ region = Rect2(32, 0, 8, 8)
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
-bullet_data = ExtResource("3_bullet")
-fire_cooldown = 0.4
+bullet_data = SubResource("BulletData_1")
 mana_cost = 4
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 40

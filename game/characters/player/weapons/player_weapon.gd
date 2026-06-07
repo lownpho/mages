@@ -6,7 +6,7 @@ var weapon_input_held: bool = false
 
 func setup_for_player(weapon_data: WeaponResource, player: CharacterBody2D) -> void:
 	owner_ref = player
-	bullet_collision_layer = 256
+	bullet_collision_layer = GameConstants.LAYER_PLAYER_BULLETS
 	setup(weapon_data)
 	target_finder = _find_closest_enemy_to_mouse
 
@@ -37,7 +37,9 @@ func _physics_process(_delta: float) -> void:
 # Returns null if no enemy is in range — the bullet flies straight.
 func _find_closest_enemy_to_mouse() -> Node2D:
 	var mouse_pos = owner_ref.get_global_mouse_position()
-	var range_sq = _homing_range * _homing_range
+	# Bullet range is in tiles; convert to pixels to match world distances.
+	var range_px = data.bullet_data.range_tiles * GameConstants.PX_PER_TILE
+	var range_sq = range_px * range_px
 	var closest: Node2D = null
 	var closest_dist: float = INF
 	for enemy in get_tree().get_nodes_in_group("enemies"):

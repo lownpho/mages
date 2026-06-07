@@ -2,7 +2,7 @@ extends WeaponNode
 class_name EnemyWeapon
 
 func setup_for_enemy(weapon_data: WeaponResource) -> void:
-	bullet_collision_layer = 512
+	bullet_collision_layer = GameConstants.LAYER_ENEMY_BULLETS
 	setup(weapon_data)
 	target_finder = _find_player
 
@@ -20,6 +20,8 @@ func _find_player() -> Node2D:
 	if players.is_empty():
 		return null
 	var player = players[0]
-	if player.global_position.distance_squared_to(global_position) > _homing_range * _homing_range:
+	# Bullet range is in tiles; convert to pixels to match world distances.
+	var range_px = data.bullet_data.range_tiles * GameConstants.PX_PER_TILE
+	if player.global_position.distance_squared_to(global_position) > range_px * range_px:
 		return null
 	return player

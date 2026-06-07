@@ -1,42 +1,44 @@
 extends CharacterBody2D
 class_name BaseBullet
 
-@export var base_damage: float = 1
-@export var distance: int = 16
-@export var speed: int = 128
-@export var skill_scaling: float = 1
-
+## All bullet stats are read from this resource — the single source of truth.
+## Set by WeaponNode before the bullet enters the tree.
+var data: BulletResource
 var base_direction: Vector2 = Vector2.UP
-var lifetime_timer: Timer = null
+var target: Node2D
 var skill: int = 0
 
-@onready var initial_position = position
+var lifetime_timer: Timer
+
+func _speed() -> float:
+	return data.speed_tiles * GameConstants.PX_PER_TILE
 
 func _ready() -> void:
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
-	lifetime_timer.wait_time = float(distance) / speed
+	lifetime_timer.wait_time = float(data.range_tiles) / data.speed_tiles
 	lifetime_timer.autostart = true
-	lifetime_timer.timeout.connect(_on_lifetime_timeout)
+	lifetime_timer.timeout.connect(queue_free)
 	add_child(lifetime_timer)
-	
-	velocity = base_direction * speed
+
+	velocity = base_direction * _speed()
 	rotation = velocity.angle() + PI / 2
 
+	if data.icon:
+		$Sprite2D.texture = data.icon
+
 func _physics_process(delta: float) -> void:
-	var collision = move_and_collide(velocity * delta)
-	
-	if collision:
+	if data.homing and is_instance_valid(target):
+		var speed := _speed()
+		var desired := global_position.direction_to(target.global_position)
+		velocity = velocity.lerp(desired * speed, data.homing_weight * delta).normalized() * speed
+		rotation = velocity.angle() + PI / 2
+
+	if move_and_collide(velocity * delta):
 		queue_free()
 
-func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
-	queue_free()
-
-func _on_lifetime_timeout() -> void:
-	queue_free()
-
 func get_damage() -> int:
-	return round(base_damage + skill * skill_scaling)
+	return round(data.base_damage + skill * data.skill_scaling)
 
 func reached_hurtbox() -> void:
 	queue_free()

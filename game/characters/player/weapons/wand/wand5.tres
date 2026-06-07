@@ -2,8 +2,23 @@
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/weapons/weapons.png" id="2_atlas"]
-[ext_resource type="Resource" uid="uid://khs503afnovc" path="res://characters/player/weapons/wand/wand5_bullet.tres" id="3_bullet"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="51_btex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("51_btex")
+region = Rect2(32, 8, 8, 8)
+
+[sub_resource type="Resource" id="BulletData_1"]
+script = ExtResource("50_bres")
+icon = SubResource("AtlasTexture_1")
+base_damage = 120.0
+range_tiles = 6
+speed_tiles = 48
+skill_scaling = 0.7
+homing = true
+homing_weight = 10.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")
@@ -15,8 +30,8 @@ region = Rect2(32, 8, 8, 8)
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
-bullet_data = ExtResource("3_bullet")
-fire_cooldown = 1.0
-mana_cost = 5
+bullet_data = SubResource("BulletData_1")
+fire_cooldown = 0.3
+mana_cost = 3
 icon = SubResource("AtlasTexture_icon")
 max_mana_modifier = 35

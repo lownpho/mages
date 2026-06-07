@@ -1,8 +1,13 @@
 [gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://p7i1gf773t0w"]
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
-[ext_resource type="Resource" path="res://characters/enemies/small_demon/demon_bullet.tres" id="2_bullet"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="3_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
+
+[sub_resource type="Resource" id="BulletData_1"]
+script = ExtResource("50_bres")
+base_damage = 10.0
+range_tiles = 48
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("3_pattern")
@@ -10,6 +15,6 @@ script = ExtResource("3_pattern")
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
-bullet_data = ExtResource("2_bullet")
+bullet_data = SubResource("BulletData_1")
 fire_cooldown = 1.0
 mana_cost = 0
