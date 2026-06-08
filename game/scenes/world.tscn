@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon/small_demon.tscn" id="4_k0juu"]
 [ext_resource type="PackedScene" path="res://characters/enemies/longleg/longleg.tscn" id="4_longleg"]
 [ext_resource type="PackedScene" uid="uid://dwdmelhkmivh8" path="res://characters/enemies/snake/snake.tscn" id="4_snake"]
+[ext_resource type="PackedScene" uid="uid://dg0l3msc3n300" path="res://characters/enemies/golem/golem.tscn" id="4_golem"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://characters/player/hats/skill_hat1.tres" id="6_8u370"]
 [ext_resource type="PackedScene" uid="uid://dix81e2eu2yg1" path="res://items/pickup_item.tscn" id="6_pickup"]
@@ -493,6 +494,9 @@ position = Vector2(227, 48)
 
 [node name="Longleg" parent="Enemies" unique_id=1463143508 instance=ExtResource("4_longleg")]
 position = Vector2(120, 150)
+
+[node name="Golem" parent="Enemies" instance=ExtResource("4_golem")]
+position = Vector2(180, 60)
 
 [node name="pickups" type="Node2D" parent="." unique_id=947830532]
 position = Vector2(852, 359)

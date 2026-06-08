@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="8_idle"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="9_wander"]
 [ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="10_approach"]
-[ext_resource type="Script" uid="uid://csnip3rch4rg3" path="res://characters/enemies/longleg/sniper_charge.gd" id="11_sniper"]
+[ext_resource type="Script" uid="uid://csnip3rch4rg3" path="res://characters/enemies/behaviours/sniper_charge.gd" id="11_sniper"]
 [ext_resource type="Script" uid="uid://ckit3r3tr34t" path="res://characters/enemies/longleg/kite_retreat.gd" id="12_ring"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ll"]

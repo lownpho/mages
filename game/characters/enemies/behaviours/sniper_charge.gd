@@ -1,6 +1,10 @@
 extends Behaviour
 class_name SniperCharge
 
+# Holds position and snipes: a wind-up charge before each shot, repeating while the
+# target sits in the sniper band. Three nested probes hand off — too close, too far
+# (drifted out of the band but still seen), or lost entirely.
+
 @export var detect_probe_path: NodePath
 @export var sniper_probe_path: NodePath
 @export var close_probe_path: NodePath

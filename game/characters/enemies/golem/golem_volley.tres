@@ -1,19 +1,19 @@
-[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://cwo4m17tbkhua"]
+[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://cg0l3mv0lltr3"]
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="1_uc26l"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="3_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ll_snipe"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_golem_volley"]
 atlas = ExtResource("1_uc26l")
-region = Rect2(24, 32, 8, 8)
+region = Rect2(0, 48, 8, 8)
 
 [sub_resource type="Resource" id="BulletData_1"]
 script = ExtResource("50_bres")
-icon = SubResource("AtlasTexture_ll_snipe")
-base_damage = 24.0
-speed_tiles = 18
+icon = SubResource("AtlasTexture_golem_volley")
+base_damage = 12.0
+speed_tiles = 12
 homing_weight = 0.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]

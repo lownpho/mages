@@ -1,27 +1,28 @@
-[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://cwo4m17tbkhua"]
+[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://cg0l3mr1ngtr3"]
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="1_uc26l"]
-[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="3_pattern"]
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/weapons/ring_pattern.gd" id="3_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ll_snipe"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_golem_ring"]
 atlas = ExtResource("1_uc26l")
-region = Rect2(24, 32, 8, 8)
+region = Rect2(40, 24, 8, 8)
 
 [sub_resource type="Resource" id="BulletData_1"]
 script = ExtResource("50_bres")
-icon = SubResource("AtlasTexture_ll_snipe")
-base_damage = 24.0
-speed_tiles = 18
+icon = SubResource("AtlasTexture_golem_ring")
+base_damage = 16.0
+range_tiles = 6
+speed_tiles = 6
 homing_weight = 0.0
 
-[sub_resource type="Resource" id="SinglePattern_1"]
+[sub_resource type="Resource" id="RingPattern_1"]
 script = ExtResource("3_pattern")
 
 [resource]
 script = ExtResource("1_script")
-fire_pattern = SubResource("SinglePattern_1")
+fire_pattern = SubResource("RingPattern_1")
 bullet_data = SubResource("BulletData_1")
-fire_cooldown = 0.2
+fire_cooldown = 1.4
 mana_cost = 0
