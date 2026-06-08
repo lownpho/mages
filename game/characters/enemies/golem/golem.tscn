@@ -136,10 +136,6 @@ collision_mask = 17
 target_position = Vector2(40, 0)
 collision_mask = 17
 
-[node name="VolleyProbe" type="RayCast2D" parent="." unique_id=270486333]
-target_position = Vector2(96, 0)
-collision_mask = 17
-
 [node name="RingWeapon" parent="." unique_id=1826912198 instance=ExtResource("5_weap")]
 
 [node name="VolleyWeapon" parent="." unique_id=808966883 instance=ExtResource("5_weap")]
@@ -169,8 +165,6 @@ attack_anim = "attack"
 
 [node name="Volley" type="Node" parent="FSM" unique_id=1700157626]
 script = ExtResource("11_volley")
-detect_probe_path = NodePath("../../VolleyProbe")
 weapon_path = NodePath("../../VolleyWeapon")
 weapon_data = ExtResource("7_volley")
-shot_interval = 0.2
 attack_anim = "attack_far"

@@ -38,21 +38,22 @@ func exit() -> void:
 	_detect.enabled = false
 	_sniper.enabled = false
 	_close.enabled = false
-	_charge.stop()  # cancel an in-progress wind-up so we don't fire after leaving
+	_charge.stop()  # defensive: clear any pending wind-up on the way out
 
 func physics_update(_delta: float) -> void:
 	var player := enemy.get_player()
-	if not player:
-		enemy.fsm.transition_to(lost_state)
+	if player:
+		enemy.face(player.global_position.x - enemy.global_position.x)
+		_detect.look_at(player.global_position)
+		_sniper.look_at(player.global_position)
+		_close.look_at(player.global_position)
+
+	# Once a wind-up is running we're committed: keep tracking the player and let
+	# the shot fire before any range check can pull us out of the state.
+	if not _charge.is_stopped():
 		return
 
-	var to_player := player.global_position - enemy.global_position
-	enemy.face(to_player.x)
-	_detect.look_at(player.global_position)
-	_sniper.look_at(player.global_position)
-	_close.look_at(player.global_position)
-
-	if not enemy.probe_sees(_detect):
+	if not player or not enemy.probe_sees(_detect):
 		enemy.fsm.transition_to(lost_state)
 		return
 	if enemy.probe_sees(_close):
@@ -62,10 +63,9 @@ func physics_update(_delta: float) -> void:
 		enemy.fsm.transition_to(too_far_state)
 		return
 
-	# Arm a wind-up only when none is running; it fires via _fire_shot then re-arms.
-	if _charge.is_stopped():
-		enemy.play("attack")
-		_charge.start(charge_time)
+	# In the band and free to act: arm the next wind-up; it fires via _fire_shot.
+	enemy.play("attack")
+	_charge.start(charge_time)
 
 func _fire_shot() -> void:
 	var player := enemy.get_player()

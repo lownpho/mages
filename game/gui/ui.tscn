@@ -39,7 +39,7 @@ region = Rect2(8, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gr1wa"]
 atlas = ExtResource("3_vuvel")
-region = Rect2(32, 0, 8, 8)
+region = Rect2(16, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fo2ah"]
 atlas = ExtResource("3_vuvel")
@@ -49,20 +49,14 @@ region = Rect2(24, 0, 8, 8)
 script = ExtResource("1_v62dg")
 
 [node name="Strip" type="MarginContainer" parent="." unique_id=1003]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+anchors_preset = 9
 anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -135.0
-offset_right = -88.0
-grow_horizontal = 2
-grow_vertical = 0
-size_flags_horizontal = 3
+offset_right = 36.0
+grow_vertical = 2
+size_flags_horizontal = 2
 size_flags_vertical = 4
 theme = ExtResource("2_cemxd")
-theme_override_constants/margin_left = 4
+theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
@@ -71,7 +65,7 @@ theme_override_constants/margin_bottom = 2
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 
 [node name="Bars" type="VBoxContainer" parent="Strip/VBox" unique_id=1002]
 layout_mode = 2
