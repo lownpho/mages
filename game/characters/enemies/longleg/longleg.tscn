@@ -1,12 +1,17 @@
 [gd_scene format=3 uid="uid://2g8xcl1nyilj"]
 
-[ext_resource type="Script" uid="uid://cwo4m17ikdswa" path="res://characters/enemies/longleg/longleg.gd" id="1_ll"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/enemies/enemy.gd" id="1_ll"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
 [ext_resource type="Texture2D" uid="uid://b6ba5cn0bc48j" path="res://characters/enemies/longleg/longlegs.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://cwo4m17tbkhua" path="res://characters/enemies/longleg/longleg_sniper.tres" id="6_snipe"]
 [ext_resource type="Resource" uid="uid://ceh1r82p7lxuq" path="res://characters/enemies/longleg/longleg_ring.tres" id="7_ring"]
+[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="8_idle"]
+[ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="9_wander"]
+[ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="10_approach"]
+[ext_resource type="Script" uid="uid://csnip3rch4rg3" path="res://characters/enemies/longleg/sniper_charge.gd" id="11_sniper"]
+[ext_resource type="Script" uid="uid://ckit3r3tr34t" path="res://characters/enemies/longleg/kite_retreat.gd" id="12_ring"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ll"]
 radius = 4.0
@@ -92,45 +97,74 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="Longleg" type="CharacterBody2D" unique_id=1357700438 groups=["enemies"]]
+[node name="Longleg" type="CharacterBody2D" unique_id=230604001 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_ll")
 max_health = 30
-retreat_speed = 24.0
-charge_time = 2.0
-sniper_weapon = ExtResource("6_snipe")
-ring_weapon = ExtResource("7_ring")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=369225080]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=512976102]
 shape = SubResource("CircleShape2D_ll")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=270378035]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1823188296]
 sprite_frames = SubResource("SpriteFrames_ll")
 animation = &"run"
 autoplay = "idle"
 
-[node name="Hurtbox" parent="." unique_id=1670849280 instance=ExtResource("2_hbox")]
+[node name="Hurtbox" parent="." unique_id=2143818521 instance=ExtResource("2_hbox")]
 collision_mask = 256
 radius = 5.0
 
-[node name="DetectProbe" type="RayCast2D" parent="." unique_id=847322866]
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=374863675]
 target_position = Vector2(96, 0)
 collision_mask = 17
 
-[node name="SniperProbe" type="RayCast2D" parent="." unique_id=847322868]
+[node name="SnipeProbe" type="RayCast2D" parent="." unique_id=564149088]
 target_position = Vector2(72, 0)
 collision_mask = 17
 
-[node name="CloseProbe" type="RayCast2D" parent="." unique_id=847322867]
+[node name="CloseProbe" type="RayCast2D" parent="." unique_id=190825006]
 target_position = Vector2(16, 0)
 collision_mask = 17
 
-[node name="SniperWeapon" parent="." unique_id=1992541327 instance=ExtResource("5_weap")]
+[node name="SnipeWeapon" parent="." unique_id=746458363 instance=ExtResource("5_weap")]
 
-[node name="RingWeapon" parent="." unique_id=1601462234 instance=ExtResource("5_weap")]
+[node name="RingWeapon" parent="." unique_id=335503071 instance=ExtResource("5_weap")]
 
-[node name="FSM" parent="." unique_id=676516466 instance=ExtResource("4_fsm")]
+[node name="FSM" parent="." unique_id=1000208612 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
-state_names = Array[String](["Idle", "Wander", "Approach", "Sniper", "Ring"])
+
+[node name="Idle" type="Node" parent="FSM" unique_id=912555256]
+script = ExtResource("8_idle")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Approach"
+
+[node name="Wander" type="Node" parent="FSM" unique_id=912554261]
+script = ExtResource("9_wander")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Approach"
+speed = 16.0
+
+[node name="Approach" type="Node" parent="FSM" unique_id=1729881054]
+script = ExtResource("10_approach")
+chase_probe_path = NodePath("../../DetectProbe")
+attack_probe_path = NodePath("../../SnipeProbe")
+attack_state = "Snipe"
+
+[node name="Snipe" type="Node" parent="FSM" unique_id=1445830287]
+script = ExtResource("11_sniper")
+detect_probe_path = NodePath("../../DetectProbe")
+sniper_probe_path = NodePath("../../SnipeProbe")
+close_probe_path = NodePath("../../CloseProbe")
+weapon_path = NodePath("../../SnipeWeapon")
+weapon_data = ExtResource("6_snipe")
+charge_time = 2.0
+
+[node name="Ring" type="Node" parent="FSM" unique_id=144721858]
+script = ExtResource("12_ring")
+detect_probe_path = NodePath("../../DetectProbe")
+close_probe_path = NodePath("../../CloseProbe")
+weapon_path = NodePath("../../RingWeapon")
+weapon_data = ExtResource("7_ring")
+retreat_speed = 24.0
