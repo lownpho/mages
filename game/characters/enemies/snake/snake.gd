@@ -7,17 +7,16 @@ var health: int
 @export var weave_frequency: float = 2.0 # Sideways oscillation rate of the S-pattern.
 @export var weave_amplitude: float = 1.3 # Sideways sway strength relative to forward speed.
 
-@export var wander_speed: float = 14.0 ## Speed of the occasional idle stroll.
+@export var wander_speed: float = 14.0 ## Speed while strolling in the Wander state.
 
 # Drives the S-pattern weave during chase.
 var _weave_time: float = 0.0
 var _weave_phase: float = 0.0
 var _weave_retarget: float = 0.0
 
-# Idle wander: alternates between pausing and strolling a random direction.
 var _wander_dir: Vector2 = Vector2.ZERO
-var _wander_timer: float = 0.0
-var _wandering: bool = false
+var _idle_timer: Timer
+var _wander_timer: Timer
 
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
@@ -37,6 +36,10 @@ func _ready() -> void:
 	idle_state.on_enter.connect(_on_idle_enter)
 	idle_state.on_exit.connect(_on_idle_exit)
 	idle_state.on_physics_update.connect(_on_idle_physics_update)
+	var wander_state = $FSM/Wander
+	wander_state.on_enter.connect(_on_wander_enter)
+	wander_state.on_exit.connect(_on_wander_exit)
+	wander_state.on_physics_update.connect(_on_wander_physics_update)
 	var chase_state = $FSM/Chase
 	chase_state.on_enter.connect(_on_chase_enter)
 	chase_state.on_exit.connect(_on_chase_exit)
@@ -46,8 +49,18 @@ func _ready() -> void:
 	attack_state.on_enter.connect(_on_attack_enter)
 	attack_state.on_exit.connect(_on_attack_exit)
 
+	_idle_timer = _make_timer(func(): fsm.transition_to("Wander"))
+	_wander_timer = _make_timer(func(): fsm.transition_to("Idle"))
+
 	# FSM started here to avoid missing the first enter call
 	$FSM.start()
+
+func _make_timer(on_timeout: Callable) -> Timer:
+	var timer := Timer.new()
+	timer.one_shot = true
+	timer.timeout.connect(on_timeout)
+	add_child(timer)
+	return timer
 
 func _get_player_position() -> Vector2:
 	var players = get_tree().get_nodes_in_group("player")
@@ -55,42 +68,43 @@ func _get_player_position() -> Vector2:
 		return global_position
 	return players[0].global_position
 
+func _detect_player() -> bool:
+	detect_probe.look_at(_get_player_position())
+	var detect_collider = detect_probe.get_collider()
+	if detect_collider and detect_collider.is_in_group("player"):
+		fsm.transition_to("Chase")
+		return true
+	return false
+
 func _on_idle_enter() -> void:
 	detect_probe.enabled = true
-	_wandering = false
-	_wander_timer = randf_range(1.5, 4.0)
+	velocity = Vector2.ZERO
+	_idle_timer.start(randf_range(1.5, 4.0))
 	$AnimatedSprite2D.play("idle")
 
 func _on_idle_exit() -> void:
 	detect_probe.enabled = false
+	_idle_timer.stop()
 
 func _on_idle_physics_update(_delta: float) -> void:
-	detect_probe.look_at(_get_player_position())
+	_detect_player()
 
-	var detect_collider = detect_probe.get_collider()
-	if detect_collider and detect_collider.is_in_group("player"):
-		fsm.transition_to("Chase")
+func _on_wander_enter() -> void:
+	detect_probe.enabled = true
+	_wander_dir = Vector2.from_angle(randf() * TAU)
+	_wander_timer.start(randf_range(0.4, 1.2))
+	$AnimatedSprite2D.play("run")
+
+func _on_wander_exit() -> void:
+	detect_probe.enabled = false
+	_wander_timer.stop()
+
+func _on_wander_physics_update(_delta: float) -> void:
+	if _detect_player():
 		return
-
-	_wander(_delta)
-
-# Occasionally strolls a random direction while idle, pausing in between.
-func _wander(delta: float) -> void:
-	_wander_timer -= delta
-	if _wander_timer <= 0.0:
-		_wandering = not _wandering
-		if _wandering:
-			_wander_dir = Vector2.from_angle(randf() * TAU)
-			_wander_timer = randf_range(0.4, 1.2)
-			$AnimatedSprite2D.play("run")
-		else:
-			_wander_dir = Vector2.ZERO
-			_wander_timer = randf_range(1.5, 4.0)
-			$AnimatedSprite2D.play("idle")
-	if _wandering:
-		velocity = _wander_dir * wander_speed
-		move_and_slide()
-		_update_facing(_wander_dir.x)
+	velocity = _wander_dir * wander_speed
+	move_and_slide()
+	_update_facing(_wander_dir.x)
 
 func _on_chase_enter() -> void:
 	chase_probe.enabled = true

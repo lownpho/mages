@@ -1,0 +1,136 @@
+[gd_scene format=3 uid="uid://2g8xcl1nyilj"]
+
+[ext_resource type="Script" uid="uid://cwo4m17ikdswa" path="res://characters/enemies/longleg/longleg.gd" id="1_ll"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://b6ba5cn0bc48j" path="res://characters/enemies/longleg/longlegs.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="5_weap"]
+[ext_resource type="Resource" uid="uid://cwo4m17tbkhua" path="res://characters/enemies/longleg/longleg_sniper.tres" id="6_snipe"]
+[ext_resource type="Resource" uid="uid://ceh1r82p7lxuq" path="res://characters/enemies/longleg/longleg_ring.tres" id="7_ring"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ll"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AT_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ll"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk3")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_run0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run2")
+}],
+"loop": true,
+"name": &"run",
+"speed": 8.0
+}]
+
+[node name="Longleg" type="CharacterBody2D" unique_id=1357700438 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_ll")
+max_health = 30
+retreat_speed = 24.0
+charge_time = 2.0
+sniper_weapon = ExtResource("6_snipe")
+ring_weapon = ExtResource("7_ring")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=369225080]
+shape = SubResource("CircleShape2D_ll")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=270378035]
+sprite_frames = SubResource("SpriteFrames_ll")
+animation = &"run"
+autoplay = "idle"
+
+[node name="Hurtbox" parent="." unique_id=1670849280 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 5.0
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=847322866]
+target_position = Vector2(96, 0)
+collision_mask = 17
+
+[node name="SniperProbe" type="RayCast2D" parent="." unique_id=847322868]
+target_position = Vector2(72, 0)
+collision_mask = 17
+
+[node name="CloseProbe" type="RayCast2D" parent="." unique_id=847322867]
+target_position = Vector2(16, 0)
+collision_mask = 17
+
+[node name="SniperWeapon" parent="." unique_id=1992541327 instance=ExtResource("5_weap")]
+
+[node name="RingWeapon" parent="." unique_id=1601462234 instance=ExtResource("5_weap")]
+
+[node name="FSM" parent="." unique_id=676516466 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+state_names = Array[String](["Idle", "Wander", "Approach", "Sniper", "Ring"])
