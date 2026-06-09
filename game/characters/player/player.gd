@@ -42,6 +42,9 @@ func _ready() -> void:
 	focus_state.on_physics_update.connect(_on_focus_physics_update)
 	focus_state.on_enter.connect(_on_focus_enter)
 	focus_state.on_exit.connect(_on_focus_exit)
+	var cast_state = $FSM/Cast
+	cast_state.on_enter.connect(_on_cast_enter)
+	cast_state.on_exit.connect(_on_cast_exit)
 
 	hurtbox.hurt.connect(_on_hurt)
 
@@ -108,6 +111,16 @@ func _on_focus_physics_update(delta: float) -> void:
 		focus_mana_remainder -= whole
 		mana = mini(mana + whole, max_mana)
 		GlobalEvent.player_mana_changed.emit(mana)
+
+# Spells with a cast time root the player here; SpellCaster drives the
+# transition in and back out when the cast resolves.
+func _on_cast_enter() -> void:
+	can_use_weapon = false
+	velocity = Vector2.ZERO
+	animated_sprite.play("channel")
+
+func _on_cast_exit() -> void:
+	can_use_weapon = true
 
 func _die() -> void:
 	queue_free()

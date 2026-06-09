@@ -53,6 +53,9 @@
 [ext_resource type="Resource" uid="uid://du3ofwl654jwg" path="res://characters/player/weapons/wand/wand3.tres" id="48_5hglh"]
 [ext_resource type="Resource" uid="uid://dwpubkkh14e55" path="res://characters/player/weapons/wand/wand4.tres" id="49_qg546"]
 [ext_resource type="Resource" uid="uid://4fcvmlx13a4a" path="res://characters/player/weapons/wand/wand5.tres" id="50_pf35h"]
+[ext_resource type="Resource" uid="uid://3kojoil7mnhh" path="res://characters/player/spells/fireball/fireball1.tres" id="51_fireball1"]
+[ext_resource type="Resource" uid="uid://cw4l5kuo0b3m8" path="res://characters/player/spells/fireball/fireball2.tres" id="52_fireball2"]
+[ext_resource type="Resource" uid="uid://bgirrijw268x" path="res://characters/player/spells/fireball/fireball3.tres" id="53_fireball3"]
 [ext_resource type="Texture2D" uid="uid://m2u22lgbpc7p" path="res://tilemaps/tilemap_grass.png" id="52_1dgkn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
@@ -686,6 +689,20 @@ item = ExtResource("49_qg546")
 [node name="Wand5" parent="pickups/weapons" unique_id=1142048708 instance=ExtResource("6_pickup")]
 position = Vector2(-260, 280)
 item = ExtResource("50_pf35h")
+
+[node name="spells" type="Node2D" parent="pickups" unique_id=1804923327]
+
+[node name="Fireball1" parent="pickups/spells" unique_id=1287345910 instance=ExtResource("6_pickup")]
+position = Vector2(-340, 310)
+item = ExtResource("51_fireball1")
+
+[node name="Fireball2" parent="pickups/spells" unique_id=946120833 instance=ExtResource("6_pickup")]
+position = Vector2(-320, 310)
+item = ExtResource("52_fireball2")
+
+[node name="Fireball3" parent="pickups/spells" unique_id=1672490552 instance=ExtResource("6_pickup")]
+position = Vector2(-300, 310)
+item = ExtResource("53_fireball3")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -1

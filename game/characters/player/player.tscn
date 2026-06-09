@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://b6f8woc2sylt2" path="res://characters/player/player.png" id="2_c6leb"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
 [ext_resource type="Script" uid="uid://cpxlcam7snap0" path="res://characters/player/player_camera.gd" id="6_cam"]
+[ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
 
 [sub_resource type="Curve" id="Curve_5dc8e"]
 _data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -151,4 +152,7 @@ radius = 4.0
 [node name="FSM" parent="." unique_id=890434761 instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"
 auto_start = true
-state_names = Array[String](["Idle", "Move", "Focus"])
+state_names = Array[String](["Idle", "Move", "Focus", "Cast"])
+
+[node name="SpellCaster" type="Node" parent="." unique_id=1093247518]
+script = ExtResource("7_caster")

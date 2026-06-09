@@ -14,6 +14,7 @@ _scan_rulesets = Array[Dictionary]([{
 &"scan_regex_include": ""
 }])
 _uids_to_string_ids = Dictionary[StringName, StringName]({
+&"uid://3kojoil7mnhh": &"fireball1",
 &"uid://3xmj0rlsuaqr": &"skill_hat2",
 &"uid://4fcvmlx13a4a": &"wand5",
 &"uid://74gh6yh7f1py": &"rune4",
@@ -21,6 +22,7 @@ _uids_to_string_ids = Dictionary[StringName, StringName]({
 &"uid://ba20gfa0wppg3": &"ultimate_robe",
 &"uid://bdnmwu8pcssmo": &"skill_hat1",
 &"uid://bebmjy87byxob": &"health_robe3",
+&"uid://bgirrijw268x": &"fireball3",
 &"uid://blaumr3koblcb": &"mana_robe3",
 &"uid://bm4wl3i4r6uxl": &"health_robe5",
 &"uid://bnp0413il6bh8": &"staff4",
@@ -33,6 +35,7 @@ _uids_to_string_ids = Dictionary[StringName, StringName]({
 &"uid://cjmpm744t7n6h": &"staff1",
 &"uid://cjxcji02rswtb": &"health_robe4",
 &"uid://crw6eatl40i7m": &"skill_hat3",
+&"uid://cw4l5kuo0b3m8": &"fireball2",
 &"uid://d2h6buka54kcn": &"wand2",
 &"uid://d35r7wwbumlr0": &"skill_speed_hat5",
 &"uid://dam52y7jqs7hp": &"mana_robe1",
@@ -62,6 +65,9 @@ _uids_to_string_ids = Dictionary[StringName, StringName]({
 &"uid://vulnsppkvabb": &"mana_robe4"
 })
 _string_ids_to_uids = Dictionary[StringName, StringName]({
+&"fireball1": &"uid://3kojoil7mnhh",
+&"fireball2": &"uid://cw4l5kuo0b3m8",
+&"fireball3": &"uid://bgirrijw268x",
 &"health_robe1": &"uid://dmai2k7j00tt2",
 &"health_robe2": &"uid://ebvbvvwonp16",
 &"health_robe3": &"uid://bebmjy87byxob",

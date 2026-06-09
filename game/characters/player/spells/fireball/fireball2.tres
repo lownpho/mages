@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="FireballResource" format=3 uid="uid://cw4l5kuo0b3m8"]
+
+[ext_resource type="Script" uid="uid://dsg053ok68mjm" path="res://characters/player/spells/fireball/fireball_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://c1fexmsku0oc" path="res://characters/player/spells/fireball/fireball.tscn" id="3_scene"]
+[ext_resource type="Texture2D" uid="uid://bdfchov4uncxh" path="res://characters/player/spells/fireball/fireball_2_explosion.png" id="4_explosion"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex1"]
+atlas = ExtResource("4_explosion")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex2"]
+atlas = ExtResource("4_explosion")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex3"]
+atlas = ExtResource("4_explosion")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_explode"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex3")
+}],
+"loop": false,
+"name": &"explode",
+"speed": 12.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(8, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+range_tiles = 16
+aoe_tiles = 4.0
+explosion_frames = SubResource("SpriteFrames_explode")
+effect_scene = ExtResource("3_scene")
+cooldown = 6.0
+mana_cost = 30
+cast_time = 0.5
+base_damage = 45.0
+skill_scaling = 3.0
+icon = SubResource("AtlasTexture_icon")

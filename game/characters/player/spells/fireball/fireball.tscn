@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://c1fexmsku0oc"]
+
+[ext_resource type="Script" uid="uid://cmc1me0fch6re" path="res://characters/player/spells/fireball/fireball.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dp0oqf5ge1dgl" path="res://components/damage_zone.gd" id="2_zone"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 2.0
+
+[node name="Fireball" type="CharacterBody2D" unique_id=617310371]
+collision_layer = 0
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1596209733]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=885516073]
+shape = SubResource("CircleShape2D_body")
+
+[node name="Explosion" type="Area2D" parent="." unique_id=1601086165]
+collision_layer = 256
+collision_mask = 0
+monitoring = false
+script = ExtResource("2_zone")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Explosion" unique_id=1072927339]
+disabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Explosion" unique_id=1496423391]
+visible = false

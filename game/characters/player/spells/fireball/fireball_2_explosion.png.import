@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddkodux03acrc"
-path="res://.godot/imported/spells.png-bd0c47a6bca67f6ed4fdc08a17c838d4.ctex"
+uid="uid://bdfchov4uncxh"
+path="res://.godot/imported/fireball_2_explosion.png-9be4c9d2ca1541d46b72f0418e4fc5e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://characters/player/spells/spells.png"
-dest_files=["res://.godot/imported/spells.png-bd0c47a6bca67f6ed4fdc08a17c838d4.ctex"]
+source_file="res://characters/player/spells/fireball/fireball_2_explosion.png"
+dest_files=["res://.godot/imported/fireball_2_explosion.png-9be4c9d2ca1541d46b72f0418e4fc5e2.ctex"]
 
 [params]
 
