@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="PiercingLightsResource" format=3 uid="uid://cqf7vhdk2oblv"]
+
+[ext_resource type="Script" uid="uid://c5hj0l041dsxu" path="res://characters/player/spells/piercing_lights/piercing_lights_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://1p4jn3jmprtt" path="res://characters/player/spells/piercing_lights/piercing_lights.tscn" id="3_scene"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="4_bullets"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(56, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_light"]
+atlas = ExtResource("4_bullets")
+region = Rect2(40, 8, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+projectile_count = 14
+projectile_texture = SubResource("AtlasTexture_light")
+effect_scene = ExtResource("3_scene")
+cooldown = 6.0
+mana_cost = 40
+cast_time = 0.5
+base_damage = 25.0
+skill_scaling = 0.3
+icon = SubResource("AtlasTexture_icon")

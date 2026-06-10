@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://1p4jn3jmprtt"]
+
+[ext_resource type="Script" uid="uid://wobvsfhitp5n" path="res://characters/player/spells/piercing_lights/piercing_lights.gd" id="1_script"]
+
+[node name="PiercingLights" type="Node2D"]
+script = ExtResource("1_script")
