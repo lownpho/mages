@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://co8g2e1gvflhe"]
+
+[ext_resource type="Script" uid="uid://c11odeynbhwhh" path="res://characters/player/spells/heal/heal.gd" id="1_script"]
+
+[node name="Heal" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+offset = Vector2(0, -10)

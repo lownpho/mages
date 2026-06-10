@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ZaapResource" format=3 uid="uid://c7aw2incf3pcw"]
+
+[ext_resource type="Script" uid="uid://bayceobs86v6u" path="res://characters/player/spells/zaap/zaap_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_b0ak7"]
+[ext_resource type="PackedScene" uid="uid://b1fi51su1n6r1" path="res://characters/player/spells/zaap/zaap.tscn" id="2_scene"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="3_bullets"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03h40"]
+atlas = ExtResource("2_b0ak7")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bolt"]
+atlas = ExtResource("3_bullets")
+region = Rect2(40, 56, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+projectile_texture = SubResource("AtlasTexture_bolt")
+effect_scene = ExtResource("2_scene")
+cooldown = 2.0
+base_damage = 8.0
+skill_scaling = 0.5
+icon = SubResource("AtlasTexture_03h40")

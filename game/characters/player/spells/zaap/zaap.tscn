@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b1fi51su1n6r1"]
+
+[ext_resource type="Script" uid="uid://bjpjwbfr6h6a3" path="res://characters/player/spells/zaap/zaap.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 1.5
+
+[node name="Zaap" type="CharacterBody2D" unique_id=2078798893 groups=["bullets"]]
+collision_layer = 256
+motion_mode = 1
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1605804675]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=878692422]
+shape = SubResource("CircleShape2D_body")

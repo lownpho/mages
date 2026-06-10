@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SpellResource" format=3 uid="uid://poyvkyjkk6ki"]
+
+[ext_resource type="Script" uid="uid://byx6j10csjj2x" path="res://characters/player/spells/spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://co8g2e1gvflhe" path="res://characters/player/spells/heal/heal.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(8, 24, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+icon = SubResource("AtlasTexture_icon")
+effect_scene = ExtResource("3_scene")
+cooldown = 12.0
+mana_cost = 20
+base_damage = 40.0
+skill_scaling = 0.8

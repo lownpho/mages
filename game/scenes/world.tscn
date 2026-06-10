@@ -60,6 +60,12 @@
 [ext_resource type="Resource" uid="uid://bn7wiuaydrfd2" path="res://characters/player/spells/piercing_lights/piercing_lights1.tres" id="54_pl1"]
 [ext_resource type="Resource" uid="uid://cqf7vhdk2oblv" path="res://characters/player/spells/piercing_lights/piercing_lights2.tres" id="55_pl2"]
 [ext_resource type="Resource" uid="uid://dwwfxtfx0ufa7" path="res://characters/player/spells/piercing_lights/piercing_lights3.tres" id="56_pl3"]
+[ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="57_zaap1"]
+[ext_resource type="Resource" uid="uid://bicoamg44aunv" path="res://characters/player/spells/zaap/zaap2.tres" id="58_zaap2"]
+[ext_resource type="Resource" uid="uid://cbh5sbaucba6f" path="res://characters/player/spells/zaap/zaap3.tres" id="59_zaap3"]
+[ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="60_heal1"]
+[ext_resource type="Resource" uid="uid://poyvkyjkk6ki" path="res://characters/player/spells/heal/heal2.tres" id="61_heal2"]
+[ext_resource type="Resource" uid="uid://3nura1igoypg" path="res://characters/player/spells/heal/heal3.tres" id="62_heal3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -718,6 +724,30 @@ item = ExtResource("55_pl2")
 [node name="PiercingLights3" parent="pickups/spells" unique_id=1576031245 instance=ExtResource("6_pickup")]
 position = Vector2(-320, 151)
 item = ExtResource("56_pl3")
+
+[node name="Zaap1" parent="pickups/spells" unique_id=1854002176 instance=ExtResource("6_pickup")]
+position = Vector2(-300, 151)
+item = ExtResource("57_zaap1")
+
+[node name="Zaap2" parent="pickups/spells" unique_id=1167335428 instance=ExtResource("6_pickup")]
+position = Vector2(-280, 151)
+item = ExtResource("58_zaap2")
+
+[node name="Zaap3" parent="pickups/spells" unique_id=1503328960 instance=ExtResource("6_pickup")]
+position = Vector2(-260, 151)
+item = ExtResource("59_zaap3")
+
+[node name="Heal1" parent="pickups/spells" unique_id=1240871156 instance=ExtResource("6_pickup")]
+position = Vector2(-240, 151)
+item = ExtResource("60_heal1")
+
+[node name="Heal2" parent="pickups/spells" unique_id=2090472413 instance=ExtResource("6_pickup")]
+position = Vector2(-220, 151)
+item = ExtResource("61_heal2")
+
+[node name="Heal3" parent="pickups/spells" unique_id=1409218047 instance=ExtResource("6_pickup")]
+position = Vector2(-200, 151)
+item = ExtResource("62_heal3")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -1
