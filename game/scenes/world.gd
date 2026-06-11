@@ -12,6 +12,6 @@ func _on_item_dropped(item: ItemResource) -> void:
 	var pickup = PickupScene.instantiate()
 	pickup.item = item
 	# This leads to possible items getting stuck in walls.
-	# ddsIt's fun so I'm leaving it in
-	pickup.global_position = player.global_position + Vector2(0, 32)
+	# It's fun so I'm leaving it in
+	pickup.global_position = get_global_mouse_position()
 	add_child(pickup)
