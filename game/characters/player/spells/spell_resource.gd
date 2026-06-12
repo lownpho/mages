@@ -18,6 +18,9 @@ class_name SpellResource
 ## When the button is released, mana runs out, or the cap hits, the caster
 ## calls channel_released() on the effect — channeled effects must implement it.
 @export var channeled: bool = false
+## Channeled only: don't root the caster while channeling — the player keeps
+## moving while the button is held (e.g. Bwoom charging on the move).
+@export var channel_while_moving: bool = false
 @export var base_damage: float = 0.0
 @export var skill_scaling: float = 0.0
 

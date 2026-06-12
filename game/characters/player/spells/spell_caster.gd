@@ -45,22 +45,18 @@ func _try_cast(slot_index: int) -> void:
 	# can_use_weapon doubles as "free to act": false while focusing or mid-cast.
 	if not player.can_use_weapon:
 		return
+	# A moving channel doesn't enter the Cast state, so can_use_weapon can't
+	# block a second cast mid-channel — gate explicitly: one channel at a time.
+	if _channel_spell != null:
+		return
 	if player.mana < spell.mana_cost:
 		return
-
-	# Cooldown commits at cast start — a cast time is a commitment.
-	if not cooldown:
-		cooldown = Timer.new()
-		cooldown.one_shot = true
-		add_child(cooldown)
-		_cooldowns[spell] = cooldown
-	cooldown.start(spell.cooldown)
-	GlobalEvent.spell_cooldown_started.emit(spell, spell.cooldown)
 
 	if spell.channeled:
 		# Channeled: mana drains per second instead of upfront; cast_time is
 		# the channel cap. The effect spawns at press, so aim locks there.
-		player.fsm.transition_to("Cast")
+		if not spell.channel_while_moving:
+			player.fsm.transition_to("Cast")
 		_channel_spell = spell
 		_channel_action = SPELL_ACTIONS[slot_index]
 		_channel_drain = 0.0
@@ -68,19 +64,20 @@ func _try_cast(slot_index: int) -> void:
 		_cast_timer.start(spell.cast_time)
 		return
 
-	# Mana commits at cast start too.
+	# Mana commits at cast start; the cooldown only starts when the cast
+	# resolves — it's downtime after the spell, not overlapping the cast.
 	player.mana -= spell.mana_cost
 	GlobalEvent.player_mana_changed.emit(player.mana)
 
 	if spell.cast_time > 0.0:
 		player.fsm.transition_to("Cast")
 		_cast_timer.start(spell.cast_time)
+		_pending_spell = spell
 		if spell.effect_at_cast_start:
 			_spawn_effect(spell)
-		else:
-			_pending_spell = spell
 	else:
 		_spawn_effect(spell)
+		_start_cooldown(spell)
 
 func _physics_process(delta: float) -> void:
 	if _channel_spell == null:
@@ -96,11 +93,14 @@ func _physics_process(delta: float) -> void:
 
 func _end_channel() -> void:
 	_cast_timer.stop()
+	var spell := _channel_spell
 	if is_instance_valid(_channel_effect):
 		_channel_effect.channel_released()
 	_channel_spell = null
 	_channel_effect = null
-	player.fsm.transition_to("Idle")
+	if not spell.channel_while_moving:
+		player.fsm.transition_to("Idle")
+	_start_cooldown(spell)
 
 func _on_cast_time_finished() -> void:
 	if _channel_spell:
@@ -110,7 +110,19 @@ func _on_cast_time_finished() -> void:
 	_pending_spell = null
 	player.fsm.transition_to("Idle")
 	if spell:
-		_spawn_effect(spell)
+		if not spell.effect_at_cast_start:
+			_spawn_effect(spell)
+		_start_cooldown(spell)
+
+func _start_cooldown(spell: SpellResource) -> void:
+	var cooldown: Timer = _cooldowns.get(spell)
+	if not cooldown:
+		cooldown = Timer.new()
+		cooldown.one_shot = true
+		add_child(cooldown)
+		_cooldowns[spell] = cooldown
+	cooldown.start(spell.cooldown)
+	GlobalEvent.spell_cooldown_started.emit(spell, spell.cooldown)
 
 func _spawn_effect(spell: SpellResource) -> Node:
 	var effect = spell.effect_scene.instantiate()

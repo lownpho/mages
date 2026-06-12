@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BwoomResource" format=3 uid="uid://b6clkhxmrwn8o"]
+
+[ext_resource type="Script" uid="uid://cfg5xm1cwy0n8" path="res://characters/player/spells/bwoom/bwoom_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://dio2ayg65020w" path="res://characters/player/spells/bwoom/bwoom.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(8, 16, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+max_ticks = 4
+effect_scene = ExtResource("3_scene")
+cooldown = 2.0
+mana_cost = 7
+cast_time = 2.0
+channeled = true
+channel_while_moving = true
+base_damage = 25.0
+skill_scaling = 0.7
+icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 10
