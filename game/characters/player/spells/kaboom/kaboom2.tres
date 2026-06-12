@@ -1,21 +1,22 @@
-[gd_resource type="Resource" script_class="FireballResource" format=3 uid="uid://bgirrijw268x"]
+[gd_resource type="Resource" script_class="KaboomResource" format=3 uid="uid://cr2uoor03g27o"]
 
-[ext_resource type="Script" uid="uid://dsg053ok68mjm" path="res://characters/player/spells/fireball/fireball_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dj2wyhacw42w5" path="res://characters/player/spells/kaboom/kaboom_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="PackedScene" uid="uid://c1fexmsku0oc" path="res://characters/player/spells/fireball/fireball.tscn" id="3_scene"]
-[ext_resource type="Texture2D" uid="uid://ce0sp5c7ybwra" path="res://characters/player/spells/fireball/fireball_3_explosion.png" id="4_explosion"]
+[ext_resource type="PackedScene" uid="uid://c5ddnxl0y5ict" path="res://characters/player/spells/kaboom/kaboom.tscn" id="3_scene"]
+[ext_resource type="Texture2D" uid="uid://bdfchov4uncxh" path="res://characters/player/spells/fireball/fireball_2_explosion.png" id="4_explosion"]
+[ext_resource type="Texture2D" uid="uid://i86r1vmqd7bq" path="res://components/mark_3.png" id="5_mark"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ex1"]
 atlas = ExtResource("4_explosion")
-region = Rect2(0, 0, 40, 40)
+region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ex2"]
 atlas = ExtResource("4_explosion")
-region = Rect2(40, 0, 40, 40)
+region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ex3"]
 atlas = ExtResource("4_explosion")
-region = Rect2(80, 0, 40, 40)
+region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_explode"]
 animations = [{
@@ -36,17 +37,19 @@ animations = [{
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(16, 0, 8, 8)
+region = Rect2(32, 0, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-range_tiles = 20
-aoe_tiles = 5.0
+meteor_count = 6
+scatter_radius_tiles = 7.0
+aoe_tiles = 4.0
+mark_texture = ExtResource("5_mark")
 explosion_frames = SubResource("SpriteFrames_explode")
 effect_scene = ExtResource("3_scene")
-cooldown = 6.0
-mana_cost = 30
-cast_time = 0.5
-base_damage = 80.0
-skill_scaling = 4.5
+mana_cost = 1
+cast_time = 2.0
+effect_at_cast_start = true
+base_damage = 25.0
+skill_scaling = 1.5
 icon = SubResource("AtlasTexture_icon")

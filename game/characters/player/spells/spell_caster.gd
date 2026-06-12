@@ -56,9 +56,12 @@ func _try_cast(slot_index: int) -> void:
 	GlobalEvent.spell_cooldown_started.emit(spell, spell.cooldown)
 
 	if spell.cast_time > 0.0:
-		_pending_spell = spell
 		player.fsm.transition_to("Cast")
 		_cast_timer.start(spell.cast_time)
+		if spell.effect_at_cast_start:
+			_spawn_effect(spell)
+		else:
+			_pending_spell = spell
 	else:
 		_spawn_effect(spell)
 
@@ -66,7 +69,8 @@ func _on_cast_time_finished() -> void:
 	var spell := _pending_spell
 	_pending_spell = null
 	player.fsm.transition_to("Idle")
-	_spawn_effect(spell)
+	if spell:
+		_spawn_effect(spell)
 
 func _spawn_effect(spell: SpellResource) -> void:
 	var effect = spell.effect_scene.instantiate()

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c5ddnxl0y5ict"]
+
+[ext_resource type="Script" uid="uid://ckx1tmred0oia" path="res://characters/player/spells/kaboom/kaboom.gd" id="1_script"]
+
+[node name="Kaboom" type="Node2D" unique_id=1455585662]
+script = ExtResource("1_script")

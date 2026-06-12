@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://cy6j5a0xi82rd"]
+
+[ext_resource type="Script" uid="uid://bbqh1obfialpl" path="res://characters/player/spells/kaboom/kaboom_meteor.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cscs3q3tao3iu" path="res://characters/player/spells/kaboom/kaboom.png" id="2_meteor"]
+[ext_resource type="Script" uid="uid://dp0oqf5ge1dgl" path="res://components/damage_zone.gd" id="3_zone"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_burn1"]
+atlas = ExtResource("2_meteor")
+region = Rect2(0, 0, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_burn2"]
+atlas = ExtResource("2_meteor")
+region = Rect2(24, 0, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_burn3"]
+atlas = ExtResource("2_meteor")
+region = Rect2(48, 0, 24, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_burn4"]
+atlas = ExtResource("2_meteor")
+region = Rect2(72, 0, 24, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_burn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_burn1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_burn2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_burn3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_burn4")
+}],
+"loop": true,
+"name": &"burn",
+"speed": 10.0
+}]
+
+[node name="KaboomMeteor" type="Node2D" unique_id=1841044698]
+script = ExtResource("1_script")
+
+[node name="Mark" type="Sprite2D" parent="." unique_id=1675448116]
+
+[node name="Meteor" type="AnimatedSprite2D" parent="." unique_id=1020693372]
+visible = false
+sprite_frames = SubResource("SpriteFrames_burn")
+animation = &"burn"
+offset = Vector2(0, -12)
+
+[node name="Explosion" type="Area2D" parent="." unique_id=1456244992]
+collision_layer = 256
+collision_mask = 0
+monitoring = false
+script = ExtResource("3_zone")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Explosion" unique_id=572277897]
+disabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Explosion" unique_id=1269342787]
+visible = false
