@@ -14,6 +14,7 @@ _scan_rulesets = Array[Dictionary]([{
 &"scan_regex_include": ""
 }])
 _uids_to_string_ids = Dictionary[StringName, StringName]({
+&"uid://22huu82wx4g1": &"nope3",
 &"uid://3kojoil7mnhh": &"fireball1",
 &"uid://3nura1igoypg": &"heal3",
 &"uid://b6clkhxmrwn8o": &"bwoom2",
@@ -32,6 +33,8 @@ _uids_to_string_ids = Dictionary[StringName, StringName]({
 &"uid://cqf7vhdk2oblv": &"piercing_lights2",
 &"uid://cr2uoor03g27o": &"kaboom2",
 &"uid://cw4l5kuo0b3m8": &"fireball2",
+&"uid://de6tt8t2m4xfp": &"nope1",
+&"uid://dlt334256tphc": &"nope2",
 &"uid://dwwfxtfx0ufa7": &"piercing_lights3",
 &"uid://poyvkyjkk6ki": &"heal2",
 &"uid://r6lbmulofea2": &"bwoom1"
@@ -52,6 +55,9 @@ _string_ids_to_uids = Dictionary[StringName, StringName]({
 &"kaboom1": &"uid://bj3gskd3pfqsh",
 &"kaboom2": &"uid://cr2uoor03g27o",
 &"kaboom3": &"uid://biwwkklbbm3qg",
+&"nope1": &"uid://de6tt8t2m4xfp",
+&"nope2": &"uid://dlt334256tphc",
+&"nope3": &"uid://22huu82wx4g1",
 &"piercing_lights1": &"uid://bn7wiuaydrfd2",
 &"piercing_lights2": &"uid://cqf7vhdk2oblv",
 &"piercing_lights3": &"uid://dwwfxtfx0ufa7",

@@ -75,6 +75,9 @@
 [ext_resource type="Resource" uid="uid://r6lbmulofea2" path="res://characters/player/spells/bwoom/bwoom1.tres" id="72_ca4ee"]
 [ext_resource type="Resource" uid="uid://b6clkhxmrwn8o" path="res://characters/player/spells/bwoom/bwoom2.tres" id="73_qaasp"]
 [ext_resource type="Resource" uid="uid://cd0nj2geqlkmk" path="res://characters/player/spells/bwoom/bwoom3.tres" id="74_1v02h"]
+[ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope1.tres" id="75_shehe"]
+[ext_resource type="Resource" uid="uid://dlt334256tphc" path="res://characters/player/spells/nope/nope2.tres" id="76_l137e"]
+[ext_resource type="Resource" uid="uid://22huu82wx4g1" path="res://characters/player/spells/nope/nope3.tres" id="77_ygn2i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -793,6 +796,18 @@ item = ExtResource("73_qaasp")
 [node name="Bwoom3" parent="pickups/spells" unique_id=1586649473 instance=ExtResource("6_pickup")]
 position = Vector2(-387, 104)
 item = ExtResource("74_1v02h")
+
+[node name="Nope1" parent="pickups/spells" unique_id=1151604254 instance=ExtResource("6_pickup")]
+position = Vector2(-481, 170)
+item = ExtResource("75_shehe")
+
+[node name="Nope2" parent="pickups/spells" unique_id=173461186 instance=ExtResource("6_pickup")]
+position = Vector2(-451, 169)
+item = ExtResource("76_l137e")
+
+[node name="Nope3" parent="pickups/spells" unique_id=2092030224 instance=ExtResource("6_pickup")]
+position = Vector2(-420, 170)
+item = ExtResource("77_ygn2i")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -20

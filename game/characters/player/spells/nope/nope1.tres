@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="NopeResource" format=3 uid="uid://de6tt8t2m4xfp"]
+
+[ext_resource type="Script" uid="uid://b33c1ioi23q5l" path="res://characters/player/spells/nope/nope_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://cvfkcv6kg0y48" path="res://characters/player/spells/nope/nope.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(24, 24, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+effect_scene = ExtResource("3_scene")
+cooldown = 2.0
+mana_cost = 0
+channeled = true
+icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 8

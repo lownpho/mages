@@ -17,3 +17,4 @@ const Z_GROUND := -20  # world.tscn ground TileMapLayer
 const Z_GROUND_EFFECTS := -10  # ground decals: brrr.tscn Patch, kaboom_meteor.tscn Mark
 const Z_PICKUPS := 10  # items/pickup_item.tscn root
 const Z_PLAYER := 20  # characters/player/player.tscn root
+const Z_OVERHEAD := 30  # effects floating above characters: nope.tscn root

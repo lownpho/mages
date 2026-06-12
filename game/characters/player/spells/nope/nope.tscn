@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://cvfkcv6kg0y48"]
+
+[ext_resource type="Script" uid="uid://c017bh1haf7br" path="res://characters/player/spells/nope/nope.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b4t307bhjry5q" path="res://characters/player/spells/nope/nope.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_spin"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s3")
+}],
+"loop": true,
+"name": &"spin",
+"speed": 8.0
+}]
+
+[node name="Nope" type="Node2D"]
+z_index = 30
+script = ExtResource("1_script")
+
+[node name="Ring" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_spin")
+animation = &"spin"
+autoplay = "spin"
