@@ -42,12 +42,12 @@ region = Rect2(32, 0, 8, 8)
 [resource]
 script = ExtResource("1_script")
 meteor_count = 6
-scatter_radius_tiles = 7.0
-aoe_tiles = 4.0
+scatter_radius_tiles = 2.0
 mark_texture = ExtResource("5_mark")
 explosion_frames = SubResource("SpriteFrames_explode")
 effect_scene = ExtResource("3_scene")
-mana_cost = 1
+cooldown = 15.0
+mana_cost = 40
 cast_time = 2.0
 effect_at_cast_start = true
 base_damage = 25.0
