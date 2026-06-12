@@ -25,6 +25,9 @@ var speed: int
 var weapon: PlayerWeapon
 var hat: ItemResource
 var robe: ItemResource
+## While set, incoming damage is filtered through its absorb(damage) -> int
+## (the remainder) before touching health — Nope's shield registers here.
+var damage_absorber: Node2D = null
 var can_use_weapon: bool = true
 var focus_time: float = 0.0
 var focus_mana_remainder: float = 0.0
@@ -126,6 +129,10 @@ func _die() -> void:
 	queue_free()
 
 func _on_hurt(damage: int) -> void:
+	if damage_absorber and is_instance_valid(damage_absorber):
+		damage = damage_absorber.absorb(damage)
+		if damage <= 0:
+			return
 	health -= damage
 	health = max(health, 0)
 	GlobalEvent.player_health_changed.emit(health)

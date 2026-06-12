@@ -14,9 +14,10 @@ class_name SpellResource
 ## marking its impact points while the player is still casting).
 @export var effect_at_cast_start: bool = false
 ## Hold-to-channel: the effect spawns at press (aim locks there), mana_cost
-## drains per second while the button is held, and cast_time caps the channel.
-## When the button is released, mana runs out, or the cap hits, the caster
-## calls channel_released() on the effect — channeled effects must implement it.
+## drains per second while the button is held, and cast_time caps the channel
+## (0 = uncapped). When the button is released, mana runs out, or the cap
+## hits, the caster calls channel_released() on the effect — channeled
+## effects must implement it.
 @export var channeled: bool = false
 ## Channeled only: don't root the caster while channeling — the player keeps
 ## moving while the button is held (e.g. Bwoom charging on the move).

@@ -61,7 +61,9 @@ func _try_cast(slot_index: int) -> void:
 		_channel_action = SPELL_ACTIONS[slot_index]
 		_channel_drain = 0.0
 		_channel_effect = _spawn_effect(spell)
-		_cast_timer.start(spell.cast_time)
+		# cast_time == 0 on a channel means no cap — hold as long as you like.
+		if spell.cast_time > 0.0:
+			_cast_timer.start(spell.cast_time)
 		return
 
 	# Mana commits at cast start; the cooldown only starts when the cast

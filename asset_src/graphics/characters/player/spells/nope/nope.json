@@ -1,0 +1,10 @@
+{
+  "source": "asset_src/graphics/characters/player/spells/nope/nope.ase",
+  "frame_width": 24,
+  "frame_height": 24,
+  "animations": [
+    { "name": "default", "row": 0, "frames": 4, "direction": "forward", "durations_ms": [250, 250, 250, 250] }
+  ],
+  "slices": [
+  ]
+}
