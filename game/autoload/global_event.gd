@@ -18,6 +18,8 @@ signal item_picked_up(slot: GlobalInventory.Slot)
 signal equipment_changed(slot: GlobalInventory.Slot)
 # Emitted when a player drops an item from the inventory to the ground
 signal item_dropped(item: ItemResource)
+# Emitted when an enemy dies and a loot roll succeeds, once per dropped item
+signal loot_dropped(item: ItemResource, position: Vector2)
 
 # Spell signals
 # Cooldowns are keyed by the spell resource, not the slot it was cast from.

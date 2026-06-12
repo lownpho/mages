@@ -3,6 +3,8 @@ class_name Enemy
 
 @export var max_health: int = 100
 @export var skill: int = 0
+## Each entry is rolled independently on death, so an enemy can drop several items at once.
+@export var drops: Array[LootDrop] = []
 var health: int
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -50,6 +52,9 @@ func face(dir_x: float) -> void:
 		sprite.flip_h = dir_x < 0.0
 
 func die() -> void:
+	for drop in drops:
+		if drop.roll():
+			GlobalEvent.loot_dropped.emit(drop.item, global_position)
 	queue_free()
 
 func _on_hurt(damage: int) -> void:
