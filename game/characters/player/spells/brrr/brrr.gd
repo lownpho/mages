@@ -24,7 +24,6 @@ func setup(spell: SpellResource, caster: Node2D) -> void:
 	global_position = caster.get_global_mouse_position()
 
 func _ready() -> void:
-	patch.z_index = GameConstants.Z_GROUND_EFFECTS
 	# The last animation frame is this tier's max radius; scale the art to it.
 	var max_diameter := (1 + data.ticks) * 2.0 * GameConstants.PX_PER_TILE
 	patch.scale = Vector2.ONE * (max_diameter / _SHEET_FRAME)

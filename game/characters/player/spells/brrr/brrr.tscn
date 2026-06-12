@@ -93,6 +93,7 @@ animations = [{
 script = ExtResource("1_script")
 
 [node name="Patch" type="AnimatedSprite2D" parent="."]
+z_index = -10
 sprite_frames = SubResource("SpriteFrames_grow")
 animation = &"grow"
 
