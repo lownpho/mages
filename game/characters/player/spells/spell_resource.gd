@@ -13,6 +13,11 @@ class_name SpellResource
 ## sampled at button press and the effect runs during the wind-up (e.g. Kaboom
 ## marking its impact points while the player is still casting).
 @export var effect_at_cast_start: bool = false
+## Hold-to-channel: the effect spawns at press (aim locks there), mana_cost
+## drains per second while the button is held, and cast_time caps the channel.
+## When the button is released, mana runs out, or the cap hits, the caster
+## calls channel_released() on the effect — channeled effects must implement it.
+@export var channeled: bool = false
 @export var base_damage: float = 0.0
 @export var skill_scaling: float = 0.0
 
