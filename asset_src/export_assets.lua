@@ -83,6 +83,33 @@ local function write_json(json_path, src_rel, spr, rows)
       json_escape(row.name), ri - 1, #row.frames, row.direction,
       table.concat(durations, ', '), ri < #rows and ',' or ''))
   end
+  table.insert(lines, '  ],')
+  table.insert(lines, '  "slices": [')
+  for si, slice in ipairs(spr.slices) do
+    local key_lines = {}
+    for ki, key in ipairs(slice.keys) do
+      local b = key.bounds
+      local entry = string.format(
+        '        { "frame": %d, "x": %d, "y": %d, "w": %d, "h": %d',
+        key.frameNumber - 1, b.x, b.y, b.width, b.height)
+      if key.center then
+        local c = key.center
+        entry = entry .. string.format(
+          ', "center": { "x": %d, "y": %d, "w": %d, "h": %d }', c.x, c.y, c.width, c.height)
+      end
+      if key.pivot then
+        entry = entry .. string.format(', "pivot": { "x": %d, "y": %d }', key.pivot.x, key.pivot.y)
+      end
+      entry = entry .. ' }' .. (ki < #slice.keys and ',' or '')
+      table.insert(key_lines, entry)
+    end
+    local keys_str = #key_lines > 0
+      and ('[\n' .. table.concat(key_lines, '\n') .. '\n      ]')
+      or '[]'
+    table.insert(lines, string.format(
+      '    { "name": "%s", "keys": %s }%s',
+      json_escape(slice.name), keys_str, si < #spr.slices and ',' or ''))
+  end
   table.insert(lines, '  ]')
   table.insert(lines, '}')
   local f = assert(io.open(json_path, 'w'))
