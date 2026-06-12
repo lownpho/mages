@@ -5,5 +5,7 @@
   "animations": [
     { "name": "idle", "row": 0, "frames": 2, "direction": "forward", "durations_ms": [250, 250] },
     { "name": "run", "row": 1, "frames": 3, "direction": "forward", "durations_ms": [250, 250, 250] }
+  ],
+  "slices": [
   ]
 }
