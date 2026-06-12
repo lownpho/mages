@@ -156,6 +156,12 @@ func _recompute_stats() -> void:
 		max_mana += robe.max_mana_modifier
 		skill += robe.skill_modifier
 		speed += robe.speed_modifier
+	for slot in GlobalInventory.spell_slots.slots:
+		if slot.item:
+			max_health += slot.item.max_health_modifier
+			max_mana += slot.item.max_mana_modifier
+			skill += slot.item.skill_modifier
+			speed += slot.item.speed_modifier
 
 	health = clamp(health, 0, max_health)
 	mana = clamp(mana, 0, max_mana)

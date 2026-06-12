@@ -19,3 +19,4 @@ channeled = true
 base_damage = 35.0
 skill_scaling = 1.2
 icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 50

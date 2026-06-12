@@ -52,3 +52,4 @@ effect_at_cast_start = true
 base_damage = 15.0
 skill_scaling = 1.0
 icon = SubResource("AtlasTexture_icon")
+skill_modifier = 10

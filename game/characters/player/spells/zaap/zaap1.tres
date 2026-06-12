@@ -21,3 +21,4 @@ cooldown = 2.0
 base_damage = 8.0
 skill_scaling = 0.5
 icon = SubResource("AtlasTexture_03h40")
+max_mana_modifier = 5
