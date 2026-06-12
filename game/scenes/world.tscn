@@ -69,6 +69,9 @@
 [ext_resource type="Resource" uid="uid://bj3gskd3pfqsh" path="res://characters/player/spells/kaboom/kaboom1.tres" id="63_kaboom1"]
 [ext_resource type="Resource" uid="uid://cr2uoor03g27o" path="res://characters/player/spells/kaboom/kaboom2.tres" id="64_kaboom2"]
 [ext_resource type="Resource" uid="uid://biwwkklbbm3qg" path="res://characters/player/spells/kaboom/kaboom3.tres" id="65_kaboom3"]
+[ext_resource type="Resource" uid="uid://c6njha6xqj2jn" path="res://characters/player/spells/brrr/brrr1.tres" id="69_r5yoc"]
+[ext_resource type="Resource" uid="uid://b6cmqivrr7wb6" path="res://characters/player/spells/brrr/brrr2.tres" id="70_1m1ue"]
+[ext_resource type="Resource" uid="uid://caac1mwuuqsd2" path="res://characters/player/spells/brrr/brrr3.tres" id="71_ntuqo"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -763,6 +766,18 @@ item = ExtResource("64_kaboom2")
 [node name="Kaboom3" parent="pickups/spells" unique_id=1277734921 instance=ExtResource("6_pickup")]
 position = Vector2(-390, 124)
 item = ExtResource("65_kaboom3")
+
+[node name="Brr1" parent="pickups/spells" unique_id=1941827906 instance=ExtResource("6_pickup")]
+position = Vector2(-465, 189)
+item = ExtResource("69_r5yoc")
+
+[node name="Brr2" parent="pickups/spells" unique_id=100710547 instance=ExtResource("6_pickup")]
+position = Vector2(-435, 188)
+item = ExtResource("70_1m1ue")
+
+[node name="Brr3" parent="pickups/spells" unique_id=1873300028 instance=ExtResource("6_pickup")]
+position = Vector2(-404, 189)
+item = ExtResource("71_ntuqo")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -1

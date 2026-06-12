@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="BrrrResource" format=3 uid="uid://caac1mwuuqsd2"]
+
+[ext_resource type="Script" uid="uid://dkoln0shhrlof" path="res://characters/player/spells/brrr/brrr_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://b46tj3asnl7f5" path="res://characters/player/spells/brrr/brrr.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(16, 8, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+ticks = 4
+effect_scene = ExtResource("3_scene")
+cooldown = 8.0
+mana_cost = 20
+cast_time = 2.0
+channeled = true
+base_damage = 35.0
+skill_scaling = 1.2
+icon = SubResource("AtlasTexture_icon")
