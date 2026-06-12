@@ -1,0 +1,8 @@
+{
+  "source": "asset_src/graphics/items/drop_indicator.ase",
+  "frame_width": 8,
+  "frame_height": 8,
+  "animations": [
+    { "name": "default", "row": 0, "frames": 6, "direction": "forward", "durations_ms": [500, 500, 500, 500, 500, 500] }
+  ]
+}

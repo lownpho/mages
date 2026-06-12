@@ -1,0 +1,9 @@
+{
+  "source": "asset_src/graphics/characters/enemies/snake/snake.ase",
+  "frame_width": 8,
+  "frame_height": 8,
+  "animations": [
+    { "name": "run", "row": 0, "frames": 4, "direction": "forward", "durations_ms": [100, 100, 100, 100] },
+    { "name": "idle", "row": 1, "frames": 4, "direction": "forward", "durations_ms": [100, 100, 100, 100] }
+  ]
+}

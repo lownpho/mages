@@ -1,0 +1,8 @@
+{
+  "source": "asset_src/graphics/characters/player/spells/fireball/fireball_2_explosion.ase",
+  "frame_width": 32,
+  "frame_height": 32,
+  "animations": [
+    { "name": "default", "row": 0, "frames": 3, "direction": "forward", "durations_ms": [100, 100, 100] }
+  ]
+}
