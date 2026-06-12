@@ -23,3 +23,4 @@ mana_cost = 10
 base_damage = 15.0
 skill_scaling = 0.8
 icon = SubResource("AtlasTexture_lxk23")
+max_mana_modifier = 10

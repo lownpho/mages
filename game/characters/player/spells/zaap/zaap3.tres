@@ -23,3 +23,4 @@ mana_cost = 15
 base_damage = 25.0
 skill_scaling = 1.2
 icon = SubResource("AtlasTexture_f45xv")
+max_mana_modifier = 20

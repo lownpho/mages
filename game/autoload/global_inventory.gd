@@ -34,7 +34,8 @@ class Slot:
 		GlobalEvent.slot_updated.emit(self)
 		if type == GlobalInventory.ItemType.WEAPON \
 				or type == GlobalInventory.ItemType.HAT \
-				or type == GlobalInventory.ItemType.ROBE:
+				or type == GlobalInventory.ItemType.ROBE \
+				or type == GlobalInventory.ItemType.SPELL:
 			GlobalEvent.equipment_changed.emit(self)
 
 class ArraySlot:

@@ -50,3 +50,4 @@ cast_time = 0.5
 base_damage = 80.0
 skill_scaling = 4.5
 icon = SubResource("AtlasTexture_icon")
+skill_modifier = 15
