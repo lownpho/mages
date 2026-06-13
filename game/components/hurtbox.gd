@@ -26,6 +26,7 @@ func _on_hit(node: Node2D) -> void:
 	if node.has_method("get_damage"):
 		damage = node.get_damage()
 		emit_signal("hurt", damage)
+		GlobalEvent.entity_damaged.emit(owner if owner else get_parent(), damage, node)
 	else:
 		print("Node has no get_damage method! Node name: ", node.name)
 
