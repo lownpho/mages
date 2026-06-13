@@ -78,6 +78,8 @@
 [ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope1.tres" id="75_shehe"]
 [ext_resource type="Resource" uid="uid://dlt334256tphc" path="res://characters/player/spells/nope/nope2.tres" id="76_l137e"]
 [ext_resource type="Resource" uid="uid://22huu82wx4g1" path="res://characters/player/spells/nope/nope3.tres" id="77_ygn2i"]
+[ext_resource type="PackedScene" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
+[ext_resource type="PackedScene" path="res://characters/enemies/dummy/dummy.tscn" id="79_dummy"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -488,11 +490,16 @@ script = ExtResource("7_world")
 
 [node name="UI" parent="." unique_id=202505504 instance=ExtResource("5_71j4m")]
 
+[node name="DebugOverlay" parent="." instance=ExtResource("78_dbgov")]
+
 [node name="Player" parent="." unique_id=49056211 instance=ExtResource("1_nnsk1")]
 position = Vector2(399, 524)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=814364381]
 position = Vector2(232, 318)
+
+[node name="Dummy" parent="Enemies" instance=ExtResource("79_dummy")]
+position = Vector2(217, 206)
 
 [node name="SmallDemon" parent="Enemies" unique_id=1323986911 instance=ExtResource("4_k0juu")]
 position = Vector2(140, -22)
