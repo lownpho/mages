@@ -12,3 +12,4 @@ script = ExtResource("1_script")
 icon = SubResource("AtlasTexture_icon")
 max_health_modifier = 80
 max_mana_modifier = 25
+defence_modifier = 5

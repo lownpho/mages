@@ -4,6 +4,10 @@ extends CharacterBody2D
 @export var base_max_mana: int = 100
 @export var base_skill: int = 25
 @export var base_speed: int = 80
+@export var base_defence: int = 0
+## Defence never blocks more than this fraction of a hit, so chip damage from
+## weak enemies always lands and armour can't make you immune.
+@export var defence_floor_fraction: float = 0.25
 @export var focus_mana_per_second: float = 5.0
 @export var focus_ramp_time: float = 3.0
 @export var focus_curve: Curve
@@ -21,6 +25,7 @@ var max_health: int
 var max_mana: int
 var skill: int
 var speed: int
+var defence: int
 
 var weapon: PlayerWeapon
 var hat: ItemResource
@@ -133,6 +138,9 @@ func _on_hurt(damage: int) -> void:
 		damage = damage_absorber.absorb(damage)
 		if damage <= 0:
 			return
+	# Flat per-hit reduction: favours the close-range playstyle (many small hits)
+	# over flat HP, which only buys effective health regardless of hit size.
+	damage = maxi(ceili(damage * defence_floor_fraction), damage - defence)
 	health -= damage
 	health = max(health, 0)
 	GlobalEvent.player_health_changed.emit(health)
@@ -147,28 +155,33 @@ func _recompute_stats() -> void:
 	max_mana = base_max_mana
 	skill = base_skill
 	speed = base_speed
+	defence = base_defence
 
 	if weapon and weapon.data:
 		max_health += weapon.data.max_health_modifier
 		max_mana += weapon.data.max_mana_modifier
 		skill += weapon.data.skill_modifier
 		speed += weapon.data.speed_modifier
+		defence += weapon.data.defence_modifier
 	if hat:
 		max_health += hat.max_health_modifier
 		max_mana += hat.max_mana_modifier
 		skill += hat.skill_modifier
 		speed += hat.speed_modifier
+		defence += hat.defence_modifier
 	if robe:
 		max_health += robe.max_health_modifier
 		max_mana += robe.max_mana_modifier
 		skill += robe.skill_modifier
 		speed += robe.speed_modifier
+		defence += robe.defence_modifier
 	for slot in GlobalInventory.spell_slots.slots:
 		if slot.item:
 			max_health += slot.item.max_health_modifier
 			max_mana += slot.item.max_mana_modifier
 			skill += slot.item.skill_modifier
 			speed += slot.item.speed_modifier
+			defence += slot.item.defence_modifier
 
 	health = clamp(health, 0, max_health)
 	mana = clamp(mana, 0, max_mana)
@@ -183,6 +196,7 @@ func _broadcast_stats() -> void:
 	GlobalEvent.player_mana_changed.emit(mana)
 	GlobalEvent.player_skill_changed.emit(skill)
 	GlobalEvent.player_speed_changed.emit(speed)
+	GlobalEvent.player_defence_changed.emit(defence)
 
 func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
 	match slot.type:
