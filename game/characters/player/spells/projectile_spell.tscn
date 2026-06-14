@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dxco26urewc3w"]
+
+[ext_resource type="Script" uid="uid://e4p7ft8ewb1j" path="res://characters/player/spells/projectile_spell.gd" id="1_script"]
+
+[node name="ProjectileSpell" type="Node2D"]
+script = ExtResource("1_script")

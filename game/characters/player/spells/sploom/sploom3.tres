@@ -1,18 +1,11 @@
-[gd_resource type="Resource" script_class="SploomResource" format=3 uid="uid://dos81uqwao2jf"]
+[gd_resource type="Resource" script_class="ProjectileSpellResource" format=3 uid="uid://dos81uqwao2jf"]
 
-[ext_resource type="Script" uid="uid://ks4jgwx1hvhp" path="res://characters/player/spells/sploom/sploom_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cyfv24cce41fq" path="res://characters/player/spells/projectile_spell_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="PackedScene" uid="uid://b4tbvkprbx7d4" path="res://characters/player/spells/sploom/sploom.tscn" id="3_scene"]
+[ext_resource type="PackedScene" uid="uid://dxco26urewc3w" path="res://characters/player/spells/projectile_spell.tscn" id="3_scene"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="4_bullets"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="5_bullet_res"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_atlas")
-region = Rect2(40, 40, 8, 8)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bomb"]
-atlas = ExtResource("4_bullets")
-region = Rect2(8, 48, 8, 8)
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/weapons/ring_pattern.gd" id="6_ring_pattern"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ring"]
 atlas = ExtResource("4_bullets")
@@ -26,17 +19,36 @@ range_tiles = 4
 speed_tiles = 8
 skill_scaling = 2.0
 
+[sub_resource type="Resource" id="RingPattern_burst"]
+script = ExtResource("6_ring_pattern")
+num_bullets = 12
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bomb"]
+atlas = ExtResource("4_bullets")
+region = Rect2(8, 48, 8, 8)
+
+[sub_resource type="Resource" id="BulletResource_bomb"]
+script = ExtResource("5_bullet_res")
+icon = SubResource("AtlasTexture_bomb")
+base_damage = 60.0
+range_tiles = 14
+speed_tiles = 4
+skill_scaling = 2.0
+homing = true
+homing_weight = 4.0
+explode_radius_tiles = 3.0
+burst_pattern = SubResource("RingPattern_burst")
+burst_bullet = SubResource("BulletResource_ring")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(40, 40, 8, 8)
+
 [resource]
 script = ExtResource("1_script")
-range_tiles = 14
-aoe_tiles = 3.0
-ring_bullets = 12
-ring_bullet = SubResource("BulletResource_ring")
-projectile_texture = SubResource("AtlasTexture_bomb")
+bullet = SubResource("BulletResource_bomb")
 effect_scene = ExtResource("3_scene")
 cooldown = 5.0
 mana_cost = 40
-base_damage = 60.0
-skill_scaling = 2.0
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 15

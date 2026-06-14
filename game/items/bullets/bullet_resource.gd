@@ -8,3 +8,19 @@ class_name BulletResource
 @export var skill_scaling: float = 1.0
 @export var homing: bool = false
 @export var homing_weight: float = 5.0
+
+@export_group("Ricochet")
+## Wall bounces before the bullet dies. Each bounce reflects the velocity off the
+## wall and restarts the range as a fresh leg, so total travel grows with bounces.
+@export var wall_bounces: int = 0
+
+@export_group("On Expire")
+## When the bullet expires (wall, max range, or reaching a hurtbox) it spawns a
+## one-shot AoE blast of this radius (tiles) dealing the bullet's own damage.
+## 0 = no blast.
+@export var explode_radius_tiles: float = 0.0
+## Set together to fire a spray of sub-bullets on expire (e.g. a RingPattern for
+## a bomb's outward burst). The sub-bullets inherit this bullet's collision layer,
+## so an enemy-fired bomb bursts enemy bullets. Either null = no burst.
+@export var burst_pattern: FirePattern
+@export var burst_bullet: BulletResource
