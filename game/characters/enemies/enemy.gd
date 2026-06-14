@@ -3,6 +3,14 @@ class_name Enemy
 
 @export var data: EnemyResource
 
+## Groups this character hunts. Default is the player plus any summons, so enemies
+## split aggro onto the player's minions for free. A summon flips this to the
+## "enemies" group (see halp_minion) — the targeting code below is faction-agnostic.
+@export var target_groups: Array[String] = ["player", "summon"]
+## Physics layer the weapon stamps on bullets it fires. Enemies fire enemy bullets;
+## a summon overrides this to player bullets so its shots hit enemy hurtboxes.
+@export var bullet_collision_layer: int = GameConstants.LAYER_ENEMY_BULLETS
+
 # Mirrored from `data` at _ready so behaviours can read enemy.skill / enemy.max_health
 # directly and damage can mutate health.
 var max_health: int
@@ -32,21 +40,32 @@ func make_timer(on_timeout: Callable) -> Timer:
 	add_child.call_deferred(timer)  # deferred for the same reason as fsm.start()
 	return timer
 
-func get_player() -> Node2D:
-	var players = get_tree().get_nodes_in_group("player")
-	if players.is_empty():
-		return null
-	return players[0]
+# Nearest node across target_groups — the thing this character should attack.
+func get_target() -> Node2D:
+	var nearest: Node2D = null
+	var best := INF
+	for group in target_groups:
+		for node in get_tree().get_nodes_in_group(group):
+			var dist: float = global_position.distance_squared_to(node.global_position)
+			if dist < best:
+				best = dist
+				nearest = node
+	return nearest
 
 func probe_sees(probe: RayCast2D) -> bool:
 	var collider = probe.get_collider()
-	return collider != null and collider.is_in_group("player")
-
-func look_for_player(probe: RayCast2D) -> bool:
-	var player = get_player()
-	if not player:
+	if collider == null:
 		return false
-	probe.look_at(player.global_position)
+	for group in target_groups:
+		if collider.is_in_group(group):
+			return true
+	return false
+
+func look_for_target(probe: RayCast2D) -> bool:
+	var target = get_target()
+	if not target:
+		return false
+	probe.look_at(target.global_position)
 	return probe_sees(probe)
 
 func play(anim: String) -> void:

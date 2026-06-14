@@ -23,7 +23,7 @@ func exit() -> void:
 	_probe.enabled = false
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_player()
+	var player := enemy.get_target()
 	if not player:
 		enemy.fsm.transition_to(out_of_range_state)
 		return

@@ -5,12 +5,17 @@
 --   aseprite -b --script asset_src/export_assets.lua
 --
 -- Sheet layout: one row per animation tag, frames left to right. Untagged
--- sprites export all frames as a single row. Multi-frame sprites also get a
--- .json next to their .ase source describing the rows so animations/positions
--- can be mapped: frame i of row r sits at (i * frame_width, r * frame_height).
+-- sprites export all frames as a single row: frame i of row r sits at
+-- (i * frame_width, r * frame_height).
+--
+-- Multi-frame sprites also emit a .json describing the rows/durations into the
+-- gitignored META dir (mirroring the source tree). It is build *metadata* only —
+-- a regenerable record of the sheet layout — NOT shipped game data: SpriteFrames
+-- are authored in the .tscn that uses each sheet, the same as every other sprite.
 
 local SRC = "asset_src/graphics"
 local DST = "game"
+local META = "asset_src/anim_meta"  -- gitignored; see asset_src/.gitignore
 
 -- icon.ase is not the project icon (game/icon.png is separate artwork) —
 -- keep it out of the pipeline so it doesn't overwrite the real icon.
@@ -85,30 +90,26 @@ local function write_json(json_path, src_rel, spr, rows)
   end
   table.insert(lines, '  ],')
   table.insert(lines, '  "slices": [')
+  -- The Lua API exposes one bounds/center/pivot per Slice (not keyframed), so each
+  -- slice emits a single-element "keys" array at frame 0 — keeping the JSON shape
+  -- stable for readers regardless of how many frames the sprite has.
   for si, slice in ipairs(spr.slices) do
-    local key_lines = {}
-    for ki, key in ipairs(slice.keys) do
-      local b = key.bounds
-      local entry = string.format(
-        '        { "frame": %d, "x": %d, "y": %d, "w": %d, "h": %d',
-        key.frameNumber - 1, b.x, b.y, b.width, b.height)
-      if key.center then
-        local c = key.center
-        entry = entry .. string.format(
-          ', "center": { "x": %d, "y": %d, "w": %d, "h": %d }', c.x, c.y, c.width, c.height)
-      end
-      if key.pivot then
-        entry = entry .. string.format(', "pivot": { "x": %d, "y": %d }', key.pivot.x, key.pivot.y)
-      end
-      entry = entry .. ' }' .. (ki < #slice.keys and ',' or '')
-      table.insert(key_lines, entry)
+    local b = slice.bounds
+    local entry = string.format(
+      '        { "frame": 0, "x": %d, "y": %d, "w": %d, "h": %d',
+      b.x, b.y, b.width, b.height)
+    if slice.center then
+      local c = slice.center
+      entry = entry .. string.format(
+        ', "center": { "x": %d, "y": %d, "w": %d, "h": %d }', c.x, c.y, c.width, c.height)
     end
-    local keys_str = #key_lines > 0
-      and ('[\n' .. table.concat(key_lines, '\n') .. '\n      ]')
-      or '[]'
+    if slice.pivot then
+      entry = entry .. string.format(', "pivot": { "x": %d, "y": %d }', slice.pivot.x, slice.pivot.y)
+    end
+    entry = entry .. ' }'
     table.insert(lines, string.format(
-      '    { "name": "%s", "keys": %s }%s',
-      json_escape(slice.name), keys_str, si < #spr.slices and ',' or ''))
+      '    { "name": "%s", "keys": [\n%s\n      ] }%s',
+      json_escape(slice.name), entry, si < #spr.slices and ',' or ''))
   end
   table.insert(lines, '  ]')
   table.insert(lines, '}')
@@ -148,16 +149,19 @@ local function export_file(src_path)
   end
   sheet:saveAs{ filename = base .. '.png', palette = spr.palettes[1] }
 
-  local animated = #spr.frames > 1 or #spr.tags > 0
-  if animated then
-    local json_path = app.fs.joinPath(app.fs.filePath(src_path),
-                                      app.fs.fileTitle(src_path) .. '.json')
-    write_json(json_path, src_path, spr, rows)
+  -- A static sprite still gets metadata if it carries slices (e.g. an icon
+  -- atlas), since the slice rects are the only way to map them back out. The
+  -- .json mirrors the source tree under META (gitignored), not next to the PNG.
+  local wants_json = #spr.frames > 1 or #spr.tags > 0 or #spr.slices > 0
+  if wants_json then
+    local meta_path = app.fs.joinPath(META, rel):gsub('%.aseprite$', '.json'):gsub('%.ase$', '.json')
+    app.fs.makeAllDirectories(app.fs.filePath(meta_path))
+    write_json(meta_path, rel, spr, rows)
   end
 
   print(string.format('%s -> %s.png  (%dx%d, %d row%s%s)',
     src_path, base, sheet.width, sheet.height,
-    #rows, #rows == 1 and '' or 's', animated and ' + json' or ''))
+    #rows, #rows == 1 and '' or 's', wants_json and ' + json' or ''))
   spr:close()
   return true
 end

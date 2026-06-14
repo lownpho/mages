@@ -26,7 +26,7 @@ func enter() -> void:
 	_shots_left = shot_count
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_player()
+	var player := enemy.get_target()
 	if not player:
 		enemy.fsm.transition_to(done_state)
 		return

@@ -27,7 +27,7 @@ func exit() -> void:
 	_timer.stop()
 
 func physics_update(_delta: float) -> void:
-	if enemy.look_for_player(_detect):
+	if enemy.look_for_target(_detect):
 		enemy.fsm.transition_to(alert_state)
 		return
 	enemy.velocity = _dir * speed

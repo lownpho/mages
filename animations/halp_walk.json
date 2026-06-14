@@ -1,0 +1,54 @@
+{
+  "sprite": "halp",
+  "anim": "walk",
+  "fps": 6,
+  "palette": {
+    "_": null,
+    "h": "#46c0b0",
+    "d": "#2f6db0"
+  },
+  "parts": {},
+  "static_parts": [],
+  "frames": [
+    [
+      "________",
+      "__hhhh__",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "__d__d__",
+      "__d_____"
+    ],
+    [
+      "__hhhh__",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "__d__d__",
+      "__d__d__",
+      "________"
+    ],
+    [
+      "________",
+      "__hhhh__",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "__d__d__",
+      "_____d__"
+    ],
+    [
+      "__hhhh__",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "_hhhhhh_",
+      "__d__d__",
+      "__d__d__",
+      "________"
+    ]
+  ]
+}

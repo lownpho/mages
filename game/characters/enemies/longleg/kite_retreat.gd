@@ -28,7 +28,7 @@ func exit() -> void:
 	_close.enabled = false
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_player()
+	var player := enemy.get_target()
 	if not player:
 		enemy.fsm.transition_to(lost_state)
 		return

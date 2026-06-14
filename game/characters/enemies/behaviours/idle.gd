@@ -6,6 +6,7 @@ class_name Idle
 @export var next_state: String = "Wander"
 @export var min_time: float = 1.5
 @export var max_time: float = 4.0
+@export var idle_anim: String = "idle" ## Played while idling; override for art with different tag names.
 
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
 var _timer: Timer
@@ -18,12 +19,12 @@ func enter() -> void:
 	_detect.enabled = true
 	enemy.velocity = Vector2.ZERO
 	_timer.start(randf_range(min_time, max_time))
-	enemy.play("idle")
+	enemy.play(idle_anim)
 
 func exit() -> void:
 	_detect.enabled = false
 	_timer.stop()
 
 func physics_update(_delta: float) -> void:
-	if enemy.look_for_player(_detect):
+	if enemy.look_for_target(_detect):
 		enemy.fsm.transition_to(alert_state)

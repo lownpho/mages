@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://bgm51iqgos7b5"]
 
-[ext_resource type="Script" path="res://gui/debug_overlay.gd" id="1_dbgov"]
+[ext_resource type="Script" uid="uid://bihjhmmyls2yr" path="res://gui/debug_overlay.gd" id="1_dbgov"]
 [ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="2_dbgov"]
 
-[node name="DebugOverlay" type="CanvasLayer"]
+[node name="DebugOverlay" type="CanvasLayer" unique_id=1391801490]
 layer = 128
 script = ExtResource("1_dbgov")
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="PanelContainer" parent="." unique_id=1009401635]
 unique_name_in_owner = true
 visible = false
+anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -4.0
@@ -19,14 +20,14 @@ offset_bottom = 4.0
 grow_horizontal = 0
 theme = ExtResource("2_dbgov")
 
-[node name="Margin" type="MarginContainer" parent="Panel"]
+[node name="Margin" type="MarginContainer" parent="Panel" unique_id=1093727040]
 layout_mode = 2
 theme_override_constants/margin_left = 3
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 2
 
-[node name="Label" type="Label" parent="Panel/Margin"]
+[node name="Label" type="Label" parent="Panel/Margin" unique_id=1777056590]
 unique_name_in_owner = true
 layout_mode = 2
 text = "DEBUG  F3 hide  Bksp reset"

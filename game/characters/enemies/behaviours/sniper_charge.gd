@@ -41,7 +41,7 @@ func exit() -> void:
 	_charge.stop()  # defensive: clear any pending wind-up on the way out
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_player()
+	var player := enemy.get_target()
 	if player:
 		enemy.face(player.global_position.x - enemy.global_position.x)
 		_detect.look_at(player.global_position)
@@ -68,6 +68,6 @@ func physics_update(_delta: float) -> void:
 	_charge.start(charge_time)
 
 func _fire_shot() -> void:
-	var player := enemy.get_player()
+	var player := enemy.get_target()
 	if player:
 		_weapon.try_fire(enemy.global_position, player.global_position, enemy.skill)
