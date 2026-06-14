@@ -10,6 +10,7 @@ signal player_max_mana_changed(max_mana: int)
 signal player_mana_changed(mana: int)
 signal player_skill_changed(skill: int)
 signal player_speed_changed(speed: int)
+signal player_defence_changed(defence: int)
 
 # Inventory signals
 signal slot_updated(slot: GlobalInventory.Slot)

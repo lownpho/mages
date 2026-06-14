@@ -95,6 +95,7 @@ func _build_text() -> String:
 		lines.append("Mana  %d / %d" % [p.mana, p.max_mana])
 		lines.append("Skill %d" % p.skill)
 		lines.append("Speed %d" % p.speed)
+		lines.append("Def   %d" % p.defence)
 	else:
 		lines.append("(no player)")
 	lines.append("-- DAMAGE DEALT ---------")
