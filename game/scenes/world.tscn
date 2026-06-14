@@ -80,6 +80,15 @@
 [ext_resource type="Resource" uid="uid://22huu82wx4g1" path="res://characters/player/spells/nope/nope3.tres" id="77_ygn2i"]
 [ext_resource type="PackedScene" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" path="res://characters/enemies/dummy/dummy.tscn" id="79_dummy"]
+[ext_resource type="Resource" uid="uid://b60ry47vq88w1" path="res://characters/player/spells/zoing/zoing1.tres" id="80_zoing1"]
+[ext_resource type="Resource" uid="uid://dbjkb4jpiwgjl" path="res://characters/player/spells/zoing/zoing2.tres" id="81_zoing2"]
+[ext_resource type="Resource" uid="uid://ctrsokm82ul8x" path="res://characters/player/spells/zoing/zoing3.tres" id="82_zoing3"]
+[ext_resource type="Resource" uid="uid://bs86safvq1nud" path="res://characters/player/spells/sploom/sploom1.tres" id="83_sploom1"]
+[ext_resource type="Resource" uid="uid://0q30f2pf4ff1" path="res://characters/player/spells/sploom/sploom2.tres" id="84_sploom2"]
+[ext_resource type="Resource" uid="uid://dos81uqwao2jf" path="res://characters/player/spells/sploom/sploom3.tres" id="85_sploom3"]
+[ext_resource type="Resource" uid="uid://dolgh4vcywf8d" path="res://characters/player/spells/sworl/sworl1.tres" id="86_sworl1"]
+[ext_resource type="Resource" uid="uid://csbf5nfq6oof3" path="res://characters/player/spells/sworl/sworl2.tres" id="87_sworl2"]
+[ext_resource type="Resource" uid="uid://ovjb10drh2pe" path="res://characters/player/spells/sworl/sworl3.tres" id="88_sworl3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -815,6 +824,42 @@ item = ExtResource("76_l137e")
 [node name="Nope3" parent="pickups/spells" unique_id=2092030224 instance=ExtResource("6_pickup")]
 position = Vector2(-420, 170)
 item = ExtResource("77_ygn2i")
+
+[node name="Zoing1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-400, 170)
+item = ExtResource("80_zoing1")
+
+[node name="Zoing2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-380, 170)
+item = ExtResource("81_zoing2")
+
+[node name="Zoing3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-360, 170)
+item = ExtResource("82_zoing3")
+
+[node name="Sploom1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-340, 170)
+item = ExtResource("83_sploom1")
+
+[node name="Sploom2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-320, 170)
+item = ExtResource("84_sploom2")
+
+[node name="Sploom3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-300, 170)
+item = ExtResource("85_sploom3")
+
+[node name="Sworl1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-280, 170)
+item = ExtResource("86_sworl1")
+
+[node name="Sworl2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-260, 170)
+item = ExtResource("87_sworl2")
+
+[node name="Sworl3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-240, 170)
+item = ExtResource("88_sworl3")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -20
