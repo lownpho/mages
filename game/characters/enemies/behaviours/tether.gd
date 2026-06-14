@@ -5,7 +5,7 @@ class_name Tether
 # darting off to `alert_state` the moment a target comes within the detect probe. Each
 # unit takes a random orbit phase on enter, so a swarm spreads into a ring instead of
 # stacking on one point (a stack shares a hurtbox and dies to a single bullet). Faction-
-# agnostic: the target is `enemy.get_target()`, the anchor is the nearest `anchor_group`
+# agnostic: the target is `creature.get_target()`, the anchor is the nearest `anchor_group`
 # member. Pair it with a Chase whose `lost_state` points back here so the swarm regroups.
 
 @export var detect_probe_path: NodePath
@@ -21,7 +21,7 @@ var _phase: float = -1.0
 
 func enter() -> void:
 	_detect.enabled = true
-	enemy.play(fly_anim)
+	creature.play(fly_anim)
 	if _phase < 0.0:
 		_phase = randf() * TAU
 
@@ -29,20 +29,20 @@ func exit() -> void:
 	_detect.enabled = false
 
 func physics_update(delta: float) -> void:
-	if enemy.look_for_target(_detect):
-		enemy.fsm.transition_to(alert_state)
+	if creature.look_for_target(_detect):
+		creature.fsm.transition_to(alert_state)
 		return
 	var anchor := _anchor()
 	if not anchor:
-		enemy.velocity = Vector2.ZERO
+		creature.velocity = Vector2.ZERO
 		return
 	_phase += orbit_speed * delta
 	var slot := anchor.global_position + Vector2(orbit_radius, 0).rotated(_phase)
-	var to_slot := slot - enemy.global_position
+	var to_slot := slot - creature.global_position
 	# Proportional chase capped at follow_speed: snappy when far, gentle on the slot.
-	enemy.velocity = (to_slot * 6.0).limit_length(follow_speed)
-	enemy.move_and_slide()
-	enemy.face(to_slot.x)
+	creature.velocity = (to_slot * 6.0).limit_length(follow_speed)
+	creature.move_and_slide()
+	creature.face(to_slot.x)
 
 func _anchor() -> Node2D:
 	var nodes := get_tree().get_nodes_in_group(anchor_group)

@@ -1,9 +1,9 @@
 [gd_scene load_steps=15 format=3 uid="uid://fs7pg6h57wed"]
 
-[ext_resource type="Script" uid="uid://ctihg1jlylx55" path="res://characters/player/spells/summon_minion.gd" id="1_minion"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_minion"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="3_fsm"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="4_weapon"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="4_weapon"]
 [ext_resource type="Script" uid="uid://o5ss1aqyk2tu" path="res://characters/enemies/behaviours/tether.gd" id="5_tether"]
 [ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="6_chase"]
 [ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="7_fire"]

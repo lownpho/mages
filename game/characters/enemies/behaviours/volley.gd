@@ -12,26 +12,26 @@ class_name Volley
 @export var attack_anim: String = "attack"
 @export var done_state: String = "Idle"
 
-@onready var _weapon: EnemyWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureWeapon = get_node(weapon_path)
 var _shots_left: int = 0
 
 func _ready() -> void:
 	super()
 	if weapon_data:
-		_weapon.setup_for_enemy(weapon_data)
+		_weapon.setup_for_creature(weapon_data)
 
 func enter() -> void:
-	enemy.velocity = Vector2.ZERO
-	enemy.play(attack_anim)
+	creature.velocity = Vector2.ZERO
+	creature.play(attack_anim)
 	_shots_left = shot_count
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_target()
+	var player := creature.get_target()
 	if not player:
-		enemy.fsm.transition_to(done_state)
+		creature.fsm.transition_to(done_state)
 		return
-	enemy.face(player.global_position.x - enemy.global_position.x)
-	if _weapon.try_fire(enemy.global_position, player.global_position, enemy.skill):
+	creature.face(player.global_position.x - creature.global_position.x)
+	if _weapon.try_fire(creature.global_position, player.global_position):
 		_shots_left -= 1
 		if _shots_left <= 0:
-			enemy.fsm.transition_to(done_state)
+			creature.fsm.transition_to(done_state)

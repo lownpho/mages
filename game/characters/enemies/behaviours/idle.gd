@@ -13,18 +13,18 @@ var _timer: Timer
 
 func _ready() -> void:
 	super()
-	_timer = enemy.make_timer(func(): enemy.fsm.transition_to(next_state))
+	_timer = creature.make_timer(func(): creature.fsm.transition_to(next_state))
 
 func enter() -> void:
 	_detect.enabled = true
-	enemy.velocity = Vector2.ZERO
+	creature.velocity = Vector2.ZERO
 	_timer.start(randf_range(min_time, max_time))
-	enemy.play(idle_anim)
+	creature.play(idle_anim)
 
 func exit() -> void:
 	_detect.enabled = false
 	_timer.stop()
 
 func physics_update(_delta: float) -> void:
-	if enemy.look_for_target(_detect):
-		enemy.fsm.transition_to(alert_state)
+	if creature.look_for_target(_detect):
+		creature.fsm.transition_to(alert_state)

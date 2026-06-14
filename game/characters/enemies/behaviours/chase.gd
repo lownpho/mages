@@ -14,30 +14,30 @@ class_name Chase
 func enter() -> void:
 	_chase.enabled = true
 	_attack.enabled = true
-	enemy.play(run_anim)
+	creature.play(run_anim)
 
 func exit() -> void:
 	_chase.enabled = false
 	_attack.enabled = false
 
 func physics_update(delta: float) -> void:
-	var player := enemy.get_target()
+	var player := creature.get_target()
 	if not player:
-		enemy.fsm.transition_to(lost_state)
+		creature.fsm.transition_to(lost_state)
 		return
 
-	var to_player := player.global_position - enemy.global_position
+	var to_player := player.global_position - creature.global_position
 	_chase.look_at(player.global_position)
 	_attack.look_at(player.global_position)
-	enemy.face(to_player.x)
+	creature.face(to_player.x)
 
-	if enemy.probe_sees(_attack):
-		enemy.fsm.transition_to(attack_state)
-	elif enemy.probe_sees(_chase):
-		enemy.velocity = _velocity(to_player, delta)
-		enemy.move_and_slide()
+	if creature.probe_sees(_attack):
+		creature.fsm.transition_to(attack_state)
+	elif creature.probe_sees(_chase):
+		creature.velocity = _velocity(to_player, delta)
+		creature.move_and_slide()
 	else:
-		enemy.fsm.transition_to(lost_state)
+		creature.fsm.transition_to(lost_state)
 
 # Movement seam: subclasses (e.g. WeaveChase) override this to change how it closes.
 func _velocity(to_player: Vector2, _delta: float) -> Vector2:

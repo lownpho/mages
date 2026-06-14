@@ -1,21 +1,25 @@
 extends CharacterBody2D
-class_name Enemy
+class_name Creature
 
-@export var data: EnemyResource
+## A faction-agnostic AI combatant (FSM + hurtbox + weapon + targeting), shared by the
+## hostile enemy roster and the player's summoned minions. Hostiles author a `data`
+## resource and drops; summons leave `data` null and have their stats injected by the
+## summon spawner before they enter the tree (see summon_spawner).
+@export var data: CreatureResource
 
-## Groups this character hunts. Default is the player plus any summons, so enemies
+## Groups this creature hunts. Default is the player plus any summons, so enemies
 ## split aggro onto the player's minions for free. A summon flips this to the
-## "enemies" group (see halp_minion) — the targeting code below is faction-agnostic.
+## "enemies" group — the targeting code below is faction-agnostic.
 @export var target_groups: Array[String] = ["player", "summon"]
 ## Physics layer the weapon stamps on bullets it fires. Enemies fire enemy bullets;
 ## a summon overrides this to player bullets so its shots hit enemy hurtboxes.
 @export var bullet_collision_layer: int = GameConstants.LAYER_ENEMY_BULLETS
 
-# Mirrored from `data` at _ready so behaviours can read enemy.skill / enemy.max_health
-# directly and damage can mutate health.
+# Mirrored from `data` at _ready (when present) so behaviours can read
+# creature.max_health directly and damage can mutate health. Summons inject
+# max_health instead of carrying a `data` resource.
 var max_health: int
-var skill: int
-var drops: Array[LootDrop]
+var drops: Array[LootDrop] = []
 var health: int
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -23,9 +27,9 @@ var health: int
 @onready var fsm: FSM = $FSM
 
 func _ready() -> void:
-	max_health = data.max_health
-	skill = data.skill
-	drops = data.drops
+	if data:
+		max_health = data.max_health
+		drops = data.drops
 	health = max_health
 	hurtbox.hurt.connect(_on_hurt)
 	# Deferred: the freshly instantiated tree is still blocked during _ready, so

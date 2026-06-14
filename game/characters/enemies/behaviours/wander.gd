@@ -14,22 +14,22 @@ var _dir: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	super()
-	_timer = enemy.make_timer(func(): enemy.fsm.transition_to(next_state))
+	_timer = creature.make_timer(func(): creature.fsm.transition_to(next_state))
 
 func enter() -> void:
 	_detect.enabled = true
 	_dir = Vector2.from_angle(randf() * TAU)
 	_timer.start(randf_range(min_time, max_time))
-	enemy.play("run")
+	creature.play("run")
 
 func exit() -> void:
 	_detect.enabled = false
 	_timer.stop()
 
 func physics_update(_delta: float) -> void:
-	if enemy.look_for_target(_detect):
-		enemy.fsm.transition_to(alert_state)
+	if creature.look_for_target(_detect):
+		creature.fsm.transition_to(alert_state)
 		return
-	enemy.velocity = _dir * speed
-	enemy.move_and_slide()
-	enemy.face(_dir.x)
+	creature.velocity = _dir * speed
+	creature.move_and_slide()
+	creature.face(_dir.x)

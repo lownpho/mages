@@ -61,7 +61,7 @@ func _collect_tres(dir_path: String, out: PackedStringArray) -> void:
 
 # Most specific class first: spell/hat/robe/weapon all extend ItemResource.
 func _classify(res: Resource) -> String:
-	if res is EnemyResource: return "enemy"
+	if res is CreatureResource: return "enemy"
 	if res is SpellResource: return "spell"
 	if res is HatResource: return "hat"
 	if res is RobeResource: return "robe"

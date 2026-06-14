@@ -30,7 +30,7 @@ func update_fire_rate(speed_scale: float) -> void:
 	# modifiers), which would make wait_time infinite or invalid.
 	fire_timer.wait_time = data.fire_cooldown / maxf(speed_scale, 0.01)
 
-func fire(direction: Vector2, skill: int) -> void:
+func fire(direction: Vector2, skill: int = 0) -> void:
 	if not can_fire or not data or not data.bullet_data or not data.fire_pattern:
 		return
 	# Only look for a target when the weapon actually fires homing bullets.

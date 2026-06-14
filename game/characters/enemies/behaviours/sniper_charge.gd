@@ -18,21 +18,21 @@ class_name SniperCharge
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
 @onready var _sniper: RayCast2D = get_node(sniper_probe_path)
 @onready var _close: RayCast2D = get_node(close_probe_path)
-@onready var _weapon: EnemyWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureWeapon = get_node(weapon_path)
 var _charge: Timer
 
 func _ready() -> void:
 	super()
 	if weapon_data:
-		_weapon.setup_for_enemy(weapon_data)
-	_charge = enemy.make_timer(_fire_shot)
+		_weapon.setup_for_creature(weapon_data)
+	_charge = creature.make_timer(_fire_shot)
 
 func enter() -> void:
 	_detect.enabled = true
 	_sniper.enabled = true
 	_close.enabled = true
-	enemy.velocity = Vector2.ZERO
-	enemy.play("idle")
+	creature.velocity = Vector2.ZERO
+	creature.play("idle")
 
 func exit() -> void:
 	_detect.enabled = false
@@ -41,9 +41,9 @@ func exit() -> void:
 	_charge.stop()  # defensive: clear any pending wind-up on the way out
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_target()
+	var player := creature.get_target()
 	if player:
-		enemy.face(player.global_position.x - enemy.global_position.x)
+		creature.face(player.global_position.x - creature.global_position.x)
 		_detect.look_at(player.global_position)
 		_sniper.look_at(player.global_position)
 		_close.look_at(player.global_position)
@@ -53,21 +53,21 @@ func physics_update(_delta: float) -> void:
 	if not _charge.is_stopped():
 		return
 
-	if not player or not enemy.probe_sees(_detect):
-		enemy.fsm.transition_to(lost_state)
+	if not player or not creature.probe_sees(_detect):
+		creature.fsm.transition_to(lost_state)
 		return
-	if enemy.probe_sees(_close):
-		enemy.fsm.transition_to(too_close_state)
+	if creature.probe_sees(_close):
+		creature.fsm.transition_to(too_close_state)
 		return
-	if not enemy.probe_sees(_sniper):
-		enemy.fsm.transition_to(too_far_state)
+	if not creature.probe_sees(_sniper):
+		creature.fsm.transition_to(too_far_state)
 		return
 
 	# In the band and free to act: arm the next wind-up; it fires via _fire_shot.
-	enemy.play("attack")
+	creature.play("attack")
 	_charge.start(charge_time)
 
 func _fire_shot() -> void:
-	var player := enemy.get_target()
+	var player := creature.get_target()
 	if player:
-		_weapon.try_fire(enemy.global_position, player.global_position, enemy.skill)
+		_weapon.try_fire(creature.global_position, player.global_position)

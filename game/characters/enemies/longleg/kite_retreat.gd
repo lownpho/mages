@@ -11,38 +11,38 @@ class_name KiteRetreat
 
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
 @onready var _close: RayCast2D = get_node(close_probe_path)
-@onready var _weapon: EnemyWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureWeapon = get_node(weapon_path)
 
 func _ready() -> void:
 	super()
 	if weapon_data:
-		_weapon.setup_for_enemy(weapon_data)
+		_weapon.setup_for_creature(weapon_data)
 
 func enter() -> void:
 	_detect.enabled = true
 	_close.enabled = true
-	enemy.play("attack")
+	creature.play("attack")
 
 func exit() -> void:
 	_detect.enabled = false
 	_close.enabled = false
 
 func physics_update(_delta: float) -> void:
-	var player := enemy.get_target()
+	var player := creature.get_target()
 	if not player:
-		enemy.fsm.transition_to(lost_state)
+		creature.fsm.transition_to(lost_state)
 		return
 
-	var to_player := player.global_position - enemy.global_position
-	enemy.face(to_player.x)
+	var to_player := player.global_position - creature.global_position
+	creature.face(to_player.x)
 	_detect.look_at(player.global_position)
 	_close.look_at(player.global_position)
 
-	enemy.velocity = -to_player.normalized() * retreat_speed
-	enemy.move_and_slide()
-	_weapon.try_fire(enemy.global_position, player.global_position, enemy.skill)
+	creature.velocity = -to_player.normalized() * retreat_speed
+	creature.move_and_slide()
+	_weapon.try_fire(creature.global_position, player.global_position)
 
-	if not enemy.probe_sees(_detect):
-		enemy.fsm.transition_to(lost_state)
-	elif not enemy.probe_sees(_close):
-		enemy.fsm.transition_to(regain_state)
+	if not creature.probe_sees(_detect):
+		creature.fsm.transition_to(lost_state)
+	elif not creature.probe_sees(_close):
+		creature.fsm.transition_to(regain_state)

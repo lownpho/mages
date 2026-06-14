@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://dg0l3msc3n300"]
 
-[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="Resource" path="res://characters/enemies/golem/golem_data.tres" id="1_data"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
 [ext_resource type="Texture2D" uid="uid://ca1evdbxy8s54" path="res://characters/enemies/golem/golem.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="5_weap"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://cg0l3mr1ngtr3" path="res://characters/enemies/golem/golem_ring.tres" id="6_ring"]
 [ext_resource type="Resource" uid="uid://cg0l3mv0lltr3" path="res://characters/enemies/golem/golem_volley.tres" id="7_volley"]
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="8_idle"]

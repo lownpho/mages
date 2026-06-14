@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://dvri3pbaf2jes"]
 
-[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/enemies/enemy.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="Resource" path="res://characters/enemies/small_demon/small_demon_data.tres" id="1_data"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_3sbbp"]
 [ext_resource type="Texture2D" uid="uid://c5vsistthr4ym" path="res://characters/enemies/small_demon/small_demon.png" id="3_n43kq"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_8ad34"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="4_bth6n"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="4_bth6n"]
 [ext_resource type="Resource" uid="uid://p7i1gf773t0w" path="res://characters/enemies/small_demon/demon_weapon.tres" id="5_demon"]
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="6_idle"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="7_wander"]

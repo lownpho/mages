@@ -1,32 +1,32 @@
 extends WeaponNode
-class_name EnemyWeapon
+class_name CreatureWeapon
 
 # Which groups this weapon's homing/auto-aim hunts, and the bullet layer it fires
-# on — both inherited from the owning Enemy so the same weapon serves enemies
+# on — both inherited from the owning Creature so the same weapon serves enemies
 # (enemy bullets aimed at the player) and summons (player bullets aimed at enemies).
 var _target_groups: Array[String] = ["player"]
 
-func setup_for_enemy(weapon_data: WeaponResource) -> void:
-	var owner_enemy := _owner_enemy()
-	if owner_enemy:
-		bullet_collision_layer = owner_enemy.bullet_collision_layer
-		_target_groups = owner_enemy.target_groups
+func setup_for_creature(weapon_data: WeaponResource) -> void:
+	var owner_creature := _owner_creature()
+	if owner_creature:
+		bullet_collision_layer = owner_creature.bullet_collision_layer
+		_target_groups = owner_creature.target_groups
 	setup(weapon_data)
 	target_finder = _find_target
 
 # Attempts to fire toward target_position. Returns true if a shot was fired.
-func try_fire(from_position: Vector2, target_position: Vector2, skill: int) -> bool:
+func try_fire(from_position: Vector2, target_position: Vector2) -> bool:
 	if not can_fire:
 		return false
 	var direction = (target_position - from_position).normalized()
-	fire(direction, skill)
+	fire(direction)
 	return true
 
-func _owner_enemy() -> Enemy:
+func _owner_creature() -> Creature:
 	var node: Node = get_parent()
-	while node and not (node is Enemy):
+	while node and not (node is Creature):
 		node = node.get_parent()
-	return node as Enemy
+	return node as Creature
 
 # Returns the nearest target within weapon range, null otherwise.
 func _find_target() -> Node2D:
