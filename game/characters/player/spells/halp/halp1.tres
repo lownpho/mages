@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://w7siv06niypt"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="3_effect"]
+[ext_resource type="PackedScene" uid="uid://vpse15rfm1lx" path="res://characters/player/spells/halp/halp_minion.tscn" id="4_minion"]
+[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="5_weapon"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="6_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
+[ext_resource type="Texture2D" uid="uid://dfbev8nxy1840" path="res://characters/player/spells/halp/halp.png" id="9_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 32, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bullet"]
+atlas = ExtResource("8_bullets")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="Resource" id="BulletData"]
+script = ExtResource("7_bullet")
+icon = SubResource("AtlasTexture_bullet")
+base_damage = 5.0
+range_tiles = 7
+speed_tiles = 8
+skill_scaling = 0.3
+
+[sub_resource type="Resource" id="SinglePattern"]
+script = ExtResource("6_pattern")
+
+[sub_resource type="Resource" id="MinionWeapon"]
+script = ExtResource("5_weapon")
+fire_pattern = SubResource("SinglePattern")
+bullet_data = SubResource("BulletData")
+fire_cooldown = 1.0
+mana_cost = 0
+
+[resource]
+script = ExtResource("1_script")
+minion_scene = ExtResource("4_minion")
+minion_weapon = SubResource("MinionWeapon")
+minion_sheet = ExtResource("9_sheet")
+effect_scene = ExtResource("3_effect")
+cooldown = 14.0
+mana_cost = 15
+cast_time = 0.5
+icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 5

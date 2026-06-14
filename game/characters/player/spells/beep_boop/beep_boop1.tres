@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://dhoyvmsn01w3y"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="3_effect"]
+[ext_resource type="PackedScene" uid="uid://dxhjvr6jun4nc" path="res://characters/player/spells/beep_boop/beep_boop_minion.tscn" id="4_minion"]
+[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="5_weapon"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="6_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
+[ext_resource type="Texture2D" uid="uid://bfa8lwuk82boc" path="res://characters/player/spells/beep_boop/beep_boop_1.png" id="9_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 48, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bolt"]
+atlas = ExtResource("8_bullets")
+region = Rect2(48, 32, 8, 8)
+
+[sub_resource type="Resource" id="BoltData"]
+script = ExtResource("7_bullet")
+icon = SubResource("AtlasTexture_bolt")
+base_damage = 6.0
+range_tiles = 10
+speed_tiles = 12
+skill_scaling = 0.3
+
+[sub_resource type="Resource" id="SinglePattern"]
+script = ExtResource("6_pattern")
+
+[sub_resource type="Resource" id="BoltWeapon"]
+script = ExtResource("5_weapon")
+fire_pattern = SubResource("SinglePattern")
+bullet_data = SubResource("BoltData")
+fire_cooldown = 0.667
+mana_cost = 0
+
+[resource]
+script = ExtResource("1_script")
+minion_scene = ExtResource("4_minion")
+count = 1
+minion_health = 20
+minion_lifetime = 30.0
+minion_weapon = SubResource("BoltWeapon")
+minion_sheet = ExtResource("9_sheet")
+effect_scene = ExtResource("3_effect")
+cooldown = 10.0
+mana_cost = 12
+cast_time = 0.4
+icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 5

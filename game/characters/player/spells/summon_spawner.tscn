@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cnkywqd7j5i1o"]
+
+[ext_resource type="Script" uid="uid://dep6m3mt4cul0" path="res://characters/player/spells/summon_spawner.gd" id="1_spawner"]
+
+[node name="SummonSpawner" type="Node2D"]
+script = ExtResource("1_spawner")

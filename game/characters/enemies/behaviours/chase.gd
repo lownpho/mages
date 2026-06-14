@@ -6,6 +6,7 @@ class_name Chase
 @export var attack_state: String = "Attack"
 @export var lost_state: String = "Idle"
 @export var speed: float = 16.0
+@export var run_anim: String = "run" ## Played while chasing; override for art with different tag names.
 
 @onready var _chase: RayCast2D = get_node(chase_probe_path)
 @onready var _attack: RayCast2D = get_node(attack_probe_path)
@@ -13,14 +14,14 @@ class_name Chase
 func enter() -> void:
 	_chase.enabled = true
 	_attack.enabled = true
-	enemy.play("run")
+	enemy.play(run_anim)
 
 func exit() -> void:
 	_chase.enabled = false
 	_attack.enabled = false
 
 func physics_update(delta: float) -> void:
-	var player := enemy.get_player()
+	var player := enemy.get_target()
 	if not player:
 		enemy.fsm.transition_to(lost_state)
 		return

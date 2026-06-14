@@ -78,8 +78,8 @@
 [ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope1.tres" id="75_shehe"]
 [ext_resource type="Resource" uid="uid://dlt334256tphc" path="res://characters/player/spells/nope/nope2.tres" id="76_l137e"]
 [ext_resource type="Resource" uid="uid://22huu82wx4g1" path="res://characters/player/spells/nope/nope3.tres" id="77_ygn2i"]
-[ext_resource type="PackedScene" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
-[ext_resource type="PackedScene" path="res://characters/enemies/dummy/dummy.tscn" id="79_dummy"]
+[ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
+[ext_resource type="PackedScene" uid="uid://cbaydsp8aq3ea" path="res://characters/enemies/dummy/dummy.tscn" id="79_dummy"]
 [ext_resource type="Resource" uid="uid://b60ry47vq88w1" path="res://characters/player/spells/zoing/zoing1.tres" id="80_zoing1"]
 [ext_resource type="Resource" uid="uid://dbjkb4jpiwgjl" path="res://characters/player/spells/zoing/zoing2.tres" id="81_zoing2"]
 [ext_resource type="Resource" uid="uid://ctrsokm82ul8x" path="res://characters/player/spells/zoing/zoing3.tres" id="82_zoing3"]
@@ -89,6 +89,18 @@
 [ext_resource type="Resource" uid="uid://dolgh4vcywf8d" path="res://characters/player/spells/sworl/sworl1.tres" id="86_sworl1"]
 [ext_resource type="Resource" uid="uid://csbf5nfq6oof3" path="res://characters/player/spells/sworl/sworl2.tres" id="87_sworl2"]
 [ext_resource type="Resource" uid="uid://ovjb10drh2pe" path="res://characters/player/spells/sworl/sworl3.tres" id="88_sworl3"]
+[ext_resource type="Resource" uid="uid://w7siv06niypt" path="res://characters/player/spells/halp/halp1.tres" id="89_halp1"]
+[ext_resource type="Resource" uid="uid://cos4jwa2pohls" path="res://characters/player/spells/halp/halp2.tres" id="90_halp2"]
+[ext_resource type="Resource" uid="uid://bfwuw3s533njh" path="res://characters/player/spells/halp/halp3.tres" id="91_halp3"]
+[ext_resource type="Resource" uid="uid://dyfiiuptqgttr" path="res://characters/player/spells/bzzz/bzzz1.tres" id="92_bzzz1"]
+[ext_resource type="Resource" uid="uid://c2qqc8m5qfmsw" path="res://characters/player/spells/bzzz/bzzz2.tres" id="93_bzzz2"]
+[ext_resource type="Resource" uid="uid://cmswtcwqihode" path="res://characters/player/spells/bzzz/bzzz3.tres" id="94_bzzz3"]
+[ext_resource type="Resource" uid="uid://c1sm2y5p435xa" path="res://characters/player/spells/jimmy/jimmy1.tres" id="95_jimmy1"]
+[ext_resource type="Resource" uid="uid://cf77nr3f15y7d" path="res://characters/player/spells/jimmy/jimmy2.tres" id="96_jimmy2"]
+[ext_resource type="Resource" uid="uid://uni8rmxa7uqp" path="res://characters/player/spells/jimmy/jimmy3.tres" id="97_jimmy3"]
+[ext_resource type="Resource" uid="uid://dhoyvmsn01w3y" path="res://characters/player/spells/beep_boop/beep_boop1.tres" id="98_bb1"]
+[ext_resource type="Resource" uid="uid://pmwk68gv5r6e" path="res://characters/player/spells/beep_boop/beep_boop2.tres" id="99_bb2"]
+[ext_resource type="Resource" uid="uid://c85m1w58fbryx" path="res://characters/player/spells/beep_boop/beep_boop3.tres" id="100_bb3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -499,7 +511,7 @@ script = ExtResource("7_world")
 
 [node name="UI" parent="." unique_id=202505504 instance=ExtResource("5_71j4m")]
 
-[node name="DebugOverlay" parent="." instance=ExtResource("78_dbgov")]
+[node name="DebugOverlay" parent="." unique_id=1590291984 instance=ExtResource("78_dbgov")]
 
 [node name="Player" parent="." unique_id=49056211 instance=ExtResource("1_nnsk1")]
 position = Vector2(399, 524)
@@ -507,7 +519,7 @@ position = Vector2(399, 524)
 [node name="Enemies" type="Node2D" parent="." unique_id=814364381]
 position = Vector2(232, 318)
 
-[node name="Dummy" parent="Enemies" instance=ExtResource("79_dummy")]
+[node name="Dummy" parent="Enemies" unique_id=715026400 instance=ExtResource("79_dummy")]
 position = Vector2(217, 206)
 
 [node name="SmallDemon" parent="Enemies" unique_id=1323986911 instance=ExtResource("4_k0juu")]
@@ -825,41 +837,89 @@ item = ExtResource("76_l137e")
 position = Vector2(-420, 170)
 item = ExtResource("77_ygn2i")
 
-[node name="Zoing1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Zoing1" parent="pickups/spells" unique_id=1956076836 instance=ExtResource("6_pickup")]
 position = Vector2(-400, 170)
 item = ExtResource("80_zoing1")
 
-[node name="Zoing2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Zoing2" parent="pickups/spells" unique_id=2044578062 instance=ExtResource("6_pickup")]
 position = Vector2(-380, 170)
 item = ExtResource("81_zoing2")
 
-[node name="Zoing3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Zoing3" parent="pickups/spells" unique_id=153285140 instance=ExtResource("6_pickup")]
 position = Vector2(-360, 170)
 item = ExtResource("82_zoing3")
 
-[node name="Sploom1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Sploom1" parent="pickups/spells" unique_id=1188561083 instance=ExtResource("6_pickup")]
 position = Vector2(-340, 170)
 item = ExtResource("83_sploom1")
 
-[node name="Sploom2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Sploom2" parent="pickups/spells" unique_id=178010546 instance=ExtResource("6_pickup")]
 position = Vector2(-320, 170)
 item = ExtResource("84_sploom2")
 
-[node name="Sploom3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Sploom3" parent="pickups/spells" unique_id=1846244576 instance=ExtResource("6_pickup")]
 position = Vector2(-300, 170)
 item = ExtResource("85_sploom3")
 
-[node name="Sworl1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Sworl1" parent="pickups/spells" unique_id=989006540 instance=ExtResource("6_pickup")]
 position = Vector2(-280, 170)
 item = ExtResource("86_sworl1")
 
-[node name="Sworl2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Sworl2" parent="pickups/spells" unique_id=2044930047 instance=ExtResource("6_pickup")]
 position = Vector2(-260, 170)
 item = ExtResource("87_sworl2")
 
-[node name="Sworl3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="Sworl3" parent="pickups/spells" unique_id=1170972567 instance=ExtResource("6_pickup")]
 position = Vector2(-240, 170)
 item = ExtResource("88_sworl3")
+
+[node name="Halp1" parent="pickups/spells" unique_id=1147430018 instance=ExtResource("6_pickup")]
+position = Vector2(-523, 124)
+item = ExtResource("89_halp1")
+
+[node name="Halp2" parent="pickups/spells" unique_id=1975591082 instance=ExtResource("6_pickup")]
+position = Vector2(-503, 124)
+item = ExtResource("90_halp2")
+
+[node name="Halp3" parent="pickups/spells" unique_id=392345703 instance=ExtResource("6_pickup")]
+position = Vector2(-483, 124)
+item = ExtResource("91_halp3")
+
+[node name="Bzzz1" parent="pickups/spells" unique_id=979912532 instance=ExtResource("6_pickup")]
+position = Vector2(-523, 109)
+item = ExtResource("92_bzzz1")
+
+[node name="Bzzz2" parent="pickups/spells" unique_id=2019674180 instance=ExtResource("6_pickup")]
+position = Vector2(-503, 109)
+item = ExtResource("93_bzzz2")
+
+[node name="Bzzz3" parent="pickups/spells" unique_id=1455483453 instance=ExtResource("6_pickup")]
+position = Vector2(-483, 109)
+item = ExtResource("94_bzzz3")
+
+[node name="Jimmy1" parent="pickups/spells" unique_id=131673851 instance=ExtResource("6_pickup")]
+position = Vector2(-523, 143)
+item = ExtResource("95_jimmy1")
+
+[node name="Jimmy2" parent="pickups/spells" unique_id=1667182115 instance=ExtResource("6_pickup")]
+position = Vector2(-503, 143)
+item = ExtResource("96_jimmy2")
+
+[node name="Jimmy3" parent="pickups/spells" unique_id=1487887199 instance=ExtResource("6_pickup")]
+position = Vector2(-483, 143)
+item = ExtResource("97_jimmy3")
+
+[node name="BeepBoop1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-463, 143)
+item = ExtResource("98_bb1")
+
+[node name="BeepBoop2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-443, 143)
+item = ExtResource("99_bb2")
+
+[node name="BeepBoop3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+position = Vector2(-423, 143)
+item = ExtResource("100_bb3")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -20

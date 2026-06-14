@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://dxhjvr6jun4nc"]
+
+[ext_resource type="Script" uid="uid://ctihg1jlylx55" path="res://characters/player/spells/summon_minion.gd" id="1_minion"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="3_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/enemies/enemy_weapon.tscn" id="4_weapon"]
+[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="5_idle"]
+[ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="6_fire"]
+[ext_resource type="Texture2D" uid="uid://bfa8lwuk82boc" path="res://characters/player/spells/beep_boop/beep_boop_1.png" id="7_sheet"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bb"]
+radius = 3.0
+
+[sub_resource type="AtlasTexture" id="f0"]
+atlas = ExtResource("7_sheet")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="f1"]
+atlas = ExtResource("7_sheet")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="f2"]
+atlas = ExtResource("7_sheet")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="f3"]
+atlas = ExtResource("7_sheet")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("f0")
+}, {
+"duration": 1.0,
+"texture": SubResource("f1")
+}, {
+"duration": 1.0,
+"texture": SubResource("f2")
+}, {
+"duration": 1.0,
+"texture": SubResource("f3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[node name="BeepBoopMinion" type="CharacterBody2D" unique_id=280006830 groups=["summon"]]
+collision_layer = 16
+motion_mode = 1
+script = ExtResource("1_minion")
+target_groups = Array[String](["enemies"])
+bullet_collision_layer = 256
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1339618180]
+shape = SubResource("CircleShape2D_bb")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1693678488]
+sprite_frames = SubResource("SpriteFrames_bb")
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." unique_id=289410982 instance=ExtResource("2_hurt")]
+collision_mask = 512
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1818805319]
+target_position = Vector2(80, 0)
+collision_mask = 33
+
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=809953095]
+target_position = Vector2(80, 0)
+collision_mask = 33
+
+[node name="Weapon" parent="." unique_id=1603741113 instance=ExtResource("4_weapon")]
+
+[node name="FSM" parent="." unique_id=1779298827 instance=ExtResource("3_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=1330446851]
+script = ExtResource("5_idle")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Attack"
+next_state = "Idle"
+idle_anim = "default"
+
+[node name="Attack" type="Node" parent="FSM" unique_id=165658709]
+script = ExtResource("6_fire")
+weapon_path = NodePath("../../Weapon")
+attack_probe_path = NodePath("../../AttackProbe")
+out_of_range_state = "Idle"
+attack_anim = "default"

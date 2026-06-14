@@ -1,0 +1,55 @@
+{
+  "sprite": "beep_boop_2",
+  "anim": "fire",
+  "fps": 9,
+  "palette": {
+    "_": null,
+    "K": "#3a2c4d",
+    "m": "#8a4fd6",
+    "g": "#e6b3ff"
+  },
+  "parts": {},
+  "static_parts": [],
+  "frames": [
+    [
+      "________",
+      "__KKKK__",
+      "_KmggmK_",
+      "_KmggmK_",
+      "__KKKK__",
+      "___KK___",
+      "___KK___",
+      "__KKKK__"
+    ],
+    [
+      "________",
+      "__KKKK__",
+      "_KmmmmK_",
+      "_KmmmmK_",
+      "__KKKK__",
+      "___KK___",
+      "___KK___",
+      "__KKKK__"
+    ],
+    [
+      "__gggg__",
+      "_gggggg_",
+      "gggggggg",
+      "_gggggg_",
+      "_gggggg_",
+      "__gggg__",
+      "___KK___",
+      "__KKKK__"
+    ],
+    [
+      "________",
+      "__KggK__",
+      "_KggggK_",
+      "_KggggK_",
+      "__KKKK__",
+      "___KK___",
+      "___KK___",
+      "__KKKK__"
+    ]
+  ]
+}
