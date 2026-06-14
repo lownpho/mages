@@ -1,10 +1,13 @@
 extends CharacterBody2D
 class_name Enemy
 
-@export var max_health: int = 100
-@export var skill: int = 0
-## Each entry is rolled independently on death, so an enemy can drop several items at once.
-@export var drops: Array[LootDrop] = []
+@export var data: EnemyResource
+
+# Mirrored from `data` at _ready so behaviours can read enemy.skill / enemy.max_health
+# directly and damage can mutate health.
+var max_health: int
+var skill: int
+var drops: Array[LootDrop]
 var health: int
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -12,6 +15,9 @@ var health: int
 @onready var fsm: FSM = $FSM
 
 func _ready() -> void:
+	max_health = data.max_health
+	skill = data.skill
+	drops = data.drops
 	health = max_health
 	hurtbox.hurt.connect(_on_hurt)
 	# Deferred: the freshly instantiated tree is still blocked during _ready, so
