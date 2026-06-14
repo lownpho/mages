@@ -9,6 +9,7 @@ var target: Node2D
 var skill: int = 0
 
 var lifetime_timer: Timer
+var _bounces_left: int = 0
 
 func _speed() -> float:
 	return data.speed_tiles * GameConstants.PX_PER_TILE
@@ -22,11 +23,13 @@ func _ready() -> void:
 		queue_free()
 		return
 
+	_bounces_left = data.wall_bounces
+
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
 	lifetime_timer.wait_time = lifetime
 	lifetime_timer.autostart = true
-	lifetime_timer.timeout.connect(queue_free)
+	lifetime_timer.timeout.connect(_expire)
 	add_child(lifetime_timer)
 
 	velocity = base_direction * _speed()
@@ -42,11 +45,65 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.lerp(desired * speed, data.homing_weight * delta).normalized() * speed
 		rotation = velocity.angle() + PI / 2
 
-	if move_and_collide(velocity * delta):
-		queue_free()
+	# Terrain is the only thing in a bullet's collision mask, so a collision is
+	# always a wall. Ricochet if any bounces remain — the leg restarts so total
+	# travel grows with bounces — otherwise expire.
+	var collision := move_and_collide(velocity * delta)
+	if collision:
+		if _bounces_left > 0:
+			_bounces_left -= 1
+			velocity = velocity.bounce(collision.get_normal())
+			rotation = velocity.angle() + PI / 2
+			lifetime_timer.start()
+		else:
+			_expire()
 
 func get_damage() -> int:
 	return round(data.base_damage + skill * data.skill_scaling)
 
 func reached_hurtbox() -> void:
+	_expire()
+
+# Single despawn path. Fires the on-expire payload (AoE blast and/or burst spray)
+# if the resource carries one, then frees. A plain bullet has no payload and just
+# frees — identical to the old behaviour.
+func _expire() -> void:
+	if data.explode_radius_tiles > 0.0:
+		_spawn_blast()
+	if data.burst_pattern and data.burst_bullet:
+		_spawn_burst()
 	queue_free()
+
+func _spawn_blast() -> void:
+	var zone := DamageZone.new()
+	zone.damage = get_damage()
+	zone.collision_layer = collision_layer  # faction inherited from this bullet
+	zone.collision_mask = 0
+	zone.monitoring = false
+	zone.position = global_position
+	var shape := CollisionShape2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = data.explode_radius_tiles * GameConstants.PX_PER_TILE / 2.0
+	shape.shape = circle
+	zone.add_child(shape)
+	# Brief life so hurtboxes register the overlap, then it cleans itself up.
+	var life := Timer.new()
+	life.one_shot = true
+	life.autostart = true
+	life.wait_time = 0.1
+	life.timeout.connect(zone.queue_free)
+	zone.add_child(life)
+	# Deferred: _expire can run mid-collision while the tree is busy.
+	get_tree().root.add_child.call_deferred(zone)
+
+func _spawn_burst() -> void:
+	var scene := load("res://items/bullets/base_bullet.tscn") as PackedScene
+	var origin := global_position
+	for dir in data.burst_pattern.get_directions(velocity.normalized()):
+		var bullet = scene.instantiate()
+		bullet.data = data.burst_bullet
+		bullet.collision_layer = collision_layer  # faction inherited
+		bullet.base_direction = dir
+		bullet.skill = skill
+		bullet.position = origin
+		get_tree().root.add_child.call_deferred(bullet)

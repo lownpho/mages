@@ -1,26 +1,31 @@
-[gd_resource type="Resource" script_class="ZoingResource" format=3 uid="uid://b60ry47vq88w1"]
+[gd_resource type="Resource" script_class="ProjectileSpellResource" format=3 uid="uid://b60ry47vq88w1"]
 
-[ext_resource type="Script" uid="uid://bn34jyofhsycc" path="res://characters/player/spells/zoing/zoing_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cyfv24cce41fq" path="res://characters/player/spells/projectile_spell_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="PackedScene" uid="uid://00vls2xl3ayt" path="res://characters/player/spells/zoing/zoing.tscn" id="3_scene"]
+[ext_resource type="PackedScene" uid="uid://dxco26urewc3w" path="res://characters/player/spells/projectile_spell.tscn" id="3_scene"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="4_bullets"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_atlas")
-region = Rect2(48, 8, 8, 8)
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="5_bullet_res"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_proj"]
 atlas = ExtResource("4_bullets")
 region = Rect2(24, 40, 8, 8)
 
+[sub_resource type="Resource" id="BulletResource_main"]
+script = ExtResource("5_bullet_res")
+icon = SubResource("AtlasTexture_proj")
+base_damage = 20.0
+speed_tiles = 18
+wall_bounces = 2
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(48, 8, 8, 8)
+
 [resource]
 script = ExtResource("1_script")
-range_per_leg_tiles = 16
-projectile_texture = SubResource("AtlasTexture_proj")
+bullet = SubResource("BulletResource_main")
 effect_scene = ExtResource("3_scene")
 cooldown = 3.0
 mana_cost = 8
-base_damage = 20.0
-skill_scaling = 1.0
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 3
