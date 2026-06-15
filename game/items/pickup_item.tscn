@@ -22,14 +22,6 @@ region = Rect2(24, 0, 12, 12)
 atlas = ExtResource("2_edkex")
 region = Rect2(36, 0, 12, 12)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_uosow"]
-atlas = ExtResource("2_edkex")
-region = Rect2(48, 0, 12, 12)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_pv4yu"]
-atlas = ExtResource("2_edkex")
-region = Rect2(60, 0, 12, 12)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_d61ir"]
 animations = [{
 "frames": [{
@@ -44,16 +36,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_d61ir")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_uosow")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_pv4yu")
 }],
 "loop": true,
 "name": &"default",
-"speed": 6.0
+"speed": 4.0
 }]
 
 [node name="PickupItem" type="Area2D" unique_id=1941827906]
