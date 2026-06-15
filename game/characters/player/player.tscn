@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
 [ext_resource type="Script" uid="uid://cpxlcam7snap0" path="res://characters/player/player_camera.gd" id="6_cam"]
 [ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
+[ext_resource type="Texture2D" uid="uid://cwj1lrhgbuqph" path="res://characters/player/focus_aura.png" id="8_aura"]
 
 [sub_resource type="Curve" id="Curve_5dc8e"]
 _data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -13,6 +14,42 @@ point_count = 2
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 3.5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura0"]
+atlas = ExtResource("8_aura")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura1"]
+atlas = ExtResource("8_aura")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura2"]
+atlas = ExtResource("8_aura")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura3"]
+atlas = ExtResource("8_aura")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aura"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura3")
+}],
+"loop": true,
+"name": &"flow",
+"speed": 8.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icpky"]
 atlas = ExtResource("2_c6leb")
@@ -139,6 +176,13 @@ sprite_frames = SubResource("SpriteFrames_58jvb")
 animation = &"idle"
 autoplay = "idle"
 metadata/_edit_lock_ = true
+
+[node name="FocusAura" type="AnimatedSprite2D" parent="." unique_id=701338245]
+visible = false
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_aura")
+animation = &"flow"
+autoplay = "flow"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=832949489]
 script = ExtResource("6_cam")

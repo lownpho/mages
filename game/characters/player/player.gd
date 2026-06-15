@@ -15,6 +15,7 @@ extends CharacterBody2D
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var focus_aura: AnimatedSprite2D = $FocusAura
 
 var health: int
 var mana: int
@@ -33,6 +34,11 @@ var robe: ItemResource
 ## While set, incoming damage is filtered through its absorb(damage) -> int
 ## (the remainder) before touching health — Nope's shield registers here.
 var damage_absorber: Node2D = null
+## Timed stat buffs (e.g. Nyoom). Each entry exposes the same *_modifier fields
+## as ItemResource; an effect adds itself on cast and removes itself on expiry,
+## and _recompute_stats folds them in alongside equipment. Generic on purpose —
+## any buff effect reuses it by handing over a modifier-carrying resource.
+var active_buffs: Array = []
 var can_use_weapon: bool = true
 var focus_time: float = 0.0
 var focus_mana_remainder: float = 0.0
@@ -100,9 +106,11 @@ func _on_focus_enter() -> void:
 	focus_time = 0.0
 	focus_mana_remainder = 0.0
 	animated_sprite.play("focus")
+	focus_aura.visible = true
 
 func _on_focus_exit() -> void:
 	can_use_weapon = true
+	focus_aura.visible = false
 
 func _on_focus_physics_update(delta: float) -> void:
 	if Input.is_action_just_released("focus"):
@@ -182,12 +190,32 @@ func _recompute_stats() -> void:
 			skill += slot.item.skill_modifier
 			speed += slot.item.speed_modifier
 			defence += slot.item.defence_modifier
+	for buff in active_buffs:
+		max_health += buff.max_health_modifier
+		max_mana += buff.max_mana_modifier
+		skill += buff.skill_modifier
+		speed += buff.speed_modifier
+		defence += buff.defence_modifier
 
 	health = clamp(health, 0, max_health)
 	mana = clamp(mana, 0, max_mana)
 
 	if weapon:
 		weapon.update_fire_rate(float(speed) / float(base_speed))
+
+# Registers/removes a timed stat buff and refreshes derived stats. The buff is
+# any resource carrying the ItemResource *_modifier fields; the effect that owns
+# it (e.g. Nyoom) calls add on cast and remove when its duration ends.
+func add_buff(buff: ItemResource) -> void:
+	if buff not in active_buffs:
+		active_buffs.append(buff)
+	_recompute_stats()
+	_broadcast_stats()
+
+func remove_buff(buff: ItemResource) -> void:
+	active_buffs.erase(buff)
+	_recompute_stats()
+	_broadcast_stats()
 
 func _broadcast_stats() -> void:
 	GlobalEvent.player_max_health_changed.emit(max_health)
