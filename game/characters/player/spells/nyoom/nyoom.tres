@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="NyoomResource" format=3 uid="uid://comoqy6bl0ob4"]
+
+[ext_resource type="Script" uid="uid://bhwkf2otg6rgt" path="res://characters/player/spells/nyoom/nyoom_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://cokvntpstj137" path="res://characters/player/spells/nyoom/nyoom.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(56, 24, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+effect_scene = ExtResource("3_scene")
+cooldown = 20.0
+mana_cost = 10
+cast_time = 1.0
+icon = SubResource("AtlasTexture_icon")
+speed_modifier = 5

@@ -75,6 +75,8 @@
 [ext_resource type="Resource" uid="uid://r6lbmulofea2" path="res://characters/player/spells/bwoom/bwoom1.tres" id="72_ca4ee"]
 [ext_resource type="Resource" uid="uid://b6clkhxmrwn8o" path="res://characters/player/spells/bwoom/bwoom2.tres" id="73_qaasp"]
 [ext_resource type="Resource" uid="uid://cd0nj2geqlkmk" path="res://characters/player/spells/bwoom/bwoom3.tres" id="74_1v02h"]
+[ext_resource type="Resource" uid="uid://comoqy6bl0ob4" path="res://characters/player/spells/nyoom/nyoom.tres" id="74_ce70q"]
+[ext_resource type="Resource" uid="uid://cqd18e63p5pro" path="res://characters/player/spells/blink/blink.tres" id="75_odf6h"]
 [ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="75_shehe"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://cbaydsp8aq3ea" path="res://characters/enemies/dummy/dummy.tscn" id="79_dummy"]
@@ -811,6 +813,14 @@ item = ExtResource("70_1m1ue")
 position = Vector2(-404, 189)
 item = ExtResource("71_ntuqo")
 
+[node name="Nyoom" parent="pickups/spells" unique_id=1820005924 instance=ExtResource("6_pickup")]
+position = Vector2(-525, 166)
+item = ExtResource("74_ce70q")
+
+[node name="Blink" parent="pickups/spells" unique_id=245412592 instance=ExtResource("6_pickup")]
+position = Vector2(-506, 172)
+item = ExtResource("75_odf6h")
+
 [node name="Bwoom1" parent="pickups/spells" unique_id=1737560108 instance=ExtResource("6_pickup")]
 position = Vector2(-448, 104)
 item = ExtResource("72_ca4ee")
@@ -899,15 +909,15 @@ item = ExtResource("96_jimmy2")
 position = Vector2(-483, 143)
 item = ExtResource("97_jimmy3")
 
-[node name="BeepBoop1" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="BeepBoop1" parent="pickups/spells" unique_id=540172090 instance=ExtResource("6_pickup")]
 position = Vector2(-463, 143)
 item = ExtResource("98_bb1")
 
-[node name="BeepBoop2" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="BeepBoop2" parent="pickups/spells" unique_id=2139853235 instance=ExtResource("6_pickup")]
 position = Vector2(-443, 143)
 item = ExtResource("99_bb2")
 
-[node name="BeepBoop3" parent="pickups/spells" instance=ExtResource("6_pickup")]
+[node name="BeepBoop3" parent="pickups/spells" unique_id=995647263 instance=ExtResource("6_pickup")]
 position = Vector2(-423, 143)
 item = ExtResource("100_bb3")
 
