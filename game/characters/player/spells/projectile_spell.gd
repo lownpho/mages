@@ -16,12 +16,14 @@ var data: ProjectileSpellResource
 var skill: int = 0
 
 var _direction: Vector2 = Vector2.RIGHT
+var _aim_point: Vector2 = Vector2.ZERO
 
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
 	skill = caster.skill
 	global_position = caster.global_position
-	_direction = (caster.get_global_mouse_position() - caster.global_position).normalized()
+	_aim_point = caster.get_global_mouse_position()
+	_direction = (_aim_point - caster.global_position).normalized()
 	if _direction == Vector2.ZERO:
 		_direction = Vector2.RIGHT
 
@@ -38,13 +40,16 @@ func _ready() -> void:
 	get_tree().root.add_child.call_deferred(bullet)
 	queue_free()
 
+# Nearest enemy to the cursor, within the bullet's aim radius. Aiming at empty
+# space locks nothing, so the bullet flies straight in the cast direction.
 func _nearest_enemy() -> Node2D:
+	var aim_px: float = data.bullet.homing_aim_tiles * GameConstants.PX_PER_TILE
+	var best_d: float = aim_px * aim_px
 	var best: Node2D = null
-	var best_d := INF
 	for enemy in get_tree().get_nodes_in_group("enemies"):
 		if enemy.is_queued_for_deletion():
 			continue
-		var d: float = global_position.distance_squared_to(enemy.global_position)
+		var d: float = _aim_point.distance_squared_to(enemy.global_position)
 		if d < best_d:
 			best_d = d
 			best = enemy

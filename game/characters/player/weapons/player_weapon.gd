@@ -33,19 +33,17 @@ func _physics_process(_delta: float) -> void:
 	GlobalEvent.player_mana_changed.emit(owner_ref.mana)
 	fire(direction, owner_ref.skill)
 
-# Targets the enemy closest to the mouse cursor within weapon range.
-# Returns null if no enemy is in range — the bullet flies straight.
+# Targets the enemy closest to the mouse cursor, within the bullet's aim radius
+# of the cursor. Returns null when no enemy is near the cursor — the player is
+# aiming at empty space, so the bullet flies straight.
 func _find_closest_enemy_to_mouse() -> Node2D:
 	var mouse_pos = owner_ref.get_global_mouse_position()
-	# Bullet range is in tiles; convert to pixels to match world distances.
-	var range_px = data.bullet_data.range_tiles * GameConstants.PX_PER_TILE
-	var range_sq = range_px * range_px
+	# Aim radius is in tiles; convert to pixels to match world distances.
+	var aim_px = data.bullet_data.homing_aim_tiles * GameConstants.PX_PER_TILE
+	var aim_sq = aim_px * aim_px
 	var closest: Node2D = null
-	var closest_dist: float = INF
+	var closest_dist: float = aim_sq
 	for enemy in get_tree().get_nodes_in_group("enemies"):
-		# Must be within range of the shooter, not just close to the cursor.
-		if enemy.global_position.distance_squared_to(global_position) > range_sq:
-			continue
 		var dist = enemy.global_position.distance_squared_to(mouse_pos)
 		if dist < closest_dist:
 			closest_dist = dist

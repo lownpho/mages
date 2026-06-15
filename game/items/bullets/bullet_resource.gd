@@ -8,6 +8,12 @@ class_name BulletResource
 @export var skill_scaling: float = 1.0
 @export var homing: bool = false
 @export var homing_weight: float = 5.0
+## Target selection: only lock an enemy within this many tiles of the mouse
+## cursor. Aiming at empty space locks nothing, so the shot flies straight.
+@export var homing_aim_tiles: float = 6.0
+## After travelling this far (tiles) the bullet stops steering and flies
+## straight. 0 = home for a default fraction of range_tiles.
+@export var homing_range_tiles: float = 0.0
 
 @export_group("Ricochet")
 ## Wall bounces before the bullet dies. Each bounce reflects the velocity off the

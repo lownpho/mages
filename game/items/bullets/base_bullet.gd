@@ -10,6 +10,13 @@ var skill: int = 0
 
 var lifetime_timer: Timer
 var _bounces_left: int = 0
+# How far the bullet steers before flying straight, and how far it has flown.
+var _homing_range_px: float = 0.0
+var _distance_travelled: float = 0.0
+
+## Fraction of range_tiles a homing bullet steers for when the resource leaves
+## homing_range_tiles at 0 — it locks on early, then flies straight to the target.
+const _DEFAULT_HOMING_FRACTION := 0.6
 
 func _speed() -> float:
 	return data.speed_tiles * GameConstants.PX_PER_TILE
@@ -25,6 +32,10 @@ func _ready() -> void:
 
 	_bounces_left = data.wall_bounces
 
+	var homing_tiles := data.homing_range_tiles if data.homing_range_tiles > 0.0 \
+		else data.range_tiles * _DEFAULT_HOMING_FRACTION
+	_homing_range_px = homing_tiles * GameConstants.PX_PER_TILE
+
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
 	lifetime_timer.wait_time = lifetime
@@ -39,7 +50,9 @@ func _ready() -> void:
 		$Sprite2D.texture = data.icon
 
 func _physics_process(delta: float) -> void:
-	if data.homing and is_instance_valid(target):
+	# Steer toward the target only within the homing range; beyond it the bullet
+	# keeps its current heading and flies straight.
+	if data.homing and is_instance_valid(target) and _distance_travelled < _homing_range_px:
 		var speed := _speed()
 		var desired := global_position.direction_to(target.global_position)
 		velocity = velocity.lerp(desired * speed, data.homing_weight * delta).normalized() * speed
@@ -48,7 +61,9 @@ func _physics_process(delta: float) -> void:
 	# Terrain is the only thing in a bullet's collision mask, so a collision is
 	# always a wall. Ricochet if any bounces remain — the leg restarts so total
 	# travel grows with bounces — otherwise expire.
-	var collision := move_and_collide(velocity * delta)
+	var motion := velocity * delta
+	var collision := move_and_collide(motion)
+	_distance_travelled += motion.length()
 	if collision:
 		if _bounces_left > 0:
 			_bounces_left -= 1
