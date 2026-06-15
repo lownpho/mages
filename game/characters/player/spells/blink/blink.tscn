@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://2t6gevgl22k"]
+
+[ext_resource type="Script" uid="uid://btbqgproxgk20" path="res://characters/player/spells/blink/blink.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://d6pkej6vhlxx" path="res://characters/player/spells/blink/blink_vanish.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vanish"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2")
+}],
+"loop": false,
+"name": &"vanish",
+"speed": 10.0
+}]
+
+[node name="Blink" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_vanish")
+animation = &"vanish"
