@@ -3,7 +3,7 @@ extends Node2D
 ## Nope channel effect: while the button is held, the caster's incoming damage
 ## drains mana instead of health. It registers itself as the player's
 ## damage_absorber (the hook in Player._on_hurt); channel_released() — button
-## release, mana-out, or the (uncapped) channel ending — unregisters it. The
+## release, mana-out, or the 1-second cap ending the channel — unregisters it. The
 ## shield ring spins overlaid on the caster and flashes on each absorbed hit.
 
 const _FLATTEN_SHADER = preload("res://gui/flatten.gdshader")

@@ -41,7 +41,7 @@ region = Rect2(24, 0, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-scatter_radius_tiles = 1.0
+scatter_radius_tiles = 4.0
 mark_texture = ExtResource("4_fqnpc")
 explosion_frames = SubResource("SpriteFrames_explode")
 effect_scene = ExtResource("3_scene")

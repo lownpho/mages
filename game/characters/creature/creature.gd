@@ -73,7 +73,12 @@ func look_for_target(probe: RayCast2D) -> bool:
 	return probe_sees(probe)
 
 func play(anim: String) -> void:
-	sprite.play(anim)
+	# A summon may lack an animation a behaviour asks for (e.g. a static turret with no
+	# idle tag). Rather than error on the missing anim, lock in place on the current frame.
+	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
+		sprite.play(anim)
+	else:
+		sprite.pause()
 
 func face(dir_x: float) -> void:
 	# Deadzone ignores near-vertical headings so the sprite doesn't flip-flicker.

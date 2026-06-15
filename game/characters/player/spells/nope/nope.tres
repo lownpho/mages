@@ -11,8 +11,9 @@ region = Rect2(24, 24, 8, 8)
 [resource]
 script = ExtResource("1_script")
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
+cooldown = 6.0
 mana_cost = 0
+cast_time = 1.0
 channeled = true
 icon = SubResource("AtlasTexture_icon")
 max_mana_modifier = 8

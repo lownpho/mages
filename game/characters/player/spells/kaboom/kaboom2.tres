@@ -42,7 +42,7 @@ region = Rect2(32, 0, 8, 8)
 [resource]
 script = ExtResource("1_script")
 meteor_count = 6
-scatter_radius_tiles = 2.0
+scatter_radius_tiles = 4.0
 mark_texture = ExtResource("5_mark")
 explosion_frames = SubResource("SpriteFrames_explode")
 effect_scene = ExtResource("3_scene")
