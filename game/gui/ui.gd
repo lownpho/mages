@@ -7,6 +7,7 @@ func _ready() -> void:
 	GlobalEvent.player_mana_changed.connect(_on_player_mana_changed)
 	GlobalEvent.player_skill_changed.connect(_on_player_skill_changed)
 	GlobalEvent.player_speed_changed.connect(_on_player_speed_changed)
+	GlobalEvent.player_defence_changed.connect(_on_player_defence_changed)
 
 	# Assign the ui_slots to the ui_slots
 	var ui_slots = %Bag.get_children()
@@ -36,3 +37,6 @@ func _on_player_skill_changed(skill: int) -> void:
 
 func _on_player_speed_changed(speed: int) -> void:
 	%SpeedValue.value = speed
+
+func _on_player_defence_changed(defence: int) -> void:
+	%DefenceValue.value = defence

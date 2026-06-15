@@ -8,27 +8,27 @@ radius = 4.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_edkex"]
 atlas = ExtResource("2_edkex")
-region = Rect2(0, 0, 8, 8)
+region = Rect2(0, 0, 12, 12)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bklxq"]
 atlas = ExtResource("2_edkex")
-region = Rect2(8, 0, 8, 8)
+region = Rect2(12, 0, 12, 12)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v852d"]
 atlas = ExtResource("2_edkex")
-region = Rect2(16, 0, 8, 8)
+region = Rect2(24, 0, 12, 12)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d61ir"]
 atlas = ExtResource("2_edkex")
-region = Rect2(24, 0, 8, 8)
+region = Rect2(36, 0, 12, 12)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uosow"]
 atlas = ExtResource("2_edkex")
-region = Rect2(32, 0, 8, 8)
+region = Rect2(48, 0, 12, 12)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pv4yu"]
 atlas = ExtResource("2_edkex")
-region = Rect2(40, 0, 8, 8)
+region = Rect2(60, 0, 12, 12)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_d61ir"]
 animations = [{
