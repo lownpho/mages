@@ -13,7 +13,7 @@ region = Rect2(8, 8, 8, 8)
 script = ExtResource("50_bres")
 icon = SubResource("AtlasTexture_poke")
 base_damage = 5.0
-range_tiles = 2
+range_tiles = 4
 speed_tiles = 10
 
 [sub_resource type="Resource" id="SinglePattern_1"]

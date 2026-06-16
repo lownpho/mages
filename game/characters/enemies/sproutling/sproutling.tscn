@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://7wiiiqdn16b3"]
 
-[ext_resource type="Resource" path="res://characters/enemies/sproutling/sproutling_data.tres" id="1_data"]
+[ext_resource type="Resource" uid="uid://plioyxy4mhka" path="res://characters/enemies/sproutling/sproutling_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
 [ext_resource type="Texture2D" uid="uid://bdjd0es466ai5" path="res://characters/enemies/sproutling/sproutling.png" id="3_tex"]

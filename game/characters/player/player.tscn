@@ -15,42 +15,6 @@ point_count = 2
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 3.5
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura0"]
-atlas = ExtResource("8_aura")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura1"]
-atlas = ExtResource("8_aura")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura2"]
-atlas = ExtResource("8_aura")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura3"]
-atlas = ExtResource("8_aura")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_aura"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura3")
-}],
-"loop": true,
-"name": &"flow",
-"speed": 8.0
-}]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_icpky"]
 atlas = ExtResource("2_c6leb")
 region = Rect2(0, 32, 16, 16)
@@ -158,8 +122,43 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura0"]
+atlas = ExtResource("8_aura")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura1"]
+atlas = ExtResource("8_aura")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura2"]
+atlas = ExtResource("8_aura")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura3"]
+atlas = ExtResource("8_aura")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aura"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura3")
+}],
+"loop": true,
+"name": &"flow",
+"speed": 8.0
+}]
+
 [node name="Player" type="CharacterBody2D" unique_id=49056211]
-z_index = 20
 collision_layer = 16
 motion_mode = 1
 script = ExtResource("1_xxgcw")
