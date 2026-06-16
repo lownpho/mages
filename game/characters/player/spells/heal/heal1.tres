@@ -17,4 +17,3 @@ base_damage = 20.0
 skill_scaling = 0.5
 icon = SubResource("AtlasTexture_icon")
 max_health_modifier = 10
-defence_modifier = 1

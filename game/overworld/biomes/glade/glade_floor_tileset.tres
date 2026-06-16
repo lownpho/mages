@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" format=3 uid="uid://dkqvr34u7gybx"]
 
-[ext_resource type="Texture2D" uid="uid://m2u22lgbpc7p" path="res://tilemaps/glade_tileset.png" id="1_sp1ty"]
+[ext_resource type="Texture2D" uid="uid://m2u22lgbpc7p" path="res://overworld/biomes/glade/glade_tileset.png" id="1_sp1ty"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("1_sp1ty")

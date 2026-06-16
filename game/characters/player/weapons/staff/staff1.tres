@@ -33,3 +33,4 @@ bullet_data = SubResource("BulletData_1")
 fire_cooldown = 1.0
 mana_cost = 2
 icon = SubResource("AtlasTexture_icon")
+skill_modifier = 5

@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" format=3 uid="uid://dj6jdkhn5padu"]
 
-[ext_resource type="Texture2D" uid="uid://bg7uxirk5dme0" path="res://tilemaps/glade_decor.png" id="1_o21on"]
-[ext_resource type="Texture2D" uid="uid://xk0iua07mnr5" path="res://tilemaps/glade_tree.png" id="2_xga3p"]
+[ext_resource type="Texture2D" uid="uid://bg7uxirk5dme0" path="res://overworld/biomes/glade/glade_decor.png" id="1_o21on"]
+[ext_resource type="Texture2D" uid="uid://xk0iua07mnr5" path="res://overworld/biomes/glade/glade_tree.png" id="2_xga3p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l4n3p"]
 texture = ExtResource("1_o21on")

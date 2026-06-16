@@ -32,3 +32,4 @@ script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
 bullet_data = SubResource("BulletData_1")
 icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 5
