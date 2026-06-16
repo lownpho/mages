@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SlurpResource" format=3 uid="uid://dn545ldwms4po"]
+
+[ext_resource type="Script" uid="uid://3hauchkixay7" path="res://characters/player/spells/slurp/slurp_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://bwyq2qr3k0v67" path="res://characters/player/spells/slurp/slurp.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(56, 16, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+heal_fraction = 0.75
+effect_scene = ExtResource("3_scene")
+cooldown = 8.0
+cast_time = 3.0
+channeled = true
+base_damage = 18.0
+skill_scaling = 0.6
+icon = SubResource("AtlasTexture_icon")
+max_health_modifier = 12

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwyq2qr3k0v67"]
+
+[ext_resource type="Script" uid="uid://cq6aqpebc25ke" path="res://characters/player/spells/slurp/slurp.gd" id="1_script"]
+
+[node name="Slurp" type="Node2D"]
+script = ExtResource("1_script")

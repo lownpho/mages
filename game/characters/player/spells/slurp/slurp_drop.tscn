@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://baic3gaj8w7kx"]
+
+[ext_resource type="Script" uid="uid://pl0gohoe7ncs" path="res://characters/player/spells/slurp/slurp_drop.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cc5g5gowypyjr" path="res://characters/player/spells/slurp/slurp_drop.png" id="2_tex"]
+
+[node name="SlurpDrop" type="Sprite2D"]
+z_index = 26
+texture = ExtResource("2_tex")
+script = ExtResource("1_script")

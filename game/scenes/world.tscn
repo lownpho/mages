@@ -101,6 +101,9 @@
 [ext_resource type="Resource" uid="uid://dhoyvmsn01w3y" path="res://characters/player/spells/beep_boop/beep_boop1.tres" id="98_bb1"]
 [ext_resource type="Resource" uid="uid://pmwk68gv5r6e" path="res://characters/player/spells/beep_boop/beep_boop2.tres" id="99_bb2"]
 [ext_resource type="Resource" uid="uid://c85m1w58fbryx" path="res://characters/player/spells/beep_boop/beep_boop3.tres" id="100_bb3"]
+[ext_resource type="Resource" uid="uid://bsgryay1nhsbf" path="res://characters/player/spells/slurp/slurp1.tres" id="101_mu18u"]
+[ext_resource type="Resource" uid="uid://dn545ldwms4po" path="res://characters/player/spells/slurp/slurp2.tres" id="102_wui3h"]
+[ext_resource type="Resource" uid="uid://dwmsvf0jnatpx" path="res://characters/player/spells/slurp/slurp3.tres" id="103_qetcs"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e68xj"]
 texture = ExtResource("52_1dgkn")
@@ -918,8 +921,20 @@ position = Vector2(-443, 143)
 item = ExtResource("99_bb2")
 
 [node name="BeepBoop3" parent="pickups/spells" unique_id=995647263 instance=ExtResource("6_pickup")]
-position = Vector2(-423, 143)
+position = Vector2(-465, 208)
 item = ExtResource("100_bb3")
+
+[node name="Slurp1" parent="pickups/spells" unique_id=300506091 instance=ExtResource("6_pickup")]
+position = Vector2(-451, 219)
+item = ExtResource("101_mu18u")
+
+[node name="Slurp2" parent="pickups/spells" unique_id=578130678 instance=ExtResource("6_pickup")]
+position = Vector2(-421, 213)
+item = ExtResource("102_wui3h")
+
+[node name="Slurp3" parent="pickups/spells" unique_id=332294677 instance=ExtResource("6_pickup")]
+position = Vector2(-437, 218)
+item = ExtResource("103_qetcs")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -20

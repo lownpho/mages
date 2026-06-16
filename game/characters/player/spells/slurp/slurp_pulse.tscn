@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://csh786otokf3s"]
+
+[ext_resource type="Script" uid="uid://bwyebbintqljm" path="res://characters/player/spells/slurp/slurp_pulse.gd" id="1_script"]
+
+[node name="SlurpPulse" type="Area2D"]
+collision_layer = 256
+collision_mask = 32
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
