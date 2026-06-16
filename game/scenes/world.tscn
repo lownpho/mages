@@ -2,9 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="PackedScene" uid="uid://dg0l3msc3n300" path="res://characters/enemies/golem/golem.tscn" id="4_golem"]
+[ext_resource type="PackedScene" uid="uid://c4kusco5b3wec" path="res://characters/enemies/hopper/hopper.tscn" id="4_hopper"]
 [ext_resource type="PackedScene" uid="uid://dvri3pbaf2jes" path="res://characters/enemies/small_demon/small_demon.tscn" id="4_k0juu"]
 [ext_resource type="PackedScene" uid="uid://2g8xcl1nyilj" path="res://characters/enemies/longleg/longleg.tscn" id="4_longleg"]
 [ext_resource type="PackedScene" uid="uid://dwdmelhkmivh8" path="res://characters/enemies/snake/snake.tscn" id="4_snake"]
+[ext_resource type="PackedScene" uid="uid://7wiiiqdn16b3" path="res://characters/enemies/sproutling/sproutling.tscn" id="4_sprout"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://characters/player/hats/skill_hat1.tres" id="6_8u370"]
 [ext_resource type="PackedScene" uid="uid://dix81e2eu2yg1" path="res://items/pickup_item.tscn" id="6_pickup"]
@@ -520,7 +522,7 @@ script = ExtResource("7_world")
 [node name="DebugOverlay" parent="." unique_id=1590291984 instance=ExtResource("78_dbgov")]
 
 [node name="Player" parent="." unique_id=49056211 instance=ExtResource("1_nnsk1")]
-position = Vector2(399, 524)
+position = Vector2(273, 435)
 
 [node name="Enemies" type="Node2D" parent="." unique_id=814364381]
 position = Vector2(232, 318)
@@ -554,6 +556,18 @@ position = Vector2(386, -12)
 
 [node name="Golem" parent="Enemies" unique_id=1544245066 instance=ExtResource("4_golem")]
 position = Vector2(480, 188)
+
+[node name="Hopper" parent="Enemies" unique_id=1090423590 instance=ExtResource("4_hopper")]
+position = Vector2(-60, 120)
+
+[node name="Hopper2" parent="Enemies" unique_id=274675652 instance=ExtResource("4_hopper")]
+position = Vector2(-51, 106)
+
+[node name="Sproutling" parent="Enemies" unique_id=647542971 instance=ExtResource("4_sprout")]
+position = Vector2(-96, 70)
+
+[node name="Sproutling2" parent="Enemies" unique_id=146620379 instance=ExtResource("4_sprout")]
+position = Vector2(63, 84)
 
 [node name="pickups" type="Node2D" parent="." unique_id=947830532]
 position = Vector2(852, 359)
