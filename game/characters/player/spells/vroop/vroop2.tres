@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="VroopResource" format=3 uid="uid://c5dq3ha2hdqsq"]
+
+[ext_resource type="Script" uid="uid://bartkmol2bcdm" path="res://characters/player/spells/vroop/vroop_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://cq67xab8umaxr" path="res://characters/player/spells/vroop/vroop.tscn" id="3_scene"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(32, 16, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+effect_scene = ExtResource("3_scene")
+cooldown = 6.0
+mana_cost = 6
+cast_time = 4.0
+channeled = true
+channel_while_moving = true
+pull_radius_tiles = 5.0
+icon = SubResource("AtlasTexture_icon")
+max_mana_modifier = 25

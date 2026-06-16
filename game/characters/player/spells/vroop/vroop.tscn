@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cq67xab8umaxr"]
+
+[ext_resource type="Script" uid="uid://gmtbkc5titcl" path="res://characters/player/spells/vroop/vroop.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://gn8uaw244nu" path="res://characters/player/spells/vroop/vroop.png" id="2_swirl"]
+
+[node name="Vroop" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Swirl" type="Sprite2D" parent="."]
+z_index = -10
+texture = ExtResource("2_swirl")
