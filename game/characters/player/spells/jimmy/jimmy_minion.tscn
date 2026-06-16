@@ -28,6 +28,14 @@ region = Rect2(32, 16, 16, 16)
 atlas = ExtResource("8_sheet")
 region = Rect2(48, 16, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_07j3d"]
+atlas = ExtResource("8_sheet")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qxymw"]
+atlas = ExtResource("8_sheet")
+region = Rect2(16, 16, 16, 16)
+
 [sub_resource type="AtlasTexture" id="walk0"]
 atlas = ExtResource("8_sheet")
 region = Rect2(0, 0, 16, 16)
@@ -61,7 +69,18 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 10.0
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07j3d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxymw")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -78,7 +97,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk",
-"speed": 6.0
+"speed": 3.0
 }]
 
 [node name="JimmyMinion" type="CharacterBody2D" unique_id=295943621 groups=["summon"]]
@@ -93,7 +112,7 @@ shape = SubResource("CircleShape2D_jimmy")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1508289973]
 sprite_frames = SubResource("SpriteFrames_jimmy")
-animation = &"walk"
+animation = &"idle"
 offset = Vector2(0, -5)
 
 [node name="Hurtbox" parent="." unique_id=1587198766 instance=ExtResource("2_hurt")]
@@ -121,7 +140,6 @@ initial_state = "Idle"
 script = ExtResource("5_idle")
 detect_probe_path = NodePath("../../DetectProbe")
 next_state = "Idle"
-idle_anim = "walk"
 
 [node name="Chase" type="Node" parent="FSM" unique_id=1759948905]
 script = ExtResource("6_chase")

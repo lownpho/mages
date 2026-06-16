@@ -27,6 +27,14 @@ region = Rect2(16, 0, 8, 8)
 atlas = ExtResource("7_sheet")
 region = Rect2(24, 0, 8, 8)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ps5ts"]
+atlas = ExtResource("7_sheet")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2puh"]
+atlas = ExtResource("7_sheet")
+region = Rect2(8, 0, 8, 8)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_bb"]
 animations = [{
 "frames": [{
@@ -43,8 +51,19 @@ animations = [{
 "texture": SubResource("f3")
 }],
 "loop": true,
-"name": &"default",
+"name": &"attack",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ps5ts")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a2puh")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.0
 }]
 
 [node name="BeepBoopMinion" type="CharacterBody2D" unique_id=280006830 groups=["summon"]]
@@ -59,6 +78,7 @@ shape = SubResource("CircleShape2D_bb")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1693678488]
 sprite_frames = SubResource("SpriteFrames_bb")
+animation = &"idle"
 offset = Vector2(0, -2)
 
 [node name="Hurtbox" parent="." unique_id=289410982 instance=ExtResource("2_hurt")]
@@ -82,11 +102,10 @@ script = ExtResource("5_idle")
 detect_probe_path = NodePath("../../DetectProbe")
 alert_state = "Attack"
 next_state = "Idle"
-idle_anim = "default"
 
 [node name="Attack" type="Node" parent="FSM" unique_id=165658709]
 script = ExtResource("6_fire")
 weapon_path = NodePath("../../Weapon")
 attack_probe_path = NodePath("../../AttackProbe")
 out_of_range_state = "Idle"
-attack_anim = "default"
+attack_anim = "attack"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://fs7pg6h57wed"]
+[gd_scene format=3 uid="uid://fs7pg6h57wed"]
 
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_minion"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
@@ -11,14 +11,6 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_bee"]
 radius = 3.0
-
-[sub_resource type="AtlasTexture" id="fly0"]
-atlas = ExtResource("8_sheet")
-region = Rect2(0, 0, 8, 8)
-
-[sub_resource type="AtlasTexture" id="fly1"]
-atlas = ExtResource("8_sheet")
-region = Rect2(8, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="atk0"]
 atlas = ExtResource("8_sheet")
@@ -36,19 +28,16 @@ region = Rect2(16, 8, 8, 8)
 atlas = ExtResource("8_sheet")
 region = Rect2(24, 8, 8, 8)
 
+[sub_resource type="AtlasTexture" id="fly0"]
+atlas = ExtResource("8_sheet")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="fly1"]
+atlas = ExtResource("8_sheet")
+region = Rect2(8, 0, 8, 8)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_bzzz"]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("fly0")
-}, {
-"duration": 1.0,
-"texture": SubResource("fly1")
-}],
-"loop": true,
-"name": &"fly",
-"speed": 12.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("atk0")
@@ -64,66 +53,70 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 12.0
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("fly0")
+}, {
+"duration": 1.0,
+"texture": SubResource("fly1")
+}],
+"loop": true,
+"name": &"fly",
+"speed": 6.0
 }]
 
-[node name="BzzzMinion" type="CharacterBody2D" groups=["summon"]]
+[node name="BzzzMinion" type="CharacterBody2D" unique_id=2136964119 groups=["summon"]]
 collision_layer = 16
-collision_mask = 1
 motion_mode = 1
 script = ExtResource("1_minion")
 target_groups = Array[String](["enemies"])
 bullet_collision_layer = 256
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2101955182]
 shape = SubResource("CircleShape2D_bee")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1703351926]
 sprite_frames = SubResource("SpriteFrames_bzzz")
 animation = &"fly"
 offset = Vector2(0, -2)
 
-[node name="Hurtbox" parent="." instance=ExtResource("2_hurt")]
+[node name="Hurtbox" parent="." unique_id=1854981579 instance=ExtResource("2_hurt")]
 collision_mask = 512
 radius = 3.0
 
-[node name="DetectProbe" type="RayCast2D" parent="."]
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1992804479]
 target_position = Vector2(48, 0)
 collision_mask = 33
 
-[node name="ChaseProbe" type="RayCast2D" parent="."]
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=1778955011]
 target_position = Vector2(64, 0)
 collision_mask = 33
 
-[node name="AttackProbe" type="RayCast2D" parent="."]
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=63071932]
 target_position = Vector2(12, 0)
 collision_mask = 33
 
-[node name="Weapon" parent="." instance=ExtResource("4_weapon")]
+[node name="Weapon" parent="." unique_id=1482350649 instance=ExtResource("4_weapon")]
 
-[node name="FSM" parent="." instance=ExtResource("3_fsm")]
+[node name="FSM" parent="." unique_id=2053004668 instance=ExtResource("3_fsm")]
 initial_state = "Hover"
 
-[node name="Hover" type="Node" parent="FSM"]
+[node name="Hover" type="Node" parent="FSM" unique_id=1448509019]
 script = ExtResource("5_tether")
 detect_probe_path = NodePath("../../DetectProbe")
-anchor_group = "player"
-follow_speed = 55.0
-orbit_radius = 18.0
-fly_anim = "fly"
 
-[node name="Chase" type="Node" parent="FSM"]
+[node name="Chase" type="Node" parent="FSM" unique_id=1785207294]
 script = ExtResource("6_chase")
 chase_probe_path = NodePath("../../ChaseProbe")
 attack_probe_path = NodePath("../../AttackProbe")
-attack_state = "Attack"
 lost_state = "Hover"
 speed = 64.0
 run_anim = "fly"
 
-[node name="Attack" type="Node" parent="FSM"]
+[node name="Attack" type="Node" parent="FSM" unique_id=656935180]
 script = ExtResource("7_fire")
-attack_probe_path = NodePath("../../AttackProbe")
 weapon_path = NodePath("../../Weapon")
-out_of_range_state = "Chase"
+attack_probe_path = NodePath("../../AttackProbe")
 attack_anim = "attack"

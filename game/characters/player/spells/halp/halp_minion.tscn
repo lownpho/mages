@@ -28,6 +28,14 @@ region = Rect2(16, 8, 8, 8)
 atlas = ExtResource("8_sheet")
 region = Rect2(24, 8, 8, 8)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_iwh8p"]
+atlas = ExtResource("8_sheet")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1vv6x"]
+atlas = ExtResource("8_sheet")
+region = Rect2(24, 0, 8, 8)
+
 [sub_resource type="AtlasTexture" id="walk0"]
 atlas = ExtResource("8_sheet")
 region = Rect2(0, 0, 8, 8)
@@ -61,7 +69,18 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 10.0
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iwh8p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1vv6x")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -78,7 +97,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk",
-"speed": 6.0
+"speed": 4.0
 }]
 
 [node name="HalpMinion" type="CharacterBody2D" unique_id=608478915 groups=["summon"]]
@@ -93,7 +112,7 @@ shape = SubResource("CircleShape2D_minion")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1243948506]
 sprite_frames = SubResource("SpriteFrames_halp")
-animation = &"walk"
+animation = &"idle"
 offset = Vector2(0, -2)
 
 [node name="Hurtbox" parent="." unique_id=182107399 instance=ExtResource("2_hurt")]
@@ -120,7 +139,6 @@ initial_state = "Idle"
 script = ExtResource("5_idle")
 detect_probe_path = NodePath("../../DetectProbe")
 next_state = "Idle"
-idle_anim = "walk"
 
 [node name="Chase" type="Node" parent="FSM" unique_id=419376632]
 script = ExtResource("6_chase")
