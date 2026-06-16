@@ -16,6 +16,5 @@ mana_cost = 4
 cast_time = 4.0
 channeled = true
 channel_while_moving = true
-pull_radius_tiles = 4.0
 icon = SubResource("AtlasTexture_icon")
 max_mana_modifier = 10

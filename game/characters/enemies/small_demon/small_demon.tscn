@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dvri3pbaf2jes"]
 
-[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="Resource" path="res://characters/enemies/small_demon/small_demon_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_3sbbp"]
 [ext_resource type="Texture2D" uid="uid://c5vsistthr4ym" path="res://characters/enemies/small_demon/small_demon.png" id="3_n43kq"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_8ad34"]
@@ -63,57 +63,57 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="SmallDemon" type="CharacterBody2D" groups=["enemies"]]
+[node name="SmallDemon" type="CharacterBody2D" unique_id=112942620 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_enemy")
 data = ExtResource("1_data")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1510109500]
 shape = SubResource("CircleShape2D_3sbbp")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=201230898]
 sprite_frames = SubResource("SpriteFrames_5jc0s")
-animation = &"run"
+animation = &"idle"
 autoplay = "idle"
 offset = Vector2(0, -2)
 
-[node name="Hurtbox" parent="." instance=ExtResource("2_3sbbp")]
+[node name="Hurtbox" parent="." unique_id=738383761 instance=ExtResource("2_3sbbp")]
 collision_mask = 256
 
-[node name="DetectProbe" type="RayCast2D" parent="."]
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1579521169]
 target_position = Vector2(64, 0)
 collision_mask = 17
 
-[node name="ChaseProbe" type="RayCast2D" parent="."]
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=292198514]
 target_position = Vector2(96, 0)
 collision_mask = 17
 
-[node name="AttackProbe" type="RayCast2D" parent="."]
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=2035437842]
 target_position = Vector2(16, 0)
 collision_mask = 17
 
-[node name="Weapon" parent="." instance=ExtResource("4_bth6n")]
+[node name="Weapon" parent="." unique_id=2041195085 instance=ExtResource("4_bth6n")]
 
-[node name="FSM" parent="." instance=ExtResource("4_8ad34")]
+[node name="FSM" parent="." unique_id=2020609619 instance=ExtResource("4_8ad34")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM"]
+[node name="Idle" type="Node" parent="FSM" unique_id=293342684]
 script = ExtResource("6_idle")
 detect_probe_path = NodePath("../../DetectProbe")
 
-[node name="Wander" type="Node" parent="FSM"]
+[node name="Wander" type="Node" parent="FSM" unique_id=1473956532]
 script = ExtResource("7_wander")
 detect_probe_path = NodePath("../../DetectProbe")
 
-[node name="Chase" type="Node" parent="FSM"]
+[node name="Chase" type="Node" parent="FSM" unique_id=821098743]
 script = ExtResource("8_chase")
 chase_probe_path = NodePath("../../ChaseProbe")
 attack_probe_path = NodePath("../../AttackProbe")
 speed = 24.0
 
-[node name="Attack" type="Node" parent="FSM"]
+[node name="Attack" type="Node" parent="FSM" unique_id=888254627]
 script = ExtResource("9_fire")
 weapon_path = NodePath("../../Weapon")
 weapon_data = ExtResource("5_demon")

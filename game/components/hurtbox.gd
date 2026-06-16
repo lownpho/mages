@@ -16,6 +16,11 @@ func _ready() -> void:
 func _update_shape() -> void:
 	var shape_node := get_node_or_null("CollisionShape2D")
 	if shape_node and shape_node.shape is CircleShape2D:
+		# The shape is a sub-resource shared across every Hurtbox instance;
+		# duplicate before mutating so instances don't trample each other's radius.
+		if not shape_node.shape.resource_local_to_scene:
+			shape_node.shape = shape_node.shape.duplicate()
+			shape_node.shape.resource_local_to_scene = true
 		shape_node.shape.radius = radius
 
 # Damage sources are bullet bodies or damage areas (e.g. spell AoEs);

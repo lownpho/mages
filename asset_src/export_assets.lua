@@ -15,7 +15,7 @@
 
 local SRC = "asset_src/graphics"
 local DST = "game"
-local META = "asset_src/anim_meta"  -- gitignored; see asset_src/.gitignore
+local META = "asset_src/meta"  -- gitignored; see asset_src/.gitignore
 
 -- icon.ase is not the project icon (game/icon.png is separate artwork) —
 -- keep it out of the pipeline so it doesn't overwrite the real icon.
