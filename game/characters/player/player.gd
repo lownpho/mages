@@ -64,7 +64,11 @@ func _ready() -> void:
 
 	GlobalEvent.equipment_changed.connect(_on_equipment_changed)
 
-	_recompute_stats()
+	# equipment_changed only fires on slot edits, not when a fresh player spawns in a
+	# new scene — so drive the equip logic once from the persisted GlobalInventory slots
+	# to rebuild the weapon node and re-apply hat/robe. Each call also recomputes stats.
+	for slot in [GlobalInventory.weapon_slot, GlobalInventory.hat_slot, GlobalInventory.robe_slot]:
+		_on_equipment_changed(slot)
 	health = max_health
 	mana = max_mana
 	_broadcast_stats()

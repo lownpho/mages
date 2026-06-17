@@ -10,7 +10,13 @@ const _FLASH_COLOR = Color("dff6f5")
 @export var slot_texture: AtlasTexture
 
 # YES THIS IS A REFERENCE, OBJECTS ARE PASSED BY REFERENCE!
-var slot: GlobalInventory.Slot = null
+# Binding a slot repaints immediately: slot_updated only fires on edits, so a slot
+# bound to persisted inventory in a freshly loaded scene would otherwise stay blank.
+var slot: GlobalInventory.Slot = null:
+	set(value):
+		slot = value
+		if is_node_ready():
+			update_texture()
 
 static var _drag_source: MarginContainer = null
 static var _drag_accepted: bool = false
@@ -20,7 +26,7 @@ static var _dither_texture: ImageTexture
 var _curtain: TextureRect
 
 func update_texture() -> void:
-	if slot.item:
+	if slot and slot.item:
 		$ItemTexture.texture = slot.item.icon
 	else:
 		$ItemTexture.texture = null
