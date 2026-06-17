@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="2_ui"]
+[ext_resource type="Script" path="res://scenes/tutorial.gd" id="3_tut"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="4_floor"]
+[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="5_obj"]
+[ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="6_dbg"]
+
+[node name="Tutorial" type="Node2D"]
+script = ExtResource("3_tut")
+
+[node name="UI" parent="." instance=ExtResource("2_ui")]
+
+[node name="DebugOverlay" parent="." instance=ExtResource("6_dbg")]
+
+[node name="floor" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("4_floor")
+
+[node name="decor" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("5_obj")
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="objects" type="TileMapLayer" parent="Entities"]
+y_sort_enabled = true
+tile_set = ExtResource("5_obj")
+
+[node name="Enemies" type="Node2D" parent="Entities"]
+y_sort_enabled = true
+
+[node name="pickups" type="Node2D" parent="Entities"]
+z_index = 10
+z_as_relative = false
+
+[node name="Player" parent="Entities" instance=ExtResource("1_player")]

@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="mages"
-run/main_scene="uid://csw2alambl3eb"
+run/main_scene="res://scenes/tutorial.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="uid://bcfc6y0mj5eou"
 config/windows_native_icon="res://icon.ico"
