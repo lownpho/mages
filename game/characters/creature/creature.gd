@@ -22,6 +22,12 @@ var max_health: int
 var drops: Array[LootDrop] = []
 var health: int
 
+# Off-screen sleep margin: the area (centred on the creature) that must touch the screen
+# for it to stay awake. 8 tiles each side so a creature wakes well before it scrolls into
+# view rather than popping into motion at the edge.
+const SLEEP_MARGIN := 8 * GameConstants.PX_PER_TILE
+const SLEEP_RECT := Rect2(-SLEEP_MARGIN, -SLEEP_MARGIN, 2 * SLEEP_MARGIN, 2 * SLEEP_MARGIN)
+
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
@@ -32,6 +38,13 @@ func _ready() -> void:
 		drops = data.drops
 	health = max_health
 	hurtbox.hurt.connect(_on_hurt)
+	# Sleep while off-screen: disable the whole creature (AI, physics, timers, hurtbox)
+	# when it leaves the screen and wake it when it returns, so a large world only ticks
+	# the creatures the player can see. The notifier's visibility check runs in the server,
+	# not in _process, so a process-disabled creature still wakes itself back up.
+	var enabler := VisibleOnScreenEnabler2D.new()
+	enabler.rect = SLEEP_RECT
+	add_child(enabler)
 	# Deferred: the freshly instantiated tree is still blocked during _ready, so
 	# behaviours can't parent their timers yet. Deferred calls flush FIFO and the
 	# behaviours' _ready run before ours, so every timer exists before start().
