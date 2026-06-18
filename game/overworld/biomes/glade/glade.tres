@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="1_biome"]
 [ext_resource type="PackedScene" uid="uid://7wiiiqdn16b3" path="res://characters/enemies/sproutling/sproutling.tscn" id="2_sprout"]
 [ext_resource type="PackedScene" uid="uid://c4kusco5b3wec" path="res://characters/enemies/hopper/hopper.tscn" id="3_hopper"]
+[ext_resource type="Script" uid="uid://bg1adepainua0" path="res://overworld/glade_painter.gd" id="4_painter"]
 
 [resource]
 script = ExtResource("1_biome")
@@ -15,3 +16,4 @@ decor_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)])
 decor_density = 0.02
 enemy_roster = Array[PackedScene]([ExtResource("2_sprout"), ExtResource("3_hopper")])
 enemy_density = 0.012
+painter = ExtResource("4_painter")

@@ -30,7 +30,7 @@ func fill(ctx: GenContext, biome: BiomeResource, cells: Array[Vector2i], rng: Ra
 		if i >= pool.size(): break
 		var enemy: Node2D = _pick(biome.enemy_roster, rng).instantiate()
 		ctx.enemies.add_child(enemy)
-		enemy.global_position = ctx.tile_to_world(pool[i])
+		enemy.global_position = _scatter_pos(ctx, pool[i], rng)
 		i += 1
 
 
@@ -39,16 +39,3 @@ func _count(density: float, cell_count: int, source: Array) -> int:
 	if source.is_empty():
 		return 0
 	return int(round(density * cell_count))
-
-
-func _pick(arr: Array, rng: RandomNumberGenerator):
-	return arr[rng.randi() % arr.size()]
-
-
-# deterministic Fisher-Yates (Array.shuffle() uses the global RNG, which isn't reproducible)
-func _shuffle(arr: Array, rng: RandomNumberGenerator) -> void:
-	for n in range(arr.size() - 1, 0, -1):
-		var j := rng.randi_range(0, n)
-		var tmp = arr[n]
-		arr[n] = arr[j]
-		arr[j] = tmp

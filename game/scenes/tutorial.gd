@@ -7,7 +7,6 @@ extends Node2D
 ## procedural overworld (res://scenes/world.tscn), which generates itself and places its
 ## own player. Persistent state (inventory, equipment) survives via GlobalInventory.
 
-const PickupScene := preload("res://items/pickup_item.tscn")
 const SproutlingScene := preload("res://characters/enemies/sproutling/sproutling.tscn")
 const HealSpell := preload("res://characters/player/spells/heal/heal1.tres")
 const OVERWORLD := "res://scenes/world.tscn"
@@ -37,12 +36,15 @@ const GATE := Rect2i(46, 27, 4, 1)
 @onready var _enemies: Node2D = $Entities/Enemies
 @onready var _pickups: Node2D = $Entities/pickups
 
+var _pickup_spawner: PickupSpawner
+
 func _ready() -> void:
-	GlobalEvent.item_dropped.connect(_on_item_dropped)
-	GlobalEvent.loot_dropped.connect(_on_loot_dropped)
+	_pickup_spawner = PickupSpawner.new()
+	_pickup_spawner.container = _pickups
+	add_child(_pickup_spawner)
 	_paint_rooms()
 	_place_player(ROOM_A.get_center())
-	_spawn_pickup(TIER1_WEAPONS[randi() % TIER1_WEAPONS.size()], _tile_to_world(CORRIDOR_H.get_center()))
+	_pickup_spawner.spawn(TIER1_WEAPONS[randi() % TIER1_WEAPONS.size()], _tile_to_world(CORRIDOR_H.get_center()))
 	_spawn_sproutling(ROOM_B.get_center())
 	_spawn_exit(ROOM_EXIT.get_center())
 
@@ -126,18 +128,3 @@ func _on_exit_entered(_body: Node2D) -> void:
 # Tile centre in world pixels (mirrors GenContext.tile_to_world).
 func _tile_to_world(tile: Vector2i) -> Vector2:
 	return Vector2(tile * GameConstants.PX_PER_TILE) + Vector2.ONE * (GameConstants.PX_PER_TILE / 2.0)
-
-func _on_item_dropped(item: ItemResource) -> void:
-	if get_tree().get_first_node_in_group("player"):
-		_spawn_pickup(item, get_global_mouse_position())
-
-func _on_loot_dropped(item: ItemResource, pos: Vector2) -> void:
-	# Scatter within a tile so simultaneous drops don't stack on the same pixel.
-	var offset := Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * GameConstants.PX_PER_TILE
-	_spawn_pickup(item, pos + offset)
-
-func _spawn_pickup(item: ItemResource, at: Vector2) -> void:
-	var pickup := PickupScene.instantiate()
-	pickup.item = item
-	pickup.global_position = at
-	_pickups.add_child(pickup)
