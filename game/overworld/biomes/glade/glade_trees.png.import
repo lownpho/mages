@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://xk0iua07mnr5"
-path="res://.godot/imported/glade_tree.png-cf7395cc0423bd88782cecb98e2e1247.ctex"
+path="res://.godot/imported/glade_trees.png-a87346eb221f957bf7542a20a11fe545.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://overworld/biomes/glade/glade_tree.png"
-dest_files=["res://.godot/imported/glade_tree.png-cf7395cc0423bd88782cecb98e2e1247.ctex"]
+source_file="res://overworld/biomes/glade/glade_trees.png"
+dest_files=["res://.godot/imported/glade_trees.png-a87346eb221f957bf7542a20a11fe545.ctex"]
 
 [params]
 
