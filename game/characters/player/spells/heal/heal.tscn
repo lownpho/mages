@@ -1,9 +1,49 @@
-[gd_scene format=3 uid="uid://co8g2e1gvflhe"]
+[gd_scene load_steps=8 format=3 uid="uid://co8g2e1gvflhe"]
 
 [ext_resource type="Script" uid="uid://c11odeynbhwhh" path="res://characters/player/spells/heal/heal.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dhe2lau4ax0p7" path="res://characters/player/heal_aura.png" id="2_aura"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura0"]
+atlas = ExtResource("2_aura")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura1"]
+atlas = ExtResource("2_aura")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura2"]
+atlas = ExtResource("2_aura")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aura3"]
+atlas = ExtResource("2_aura")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_aura"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aura3")
+}],
+"loop": true,
+"name": &"flow",
+"speed": 8.0
+}]
 
 [node name="Heal" type="Node2D"]
 script = ExtResource("1_script")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-offset = Vector2(0, -10)
+[node name="Aura" type="AnimatedSprite2D" parent="."]
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_aura")
+animation = &"flow"
+autoplay = "flow"
