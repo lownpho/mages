@@ -11,10 +11,10 @@
 atlas = ExtResource("3_vuvel")
 region = Rect2(0, 0, 8, 8)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bar"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_barpad"]
 content_margin_left = 1.0
 content_margin_top = 1.0
-content_margin_right = 3.0
+content_margin_right = 2.0
 content_margin_bottom = 1.0
 texture = SubResource("AtlasTexture_frame")
 texture_margin_left = 1.0
@@ -36,26 +36,31 @@ region = Rect2(32, 8, 8, 8)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana"]
 bg_color = Color(0.22352941, 0.47058824, 0.65882355, 1)
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bar"]
+content_margin_left = 1.0
+content_margin_top = 1.0
+content_margin_right = 1.0
+content_margin_bottom = 1.0
+texture = SubResource("AtlasTexture_frame")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_2faxs"]
 atlas = ExtResource("3_vuvel")
 region = Rect2(48, 8, 8, 8)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5pghu"]
-bg_color = Color(0.8039216, 0.3764706, 0.5764706, 1)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_statpad"]
+content_margin_right = 1.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qh6k6"]
 atlas = ExtResource("3_vuvel")
 region = Rect2(56, 8, 8, 8)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7lg4f"]
-bg_color = Color(0.95686275, 0.7058824, 0.105882354, 1)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_defence"]
 atlas = ExtResource("3_vuvel")
 region = Rect2(40, 8, 8, 8)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_defence"]
-bg_color = Color(0.627451, 0.5764706, 0.5568628, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jw18c"]
 atlas = ExtResource("3_vuvel")
@@ -99,7 +104,7 @@ theme_override_constants/separation = 1
 [node name="HealthPanel" type="PanelContainer" parent="Strip/VBox/Bars" unique_id=768324573]
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxTexture_bar")
+theme_override_styles/panel = SubResource("StyleBoxTexture_barpad")
 
 [node name="GridThingy" type="GridContainer" parent="Strip/VBox/Bars/HealthPanel" unique_id=768324574]
 layout_mode = 2
@@ -115,7 +120,7 @@ texture = SubResource("AtlasTexture_health")
 
 [node name="HealthBar" type="ProgressBar" parent="Strip/VBox/Bars/HealthPanel/GridThingy" unique_id=768324576]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(8, 3)
+custom_minimum_size = Vector2(8, 4)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -126,10 +131,27 @@ rounded = true
 allow_greater = true
 show_percentage = false
 
+[node name="HealthValue" type="Label" parent="Strip/VBox/Bars/HealthPanel/GridThingy/HealthBar" unique_id=768324577]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -4.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
 [node name="ManaPanel" type="PanelContainer" parent="Strip/VBox/Bars" unique_id=801238385]
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxTexture_bar")
+theme_override_styles/panel = SubResource("StyleBoxTexture_barpad")
 
 [node name="GridThingy" type="GridContainer" parent="Strip/VBox/Bars/ManaPanel" unique_id=801238386]
 layout_mode = 2
@@ -145,7 +167,7 @@ texture = SubResource("AtlasTexture_mana")
 
 [node name="ManaBar" type="ProgressBar" parent="Strip/VBox/Bars/ManaPanel/GridThingy" unique_id=801238388]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(8, 3)
+custom_minimum_size = Vector2(8, 4)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -156,101 +178,81 @@ rounded = true
 allow_greater = true
 show_percentage = false
 
-[node name="SkillPanel" type="PanelContainer" parent="Strip/VBox/Bars" unique_id=463522697]
+[node name="ManaValue" type="Label" parent="Strip/VBox/Bars/ManaPanel/GridThingy/ManaBar" unique_id=801238389]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "100/100"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true
+
+[node name="StatsPanel" type="PanelContainer" parent="Strip/VBox" unique_id=463522697]
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxTexture_bar")
 
-[node name="GridThingy" type="GridContainer" parent="Strip/VBox/Bars/SkillPanel" unique_id=3738584]
+[node name="GridThingy" type="GridContainer" parent="Strip/VBox/StatsPanel" unique_id=3738584]
 layout_mode = 2
-theme_override_constants/h_separation = 1
+theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 0
 columns = 2
 
-[node name="Skill" type="TextureRect" parent="Strip/VBox/Bars/SkillPanel/GridThingy" unique_id=789912248]
+[node name="Skill" type="TextureRect" parent="Strip/VBox/StatsPanel/GridThingy" unique_id=789912248]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 texture = SubResource("AtlasTexture_2faxs")
 
-[node name="SkillValue" type="ProgressBar" parent="Strip/VBox/Bars/SkillPanel/GridThingy" unique_id=1634103434]
+[node name="SkillValue" type="Label" parent="Strip/VBox/StatsPanel/GridThingy" unique_id=1634103434]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(8, 3)
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 6
-theme_override_styles/fill = SubResource("StyleBoxFlat_5pghu")
-min_value = 20.0
-max_value = 300.0
-step = 1.0
-value = 30.0
-rounded = true
-allow_greater = true
-show_percentage = false
+size_flags_horizontal = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_statpad")
+text = "30"
+horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="SpeedPanel" type="PanelContainer" parent="Strip/VBox/Bars" unique_id=2079143387]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxTexture_bar")
-
-[node name="GridThingy" type="GridContainer" parent="Strip/VBox/Bars/SpeedPanel" unique_id=871157179]
-layout_mode = 2
-theme_override_constants/h_separation = 1
-theme_override_constants/v_separation = 0
-columns = 2
-
-[node name="Speed" type="TextureRect" parent="Strip/VBox/Bars/SpeedPanel/GridThingy" unique_id=1103856472]
+[node name="Speed" type="TextureRect" parent="Strip/VBox/StatsPanel/GridThingy" unique_id=1103856472]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 texture = SubResource("AtlasTexture_qh6k6")
 
-[node name="SpeedValue" type="ProgressBar" parent="Strip/VBox/Bars/SpeedPanel/GridThingy" unique_id=1136798671]
+[node name="SpeedValue" type="Label" parent="Strip/VBox/StatsPanel/GridThingy" unique_id=1136798671]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(8, 3)
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_styles/fill = SubResource("StyleBoxFlat_7lg4f")
-min_value = 30.0
-max_value = 120.0
-step = 1.0
-value = 35.0
-exp_edit = true
-rounded = true
-allow_greater = true
-show_percentage = false
+size_flags_horizontal = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_statpad")
+text = "35"
+horizontal_alignment = 2
+vertical_alignment = 1
 
-[node name="DefencePanel" type="PanelContainer" parent="Strip/VBox/Bars" unique_id=767022871]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxTexture_bar")
-
-[node name="GridThingy" type="GridContainer" parent="Strip/VBox/Bars/DefencePanel" unique_id=767022872]
-layout_mode = 2
-theme_override_constants/h_separation = 1
-theme_override_constants/v_separation = 0
-columns = 2
-
-[node name="Defence" type="TextureRect" parent="Strip/VBox/Bars/DefencePanel/GridThingy" unique_id=767022873]
+[node name="Defence" type="TextureRect" parent="Strip/VBox/StatsPanel/GridThingy" unique_id=767022873]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 texture = SubResource("AtlasTexture_defence")
 
-[node name="DefenceValue" type="ProgressBar" parent="Strip/VBox/Bars/DefencePanel/GridThingy" unique_id=767022874]
+[node name="DefenceValue" type="Label" parent="Strip/VBox/StatsPanel/GridThingy" unique_id=767022874]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(8, 3)
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_styles/fill = SubResource("StyleBoxFlat_defence")
-max_value = 50.0
-step = 1.0
-value = 2.0
-rounded = true
-allow_greater = true
-show_percentage = false
+size_flags_horizontal = 8
+theme_override_styles/normal = SubResource("StyleBoxEmpty_statpad")
+text = "2"
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="EquipItems" type="PanelContainer" parent="Strip/VBox" unique_id=1265894855]
 layout_mode = 2

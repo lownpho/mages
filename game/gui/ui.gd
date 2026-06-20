@@ -20,23 +20,43 @@ func _ready() -> void:
 	%RobeSlot.slot = GlobalInventory.robe_slot
 	%WeaponSlot.slot = GlobalInventory.weapon_slot
 
+	# Show the value overlay only while hovering the bar.
+	_setup_bar_hover(%HealthBar, %HealthValue)
+	_setup_bar_hover(%ManaBar, %ManaValue)
+
+func _setup_bar_hover(bar: ProgressBar, label: Label) -> void:
+	# self_modulate hides the bar's own fill/bg drawing without affecting the child label.
+	bar.mouse_entered.connect(func() -> void:
+		bar.self_modulate.a = 0.0
+		label.visible = true)
+	bar.mouse_exited.connect(func() -> void:
+		bar.self_modulate.a = 1.0
+		label.visible = false)
+
 func _on_player_max_health_changed(max_health: int) -> void:
 	%HealthBar.max_value = max_health
+	_refresh_bar_value(%HealthBar, %HealthValue)
 
 func _on_player_health_changed(health: int) -> void:
 	%HealthBar.value = health
+	_refresh_bar_value(%HealthBar, %HealthValue)
 
 func _on_player_max_mana_changed(max_mana: int) -> void:
 	%ManaBar.max_value = max_mana
+	_refresh_bar_value(%ManaBar, %ManaValue)
 
 func _on_player_mana_changed(mana: int) -> void:
 	%ManaBar.value = mana
+	_refresh_bar_value(%ManaBar, %ManaValue)
+
+func _refresh_bar_value(bar: ProgressBar, label: Label) -> void:
+	label.text = "%d/%d" % [bar.value, bar.max_value]
 
 func _on_player_skill_changed(skill: int) -> void:
-	%SkillValue.value = skill
+	%SkillValue.text = str(skill)
 
 func _on_player_speed_changed(speed: int) -> void:
-	%SpeedValue.value = speed
+	%SpeedValue.text = str(speed)
 
 func _on_player_defence_changed(defence: int) -> void:
-	%DefenceValue.value = defence
+	%DefenceValue.text = str(defence)
