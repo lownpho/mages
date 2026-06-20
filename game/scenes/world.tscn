@@ -6,6 +6,7 @@
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="8_floor"]
 [ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="9_obj"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
+[ext_resource type="PackedScene" uid="uid://dn3kf6w8p1qzm" path="res://gui/damage_numbers.tscn" id="79_dmgnum"]
 
 [node name="World" type="Node2D" unique_id=2109786957]
 script = ExtResource("7_world")
@@ -13,6 +14,8 @@ script = ExtResource("7_world")
 [node name="UI" parent="." unique_id=202505504 instance=ExtResource("5_71j4m")]
 
 [node name="DebugOverlay" parent="." unique_id=1590291984 instance=ExtResource("78_dbgov")]
+
+[node name="DamageNumbers" parent="." instance=ExtResource("79_dmgnum")]
 
 [node name="floor" type="TileMapLayer" parent="." unique_id=315948142]
 z_index = -20

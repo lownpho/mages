@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="2_ui"]
+[ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://gui/damage_numbers.tscn" id="3_wr8iv"]
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="4_floor"]
 [ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="5_obj"]
 [ext_resource type="PackedScene" uid="uid://7wiiiqdn16b3" path="res://characters/enemies/sproutling/sproutling.tscn" id="6_0hilk"]
@@ -52,6 +53,8 @@ metadata/_custom_type_script = "uid://44q27a0xs6wc"
 [node name="UI" parent="." unique_id=1697867525 instance=ExtResource("2_ui")]
 
 [node name="DebugOverlay" parent="." unique_id=1794357834 instance=ExtResource("6_dbg")]
+
+[node name="DamageNumbers" parent="." unique_id=786998724 instance=ExtResource("3_wr8iv")]
 
 [node name="floor" type="TileMapLayer" parent="." unique_id=1994591513]
 z_index = -20
