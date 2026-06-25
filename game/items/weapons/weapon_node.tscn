@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://c0weaponnode1"]
+[gd_scene format=3 uid="uid://c0weaponnode1"]
 
 [ext_resource type="Script" uid="uid://cgtnlqe7dgdit" path="res://items/weapons/weapon_node.gd" id="1_weapon"]
 

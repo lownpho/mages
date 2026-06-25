@@ -9,3 +9,8 @@ class_name WeaponResource
 
 func get_item_type() -> GlobalInventory.ItemType:
 	return GlobalInventory.ItemType.WEAPON
+
+func get_stats() -> Array:
+	return [["damage", "%d" % int(bullet_data.base_damage)],
+		["cooldown", "%.1f" % fire_cooldown],
+		["mana", "%d" % mana_cost]]

@@ -40,3 +40,4 @@ ProgressBar/font_sizes/font_size = 8
 ProgressBar/fonts/font = ExtResource("1_qgmjj")
 ProgressBar/styles/background = SubResource("StyleBoxEmpty_a8th1")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_jihbb")
+TooltipPanel/styles/panel = SubResource("StyleBoxEmpty_jlndv")

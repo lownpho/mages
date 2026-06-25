@@ -27,3 +27,11 @@ class_name SpellResource
 
 func get_item_type() -> GlobalInventory.ItemType:
 	return GlobalInventory.ItemType.SPELL
+
+func get_stats() -> Array:
+	var rows := []
+	if base_damage > 0.0: rows.append(["damage", "%d" % int(base_damage)])
+	rows.append(["mana", "%d" % mana_cost])
+	rows.append(["cooldown", "%.1f" % cooldown])
+	if cast_time > 0.0: rows.append(["cast", "%.1f" % cast_time])
+	return rows

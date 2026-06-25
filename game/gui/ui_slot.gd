@@ -45,7 +45,8 @@ func update_texture() -> void:
 		tooltip_text = ""
 
 # Same look as the StatsPanel (see ui.tscn): shared panel frame, an icon column and
-# a right-aligned value column in a tight grid.
+# a right-aligned value column. Active stats and equip modifiers are two grids split
+# by a divider so the shared icons (e.g. mana cost vs +mana) read unambiguously.
 func _make_custom_tooltip(_for_text: String) -> Object:
 	var panel := PanelContainer.new()
 	panel.theme = _THEME
@@ -53,12 +54,26 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 	var frame: StyleBox = _THEME.get_stylebox("panel", "PanelContainer").duplicate()
 	frame.set_content_margin_all(1)
 	panel.add_theme_stylebox_override("panel", frame)
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 2)
+	panel.add_child(vbox)
+	var active: Array = slot.item.get_stats()
+	var modifiers: Array = slot.item.get_modifiers()
+	if not active.is_empty():
+		vbox.add_child(_stat_grid(active))
+	if not active.is_empty() and not modifiers.is_empty():
+		# Blank spacer row to widen the gap between the two groups (no divider line).
+		vbox.add_child(Control.new())
+	if not modifiers.is_empty():
+		vbox.add_child(_stat_grid(modifiers))
+	return panel
+
+func _stat_grid(rows: Array) -> GridContainer:
 	var grid := GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 2)
 	grid.add_theme_constant_override("v_separation", 0)
-	panel.add_child(grid)
-	for row in slot.item.get_stats():
+	for row in rows:
 		var icon := TextureRect.new()
 		icon.texture = _stat_icon(row[0])
 		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -70,7 +85,7 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		grid.add_child(label)
-	return panel
+	return grid
 
 func _stat_icon(key: String) -> AtlasTexture:
 	var t := AtlasTexture.new()
