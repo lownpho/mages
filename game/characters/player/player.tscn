@@ -185,7 +185,7 @@ autoplay = "flow"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=832949489]
 script = ExtResource("6_cam")
-lookahead_distance = 32.0
+lookahead_distance = 48.0
 lookahead_smoothing = 1.0
 
 [node name="Hurtbox" parent="." unique_id=1632214819 instance=ExtResource("5_c6leb")]

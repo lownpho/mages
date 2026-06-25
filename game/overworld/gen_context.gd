@@ -7,7 +7,6 @@ var ground: TileMapLayer                 # grass terrain (autotiled)
 var decor: TileMapLayer                  # cosmetic overlay
 var objects: TileMapLayer                # collidable blockers (y-sorted); may equal `decor`
 var enemies: Node2D                      # container for spawned enemy nodes
-var pickups: Node2D                      # container for spawned pickup nodes
 var bounds: Rect2i                       # tile-space region to fill
 var biomes: Array[BiomeResource] = []    # biome registry (the slice uses biomes[0] everywhere)
 

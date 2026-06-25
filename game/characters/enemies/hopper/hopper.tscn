@@ -25,15 +25,15 @@ region = Rect2(8, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AT_run0"]
 atlas = ExtResource("3_tex")
-region = Rect2(16, 0, 8, 8)
+region = Rect2(0, 8, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AT_run1"]
 atlas = ExtResource("3_tex")
-region = Rect2(24, 0, 8, 8)
+region = Rect2(8, 8, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AT_run2"]
 atlas = ExtResource("3_tex")
-region = Rect2(32, 0, 8, 8)
+region = Rect2(16, 8, 8, 8)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_hop"]
 animations = [{
