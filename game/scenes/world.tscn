@@ -35,7 +35,7 @@ tile_set = ExtResource("9_obj")
 [node name="Enemies" type="Node2D" parent="Entities" unique_id=814364381]
 y_sort_enabled = true
 
-[node name="pickups" type="Node2D" parent="Entities" unique_id=947830532]
+[node name="pickups" type="Node2D" parent="Entities" groups=["pickups"] unique_id=947830532]
 z_index = 10
 z_as_relative = false
 

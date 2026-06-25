@@ -7,6 +7,14 @@ const _SLOT_PX = 8
 const _CURTAIN_COLOR = Color("302c2e")
 const _FLASH_COLOR = Color("dff6f5")
 
+# Tooltip stat icons: x offset of each 8x8 glyph in the y=8 row of ui.png.
+const _UI = preload("res://gui/ui.png")
+const _THEME = preload("res://gui/theme.tres")
+const _ICON_X = {
+	"damage": 0, "cooldown": 8, "cast": 16,
+	"health": 24, "mana": 32, "defence": 40, "skill": 48, "speed": 56,
+}
+
 @export var slot_texture: AtlasTexture
 
 # YES THIS IS A REFERENCE, OBJECTS ARE PASSED BY REFERENCE!
@@ -28,8 +36,47 @@ var _curtain: TextureRect
 func update_texture() -> void:
 	if slot and slot.item:
 		$ItemTexture.texture = slot.item.icon
+		# Sentinel: Godot strips the tooltip text and skips the popup if it's blank,
+		# so it must be non-whitespace; the value is unused, _make_custom_tooltip
+		# builds the contents.
+		tooltip_text = "."
 	else:
 		$ItemTexture.texture = null
+		tooltip_text = ""
+
+# Same look as the StatsPanel (see ui.tscn): shared panel frame, an icon column and
+# a right-aligned value column in a tight grid.
+func _make_custom_tooltip(_for_text: String) -> Object:
+	var panel := PanelContainer.new()
+	panel.theme = _THEME
+	# Reuse the UI's panel frame, just inset the contents 1px off the border.
+	var frame: StyleBox = _THEME.get_stylebox("panel", "PanelContainer").duplicate()
+	frame.set_content_margin_all(1)
+	panel.add_theme_stylebox_override("panel", frame)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 2)
+	grid.add_theme_constant_override("v_separation", 0)
+	panel.add_child(grid)
+	for row in slot.item.get_stats():
+		var icon := TextureRect.new()
+		icon.texture = _stat_icon(row[0])
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		grid.add_child(icon)
+		var label := Label.new()
+		label.text = row[1]
+		label.custom_minimum_size = Vector2(10, 0)
+		label.size_flags_horizontal = Control.SIZE_SHRINK_END
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		grid.add_child(label)
+	return panel
+
+func _stat_icon(key: String) -> AtlasTexture:
+	var t := AtlasTexture.new()
+	t.atlas = _UI
+	t.region = Rect2(_ICON_X[key], 8, 8, 8)
+	return t
 
 func _ready() -> void:
 	if slot_texture:

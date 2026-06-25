@@ -12,12 +12,8 @@ const GLADE := preload("res://overworld/biomes/glade/glade.tres")
 @onready var _decor: TileMapLayer = $decor
 @onready var _objects: TileMapLayer = $Entities/objects
 @onready var _enemies: Node2D = $Entities/Enemies
-@onready var _pickups: Node2D = $Entities/pickups
 
 func _ready() -> void:
-	var spawner := PickupSpawner.new()
-	spawner.container = _pickups
-	add_child(spawner)
 	if generate_world:
 		_generate_overworld()
 
@@ -39,7 +35,6 @@ func _generate_overworld() -> void:
 	ctx.decor = _decor
 	ctx.objects = _objects
 	ctx.enemies = _enemies
-	ctx.pickups = _pickups
 	ctx.bounds = Rect2i(Vector2i.ZERO, world_size)
 	ctx.biomes = biomes
 
