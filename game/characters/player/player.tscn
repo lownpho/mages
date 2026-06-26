@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="2_5dc8e"]
 [ext_resource type="Texture2D" uid="uid://b6f8woc2sylt2" path="res://characters/player/player.png" id="2_c6leb"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
-[ext_resource type="Script" uid="uid://cpxlcam7snap0" path="res://characters/player/player_camera.gd" id="6_cam"]
 [ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
 [ext_resource type="Texture2D" uid="uid://cwj1lrhgbuqph" path="res://characters/player/focus_aura.png" id="8_aura"]
 
@@ -162,7 +161,8 @@ animations = [{
 collision_layer = 16
 motion_mode = 1
 script = ExtResource("1_xxgcw")
-base_speed = 40
+base_skill = 0
+base_speed = 30
 focus_mana_per_second = 20.0
 focus_ramp_time = 2.0
 focus_curve = SubResource("Curve_5dc8e")
@@ -184,9 +184,6 @@ animation = &"flow"
 autoplay = "flow"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=832949489]
-script = ExtResource("6_cam")
-lookahead_distance = 48.0
-lookahead_smoothing = 1.0
 
 [node name="Hurtbox" parent="." unique_id=1632214819 instance=ExtResource("5_c6leb")]
 collision_mask = 512

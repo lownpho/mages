@@ -27,10 +27,14 @@ func _on_entity_damaged(victim: Node, amount: int, _source: Node) -> void:
 		return
 
 	var color := TAKEN_COLOR if victim.is_in_group("player") else DEALT_COLOR
-	var jitter := Vector2(randf_range(-3.0, 3.0), 0.0)
+	var offset := HEAD_OFFSET + Vector2(randf_range(-3.0, 3.0), 0.0)
 	var num := NUMBER.instantiate()
+	# Place before add_child: otherwise it enters the tree at (0,0) and, with physics
+	# interpolation on, streaks from world origin for a frame. DamageNumbers sits at origin,
+	# so local position == world. setup() re-snaps to the same spot once @onready label exists.
+	num.position = (victim.global_position + offset).round()
 	add_child(num)
-	num.setup(victim, amount, color, HEAD_OFFSET + jitter)
+	num.setup(victim, amount, color, offset)
 	_active[victim] = num
 	# Erase by value, not by the victim key: the victim may be freed before the
 	# number fades out, and capturing it would fire a "freed capture" error here.
