@@ -1,6 +1,6 @@
 extends Node2D
 
-const GLADE := preload("res://overworld/biomes/glade/glade.tres")
+const DEEPWOOD := preload("res://overworld/biomes/deepwood/deepwood.tres")
 
 ## Untick to leave the scene empty instead of generating into it.
 @export var generate_world := true
@@ -26,7 +26,7 @@ func _generate_overworld() -> void:
 		n.free()
 
 	var biomes: Array[BiomeResource] = []
-	biomes.append(GLADE)
+	biomes.append(DEEPWOOD)
 
 	var ctx := GenContext.new()
 	ctx.rng = RandomNumberGenerator.new()

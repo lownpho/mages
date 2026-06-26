@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="Script" uid="uid://cgpcj6mm1cmkg" path="res://scenes/world.gd" id="7_world"]
-[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="8_floor"]
-[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="9_obj"]
+[ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://overworld/biomes/deepwood/deepwood_floor_tileset.tres" id="8_floor"]
+[ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="9_obj"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
 

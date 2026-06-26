@@ -97,3 +97,8 @@ table = SubResource("Resource_qbchm")
 position = Vector2(507, -484)
 style = 1
 target_scene = ExtResource("16_world")
+
+[node name="ExitDoor2" parent="." unique_id=311045001 instance=ExtResource("15_door")]
+position = Vector2(152, -25)
+style = 1
+target_scene = ExtResource("16_world")
