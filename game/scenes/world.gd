@@ -6,7 +6,7 @@ const GLADE := preload("res://overworld/biomes/glade/glade.tres")
 @export var generate_world := true
 @export var world_seed := 0                  # 0 = random each run
 @export var world_size := Vector2i(160, 120)   # tiles (bounds; the landmass fills an organic blob inside)
-@export var spawn_clear_radius := 6          # tiles kept enemy-free around the player
+@export var spawn_clear_radius := 8          # tiles kept enemy-free around the player
 
 @onready var _floor: TileMapLayer = $floor
 @onready var _decor: TileMapLayer = $decor
