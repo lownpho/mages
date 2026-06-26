@@ -9,5 +9,6 @@ func _ready() -> void:
 	add_to_group("enemies")
 	$Hurtbox.hurt.connect(_on_hurt)
 
-func _on_hurt(_damage: int) -> void:
-	pass  # invincible by design
+func _on_hurt(damage: int, source: Node) -> void:
+	# Invincible by design, but still report the hit so the debug overlay tallies it.
+	GlobalEvent.entity_damaged.emit(self, damage, source)

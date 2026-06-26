@@ -145,7 +145,7 @@ func _on_cast_exit() -> void:
 func _die() -> void:
 	queue_free()
 
-func _on_hurt(damage: int) -> void:
+func _on_hurt(damage: int, source: Node) -> void:
 	if damage_absorber and is_instance_valid(damage_absorber):
 		damage = damage_absorber.absorb(damage)
 		if damage <= 0:
@@ -156,6 +156,9 @@ func _on_hurt(damage: int) -> void:
 	health -= damage
 	health = max(health, 0)
 	GlobalEvent.player_health_changed.emit(health)
+	# Report the post-mitigation damage so the floating number and debug tally
+	# reflect what defence (and any shield) actually blocked.
+	GlobalEvent.entity_damaged.emit(self, damage, source)
 
 	if health <= 0:
 		_die()

@@ -104,7 +104,9 @@ func die() -> void:
 			GlobalEvent.loot_dropped.emit(drop.item, global_position)
 	queue_free()
 
-func _on_hurt(damage: int) -> void:
+func _on_hurt(damage: int, source: Node) -> void:
 	health -= damage
+	# Emit before die() frees us so the floating number still spawns on a live node.
+	GlobalEvent.entity_damaged.emit(self, damage, source)
 	if health <= 0:
 		die()

@@ -1,7 +1,7 @@
 @tool
 extends Area2D
 
-signal hurt(damage: int)
+signal hurt(damage: int, source: Node)
 
 @export var radius: float = 8.0:
 	set(value):
@@ -24,14 +24,12 @@ func _update_shape() -> void:
 		shape_node.shape.radius = radius
 
 # Damage sources are bullet bodies or damage areas (e.g. spell AoEs);
-# both carry their damage via get_damage().
+# both carry their damage via get_damage(). We hand the raw damage and the source
+# to the victim and let *it* report entity_damaged — mitigation (defence, shields)
+# is victim-specific, so only the victim knows the damage actually taken.
 func _on_hit(node: Node2D) -> void:
-	var damage = 0
-
 	if node.has_method("get_damage"):
-		damage = node.get_damage()
-		emit_signal("hurt", damage)
-		GlobalEvent.entity_damaged.emit(owner if owner else get_parent(), damage, node)
+		hurt.emit(node.get_damage(), node)
 	else:
 		print("Node has no get_damage method! Node name: ", node.name)
 
