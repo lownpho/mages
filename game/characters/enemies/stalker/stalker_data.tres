@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://b8stk4lkrdat0"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_4pmy6"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Stalker"
+max_health = 40

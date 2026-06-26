@@ -1,0 +1,162 @@
+[gd_scene format=3 uid="uid://b8stk4lkrscn0"]
+
+[ext_resource type="Resource" uid="uid://b8stk4lkrdat0" path="res://characters/enemies/stalker/stalker_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
+[ext_resource type="Texture2D" uid="uid://dy6fuae783ai" path="res://characters/enemies/stalker/stalker.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="4_wpn"]
+[ext_resource type="Resource" uid="uid://b8stk4lkrwpn0" path="res://characters/enemies/stalker/stalker_weapon.tres" id="5_wpn"]
+[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="6_idle"]
+[ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="8_chase"]
+[ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="9_fire"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_stk"]
+radius = 5.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3boe3"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ok472"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q25wq"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38ejp"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ktiw"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dk70j"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_amriq"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0sli3"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61tx1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5k2kv"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_stk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3boe3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ok472")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q25wq")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_38ejp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ktiw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dk70j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_amriq")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0sli3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_61tx1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5k2kv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_61tx1")
+}],
+"loop": true,
+"name": &"run",
+"speed": 4.0
+}]
+
+[node name="Stalker" type="CharacterBody2D" unique_id=542191790 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1547942611]
+shape = SubResource("CircleShape2D_stk")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=511352501]
+sprite_frames = SubResource("SpriteFrames_stk")
+animation = &"attack"
+autoplay = "idle"
+frame = 2
+frame_progress = 0.32775134
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." unique_id=1711338094 instance=ExtResource("2_hurt")]
+collision_mask = 256
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1424353465]
+target_position = Vector2(32, 0)
+collision_mask = 17
+
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=1744766187]
+target_position = Vector2(160, 0)
+collision_mask = 17
+
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=155951122]
+target_position = Vector2(16, 0)
+collision_mask = 17
+
+[node name="Weapon" parent="." unique_id=716375025 instance=ExtResource("4_wpn")]
+
+[node name="FSM" parent="." unique_id=1989047363 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=1387528600]
+script = ExtResource("6_idle")
+detect_probe_path = NodePath("../../DetectProbe")
+next_state = "Idle"
+
+[node name="Chase" type="Node" parent="FSM" unique_id=1159400583]
+script = ExtResource("8_chase")
+chase_probe_path = NodePath("../../ChaseProbe")
+attack_probe_path = NodePath("../../AttackProbe")
+speed = 35.0
+
+[node name="Attack" type="Node" parent="FSM" unique_id=1180761023]
+script = ExtResource("9_fire")
+weapon_path = NodePath("../../Weapon")
+weapon_data = ExtResource("5_wpn")
+attack_probe_path = NodePath("../../AttackProbe")
+attack_anim = "attack"
