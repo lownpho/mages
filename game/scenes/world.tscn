@@ -5,38 +5,60 @@
 [ext_resource type="Script" uid="uid://cgpcj6mm1cmkg" path="res://scenes/world.gd" id="7_world"]
 [ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://overworld/biomes/deepwood/deepwood_floor_tileset.tres" id="8_floor"]
 [ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="9_obj"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="10_gfloor"]
+[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="11_gobj"]
+[ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="11_jhx03"]
+[ext_resource type="Script" uid="uid://880mq6srhpdt" path="res://overworld/chunk_streamer.gd" id="12_stream"]
+[ext_resource type="Resource" uid="uid://cau06dccis7gb" path="res://overworld/biomes/glade/glade.tres" id="13_glade"]
+[ext_resource type="Resource" uid="uid://sunjt3y0dibb" path="res://overworld/biomes/deepwood/deepwood.tres" id="14_deepw"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
 
-[node name="World" type="Node2D" unique_id=2109786957]
+[node name="World" type="Node2D" unique_id=606710024]
 script = ExtResource("7_world")
 
-[node name="UI" parent="." unique_id=202505504 instance=ExtResource("5_71j4m")]
+[node name="UI" parent="." unique_id=1550154989 instance=ExtResource("5_71j4m")]
 
-[node name="DebugOverlay" parent="." unique_id=1590291984 instance=ExtResource("78_dbgov")]
+[node name="DebugOverlay" parent="." unique_id=409200301 instance=ExtResource("78_dbgov")]
 
-[node name="DamageNumbers" parent="." unique_id=1399474478 instance=ExtResource("79_dmgnum")]
+[node name="DamageNumbers" parent="." unique_id=1159986638 instance=ExtResource("79_dmgnum")]
 
-[node name="floor" type="TileMapLayer" parent="." unique_id=315948142]
+[node name="floor_glade" type="TileMapLayer" parent="." unique_id=429425987]
+z_index = -20
+tile_set = ExtResource("10_gfloor")
+
+[node name="floor_deepwood" type="TileMapLayer" parent="." unique_id=903247295]
 z_index = -20
 tile_set = ExtResource("8_floor")
 
-[node name="decor" type="TileMapLayer" parent="." unique_id=1641873394]
+[node name="decor_glade" type="TileMapLayer" parent="." unique_id=175054279]
+z_index = -19
+tile_set = ExtResource("11_gobj")
+
+[node name="decor_deepwood" type="TileMapLayer" parent="." unique_id=1352341293]
 z_index = -19
 tile_set = ExtResource("9_obj")
 
-[node name="Entities" type="Node2D" parent="." unique_id=111000001]
+[node name="Entities" type="Node2D" parent="." unique_id=1613421289]
 y_sort_enabled = true
 
-[node name="objects" type="TileMapLayer" parent="Entities" unique_id=111000002]
+[node name="objects_glade" type="TileMapLayer" parent="Entities" unique_id=145916699]
+y_sort_enabled = true
+tile_set = ExtResource("11_gobj")
+
+[node name="objects_deepwood" type="TileMapLayer" parent="Entities" unique_id=1274790631]
 y_sort_enabled = true
 tile_set = ExtResource("9_obj")
 
-[node name="Enemies" type="Node2D" parent="Entities" unique_id=814364381]
+[node name="Enemies" type="Node2D" parent="Entities" unique_id=1746165412]
 y_sort_enabled = true
 
-[node name="pickups" type="Node2D" parent="Entities" unique_id=947830532 groups=["pickups"]]
+[node name="pickups" type="Node2D" parent="Entities" unique_id=42372176 groups=["pickups"]]
 z_index = 10
 z_as_relative = false
 
-[node name="Player" parent="Entities" unique_id=49056211 instance=ExtResource("1_nnsk1")]
+[node name="Player" parent="Entities" unique_id=1740480760 instance=ExtResource("1_nnsk1")]
+
+[node name="ChunkStreamer" type="Node" parent="." unique_id=23583220]
+script = ExtResource("12_stream")
+biomes = Array[ExtResource("11_jhx03")]([ExtResource("13_glade"), ExtResource("14_deepw")])

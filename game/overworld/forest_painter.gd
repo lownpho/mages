@@ -1,101 +1,80 @@
 class_name ForestPainter extends BiomePainter
-## A forest biome: the playable area is what's carved out of an otherwise solid wood. The
-## walkable mask comes from the WorldGenerator; this painter owns everything around it.
-##   1. ground        — walkable cells = floor; the void = the deep-forest floor (visual only)
-##   2. border seal   — every void cell touching walkable gets a tree, walling the walkable
-##                      region with tree collision (the trees ARE the wall — no ground collision)
-##   3. void fill     — the rest of the void fills with trees at `void_fill_density`
-##   4. clumps        — tree clusters dotted through the walkable area as cover
-##   5. decor/enemies — scattered on the leftover walkable cells; the spawn pocket stays clear
-## Glade and Deepwood share this and differ only in their BiomeResource knobs (Deepwood crams
-## a tighter mask and denser fill/clumps).
+## A forest biome as a stateless per-tile function. Every cell gets walkable ground; then
+## independent hash rolls decide cover (trees), decor, or an enemy. There is no void to seal
+## or fill — the whole ground is walkable and trees are sparse cover, so the player can always
+## walk anywhere. Cover shape is data: `patch_thickness` (thickness in a patch), `coverage`
+## (how much of the biome is wooded), `patch_width` (patch width in tiles) — so one painter makes
+## both Glade's sparse tree-lumps and Deepwood's dense-woods-with-clearings.
+##
+## All rolls come from `Hash(world_seed, x, y, channel)`, so the result is identical whichever
+## chunk builds a border cell (no seams) and survives a discard/rebuild unchanged.
 
-const SPAWN_CLEAR := 8   # tiles around the map centre kept free of trees (the player's spawn pocket)
+const SPAWN_CLEAR := 8   # tiles around world origin kept free of cover/enemies (the spawn pocket)
+const PATCH_EDGE := 0.12 # softness of grove/clearing borders (smoothstep width on the noise mask)
+const NOISE_GAIN := 2.0  # stretches the noise to fill [0,1] so groves reach full density, not just the noise's narrow mid-band
 
-const NEIGHBORS_8: Array[Vector2i] = [
-	Vector2i(-1, -1), Vector2i(0, -1), Vector2i(1, -1),
-	Vector2i(-1, 0),                   Vector2i(1, 0),
-	Vector2i(-1, 1),  Vector2i(0, 1),  Vector2i(1, 1),
-]
+# Independent hash channels — one per decision so rolls on the same tile don't correlate.
+enum { CH_GROUND, CH_COVER, CH_COVER_TILE, CH_DECOR, CH_DECOR_TILE, CH_ENEMY, CH_ENEMY_PICK, CH_JIT_X, CH_JIT_Y }
 
-func fill(ctx: GenContext, biome: BiomeResource, cells: Array[Vector2i], rng: RandomNumberGenerator) -> void:
-	if cells.is_empty():
-		return
+# Lazily built when a biome wants clustered cover; pure function of (world_seed, x, y) so it
+# agrees across chunk borders. One painter instance per biome (the streamer caches them).
+var _clump_noise: FastNoiseLite
 
-	var land_set := {}
-	for c in cells:
-		land_set[c] = true
 
-	# 1. Ground: walkable floor, plus the forest floor under the void. -1 reuses the floor
-	# terrain, so the whole map is one seamless field and the trees alone read as the wall.
-	var void_cells := _void_cells(ctx, land_set)
-	var void_terrain := biome.void_terrain_id if biome.void_terrain_id >= 0 else biome.terrain_id
-	ctx.ground.set_cells_terrain_connect(cells, biome.terrain_set, biome.terrain_id, false)
-	ctx.ground.set_cells_terrain_connect(void_cells, biome.terrain_set, void_terrain, false)
+func fill(ctx: GenContext, biome: BiomeResource, cells: Array[Vector2i], _rng: RandomNumberGenerator) -> void:
+	var world_seed := int(ctx.rng.seed)
+	if biome.patch_width > 0:
+		_ensure_clump_noise(world_seed, biome.patch_width)
 
-	if biome.blocker_tiles.is_empty():
-		return
+	for cell in cells:
+		# Ground: every cell, always — a hash-picked interior-grass variant placed directly
+		# (no set_cells_terrain_connect; autotiling would resolve against empty neighbour chunks).
+		if not biome.ground_tiles.is_empty():
+			ctx.ground.set_cell(cell, biome.ground_source, Hash.pick(world_seed, cell.x, cell.y, CH_GROUND, biome.ground_tiles))
 
-	# 2+3. Trees fill the void: every border cell (8-adjacency seals diagonal gaps, so the
-	# walkable region is walled by tree collision with no slip-throughs), then the interior.
-	for cell in void_cells:
-		if _touches_land(cell, land_set) or rng.randf() < biome.void_fill_density:
-			ctx.objects.set_cell(cell, biome.blocker_source, _pick(biome.blocker_tiles, rng))
-
-	# 4. Clumps of trees as cover inside the walkable area, away from the spawn pocket. Cells a
-	# clump takes are marked so decor/enemies don't land on a tree.
-	var centre := ctx.bounds.get_center()
-	var occupied := {}
-	var clumps := int(round(biome.clump_count_per_1k * cells.size() / 1000.0))
-	for _i in clumps:
-		var c0: Vector2i = cells[rng.randi() % cells.size()]
-		if _within(c0, centre, SPAWN_CLEAR):
+		# Keep the spawn pocket clear of cover and enemies.
+		if cell.x * cell.x + cell.y * cell.y <= SPAWN_CLEAR * SPAWN_CLEAR:
 			continue
-		var r := rng.randi_range(biome.clump_radius.x, biome.clump_radius.y)
-		for dy in range(-r, r + 1):
-			for dx in range(-r, r + 1):
-				var c := c0 + Vector2i(dx, dy)
-				if dx * dx + dy * dy <= r * r and land_set.has(c) and not occupied.has(c) \
-						and rng.randf() < biome.clump_density:
-					ctx.objects.set_cell(c, biome.blocker_source, _pick(biome.blocker_tiles, rng))
-					occupied[c] = true
 
-	# 5. Decor + enemies on the leftover walkable cells (one role per cell, spawn pocket clear).
-	var pool := cells.duplicate()
-	_shuffle(pool, rng)
-	for cell in pool:
-		if occupied.has(cell) or _within(cell, centre, SPAWN_CLEAR):
+		# Cover (trees): the sightline dial. A tree owns its cell — no decor/enemy on top.
+		# Trail cells are forced clear (never a tree) so the walkable network stays connected;
+		# they still get decor/enemies below, so trails read as planted clearings, not blanks.
+		var on_path := ctx.macro and ctx.macro.is_path(cell)
+		if not on_path and not biome.blocker_tiles.is_empty() and Hash.chance(world_seed, cell.x, cell.y, CH_COVER, _cover_chance(biome, cell)):
+			ctx.objects.set_cell(cell, biome.blocker_source, Hash.pick(world_seed, cell.x, cell.y, CH_COVER_TILE, biome.blocker_tiles))
 			continue
-		var roll := rng.randf()
-		if not biome.decor_tiles.is_empty() and roll < biome.decor_density:
-			ctx.decor.set_cell(cell, biome.decor_source, _pick(biome.decor_tiles, rng))
-		elif not biome.enemy_roster.is_empty() and roll < biome.decor_density + biome.enemy_density:
-			var enemy: Node2D = _pick(biome.enemy_roster, rng).instantiate()
+
+		# Decor (cosmetic), else an enemy — at most one per cell.
+		if not biome.decor_tiles.is_empty() and Hash.chance(world_seed, cell.x, cell.y, CH_DECOR, biome.decor_density):
+			ctx.decor.set_cell(cell, biome.decor_source, Hash.pick(world_seed, cell.x, cell.y, CH_DECOR_TILE, biome.decor_tiles))
+		elif not biome.enemy_roster.is_empty() and Hash.chance(world_seed, cell.x, cell.y, CH_ENEMY, biome.enemy_density):
+			var enemy: Node2D = Hash.pick(world_seed, cell.x, cell.y, CH_ENEMY_PICK, biome.enemy_roster).instantiate()
+			# Position BEFORE add_child: otherwise the node enters the tree at (0,0) — world origin
+			# since Enemies sits there — so it flashes at origin for a frame and its _ready reads the
+			# wrong global_position. Enemies has an identity transform, so local position == world.
+			enemy.position = _scatter_pos(ctx, cell, world_seed, CH_JIT_X, CH_JIT_Y)
 			ctx.enemies.add_child(enemy)
-			enemy.global_position = _scatter_pos(ctx, cell, rng)
 
 
-# Every in-bounds cell that isn't walkable land (the coastline margin plus any interior lakes).
-func _void_cells(ctx: GenContext, land_set: Dictionary) -> Array[Vector2i]:
-	var out: Array[Vector2i] = []
-	var b := ctx.bounds
-	for y in range(b.position.y, b.end.y):
-		for x in range(b.position.x, b.end.x):
-			var c := Vector2i(x, y)
-			if not land_set.has(c):
-				out.append(c)
-	return out
+# Local tree probability. With no groves (patch_width 0 or full coverage) it's a flat field
+# at patch_thickness. Otherwise a low-frequency noise mask carves the biome into wooded patches: the
+# top `coverage` of the noise is "woods" (trees at patch_thickness), the rest is open clearing
+# (no trees), with soft borders. So low coverage = sparse groves in open ground (Glade
+# lumps); high coverage = mostly woods with open clearings/rooms (Deepwood), the gaps
+# stitched together by the guaranteed trail corridors.
+func _cover_chance(biome: BiomeResource, cell: Vector2i) -> float:
+	if not _clump_noise or biome.coverage >= 1.0:
+		return biome.patch_thickness
+	var n01 := clampf(_clump_noise.get_noise_2d(cell.x, cell.y) * NOISE_GAIN * 0.5 + 0.5, 0.0, 1.0)
+	var threshold := 1.0 - biome.coverage                        # more woods → lower bar to be "woods"
+	var mask := smoothstep(threshold, threshold + PATCH_EDGE, n01)
+	return biome.patch_thickness * mask
 
 
-# True if any 8-neighbour is walkable land (this void cell is on the playable border).
-func _touches_land(cell: Vector2i, land_set: Dictionary) -> bool:
-	for d in NEIGHBORS_8:
-		if land_set.has(cell + d):
-			return true
-	return false
-
-
-func _within(cell: Vector2i, centre: Vector2i, radius: int) -> bool:
-	var dx := cell.x - centre.x
-	var dy := cell.y - centre.y
-	return dx * dx + dy * dy <= radius * radius
+func _ensure_clump_noise(world_seed: int, patch_width: int) -> void:
+	if _clump_noise:
+		return
+	_clump_noise = FastNoiseLite.new()
+	_clump_noise.seed = world_seed
+	_clump_noise.frequency = 1.0 / float(patch_width)   # patch width in tiles → noise frequency
+	_clump_noise.fractal_octaves = 2   # fewer octaves = smoother, blobbier patches (cleaner groves/rooms)

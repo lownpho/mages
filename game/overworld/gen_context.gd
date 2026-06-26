@@ -9,6 +9,7 @@ var objects: TileMapLayer                # collidable blockers (y-sorted); may e
 var enemies: Node2D                      # container for spawned enemy nodes
 var bounds: Rect2i                       # tile-space region to fill
 var biomes: Array[BiomeResource] = []    # biome registry (the slice uses biomes[0] everywhere)
+var macro: MacroMap                      # global overview: biome_at(tile), is_path(tile)
 
 ## An independent RNG for a sub-region, derived from the master seed + an id, so the order
 ## regions are generated in can't leak into their output (a region is reproducible alone).

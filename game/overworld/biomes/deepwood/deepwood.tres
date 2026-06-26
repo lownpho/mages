@@ -1,21 +1,18 @@
 [gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://sunjt3y0dibb"]
 
-[ext_resource type="Script" uid="uid://ds7mrg5yeshwy" path="res://overworld/forest_painter.gd" id="3_m83yc"]
-[ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="4_yq353"]
-[ext_resource type="PackedScene" uid="uid://7wiiiqdn16b3" path="res://characters/enemies/sproutling/sproutling.tscn" id="5_sprout"]
-[ext_resource type="PackedScene" uid="uid://c4kusco5b3wec" path="res://characters/enemies/hopper/hopper.tscn" id="6_hopper"]
+[ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="1_biome"]
+[ext_resource type="Script" uid="uid://ds7mrg5yeshwy" path="res://overworld/forest_painter.gd" id="2_forest"]
 
 [resource]
-script = ExtResource("4_yq353")
+script = ExtResource("1_biome")
 id = &"deepwood"
+ground_tiles = Array[Vector2i]([Vector2i(9, 0), Vector2i(9, 1)])
 blocker_source = 1
 blocker_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0)])
-void_fill_density = 0.95
-clump_count_per_1k = 5.0
-clump_radius = Vector2i(2, 10)
-clump_density = 0.8
+patch_thickness = 0.4
+coverage = 0.8
+patch_width = 20
 decor_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0), Vector2i(6, 0), Vector2i(7, 0)])
 decor_density = 0.01
-enemy_roster = Array[PackedScene]([ExtResource("5_sprout"), ExtResource("6_hopper")])
-enemy_density = 0.012
-painter = ExtResource("3_m83yc")
+allows_dungeon = true
+painter = ExtResource("2_forest")
