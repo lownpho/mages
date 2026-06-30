@@ -1,0 +1,157 @@
+[gd_scene format=3 uid="uid://c8egykt110053"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_tb"]
+[ext_resource type="Resource" path="res://characters/enemies/thornback/thornback_data.tres" id="1_data"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://bthornbacktex0" path="res://characters/enemies/thornback/thornback.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
+[ext_resource type="Resource" uid="uid://bthornbflank01" path="res://characters/enemies/thornback/thornback_flank.tres" id="6_flank"]
+[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
+[ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="8_wander"]
+[ext_resource type="Script" uid="uid://cch4rg3w1ndup" path="res://characters/enemies/thornback/charge_windup.gd" id="9_windup"]
+[ext_resource type="Script" uid="uid://cch4rg3d4sh01" path="res://characters/enemies/thornback/charge_dash.gd" id="10_dash"]
+[ext_resource type="Script" uid="uid://cch4rg3r3c0v3" path="res://characters/enemies/thornback/charge_recover.gd" id="11_recover"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tb"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 0, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_run0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_run1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_run2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_run3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 8, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_wind0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_wind1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_wind2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_dash0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 24, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_dash1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 24, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_rec0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 32, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_rec1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 32, 8, 8)
+[sub_resource type="AtlasTexture" id="AT_rec2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 32, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tb"]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("AT_idle0")}, {"duration": 1.0, "texture": SubResource("AT_idle1")}, {"duration": 1.0, "texture": SubResource("AT_idle2")}, {"duration": 1.0, "texture": SubResource("AT_idle3")}],
+"loop": true,
+"name": &"idle",
+"speed": 4.5
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("AT_run0")}, {"duration": 1.0, "texture": SubResource("AT_run1")}, {"duration": 1.0, "texture": SubResource("AT_run2")}, {"duration": 1.0, "texture": SubResource("AT_run3")}],
+"loop": true,
+"name": &"run",
+"speed": 6.5
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("AT_wind0")}, {"duration": 1.0, "texture": SubResource("AT_wind1")}, {"duration": 1.0, "texture": SubResource("AT_wind2")}],
+"loop": true,
+"name": &"windup",
+"speed": 6.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("AT_dash0")}, {"duration": 1.0, "texture": SubResource("AT_dash1")}],
+"loop": true,
+"name": &"dash",
+"speed": 7.5
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("AT_rec0")}, {"duration": 1.0, "texture": SubResource("AT_rec1")}, {"duration": 1.0, "texture": SubResource("AT_rec2")}],
+"loop": true,
+"name": &"recover",
+"speed": 5.0
+}]
+
+[node name="Thornback" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_tb")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_tb")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_tb")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 5.0
+
+[node name="DetectProbe" type="RayCast2D" parent="."]
+target_position = Vector2(56, 0)
+collision_mask = 17
+
+[node name="FlankWeapon" parent="." instance=ExtResource("5_weap")]
+
+[node name="FSM" parent="." instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("7_idle")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Windup"
+next_state = "Wander"
+
+[node name="Wander" type="Node" parent="FSM"]
+script = ExtResource("8_wander")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Windup"
+next_state = "Idle"
+speed = 9.6
+
+[node name="Windup" type="Node" parent="FSM"]
+script = ExtResource("9_windup")
+dash_state = "Dash"
+windup_time = 0.8
+
+[node name="Dash" type="Node" parent="FSM"]
+script = ExtResource("10_dash")
+weapon_path = NodePath("../../FlankWeapon")
+weapon_data = ExtResource("6_flank")
+recover_state = "Recover"
+dash_speed = 72.0
+dash_distance = 48.0
+drop_interval = 4.0
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("11_recover")
+detect_probe_path = NodePath("../../DetectProbe")
+windup_state = "Windup"
+idle_state = "Idle"
+recover_time = 1.2

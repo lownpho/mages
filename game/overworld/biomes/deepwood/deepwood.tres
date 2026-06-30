@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="1_biome"]
 [ext_resource type="Script" uid="uid://ds7mrg5yeshwy" path="res://overworld/forest_painter.gd" id="2_forest"]
+[ext_resource type="PackedScene" uid="uid://bthornbscene01" path="res://characters/enemies/thornback/thornback.tscn" id="3_thorn"]
 
 [resource]
 script = ExtResource("1_biome")
@@ -14,5 +15,7 @@ coverage = 0.8
 patch_width = 20
 decor_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0), Vector2i(6, 0), Vector2i(7, 0)])
 decor_density = 0.01
+enemy_roster = Array[PackedScene]([ExtResource("3_thorn")])
+enemy_density = 0.008
 allows_dungeon = true
 painter = ExtResource("2_forest")
