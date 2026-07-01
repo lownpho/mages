@@ -116,18 +116,27 @@ func _placement_tiles(ctx: GenContext, biome: Resource, anchor: Vector2i, count:
 		return []   # sealed pocket — the player can't reach it, so spawn nothing here
 
 	# Nearest stand-on tiles to the anchor: passable, outside the spawn pocket, and with clearance
-	# from cover so the enemy's body doesn't overlap an adjacent tree collider.
-	var tiles: Array[Vector2i] = []
+	# from cover so the enemy's body doesn't overlap an adjacent tree collider. Sort by distance FIRST,
+	# then clearance-check nearest-first and stop at `count` — clearance is 25 `_blocks` per tile, so
+	# checking the whole flood set (as a filter-then-sort would) is the pass's dominant cost. Same
+	# result: the `count` nearest tiles that pass both filters.
+	var cand: Array[Vector2i] = []
 	for t in reach.tiles:
-		if not _in_spawn_pocket(t) and _has_clearance(ctx, biome, t, world_seed):
-			tiles.append(t)
-	tiles.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		if not _in_spawn_pocket(t):
+			cand.append(t)
+	cand.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		var da := maxi(absi(a.x - anchor.x), absi(a.y - anchor.y))
 		var db := maxi(absi(b.x - anchor.x), absi(b.y - anchor.y))
 		if da != db: return da < db
 		if a.x != b.x: return a.x < b.x
 		return a.y < b.y)
-	return tiles.slice(0, count)
+	var tiles: Array[Vector2i] = []
+	for t in cand:
+		if _has_clearance(ctx, biome, t, world_seed):
+			tiles.append(t)
+			if tiles.size() >= count:
+				break
+	return tiles
 
 
 # Flood the walkable component of `start` (4-connected passable tiles). Returns

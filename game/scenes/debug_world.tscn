@@ -105,7 +105,6 @@ script = ExtResource("7_stream")
 world_graph = ExtResource("8_graph")
 
 [node name="MinimapLayer" type="CanvasLayer" parent="." unique_id=315463426]
-visible = false
 
 [node name="Minimap" type="Control" parent="MinimapLayer" unique_id=38367210]
 layout_mode = 3

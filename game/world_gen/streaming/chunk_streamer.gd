@@ -17,10 +17,16 @@ const _SIGN := preload("res://world_gen/runtime/sign.tscn")
 const _DUNGEON_PLACEHOLDER := preload("res://world_gen/runtime/dungeon_placeholder.tscn")
 
 @export var world_graph: WorldGraph                    # authored biome graph; embedded per seed
-@export_range(8, 128, 1) var chunk_size := 32          # tiles per chunk side
+# The viewport is 320×180 px = 40×23 tiles (PX_PER_TILE=8), so 16-tile (128px) chunks at load_radius
+# 2 cover an 80-tile square — ~2× the screen each way, enough buffer to scroll into without popping,
+# without pre-building the ~16× area that 32-tile chunks did (that was most of the load/stream cost).
+@export_range(8, 128, 1) var chunk_size := 16          # tiles per chunk side
 @export_range(1, 8, 1) var load_radius := 2            # chunks kept built around the player (Chebyshev)
 @export_range(1, 12, 1) var unload_radius := 3         # chunks beyond this are discarded (must be > load_radius)
-@export_range(1, 16, 1) var gen_budget_per_frame := 2  # chunks built per frame from the queue (amortised)
+# Per-frame build budget in milliseconds. The queue drains until this is spent (always ≥1 chunk, so
+# streaming still progresses if one chunk alone overruns), bounding the frame-time a build spike can
+# cost regardless of how heavy an individual chunk is. Kept well under a 16 ms frame.
+@export_range(1.0, 16.0, 0.5) var gen_budget_ms := 4.0
 
 var _macro: MacroMap
 var _ctx: GenContext
@@ -181,12 +187,17 @@ func _refresh(center: Vector2i) -> void:
 
 
 func _drain_queue() -> void:
-	var built := 0
-	while built < gen_budget_per_frame and not _queue.is_empty():
+	if _queue.is_empty():
+		return
+	var deadline := Time.get_ticks_usec() + int(gen_budget_ms * 1000.0)
+	# Always build at least one so the queue makes progress even when a single chunk overruns the
+	# budget; otherwise keep building until the frame budget is spent.
+	while not _queue.is_empty():
 		var c: Vector2i = _queue.pop_front()
 		if not _chunks.has(c):
 			_build_chunk(c)
-			built += 1
+			if Time.get_ticks_usec() >= deadline:
+				break
 
 
 func _build_chunk(coord: Vector2i) -> void:

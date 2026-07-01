@@ -43,6 +43,13 @@ var _areas: Areas
 var _specials: Specials
 var _warp_noise: FastNoiseLite
 var _cell_biome: Dictionary = {}   # Vector2i lattice cell -> Resource (BiomeResource)
+# Memo of `_warped` (Vector2i tile -> Vector2). The same tile is warped by biome_at, area_at and
+# is_world_edge, and the encounter flood/clearance pass re-queries the same tiles many times over,
+# so one cache collapses all that repeated noise sampling. Pure memo of a deterministic function —
+# no effect on results. Bounded (cleared past _CACHE_CAP) so streaming can't grow it without limit;
+# reset on every setup so a reseed starts clean.
+var _warp_cache: Dictionary = {}
+const _CACHE_CAP := 120000
 
 
 func setup(world_seed: int, world_graph: WorldGraph) -> void:
@@ -51,6 +58,7 @@ func setup(world_seed: int, world_graph: WorldGraph) -> void:
 	_embedding = Embedding.new()
 	_embedding.setup(world_seed, world_graph)
 
+	_warp_cache.clear()
 	_warp_noise = FastNoiseLite.new()
 	_warp_noise.seed = world_seed
 	_warp_noise.frequency = 0.004          # low frequency: borders undulate at biome scale
@@ -103,7 +111,17 @@ func in_world(tile: Vector2i) -> bool:
 
 ## True if the tile is in-world but within BORDER of the hull boundary — the ring Group I walls.
 func is_world_edge(tile: Vector2i) -> bool:
-	if not in_world(tile):
+	var w := _warped(tile)
+	var cell := _cell_from_warped(w)
+	if not _cell_biome.has(cell):
+		return false
+	# Fast interior reject: a neighbour at ±BORDER warps within (BORDER + 2·WARP) of this tile's
+	# warped point, so if that point is deeper than that margin inside its cell every neighbour stays
+	# in the same occupied cell and this can't be an edge — skip the four extra warps. Sound because
+	# the warp displacement is bounded by WARP on each side.
+	var margin := BORDER + 2.0 * WARP + 2.0
+	var half := CELL / 2.0
+	if absf(w.x - cell.x * CELL) < half - margin and absf(w.y - cell.y * CELL) < half - margin:
 		return false
 	for d in Embedding._DIRS:
 		if not in_world(tile + d * BORDER):
@@ -207,9 +225,16 @@ func area_instances(node: int) -> Array:
 # The domain-warped coordinate of a tile (organic borders): the biome/area partition lives in
 # this warped space, so both `biome_at` and `area_at` warp once and derive cell + area-cell here.
 func _warped(tile: Vector2i) -> Vector2:
+	var cached: Variant = _warp_cache.get(tile)
+	if cached != null:
+		return cached
 	var wx: float = tile.x + _warp_noise.get_noise_2d(tile.x, tile.y) * WARP
 	var wy: float = tile.y + _warp_noise.get_noise_2d(tile.x + 1000.0, tile.y) * WARP
-	return Vector2(wx, wy)
+	var w := Vector2(wx, wy)
+	if _warp_cache.size() >= _CACHE_CAP:
+		_warp_cache.clear()
+	_warp_cache[tile] = w
+	return w
 
 
 # Nearest lattice cell to a warped coordinate (round-based, so the origin sits at the centre of

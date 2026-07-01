@@ -47,6 +47,12 @@ var _seg_b: Array[Vector2i] = []
 var _seg_phase: Array[float] = []
 var _buckets: Dictionary = {}   # Vector2i bucket -> Array[int] corridor indices overlapping it
 var _noise: FastNoiseLite
+# Memo of is_trail (Vector2i tile -> bool). Near a biome centre every branch corridor is bucketed
+# together, so a miss scans ~20 corridors (segment projection + a noise sample each); the painter and
+# the encounter flood/clearance pass re-test the same tiles repeatedly. Pure memo — bounded and reset
+# in setup like MacroMap's warp cache.
+var _trail_cache: Dictionary = {}
+const _CACHE_CAP := 120000
 
 
 ## `centers`: node_index -> centre tile (from MacroMap.biome_centers()). `edges` + `corridor_edges`
@@ -57,6 +63,7 @@ func setup(world_seed: int, centers: Dictionary, edges: Array[Vector2i], corrido
 	_seg_b.clear()
 	_seg_phase.clear()
 	_buckets.clear()
+	_trail_cache.clear()
 	_noise = FastNoiseLite.new()
 	_noise.seed = world_seed ^ 0x74011   # decorrelate wobble from the biome/warp fields
 	_noise.frequency = WOBBLE_FREQ
@@ -93,11 +100,20 @@ func add_corridor(a: Vector2i, b: Vector2i) -> void:
 ## True iff the tile lies on any corridor. Pure function of the seed. Only tests corridors indexed
 ## to the tile's bucket (see `_buckets`) — identical result to scanning all, far cheaper.
 func is_trail(tile: Vector2i) -> bool:
-	var arr: Array = _buckets.get(_bucket_key(tile.x, tile.y), [])
-	for i in arr:
-		if _on_corridor(tile, _seg_a[i], _seg_b[i], _seg_phase[i]):
-			return true
-	return false
+	var cached: Variant = _trail_cache.get(tile)
+	if cached != null:
+		return cached
+	var result := false
+	var key := _bucket_key(tile.x, tile.y)
+	if _buckets.has(key):
+		for i in _buckets[key]:
+			if _on_corridor(tile, _seg_a[i], _seg_b[i], _seg_phase[i]):
+				result = true
+				break
+	if _trail_cache.size() >= _CACHE_CAP:
+		_trail_cache.clear()
+	_trail_cache[tile] = result
+	return result
 
 
 # Bucket owning a tile coord. floori so negative coords bucket consistently (int / truncates).
