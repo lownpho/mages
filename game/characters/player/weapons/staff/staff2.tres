@@ -13,7 +13,7 @@ region = Rect2(8, 0, 8, 8)
 [sub_resource type="Resource" id="BulletData_1"]
 script = ExtResource("50_bres")
 icon = SubResource("AtlasTexture_1")
-base_damage = 12.0
+base_damage = 24.0
 range_tiles = 12
 speed_tiles = 12
 homing = true

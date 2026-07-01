@@ -2,7 +2,7 @@ extends FirePattern
 class_name ShotgunPattern
 
 @export var num_pellets: int = 3
-@export var spread_angle: float = 35.0 ## Cone width in degrees.
+@export var spread_angle: float = 20.0 ## Cone width in degrees.
 
 func get_directions(direction: Vector2) -> Array[Vector2]:
 	var dirs: Array[Vector2] = []

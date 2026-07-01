@@ -13,7 +13,7 @@ region = Rect2(8, 16, 8, 8)
 [sub_resource type="Resource" id="BulletData_1"]
 script = ExtResource("50_bres")
 icon = SubResource("AtlasTexture_1")
-base_damage = 7.0
+base_damage = 16.0
 range_tiles = 3
 speed_tiles = 8
 homing_weight = 0.0
@@ -33,5 +33,5 @@ bullet_data = SubResource("BulletData_1")
 fire_cooldown = 1.3
 mana_cost = 3
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 10
-max_health_modifier = 15
+max_health_modifier = 40
+defence_modifier = 8
