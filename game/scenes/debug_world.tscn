@@ -5,10 +5,10 @@
 [ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="3_ddecor"]
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="4_gfloor"]
 [ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="5_gdecor"]
-[ext_resource type="Script" uid="uid://dw1pd22a3vunr" path="res://world_gen/streaming/chunk_streamer.gd" id="7_stream"]
-[ext_resource type="Resource" uid="uid://nuffhf31wdq2" path="res://world_gen/content/world_graph.tres" id="8_graph"]
+[ext_resource type="Script" uid="uid://dw1pd22a3vunr" path="res://overworld/streaming/chunk_streamer.gd" id="7_stream"]
+[ext_resource type="Resource" uid="uid://nuffhf31wdq2" path="res://overworld/world_graph.tres" id="8_graph"]
 [ext_resource type="Script" uid="uid://1171x6b5dj8p" path="res://scenes/flycam.gd" id="10_flycam"]
-[ext_resource type="Script" uid="uid://cf1c361xfib0n" path="res://world_gen/runtime/debug_minimap.gd" id="11_minimap"]
+[ext_resource type="Script" uid="uid://cf1c361xfib0n" path="res://overworld/runtime/debug_minimap.gd" id="11_minimap"]
 
 [node name="World" type="Node2D" unique_id=403959107]
 script = ExtResource("1_world")
@@ -111,10 +111,11 @@ layout_mode = 3
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -252.0
-offset_top = 6.0
+offset_left = -94.0
+offset_top = 2.0
 offset_right = -2.0
-offset_bottom = 380.0
+offset_bottom = 180.0
+grow_horizontal = 0
 mouse_filter = 2
 script = ExtResource("11_minimap")
 streamer_path = NodePath("../../ChunkStreamer")
@@ -122,8 +123,8 @@ player_path = NodePath("../../Entities/FlyCam")
 
 [node name="Info" type="Label" parent="MinimapLayer/Minimap" unique_id=1634060849]
 layout_mode = 0
-offset_top = 344.0
-offset_right = 250.0
-offset_bottom = 372.0
+offset_top = 167.0
+offset_right = 92.0
+offset_bottom = 177.0
 theme_override_font_sizes/font_size = 8
 text = "seed --   [R] reroll"

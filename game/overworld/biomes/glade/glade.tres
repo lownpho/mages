@@ -1,0 +1,60 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://doafmwwvj5gex"]
+
+[ext_resource type="Script" uid="uid://dnio1gmhq66rg" path="res://overworld/biomes/biome_resource.gd" id="1_biome"]
+[ext_resource type="Script" uid="uid://cyljcqgkgm7uc" path="res://overworld/biomes/area_resource.gd" id="2_area"]
+[ext_resource type="Script" uid="uid://cyrpxwiyb7cpn" path="res://overworld/biomes/encounter_template.gd" id="3_enc"]
+[ext_resource type="PackedScene" uid="uid://7wiiiqdn16b3" path="res://characters/enemies/sproutling/sproutling.tscn" id="4_sprout"]
+[ext_resource type="PackedScene" uid="uid://c4kusco5b3wec" path="res://characters/enemies/hopper/hopper.tscn" id="5_hopper"]
+[ext_resource type="Script" uid="uid://87ji208fqj48" path="res://overworld/biomes/painters/forest_painter.gd" id="6_painter"]
+
+[sub_resource type="Resource" id="enc_clearing_solo"]
+script = ExtResource("3_enc")
+entry_scenes = Array[PackedScene]([ExtResource("4_sprout")])
+entry_weights = Array[float]([1.0])
+weight = 1.5
+
+[sub_resource type="Resource" id="enc_clearing_pack"]
+script = ExtResource("3_enc")
+kind = 1
+entry_scenes = Array[PackedScene]([ExtResource("5_hopper")])
+entry_weights = Array[float]([1.0])
+count_min = 2
+count_max = 4
+
+[sub_resource type="Resource" id="area_clearing"]
+script = ExtResource("2_area")
+type_id = &"clearing"
+required = true
+roster = Array[PackedScene]([ExtResource("4_sprout"), ExtResource("5_hopper")])
+encounters = Array[ExtResource("3_enc")]([SubResource("enc_clearing_solo"), SubResource("enc_clearing_pack")])
+
+[sub_resource type="Resource" id="enc_grove_pack"]
+script = ExtResource("3_enc")
+kind = 1
+entry_scenes = Array[PackedScene]([ExtResource("5_hopper")])
+entry_weights = Array[float]([1.0])
+count_min = 3
+count_max = 5
+
+[sub_resource type="Resource" id="area_grove"]
+script = ExtResource("2_area")
+type_id = &"grove"
+weight = 2.0
+patch_thickness = 0.5
+coverage = 0.6
+roster = Array[PackedScene]([ExtResource("5_hopper")])
+encounters = Array[ExtResource("3_enc")]([SubResource("enc_grove_pack")])
+
+[resource]
+script = ExtResource("1_biome")
+id = &"glade"
+painter = ExtResource("6_painter")
+ground_tiles = Array[Vector2i]([Vector2i(9, 0), Vector2i(8, 0), Vector2i(9, 1)])
+blocker_source = 1
+blocker_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0)])
+patch_thickness = 0.5
+coverage = 0.25
+patch_width = 40
+decor_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1)])
+decor_density = 0.01
+area_set = Array[ExtResource("2_area")]([SubResource("area_clearing"), SubResource("area_grove")])

@@ -7,8 +7,8 @@
 [ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="9_obj"]
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="10_gfloor"]
 [ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="11_gobj"]
-[ext_resource type="Script" path="res://world_gen/streaming/chunk_streamer.gd" id="12_stream"]
-[ext_resource type="Resource" path="res://world_gen/content/world_graph.tres" id="13_graph"]
+[ext_resource type="Script" path="res://overworld/streaming/chunk_streamer.gd" id="12_stream"]
+[ext_resource type="Resource" path="res://overworld/world_graph.tres" id="13_graph"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
 
