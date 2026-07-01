@@ -10,6 +10,5 @@ region = Rect2(24, 16, 8, 8)
 [resource]
 script = ExtResource("1_script")
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 60
-max_health_modifier = 20
-max_mana_modifier = 20
+skill_modifier = 32
+speed_modifier = 16
