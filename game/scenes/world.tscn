@@ -16,6 +16,7 @@
 
 [node name="World" type="Node2D" unique_id=606710024]
 script = ExtResource("7_world")
+world_seed = 33
 
 [node name="UI" parent="." unique_id=1550154989 instance=ExtResource("5_71j4m")]
 

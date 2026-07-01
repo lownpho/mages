@@ -11,6 +11,7 @@ class_name ChunkStreamer extends Node
 @export_range(1, 12, 1) var unload_radius := 3         # chunks beyond this are discarded (must be > load_radius)
 @export_range(1, 16, 1) var gen_budget_per_frame := 2  # chunks built per frame from the queue (amortised)
 @export var biomes: Array[BiomeResource] = []          # registry; [0] is the spawn biome
+@export var world_regions := Vector2i(3, 3)            # finite world size, in region cells (W x H)
 
 var _macro := MacroMap.new()
 var _ctx := GenContext.new()
@@ -30,7 +31,7 @@ var _last_center := Vector2i(2147483647, 0)  # force a refresh on the first fram
 func init(world_seed: int) -> void:
 	_player = get_tree().get_first_node_in_group("player")
 	_enemies_root = _world().get_node("Entities/Enemies")
-	_macro.setup(world_seed, biomes)
+	_macro.setup(world_seed, biomes, world_regions)
 	_ctx.rng = RandomNumberGenerator.new()
 	_ctx.rng.seed = world_seed
 	_ctx.biomes = biomes
@@ -93,6 +94,8 @@ func _build_chunk(coord: Vector2i) -> void:
 		for x in range(rect.position.x, rect.end.x):
 			var cell := Vector2i(x, y)
 			var biome := _macro.biome_at(cell)
+			if biome == null:   # off-world: nothing generated beyond the finite grid
+				continue
 			if not buckets.has(biome):
 				buckets[biome] = [] as Array[Vector2i]
 			buckets[biome].append(cell)

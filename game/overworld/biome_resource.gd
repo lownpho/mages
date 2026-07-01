@@ -27,5 +27,6 @@ class_name BiomeResource extends Resource
 @export_range(0.0, 0.1, 0.001) var enemy_density: float = 0.0    ## per-tile spawn probability
 
 @export_group("Generation")
+@export_range(0, 16, 1) var region_weight: int = 1  ## relative frequency in the region grid (0 = never)
 @export var allows_dungeon: bool = false            ## can a dungeon entrance spawn here (read by MacroMap)
 @export var painter: Script                         ## the BiomePainter subclass that fills this biome

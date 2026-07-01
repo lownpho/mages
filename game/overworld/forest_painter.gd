@@ -36,6 +36,11 @@ func fill(ctx: GenContext, biome: BiomeResource, cells: Array[Vector2i], _rng: R
 		if cell.x * cell.x + cell.y * cell.y <= SPAWN_CLEAR * SPAWN_CLEAR:
 			continue
 
+		# World edge: force cover (overriding trails) so the finite world reads as walled in.
+		if ctx.macro and ctx.macro.is_world_edge(cell) and not biome.blocker_tiles.is_empty():
+			ctx.objects.set_cell(cell, biome.blocker_source, Hash.pick(world_seed, cell.x, cell.y, CH_COVER_TILE, biome.blocker_tiles))
+			continue
+
 		# Cover (trees): the sightline dial. A tree owns its cell — no decor/enemy on top.
 		# Trail cells are forced clear (never a tree) so the walkable network stays connected;
 		# they still get decor/enemies below, so trails read as planted clearings, not blanks.
