@@ -1,0 +1,67 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" uid="uid://cgpcj6mm1cmkg" path="res://scenes/world.gd" id="1_world"]
+[ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://overworld/biomes/deepwood/deepwood_floor_tileset.tres" id="2_dfloor"]
+[ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="3_ddecor"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="4_gfloor"]
+[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="5_gdecor"]
+[ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="6_biome"]
+[ext_resource type="Script" uid="uid://880mq6srhpdt" path="res://overworld/chunk_streamer.gd" id="7_stream"]
+[ext_resource type="Resource" uid="uid://cau06dccis7gb" path="res://overworld/biomes/glade/glade.tres" id="8_glade"]
+[ext_resource type="Resource" uid="uid://sunjt3y0dibb" path="res://overworld/biomes/deepwood/deepwood.tres" id="9_deepw"]
+[ext_resource type="Script" path="res://scenes/flycam.gd" id="10_flycam"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_world")
+world_seed = 33
+
+[node name="floor_glade" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("4_gfloor")
+
+[node name="floor_deepwood" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("2_dfloor")
+
+[node name="decor_glade" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("5_gdecor")
+
+[node name="decor_deepwood" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("3_ddecor")
+
+[node name="Entities" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="objects_glade" type="TileMapLayer" parent="Entities"]
+y_sort_enabled = true
+tile_set = ExtResource("5_gdecor")
+
+[node name="objects_deepwood" type="TileMapLayer" parent="Entities"]
+y_sort_enabled = true
+tile_set = ExtResource("3_ddecor")
+
+[node name="Enemies" type="Node2D" parent="Entities"]
+y_sort_enabled = true
+
+[node name="FlyCam" type="Node2D" parent="Entities" groups=["player"]]
+z_index = 1000
+z_as_relative = false
+script = ExtResource("10_flycam")
+
+[node name="Camera2D" type="Camera2D" parent="Entities/FlyCam"]
+
+[node name="HUD" type="CanvasLayer" parent="Entities/FlyCam"]
+
+[node name="Label" type="Label" parent="Entities/FlyCam/HUD"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 316.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 8
+text = "WASD/Arrows: fly   Shift: fast   Wheel or +/-: zoom"
+
+[node name="ChunkStreamer" type="Node" parent="."]
+script = ExtResource("7_stream")
+biomes = Array[ExtResource("6_biome")]([ExtResource("8_glade"), ExtResource("9_deepw")])

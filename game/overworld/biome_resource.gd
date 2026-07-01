@@ -24,7 +24,17 @@ class_name BiomeResource extends Resource
 
 @export_group("Enemies")
 @export var enemy_roster: Array[PackedScene] = []   ## reuses existing enemy scenes
-@export_range(0.0, 0.1, 0.001) var enemy_density: float = 0.0    ## per-tile spawn probability
+@export_range(0.0, 0.1, 0.001) var enemy_density: float = 0.0    ## per-tile spawn probability at peak danger
+@export_range(0.0, 1.0, 0.01) var danger_threshold: float = 0.45 ## danger below this = safe zone (no enemies)
+@export_range(1.0, 6.0, 0.1) var danger_peak: float = 2.0        ## density multiplier at maximum danger
+
+const _DANGER_EDGE := 0.12   ## smoothstep softness at the safe/dangerous border
+
+## Multiplier applied to `enemy_density` for a cell of ambient danger `d` (0..1, from MacroMap):
+## 0 below `danger_threshold` (a safe zone), ramping to `danger_peak` at full danger. So one
+## flat density becomes contiguous enemy zones separated by empty ground.
+func danger_multiplier(d: float) -> float:
+	return smoothstep(danger_threshold, danger_threshold + _DANGER_EDGE, d) * danger_peak
 
 @export_group("Generation")
 @export_range(0, 16, 1) var region_weight: int = 1  ## relative frequency in the region grid (0 = never)

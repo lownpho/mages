@@ -32,9 +32,14 @@ const PATH_CELL := 34          # tiles between parallel trails (raise = sparser 
 const PATH_WIDTH := 2.0        # trail half-width in tiles (clear strip ≈ 2*this + 1)
 const PATH_WOBBLE := 10.0      # how far a trail wanders sideways (organic, not ruler-straight)
 
+# Ambient-threat field: a low-frequency noise carving the world into calm and dangerous zones.
+const DANGER_FREQ := 0.02      # danger wavelength ≈ 1/freq tiles (~50, <2 chunks); lower = larger zones
+const DANGER_GAIN := 1.6       # stretches the noise toward [0,1] so hot zones reach full intensity
+
 var _seed: int
 var _noise: FastNoiseLite          # low-frequency domain-warp field for region borders
 var _path_noise: FastNoiseLite
+var _danger_noise: FastNoiseLite   # ambient-threat field (danger_at)
 var _biomes: Array[BiomeResource] = []   # [0] = spawn/default biome
 
 var _rmin: Vector2i                # inclusive region-grid bounds (region coords)
@@ -55,11 +60,17 @@ func setup(world_seed: int, biomes: Array[BiomeResource], world_regions := Vecto
 	_path_noise.seed = world_seed ^ 0x5EED   # decorrelate trails from the biome field
 	_path_noise.frequency = 0.03
 	_path_noise.fractal_octaves = 2
+	_danger_noise = FastNoiseLite.new()
+	_danger_noise.seed = world_seed ^ 0xDA46E5   # decorrelate danger from the biome & trail fields
+	_danger_noise.frequency = DANGER_FREQ
+	_danger_noise.fractal_octaves = 2
 
 	# Grid bounds, centred on origin (region (0,0) contains the spawn).
 	var size := Vector2i(maxi(1, world_regions.x), maxi(1, world_regions.y))
+	@warning_ignore("integer_division")
 	_rmin = Vector2i(-((size.x - 1) / 2), -((size.y - 1) / 2))
 	_rmax = _rmin + size - Vector2i.ONE
+	@warning_ignore("integer_division")
 	var half := REGION_SIZE / 2
 	_world_min = _rmin * REGION_SIZE - Vector2i(half, half)
 	_world_max = _rmax * REGION_SIZE + Vector2i(half - 1, half - 1)
@@ -91,6 +102,13 @@ func is_world_edge(tile: Vector2i) -> bool:
 		return false
 	return tile.x < _world_min.x + BORDER_THICKNESS or tile.x > _world_max.x - BORDER_THICKNESS \
 		or tile.y < _world_min.y + BORDER_THICKNESS or tile.y > _world_max.y - BORDER_THICKNESS
+
+
+## Ambient threat at this tile, smooth [0,1]. A low-frequency field independent of biomes, so
+## calm and dangerous zones read at world scale and cross biome borders. Pure function of the
+## seed → the danger map never shifts. Painters scale enemy density by it (BiomeResource.danger_multiplier).
+func danger_at(tile: Vector2i) -> float:
+	return clampf(_danger_noise.get_noise_2d(tile.x, tile.y) * DANGER_GAIN * 0.5 + 0.5, 0.0, 1.0)
 
 
 ## The region cell owning this tile. Domain-warps the coordinate so borders undulate, then

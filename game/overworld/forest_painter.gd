@@ -49,16 +49,19 @@ func fill(ctx: GenContext, biome: BiomeResource, cells: Array[Vector2i], _rng: R
 			ctx.objects.set_cell(cell, biome.blocker_source, Hash.pick(world_seed, cell.x, cell.y, CH_COVER_TILE, biome.blocker_tiles))
 			continue
 
-		# Decor (cosmetic), else an enemy — at most one per cell.
+		# Decor (cosmetic), else an enemy — at most one per cell. The enemy chance is scaled by the
+		# ambient danger field (MacroMap.danger_at): calm zones stay empty, dangerous zones swarm.
 		if not biome.decor_tiles.is_empty() and Hash.chance(world_seed, cell.x, cell.y, CH_DECOR, biome.decor_density):
 			ctx.decor.set_cell(cell, biome.decor_source, Hash.pick(world_seed, cell.x, cell.y, CH_DECOR_TILE, biome.decor_tiles))
-		elif not biome.enemy_roster.is_empty() and Hash.chance(world_seed, cell.x, cell.y, CH_ENEMY, biome.enemy_density):
-			var enemy: Node2D = Hash.pick(world_seed, cell.x, cell.y, CH_ENEMY_PICK, biome.enemy_roster).instantiate()
-			# Position BEFORE add_child: otherwise the node enters the tree at (0,0) — world origin
-			# since Enemies sits there — so it flashes at origin for a frame and its _ready reads the
-			# wrong global_position. Enemies has an identity transform, so local position == world.
-			enemy.position = _scatter_pos(ctx, cell, world_seed, CH_JIT_X, CH_JIT_Y)
-			ctx.enemies.add_child(enemy)
+		elif not biome.enemy_roster.is_empty():
+			var danger := ctx.macro.danger_at(cell) if ctx.macro else 1.0
+			if Hash.chance(world_seed, cell.x, cell.y, CH_ENEMY, biome.enemy_density * biome.danger_multiplier(danger)):
+				var enemy: Node2D = Hash.pick(world_seed, cell.x, cell.y, CH_ENEMY_PICK, biome.enemy_roster).instantiate()
+				# Position BEFORE add_child: otherwise the node enters the tree at (0,0) — world origin
+				# since Enemies sits there — so it flashes at origin for a frame and its _ready reads the
+				# wrong global_position. Enemies has an identity transform, so local position == world.
+				enemy.position = _scatter_pos(ctx, cell, world_seed, CH_JIT_X, CH_JIT_Y)
+				ctx.enemies.add_child(enemy)
 
 
 # Local tree probability. With no groves (patch_width 0 or full coverage) it's a flat field
