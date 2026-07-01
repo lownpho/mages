@@ -7,10 +7,8 @@
 [ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="9_obj"]
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="10_gfloor"]
 [ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="11_gobj"]
-[ext_resource type="Script" uid="uid://cp538krw54tgl" path="res://overworld/biome_resource.gd" id="11_jhx03"]
-[ext_resource type="Script" uid="uid://880mq6srhpdt" path="res://overworld/chunk_streamer.gd" id="12_stream"]
-[ext_resource type="Resource" uid="uid://cau06dccis7gb" path="res://overworld/biomes/glade/glade.tres" id="13_glade"]
-[ext_resource type="Resource" uid="uid://sunjt3y0dibb" path="res://overworld/biomes/deepwood/deepwood.tres" id="14_deepw"]
+[ext_resource type="Script" path="res://world_gen/streaming/chunk_streamer.gd" id="12_stream"]
+[ext_resource type="Resource" path="res://world_gen/content/world_graph.tres" id="13_graph"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
 
@@ -32,6 +30,18 @@ tile_set = ExtResource("10_gfloor")
 z_index = -20
 tile_set = ExtResource("8_floor")
 
+[node name="floor_wilds" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("10_gfloor")
+
+[node name="floor_hollow" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("10_gfloor")
+
+[node name="floor_marsh" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("10_gfloor")
+
 [node name="decor_glade" type="TileMapLayer" parent="." unique_id=175054279]
 z_index = -19
 tile_set = ExtResource("11_gobj")
@@ -39,6 +49,18 @@ tile_set = ExtResource("11_gobj")
 [node name="decor_deepwood" type="TileMapLayer" parent="." unique_id=1352341293]
 z_index = -19
 tile_set = ExtResource("9_obj")
+
+[node name="decor_wilds" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("11_gobj")
+
+[node name="decor_hollow" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("11_gobj")
+
+[node name="decor_marsh" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("11_gobj")
 
 [node name="Entities" type="Node2D" parent="." unique_id=1613421289]
 y_sort_enabled = true
@@ -51,7 +73,22 @@ tile_set = ExtResource("11_gobj")
 y_sort_enabled = true
 tile_set = ExtResource("9_obj")
 
+[node name="objects_wilds" type="TileMapLayer" parent="Entities"]
+y_sort_enabled = true
+tile_set = ExtResource("11_gobj")
+
+[node name="objects_hollow" type="TileMapLayer" parent="Entities"]
+y_sort_enabled = true
+tile_set = ExtResource("11_gobj")
+
+[node name="objects_marsh" type="TileMapLayer" parent="Entities"]
+y_sort_enabled = true
+tile_set = ExtResource("11_gobj")
+
 [node name="Enemies" type="Node2D" parent="Entities" unique_id=1746165412]
+y_sort_enabled = true
+
+[node name="Specials" type="Node2D" parent="Entities"]
 y_sort_enabled = true
 
 [node name="pickups" type="Node2D" parent="Entities" unique_id=42372176 groups=["pickups"]]
@@ -62,4 +99,4 @@ z_as_relative = false
 
 [node name="ChunkStreamer" type="Node" parent="." unique_id=23583220]
 script = ExtResource("12_stream")
-biomes = Array[ExtResource("11_jhx03")]([ExtResource("13_glade"), ExtResource("14_deepw")])
+world_graph = ExtResource("13_graph")

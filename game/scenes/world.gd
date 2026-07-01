@@ -9,8 +9,5 @@ extends Node2D
 func _ready() -> void:
 	if not generate_world:
 		return
-	# Player starts at world origin; the streamer primes the chunks around it from here.
-	var player := get_tree().get_first_node_in_group("player")
-	if player:
-		player.global_position = Vector2.ZERO
+	# The streamer positions the player at a validated Glade spawn, then primes chunks around it.
 	_streamer.init(world_seed if world_seed != 0 else randi())

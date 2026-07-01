@@ -9,23 +9,13 @@ const ZOOM_STEP := 1.15
 
 @onready var _cam: Camera2D = $Camera2D
 @onready var _label: Label = $HUD/Label
-var _wmin: Vector2i
-var _wmax: Vector2i
 
 
 func _ready() -> void:
 	add_to_group("player")
 	_cam.zoom = Vector2(0.3, 0.3)
-	# World tile bounds, from the streamer's region grid (same formula as MacroMap.setup).
-	var regions: Vector2i = owner.get_node("ChunkStreamer").world_regions
-	var rs := MacroMap.REGION_SIZE
-	var sz := Vector2i(maxi(1, regions.x), maxi(1, regions.y))
-	@warning_ignore("integer_division")
-	var rmin := Vector2i(-((sz.x - 1) / 2), -((sz.y - 1) / 2))
-	@warning_ignore("integer_division")
-	var half := Vector2i(rs / 2, rs / 2)
-	_wmin = rmin * rs - half
-	_wmax = (rmin + sz - Vector2i.ONE) * rs + half - Vector2i.ONE
+	# The hull is now the union of biome cells (no fixed region grid) — the rich minimap /
+	# bounds overlay is Group J's job. This cam just flies and shows the tile position.
 
 
 func _process(dt: float) -> void:
@@ -35,8 +25,8 @@ func _process(dt: float) -> void:
 	if v != Vector2.ZERO:
 		global_position += v.normalized() * PAN * dt / _cam.zoom.x
 	var t := (global_position / GameConstants.PX_PER_TILE).round()
-	_label.text = "WASD/arrows fly · wheel zoom\npos %d,%d   x[%d,%d] y[%d,%d]   ×%.2f" % [
-		int(t.x), int(t.y), _wmin.x, _wmax.x, _wmin.y, _wmax.y, _cam.zoom.x]
+	_label.text = "WASD/arrows fly · wheel zoom\npos %d,%d   ×%.2f" % [
+		int(t.x), int(t.y), _cam.zoom.x]
 	queue_redraw()
 
 

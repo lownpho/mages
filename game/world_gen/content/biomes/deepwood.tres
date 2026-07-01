@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://bk3ncxx20rtbb"]
+
+[ext_resource type="Script" uid="uid://dnio1gmhq66rg" path="res://world_gen/biomes/biome_resource.gd" id="1_biome"]
+[ext_resource type="Script" uid="uid://cyljcqgkgm7uc" path="res://world_gen/biomes/area_resource.gd" id="2_area"]
+[ext_resource type="Script" uid="uid://cyrpxwiyb7cpn" path="res://world_gen/biomes/encounter_template.gd" id="3_enc"]
+[ext_resource type="PackedScene" uid="uid://c8egykt110053" path="res://characters/enemies/thornback/thornback.tscn" id="4_thorn"]
+[ext_resource type="PackedScene" uid="uid://d0wl3nemysc3n" path="res://characters/enemies/owl/owl.tscn" id="5_owl"]
+[ext_resource type="PackedScene" uid="uid://dwdmelhkmivh8" path="res://characters/enemies/snake/snake.tscn" id="6_snake"]
+[ext_resource type="Script" uid="uid://87ji208fqj48" path="res://world_gen/biomes/painters/forest_painter.gd" id="7_painter"]
+
+[sub_resource type="Resource" id="enc_thicket_solo"]
+script = ExtResource("3_enc")
+entry_scenes = Array[PackedScene]([ExtResource("4_thorn")])
+entry_weights = Array[float]([1.0])
+
+[sub_resource type="Resource" id="enc_thicket_mixed"]
+script = ExtResource("3_enc")
+kind = 2
+entry_scenes = Array[PackedScene]([ExtResource("4_thorn"), ExtResource("5_owl")])
+entry_weights = Array[float]([2.0, 1.0])
+count_min = 2
+count_max = 3
+
+[sub_resource type="Resource" id="area_thicket"]
+script = ExtResource("2_area")
+type_id = &"thicket"
+required = true
+coverage = 0.7
+roster = Array[PackedScene]([ExtResource("4_thorn"), ExtResource("5_owl")])
+encounters = Array[ExtResource("3_enc")]([SubResource("enc_thicket_solo"), SubResource("enc_thicket_mixed")])
+
+[sub_resource type="Resource" id="enc_den_pack"]
+script = ExtResource("3_enc")
+kind = 1
+entry_scenes = Array[PackedScene]([ExtResource("6_snake")])
+entry_weights = Array[float]([1.0])
+count_min = 2
+count_max = 3
+
+[sub_resource type="Resource" id="area_den"]
+script = ExtResource("2_area")
+type_id = &"den"
+weight = 1.5
+tags = Array[StringName]([&"rare_den"])
+patch_thickness = 0.5
+coverage = 0.9
+roster = Array[PackedScene]([ExtResource("6_snake"), ExtResource("5_owl")])
+encounters = Array[ExtResource("3_enc")]([SubResource("enc_den_pack")])
+
+[resource]
+script = ExtResource("1_biome")
+id = &"deepwood"
+painter = ExtResource("7_painter")
+ground_tiles = Array[Vector2i]([Vector2i(9, 0), Vector2i(9, 1)])
+blocker_source = 1
+blocker_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0)])
+patch_thickness = 0.5
+coverage = 0.4
+patch_width = 33
+decor_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0), Vector2i(6, 0), Vector2i(7, 0)])
+decor_density = 0.01
+area_set = Array[ExtResource("2_area")]([SubResource("area_thicket"), SubResource("area_den")])
+dungeon_types = Array[StringName]([&"hell_caves"])
+target_radius_tiles = 1000
