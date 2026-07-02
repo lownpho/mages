@@ -4,10 +4,14 @@ extends Node2D
 @export var generate_world := true
 @export var world_seed := 0          # 0 = random each run, captured once for the session
 
-@onready var _streamer: ChunkStreamer = $ChunkStreamer
+@onready var _streamer: WorldStreamer = $WorldStreamer
+@onready var _player: Node2D = $Entities/Player
 
 func _ready() -> void:
 	if not generate_world:
 		return
-	# The streamer positions the player at a validated Glade spawn, then primes chunks around it.
+	_streamer.config.prepare()
 	_streamer.init(world_seed if world_seed != 0 else randi())
+	# Deterministic spawn: the traversal room nearest the glade's center, on a validated tile.
+	_player.global_position = _streamer.find_spawn_position()
+	_streamer.target = _player

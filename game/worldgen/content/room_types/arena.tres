@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://bg5d4ckwn2y5"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_30v7j"]
+[ext_resource type="Script" uid="uid://bsh1odj2asr3u" path="res://worldgen/generators/arena_params.gd" id="2_arprm"]
+
+[sub_resource type="Resource" id="Resource_arprm"]
+script = ExtResource("2_arprm")
+inset = 3
+thickness = 1
+gap_count = 3
+gap_width = 3
+
+[resource]
+script = ExtResource("1_30v7j")
+id = &"arena"
+generator_id = &"arena"
+generator_params = SubResource("Resource_arprm")
+unique_scope = 1
+allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
+enemy_groups_min = 2
+enemy_groups_max = 4
+loot_min = 1
+loot_max = 2

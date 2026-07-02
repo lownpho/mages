@@ -1,0 +1,77 @@
+[gd_resource type="Resource" script_class="BiomeDef" format=3 uid="uid://cs1ucr86i13b0"]
+
+[ext_resource type="Script" uid="uid://dabkp4sdwmgjc" path="res://worldgen/core/loot_table_entry.gd" id="1_y0vl1"]
+[ext_resource type="Script" uid="uid://cmerejb1v5l5p" path="res://worldgen/core/room_type_table_entry.gd" id="2_s32bt"]
+[ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="3_ugsjj"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_r6u0t"]
+[ext_resource type="Resource" uid="uid://bhollow0presen0" path="res://worldgen/content/biomes/hollow_presentation.tres" id="5_pres"]
+
+[sub_resource type="Resource" id="Resource_o5ap1"]
+script = ExtResource("1_y0vl1")
+room_type = &"cave_pocket"
+item_id = &"coin"
+
+[sub_resource type="Resource" id="Resource_fc60k"]
+script = ExtResource("1_y0vl1")
+room_type = &"arena"
+item_id = &"coin"
+weight = 2
+
+[sub_resource type="Resource" id="Resource_shloot"]
+script = ExtResource("1_y0vl1")
+room_type = &"shrine"
+item_id = &"coin"
+
+[sub_resource type="Resource" id="Resource_pay1e"]
+script = ExtResource("2_s32bt")
+type_id = &"cave_pocket"
+weight = 5
+max_per_biome = 14
+
+[sub_resource type="Resource" id="Resource_6uhi4"]
+script = ExtResource("2_s32bt")
+type_id = &"field"
+weight = 2
+max_per_biome = 8
+
+[sub_resource type="Resource" id="Resource_4obes"]
+script = ExtResource("2_s32bt")
+type_id = &"arena"
+max_per_biome = 1
+
+[sub_resource type="Resource" id="Resource_6emt3"]
+script = ExtResource("2_s32bt")
+type_id = &"traversal"
+weight = 3
+
+[sub_resource type="Resource" id="Resource_onim0"]
+script = ExtResource("4_r6u0t")
+room_type = &"cave_pocket"
+enemy_id = &"small_demon"
+weight = 3
+group_max = 3
+
+[sub_resource type="Resource" id="Resource_o8hax"]
+script = ExtResource("4_r6u0t")
+room_type = &"field"
+enemy_id = &"stalker"
+weight = 2
+group_max = 2
+
+[sub_resource type="Resource" id="Resource_afqtp"]
+script = ExtResource("4_r6u0t")
+room_type = &"arena"
+enemy_id = &"small_demon"
+group_min = 2
+group_max = 4
+
+[resource]
+script = ExtResource("3_ugsjj")
+id = &"hollow"
+display_color = Color(0.28, 0.22, 0.34, 1)
+openness = 0.4
+decor_density = 0.03
+room_type_table = Array[ExtResource("2_s32bt")]([SubResource("Resource_pay1e"), SubResource("Resource_6uhi4"), SubResource("Resource_4obes"), SubResource("Resource_6emt3")])
+spawn_tables = Array[ExtResource("4_r6u0t")]([SubResource("Resource_onim0"), SubResource("Resource_o8hax"), SubResource("Resource_afqtp")])
+loot_tables = Array[ExtResource("1_y0vl1")]([SubResource("Resource_o5ap1"), SubResource("Resource_fc60k"), SubResource("Resource_shloot")])
+presentation = ExtResource("5_pres")

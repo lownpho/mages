@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://d0h5cm6myal0v"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_n2eaj"]
+[ext_resource type="Script" uid="uid://rsaxqx83qmip" path="res://worldgen/generators/cave_params.gd" id="2_cvprm"]
+
+[sub_resource type="Resource" id="Resource_cvprm"]
+script = ExtResource("2_cvprm")
+
+[resource]
+script = ExtResource("1_n2eaj")
+id = &"cave_pocket"
+generator_id = &"cave"
+generator_params = SubResource("Resource_cvprm")
+allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
+enemy_groups_min = 1
+enemy_groups_max = 2
+loot_max = 1

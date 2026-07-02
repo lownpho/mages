@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://3l001xvpnfnb"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_to306"]
+[ext_resource type="Script" uid="uid://dffpkaadie3g2" path="res://worldgen/generators/scatter_params.gd" id="2_scprm"]
+
+[sub_resource type="Resource" id="Resource_scprm"]
+script = ExtResource("2_scprm")
+count_per_slot = 4
+min_spacing = 7
+clump_min = 3
+clump_max = 8
+
+[resource]
+script = ExtResource("1_to306")
+id = &"field"
+generator_id = &"scatter"
+generator_params = SubResource("Resource_scprm")
+allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
+enemy_groups_min = 1
+enemy_groups_max = 3
+loot_max = 1

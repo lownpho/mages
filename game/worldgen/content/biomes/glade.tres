@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="BiomeDef" format=3 uid="uid://4oigyor383wv"]
+
+[ext_resource type="Script" uid="uid://dabkp4sdwmgjc" path="res://worldgen/core/loot_table_entry.gd" id="1_ht55i"]
+[ext_resource type="Script" uid="uid://cmerejb1v5l5p" path="res://worldgen/core/room_type_table_entry.gd" id="2_fldcm"]
+[ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="3_mmytg"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_no0o3"]
+[ext_resource type="Resource" uid="uid://c2xb6qd7ustlb" path="res://worldgen/content/biomes/glade_presentation.tres" id="5_pres"]
+
+[sub_resource type="Resource" id="Resource_aorrl"]
+script = ExtResource("1_ht55i")
+room_type = &"field"
+item_id = &"coin"
+
+[sub_resource type="Resource" id="Resource_8avm0"]
+script = ExtResource("1_ht55i")
+room_type = &"arena"
+item_id = &"coin"
+weight = 2
+
+[sub_resource type="Resource" id="Resource_shloot"]
+script = ExtResource("1_ht55i")
+room_type = &"shrine"
+item_id = &"coin"
+
+[sub_resource type="Resource" id="Resource_7g0f4"]
+script = ExtResource("2_fldcm")
+type_id = &"field"
+weight = 6
+max_per_biome = 20
+
+[sub_resource type="Resource" id="Resource_f5mc0"]
+script = ExtResource("2_fldcm")
+type_id = &"arena"
+max_per_biome = 1
+
+[sub_resource type="Resource" id="Resource_3hwxj"]
+script = ExtResource("2_fldcm")
+type_id = &"traversal"
+weight = 3
+
+[sub_resource type="Resource" id="Resource_7h78i"]
+script = ExtResource("4_no0o3")
+room_type = &"field"
+enemy_id = &"sproutling"
+weight = 3
+group_min = 2
+group_max = 4
+
+[sub_resource type="Resource" id="Resource_bxxi7"]
+script = ExtResource("4_no0o3")
+room_type = &"field"
+enemy_id = &"hopper"
+weight = 2
+group_max = 3
+
+[sub_resource type="Resource" id="Resource_kvbqo"]
+script = ExtResource("4_no0o3")
+room_type = &"arena"
+enemy_id = &"hopper"
+group_min = 3
+group_max = 5
+
+[sub_resource type="Resource" id="Resource_glcpl"]
+script = ExtResource("1_ht55i")
+room_type = &"cave_pocket"
+item_id = &"coin"
+
+[sub_resource type="Resource" id="Resource_glcp"]
+script = ExtResource("2_fldcm")
+type_id = &"cave_pocket"
+weight = 2
+max_per_biome = 6
+
+[sub_resource type="Resource" id="Resource_glfow"]
+script = ExtResource("4_no0o3")
+room_type = &"field"
+enemy_id = &"owl"
+weight = 1
+group_max = 2
+
+[sub_resource type="Resource" id="Resource_glcpb"]
+script = ExtResource("4_no0o3")
+room_type = &"cave_pocket"
+enemy_id = &"thornback"
+weight = 3
+group_max = 2
+
+[resource]
+script = ExtResource("3_mmytg")
+id = &"glade"
+display_color = Color(0.55, 0.82, 0.42, 1)
+openness = 0.8
+decor_density = 0.05
+room_type_table = Array[ExtResource("2_fldcm")]([SubResource("Resource_7g0f4"), SubResource("Resource_f5mc0"), SubResource("Resource_3hwxj"), SubResource("Resource_glcp")])
+spawn_tables = Array[ExtResource("4_no0o3")]([SubResource("Resource_7h78i"), SubResource("Resource_bxxi7"), SubResource("Resource_kvbqo"), SubResource("Resource_glfow"), SubResource("Resource_glcpb")])
+loot_tables = Array[ExtResource("1_ht55i")]([SubResource("Resource_aorrl"), SubResource("Resource_8avm0"), SubResource("Resource_shloot"), SubResource("Resource_glcpl")])
+presentation = ExtResource("5_pres")

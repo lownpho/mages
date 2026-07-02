@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="RoomStamp" format=3]
+
+[ext_resource type="Script" path="res://worldgen/core/room_stamp.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+rows = Array[String](["...##.##...", "..#.....#..", ".#.......#.", "#....d....#", "#...ddd...#", "....dBd....", "#...ddd...#", "#....d....#", ".#.......#.", "..#.....#..", "...##.##..."])

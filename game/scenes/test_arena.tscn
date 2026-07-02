@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="dbg"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="dmgnum"]
 [ext_resource type="PackedScene" uid="uid://cbaydsp8aq3ea" path="res://characters/enemies/dummy/dummy.tscn" id="dummy"]
-[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="floor_ts"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://worldgen/content/biomes/glade/glade_floor_tileset.tres" id="floor_ts"]
 [ext_resource type="Resource" uid="uid://j00f2n4yqpe1" path="res://characters/player/weapons/rune/rune1.tres" id="it_0"]
 [ext_resource type="Resource" uid="uid://m0uq0gpm52ck" path="res://characters/player/weapons/rune/rune2.tres" id="it_1"]
 [ext_resource type="Resource" uid="uid://bsm2wkf63rmeq" path="res://characters/player/weapons/rune/rune3.tres" id="it_2"]

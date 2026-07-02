@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="AdjacencyRules" format=3 uid="uid://70gxdakwf6l8"]
+
+[ext_resource type="Script" uid="uid://bqimktg6tyv2k" path="res://worldgen/core/biome_pair_rule.gd" id="1_vevf3"]
+[ext_resource type="Script" uid="uid://c5dh8e8yol1mn" path="res://worldgen/core/adjacency_rules.gd" id="2_ult2l"]
+
+[sub_resource type="Resource" id="Resource_jbxlu"]
+script = ExtResource("1_vevf3")
+biome_a = &"glade"
+biome_b = &"deepwood"
+
+[resource]
+script = ExtResource("2_ult2l")
+required = Array[ExtResource("1_vevf3")]([SubResource("Resource_jbxlu")])

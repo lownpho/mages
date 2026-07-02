@@ -3,14 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_nnsk1"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_71j4m"]
 [ext_resource type="Script" uid="uid://cgpcj6mm1cmkg" path="res://scenes/world.gd" id="7_world"]
-[ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://overworld/biomes/deepwood/deepwood_floor_tileset.tres" id="8_floor"]
-[ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://overworld/biomes/deepwood/deepwood_decor_tileset.tres" id="9_obj"]
-[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://overworld/biomes/glade/glade_floor_tileset.tres" id="10_gfloor"]
-[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://overworld/biomes/glade/glade_decor_tileset.tres" id="11_gobj"]
-[ext_resource type="Script" path="res://overworld/streaming/chunk_streamer.gd" id="12_stream"]
-[ext_resource type="Resource" path="res://overworld/world_graph.tres" id="13_graph"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
+[ext_resource type="Script" path="res://worldgen/streaming/world_streamer.gd" id="80_stream"]
+[ext_resource type="Script" path="res://worldgen/streaming/entity_spawner.gd" id="81_spawn"]
+[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://worldgen/content/gen_config.tres" id="82_cfg"]
 
 [node name="World" type="Node2D" unique_id=606710024]
 script = ExtResource("7_world")
@@ -22,68 +19,19 @@ world_seed = 33
 
 [node name="DamageNumbers" parent="." unique_id=1159986638 instance=ExtResource("79_dmgnum")]
 
-[node name="floor_glade" type="TileMapLayer" parent="." unique_id=429425987]
+[node name="WorldStreamer" type="Node2D" parent="."]
 z_index = -20
-tile_set = ExtResource("10_gfloor")
+script = ExtResource("80_stream")
+config = ExtResource("82_cfg")
+debug_spawn_markers = false
 
-[node name="floor_deepwood" type="TileMapLayer" parent="." unique_id=903247295]
-z_index = -20
-tile_set = ExtResource("8_floor")
-
-[node name="floor_wilds" type="TileMapLayer" parent="."]
-z_index = -20
-tile_set = ExtResource("10_gfloor")
-
-[node name="floor_hollow" type="TileMapLayer" parent="."]
-z_index = -20
-tile_set = ExtResource("10_gfloor")
-
-[node name="floor_marsh" type="TileMapLayer" parent="."]
-z_index = -20
-tile_set = ExtResource("10_gfloor")
-
-[node name="decor_glade" type="TileMapLayer" parent="." unique_id=175054279]
-z_index = -19
-tile_set = ExtResource("11_gobj")
-
-[node name="decor_deepwood" type="TileMapLayer" parent="." unique_id=1352341293]
-z_index = -19
-tile_set = ExtResource("9_obj")
-
-[node name="decor_wilds" type="TileMapLayer" parent="."]
-z_index = -19
-tile_set = ExtResource("11_gobj")
-
-[node name="decor_hollow" type="TileMapLayer" parent="."]
-z_index = -19
-tile_set = ExtResource("11_gobj")
-
-[node name="decor_marsh" type="TileMapLayer" parent="."]
-z_index = -19
-tile_set = ExtResource("11_gobj")
+[node name="EntitySpawner" type="Node" parent="."]
+script = ExtResource("81_spawn")
+streamer_path = NodePath("../WorldStreamer")
+enemies_parent_path = NodePath("../Entities/Enemies")
 
 [node name="Entities" type="Node2D" parent="." unique_id=1613421289]
 y_sort_enabled = true
-
-[node name="objects_glade" type="TileMapLayer" parent="Entities" unique_id=145916699]
-y_sort_enabled = true
-tile_set = ExtResource("11_gobj")
-
-[node name="objects_deepwood" type="TileMapLayer" parent="Entities" unique_id=1274790631]
-y_sort_enabled = true
-tile_set = ExtResource("9_obj")
-
-[node name="objects_wilds" type="TileMapLayer" parent="Entities"]
-y_sort_enabled = true
-tile_set = ExtResource("11_gobj")
-
-[node name="objects_hollow" type="TileMapLayer" parent="Entities"]
-y_sort_enabled = true
-tile_set = ExtResource("11_gobj")
-
-[node name="objects_marsh" type="TileMapLayer" parent="Entities"]
-y_sort_enabled = true
-tile_set = ExtResource("11_gobj")
 
 [node name="Enemies" type="Node2D" parent="Entities" unique_id=1746165412]
 y_sort_enabled = true
@@ -96,7 +44,3 @@ z_index = 10
 z_as_relative = false
 
 [node name="Player" parent="Entities" unique_id=1740480760 instance=ExtResource("1_nnsk1")]
-
-[node name="ChunkStreamer" type="Node" parent="." unique_id=23583220]
-script = ExtResource("12_stream")
-world_graph = ExtResource("13_graph")

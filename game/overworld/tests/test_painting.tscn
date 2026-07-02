@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://overworld/tests/test_painting.gd" id="1"]
-
-[node name="TestPainting" type="Node"]
-script = ExtResource("1")

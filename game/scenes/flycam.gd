@@ -1,6 +1,7 @@
 extends Node2D
-## Free-fly debug camera (scenes/debug_world.tscn). Sits in the "player" group so ChunkStreamer
-## streams the world around it; ignores physics, so fly anywhere. Yellow box = the player's real
+## Free-fly debug camera (scenes/worldgen_debug.tscn, fly mode / view 4). Assigned as the
+## WorldStreamer target so the world streams around it; ignores physics, so fly anywhere.
+## Yellow box = the player's real
 ## 320×180 view drawn at world size (shrinks as you zoom out). HUD shows tile pos vs world bounds.
 
 const PLAYER_VIEW := Vector2(320, 180)   # base viewport = the real play view, in world px
