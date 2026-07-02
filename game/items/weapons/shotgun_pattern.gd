@@ -7,8 +7,9 @@ class_name ShotgunPattern
 func get_directions(direction: Vector2) -> Array[Vector2]:
 	var dirs: Array[Vector2] = []
 	var base_angle = direction.angle()
-	var half_spread = deg_to_rad(spread_angle) / 2.0
+	var spread_tick = deg_to_rad(spread_angle) / (num_pellets - 1)
+	var start_spread = -deg_to_rad(spread_angle) / 2
 	for i in range(num_pellets):
-		var offset = randf_range(-half_spread, half_spread)
+		var offset = start_spread + i * spread_tick
 		dirs.append(Vector2.from_angle(base_angle + offset))
 	return dirs
