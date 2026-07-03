@@ -21,10 +21,19 @@ var _quadrant: int = 16
 var _biome_layers: Dictionary = {}   # StringName biome_id -> { "floor"/"wall"/"blocker"/"decor": TileMapLayer|null }
 
 
+## Z-bands: floor/decor sit BEHIND every entity (flat ground), trees share the entity band (0) so
+## they Y-sort against the player/enemies. y_sort_enabled here propagates the tree layers' per-tile
+## sort up to the world's shared Y-sort root (World → WorldRoot → WorldStreamer → chunk → layer).
+const _Z_FLOOR := -2
+const _Z_DECOR := -1
+const _Z_OBJECT := 0
+
+
 func setup(coord: Vector2i, origin_px: Vector2, quadrant: int) -> void:
 	chunk_coord = coord
 	position = origin_px
 	_quadrant = quadrant
+	y_sort_enabled = true
 
 
 ## The (up to four) TileMapLayers for one biome, created + cached on first request. Each slot is a
@@ -34,23 +43,27 @@ func layers_for(biome_id: StringName, pres: BiomePresentation) -> Dictionary:
 	if _biome_layers.has(biome_id):
 		return _biome_layers[biome_id]
 	var group := {
-		"floor": _make_layer("%s_floor" % biome_id, pres.floor_tileset, false),
-		"wall": _make_layer("%s_wall" % biome_id, pres.wall_tileset, true),
-		"blocker": _make_layer("%s_blocker" % biome_id, pres.blocker_tileset, true),
-		"decor": _make_layer("%s_decor" % biome_id, pres.decor_tileset, false),
+		"floor": _make_layer("%s_floor" % biome_id, pres.floor_tileset, _Z_FLOOR, false),
+		"wall": _make_layer("%s_wall" % biome_id, pres.wall_tileset, _Z_OBJECT, true),
+		"blocker": _make_layer("%s_blocker" % biome_id, pres.blocker_tileset, _Z_OBJECT, true),
+		"decor": _make_layer("%s_decor" % biome_id, pres.decor_tileset, _Z_DECOR, false),
 	}
 	_biome_layers[biome_id] = group
 	return group
 
 
-func _make_layer(layer_name: String, tileset: TileSet, collides: bool) -> TileMapLayer:
+## `solid` layers (trees) collide AND Y-sort so tall props render in front/behind by base position;
+## flat layers (floor/decor) do neither and are pinned to a background z-band.
+func _make_layer(layer_name: String, tileset: TileSet, z: int, solid: bool) -> TileMapLayer:
 	if tileset == null:
 		return null
 	var l := TileMapLayer.new()
 	l.name = layer_name
 	l.tile_set = tileset
-	if collides:
+	l.z_index = z
+	if solid:
 		l.physics_quadrant_size = _quadrant
+		l.y_sort_enabled = true
 	add_child(l)
 	return l
 

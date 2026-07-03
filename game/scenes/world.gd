@@ -4,8 +4,8 @@ extends Node2D
 @export var generate_world := true
 @export var world_seed := 0          # 0 = random each run, captured once for the session
 
-@onready var _streamer: WorldStreamer = $WorldStreamer
-@onready var _player: Node2D = $Entities/Player
+@onready var _streamer: WorldStreamer = $WorldRoot/WorldStreamer
+@onready var _player: Node2D = $WorldRoot/Entities/Player
 
 func _ready() -> void:
 	if not generate_world:

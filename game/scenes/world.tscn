@@ -19,28 +19,31 @@ world_seed = 33
 
 [node name="DamageNumbers" parent="." unique_id=1159986638 instance=ExtResource("79_dmgnum")]
 
-[node name="WorldStreamer" type="Node2D" parent="."]
-z_index = -20
+[node name="EntitySpawner" type="Node" parent="." node_paths=PackedStringArray("streamer", "enemies_parent")]
+script = ExtResource("81_spawn")
+streamer = NodePath("../WorldRoot/WorldStreamer")
+enemies_parent = NodePath("../WorldRoot/Entities/Enemies")
+
+[node name="WorldRoot" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="WorldStreamer" type="Node2D" parent="WorldRoot"]
+y_sort_enabled = true
 script = ExtResource("80_stream")
 config = ExtResource("82_cfg")
 debug_spawn_markers = false
 
-[node name="EntitySpawner" type="Node" parent="." node_paths=PackedStringArray("streamer", "enemies_parent")]
-script = ExtResource("81_spawn")
-streamer = NodePath("../WorldStreamer")
-enemies_parent = NodePath("../Entities/Enemies")
-
-[node name="Entities" type="Node2D" parent="." unique_id=1613421289]
+[node name="Entities" type="Node2D" parent="WorldRoot" unique_id=1613421289]
 y_sort_enabled = true
 
-[node name="Enemies" type="Node2D" parent="Entities" unique_id=1746165412]
+[node name="Enemies" type="Node2D" parent="WorldRoot/Entities" unique_id=1746165412]
 y_sort_enabled = true
 
-[node name="Specials" type="Node2D" parent="Entities"]
+[node name="Specials" type="Node2D" parent="WorldRoot/Entities"]
 y_sort_enabled = true
 
-[node name="pickups" type="Node2D" parent="Entities" unique_id=42372176 groups=["pickups"]]
+[node name="pickups" type="Node2D" parent="WorldRoot/Entities" unique_id=42372176 groups=["pickups"]]
 z_index = 10
 z_as_relative = false
 
-[node name="Player" parent="Entities" unique_id=1740480760 instance=ExtResource("1_nnsk1")]
+[node name="Player" parent="WorldRoot/Entities" unique_id=1740480760 instance=ExtResource("1_nnsk1")]
