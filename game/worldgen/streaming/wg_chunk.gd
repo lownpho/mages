@@ -1,45 +1,58 @@
 class_name WgChunk
-## One streaming chunk (spec §11 / godot_tips): a small Node2D owning its OWN ground/wall/decor
-## TileMapLayer trio, fully populated by WorldStreamer BEFORE it enters the tree. Unloading is
-## just queue_free() — O(1), no per-cell erase storm on a giant shared layer.
+## One streaming chunk (spec §11 / godot_tips): a small Node2D owning its OWN TileMapLayers, fully
+## populated by WorldStreamer BEFORE it enters the tree. Unloading is just queue_free() — O(1), no
+## per-cell erase storm on a giant shared layer.
 ##
-## Layers and tilesets are built in code (not a .tscn) because chunks are procedural — there is
-## no authorable scene per chunk. Ground and wall share `floor_tileset` (grass tiles have no
-## collider, wall tiles do); decor uses `object_tileset`. The wall/decor layers get
-## physics_quadrant_size == CHUNK_SIZE so the engine batches their colliders per chunk.
+## Layers are built in code (not a .tscn) because chunks are procedural. A chunk may overlap more
+## than one biome, and each biome has its OWN per-class tilesets, so a single shared TileMapLayer
+## (which holds one tile_set) cannot serve both. Instead layers are created lazily per biome via
+## layers_for(): one floor/wall/blocker/decor TileMapLayer group per biome present in the chunk,
+## each backed by that biome's tileset (skipping null slots). Biome regions never share a cell, so
+## cross-biome draw order is irrelevant; within a biome order is floor < wall < blocker < decor.
+## Wall/blocker layers get physics_quadrant_size == chunk_tiles so the engine batches colliders.
 extends Node2D
 
 var chunk_coord: Vector2i
-var ground: TileMapLayer
-var wall: TileMapLayer
-var decor: TileMapLayer
 ## Spawn entries overlapping this chunk, with a `world_tile` field resolved (Task 9: consumed
 ## by WgEntitySpawner via WorldStreamer.chunk_loaded).
 var spawn_data: Array = []
 
+var _quadrant: int = 16
+var _biome_layers: Dictionary = {}   # StringName biome_id -> { "floor"/"wall"/"blocker"/"decor": TileMapLayer|null }
 
-func setup(coord: Vector2i, origin_px: Vector2, floor_tileset: TileSet, object_tileset: TileSet,
-		quadrant: int) -> void:
+
+func setup(coord: Vector2i, origin_px: Vector2, quadrant: int) -> void:
 	chunk_coord = coord
 	position = origin_px
+	_quadrant = quadrant
 
-	ground = TileMapLayer.new()
-	ground.name = "ground"
-	ground.tile_set = floor_tileset
 
-	wall = TileMapLayer.new()
-	wall.name = "wall"
-	wall.tile_set = floor_tileset
-	wall.physics_quadrant_size = quadrant
+## The (up to four) TileMapLayers for one biome, created + cached on first request. Each slot is a
+## TileMapLayer or null (when the presentation leaves that class's tileset unset). Order of
+## add_child is floor < wall < blocker < decor so the decor overlay draws on top within a biome.
+func layers_for(biome_id: StringName, pres: BiomePresentation) -> Dictionary:
+	if _biome_layers.has(biome_id):
+		return _biome_layers[biome_id]
+	var group := {
+		"floor": _make_layer("%s_floor" % biome_id, pres.floor_tileset, false),
+		"wall": _make_layer("%s_wall" % biome_id, pres.wall_tileset, true),
+		"blocker": _make_layer("%s_blocker" % biome_id, pres.blocker_tileset, true),
+		"decor": _make_layer("%s_decor" % biome_id, pres.decor_tileset, false),
+	}
+	_biome_layers[biome_id] = group
+	return group
 
-	decor = TileMapLayer.new()
-	decor.name = "decor"
-	decor.tile_set = object_tileset
-	decor.physics_quadrant_size = quadrant
 
-	add_child(ground)
-	add_child(wall)
-	add_child(decor)
+func _make_layer(layer_name: String, tileset: TileSet, collides: bool) -> TileMapLayer:
+	if tileset == null:
+		return null
+	var l := TileMapLayer.new()
+	l.name = layer_name
+	l.tile_set = tileset
+	if collides:
+		l.physics_quadrant_size = _quadrant
+	add_child(l)
+	return l
 
 
 ## Placeholder spawn marker (Task 8): a small coloured square at a chunk-local tile. Real enemy

@@ -15,11 +15,11 @@
 
 [resource]
 script = ExtResource("13_lk1mk")
-ROOM_SLOT_SIZE = 16
-BIOME_SIZE_SLOTS = 4
-WORLD_SIZE_BIOMES = Vector2i(1, 2)
-BORDER_CROSSINGS = 4
-SPAWN_OPENING_GUARD = 3
+room_slot_tiles = 16
+biome_slots = 4
+world_width_biomes = 1
+doors_per_biome_border = 4
+spawn_min_dist_from_doors = 3
 biomes = Array[ExtResource("2_101ut")]([ExtResource("3_nry5q"), ExtResource("4_i5b0q")])
 adjacency = ExtResource("1_nh5px")
 room_types = Array[ExtResource("7_lpl1d")]([ExtResource("8_wsaof"), ExtResource("9_gtcgy"), ExtResource("10_r5d6f"), ExtResource("11_pfvbv"), ExtResource("12_qd75r"), ExtResource("14_grove")])

@@ -5,28 +5,29 @@ class_name WorldLayout
 extends RefCounted
 
 
-## Build the WorldSpec, or null (with push_error) if the adjacency rules are unsatisfiable
-## within MAX_LAYOUT_RETRIES — a content bug, not a runtime condition (spec §5.2 step 6).
+## Build the WorldSpec, or null (with push_error) if the config is invalid or the adjacency
+## rules are unsatisfiable within max_layout_retries — a content bug, not a runtime condition
+## (spec §5.2 step 6).
 static func build(world_seed: int, config: GenConfig) -> WorldSpec:
-	var w := config.WORLD_SIZE_BIOMES.x
-	var h := config.WORLD_SIZE_BIOMES.y
+	if not config.validate():
+		return null
+	var w := config.world_width_biomes
+	var h := config.world_height_biomes()
 	var n_cells := w * h
-	assert(config.biomes.size() == n_cells, "biome count must equal WORLD_SIZE_BIOMES cells")
-	var config_hash := config.compute_hash()
 
 	var grid: Array[StringName] = []
 	var placed := false
-	for attempt in config.MAX_LAYOUT_RETRIES:
-		var parts: Array[int] = [world_seed, WgHash.NS_WORLD_LAYOUT, attempt]
-		var rng := WgHash.rng(WgHash.seed_for(config.gen_version, config_hash, parts))
+	for attempt in config.max_layout_retries:
+		var rng := config.rng_for([world_seed, WgHash.NS_WORLD_LAYOUT, attempt] as Array[int])
 		grid = _try_place(rng, config, w, h)
 		if not grid.is_empty() and _required_satisfied(grid, config, w, h):
 			placed = true
 			break
 	if not placed:
 		push_error("WorldLayout: adjacency rules unsatisfiable after %d attempts (config bug)"
-				% config.MAX_LAYOUT_RETRIES)
+				% config.max_layout_retries)
 		return null
+	assert(grid.size() == n_cells)
 
 	var spec := WorldSpec.new()
 	spec.world_seed = world_seed
@@ -130,7 +131,6 @@ static func _pair_adjacent(grid: Array[StringName], w: int, h: int, a: StringNam
 ## the later type with attempt indices. The StringName type_id is encoded into the seed parts
 ## by folding its UTF-8 bytes — stable under content additions, unlike a list index.
 static func _place_unique_rooms(world_seed: int, config: GenConfig, spec: WorldSpec) -> Array:
-	var config_hash := config.compute_hash()
 	var world_types: Array[RoomTypeDef] = []
 	for rt in config.room_types:
 		if rt.unique_scope == RoomTypeDef.UniqueScope.WORLD:
@@ -142,7 +142,7 @@ static func _place_unique_rooms(world_seed: int, config: GenConfig, spec: WorldS
 	for rt in world_types:
 		var tkey := WgHash.fold_bytes(0, String(rt.id).to_utf8_buffer())
 		# Allowed biomes sorted by id, filtered to ones actually placed on the grid.
-		var cands: Array[StringName] = rt.allowed_biomes.duplicate()
+		var cands: Array[StringName] = rt.unique_allowed_biomes.duplicate()
 		cands.sort_custom(func(p, q): return String(p) < String(q))
 		var coords: Array[Vector2i] = []
 		for bid in cands:
@@ -155,11 +155,10 @@ static func _place_unique_rooms(world_seed: int, config: GenConfig, spec: WorldS
 
 		var attempt := 0
 		while true:
-			var parts: Array[int] = [world_seed, WgHash.NS_UNIQUE, tkey, attempt]
-			var rng := WgHash.rng(WgHash.seed_for(config.gen_version, config_hash, parts))
+			var rng := config.rng_for([world_seed, WgHash.NS_UNIQUE, tkey, attempt] as Array[int])
 			var bc := coords[rng.randi_range(0, coords.size() - 1)]
 			# Interior slots only — never on the biome border (avoids contract interaction).
-			var s := config.BIOME_SIZE_SLOTS
+			var s := config.biome_slots
 			var ls := Vector2i(rng.randi_range(1, s - 2), rng.randi_range(1, s - 2))
 			var key := "%d,%d,%d,%d" % [bc.x, bc.y, ls.x, ls.y]
 			if not taken.has(key):

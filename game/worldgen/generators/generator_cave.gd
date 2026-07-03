@@ -4,15 +4,21 @@ class_name RoomGenCave
 ## so the corridor star always pierces the cave and openings stay connected.
 extends RoomGenBase
 
+@export_range(0.0, 1.0, 0.01) var fill_prob: float = 0.45   ## initial wall-noise density
+@export var iterations: int = 4                              ## 4-5 rule smoothing passes
+@export var write_blockers: bool = false                     ## emit BLOCKER (trees) instead of WALL
+
+
+func hash_fold(h: int) -> int:
+	h = super.hash_fold(h)
+	h = WgHash.fold_var(h, fill_prob)
+	h = WgHash.fold_var(h, iterations)
+	h = WgHash.fold_var(h, write_blockers)
+	return h
+
 
 func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
-		rng: RandomNumberGenerator, spec: RoomSpec, config: GenConfig) -> void:
-	var rt := config.room_type_by_id(spec.type_id)
-	var params: CaveParams = null
-	if rt != null:
-		params = rt.generator_params as CaveParams
-	var fill_prob := params.fill_prob if params != null else 0.45
-	var iterations := params.iterations if params != null else 4
+		rng: RandomNumberGenerator, _spec: RoomSpec) -> void:
 	var th := WgHash.threshold(fill_prob)
 
 	var size := w * h
@@ -53,7 +59,7 @@ func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
 
 	# `write_blockers` renders the cave mass as trees/rocks (BLOCKER) instead of cliff WALL —
 	# same shape, different art class (e.g. deepwood tree-walls).
-	var out_class := RoomBuilder.BLOCKER if params != null and params.write_blockers else RoomBuilder.WALL
+	var out_class := RoomBuilder.BLOCKER if write_blockers else RoomBuilder.WALL
 	for y in range(1, h - 1):
 		var row := y * w
 		for x in range(1, w - 1):

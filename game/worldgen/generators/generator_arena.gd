@@ -4,18 +4,23 @@ class_name RoomGenArena
 ## filled deterministically.
 extends RoomGenBase
 
+@export var inset: int = 8        ## tiles between the room wall and the blocker ring
+@export var thickness: int = 2    ## ring band thickness in tiles
+@export var gap_count: int = 4    ## openings carved through the ring
+@export var gap_width: int = 4    ## width of each opening in tiles
+
+
+func hash_fold(h: int) -> int:
+	h = super.hash_fold(h)
+	h = WgHash.fold_var(h, inset)
+	h = WgHash.fold_var(h, thickness)
+	h = WgHash.fold_var(h, gap_count)
+	h = WgHash.fold_var(h, gap_width)
+	return h
+
 
 func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
-		rng: RandomNumberGenerator, spec: RoomSpec, config: GenConfig) -> void:
-	var rt := config.room_type_by_id(spec.type_id)
-	var params: ArenaParams = null
-	if rt != null:
-		params = rt.generator_params as ArenaParams
-	var inset := params.inset if params != null else 8
-	var thickness := params.thickness if params != null else 2
-	var gap_count := params.gap_count if params != null else 4
-	var gap_width := params.gap_width if params != null else 4
-
+		rng: RandomNumberGenerator, _spec: RoomSpec) -> void:
 	# Gaps: (side, offset along that side). Drawn before any placement so the RNG stream is
 	# independent of grid contents.
 	var gaps: Array[Vector2i] = []
@@ -41,19 +46,19 @@ func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
 
 
 static func _in_gap(gaps: Array[Vector2i], x: int, y: int, w: int, h: int,
-		band_hi: int, gap_width: int) -> bool:
+		band_hi: int, gap_w: int) -> bool:
 	for g in gaps:
 		match g.x:
 			WorldSpec.SIDE_NORTH:
-				if y < band_hi and x >= g.y and x < g.y + gap_width:
+				if y < band_hi and x >= g.y and x < g.y + gap_w:
 					return true
 			WorldSpec.SIDE_SOUTH:
-				if y >= h - band_hi and x >= g.y and x < g.y + gap_width:
+				if y >= h - band_hi and x >= g.y and x < g.y + gap_w:
 					return true
 			WorldSpec.SIDE_WEST:
-				if x < band_hi and y >= g.y and y < g.y + gap_width:
+				if x < band_hi and y >= g.y and y < g.y + gap_w:
 					return true
 			WorldSpec.SIDE_EAST:
-				if x >= w - band_hi and y >= g.y and y < g.y + gap_width:
+				if x >= w - band_hi and y >= g.y and y < g.y + gap_w:
 					return true
 	return false

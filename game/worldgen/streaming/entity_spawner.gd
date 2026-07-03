@@ -6,12 +6,9 @@ class_name WgEntitySpawner
 ## the save-delta system itself is out of scope, so the set lives for this session only.
 extends Node
 
-@export var streamer_path: NodePath          ## the WorldStreamer to follow
-@export var enemies_parent_path: NodePath    ## y-sorted parent the enemy scenes are added under
-
-# Resolved from the paths at _ready, or injected directly by code (tests build the rig by hand).
-var streamer: WorldStreamer = null
-var enemies_parent: Node2D = null
+# Wired in the scene, or injected directly by code before add_child (tests build the rig by hand).
+@export var streamer: WorldStreamer = null          ## the WorldStreamer to follow
+@export var enemies_parent: Node2D = null           ## y-sorted parent the enemy scenes are added under
 
 var defeated: Dictionary = {}        ## entity_id -> true (session-only)
 
@@ -20,10 +17,9 @@ var _scenes: Dictionary = {}         # enemy_id -> PackedScene (or null when mis
 
 
 func _ready() -> void:
-	if streamer == null and not streamer_path.is_empty():
-		streamer = get_node(streamer_path)
-	if enemies_parent == null and not enemies_parent_path.is_empty():
-		enemies_parent = get_node(enemies_parent_path)
+	if streamer == null or enemies_parent == null:
+		push_error("WgEntitySpawner: streamer and enemies_parent must be wired (inspector or code)")
+		return
 	streamer.chunk_loaded.connect(_on_chunk_loaded)
 	streamer.chunk_unloaded.connect(_on_chunk_unloaded)
 

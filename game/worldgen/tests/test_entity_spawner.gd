@@ -11,7 +11,6 @@ const SEED := 777_003
 func _ready() -> void:
 	var fails: Array[String] = []
 	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
-	config.prepare()
 
 	# World A.
 	var a := await _build_world(config, SEED)
@@ -47,7 +46,7 @@ func _ready() -> void:
 		await get_tree().process_frame
 		if not b.spawner.defeated.has(dead_eid):
 			fails.append("kill not recorded in defeated set")
-		b.streamer.reseed(SEED)
+		b.streamer.build_world(SEED)
 		for _i in 30:
 			await get_tree().process_frame
 		var live_after: Dictionary = _snapshot(b.spawner, b.enemies)
@@ -85,7 +84,7 @@ func _build_world(config: GenConfig, seed_value: int) -> Dictionary:
 	var target := Node2D.new()
 	root.add_child(target)
 
-	streamer.init(seed_value)
+	streamer.build_world(seed_value)
 	target.position = streamer.find_spawn_position()
 	streamer.target = target
 	for _i in 30:   # 3 chunk loads/frame; ~25 chunks around the spawn headless

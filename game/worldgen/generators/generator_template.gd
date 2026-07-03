@@ -4,18 +4,28 @@ class_name RoomGenTemplate
 ## can never sever the corridor star.
 extends RoomGenBase
 
+@export var stamps: Array[RoomStamp] = []   ## hand-authored layouts; one is picked uniformly
+@export var allow_mirror: bool = true
+@export var allow_rotate: bool = true
+
+
+func hash_fold(h: int) -> int:
+	h = super.hash_fold(h)
+	h = WgHash.fold_var(h, allow_mirror)
+	h = WgHash.fold_var(h, allow_rotate)
+	for s in stamps:
+		if s != null:
+			h = s.hash_fold(h)
+	return h
+
 
 func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
-		rng: RandomNumberGenerator, spec: RoomSpec, config: GenConfig) -> void:
-	var rt := config.room_type_by_id(spec.type_id)
-	var params: TemplateParams = null
-	if rt != null:
-		params = rt.generator_params as TemplateParams
-	if params == null or params.stamps.is_empty():
+		rng: RandomNumberGenerator, _spec: RoomSpec) -> void:
+	if stamps.is_empty():
 		return
-	var stamp: RoomStamp = params.stamps[rng.randi_range(0, params.stamps.size() - 1)]
-	var rots := 4 if params.allow_rotate else 1
-	var mirrors := 2 if params.allow_mirror else 1
+	var stamp: RoomStamp = stamps[rng.randi_range(0, stamps.size() - 1)]
+	var rots := 4 if allow_rotate else 1
+	var mirrors := 2 if allow_mirror else 1
 	var variant := rng.randi_range(0, mirrors * rots - 1)
 	var mirror := variant >= rots
 	var rot := variant % rots

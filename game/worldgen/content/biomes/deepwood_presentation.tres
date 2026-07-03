@@ -2,16 +2,12 @@
 
 [ext_resource type="Script" path="res://worldgen/core/biome_presentation.gd" id="1"]
 [ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://worldgen/content/biomes/deepwood/deepwood_floor_tileset.tres" id="2"]
-[ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://worldgen/content/biomes/deepwood/deepwood_decor_tileset.tres" id="3"]
+[ext_resource type="TileSet" uid="uid://brf5ixc7tgubc" path="res://worldgen/content/biomes/deepwood/deepwood_trees.tres" id="3"]
+[ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://worldgen/content/biomes/deepwood/deepwood_decor_tileset.tres" id="4"]
 
 [resource]
 script = ExtResource("1")
 floor_tileset = ExtResource("2")
-floor_source_id = 0
-grass_tiles = Array[Vector2i]([Vector2i(9, 0), Vector2i(9, 1)])
-wall_tiles = Array[Vector2i]([Vector2i(9, 2), Vector2i(9, 3)])
-object_tileset = ExtResource("3")
-blocker_source_id = 1
-blocker_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(4, 0), Vector2i(5, 0)])
-decor_source_id = 0
-decor_tiles = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)])
+wall_tileset = ExtResource("3")
+blocker_tileset = ExtResource("3")
+decor_tileset = ExtResource("4")

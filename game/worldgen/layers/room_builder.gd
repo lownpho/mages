@@ -1,12 +1,12 @@
 class_name RoomBuilder
-## Layer 3 (spec §8): builds one room unit's interior from its RoomSpec. Pure function of
+## Layer 3 (spec §8): builds one room's interior from its RoomSpec. Pure function of
 ## (room_spec, config, world_seed) — doors/open sides are immutable inputs; retries re-roll
 ## everything else via the attempt index in the seed (spec §4.3.4–5).
 ##
 ## Pipeline per attempt (spec §8.1): base FLOOR fill → wall shell with openings erased →
 ## L-corridors from every opening to the center (all carved tiles PROTECTED) → structure
-## generator → (decoration: Task 6) → reachability flood fill → validate. After
-## MAX_ROOM_RETRIES failures the fallback runs steps 1–3 only, which validates by construction.
+## generator → decoration → reachability flood fill → validate. After
+## max_room_retries failures the fallback runs steps 1–3 only, which validates by construction.
 extends RefCounted
 
 # Logical tile classes (spec §8). Byte values in RoomOutput.tile_grid; PROTECTED is the
@@ -16,39 +16,24 @@ const WALL := 1
 const BLOCKER := 2
 const DECOR_FLOOR := 3
 
-static var _generators: Dictionary = {}   # generator_id -> RoomGenBase; registry reads only
-
-
-static func _generator_for(id: StringName) -> RoomGenBase:
-	if _generators.is_empty():
-		_generators[&"empty"] = RoomGenEmpty.new()
-		_generators[&"scatter"] = RoomGenScatter.new()
-		_generators[&"cave"] = RoomGenCave.new()
-		_generators[&"arena"] = RoomGenArena.new()
-		_generators[&"template"] = RoomGenTemplate.new()
-	if not _generators.has(id):
-		push_error("RoomBuilder: unknown generator '%s', using empty" % id)
-		return _generators[&"empty"]
-	return _generators[id]
-
 
 ## Build the interior. `force_fallback` is test-only (exercises the spec §8.1 step-8 ladder).
 static func build(spec: RoomSpec, config: GenConfig, world_seed: int, force_fallback := false) -> RoomOutput:
-	var w := spec.size_slots.x * config.ROOM_SLOT_SIZE
-	var h := spec.size_slots.y * config.ROOM_SLOT_SIZE
+	var w := spec.size_slots.x * config.room_slot_tiles
+	var h := spec.size_slots.y * config.room_slot_tiles
 	var openings := _opening_tiles(spec, w, h)
 	if not force_fallback:
-		for attempt in config.MAX_ROOM_RETRIES:
+		for attempt in config.max_room_retries:
 			var out := _attempt(spec, config, world_seed, attempt, true, w, h, openings)
 			if _validate(out, openings, config):
 				return out
-	return _attempt(spec, config, world_seed, config.MAX_ROOM_RETRIES, false, w, h, openings)
+	return _attempt(spec, config, world_seed, config.max_room_retries, false, w, h, openings)
 
 
 static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt: int,
 		with_structure: bool, w: int, h: int, openings: PackedInt32Array) -> RoomOutput:
-	var parts: Array[int] = [world_seed, WgHash.NS_INTERIOR, spec.unit_id.x, spec.unit_id.y, attempt]
-	var rng := WgHash.rng(WgHash.seed_for(config.gen_version, config.compute_hash(), parts))
+	var rng := config.rng_for([world_seed, WgHash.NS_INTERIOR,
+			spec.origin_slot.x, spec.origin_slot.y, attempt] as Array[int])
 
 	var grid := PackedByteArray()
 	grid.resize(w * h)               # zero-filled == FLOOR (step 1)
@@ -71,20 +56,20 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 	var cx := w >> 1
 	var cy := h >> 1
 	for p in spec.passages:
-		_carve_corridor(grid, prot, w, h, p, cx, cy, config.DOOR_WIDTH)
+		_carve_corridor(grid, prot, w, h, p, cx, cy, config.door_width_tiles)
 
-	# Step 4 — structure generator (respects `prot`).
+	# Step 4 — structure generator (respects `prot`). A null generator = leave the room empty.
 	if with_structure:
 		var rt := config.room_type_by_id(spec.type_id)
-		var gen_id: StringName = rt.generator_id if rt != null else &"empty"
-		_generator_for(gen_id).run(grid, prot, w, h, rng, spec, config)
+		if rt != null and rt.generator != null:
+			rt.generator.run(grid, prot, w, h, rng, spec)
 
 		# Step 5 — decoration: non-blocking DECOR_FLOOR at the biome's density (spec §8.1.5);
 		# PROTECTED tiles are fair game because decor never blocks. Blocking decor is the
 		# structure generators' business. Skipped on the fallback path (steps 1–3 only).
 		var biome := config.biome_by_id(spec.biome_id)
-		if biome != null and biome.decor_threshold > 0:
-			var th := biome.decor_threshold
+		if biome != null and biome.decor_density > 0.0:
+			var th := WgHash.threshold(biome.decor_density)
 			# rng.randi() < th inlined (== WgHash.chance) — the call overhead dominates
 			# this per-tile loop in GDScript.
 			for i in grid.size():
@@ -93,7 +78,7 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 
 	# Step 6 — reachability from center over non-blocking tiles.
 	var out := RoomOutput.new()
-	out.unit_id = spec.unit_id
+	out.origin_slot = spec.origin_slot
 	out.attempt_used = attempt
 	out.width = w
 	out.height = h
@@ -109,10 +94,10 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 	return out
 
 
-## Opening tiles per passage: the erased perimeter tiles, in this unit's tile frame.
+## Opening tiles per passage: the erased perimeter tiles, in this room's tile frame.
 ## OPEN segments are clamped off the side's two corner tiles — a corner belongs to the
 ## perpendicular wall too, and erasing it would punch a hole in that wall (worst case the
-## sealed world edge). Both units of an edge apply the same clamp, so they stay consistent.
+## sealed world edge). Both rooms of an edge apply the same clamp, so they stay consistent.
 static func _opening_tiles(spec: RoomSpec, w: int, h: int) -> PackedInt32Array:
 	var out := PackedInt32Array()
 	for p in spec.passages:
@@ -138,10 +123,10 @@ static func _opening_tiles(spec: RoomSpec, w: int, h: int) -> PackedInt32Array:
 	return out
 
 
-## L-corridor (spec §8.1.3), width DOOR_WIDTH, from the opening midpoint to the room center.
-## Fixed rule: the wall-perpendicular leg runs first (a literal horizontal-first leg from a
-## N/S door would carve along the shell wall itself), then the other axis to the center. The
-## perpendicular leg's width equals the door width, so it never widens the opening.
+## L-corridor (spec §8.1.3), width door_width_tiles, from the opening midpoint to the room
+## center. Fixed rule: the wall-perpendicular leg runs first (a literal horizontal-first leg
+## from a N/S door would carve along the shell wall itself), then the other axis to the center.
+## The perpendicular leg's width equals the door width, so it never widens the opening.
 static func _carve_corridor(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
 		p: RoomSpec.Passage, cx: int, cy: int, door_width: int) -> void:
 	var mid := p.offset_tiles + (p.width_tiles >> 1)
@@ -210,10 +195,10 @@ static func _flood_fill(grid: PackedByteArray, w: int, h: int, cx: int, cy: int)
 	return reach
 
 
-## Spec §8.1.8: every opening tile reachable, and reachable tiles ≥ MIN_FLOOR_RATIO of all.
+## Spec §8.1.8: every opening tile reachable, and reachable tiles ≥ min_reachable_floor_ratio.
 static func _validate(out: RoomOutput, openings: PackedInt32Array, config: GenConfig) -> bool:
 	for i in openings.size():
 		if out.reachability_map[openings[i]] == 0:
 			return false
 	var total := out.width * out.height
-	return out.reachability_map.count(1) >= int(config.MIN_FLOOR_RATIO * total)
+	return out.reachability_map.count(1) >= int(config.min_reachable_floor_ratio * total)

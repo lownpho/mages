@@ -13,9 +13,8 @@ var _T: int
 func _ready() -> void:
 	var fails: Array[String] = []
 	_config = load("res://worldgen/content/gen_config.tres")
-	_config.prepare()
-	_S = _config.BIOME_SIZE_SLOTS
-	_T = _config.ROOM_SLOT_SIZE
+	_S = _config.biome_slots
+	_T = _config.room_slot_tiles
 
 	_test_connectivity(fails)
 	_test_determinism(fails)
@@ -48,8 +47,8 @@ func _build_world(seed: int) -> Dictionary:
 ## internal (same-biome) and external (adjacent-biome) passages: both resolve to a real slot across
 ## the border. Returns Vector2i(-1,-1) if the slot falls outside the world.
 func _neighbour_id(spec: RoomSpec, p, graphs: Dictionary) -> Vector2i:
-	var left := spec.unit_id.x
-	var top := spec.unit_id.y
+	var left := spec.origin_slot.x
+	var top := spec.origin_slot.y
 	var w := spec.size_slots.x
 	var h := spec.size_slots.y
 	var mid: int = p.offset_tiles + p.width_tiles / 2
@@ -75,7 +74,7 @@ func _neighbour_id(spec: RoomSpec, p, graphs: Dictionary) -> Vector2i:
 		return Vector2i(-1, -1)
 	var g: BiomeGraph = graphs[bc]
 	var local := Vector2i(nx - bc.x * _S, ny - bc.y * _S)
-	return g.unit_at(local).unit_id
+	return g.room_at(local).origin_slot
 
 
 func _test_connectivity(fails: Array[String]) -> void:
@@ -83,19 +82,19 @@ func _test_connectivity(fails: Array[String]) -> void:
 		var seed := 2_654_435_761 * i + 11
 		var world := _build_world(seed)
 		var graphs: Dictionary = world["graphs"]
-		# Adjacency keyed by unit_id (globally unique). Every unit is a node.
+		# Adjacency keyed by origin_slot (globally unique). Every room is a node.
 		var adj: Dictionary = {}
 		var total := 0
 		for c in graphs:
-			for u in graphs[c].units:
-				adj[u.unit_id] = []
+			for u in graphs[c].rooms:
+				adj[u.origin_slot] = []
 				total += 1
 		for c in graphs:
-			for u in graphs[c].units:
+			for u in graphs[c].rooms:
 				for p in u.passages:
 					var nb := _neighbour_id(u, p, graphs)
 					if nb != Vector2i(-1, -1):
-						adj[u.unit_id].append(nb)
+						adj[u.origin_slot].append(nb)
 		# BFS from any node.
 		var start: Vector2i = adj.keys()[0]
 		var seen: Dictionary = {start: true}
@@ -128,12 +127,12 @@ func _test_determinism(fails: Array[String]) -> void:
 
 
 func _graphs_equal(a: BiomeGraph, b: BiomeGraph) -> bool:
-	if a.units.size() != b.units.size() or a.slot_to_unit != b.slot_to_unit:
+	if a.rooms.size() != b.rooms.size() or a.slot_to_room != b.slot_to_room:
 		return false
-	for i in a.units.size():
-		var ua: RoomSpec = a.units[i]
-		var ub: RoomSpec = b.units[i]
-		if ua.unit_id != ub.unit_id or ua.size_slots != ub.size_slots or ua.type_id != ub.type_id:
+	for i in a.rooms.size():
+		var ua: RoomSpec = a.rooms[i]
+		var ub: RoomSpec = b.rooms[i]
+		if ua.origin_slot != ub.origin_slot or ua.size_slots != ub.size_slots or ua.type_id != ub.type_id:
 			return false
 		if ua.passages.size() != ub.passages.size():
 			return false
@@ -151,7 +150,7 @@ func _test_types(fails: Array[String]) -> void:
 		var seed := 15_485_863 * i + 3
 		var world := _build_world(seed)
 		for c in world["graphs"]:
-			for u in world["graphs"][c].units:
+			for u in world["graphs"][c].rooms:
 				if u.type_id == &"":
 					fails.append("types: empty type_id at seed %d biome %s" % [seed, c])
 					return
@@ -202,11 +201,11 @@ func _check_border(spec: WorldSpec, graphs: Dictionary, a: Vector2i, b: Vector2i
 
 func _count_external(g: BiomeGraph, side: int, abs_pos: int, horizontal: bool, width: int) -> int:
 	var n := 0
-	for u in g.units:
+	for u in g.rooms:
 		for p in u.passages:
 			if not p.external or p.side != side or p.kind != RoomSpec.KIND_DOOR:
 				continue
-			var edge_start: int = u.unit_id.y if horizontal else u.unit_id.x
+			var edge_start: int = u.origin_slot.y if horizontal else u.origin_slot.x
 			var pos: int = edge_start * _T + p.offset_tiles
 			if pos == abs_pos and p.width_tiles == width:
 				n += 1
@@ -222,19 +221,19 @@ func _test_partition(fails: Array[String]) -> void:
 			# Every slot maps to a unit whose rect contains it.
 			for ly in _S:
 				for lx in _S:
-					var idx: int = g.slot_to_unit[ly * _S + lx]
-					if idx < 0 or idx >= g.units.size():
+					var idx: int = g.slot_to_room[ly * _S + lx]
+					if idx < 0 or idx >= g.rooms.size():
 						fails.append("partition: bad unit index at seed %d biome %s" % [seed, c])
 						return
-					var u: RoomSpec = g.units[idx]
-					var lt: Vector2i = u.unit_id - c * _S   # local top-left slot
+					var u: RoomSpec = g.rooms[idx]
+					var lt: Vector2i = u.origin_slot - c * _S   # local top-left slot
 					if lx < lt.x or lx >= lt.x + u.size_slots.x or ly < lt.y or ly >= lt.y + u.size_slots.y:
 						fails.append("partition: slot (%d,%d) outside its unit at seed %d biome %s" % [lx, ly, seed, c])
 						return
 					if lt.x < 0 or lt.y < 0 or lt.x + u.size_slots.x > _S or lt.y + u.size_slots.y > _S:
 						fails.append("partition: unit leaves biome at seed %d biome %s" % [seed, c])
 						return
-	print("partition: 30 seeds, slot_to_unit is a valid in-biome partition")
+	print("partition: 30 seeds, slot_to_room is a valid in-biome partition")
 
 
 func _test_world_unique(fails: Array[String]) -> void:
@@ -246,7 +245,7 @@ func _test_world_unique(fails: Array[String]) -> void:
 		# Each world-unique room sits on its assigned unit.
 		for ur in spec.unique_rooms:
 			var g: BiomeGraph = graphs[ur.biome_coord]
-			var host := g.unit_at(ur.local_slot)
+			var host := g.room_at(ur.local_slot)
 			if host.type_id != ur.type_id:
 				fails.append("world_unique: type '%s' not on its host unit at seed %d" % [ur.type_id, seed])
 				return
@@ -256,7 +255,7 @@ func _test_world_unique(fails: Array[String]) -> void:
 				continue
 			var count := 0
 			for c in graphs:
-				for u in graphs[c].units:
+				for u in graphs[c].rooms:
 					if u.type_id == rt.id:
 						count += 1
 			var placed := false

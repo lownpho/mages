@@ -28,7 +28,7 @@ func _draw() -> void:
 	var cell := minf((view.x - 2.0 * MARGIN) / _spec.grid_w, (view.y - TOP - MARGIN) / _spec.grid_h)
 	var origin := Vector2((view.x - cell * _spec.grid_w) * 0.5, TOP)
 	var font := ThemeDB.fallback_font
-	var s := float(_config.BIOME_SIZE_SLOTS)
+	var s := float(_config.biome_slots)
 
 	for y in _spec.grid_h:
 		for x in _spec.grid_w:
@@ -47,13 +47,13 @@ func _draw() -> void:
 			if x + 1 < _spec.grid_w:
 				var edge_x := origin.x + (x + 1) * cell
 				for c in _spec.get_contract(a, Vector2i(x + 1, y)):
-					var f: float = (c.slot_index + (c.tile_offset + c.width * 0.5) / _config.ROOM_SLOT_SIZE) / s
+					var f: float = (c.slot_index + (c.tile_offset + c.width * 0.5) / _config.room_slot_tiles) / s
 					var py: float = origin.y + y * cell + f * cell
 					draw_line(Vector2(edge_x - 7, py), Vector2(edge_x + 7, py), Color.RED, 3.0)
 			if y + 1 < _spec.grid_h:
 				var edge_y := origin.y + (y + 1) * cell
 				for c in _spec.get_contract(a, Vector2i(x, y + 1)):
-					var f: float = (c.slot_index + (c.tile_offset + c.width * 0.5) / _config.ROOM_SLOT_SIZE) / s
+					var f: float = (c.slot_index + (c.tile_offset + c.width * 0.5) / _config.room_slot_tiles) / s
 					var px: float = origin.x + x * cell + f * cell
 					draw_line(Vector2(px, edge_y - 7), Vector2(px, edge_y + 7), Color.RED, 3.0)
 

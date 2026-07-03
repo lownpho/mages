@@ -3,7 +3,7 @@ extends Node2D
 ## 1 = world view (Task 3), 2 = biome view (Task 4), 3 = room view (Task 5). View 4 = Task 8.
 ## R rerolls a random seed, Enter in the seed box applies a typed one, 1..4 switch views.
 ## In the biome view, arrow keys / clicking the corner overview select a biome cell and
-## clicking the main grid selects a unit; view 3 shows that unit (arrows cycle, P/M overlays).
+## clicking the main grid selects a room; view 3 shows that room (arrows cycle, P/M overlays).
 
 @export var config: GenConfig
 
@@ -22,7 +22,7 @@ var world_seed: int = 0
 var spec: WorldSpec = null
 var current_view: int = 1
 var selected_biome := Vector2i.ZERO
-var selected_unit := 0
+var selected_room := 0
 var _room_graphs: RoomGraph = null   ## per-session BiomeGraph cache (spec §11); reset on reseed
 
 
@@ -30,11 +30,10 @@ func _ready() -> void:
 	# The game viewport is 320×180 with canvas_items stretch — unusable for a debug UI.
 	# This scene renders in native window pixels instead; views lay out from window size.
 	get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
-	config.prepare()
 	_seed_edit.text_submitted.connect(_on_seed_submitted)
 	_streamer.config = config
 	_streamer.target = _flycam
-	_streamer.set_streaming(false)   # only view 4 streams
+	_streamer.streaming = false   # only view 4 streams
 	world_seed = randi()   # UI-side reroll, not generation code — global RNG is fine here
 	_rebuild()
 	_switch_view(1)
@@ -43,7 +42,7 @@ func _ready() -> void:
 func _process(_dt: float) -> void:
 	if current_view != 4 or _streamer.world_spec == null:
 		return
-	var chunk_px := config.CHUNK_SIZE * GameConstants.PX_PER_TILE
+	var chunk_px := config.chunk_tiles * GameConstants.PX_PER_TILE
 	var gp := _flycam.global_position
 	var cc := Vector2i(floori(gp.x / chunk_px), floori(gp.y / chunk_px))
 	_overlay_label.text = "chunk %d,%d   loaded %d\ncache hit %d / miss %d\nassembly %.2f ms" % [
@@ -65,7 +64,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			if current_view == 2:
 				_move_selection(key.keycode)
 			elif current_view == 3:
-				_cycle_unit(1 if key.keycode == KEY_RIGHT or key.keycode == KEY_DOWN else -1)
+				_cycle_room(1 if key.keycode == KEY_RIGHT or key.keycode == KEY_DOWN else -1)
 		KEY_P:
 			if current_view == 3:
 				_room_view.toggle_protected()
@@ -84,12 +83,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if cell.x >= 0:
 		if cell != selected_biome:
 			selected_biome = cell
-			selected_unit = 0
+			selected_room = 0
 			_refresh_biome_view()
 		return
-	var unit: int = _biome_view.unit_at_screen_pos(mb.position)
-	if unit >= 0 and unit != selected_unit:
-		selected_unit = unit
+	var room: int = _biome_view.room_at_screen_pos(mb.position)
+	if room >= 0 and room != selected_room:
+		selected_room = room
 		_refresh_biome_view()
 
 
@@ -103,15 +102,15 @@ func _move_selection(keycode: int) -> void:
 	var next := selected_biome + d
 	if next.x >= 0 and next.y >= 0 and next.x < spec.grid_w and next.y < spec.grid_h:
 		selected_biome = next
-		selected_unit = 0
+		selected_room = 0
 		_refresh_biome_view()
 
 
-func _cycle_unit(dir: int) -> void:
+func _cycle_room(dir: int) -> void:
 	if spec == null:
 		return
 	var graph := _room_graphs.get_biome_graph(spec, selected_biome, config)
-	selected_unit = posmod(selected_unit + dir, graph.units.size())
+	selected_room = posmod(selected_room + dir, graph.rooms.size())
 	_refresh_room_view()
 
 
@@ -136,23 +135,23 @@ func _rebuild() -> void:
 	elif current_view == 3:
 		_refresh_room_view()
 	elif current_view == 4:
-		_streamer.reseed(world_seed)   # rebuild the streamed world in place (spec §12 seed console)
+		_streamer.build_world(world_seed)   # rebuild the streamed world in place (spec §12 seed console)
 
 
 func _refresh_biome_view() -> void:
 	if spec == null:
 		return
 	var graph := _room_graphs.get_biome_graph(spec, selected_biome, config)
-	_biome_view.set_data(spec, config, graph, selected_biome, selected_unit)
+	_biome_view.set_data(spec, config, graph, selected_biome, selected_room)
 
 
 func _refresh_room_view() -> void:
 	if spec == null:
 		return
 	var graph := _room_graphs.get_biome_graph(spec, selected_biome, config)
-	selected_unit = clampi(selected_unit, 0, graph.units.size() - 1)
-	var out := RoomBuilder.build(graph.units[selected_unit], config, world_seed)
-	_room_view.set_data(config, out, selected_unit, graph.units.size())
+	selected_room = clampi(selected_room, 0, graph.rooms.size() - 1)
+	var out := RoomBuilder.build(graph.rooms[selected_room], config, world_seed)
+	_room_view.set_data(config, out, selected_room, graph.rooms.size())
 
 
 # Views live as sibling CanvasItems; only the active one is visible. View 4 is the streamed
@@ -177,8 +176,8 @@ func _switch_view(v: int) -> void:
 ## kept when leaving (cheap; re-shown on return); a reseed while away still rebuilds on re-entry.
 func _set_fly_active(on: bool) -> void:
 	if on and (_streamer.world_spec == null or _streamer.world_seed != world_seed):
-		_streamer.init(world_seed)
-	_streamer.set_streaming(on)
+		_streamer.build_world(world_seed)
+	_streamer.streaming = on
 	_flycam.set_process(on)
 	_fly_cam2d.enabled = on
 	if on:

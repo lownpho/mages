@@ -1,86 +1,107 @@
 class_name GenConfig
-## The whole authored configuration for the new world generator (spec §3, §4.4, §10.4). Every
-## §3 constant is an @export so it can be tuned in the inspector and saved as a .tres; the
-## content registries (biomes, room types, adjacency) hang off it. compute_hash() folds all of
-## it into CONFIG_HASH, which is mixed into every generation seed (spec §4.1) — so a saved
-## world_seed only reproduces its world under the same content, and diverges loudly otherwise.
+## The whole authored configuration for the world generator (spec §3, §4.4, §10.4). Every §3
+## dial is an @export so it can be tuned in the inspector and saved as a .tres; the content
+## registries (biomes, room types, adjacency) hang off it. compute_hash() folds the
+## world-affecting fields into CONFIG_HASH, which is mixed into every generation seed
+## (spec §4.1) — so a saved world_seed only reproduces its world under the same content, and
+## diverges loudly otherwise. Runtime dials (streaming, retry caps) are deliberately NOT
+## hashed: they cannot change the generated world, so tuning them must not re-roll it.
 extends Resource
 
-@export var gen_version: int = 1   ## GEN_VERSION — bump on any algorithm change (spec §3)
+@export var gen_version: int = 2   ## GEN_VERSION — bump on any algorithm change (spec §3)
 
 @export_group("World shape (spec §3)")
-@export var ROOM_SLOT_SIZE: int = 64                                ## tiles per room-slot side
-@export var BIOME_SIZE_SLOTS: int = 9                               ## room slots per biome side
-@export var WORLD_SIZE_BIOMES: Vector2i = Vector2i(4, 4)            ## biome cells per world side
-@export var CHUNK_SIZE: int = 32                                    ## tiles per streaming chunk side
-@export var DOOR_WIDTH: int = 3                                     ## tiles per door / carved corridor
+@export var room_slot_tiles: int = 64        ## tiles per room-slot side
+@export var biome_slots: int = 9             ## room slots per biome side
+@export var world_width_biomes: int = 4      ## biome cells per row; rows = biomes.size() / width
+@export var door_width_tiles: int = 3        ## tiles per door / carved corridor
 
 @export_group("Graph shape (spec §3)")
-@export_range(0.0, 1.0, 0.01) var P_LOOP: float = 0.25             ## keep-prob for non-tree edges
-@export_range(0.0, 1.0, 0.01) var P_MERGE: float = 0.15            ## per-slot merge attempt prob
-@export var BORDER_CROSSINGS: int = 2                               ## doors per shared biome border
+@export_range(0.0, 1.0, 0.01) var extra_connection_chance: float = 0.25  ## keep-prob for non-tree edges (loops)
+@export_range(0.0, 1.0, 0.01) var room_merge_chance: float = 0.15        ## per-slot merge attempt prob
+@export var doors_per_biome_border: int = 2                              ## crossings per shared biome border
 
 @export_group("Interior (spec §3)")
-@export var MAX_ROOM_RETRIES: int = 5                               ## interior attempts before fallback
-@export var MAX_LAYOUT_RETRIES: int = 1000                         ## layout attempts before config error
-@export_range(0.0, 1.0, 0.01) var MIN_FLOOR_RATIO: float = 0.20    ## min reachable-floor fraction
-@export var SPAWN_OPENING_GUARD: int = 6                            ## min tiles a spawn sits from any opening (spec §9)
+@export var max_room_retries: int = 5                                    ## interior attempts before fallback
+@export_range(0.0, 1.0, 0.01) var min_reachable_floor_ratio: float = 0.20  ## validation floor fraction
+@export var spawn_min_dist_from_doors: int = 6                           ## tiles between a spawn and any opening (spec §9)
 
-@export_group("Streaming (spec §3)")
-@export var ROOM_CACHE_CAPACITY: int = 64                           ## LRU room interiors kept in memory
-@export var PREFETCH_RADIUS: int = 2                               ## chunks pre-generated around camera
+@export_group("Well-known ids")
+@export var starting_biome: StringName = &"glade"           ## hosts the player spawn; presentation fallback
+@export var fallback_room_type: StringName = &"traversal"   ## assigned when a biome's fill table runs dry
+
+@export_group("Runtime (not hashed — cannot affect the generated world)")
+@export var chunk_tiles: int = 32              ## tiles per streaming chunk side (a view, not content)
+@export var max_layout_retries: int = 1000     ## layout attempts before config error
+@export var room_cache_capacity: int = 64      ## LRU room interiors kept in memory
+@export var prefetch_radius_chunks: int = 2    ## chunks pre-generated around the camera
 
 @export_group("Content registries")
 @export var biomes: Array[BiomeDef] = []
 @export var adjacency: AdjacencyRules = null
 @export var room_types: Array[RoomTypeDef] = []
 
-# Precomputed at prepare() from the float dials above; generation loops read only these ints
-# (spec §4.3.3). Not exported — recomputed from source of truth every load.
-var threshold_loop: int = 0
-var threshold_merge: int = 0
+# CONFIG_HASH is cached on first use — the config must not be mutated once generation has
+# started (tests that probe hash sensitivity mutate a duplicate(true), which starts uncached).
 var _cached_hash: int = 0
-var _prepared: bool = false
+var _hash_valid: bool = false
 
 
-## Precompute integer thresholds (loop, merge, per-biome openness) once at load. Idempotent.
-func prepare() -> void:
-	threshold_loop = WgHash.threshold(P_LOOP)
-	threshold_merge = WgHash.threshold(P_MERGE)
-	for b in biomes:
-		if b != null:
-			b.prepare()
-	_cached_hash = _compute_hash_uncached()
-	_prepared = true
+func world_height_biomes() -> int:
+	@warning_ignore("integer_division")
+	return biomes.size() / maxi(world_width_biomes, 1)
 
 
-## CONFIG_HASH (spec §4.4). Folds var_to_bytes() of every field in a FIXED, hand-written order
-## — never property-list order — recursing into biomes, room types, adjacency, and their nested
-## spawn/loot tables. Cached after prepare(); recomputed on demand otherwise.
+## Content sanity for the one structural invariant code can't default away: the biome list
+## must tile the world grid exactly (every biome appears exactly once). Loud, not an assert.
+func validate() -> bool:
+	if biomes.is_empty() or world_width_biomes < 1:
+		push_error("GenConfig: need at least one biome and world_width_biomes >= 1")
+		return false
+	if biomes.size() % world_width_biomes != 0:
+		push_error("GenConfig: %d biomes don't fill a width-%d grid (each biome appears exactly once — add/remove biomes or change world_width_biomes)"
+				% [biomes.size(), world_width_biomes])
+		return false
+	return true
+
+
+## CONFIG_HASH (spec §4.4). Folds var_to_bytes() of every world-affecting field in a FIXED,
+## hand-written order — never property-list order — recursing into biomes, room types,
+## adjacency, and their nested spawn/loot tables. Cached after the first call.
 func compute_hash() -> int:
-	if _prepared:
-		return _cached_hash
-	return _compute_hash_uncached()
+	if not _hash_valid:
+		_cached_hash = _compute_hash_uncached()
+		_hash_valid = true
+	return _cached_hash
+
+
+## Derive a seed from an ordered parts list under this config (spec §4.1).
+## parts[0] is always world_seed, parts[1] a WgHash.NS_* namespace constant.
+func seed_for(parts: Array[int]) -> int:
+	return WgHash.seed_for(gen_version, compute_hash(), parts)
+
+
+## The one sanctioned way to make a per-unit generation RNG (spec §4.2).
+func rng_for(parts: Array[int]) -> RandomNumberGenerator:
+	return WgHash.rng(seed_for(parts))
 
 
 func _compute_hash_uncached() -> int:
 	var h: int = 0
-	# Constants (spec §3), fixed order.
+	# World-affecting constants (spec §3), fixed order.
 	h = WgHash.fold_var(h, gen_version)
-	h = WgHash.fold_var(h, ROOM_SLOT_SIZE)
-	h = WgHash.fold_var(h, BIOME_SIZE_SLOTS)
-	h = WgHash.fold_var(h, WORLD_SIZE_BIOMES)
-	h = WgHash.fold_var(h, CHUNK_SIZE)
-	h = WgHash.fold_var(h, DOOR_WIDTH)
-	h = WgHash.fold_var(h, P_LOOP)
-	h = WgHash.fold_var(h, P_MERGE)
-	h = WgHash.fold_var(h, BORDER_CROSSINGS)
-	h = WgHash.fold_var(h, MAX_ROOM_RETRIES)
-	h = WgHash.fold_var(h, MAX_LAYOUT_RETRIES)
-	h = WgHash.fold_var(h, MIN_FLOOR_RATIO)
-	h = WgHash.fold_var(h, SPAWN_OPENING_GUARD)
-	h = WgHash.fold_var(h, ROOM_CACHE_CAPACITY)
-	h = WgHash.fold_var(h, PREFETCH_RADIUS)
+	h = WgHash.fold_var(h, room_slot_tiles)
+	h = WgHash.fold_var(h, biome_slots)
+	h = WgHash.fold_var(h, world_width_biomes)
+	h = WgHash.fold_var(h, door_width_tiles)
+	h = WgHash.fold_var(h, extra_connection_chance)
+	h = WgHash.fold_var(h, room_merge_chance)
+	h = WgHash.fold_var(h, doors_per_biome_border)
+	h = WgHash.fold_var(h, max_room_retries)
+	h = WgHash.fold_var(h, min_reachable_floor_ratio)
+	h = WgHash.fold_var(h, spawn_min_dist_from_doors)
+	h = WgHash.fold_var(h, starting_biome)
+	h = WgHash.fold_var(h, fallback_room_type)
 	# Content registries (spec §4.4), fixed order.
 	for b in biomes:
 		h = b.hash_fold(h)

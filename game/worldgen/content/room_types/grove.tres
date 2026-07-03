@@ -1,19 +1,16 @@
-[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://bgrove0roomtyp0"]
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://brnk0og0kuexr"]
 
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_grv"]
-[ext_resource type="Script" uid="uid://rsaxqx83qmip" path="res://worldgen/generators/cave_params.gd" id="2_grvp"]
+[ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_grvg"]
 
-[sub_resource type="Resource" id="Resource_grvp"]
-script = ExtResource("2_grvp")
+[sub_resource type="Resource" id="Resource_grvg"]
+script = ExtResource("2_grvg")
 fill_prob = 0.4
 write_blockers = true
 
 [resource]
 script = ExtResource("1_grv")
 id = &"grove"
-generator_id = &"cave"
-generator_params = SubResource("Resource_grvp")
-allowed_biomes = Array[StringName]([&"deepwood"])
-enemy_groups_min = 0
+generator = SubResource("Resource_grvg")
 enemy_groups_max = 1
 loot_max = 1

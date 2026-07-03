@@ -49,16 +49,16 @@ static func seed_for(gen_version: int, config_hash: int, parts: Array[int]) -> i
 
 ## The one sanctioned way to make a per-unit RNG (spec §4.2). Godot's RandomNumberGenerator
 ## is PCG32 internally, which satisfies the spec directly.
-static func rng(seed: int) -> RandomNumberGenerator:
+static func rng(seed_value: int) -> RandomNumberGenerator:
 	var r := RandomNumberGenerator.new()
-	r.seed = seed
+	r.seed = seed_value
 	return r
 
 
 ## True iff the next u32 draw is below the threshold. randi() returns an unsigned 32-bit
 ## value as a non-negative int, so the plain comparison is correct (spec §4.3.3).
-static func chance(rng: RandomNumberGenerator, threshold_u32: int) -> bool:
-	return rng.randi() < threshold_u32
+static func chance(p_rng: RandomNumberGenerator, threshold_u32: int) -> bool:
+	return p_rng.randi() < threshold_u32
 
 
 ## Precompute the integer threshold for a probability p in [0,1] (call at config-load time;

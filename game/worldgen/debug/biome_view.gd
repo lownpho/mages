@@ -1,8 +1,8 @@
 extends Node2D
-## Debug view 2 (spec §12 tooling 2): the selected biome's 9x9 slot grid with room units as
-## outlined rects (merged units render larger), passages on shared edges (tree = white, loop =
+## Debug view 2 (spec §12 tooling 2): the selected biome's slot grid with rooms as
+## outlined rects (merged rooms render larger), passages on shared edges (tree = white, loop =
 ## yellow, external contract door = red; DOOR = short tick at its true offset, OPEN = the whole
-## shared segment highlighted), a short type tag per unit, and unique-scope units outlined in a
+## shared segment highlighted), a short type tag per room, and unique-scope rooms outlined in a
 ## distinct colour. A small world overview sits in the corner with the current selection ringed.
 
 const TOP := 56.0
@@ -13,7 +13,7 @@ var _spec: WorldSpec = null
 var _config: GenConfig = null
 var _graph: BiomeGraph = null
 var _selected := Vector2i.ZERO
-var _selected_unit := -1
+var _selected_room := -1
 
 
 func _ready() -> void:
@@ -21,38 +21,38 @@ func _ready() -> void:
 
 
 func set_data(spec: WorldSpec, config: GenConfig, graph: BiomeGraph, selected: Vector2i,
-		selected_unit := -1) -> void:
+		selected_room := -1) -> void:
 	_spec = spec
 	_config = config
 	_graph = graph
 	_selected = selected
-	_selected_unit = selected_unit
+	_selected_room = selected_room
 	queue_redraw()
 
 
 ## Main-grid layout shared by _draw and hit-testing: [origin: Vector2, slot_px: float].
 func _layout() -> Array:
 	var view := get_viewport_rect().size
-	var s := _config.BIOME_SIZE_SLOTS
+	var s := _config.biome_slots
 	var main_top: float = TOP + _spec.grid_h * OVERVIEW_CELL + 16.0
 	var slot_px := minf((view.x - 2.0 * MARGIN) / s, (view.y - main_top - MARGIN) / s)
 	return [Vector2((view.x - slot_px * s) * 0.5, main_top), slot_px]
 
 
-## Index (into _graph.units) of the unit under a screen position, or -1 outside the main grid.
-func unit_at_screen_pos(pos: Vector2) -> int:
+## Index (into _graph.rooms) of the room under a screen position, or -1 outside the main grid.
+func room_at_screen_pos(pos: Vector2) -> int:
 	if _graph == null:
 		return -1
 	var lay := _layout()
 	var origin: Vector2 = lay[0]
 	var slot_px: float = lay[1]
-	var s := _config.BIOME_SIZE_SLOTS
+	var s := _config.biome_slots
 	var rel := (pos - origin) / slot_px
 	var lx := int(floor(rel.x))
 	var ly := int(floor(rel.y))
 	if lx < 0 or ly < 0 or lx >= s or ly >= s:
 		return -1
-	return _graph.slot_to_unit[ly * s + lx]
+	return _graph.slot_to_room[ly * s + lx]
 
 
 ## Top-left corner of the overview grid in screen space.
@@ -78,8 +78,8 @@ func _draw() -> void:
 	if _graph == null:
 		return
 	var view := get_viewport_rect().size
-	var s := _config.BIOME_SIZE_SLOTS
-	var t := float(_config.ROOM_SLOT_SIZE)
+	var s := _config.biome_slots
+	var t := float(_config.room_slot_tiles)
 	var font := ThemeDB.fallback_font
 
 	# Main 9x9 slot grid, below the overview band.
@@ -96,11 +96,11 @@ func _draw() -> void:
 		draw_line(Vector2(origin.x, gy), Vector2(origin.x + s * slot_px, gy), Color(1, 1, 1, 0.08))
 
 	var bc := _graph.biome_coord
-	for ui in _graph.units.size():
-		var u: RoomSpec = _graph.units[ui]
-		var lt := Vector2(u.unit_id - bc * s)
+	for ui in _graph.rooms.size():
+		var u: RoomSpec = _graph.rooms[ui]
+		var lt := Vector2(u.origin_slot - bc * s)
 		var rect := Rect2(origin + lt * slot_px, Vector2(u.size_slots) * slot_px)
-		if ui == _selected_unit:
+		if ui == _selected_room:
 			draw_rect(rect.grow(-1.0), Color(1, 1, 1, 0.15))
 		var rt := _config.room_type_by_id(u.type_id)
 		var outline := Color(0.6, 0.6, 0.7)
@@ -117,8 +117,8 @@ func _draw() -> void:
 
 	_draw_overview()
 
-	draw_string(font, Vector2(MARGIN, view.y - 12), "biome %s  [%s]  units:%d   arrows/click select"
-			% [bc, _graph.units[0].biome_id, _graph.units.size()],
+	draw_string(font, Vector2(MARGIN, view.y - 12), "biome %s  [%s]  rooms:%d   arrows/click select"
+			% [bc, _graph.rooms[0].biome_id, _graph.rooms.size()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
 
 

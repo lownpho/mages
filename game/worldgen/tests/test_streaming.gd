@@ -4,7 +4,7 @@ extends Node
 ##   - Chunk determinism: the same chunk assembled twice (caches cleared between) has byte-identical
 ##     RENDERED cell data (source id + atlas coords) on every layer.
 ##   - Eviction safety (spec §11): a chunk whose rooms were evicted from the LRU re-assembles
-##     identically; the LRU never exceeds ROOM_CACHE_CAPACITY.
+##     identically; the LRU never exceeds room_cache_capacity.
 ##   - Performance (spec T6 subset, report-only — never fails the run): L2 biome-graph build,
 ##     L3+L4 room build, and chunk assembly from CACHED rooms, over ≥ 200 samples each.
 ## Run: godot --headless --path game res://worldgen/tests/test_streaming.tscn
@@ -15,12 +15,11 @@ const SAMPLES := 200
 func _ready() -> void:
 	var fails: Array[String] = []
 	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
-	config.prepare()
 	var seed := 918_273_645
 
 	var streamer := WorldStreamer.new()
 	streamer.config = config
-	streamer.init(seed)
+	streamer.build_world(seed)
 	if streamer.world_spec == null:
 		print("FAILED: 1")
 		print("  FAIL: world layout returned null")
@@ -29,7 +28,8 @@ func _ready() -> void:
 
 	# --- Chunk determinism ----------------------------------------------------------------------
 	print("== chunk determinism ==")
-	for coord in [Vector2i(0, 0), Vector2i(2, 2), Vector2i(5, 3)]:
+	# In-world chunks covering both biomes (world is 2 chunks wide × 4 tall: glade y0-1, deepwood y2-3).
+	for coord in [Vector2i(0, 0), Vector2i(1, 1), Vector2i(0, 3)]:
 		streamer.clear_room_cache()
 		var a := streamer.assemble_chunk(coord.x, coord.y)
 		var sa := _serialize(a)
@@ -54,9 +54,9 @@ func _ready() -> void:
 	var all_units := _all_units(streamer, config)
 	for spec in all_units:
 		streamer.get_room_output(spec)
-	if streamer.room_cache_size() > config.ROOM_CACHE_CAPACITY:
+	if streamer.room_cache_size() > config.room_cache_capacity:
 		fails.append("room cache exceeded capacity: %d > %d"
-				% [streamer.room_cache_size(), config.ROOM_CACHE_CAPACITY])
+				% [streamer.room_cache_size(), config.room_cache_capacity])
 
 	var re := streamer.assemble_chunk(0, 0)   # its rooms were evicted → regenerated
 	var s2 := _serialize(re)
@@ -64,12 +64,12 @@ func _ready() -> void:
 	if s1 != s2:
 		fails.append("chunk (0,0) differs after its rooms were evicted (spec §11 violated)")
 	print("  cache size %d/%d after touching %d rooms; post-eviction chunk identical"
-			% [streamer.room_cache_size(), config.ROOM_CACHE_CAPACITY, all_units.size()])
+			% [streamer.room_cache_size(), config.room_cache_capacity, all_units.size()])
 
 	# --- Performance (report only) --------------------------------------------------------------
 	print("== performance (%d samples each; budgets: L2 5ms / L3 10ms / assembly 1ms) ==" % SAMPLES)
-	var bw := config.WORLD_SIZE_BIOMES.x
-	var bh := config.WORLD_SIZE_BIOMES.y
+	var bw := config.world_width_biomes
+	var bh := config.world_height_biomes()
 
 	var l2_us := 0
 	for i in SAMPLES:
@@ -86,11 +86,11 @@ func _ready() -> void:
 		l3_us += Time.get_ticks_usec() - t0
 
 	# Chunk assembly from CACHED rooms: warm chunk (2,2)'s rooms, then re-assemble repeatedly.
-	streamer.assemble_chunk(2, 2).free()
+	streamer.assemble_chunk(0, 3).free()
 	var asm_us := 0
 	for _i in SAMPLES:
 		var t0 := Time.get_ticks_usec()
-		var c := streamer.assemble_chunk(2, 2)
+		var c := streamer.assemble_chunk(0, 3)
 		asm_us += Time.get_ticks_usec() - t0
 		c.free()
 
@@ -113,24 +113,28 @@ func _ready() -> void:
 ## Every room unit across the whole world, as flat RoomSpec list (canonical order per biome).
 func _all_units(streamer: WorldStreamer, config: GenConfig) -> Array:
 	var out: Array = []
-	for by in config.WORLD_SIZE_BIOMES.y:
-		for bx in config.WORLD_SIZE_BIOMES.x:
+	for by in config.world_height_biomes():
+		for bx in config.world_width_biomes:
 			var g := RoomGraph.build(streamer.world_spec, Vector2i(bx, by), config)
-			for u in g.units:
+			for u in g.rooms:
 				out.append(u)
 	return out
 
 
 ## Real rendered cell data of a chunk, as a sorted String — compares source id + atlas coords on
-## every layer, so it catches any presentation divergence (spec T1 "byte-compare outputs").
+## every layer, so it catches any presentation divergence (spec T1 "byte-compare outputs"). Layers
+## are per-biome (`<biome>_floor`/`_wall`/`_blocker`/`_decor`), so iterate all TileMapLayer children.
 func _serialize(chunk: WgChunk) -> String:
 	var parts: Array[String] = []
-	for layer_name in ["ground", "wall", "decor"]:
-		var layer: TileMapLayer = chunk.get_node(layer_name)
+	for child in chunk.get_children():
+		if not (child is TileMapLayer):
+			continue
+		var layer: TileMapLayer = child
 		var rows: Array[String] = []
 		for cell in layer.get_used_cells():
 			var a := layer.get_cell_atlas_coords(cell)
 			rows.append("%d,%d:%d:%d,%d" % [cell.x, cell.y, layer.get_cell_source_id(cell), a.x, a.y])
 		rows.sort()
-		parts.append(layer_name + "{" + ";".join(rows) + "}")
+		parts.append(String(layer.name) + "{" + ";".join(rows) + "}")
+	parts.sort()
 	return "|".join(parts)

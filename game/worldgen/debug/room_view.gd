@@ -1,7 +1,7 @@
 extends Node2D
-## Debug view 3 (spec §12 tooling 3): one room unit's logical tile grid. FLOOR dark, WALL
+## Debug view 3 (spec §12 tooling 3): one room's logical tile grid. FLOOR dark, WALL
 ## light, BLOCKER mid, DECOR_FLOOR tinted. P toggles the PROTECTED overlay (translucent cyan),
-## M the reachability overlay (translucent green). Left/right arrows cycle units (handled by
+## M the reachability overlay (translucent green). Left/right arrows cycle rooms (handled by
 ## the root). Lays out from the window size (viewport is 320×180-stretched otherwise).
 
 const TOP := 56.0
@@ -19,19 +19,19 @@ var show_reach := false
 
 var _config: GenConfig = null
 var _out: RoomOutput = null
-var _unit_index: int = 0
-var _unit_count: int = 0
+var _room_index: int = 0
+var _room_count: int = 0
 
 
 func _ready() -> void:
 	get_viewport().size_changed.connect(queue_redraw)
 
 
-func set_data(config: GenConfig, out: RoomOutput, unit_index: int, unit_count: int) -> void:
+func set_data(config: GenConfig, out: RoomOutput, room_index: int, room_count: int) -> void:
 	_config = config
 	_out = out
-	_unit_index = unit_index
-	_unit_count = unit_count
+	_room_index = room_index
+	_room_count = room_count
 	queue_redraw()
 
 
@@ -93,9 +93,9 @@ func _draw() -> void:
 		draw_string(font, pos + Vector2(4, -3), String(sid),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 10, col)
 
-	var status := "unit %d/%d  %s  [%s]  %dx%d slots  %dx%d tiles  attempt %d   [P] protected:%s  [M] reach:%s  [←/→] cycle" % [
-		_unit_index + 1, _unit_count, _out.unit_id, _out.type_id,
-		_out.width / _config.ROOM_SLOT_SIZE, _out.height / _config.ROOM_SLOT_SIZE,
+	var status := "room %d/%d  %s  [%s]  %dx%d slots  %dx%d tiles  attempt %d   [P] protected:%s  [M] reach:%s  [←/→] cycle" % [
+		_room_index + 1, _room_count, _out.origin_slot, _out.type_id,
+		_out.width / _config.room_slot_tiles, _out.height / _config.room_slot_tiles,
 		w, h, _out.attempt_used, "on" if show_protected else "off", "on" if show_reach else "off"]
 	draw_string(ThemeDB.fallback_font, Vector2(MARGIN, view.y - 10), status,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.85, 0.88, 0.92))

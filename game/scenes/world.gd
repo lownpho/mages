@@ -10,8 +10,7 @@ extends Node2D
 func _ready() -> void:
 	if not generate_world:
 		return
-	_streamer.config.prepare()
-	_streamer.init(world_seed if world_seed != 0 else randi())
-	# Deterministic spawn: the traversal room nearest the glade's center, on a validated tile.
+	_streamer.build_world(world_seed if world_seed != 0 else randi())
+	# Deterministic spawn: the fallback-type room nearest the starting biome's center.
 	_player.global_position = _streamer.find_spawn_position()
 	_streamer.target = _player

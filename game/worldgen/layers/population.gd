@@ -1,6 +1,6 @@
 class_name Population
 ## Layer 4 (spec §9): enemy groups and loot for one room, as data only — no nodes, no scenes.
-## Runs as pipeline step 7 with its OWN RNG seeded [world_seed, NS_POPULATION, unit_x, unit_y]
+## Runs as pipeline step 7 with its OWN RNG seeded [world_seed, NS_POPULATION, slot_x, slot_y]
 ## (no attempt index): spawn IDENTITY — group count, enemy ids, group sizes, entity_ids — is
 ## invariant under interior retries; only positions re-sample against the final reachability
 ## map. Draw order is fixed (spec §4.2): groups → per group (weighted pick, size, per-entity
@@ -19,13 +19,14 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 	var biome := config.biome_by_id(spec.biome_id)
 	if rt == null or biome == null:
 		return
-	var parts: Array[int] = [world_seed, WgHash.NS_POPULATION, spec.unit_id.x, spec.unit_id.y]
-	var rng := WgHash.rng(WgHash.seed_for(config.gen_version, config.compute_hash(), parts))
+	var rng := config.rng_for([world_seed, WgHash.NS_POPULATION,
+			spec.origin_slot.x, spec.origin_slot.y] as Array[int])
 
 	var ox := PackedInt32Array()
 	var oy := PackedInt32Array()
 	for i in openings.size():
 		ox.append(openings[i] % out.width)
+		@warning_ignore("integer_division")
 		oy.append(openings[i] / out.width)
 	var sx := PackedInt32Array()   # placed spawn positions
 	var sy := PackedInt32Array()
@@ -34,32 +35,26 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 	# draws happen until the whole identity list exists, so identity never depends on the
 	# reachability map and survives interior retries (spec §9 preamble).
 	var identities: Array = []   # of {"enemy_id": ...} / {"item_id": ...}
-	var spawn_table: Array = []
-	for e in biome.spawn_tables:
-		if e.room_type == spec.type_id:
-			spawn_table.append(e)
+	var spawn_entries: Array = _entries_for(biome.spawn_tables, spec.type_id, "enemies")
 	var groups := rng.randi_range(rt.enemy_groups_min, rt.enemy_groups_max)
 	for _g in groups:
-		var entry: SpawnTableEntry = _weighted_pick(rng, spawn_table)
+		var entry: SpawnTableEntry = _weighted_pick(rng, spawn_entries)
 		if entry == null:
 			continue
 		var size := rng.randi_range(entry.group_min, entry.group_max)
 		for _s in size:
 			identities.append({"enemy_id": entry.enemy_id})
-	var loot_table: Array = []
-	for e in biome.loot_tables:
-		if e.room_type == spec.type_id:
-			loot_table.append(e)
+	var loot_entries: Array = _entries_for(biome.loot_tables, spec.type_id, "items")
 	var loot_count := rng.randi_range(rt.loot_min, rt.loot_max)
 	for _l in loot_count:
-		var entry: LootTableEntry = _weighted_pick(rng, loot_table)
+		var entry: LootTableEntry = _weighted_pick(rng, loot_entries)
 		if entry == null:
 			continue
 		identities.append({"item_id": entry.item_id})
 
 	# Phase 2 — POSITIONS: rejection-sample against this attempt's reachability map, in
 	# identity order. Only these draws (and the resulting positions) may vary across retries.
-	var opening_dist2 := config.SPAWN_OPENING_GUARD * config.SPAWN_OPENING_GUARD
+	var opening_dist2 := config.spawn_min_dist_from_doors * config.spawn_min_dist_from_doors
 	for ident in identities:
 		var tile := _sample_tile(rng, out, ox, oy, sx, sy, opening_dist2)
 		if tile.x < 0:
@@ -71,9 +66,17 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 
 	# Stable entity ids by list index (spec §4.5).
 	for i in out.spawns.size():
-		var id_parts: Array[int] = [world_seed, WgHash.NS_POPULATION,
-				spec.unit_id.x, spec.unit_id.y, i]
-		out.spawns[i]["entity_id"] = WgHash.seed_for(config.gen_version, config.compute_hash(), id_parts)
+		out.spawns[i]["entity_id"] = config.seed_for([world_seed, WgHash.NS_POPULATION,
+				spec.origin_slot.x, spec.origin_slot.y, i] as Array[int])
+
+
+## The entry list of the FIRST table matching room_type ([] if none). `field` is the entry
+## array's property name — "enemies" on RoomSpawnTable, "items" on RoomLootTable.
+static func _entries_for(tables: Array, room_type: StringName, field: String) -> Array:
+	for t in tables:
+		if t != null and t.room_type == room_type:
+			return t.get(field)
+	return []
 
 
 ## Integer cumulative-weight pick; null on an empty/zero-weight table (consumes no draw then).
@@ -91,8 +94,8 @@ static func _weighted_pick(rng: RandomNumberGenerator, table: Array) -> Variant:
 	return table[table.size() - 1]
 
 
-## Rejection-sample a reachable tile ≥ SPAWN_OPENING_GUARD tiles from every opening and ≥2 from
-## other spawns; (-1,-1) when 100 attempts exhaust (spec §9.3).
+## Rejection-sample a reachable tile ≥ spawn_min_dist_from_doors tiles from every opening and
+## ≥2 from other spawns; (-1,-1) when 100 attempts exhaust (spec §9.3).
 static func _sample_tile(rng: RandomNumberGenerator, out: RoomOutput,
 		ox: PackedInt32Array, oy: PackedInt32Array,
 		sx: PackedInt32Array, sy: PackedInt32Array, opening_dist2: int) -> Vector2i:

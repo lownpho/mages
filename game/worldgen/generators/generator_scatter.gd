@@ -2,22 +2,30 @@ class_name RoomGenScatter
 ## Scatter generator (spec §8.2): N blocker CLUMPS at rejection-sampled positions with a
 ## minimum spacing between clump centers. clump_min/max = 1 gives classic lone rocks/trees;
 ## larger values grow each center into a touching grove by deterministic neighbour walk.
-## Count scales with merged-unit slot area.
+## Count scales with merged-room slot area.
 extends RoomGenBase
 
 const ATTEMPTS_PER_BLOCKER := 20
 
+@export var count_per_slot: int = 10   ## clumps per room slot (scales with merged size)
+@export var min_spacing: int = 4       ## minimum tile distance between clump CENTERS
+@export var clump_min: int = 1         ## blockers per clump; 1/1 = lone blockers (classic scatter)
+@export var clump_max: int = 1
+
+
+func hash_fold(h: int) -> int:
+	h = super.hash_fold(h)
+	h = WgHash.fold_var(h, count_per_slot)
+	h = WgHash.fold_var(h, min_spacing)
+	h = WgHash.fold_var(h, clump_min)
+	h = WgHash.fold_var(h, clump_max)
+	return h
+
 
 func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
-		rng: RandomNumberGenerator, spec: RoomSpec, config: GenConfig) -> void:
-	var rt := config.room_type_by_id(spec.type_id)
-	var params: ScatterParams = null
-	if rt != null:
-		params = rt.generator_params as ScatterParams
-	if params == null:
-		return
-	var count := params.count_per_slot * spec.size_slots.x * spec.size_slots.y
-	var min_d2 := params.min_spacing * params.min_spacing
+		rng: RandomNumberGenerator, spec: RoomSpec) -> void:
+	var count := count_per_slot * spec.size_slots.x * spec.size_slots.y
+	var min_d2 := min_spacing * min_spacing
 	var px := PackedInt32Array()
 	var py := PackedInt32Array()
 	for _n in count:
@@ -36,7 +44,7 @@ func run(grid: PackedByteArray, protected: PackedByteArray, w: int, h: int,
 					break
 			if ok:
 				_grow_clump(grid, protected, w, h, rng, x, y,
-						rng.randi_range(params.clump_min, params.clump_max))
+						rng.randi_range(clump_min, clump_max))
 				px.append(x)
 				py.append(y)
 				break

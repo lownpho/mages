@@ -10,7 +10,6 @@ const SEEDS := 60
 func _ready() -> void:
 	var fails: Array[String] = []
 	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
-	config.prepare()
 
 	var checked := 0
 	var with_spawns := 0
@@ -19,12 +18,12 @@ func _ready() -> void:
 			print("  seed %d/%d" % [i, SEEDS])
 		var seed := 49_979_687 * i + 13
 		var world := WorldLayout.build(seed, config)
-		var bc := Vector2i(i % config.WORLD_SIZE_BIOMES.x,
-				(i / config.WORLD_SIZE_BIOMES.x) % config.WORLD_SIZE_BIOMES.y)
+		var bc := Vector2i(i % config.world_width_biomes,
+				(i / config.world_width_biomes) % config.world_height_biomes())
 		var graph := RoomGraph.build(world, bc, config)
 
 		var picked := {}
-		for u in graph.units:
+		for u in graph.rooms:
 			if not picked.has(u.type_id):
 				picked[u.type_id] = u
 		for type_id in picked:
@@ -44,9 +43,10 @@ func _ready() -> void:
 				else:
 					enemies += 1
 			var max_group := 0
-			for e in config.biome_by_id(u.biome_id).spawn_tables:
-				if e.room_type == u.type_id:
-					max_group = maxi(max_group, e.group_max)
+			for t in config.biome_by_id(u.biome_id).spawn_tables:
+				if t.room_type == u.type_id:
+					for e in t.enemies:
+						max_group = maxi(max_group, e.group_max)
 			if enemies > rt.enemy_groups_max * max_group:
 				fails.append("enemy count over budget (seed %d %s)" % [seed, u.type_id])
 			if loot > rt.loot_max:
@@ -63,7 +63,7 @@ func _ready() -> void:
 				for j in openings.size():
 					var dx := openings[j] % out.width - ta.x
 					var dy := openings[j] / out.width - ta.y
-					if dx * dx + dy * dy < config.SPAWN_OPENING_GUARD * config.SPAWN_OPENING_GUARD:
+					if dx * dx + dy * dy < config.spawn_min_dist_from_doors * config.spawn_min_dist_from_doors:
 						fails.append("spawn %d tiles from opening (seed %d %s)" % [dx * dx + dy * dy, seed, u.type_id])
 						break
 				for b in range(a + 1, out.spawns.size()):
@@ -96,10 +96,10 @@ func _ready() -> void:
 	# Entity ids unique across a whole biome (all units, one seed per biome cell).
 	var world := WorldLayout.build(31337, config)
 	var seen := {}
-	for by in config.WORLD_SIZE_BIOMES.y:
-		for bx in config.WORLD_SIZE_BIOMES.x:
+	for by in config.world_height_biomes():
+		for bx in config.world_width_biomes:
 			var graph := RoomGraph.build(world, Vector2i(bx, by), config)
-			for u in graph.units:
+			for u in graph.rooms:
 				var out := RoomBuilder.build(u, config, 31337)
 				for sp in out.spawns:
 					var eid: int = sp["entity_id"]

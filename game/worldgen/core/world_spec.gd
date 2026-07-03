@@ -50,12 +50,12 @@ func get_contract(a: Vector2i, b: Vector2i) -> Array:
 
 
 ## Which of a world-space slot's four sides face the world's outer edge (spec §5.3). The world
-## occupies slots [0, grid_w*BIOME_SIZE_SLOTS) × [0, grid_h*BIOME_SIZE_SLOTS); a side is an edge
+## occupies slots [0, grid_w*biome_slots) × [0, grid_h*biome_slots); a side is an edge
 ## side iff the slot sits on that perimeter. Returns an Array[int] of SIDE_* constants (empty for
 ## interior slots). Callers seal these sides CLOSED with no door.
 func is_world_edge_slot(slot: Vector2i) -> Array[int]:
 	var sides: Array[int] = []
-	var s := config.BIOME_SIZE_SLOTS
+	var s := config.biome_slots
 	var max_x := grid_w * s - 1
 	var max_y := grid_h * s - 1
 	if slot.y == 0:

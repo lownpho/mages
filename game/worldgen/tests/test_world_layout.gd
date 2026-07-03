@@ -7,9 +7,8 @@ extends Node
 func _ready() -> void:
 	var fails: Array[String] = []
 	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
-	config.prepare()
-	var w := config.WORLD_SIZE_BIOMES.x
-	var h := config.WORLD_SIZE_BIOMES.y
+	var w := config.world_width_biomes
+	var h := config.world_height_biomes()
 
 	# 1. T4 contract symmetry over 1000 seeds: every internal border computed from both
 	# orderings must be field-identical.
@@ -33,7 +32,7 @@ func _ready() -> void:
 					fails.append("contract slots not ascending/distinct at seed %d" % seed)
 					break
 			for c in ab:
-				if c.tile_offset < 2 or c.tile_offset > config.ROOM_SLOT_SIZE - config.DOOR_WIDTH - 2:
+				if c.tile_offset < 2 or c.tile_offset > config.room_slot_tiles - config.door_width_tiles - 2:
 					fails.append("door offset out of range at seed %d: %d" % [seed, c.tile_offset])
 					break
 		if not fails.is_empty():
@@ -55,7 +54,7 @@ func _ready() -> void:
 
 	# 3. Over 200 seeds: FORBIDDEN never violated, REQUIRED always satisfied, unique rooms
 	# in allowed biomes / interior slots / no collisions.
-	var s := config.BIOME_SIZE_SLOTS
+	var s := config.biome_slots
 	for i in 200:
 		var seed := 104_729 * i + 41
 		var spec := WorldLayout.build(seed, config)
@@ -71,7 +70,7 @@ func _ready() -> void:
 		var taken := {}
 		for ur in spec.unique_rooms:
 			var rt := config.room_type_by_id(ur.type_id)
-			if not spec.biome_at(ur.biome_coord) in rt.allowed_biomes:
+			if not spec.biome_at(ur.biome_coord) in rt.unique_allowed_biomes:
 				fails.append("unique '%s' outside allowed biomes at seed %d" % [ur.type_id, seed])
 			if ur.local_slot.x < 1 or ur.local_slot.x > s - 2 \
 					or ur.local_slot.y < 1 or ur.local_slot.y > s - 2:

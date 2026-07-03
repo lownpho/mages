@@ -1,23 +1,22 @@
 [gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://nnkmg3avvpqj"]
 
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_3wlll"]
-[ext_resource type="Script" uid="uid://igj131qw4kox" path="res://worldgen/generators/template_params.gd" id="2_tpprm"]
+[ext_resource type="Script" uid="uid://d124ncb30n3hi" path="res://worldgen/generators/generator_template.gd" id="2_tpgen"]
 [ext_resource type="Resource" path="res://worldgen/content/templates/shrine_pillars.tres" id="3_stmp1"]
-[ext_resource type="Resource" path="res://worldgen/content/templates/shrine_walls.tres" id="4_stmp2"]
+[ext_resource type="Resource" uid="uid://p1tfajo4fg1e" path="res://worldgen/content/templates/shrine_walls.tres" id="4_stmp2"]
 [ext_resource type="Resource" path="res://worldgen/content/templates/shrine_ring.tres" id="5_stmp3"]
 [ext_resource type="Script" uid="uid://dxrymnjmvnk7u" path="res://worldgen/core/room_stamp.gd" id="6_rstmp"]
 
-[sub_resource type="Resource" id="Resource_tpprm"]
-script = ExtResource("2_tpprm")
+[sub_resource type="Resource" id="Resource_tpgen"]
+script = ExtResource("2_tpgen")
 stamps = Array[ExtResource("6_rstmp")]([ExtResource("3_stmp1"), ExtResource("4_stmp2"), ExtResource("5_stmp3")])
 
 [resource]
 script = ExtResource("1_3wlll")
 id = &"shrine"
-generator_id = &"template"
-generator_params = SubResource("Resource_tpprm")
+generator = SubResource("Resource_tpgen")
 unique_scope = 2
-allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
+unique_allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
 enemy_groups_max = 1
 loot_min = 1
 loot_max = 1
