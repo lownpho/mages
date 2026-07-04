@@ -1,5 +1,5 @@
 class_name SpawnTableEntry
-## One weighted enemy option inside a RoomSpawnTable (spec §9 / §10.4).
+## One weighted enemy option inside a RoomSpawnTable.
 extends Resource
 
 @export var enemy_id: StringName         ## scene id under characters/enemies/<id>/

@@ -1,12 +1,12 @@
 class_name BorderContracts
-## Border contracts (spec §6): the deterministic shared decision between two adjacent biome
+## Border contracts: the deterministic shared decision between two adjacent biome
 ## cells. Pure static function — no state, callable lazily from either side. The seed is
-## symmetric in (A,B) via coordinate-wise min/max (spec §4.1), so both neighbours compute the
+## symmetric in (A,B) via coordinate-wise min/max, so both neighbours compute the
 ## identical crossings in any generation order.
 extends RefCounted
 
 
-## One door crossing on a shared biome border (spec §6). Lightweight object, not a Dict.
+## One door crossing on a shared biome border. Lightweight object, not a Dict.
 class Crossing extends RefCounted:
 	var slot_index: int    ## which slot along the border [0, biome_slots)
 	var tile_offset: int   ## door offset within the slot's shared wall
@@ -18,7 +18,7 @@ class Crossing extends RefCounted:
 		width = w
 
 
-## doors_per_biome_border distinct slot indices (ascending) each with a door offset (spec §6).
+## doors_per_biome_border distinct slot indices (ascending) each with a door offset.
 ## RNG consumption order is fixed: draw all distinct slot indices first (partial Fisher-Yates),
 ## sort ascending, then draw one offset per crossing in ascending-slot order.
 static func get_contract(world_seed: int, config: GenConfig, biome_a: Vector2i, biome_b: Vector2i) -> Array:

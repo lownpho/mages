@@ -1,10 +1,10 @@
 class_name RoomGraph
-## Layer 2 (spec §7, §10.2): builds one biome's room graph from (world_spec, biome_coord, config).
-## Pure data — no tiles. An instance holds the never-evicted BiomeGraph cache (spec §11); the heavy
+## Layer 2: builds one biome's room graph from (world_spec, biome_coord, config).
+## Pure data — no tiles. An instance holds the never-evicted BiomeGraph cache; the heavy
 ## lifting is the static build() so tests can force fresh, cache-free builds.
 ##
 ## SINGLE per-biome RNG, seeded seed_for([world_seed, NS_ROOM_GRAPH, bx, by]), consumed in EXACTLY
-## this order (spec §7 — any reorder is a GEN_VERSION bump):
+## this order:
 ##   1. Slot merging: row-major over slots; ONE merge roll per ELIGIBLE slot (not already merged,
 ##      not a world-unique host), regardless of outcome. On a hit, shapes 2x2, 2x1, 1x2 are tried
 ##      in that fixed order (geometry only, no RNG); first fit wins.
@@ -20,7 +20,7 @@ extends RefCounted
 var _cache: Dictionary = {}   ## Vector2i biome_coord -> BiomeGraph; never evicted, never iterated
 
 
-## Cached accessor (spec §11). Cache reads don't break the no-dict-iteration rule; we never iterate.
+## Cached accessor. Cache reads don't break the no-dict-iteration rule; we never iterate.
 func get_biome_graph(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfig) -> BiomeGraph:
 	if _cache.has(biome_coord):
 		return _cache[biome_coord]
@@ -37,8 +37,8 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	var biome := config.biome_by_id(bid)
 	var rng := config.rng_for(
 			[world_spec.world_seed, WgHash.NS_ROOM_GRAPH, biome_coord.x, biome_coord.y] as Array[int])
-	# Integer thresholds from the config's float dials, once per biome build (spec §4.3.3:
-	# generation loops compare integers, never floats).
+	# Integer thresholds from the config's float dials, once per biome build — generation
+	# loops compare integers, never floats.
 	var threshold_merge := WgHash.threshold(config.room_merge_chance)
 	var threshold_loop := WgHash.threshold(config.extra_connection_chance)
 	var openness_threshold := WgHash.threshold(biome.open_passage_chance)
@@ -64,7 +64,7 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 			if unique_here.has(here):
 				_claim(owner, room_top, room_size, s, here, Vector2i.ONE)
 				continue
-			# Eligible slot: consume exactly one merge roll regardless of outcome (spec §7.1).
+			# Eligible slot: consume exactly one merge roll regardless of outcome.
 			var shape := Vector2i.ONE
 			if WgHash.chance(rng, threshold_merge):
 				for sh in [Vector2i(2, 2), Vector2i(2, 1), Vector2i(1, 2)]:
@@ -77,7 +77,7 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 
 	# --- Step 2: spanning tree ------------------------------------------------------------------
 	# Canonical edge list: room indices are already row-major by top-left, so (a<b) sorted by (a,b)
-	# is "by top-left room, then neighbour" (spec §7.2).
+	# is "by top-left room, then neighbour".
 	var edges := _enumerate_edges(owner, s, n_rooms)   # Array of Vector2i(a, b), a < b
 	edges.sort_custom(func(p, q): return p.x < q.x if p.x != q.x else p.y < q.y)
 
@@ -114,7 +114,7 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 		_carve_passage(room_top, room_size, t, config.door_width_tiles, openness_threshold, rng,
 				e.x, e.y, entry["from_tree"], room_passages)
 
-	# Border-contract crossings (spec §6/§7.3) — forced external doors; NO biome RNG consumed here.
+	# Border-contract crossings — forced external doors; NO biome RNG consumed here.
 	_append_contracts(world_spec, biome_coord, s, t, owner, room_top, room_passages)
 
 	# --- Step 4: type assignment ----------------------------------------------------------------
@@ -318,7 +318,7 @@ static func _carve_passage(room_top: Array[Vector2i], room_size: Array[Vector2i]
 		out[ib].append(RoomSpec.Passage.new(side_b, RoomSpec.KIND_DOOR, base_b + door_off, door_width, false, from_tree))
 
 
-## Append border-contract crossings (spec §6) as forced external DOORs on the correct edge rooms.
+## Append border-contract crossings as forced external DOORs on the correct edge rooms.
 ## A crossing's slot_index runs along the shared border; its tile_offset is relative to that SLOT's
 ## wall start. We map it to the room owning that border slot and rebase the offset onto the ROOM's
 ## wall-segment start (crucial for merged rooms, whose start is not the slot's).

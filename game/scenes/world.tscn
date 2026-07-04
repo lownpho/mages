@@ -19,10 +19,11 @@ world_seed = 33
 
 [node name="DamageNumbers" parent="." unique_id=1159986638 instance=ExtResource("79_dmgnum")]
 
-[node name="EntitySpawner" type="Node" parent="." node_paths=PackedStringArray("streamer", "enemies_parent")]
+[node name="EntitySpawner" type="Node" parent="." node_paths=PackedStringArray("streamer", "enemies_parent", "features_parent")]
 script = ExtResource("81_spawn")
 streamer = NodePath("../WorldRoot/WorldStreamer")
 enemies_parent = NodePath("../WorldRoot/Entities/Enemies")
+features_parent = NodePath("../WorldRoot/Entities/Specials")
 
 [node name="WorldRoot" type="Node2D" parent="."]
 y_sort_enabled = true

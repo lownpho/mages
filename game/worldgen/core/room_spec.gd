@@ -1,5 +1,5 @@
 class_name RoomSpec
-## One room's graph-level description (spec §10.3): where it sits, how big it is, its type,
+## One room's graph-level description: where it sits, how big it is, its type,
 ## and the passages on its four sides. A room covers one slot, or 2x1/1x2/2x2 merged slots.
 ## Produced by Layer 2 (RoomGraph); consumed by Layer 3. Pure data, RefCounted — no tiles here.
 extends RefCounted
@@ -8,7 +8,7 @@ extends RefCounted
 enum { KIND_DOOR = 0, KIND_OPEN = 1 }
 
 
-## A traversable connection on one side of this room (spec §10.3).
+## A traversable connection on one side of this room.
 ##
 ## `offset_tiles` convention (normative — the two rooms sharing an edge MUST agree geometrically):
 ##   The offset is measured in TILES from this room's own wall-segment START, where "start" is the
@@ -22,7 +22,7 @@ enum { KIND_DOOR = 0, KIND_OPEN = 1 }
 ##     room's full wall when the neighbour is smaller). width_tiles == shared segment length.
 ##   Because both rooms record the SAME absolute door/segment position — each just subtracting its
 ##   own edge-start — a door written from side A lands on identical world tiles as its twin on B.
-## `external` marks a forced border-contract crossing (spec §6) to a neighbouring biome; those get
+## `external` marks a forced border-contract crossing to a neighbouring biome; those get
 ## no internal graph edge. `from_tree` is DEBUG-ONLY metadata (not part of the spec schema) letting
 ## the biome view colour tree edges vs loop edges.
 class Passage extends RefCounted:
@@ -43,7 +43,7 @@ class Passage extends RefCounted:
 		from_tree = p_from_tree
 
 
-var origin_slot: Vector2i     ## top-left slot coord, WORLD slot space (spec §10.3); also the cache key
+var origin_slot: Vector2i     ## top-left slot coord, WORLD slot space; also the cache key
 var size_slots: Vector2i      ## (w, h) in {1x1, 2x1, 1x2, 2x2}
 var type_id: StringName       ## room type
 var biome_id: StringName      ## biome definition id

@@ -1,6 +1,6 @@
 class_name BiomePresentation
 ## How one biome's LOGICAL tile classes (FLOOR/WALL/BLOCKER/DECOR_FLOOR) map to actual tileset
-## art. This is a PRESENTATION concern only: per spec §13 tile-art selection lives outside the
+## art. This is a PRESENTATION concern only: tile-art selection lives outside the
 ## deterministic core, so it is deliberately NOT folded into CONFIG_HASH and never touched by
 ## generation code — the streamer reads it when blitting rooms into chunks.
 ##

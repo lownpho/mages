@@ -1,30 +1,30 @@
 class_name GenConfig
-## The whole authored configuration for the world generator (spec §3, §4.4, §10.4). Every §3
-## dial is an @export so it can be tuned in the inspector and saved as a .tres; the content
+## The whole authored configuration for the world generator. Every dial is an @export so it
+## can be tuned in the inspector and saved as a .tres; the content
 ## registries (biomes, room types, adjacency) hang off it. compute_hash() folds the
 ## world-affecting fields into CONFIG_HASH, which is mixed into every generation seed
-## (spec §4.1) — so a saved world_seed only reproduces its world under the same content, and
+## — so a saved world_seed only reproduces its world under the same content, and
 ## diverges loudly otherwise. Runtime dials (streaming, retry caps) are deliberately NOT
 ## hashed: they cannot change the generated world, so tuning them must not re-roll it.
 extends Resource
 
-@export var gen_version: int = 2   ## GEN_VERSION — bump on any algorithm change (spec §3)
+@export var gen_version: int = 3   ## GEN_VERSION — bump on any algorithm change
 
-@export_group("World shape (spec §3)")
+@export_group("World shape")
 @export var room_slot_tiles: int = 64        ## tiles per room-slot side
 @export var biome_slots: int = 9             ## room slots per biome side
 @export var world_width_biomes: int = 4      ## biome cells per row; rows = biomes.size() / width
 @export var door_width_tiles: int = 3        ## tiles per door / carved corridor
 
-@export_group("Graph shape (spec §3)")
+@export_group("Graph shape")
 @export_range(0.0, 1.0, 0.01) var extra_connection_chance: float = 0.25  ## keep-prob for non-tree edges (loops)
 @export_range(0.0, 1.0, 0.01) var room_merge_chance: float = 0.15        ## per-slot merge attempt prob
 @export var doors_per_biome_border: int = 2                              ## crossings per shared biome border
 
-@export_group("Interior (spec §3)")
+@export_group("Interior")
 @export var max_room_retries: int = 5                                    ## interior attempts before fallback
 @export_range(0.0, 1.0, 0.01) var min_reachable_floor_ratio: float = 0.20  ## validation floor fraction
-@export var spawn_min_dist_from_doors: int = 6                           ## tiles between a spawn and any opening (spec §9)
+@export var spawn_min_dist_from_doors: int = 6                           ## tiles between a spawn and any opening
 
 @export_group("Well-known ids")
 @export var starting_biome: StringName = &"glade"           ## hosts the player spawn; presentation fallback
@@ -65,9 +65,9 @@ func validate() -> bool:
 	return true
 
 
-## CONFIG_HASH (spec §4.4). Folds var_to_bytes() of every world-affecting field in a FIXED,
+## CONFIG_HASH. Folds var_to_bytes() of every world-affecting field in a FIXED,
 ## hand-written order — never property-list order — recursing into biomes, room types,
-## adjacency, and their nested spawn/loot tables. Cached after the first call.
+## adjacency, and their nested spawn tables. Cached after the first call.
 func compute_hash() -> int:
 	if not _hash_valid:
 		_cached_hash = _compute_hash_uncached()
@@ -75,20 +75,20 @@ func compute_hash() -> int:
 	return _cached_hash
 
 
-## Derive a seed from an ordered parts list under this config (spec §4.1).
+## Derive a seed from an ordered parts list under this config.
 ## parts[0] is always world_seed, parts[1] a WgHash.NS_* namespace constant.
 func seed_for(parts: Array[int]) -> int:
 	return WgHash.seed_for(gen_version, compute_hash(), parts)
 
 
-## The one sanctioned way to make a per-unit generation RNG (spec §4.2).
+## The one sanctioned way to make a per-unit generation RNG.
 func rng_for(parts: Array[int]) -> RandomNumberGenerator:
 	return WgHash.rng(seed_for(parts))
 
 
 func _compute_hash_uncached() -> int:
 	var h: int = 0
-	# World-affecting constants (spec §3), fixed order.
+	# World-affecting constants, fixed order.
 	h = WgHash.fold_var(h, gen_version)
 	h = WgHash.fold_var(h, room_slot_tiles)
 	h = WgHash.fold_var(h, biome_slots)
@@ -102,7 +102,7 @@ func _compute_hash_uncached() -> int:
 	h = WgHash.fold_var(h, spawn_min_dist_from_doors)
 	h = WgHash.fold_var(h, starting_biome)
 	h = WgHash.fold_var(h, fallback_room_type)
-	# Content registries (spec §4.4), fixed order.
+	# Content registries, fixed order.
 	for b in biomes:
 		h = b.hash_fold(h)
 	for rt in room_types:

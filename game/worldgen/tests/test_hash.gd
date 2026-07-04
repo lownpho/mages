@@ -1,5 +1,5 @@
 extends Node
-## Headless determinism test for the Task 1 hash/seeding core (WgHash). Pure logic, no scene
+## Headless determinism test for the hash/seeding core (WgHash). Pure logic, no scene
 ## tree touched. Run:
 ##   godot --headless --path game res://worldgen/tests/test_hash.tscn
 

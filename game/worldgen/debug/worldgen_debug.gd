@@ -1,6 +1,6 @@
 extends Node2D
-## Interactive worldgen debug scene (spec §12 tooling). Grows one view per task:
-## 1 = world view (Task 3), 2 = biome view (Task 4), 3 = room view (Task 5). View 4 = Task 8.
+## Interactive worldgen debug scene. Grows one view per task:
+## 1 = world view, 2 = biome view, 3 = room view, 4 = fly mode over real streamed tiles.
 ## R rerolls a random seed, Enter in the seed box applies a typed one, 1..4 switch views.
 ## In the biome view, arrow keys / clicking the corner overview select a biome cell and
 ## clicking the main grid selects a room; view 3 shows that room (arrows cycle, P/M overlays).
@@ -23,7 +23,7 @@ var spec: WorldSpec = null
 var current_view: int = 1
 var selected_biome := Vector2i.ZERO
 var selected_room := 0
-var _room_graphs: RoomGraph = null   ## per-session BiomeGraph cache (spec §11); reset on reseed
+var _room_graphs: RoomGraph = null   ## per-session BiomeGraph cache; reset on reseed
 
 
 func _ready() -> void:
@@ -135,7 +135,7 @@ func _rebuild() -> void:
 	elif current_view == 3:
 		_refresh_room_view()
 	elif current_view == 4:
-		_streamer.build_world(world_seed)   # rebuild the streamed world in place (spec §12 seed console)
+		_streamer.build_world(world_seed)   # rebuild the streamed world in place
 
 
 func _refresh_biome_view() -> void:
@@ -181,4 +181,4 @@ func _set_fly_active(on: bool) -> void:
 	_flycam.set_process(on)
 	_fly_cam2d.enabled = on
 	if on:
-		_fly_cam2d.zoom = Vector2(2, 2)   # 8px tiles visible (gotcha 4)
+		_fly_cam2d.zoom = Vector2(2, 2)   # 8px tiles visible

@@ -13,4 +13,3 @@ script = ExtResource("1_grv")
 id = &"grove"
 generator = SubResource("Resource_grvg")
 enemy_groups_max = 1
-loot_max = 1

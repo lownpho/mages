@@ -1,5 +1,5 @@
 class_name RoomGenArena
-## Arena generator (spec §8.2): a perimeter ring of blockers with gaps, open center — for
+## Arena generator: a perimeter ring of blockers with gaps, open center — for
 ## boss/challenge rooms. Gap positions are drawn first (fixed RNG count), then the band is
 ## filled deterministically.
 extends RoomGenBase

@@ -1,5 +1,5 @@
 class_name BiomePairRule
-## An ordered pair of biome ids for one adjacency rule (spec §5.1 / §10.4). Two StringNames in
+## An ordered pair of biome ids for one adjacency rule. Two StringNames in
 ## a fixed order (not a Dictionary/Vector2i) so both the rule and its hash are deterministic.
 extends Resource
 

@@ -1,11 +1,11 @@
 extends Node
-## Headless tests for Layer 5 chunk streaming + presentation (spec §11, Task 8). Runs as a scene
+## Headless tests for Layer 5 chunk streaming + presentation. Runs as a scene
 ## (it instantiates WorldStreamer/WgChunk nodes). Asserts:
 ##   - Chunk determinism: the same chunk assembled twice (caches cleared between) has byte-identical
 ##     RENDERED cell data (source id + atlas coords) on every layer.
-##   - Eviction safety (spec §11): a chunk whose rooms were evicted from the LRU re-assembles
+##   - Eviction safety: a chunk whose rooms were evicted from the LRU re-assembles
 ##     identically; the LRU never exceeds room_cache_capacity.
-##   - Performance (spec T6 subset, report-only — never fails the run): L2 biome-graph build,
+##   - Performance: L2 biome-graph build,
 ##     L3+L4 room build, and chunk assembly from CACHED rooms, over ≥ 200 samples each.
 ## Run: godot --headless --path game res://worldgen/tests/test_streaming.tscn
 
@@ -62,7 +62,7 @@ func _ready() -> void:
 	var s2 := _serialize(re)
 	re.free()
 	if s1 != s2:
-		fails.append("chunk (0,0) differs after its rooms were evicted (spec §11 violated)")
+		fails.append("chunk (0,0) differs after its rooms were evicted")
 	print("  cache size %d/%d after touching %d rooms; post-eviction chunk identical"
 			% [streamer.room_cache_size(), config.room_cache_capacity, all_units.size()])
 
@@ -122,7 +122,7 @@ func _all_units(streamer: WorldStreamer, config: GenConfig) -> Array:
 
 
 ## Real rendered cell data of a chunk, as a sorted String — compares source id + atlas coords on
-## every layer, so it catches any presentation divergence (spec T1 "byte-compare outputs"). Layers
+## every layer, so it catches any presentation divergence. Layers
 ## are per-biome (`<biome>_floor`/`_wall`/`_blocker`/`_decor`), so iterate all TileMapLayer children.
 func _serialize(chunk: WgChunk) -> String:
 	var parts: Array[String] = []

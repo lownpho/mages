@@ -1,5 +1,5 @@
 class_name RoomSpawnTable
-## A biome's enemy options for ONE room type (spec §9 / §10.4): the room type named once,
+## A biome's enemy options for ONE room type: the room type named once,
 ## then its weighted entries. Typed ordered Resources, so both the table and its hash are
 ## deterministic and .tres-serializable.
 extends Resource

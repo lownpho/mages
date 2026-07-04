@@ -1,5 +1,5 @@
 class_name RoomGenScatter
-## Scatter generator (spec §8.2): N blocker CLUMPS at rejection-sampled positions with a
+## Scatter generator: N blocker CLUMPS at rejection-sampled positions with a
 ## minimum spacing between clump centers. clump_min/max = 1 gives classic lone rocks/trees;
 ## larger values grow each center into a touching grove by deterministic neighbour walk.
 ## Count scales with merged-room slot area.

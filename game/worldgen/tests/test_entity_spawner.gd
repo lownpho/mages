@@ -1,5 +1,5 @@
 extends Node
-## Headless test for Task 9: entity-spawner determinism (same seed → same live entity ids and
+## Headless test for entity-spawner determinism (same seed → same live entity ids and
 ## positions around the player spawn), deterministic player spawn, and session defeated
 ## tracking (a killed enemy stays gone through despawn/respawn). Runs as a scene because it
 ## exercises real nodes. Run:

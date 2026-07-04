@@ -1,5 +1,5 @@
 extends Node
-## Headless tests for Layer 4 population (spec §9, §4.5): determinism, retry-independence of
+## Headless tests for Layer 4 population: determinism, retry-independence of
 ## spawn identity, distance constraints, budgets, empty traversal rooms, and world-wide
 ## entity-id uniqueness. Run:
 ##   godot --headless --path game res://worldgen/tests/test_population.tscn
@@ -34,14 +34,8 @@ func _ready() -> void:
 			if not out.spawns.is_empty():
 				with_spawns += 1
 
-			# Budgets: groups*group_max bounds enemies; loot_max bounds loot. traversal = empty.
-			var enemies := 0
-			var loot := 0
-			for sp in out.spawns:
-				if sp.has("item_id"):
-					loot += 1
-				else:
-					enemies += 1
+			# Budget: groups*group_max bounds enemies. traversal = empty.
+			var enemies := out.spawns.size()
 			var max_group := 0
 			for t in config.biome_by_id(u.biome_id).spawn_tables:
 				if t.room_type == u.type_id:
@@ -49,8 +43,6 @@ func _ready() -> void:
 						max_group = maxi(max_group, e.group_max)
 			if enemies > rt.enemy_groups_max * max_group:
 				fails.append("enemy count over budget (seed %d %s)" % [seed, u.type_id])
-			if loot > rt.loot_max:
-				fails.append("loot over budget (seed %d %s)" % [seed, u.type_id])
 			if u.type_id == &"traversal" and not out.spawns.is_empty():
 				fails.append("traversal room populated (seed %d)" % seed)
 
@@ -79,7 +71,7 @@ func _ready() -> void:
 			if not _spawns_equal(out.spawns, out2.spawns, true):
 				fails.append("spawns differ on rebuild (seed %d %s)" % [seed, u.type_id])
 
-			# Retry independence (spec §9 preamble): forced fallback re-rolls the interior but
+			# Retry independence: forced fallback re-rolls the interior but
 			# spawn IDENTITY (order, kind, id, entity_id) must be unchanged; positions may move.
 			var out3 := RoomBuilder.build(u, config, seed, true)
 			if not _spawns_equal(out.spawns, out3.spawns, false):
@@ -123,8 +115,6 @@ func _spawns_equal(a: Array, b: Array, with_positions: bool) -> bool:
 		return false
 	for i in a.size():
 		if a[i].get("enemy_id", &"") != b[i].get("enemy_id", &""):
-			return false
-		if a[i].get("item_id", &"") != b[i].get("item_id", &""):
 			return false
 		if a[i].get("entity_id", 0) != b[i].get("entity_id", 0):
 			return false

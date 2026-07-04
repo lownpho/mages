@@ -1,9 +1,9 @@
 extends Node
-## Headless tests for Layer 3 with all structure generators + decoration (spec §8, T3 —
-## absorbs the former test_interior). Covers every room type × merge shape across seeds:
+## Headless tests for Layer 3 with all structure generators + decoration. Covers every
+## room type × merge shape across seeds:
 ## validation within max_room_retries, opening reachability, PROTECTED star, world-edge
 ## sealing, determinism per generator, fallback ladder, and a per-generator stats table
-## (rooms, retry rate, mean reachable-floor ratio, mean build time — spec §11 budget 10 ms).
+## (rooms, retry rate, mean reachable-floor ratio, mean build time — budget 10 ms).
 ## Run: godot --headless --path game res://worldgen/tests/test_generators.tscn
 
 const SEEDS := 100
@@ -91,7 +91,7 @@ func _ready() -> void:
 
 	print("generator          rooms  retry%%  fallback  mean_ratio  mean_ms  det_checks")
 	var total_fallbacks := 0
-	for gen_id in ["(none)", "RoomGenScatter", "RoomGenCave", "RoomGenArena", "RoomGenTemplate"]:
+	for gen_id in ["(none)", "RoomGenScatter", "RoomGenCave", "RoomGenArena"]:
 		if not stats.has(gen_id):
 			fails.append("generator '%s' never exercised" % gen_id)
 			continue
@@ -99,7 +99,7 @@ func _ready() -> void:
 		total_fallbacks += s[2]
 		print("%-16s %6d  %5.1f  %8d  %10.2f  %7.2f  %10d"
 				% [gen_id, s[0], 100.0 * s[1] / s[0], s[2], s[3] / s[0], s[4] / 1000.0 / s[0], s[5]])
-	# Spec T3: ≥ 99.9% of rooms validate within max_room_retries (i.e. no fallback).
+	# ≥ 99.9% of rooms validate within max_room_retries (i.e. no fallback).
 	if built > 0 and total_fallbacks / float(built) > 0.001:
 		fails.append("fallback rate too high: %d/%d" % [total_fallbacks, built])
 

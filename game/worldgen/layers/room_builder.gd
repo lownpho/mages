@@ -1,15 +1,15 @@
 class_name RoomBuilder
-## Layer 3 (spec §8): builds one room's interior from its RoomSpec. Pure function of
+## Layer 3: builds one room's interior from its RoomSpec. Pure function of
 ## (room_spec, config, world_seed) — doors/open sides are immutable inputs; retries re-roll
-## everything else via the attempt index in the seed (spec §4.3.4–5).
+## everything else via the attempt index in the seed.
 ##
-## Pipeline per attempt (spec §8.1): base FLOOR fill → wall shell with openings erased →
+## Pipeline per attempt: base FLOOR fill → wall shell with openings erased →
 ## L-corridors from every opening to the center (all carved tiles PROTECTED) → structure
 ## generator → decoration → reachability flood fill → validate. After
 ## max_room_retries failures the fallback runs steps 1–3 only, which validates by construction.
 extends RefCounted
 
-# Logical tile classes (spec §8). Byte values in RoomOutput.tile_grid; PROTECTED is the
+# Logical tile classes. Byte values in RoomOutput.tile_grid; PROTECTED is the
 # separate parallel mask, never a class value.
 const FLOOR := 0
 const WALL := 1
@@ -17,7 +17,7 @@ const BLOCKER := 2
 const DECOR_FLOOR := 3
 
 
-## Build the interior. `force_fallback` is test-only (exercises the spec §8.1 step-8 ladder).
+## Build the interior. `force_fallback` is test-only (exercises the step-8 ladder).
 static func build(spec: RoomSpec, config: GenConfig, world_seed: int, force_fallback := false) -> RoomOutput:
 	var w := spec.size_slots.x * config.room_slot_tiles
 	var h := spec.size_slots.y * config.room_slot_tiles
@@ -41,7 +41,7 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 	prot.resize(w * h)
 
 	# Step 2 — shell: wall the whole perimeter, then erase (and protect) the openings.
-	# World-edge and passage-less sides simply keep their wall (spec §5.3).
+	# World-edge and passage-less sides simply keep their wall.
 	for x in w:
 		grid[x] = WALL
 		grid[(h - 1) * w + x] = WALL
@@ -64,7 +64,7 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 		if rt != null and rt.generator != null:
 			rt.generator.run(grid, prot, w, h, rng, spec)
 
-		# Step 5 — decoration: non-blocking DECOR_FLOOR at the biome's density (spec §8.1.5);
+		# Step 5 — decoration: non-blocking DECOR_FLOOR at the biome's density;
 		# PROTECTED tiles are fair game because decor never blocks. Blocking decor is the
 		# structure generators' business. Skipped on the fallback path (steps 1–3 only).
 		var biome := config.biome_by_id(spec.biome_id)
@@ -88,7 +88,7 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 	out.protected_map = prot
 	out.reachability_map = _flood_fill(grid, w, h, cx, cy)
 
-	# Step 7 — population (spec §9): own RNG, no attempt index — spawn identity survives
+	# Step 7 — population: own RNG, no attempt index — spawn identity survives
 	# retries; positions sample this attempt's reachability map. Runs on the fallback too.
 	Population.populate(out, spec, config, world_seed, openings)
 	return out
@@ -123,7 +123,7 @@ static func _opening_tiles(spec: RoomSpec, w: int, h: int) -> PackedInt32Array:
 	return out
 
 
-## L-corridor (spec §8.1.3), width door_width_tiles, from the opening midpoint to the room
+## L-corridor, width door_width_tiles, from the opening midpoint to the room
 ## center. Fixed rule: the wall-perpendicular leg runs first (a literal horizontal-first leg
 ## from a N/S door would carve along the shell wall itself), then the other axis to the center.
 ## The perpendicular leg's width equals the door width, so it never widens the opening.
@@ -195,7 +195,7 @@ static func _flood_fill(grid: PackedByteArray, w: int, h: int, cx: int, cy: int)
 	return reach
 
 
-## Spec §8.1.8: every opening tile reachable, and reachable tiles ≥ min_reachable_floor_ratio.
+## every opening tile reachable, and reachable tiles ≥ min_reachable_floor_ratio.
 static func _validate(out: RoomOutput, openings: PackedInt32Array, config: GenConfig) -> bool:
 	for i in openings.size():
 		if out.reachability_map[openings[i]] == 0:

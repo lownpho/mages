@@ -1,5 +1,5 @@
 class_name BiomeGraph
-## Output of Layer 2 (spec §10.2), one per biome cell, cached forever (spec §11). Pure data.
+## Output of Layer 2, one per biome cell, cached forever. Pure data.
 ## `rooms` are in canonical order (top-left slot, row-major); `slot_to_room` maps each of the
 ## biome_slots² local slots to the index of the room that covers it.
 extends RefCounted

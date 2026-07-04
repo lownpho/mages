@@ -1,5 +1,5 @@
 class_name AdjacencyRules
-## World-layout adjacency constraints (spec §5.1). Both lists are ordered arrays of ordered
+## World-layout adjacency constraints. Both lists are ordered arrays of ordered
 ## biome-pair Resources so placement and hashing are fully deterministic.
 extends Resource
 

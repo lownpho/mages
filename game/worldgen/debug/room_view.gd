@@ -1,5 +1,5 @@
 extends Node2D
-## Debug view 3 (spec §12 tooling 3): one room's logical tile grid. FLOOR dark, WALL
+## Debug view 3: one room's logical tile grid. FLOOR dark, WALL
 ## light, BLOCKER mid, DECOR_FLOOR tinted. P toggles the PROTECTED overlay (translucent cyan),
 ## M the reachability overlay (translucent green). Left/right arrows cycle rooms (handled by
 ## the root). Lays out from the window size (viewport is 320×180-stretched otherwise).
@@ -79,17 +79,16 @@ func _draw() -> void:
 					draw_rect(Rect2(origin + Vector2(x, y) * ppt, tile), rc)
 	draw_rect(Rect2(origin, Vector2(w, h) * ppt), Color(1, 1, 1, 0.4), false, 1.0)
 
-	# Spawn markers (Task 7): enemies red, loot gold, id as tiny text.
+	# Spawn markers: enemies red, id as tiny text.
 	var font := ThemeDB.fallback_font
+	var col := Color(0.9, 0.2, 0.2)
 	for sp in _out.spawns:
 		if not (sp is Dictionary):
 			continue
 		var stile: Vector2i = sp.get("tile", Vector2i.ZERO)
 		var pos := origin + (Vector2(stile) + Vector2(0.5, 0.5)) * ppt
-		var is_item: bool = sp.has("item_id")
-		var col := Color(0.95, 0.8, 0.2) if is_item else Color(0.9, 0.2, 0.2)
 		draw_circle(pos, maxf(2.5, ppt), col)
-		var sid: StringName = sp.get("item_id", sp.get("enemy_id", &"?"))
+		var sid: StringName = sp.get("enemy_id", &"?")
 		draw_string(font, pos + Vector2(4, -3), String(sid),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 10, col)
 

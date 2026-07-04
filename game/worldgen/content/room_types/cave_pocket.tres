@@ -12,4 +12,3 @@ id = &"cave_pocket"
 generator = SubResource("Resource_cvgen")
 enemy_groups_min = 1
 enemy_groups_max = 2
-loot_max = 1

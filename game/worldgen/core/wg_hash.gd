@@ -1,9 +1,9 @@
 class_name WgHash
-## Deterministic hashing / seeding core for the new world generator (spec §4.1–4.3).
+## Deterministic hashing / seeding core for the new world generator.
 ## All static, all integer math. Every value flowing into generation RNGs comes from here.
 extends RefCounted
 
-# Namespace constants (spec §4.1) — the second element of every seed_for parts list.
+# Namespace constants — the second element of every seed_for parts list.
 const NS_WORLD_LAYOUT := 1
 const NS_BORDER := 2
 const NS_ROOM_GRAPH := 3
@@ -22,7 +22,7 @@ const _MIX2 := -7723592293110705685   # 0x94D049BB133111EB
 const _U32_RANGE := 0x100000000
 
 
-## SplitMix64 finalizer (spec §4.1). GDScript `>>` is an arithmetic shift on signed 64-bit
+## SplitMix64 finalizer. GDScript `>>` is an arithmetic shift on signed 64-bit
 ## ints, so every right shift is masked to stay unsigned — an unmasked shift smears the sign
 ## bit and silently corrupts the hash. Multiply/add wrap naturally on 64-bit ints.
 static func splitmix64(x: int) -> int:
@@ -37,9 +37,8 @@ static func _ushift(x: int, n: int) -> int:
 	return (x >> n) & ((1 << (64 - n)) - 1)
 
 
-## Derive a seed from an ordered parts list (spec §4.1). Parts[0] is always world_seed,
-## parts[1] a namespace constant. config_hash is a parameter for now (Task 2 supplies the
-## real one).
+## Derive a seed from an ordered parts list. Parts[0] is always world_seed,
+## parts[1] a namespace constant. config_hash is a parameter supplied by the caller.
 static func seed_for(gen_version: int, config_hash: int, parts: Array[int]) -> int:
 	var h := splitmix64(gen_version ^ config_hash)
 	for p in parts:
@@ -47,8 +46,8 @@ static func seed_for(gen_version: int, config_hash: int, parts: Array[int]) -> i
 	return h
 
 
-## The one sanctioned way to make a per-unit RNG (spec §4.2). Godot's RandomNumberGenerator
-## is PCG32 internally, which satisfies the spec directly.
+## The one sanctioned way to make a per-unit RNG. Godot's RandomNumberGenerator
+## is PCG32 internally, which gives the determinism we need directly.
 static func rng(seed_value: int) -> RandomNumberGenerator:
 	var r := RandomNumberGenerator.new()
 	r.seed = seed_value
@@ -56,7 +55,7 @@ static func rng(seed_value: int) -> RandomNumberGenerator:
 
 
 ## True iff the next u32 draw is below the threshold. randi() returns an unsigned 32-bit
-## value as a non-negative int, so the plain comparison is correct (spec §4.3.3).
+## value as a non-negative int, so the plain comparison is correct.
 static func chance(p_rng: RandomNumberGenerator, threshold_u32: int) -> bool:
 	return p_rng.randi() < threshold_u32
 
@@ -69,7 +68,7 @@ static func threshold(p: float) -> int:
 
 
 ## Fold a byte stream into an accumulator, one splitmix64 step per byte. Deterministic and
-## order-sensitive — the basis of CONFIG_HASH (spec §4.4). Not a fast general-purpose hash,
+## order-sensitive — the basis of CONFIG_HASH. Not a fast general-purpose hash,
 ## but config hashing happens once at load.
 static func fold_bytes(h: int, bytes: PackedByteArray) -> int:
 	for b in bytes:

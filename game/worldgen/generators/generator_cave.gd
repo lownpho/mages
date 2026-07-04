@@ -1,5 +1,5 @@
 class_name RoomGenCave
-## Cellular-automata cave generator (spec §8.2): seed wall noise at `fill_prob`, smooth with
+## Cellular-automata cave generator: seed wall noise at `fill_prob`, smooth with
 ## the 4-5 rule, write the result as WALL. PROTECTED tiles are forced floor every iteration,
 ## so the corridor star always pierces the cave and openings stay connected.
 extends RoomGenBase

@@ -1,5 +1,5 @@
 class_name WorldLayout
-## Layer 1 (spec §5): places every biome exactly once on the world grid via randomized
+## Layer 1: places every biome exactly once on the world grid via randomized
 ## backtracking under the adjacency rules, then assigns world-unique room homes. Pure static
 ## function of (world_seed, config) — no scene tree, safe headless.
 extends RefCounted
@@ -7,7 +7,7 @@ extends RefCounted
 
 ## Build the WorldSpec, or null (with push_error) if the config is invalid or the adjacency
 ## rules are unsatisfiable within max_layout_retries — a content bug, not a runtime condition
-## (spec §5.2 step 6).
+##.
 static func build(world_seed: int, config: GenConfig) -> WorldSpec:
 	if not config.validate():
 		return null
@@ -39,13 +39,13 @@ static func build(world_seed: int, config: GenConfig) -> WorldSpec:
 	return spec
 
 
-## One placement attempt (spec §5.2 steps 1–4): shuffle the biome list, fill cells row-major,
+## One placement attempt: shuffle the biome list, fill cells row-major,
 ## backtrack when no remaining biome is admissible. Returns [] if backtracking exhausts.
 static func _try_place(rng: RandomNumberGenerator, config: GenConfig, w: int, h: int) -> Array[StringName]:
 	var order: Array[StringName] = []
 	for b in config.biomes:
 		order.append(b.id)
-	# Fisher-Yates with the unit RNG — Array.shuffle() would use the global RNG (spec §4.2).
+	# Fisher-Yates with the unit RNG — Array.shuffle() would use the global RNG.
 	for i in range(order.size() - 1, 0, -1):
 		var j := rng.randi_range(0, i)
 		var t := order[i]
@@ -127,7 +127,7 @@ static func _pair_adjacent(grid: Array[StringName], w: int, h: int, a: StringNam
 	return false
 
 
-## World-unique room homes (spec §5.4). Types ordered by type_id ascending; collisions re-roll
+## World-unique room homes. Types ordered by type_id ascending; collisions re-roll
 ## the later type with attempt indices. The StringName type_id is encoded into the seed parts
 ## by folding its UTF-8 bytes — stable under content additions, unlike a list index.
 static func _place_unique_rooms(world_seed: int, config: GenConfig, spec: WorldSpec) -> Array:

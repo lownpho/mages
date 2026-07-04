@@ -1,5 +1,5 @@
 class_name RoomTypeTableEntry
-## One row of a biome's weighted room-type table (spec §7.4 / §10.4). Typed Resource, not a
+## One row of a biome's weighted room-type table. Typed Resource, not a
 ## Dictionary, so it serializes cleanly inside a .tres array and is editable in the inspector.
 extends Resource
 

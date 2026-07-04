@@ -1,5 +1,5 @@
 extends Node2D
-## Debug view 2 (spec §12 tooling 2): the selected biome's slot grid with rooms as
+## Debug view 2: the selected biome's slot grid with rooms as
 ## outlined rects (merged rooms render larger), passages on shared edges (tree = white, loop =
 ## yellow, external contract door = red; DOOR = short tick at its true offset, OPEN = the whole
 ## shared segment highlighted), a short type tag per room, and unique-scope rooms outlined in a

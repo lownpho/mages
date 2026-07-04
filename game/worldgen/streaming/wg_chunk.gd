@@ -1,5 +1,5 @@
 class_name WgChunk
-## One streaming chunk (spec §11 / godot_tips): a small Node2D owning its OWN TileMapLayers, fully
+## One streaming chunk: a small Node2D owning its OWN TileMapLayers, fully
 ## populated by WorldStreamer BEFORE it enters the tree. Unloading is just queue_free() — O(1), no
 ## per-cell erase storm on a giant shared layer.
 ##
@@ -13,7 +13,7 @@ class_name WgChunk
 extends Node2D
 
 var chunk_coord: Vector2i
-## Spawn entries overlapping this chunk, with a `world_tile` field resolved (Task 9: consumed
+## Spawn entries overlapping this chunk, with a `world_tile` field resolved (consumed
 ## by WgEntitySpawner via WorldStreamer.chunk_loaded).
 var spawn_data: Array = []
 
@@ -68,8 +68,8 @@ func _make_layer(layer_name: String, tileset: TileSet, z: int, solid: bool) -> T
 	return l
 
 
-## Placeholder spawn marker (Task 8): a small coloured square at a chunk-local tile. Real enemy
-## scenes are Task 9. `is_item` → gold, else red (enemy). Freed with the chunk.
+## Placeholder spawn marker: a small coloured square at a chunk-local tile (real enemy scenes
+## are spawned by WgEntitySpawner). `is_item` → gold, else red (enemy). Freed with the chunk.
 func add_spawn_marker(local_tile: Vector2i, tile_px: int, is_item: bool) -> void:
 	var m := Polygon2D.new()
 	var s := float(tile_px)

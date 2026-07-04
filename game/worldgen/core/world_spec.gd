@@ -1,25 +1,25 @@
 class_name WorldSpec
-## Output of Layer 1 (spec §10.1). A plain RefCounted (NOT a Resource) — it is recomputed
+## Output of Layer 1. A plain RefCounted (NOT a Resource) — it is recomputed
 ## from (world_seed, config) every load, never saved. Holds the biome placement grid, the
 ## world-unique room homes, and a lazy accessor for border contracts.
 extends RefCounted
 
-# Side constants (spec §7/§5.3 talk of a passage/wall "side"). World-space directions; the
-# room-graph layer (Task 4) reuses these. Order is fixed — a change bumps GEN_VERSION.
+# Side constants. World-space directions; the
+# room-graph layer reuses these. Order is fixed — a change bumps GEN_VERSION.
 enum { SIDE_NORTH = 0, SIDE_EAST = 1, SIDE_SOUTH = 2, SIDE_WEST = 3 }
 
 var world_seed: int = 0
 var grid_w: int = 0
 var grid_h: int = 0
-var biome_grid: Array[StringName] = []   ## row-major, size grid_w*grid_h (spec §10.1)
-var unique_rooms: Array = []             ## of UniqueRoom (spec §5.4)
+var biome_grid: Array[StringName] = []   ## row-major, size grid_w*grid_h
+var unique_rooms: Array = []             ## of UniqueRoom
 var config: GenConfig = null             ## source config (for dims + contract recompute)
 
 var _contract_cache: Dictionary = {}     ## read-through cache; never iterated during generation
 
 
-## One world-unique room home (spec §5.4). Lightweight typed object rather than a raw Dict so
-## callers can iterate the list without touching a Dictionary (spec §4.3.1).
+## One world-unique room home. Lightweight typed object rather than a raw Dict so
+## callers can iterate the list without touching a Dictionary.
 class UniqueRoom extends RefCounted:
 	var type_id: StringName
 	var biome_coord: Vector2i   ## which biome cell hosts it
@@ -38,7 +38,7 @@ func biome_at(biome_coord: Vector2i) -> StringName:
 	return biome_grid[biome_coord.y * grid_w + biome_coord.x]
 
 
-## Border contract between two adjacent biome cells (spec §6). Symmetric in a/b; cached.
+## Border contract between two adjacent biome cells. Symmetric in a/b; cached.
 ## Returns Array[BorderContracts.Crossing].
 func get_contract(a: Vector2i, b: Vector2i) -> Array:
 	var key := "%d,%d-%d,%d" % [mini(a.x, b.x), mini(a.y, b.y), maxi(a.x, b.x), maxi(a.y, b.y)]
@@ -49,7 +49,7 @@ func get_contract(a: Vector2i, b: Vector2i) -> Array:
 	return c
 
 
-## Which of a world-space slot's four sides face the world's outer edge (spec §5.3). The world
+## Which of a world-space slot's four sides face the world's outer edge. The world
 ## occupies slots [0, grid_w*biome_slots) × [0, grid_h*biome_slots); a side is an edge
 ## side iff the slot sits on that perimeter. Returns an Array[int] of SIDE_* constants (empty for
 ## interior slots). Callers seal these sides CLOSED with no door.

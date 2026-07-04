@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://bg5d4ckwn2y5"]
 
+[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="1_1dqpa"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_30v7j"]
 [ext_resource type="Script" uid="uid://b2bcviskgpwl7" path="res://worldgen/generators/generator_arena.gd" id="2_argen"]
 
@@ -18,5 +19,4 @@ unique_scope = 1
 unique_allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
 enemy_groups_min = 2
 enemy_groups_max = 4
-loot_min = 1
-loot_max = 2
+feature_scene = ExtResource("1_1dqpa")

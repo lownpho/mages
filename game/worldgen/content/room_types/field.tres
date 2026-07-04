@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://3l001xvpnfnb"]
 
+[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="1_mv2to"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_to306"]
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="2_scgen"]
 
@@ -16,4 +17,4 @@ id = &"field"
 generator = SubResource("Resource_scgen")
 enemy_groups_min = 1
 enemy_groups_max = 3
-loot_max = 1
+feature_scene = ExtResource("1_mv2to")

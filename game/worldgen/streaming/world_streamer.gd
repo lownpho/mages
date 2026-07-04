@@ -1,9 +1,9 @@
 class_name WorldStreamer
-## Layer 5: the read-through streaming cache view over Layers 2–4 (spec §11). Owns NO generation
+## Layer 5: the read-through streaming cache view over Layers 2–4. Owns NO generation
 ## logic — it resolves which rooms a chunk overlaps, pulls their RoomOutputs through an LRU
 ## cache, and blits the overlapping tile slices into a per-chunk node (WgChunk).
 ##
-## Caches (spec §11):
+## Caches:
 ##   - BiomeGraph cache: RoomGraph instance, never evicted (a few KB each).
 ##   - Room cache: LRU keyed by origin_slot, capacity room_cache_capacity. Eviction is always
 ##     safe — regeneration is byte-identical. Godot Dictionaries preserve insertion order, so
@@ -27,7 +27,7 @@ const _UNLOAD_MARGIN := 2         ## chunks; unload radius = load radius + this 
 
 ## Emitted right after a chunk enters the tree / right before one is freed. `spawns` carries the
 ## population entries overlapping the chunk with a `world_tile` field added (the entity spawner
-## instantiates/frees enemy scenes from these — spec §11 "spawn data, not nodes").
+## instantiates/frees enemy scenes from these — "spawn data, not nodes").
 signal chunk_loaded(coord: Vector2i, spawns: Array)
 signal chunk_unloaded(coord: Vector2i)
 
@@ -50,7 +50,7 @@ var cache_hits: int = 0
 var cache_misses: int = 0
 var last_assembly_usec: int = 0
 
-var _room_graphs: RoomGraph = null            # never-evicted BiomeGraph cache (spec §11)
+var _room_graphs: RoomGraph = null            # never-evicted BiomeGraph cache
 var _room_cache: Dictionary = {}              # Vector2i origin_slot -> RoomOutput, LRU by insertion order
 var _chunks: Dictionary = {}                  # Vector2i chunk_coord -> WgChunk
 var _fallback_pres: BiomePresentation = null  # starting biome's mapping; fallback for biomes without one
@@ -58,7 +58,7 @@ var _world_chunks := Vector2i.ZERO            # world size in chunks (finite bou
 var _tile_tables: Dictionary = {}             # TileSet -> weighted pick table (built once, see _tile_table)
 
 
-## (Re)build the world for a seed and reset all caches/chunks (spec §5 recompute-not-save).
+## (Re)build the world for a seed and reset all caches/chunks.
 func build_world(seed_value: int) -> void:
 	world_seed = seed_value
 	_clear_chunks()
@@ -87,7 +87,7 @@ func room_cache_size() -> int:
 	return _room_cache.size()
 
 
-## Test hook (spec §11: eviction is always safe). Dropping every cached room forces regeneration,
+## Test hook. Dropping every cached room forces regeneration,
 ## which must reproduce byte-identical chunks.
 func clear_room_cache() -> void:
 	_room_cache.clear()
@@ -145,7 +145,7 @@ func _update_streaming() -> void:
 
 # --- Chunk assembly -----------------------------------------------------------------------------
 
-## Build one chunk node fully populated (spec §11 pseudocode). Not added to the tree here.
+## Build one chunk node fully populated. Not added to the tree here.
 func assemble_chunk(cx: int, cy: int) -> WgChunk:
 	var t0 := Time.get_ticks_usec()
 	var cs := config.chunk_tiles
@@ -225,7 +225,7 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int) -> void:
 				_:   # FLOOR
 					_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
 
-	# Spawn data for this chunk (spec §9): entries overlapping it, with the world tile resolved.
+	# Spawn data for this chunk: entries overlapping it, with the world tile resolved.
 	# Debug markers only in the debug scene; the game spawns real entities via chunk_loaded.
 	for sp in room.spawns:
 		if not (sp is Dictionary):
@@ -239,12 +239,12 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int) -> void:
 		entry["world_tile"] = Vector2i(wx, wy)
 		chunk.spawn_data.append(entry)
 		if debug_spawn_markers:
-			chunk.add_spawn_marker(Vector2i(wx - tx0, wy - ty0), GameConstants.PX_PER_TILE, sp.has("item_id"))
+			chunk.add_spawn_marker(Vector2i(wx - tx0, wy - ty0), GameConstants.PX_PER_TILE, false)
 
 
 # --- Room cache (LRU) ---------------------------------------------------------------------------
 
-## Fetch a room's RoomOutput, generating on miss (spec §11). LRU touch = erase + reinsert.
+## Fetch a room's RoomOutput, generating on miss. LRU touch = erase + reinsert.
 func get_room_output(spec: RoomSpec) -> RoomOutput:
 	var key := spec.origin_slot
 	if _room_cache.has(key):
@@ -282,7 +282,7 @@ func _place(layer: TileMapLayer, cell: Vector2i, wx: int, wy: int,
 
 
 ## Per-tileset pick table, built once and cached: EVERY tile of the tileset's first source, with
-## integer cumulative weights from each tile's `probability` (spec §13 — art picks read the
+## integer cumulative weights from each tile's `probability` (— art picks read the
 ## tileset, not a curated subset). Probability is scaled ×1000 (min 1 for any non-zero tile) so
 ## selection stays pure-integer and cross-platform deterministic. Fields: source_id, coords
 ## (Array[Vector2i]), cum (PackedInt64Array cumulative weights), total (int).
@@ -314,7 +314,7 @@ func _tile_table(tileset: TileSet) -> Dictionary:
 
 
 ## Deterministic per-tile variant pick — pure function of (world_seed, tile, channel), so a
-## rebuilt chunk is byte-identical and neighbouring chunks agree at their seam (gotcha 7).
+## rebuilt chunk is byte-identical and neighbouring chunks agree at their seam.
 ## Hashes to a value in [0, total) then binary-searches the cumulative weight table.
 func _pick_weighted(wx: int, wy: int, channel: int, t: Dictionary) -> Vector2i:
 	var coords: Array[Vector2i] = t.coords

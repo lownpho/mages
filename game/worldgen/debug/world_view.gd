@@ -1,5 +1,5 @@
 extends Node2D
-## Debug view 1 (spec §12 tooling 1): the biome grid as colored cells, border-contract
+## Debug view 1: the biome grid as colored cells, border-contract
 ## crossings as ticks on shared edges at their true slot positions, and world-unique room
 ## homes as dots in their host cell.
 

@@ -1,14 +1,16 @@
 class_name WgEntitySpawner
-## Task 9: turns chunk spawn DATA into live enemy scenes. Chunks near the player instantiate
-## their enemies on chunk_loaded; chunk_unloaded frees them (their spawn data regenerates
-## identically, so walking away and back restores the same enemies in the same places — minus
-## ones defeated this session). Defeated tracking is keyed by stable entity_id (spec §4.5);
-## the save-delta system itself is out of scope, so the set lives for this session only.
+## Turns chunk spawn DATA into live scenes. Chunks near the player instantiate their enemies —
+## and any per-room feature scenes (doors, signs, altars) — on chunk_loaded; chunk_unloaded frees
+## them (spawn data regenerates identically, so walking away and back restores the same enemies in
+## the same places — minus ones defeated this session — and re-places the same features). Defeated
+## tracking is keyed by stable entity_id; the save-delta system itself is out of scope, so the set
+## lives for this session only. Features are never defeat-tracked — they always re-place.
 extends Node
 
 # Wired in the scene, or injected directly by code before add_child (tests build the rig by hand).
 @export var streamer: WorldStreamer = null          ## the WorldStreamer to follow
 @export var enemies_parent: Node2D = null           ## y-sorted parent the enemy scenes are added under
+@export var features_parent: Node2D = null          ## y-sorted parent for feature scenes; falls back to enemies_parent
 
 var defeated: Dictionary = {}        ## entity_id -> true (session-only)
 
@@ -38,8 +40,16 @@ func live_entity_ids() -> Array:
 func _on_chunk_loaded(coord: Vector2i, spawns: Array) -> void:
 	var nodes: Array = []
 	for sp in spawns:
-		if sp.has("item_id"):
-			continue   # loot on the ground arrives with real item content (Task 10)
+		if sp.has("feature"):
+			var fscene: PackedScene = sp["feature"]
+			if fscene == null:
+				continue
+			var f: Node2D = fscene.instantiate()
+			f.position = (Vector2(sp["world_tile"]) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+			var fparent: Node2D = features_parent if features_parent != null else enemies_parent
+			fparent.add_child(f)
+			nodes.append(f)   # freed on unload; never defeat-tracked
+			continue
 		var eid: int = sp.get("entity_id", 0)
 		if defeated.has(eid):
 			continue
