@@ -1,6 +1,6 @@
 extends Node
 ## Headless tests for Layer 2. Run:
-##   godot --headless --path game res://worldgen/tests/test_room_graph.tscn
+##   godot --headless --path game res://tests/worldgen/test_room_graph.tscn
 ## Builds full worlds (layout + every biome graph + contracts) and asserts: one connected
 ## component over all room units world-wide; determinism; every unit typed; contract crossings
 ## land on the correct units; merged-unit partition validity; world-unique uniqueness.

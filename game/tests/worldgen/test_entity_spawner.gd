@@ -3,7 +3,7 @@ extends Node
 ## positions around the player spawn), deterministic player spawn, and session defeated
 ## tracking (a killed enemy stays gone through despawn/respawn). Runs as a scene because it
 ## exercises real nodes. Run:
-##   godot --headless --path game res://worldgen/tests/test_entity_spawner.tscn
+##   godot --headless --path game res://tests/worldgen/test_entity_spawner.tscn
 
 const SEED := 777_003
 

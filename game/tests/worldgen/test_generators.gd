@@ -4,7 +4,7 @@ extends Node
 ## validation within max_room_retries, opening reachability, PROTECTED star, world-edge
 ## sealing, determinism per generator, fallback ladder, and a per-generator stats table
 ## (rooms, retry rate, mean reachable-floor ratio, mean build time — budget 10 ms).
-## Run: godot --headless --path game res://worldgen/tests/test_generators.tscn
+## Run: godot --headless --path game res://tests/worldgen/test_generators.tscn
 
 const SEEDS := 100
 

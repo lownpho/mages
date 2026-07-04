@@ -2,7 +2,7 @@ extends Node
 ## Headless tests for Layer 4 population: determinism, retry-independence of
 ## spawn identity, distance constraints, budgets, empty traversal rooms, and world-wide
 ## entity-id uniqueness. Run:
-##   godot --headless --path game res://worldgen/tests/test_population.tscn
+##   godot --headless --path game res://tests/worldgen/test_population.tscn
 
 const SEEDS := 60
 

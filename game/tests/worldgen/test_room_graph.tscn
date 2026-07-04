@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://worldgen/tests/test_room_graph.gd" id="1"]
+[ext_resource type="Script" path="res://tests/worldgen/test_room_graph.gd" id="1"]
 
 [node name="TestRoomGraph" type="Node"]
 script = ExtResource("1")

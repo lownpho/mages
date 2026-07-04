@@ -7,7 +7,7 @@ extends Node
 ##     identically; the LRU never exceeds room_cache_capacity.
 ##   - Performance: L2 biome-graph build,
 ##     L3+L4 room build, and chunk assembly from CACHED rooms, over ≥ 200 samples each.
-## Run: godot --headless --path game res://worldgen/tests/test_streaming.tscn
+## Run: godot --headless --path game res://tests/worldgen/test_streaming.tscn
 
 const SAMPLES := 200
 

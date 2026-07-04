@@ -2,7 +2,7 @@ extends Node
 ## Headless config-sanity test. Loads the starter GenConfig and asserts the
 ## content invariants plus CONFIG_HASH stability/sensitivity — including the hash DIET: runtime
 ## dials and presentation fields must NOT move the hash. Run:
-##   godot --headless --path game res://worldgen/tests/test_config.tscn
+##   godot --headless --path game res://tests/worldgen/test_config.tscn
 
 const CONFIG_PATH := "res://worldgen/content/gen_config.tres"
 

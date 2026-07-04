@@ -1,7 +1,7 @@
 extends Node
 ## Headless determinism test for the hash/seeding core (WgHash). Pure logic, no scene
 ## tree touched. Run:
-##   godot --headless --path game res://worldgen/tests/test_hash.tscn
+##   godot --headless --path game res://tests/worldgen/test_hash.tscn
 
 const GAMMA := -7046029254386353131  # 0x9E3779B97F4A7C15 as signed-64 (GDScript clamps the raw hex)
 

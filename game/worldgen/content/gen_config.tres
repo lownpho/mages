@@ -2,8 +2,8 @@
 
 [ext_resource type="Resource" uid="uid://70gxdakwf6l8" path="res://worldgen/content/adjacency.tres" id="1_nh5px"]
 [ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="2_101ut"]
-[ext_resource type="Resource" uid="uid://4oigyor383wv" path="res://worldgen/content/biomes/glade.tres" id="3_nry5q"]
-[ext_resource type="Resource" uid="uid://yd0ixxnn8n1s" path="res://worldgen/content/biomes/deepwood.tres" id="4_i5b0q"]
+[ext_resource type="Resource" uid="uid://4oigyor383wv" path="res://worldgen/content/biomes/glade/glade.tres" id="3_nry5q"]
+[ext_resource type="Resource" uid="uid://yd0ixxnn8n1s" path="res://worldgen/content/biomes/deepwood/deepwood.tres" id="4_i5b0q"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="7_lpl1d"]
 [ext_resource type="Resource" uid="uid://cabfcbml2awjp" path="res://worldgen/content/room_types/traversal.tres" id="8_wsaof"]
 [ext_resource type="Resource" uid="uid://3l001xvpnfnb" path="res://worldgen/content/room_types/field.tres" id="9_gtcgy"]

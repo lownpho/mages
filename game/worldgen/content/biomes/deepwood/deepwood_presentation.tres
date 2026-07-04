@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BiomePresentation" format=3 uid="uid://bdeepwood0pres0"]
+[gd_resource type="Resource" script_class="BiomePresentation" format=3 uid="uid://cfp7eapvlt2rp"]
 
 [ext_resource type="Script" path="res://worldgen/core/biome_presentation.gd" id="1"]
 [ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://worldgen/content/biomes/deepwood/deepwood_floor_tileset.tres" id="2"]

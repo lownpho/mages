@@ -1,7 +1,7 @@
 extends Node
 ## Headless tests for Layer 1: contract symmetry (T4), layout determinism,
 ## adjacency rules, and world-unique room placement. Run:
-##   godot --headless --path game res://worldgen/tests/test_world_layout.tscn
+##   godot --headless --path game res://tests/worldgen/test_world_layout.tscn
 
 
 func _ready() -> void:
