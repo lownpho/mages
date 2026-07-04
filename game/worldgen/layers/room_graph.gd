@@ -39,7 +39,9 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 			[world_spec.world_seed, WgHash.NS_ROOM_GRAPH, biome_coord.x, biome_coord.y] as Array[int])
 	# Integer thresholds from the config's float dials, once per biome build — generation
 	# loops compare integers, never floats.
-	var threshold_merge := WgHash.threshold(config.room_merge_chance)
+	# Per-biome override (sentinel -1 inherits the global dial), mirroring open_passage_chance.
+	var merge_chance := biome.room_merge_chance if biome.room_merge_chance >= 0.0 else config.room_merge_chance
+	var threshold_merge := WgHash.threshold(merge_chance)
 	var threshold_loop := WgHash.threshold(config.extra_connection_chance)
 	var openness_threshold := WgHash.threshold(biome.open_passage_chance)
 

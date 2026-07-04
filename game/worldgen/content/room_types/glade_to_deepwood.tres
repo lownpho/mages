@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://20q0pufflg76"]
+
+[ext_resource type="Resource" uid="uid://bh7j16fiw6465" path="res://worldgen/content/features/cave_door.tres" id="1_sfdxi"]
+[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="2_5en2i"]
+[ext_resource type="Script" uid="uid://b2bcviskgpwl7" path="res://worldgen/generators/generator_arena.gd" id="3_qu05m"]
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="4_wgtm2"]
+
+[sub_resource type="Resource" id="Resource_egp3m"]
+script = ExtResource("3_qu05m")
+metadata/_custom_type_script = "uid://b2bcviskgpwl7"
+
+[resource]
+script = ExtResource("4_wgtm2")
+id = &"glade_to_deepwood"
+generator = SubResource("Resource_egp3m")
+unique_scope = 1
+unique_allowed_biomes = Array[StringName]([&"glade"])
+feature_scene = ExtResource("2_5en2i")
+feature_data = ExtResource("1_sfdxi")

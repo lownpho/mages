@@ -31,25 +31,19 @@ max_per_biome = 6
 [sub_resource type="Resource" id="sp_sproutling"]
 script = ExtResource("4_ste")
 enemy_id = &"sproutling"
-weight = 3
+weight = 2
 group_min = 2
 group_max = 4
 
 [sub_resource type="Resource" id="sp_hopper"]
 script = ExtResource("4_ste")
 enemy_id = &"hopper"
-weight = 2
-group_max = 3
-
-[sub_resource type="Resource" id="sp_owl"]
-script = ExtResource("4_ste")
-enemy_id = &"owl"
 group_max = 2
 
 [sub_resource type="Resource" id="st_field"]
 script = ExtResource("3_rst")
 room_type = &"field"
-enemies = Array[ExtResource("4_ste")]([SubResource("sp_sproutling"), SubResource("sp_hopper"), SubResource("sp_owl")])
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_sproutling"), SubResource("sp_hopper")])
 
 [sub_resource type="Resource" id="sp_arena_hopper"]
 script = ExtResource("4_ste")
@@ -57,21 +51,46 @@ enemy_id = &"hopper"
 group_min = 3
 group_max = 5
 
+[sub_resource type="Resource" id="Resource_odfk5"]
+script = ExtResource("4_ste")
+enemy_id = &"hopper"
+weight = 2
+group_min = 3
+group_max = 5
+metadata/_custom_type_script = "uid://85nnqx50mcsn"
+
 [sub_resource type="Resource" id="st_arena"]
 script = ExtResource("3_rst")
 room_type = &"arena"
-enemies = Array[ExtResource("4_ste")]([SubResource("sp_arena_hopper")])
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_arena_hopper"), SubResource("Resource_odfk5")])
 
 [sub_resource type="Resource" id="sp_thornback"]
 script = ExtResource("4_ste")
-enemy_id = &"thornback"
-weight = 3
+enemy_id = &"hopper"
 group_max = 2
 
 [sub_resource type="Resource" id="st_cave"]
 script = ExtResource("3_rst")
 room_type = &"cave_pocket"
 enemies = Array[ExtResource("4_ste")]([SubResource("sp_thornback")])
+
+[sub_resource type="Resource" id="sp_boss"]
+script = ExtResource("4_ste")
+enemy_id = &"golem"
+
+[sub_resource type="Resource" id="st_boss"]
+script = ExtResource("3_rst")
+room_type = &"boss"
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_boss")])
+
+[sub_resource type="Resource" id="sp_rare"]
+script = ExtResource("4_ste")
+enemy_id = &"snake"
+
+[sub_resource type="Resource" id="st_rare"]
+script = ExtResource("3_rst")
+room_type = &"rare"
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_rare")])
 
 [resource]
 script = ExtResource("1_biome")
@@ -80,5 +99,5 @@ display_color = Color(0.55, 0.82, 0.42, 1)
 open_passage_chance = 0.8
 decor_density = 0.05
 room_type_table = Array[ExtResource("2_rtte")]([SubResource("rtt_field"), SubResource("rtt_arena"), SubResource("rtt_traversal"), SubResource("rtt_cave")])
-spawn_tables = Array[ExtResource("3_rst")]([SubResource("st_field"), SubResource("st_arena"), SubResource("st_cave")])
+spawn_tables = Array[ExtResource("3_rst")]([SubResource("st_field"), SubResource("st_arena"), SubResource("st_cave"), SubResource("st_boss"), SubResource("st_rare")])
 presentation = ExtResource("7_pres")

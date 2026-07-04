@@ -9,17 +9,21 @@
 [ext_resource type="Resource" uid="uid://3l001xvpnfnb" path="res://worldgen/content/room_types/field.tres" id="9_gtcgy"]
 [ext_resource type="Resource" uid="uid://d0h5cm6myal0v" path="res://worldgen/content/room_types/cave_pocket.tres" id="10_r5d6f"]
 [ext_resource type="Resource" uid="uid://bg5d4ckwn2y5" path="res://worldgen/content/room_types/arena.tres" id="11_pfvbv"]
+[ext_resource type="Resource" uid="uid://kgsugx3jw1n1" path="res://worldgen/content/room_types/boss.tres" id="12_nh5px"]
+[ext_resource type="Resource" uid="uid://20q0pufflg76" path="res://worldgen/content/room_types/glade_to_deepwood.tres" id="12_nry5q"]
 [ext_resource type="Resource" uid="uid://nnkmg3avvpqj" path="res://worldgen/content/room_types/shrine.tres" id="12_qd75r"]
-[ext_resource type="Resource" uid="uid://bgrove0roomtyp0" path="res://worldgen/content/room_types/grove.tres" id="14_grove"]
+[ext_resource type="Resource" uid="uid://csjkalxk7yin4" path="res://worldgen/content/room_types/rare.tres" id="13_i5b0q"]
 [ext_resource type="Script" uid="uid://ebitj0qutpum" path="res://worldgen/core/gen_config.gd" id="13_lk1mk"]
+[ext_resource type="Resource" uid="uid://brnk0og0kuexr" path="res://worldgen/content/room_types/grove.tres" id="14_grove"]
 
 [resource]
 script = ExtResource("13_lk1mk")
-room_slot_tiles = 16
-biome_slots = 4
+room_slot_tiles = 32
+biome_slots = 8
 world_width_biomes = 1
+room_merge_chance = 0.33
 doors_per_biome_border = 4
 spawn_min_dist_from_doors = 3
 biomes = Array[ExtResource("2_101ut")]([ExtResource("3_nry5q"), ExtResource("4_i5b0q")])
 adjacency = ExtResource("1_nh5px")
-room_types = Array[ExtResource("7_lpl1d")]([ExtResource("8_wsaof"), ExtResource("9_gtcgy"), ExtResource("10_r5d6f"), ExtResource("11_pfvbv"), ExtResource("12_qd75r"), ExtResource("14_grove")])
+room_types = Array[ExtResource("7_lpl1d")]([ExtResource("8_wsaof"), ExtResource("9_gtcgy"), ExtResource("10_r5d6f"), ExtResource("11_pfvbv"), ExtResource("12_qd75r"), ExtResource("14_grove"), ExtResource("13_i5b0q"), ExtResource("12_nh5px"), ExtResource("12_nry5q")])
