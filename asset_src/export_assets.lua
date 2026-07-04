@@ -4,6 +4,14 @@
 -- Run from the repo root:
 --   aseprite -b --script asset_src/export_assets.lua
 --
+-- Export only certain paths with the `paths` script param — a comma-separated
+-- list of path prefixes (relative to asset_src/graphics). A prefix matches a
+-- whole subtree or a single file; omit the param to export everything:
+--   aseprite -b --script-param paths=worldgen --script asset_src/export_assets.lua
+--   aseprite -b --script-param paths=characters --script asset_src/export_assets.lua
+--   aseprite -b --script-param paths=characters/enemies/golem,worldgen \
+--     --script asset_src/export_assets.lua
+--
 -- Sheet layout: one row per animation tag, frames left to right. Untagged
 -- sprites export all frames as a single row: frame i of row r sits at
 -- (i * frame_width, r * frame_height).
@@ -23,13 +31,38 @@ local function is_excluded(name)
   return name:match("^palette") ~= nil or name == "icon.ase"
 end
 
-local function collect(dir, out)
+-- `paths` param -> list of prefixes (relative to SRC, forward slashes, no
+-- trailing slash). Empty list means "export everything".
+local function parse_filters(raw)
+  local filters = {}
+  if raw then
+    for part in raw:gmatch("[^,]+") do
+      local p = part:gsub("^%s+", ""):gsub("%s+$", ""):gsub("/+$", "")
+      if p ~= "" then table.insert(filters, p) end
+    end
+  end
+  return filters
+end
+
+-- A prefix matches a file whose relative path equals it (a single file) or
+-- starts with it followed by "/" (a whole subtree) — never a partial segment,
+-- so "golem" won't match "golem_king".
+local function matches_filters(rel, filters)
+  if #filters == 0 then return true end
+  for _, p in ipairs(filters) do
+    if rel == p or rel:sub(1, #p + 1) == p .. "/" then return true end
+  end
+  return false
+end
+
+local function collect(dir, out, filters)
   for _, entry in ipairs(app.fs.listFiles(dir)) do
     local full = app.fs.joinPath(dir, entry)
     if app.fs.isDirectory(full) then
-      collect(full, out)
+      collect(full, out, filters)
     elseif (entry:match("%.ase$") or entry:match("%.aseprite$"))
-        and not is_excluded(entry) then
+        and not is_excluded(entry)
+        and matches_filters(full:sub(#SRC + 2), filters) then
       table.insert(out, full)
     end
   end
@@ -166,9 +199,20 @@ local function export_file(src_path)
   return true
 end
 
+local filters = parse_filters(app.params["paths"])
+if #filters > 0 then
+  print("exporting only: " .. table.concat(filters, ", "))
+end
+
 local files = {}
-collect(SRC, files)
+collect(SRC, files, filters)
 table.sort(files)
+
+if #files == 0 then
+  print("no matching .ase files" ..
+    (#filters > 0 and " for: " .. table.concat(filters, ", ") or ""))
+  return
+end
 
 local failures = 0
 for _, src in ipairs(files) do
