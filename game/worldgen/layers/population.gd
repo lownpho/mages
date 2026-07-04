@@ -61,7 +61,8 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 	if rt.feature_scene != null:
 		var ftile := _feature_tile(out)
 		if ftile.x >= 0:
-			out.spawns.append({"feature": rt.feature_scene, "tile": ftile})
+			out.spawns.append({"feature": rt.feature_scene, "feature_data": rt.feature_data,
+					"tile": ftile})
 
 	# Stable entity ids by list index.
 	for i in out.spawns.size():

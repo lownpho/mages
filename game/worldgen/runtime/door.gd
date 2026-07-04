@@ -34,6 +34,15 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
+## Configure this door from a DoorResource (WgEntitySpawner calls this when a room type spawns a
+## door as its feature). Untyped param so door.gd keeps no hard dependency on door_resource.gd.
+func setup(res) -> void:
+	if res == null:
+		return
+	style = res.style            # setter re-applies the art once in-tree
+	target_scene = res.target_scene
+
+
 func _apply_style() -> void:
 	if not is_node_ready():
 		return

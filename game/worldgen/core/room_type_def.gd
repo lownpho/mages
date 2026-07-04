@@ -14,9 +14,13 @@ enum UniqueScope { NONE, BIOME, WORLD }
 @export var enemy_groups_max: int = 0
 
 ## One specific scene (door, sign, altar, portal) placed at the room centre and instantiated by
-## WgEntitySpawner. Deliberately NOT hashed (see hash_fold): like presentation it is an overlay
-## on the finished room, not terrain, so swapping it never re-rolls a saved world.
+## WgEntitySpawner. `feature_data` is an optional Resource applied to the instance via its
+## `setup(data)` method (e.g. a DoorResource onto door.tscn) — scene and data are kept separate
+## so one scene can be reused with different data. Deliberately NOT hashed (see hash_fold): like
+## presentation these are an overlay on the finished room, not terrain, so swapping them never
+## re-rolls a saved world.
 @export var feature_scene: PackedScene = null
+@export var feature_data: Resource = null
 
 
 func hash_fold(h: int) -> int:

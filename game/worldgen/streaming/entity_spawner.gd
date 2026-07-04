@@ -46,6 +46,9 @@ func _on_chunk_loaded(coord: Vector2i, spawns: Array) -> void:
 				continue
 			var f: Node2D = fscene.instantiate()
 			f.position = (Vector2(sp["world_tile"]) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+			var fdata: Resource = sp.get("feature_data")
+			if fdata != null and f.has_method("setup"):
+				f.setup(fdata)   # e.g. DoorResource → door.tscn (scene + data kept separate)
 			var fparent: Node2D = features_parent if features_parent != null else enemies_parent
 			fparent.add_child(f)
 			nodes.append(f)   # freed on unload; never defeat-tracked

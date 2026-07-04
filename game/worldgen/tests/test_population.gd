@@ -34,8 +34,11 @@ func _ready() -> void:
 			if not out.spawns.is_empty():
 				with_spawns += 1
 
-			# Budget: groups*group_max bounds enemies. traversal = empty.
-			var enemies := out.spawns.size()
+			# Budget: groups*group_max bounds enemies (feature entries share the spawns array — skip them).
+			var enemies := 0
+			for sp in out.spawns:
+				if sp.has("enemy_id"):
+					enemies += 1
 			var max_group := 0
 			for t in config.biome_by_id(u.biome_id).spawn_tables:
 				if t.room_type == u.type_id:
@@ -46,9 +49,12 @@ func _ready() -> void:
 			if u.type_id == &"traversal" and not out.spawns.is_empty():
 				fails.append("traversal room populated (seed %d)" % seed)
 
-			# Distance constraints against openings and other spawns.
+			# Distance constraints apply to ENEMIES only (feature entries aren't subject to the
+			# door-distance / anti-stacking rules — they're placed deterministically at the centre).
 			var openings := RoomBuilder._opening_tiles(u, out.width, out.height)
 			for a in out.spawns.size():
+				if not out.spawns[a].has("enemy_id"):
+					continue
 				var ta: Vector2i = out.spawns[a]["tile"]
 				if out.reachability_map[ta.y * out.width + ta.x] == 0:
 					fails.append("spawn on unreachable tile (seed %d %s)" % [seed, u.type_id])
@@ -59,6 +65,8 @@ func _ready() -> void:
 						fails.append("spawn %d tiles from opening (seed %d %s)" % [dx * dx + dy * dy, seed, u.type_id])
 						break
 				for b in range(a + 1, out.spawns.size()):
+					if not out.spawns[b].has("enemy_id"):
+						continue
 					var tb: Vector2i = out.spawns[b]["tile"]
 					var dx2 := tb.x - ta.x
 					var dy2 := tb.y - ta.y
