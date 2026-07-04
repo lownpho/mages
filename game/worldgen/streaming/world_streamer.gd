@@ -24,6 +24,10 @@ const _CH_DECOR := 4
 
 const _MAX_LOADS_PER_FRAME := 3   ## smooth the initial burst; remaining chunks stream next frame
 const _UNLOAD_MARGIN := 2         ## chunks; unload radius = load radius + this (hysteresis)
+## Ring of solid-wall chunks streamed just OUTSIDE the finite world so the player never sees void
+## past the sealed edge. Cells beyond any room are filled with the starting biome's wall tiles
+## (see _fill_border). Bounded so a zoomed-out fly cam can't spawn an unbounded wall field.
+const _BORDER_CHUNKS := 4
 
 ## Emitted right after a chunk enters the tree / right before one is freed. `spawns` carries the
 ## population entries overlapping the chunk with a `world_tile` field added (the entity spawner
@@ -117,7 +121,8 @@ func _update_streaming() -> void:
 	var loads := 0
 	for gy in range(cc.y - ry, cc.y + ry + 1):
 		for gx in range(cc.x - rx, cc.x + rx + 1):
-			if gx < 0 or gy < 0 or gx >= _world_chunks.x or gy >= _world_chunks.y:
+			if gx < -_BORDER_CHUNKS or gy < -_BORDER_CHUNKS \
+					or gx >= _world_chunks.x + _BORDER_CHUNKS or gy >= _world_chunks.y + _BORDER_CHUNKS:
 				continue
 			var key := Vector2i(gx, gy)
 			if _chunks.has(key):
@@ -173,10 +178,22 @@ func _blit_chunk(chunk: WgChunk, cx: int, cy: int) -> void:
 	var slot_y1 := (ty0 + cs - 1) / ss
 	@warning_ignore_restore("integer_division")
 
+	# Coverage mask: which chunk cells a room wrote. Cells left uncovered (out past the sealed
+	# world edge) are walled by _fill_border so the player never sees void.
+	var covered := PackedByteArray()
+	covered.resize(cs * cs)
+
 	# ≤ 4 overlapped slots; merged rooms span 2 slots, so dedupe rooms by origin_slot.
+	var world_slots_w := world_spec.grid_w * bs
+	var world_slots_h := world_spec.grid_h * bs
 	var done: Dictionary = {}
 	for sy in range(slot_y0, slot_y1 + 1):
 		for sx in range(slot_x0, slot_x1 + 1):
+			# Skip slots outside the finite world (border chunks straddle the edge). Explicit —
+			# integer division truncates toward zero, so slightly-negative coords would otherwise
+			# alias to slot 0 / a negative modulo into room_at.
+			if sx < 0 or sy < 0 or sx >= world_slots_w or sy >= world_slots_h:
+				continue
 			@warning_ignore("integer_division")
 			var bc := Vector2i(sx / bs, sy / bs)
 			if world_spec.biome_at(bc) == &"":
@@ -186,10 +203,12 @@ func _blit_chunk(chunk: WgChunk, cx: int, cy: int) -> void:
 			if done.has(spec.origin_slot):
 				continue
 			done[spec.origin_slot] = true
-			_blit_room(chunk, get_room_output(spec), tx0, ty0)
+			_blit_room(chunk, get_room_output(spec), tx0, ty0, covered)
+
+	_fill_border(chunk, covered, tx0, ty0)
 
 
-func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int) -> void:
+func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int, covered: PackedByteArray) -> void:
 	var cs := config.chunk_tiles
 	var ss := config.room_slot_tiles
 	var utx0 := room.origin_slot.x * ss   # room's world-tile origin
@@ -210,6 +229,7 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int) -> void:
 		for wx in range(rx0, rx1):
 			var cls := room.tile_grid[(wy - uty0) * room.width + (wx - utx0)]
 			var cell := Vector2i(wx - tx0, wy - ty0)
+			covered[cell.y * cs + cell.x] = 1
 			# Every non-floor object (wall/blocker/decor) also lays a floor tile beneath it, so
 			# tree-walls and blockers — which are transparent around the trunk — never sit on void.
 			match cls:
@@ -240,6 +260,26 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int) -> void:
 		chunk.spawn_data.append(entry)
 		if debug_spawn_markers:
 			chunk.add_spawn_marker(Vector2i(wx - tx0, wy - ty0), GameConstants.PX_PER_TILE, false)
+
+
+## Fill every chunk cell no room wrote (out past the sealed world edge) with the starting biome's
+## solid wall tiles, so a player standing at the edge sees a wall of terrain instead of void. Uses
+## the same deterministic per-tile variant pick as rooms, on the shared starting-biome layers.
+func _fill_border(chunk: WgChunk, covered: PackedByteArray, tx0: int, ty0: int) -> void:
+	var cs := config.chunk_tiles
+	var lyr := chunk.layers_for(config.starting_biome, _fallback_pres)
+	var t_floor := _tile_table(_fallback_pres.floor_tileset)
+	var t_wall := _tile_table(_fallback_pres.wall_tileset)
+	for cy in cs:
+		for cx in cs:
+			if covered[cy * cs + cx] == 1:
+				continue
+			var cell := Vector2i(cx, cy)
+			var wx := tx0 + cx
+			var wy := ty0 + cy
+			# Floor beneath the wall so transparent-around-trunk wall art never shows void.
+			_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
+			_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
 
 
 # --- Room cache (LRU) ---------------------------------------------------------------------------

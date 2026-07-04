@@ -5,8 +5,8 @@
 [ext_resource type="Script" uid="uid://cgpcj6mm1cmkg" path="res://scenes/world.gd" id="7_world"]
 [ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://gui/debug_overlay.tscn" id="78_dbgov"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
-[ext_resource type="Script" path="res://worldgen/streaming/world_streamer.gd" id="80_stream"]
-[ext_resource type="Script" path="res://worldgen/streaming/entity_spawner.gd" id="81_spawn"]
+[ext_resource type="Script" uid="uid://vyytyrgsxtwl" path="res://worldgen/streaming/world_streamer.gd" id="80_stream"]
+[ext_resource type="Script" uid="uid://bkrdnakhdrujm" path="res://worldgen/streaming/entity_spawner.gd" id="81_spawn"]
 [ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://worldgen/content/gen_config.tres" id="82_cfg"]
 
 [node name="World" type="Node2D" unique_id=606710024]
@@ -19,16 +19,16 @@ world_seed = 33
 
 [node name="DamageNumbers" parent="." unique_id=1159986638 instance=ExtResource("79_dmgnum")]
 
-[node name="EntitySpawner" type="Node" parent="." node_paths=PackedStringArray("streamer", "enemies_parent", "features_parent")]
+[node name="EntitySpawner" type="Node" parent="." unique_id=1111774934 node_paths=PackedStringArray("streamer", "enemies_parent", "features_parent")]
 script = ExtResource("81_spawn")
 streamer = NodePath("../WorldRoot/WorldStreamer")
 enemies_parent = NodePath("../WorldRoot/Entities/Enemies")
 features_parent = NodePath("../WorldRoot/Entities/Specials")
 
-[node name="WorldRoot" type="Node2D" parent="."]
+[node name="WorldRoot" type="Node2D" parent="." unique_id=976304693]
 y_sort_enabled = true
 
-[node name="WorldStreamer" type="Node2D" parent="WorldRoot"]
+[node name="WorldStreamer" type="Node2D" parent="WorldRoot" unique_id=1441029052]
 y_sort_enabled = true
 script = ExtResource("80_stream")
 config = ExtResource("82_cfg")
@@ -40,7 +40,7 @@ y_sort_enabled = true
 [node name="Enemies" type="Node2D" parent="WorldRoot/Entities" unique_id=1746165412]
 y_sort_enabled = true
 
-[node name="Specials" type="Node2D" parent="WorldRoot/Entities"]
+[node name="Specials" type="Node2D" parent="WorldRoot/Entities" unique_id=516635354]
 y_sort_enabled = true
 
 [node name="pickups" type="Node2D" parent="WorldRoot/Entities" unique_id=42372176 groups=["pickups"]]
