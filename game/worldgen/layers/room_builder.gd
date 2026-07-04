@@ -3,7 +3,9 @@ class_name RoomBuilder
 ## (room_spec, config, world_seed) — doors/open sides are immutable inputs; retries re-roll
 ## everything else via the attempt index in the seed.
 ##
-## Pipeline per attempt: base FLOOR fill → wall shell with openings erased →
+## Pipeline per attempt: base FLOOR fill → wall shell with openings erased → organic
+## shaping (noise-thickened wall band + rounded corners, hashed from WORLD tile coords so it
+## is attempt-independent and continuous across collinear walls of adjacent rooms) →
 ## L-corridors from every opening to the center (all carved tiles PROTECTED) → structure
 ## generator → decoration → reachability flood fill → validate. After
 ## max_room_retries failures the fallback runs steps 1–3 only, which validates by construction.
@@ -51,6 +53,10 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 	for i in openings.size():
 		grid[openings[i]] = FLOOR
 		prot[openings[i]] = 1
+
+	# Step 2b — organic shaping: erode the straight shell into a wobbly band and round the
+	# corners. Runs before the corridor star, which carves (and protects) its way through.
+	_shape_shell(grid, prot, w, h, spec, config, world_seed)
 
 	# Step 3 — corridor star: every opening connects to the center.
 	var cx := w >> 1
@@ -121,6 +127,87 @@ static func _opening_tiles(spec: RoomSpec, w: int, h: int) -> PackedInt32Array:
 				for y in range(from, to):
 					out.append(y * w + w - 1)
 	return out
+
+
+## Step 2b — organic shell. Each wall thickens inward by 0..wall_extra_depth extra rings of
+## smoothed value noise, and each corner gets a quarter-disc of WALL (radius corner_radius ±1).
+## All inputs are WORLD tile coordinates hashed under NS_WALL_SHAPE — never room identity or
+## the attempt index — so the wobble survives retries and flows continuously across the
+## collinear walls of adjacent rooms. Perimeter columns whose shell tile is an opening keep
+## depth 0 (no ledge looming behind a door or open side); protected tiles are never written.
+static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
+		spec: RoomSpec, config: GenConfig, world_seed: int) -> void:
+	var depth := mini(config.wall_extra_depth, (mini(w, h) >> 1) - 1)
+	var radius := config.corner_radius
+	if depth <= 0 and radius <= 0:
+		return
+	var base := config.seed_for([world_seed, WgHash.NS_WALL_SHAPE] as Array[int])
+	var ox := spec.origin_slot.x * config.room_slot_tiles
+	var oy := spec.origin_slot.y * config.room_slot_tiles
+	var period := maxi(config.wall_noise_period, 1)
+
+	if depth > 0:
+		for x in w:
+			if prot[x] == 0:
+				var dn := _band_depth(base, 0, oy, ox + x, depth, period)
+				for k in range(1, dn + 1):
+					if prot[k * w + x] == 0:
+						grid[k * w + x] = WALL
+			if prot[(h - 1) * w + x] == 0:
+				var ds := _band_depth(base, 0, oy + h - 1, ox + x, depth, period)
+				for k in range(1, ds + 1):
+					if prot[(h - 1 - k) * w + x] == 0:
+						grid[(h - 1 - k) * w + x] = WALL
+		for y in h:
+			if prot[y * w] == 0:
+				var dw := _band_depth(base, 1, ox, oy + y, depth, period)
+				for k in range(1, dw + 1):
+					if prot[y * w + k] == 0:
+						grid[y * w + k] = WALL
+			if prot[y * w + w - 1] == 0:
+				var de := _band_depth(base, 1, ox + w - 1, oy + y, depth, period)
+				for k in range(1, de + 1):
+					if prot[y * w + w - 1 - k] == 0:
+						grid[y * w + w - 1 - k] = WALL
+
+	if radius > 0:
+		_round_corner(grid, prot, w, h, 0, 0, 1, 1, base, ox, oy, radius)
+		_round_corner(grid, prot, w, h, w - 1, 0, -1, 1, base, ox + w - 1, oy, radius)
+		_round_corner(grid, prot, w, h, 0, h - 1, 1, -1, base, ox, oy + h - 1, radius)
+		_round_corner(grid, prot, w, h, w - 1, h - 1, -1, -1, base, ox + w - 1, oy + h - 1, radius)
+
+
+## Wall-band depth at position t along a wall line: 1-D value noise — lattice samples every
+## `period` tiles, linearly interpolated, rounded to 0..max_extra. `axis` disambiguates
+## horizontal walls (line = world row, t = world column) from vertical ones (transposed).
+static func _band_depth(base: int, axis: int, line: int, t: int, max_extra: int, period: int) -> int:
+	var t0 := t - posmod(t, period)
+	var f := float(t - t0) / float(period)
+	var v0 := _lattice_val(base, axis, line, t0, max_extra)
+	var v1 := _lattice_val(base, axis, line, t0 + period, max_extra)
+	return int(round(lerpf(v0, v1, f)))
+
+
+static func _lattice_val(base: int, axis: int, line: int, t: int, max_extra: int) -> float:
+	var m := WgHash.splitmix64(WgHash.splitmix64(line) ^ WgHash.splitmix64(t))
+	m = WgHash.splitmix64(m ^ axis)
+	return float(WgHash.splitmix64(base ^ m) & 0xFFFF) / 65535.0 * float(max_extra)
+
+
+## Quarter-disc of WALL at room corner (cx0, cy0), growing inward along (sx, sy). The radius
+## varies ±1 around base_radius by a hash of the corner's world tile (wx, wy).
+static func _round_corner(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
+		cx0: int, cy0: int, sx: int, sy: int, base: int, wx: int, wy: int, base_radius: int) -> void:
+	var m := WgHash.splitmix64(WgHash.splitmix64(wx) ^ WgHash.splitmix64(wy))
+	var r := mini(base_radius - 1 + posmod(WgHash.splitmix64(base ^ m), 3), (mini(w, h) >> 1) - 1)
+	for j in r:
+		var y := cy0 + sy * j
+		var row := y * w
+		for i in r:
+			if i * i + j * j < r * r:
+				var idx := row + cx0 + sx * i
+				if prot[idx] == 0:
+					grid[idx] = WALL
 
 
 ## L-corridor, width door_width_tiles, from the opening midpoint to the room

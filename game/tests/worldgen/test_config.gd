@@ -100,6 +100,12 @@ func _ready() -> void:
 	dup = cfg.duplicate(true)
 	dup.starting_biome = &"elsewhere"
 	_expect_changed(fails, h1, dup.compute_hash(), "starting_biome")
+	dup = cfg.duplicate(true)
+	dup.wall_extra_depth += 1
+	_expect_changed(fails, h1, dup.compute_hash(), "wall_extra_depth")
+	dup = cfg.duplicate(true)
+	dup.corner_radius += 1
+	_expect_changed(fails, h1, dup.compute_hash(), "corner_radius")
 
 	cfg.biomes[0].open_passage_chance += 0.1
 	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "biome open_passage_chance")

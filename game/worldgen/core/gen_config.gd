@@ -8,7 +8,7 @@ class_name GenConfig
 ## hashed: they cannot change the generated world, so tuning them must not re-roll it.
 extends Resource
 
-@export var gen_version: int = 3   ## GEN_VERSION — bump on any algorithm change
+@export var gen_version: int = 4   ## GEN_VERSION — bump on any algorithm change
 
 @export_group("World shape")
 @export var room_slot_tiles: int = 64        ## tiles per room-slot side
@@ -25,6 +25,9 @@ extends Resource
 @export var max_room_retries: int = 5                                    ## interior attempts before fallback
 @export_range(0.0, 1.0, 0.01) var min_reachable_floor_ratio: float = 0.20  ## validation floor fraction
 @export var spawn_min_dist_from_doors: int = 6                           ## tiles between a spawn and any opening
+@export var wall_extra_depth: int = 2                                    ## max extra wall rings of shell noise (0 = straight shell)
+@export var wall_noise_period: int = 4                                   ## tiles between wall-noise lattice samples
+@export var corner_radius: int = 3                                       ## room-corner rounding radius, varied ±1 per corner (0 = square)
 
 @export_group("Well-known ids")
 @export var starting_biome: StringName = &"glade"           ## hosts the player spawn; presentation fallback
@@ -100,6 +103,9 @@ func _compute_hash_uncached() -> int:
 	h = WgHash.fold_var(h, max_room_retries)
 	h = WgHash.fold_var(h, min_reachable_floor_ratio)
 	h = WgHash.fold_var(h, spawn_min_dist_from_doors)
+	h = WgHash.fold_var(h, wall_extra_depth)
+	h = WgHash.fold_var(h, wall_noise_period)
+	h = WgHash.fold_var(h, corner_radius)
 	h = WgHash.fold_var(h, starting_biome)
 	h = WgHash.fold_var(h, fallback_room_type)
 	# Content registries, fixed order.
