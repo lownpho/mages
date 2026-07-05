@@ -7,7 +7,7 @@ extends CharacterBody2D
 @export var base_defence: int = 0
 ## Defence never blocks more than this fraction of a hit, so chip damage from
 ## weak enemies always lands and armour can't make you immune.
-@export var defence_floor_fraction: float = 0.10
+@export var defence_floor_fraction: float = 0.20
 @export var focus_mana_per_second: float = 5.0
 @export var focus_ramp_time: float = 3.0
 @export var focus_curve: Curve
