@@ -9,6 +9,8 @@ var data: FireballResource
 var skill: int = 0
 
 var _direction: Vector2 = Vector2.RIGHT
+var _aim_point: Vector2 = Vector2.ZERO
+var _target: Node2D
 var _exploded: bool = false
 
 @onready var explosion: DamageZone = $Explosion
@@ -18,11 +20,15 @@ func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
 	skill = caster.skill
 	global_position = caster.global_position
-	_direction = (caster.get_global_mouse_position() - caster.global_position).normalized()
+	_aim_point = caster.get_global_mouse_position()
+	_direction = (_aim_point - caster.global_position).normalized()
 
 func _ready() -> void:
 	$Sprite2D.texture = data.icon
 	velocity = _direction * data.speed_tiles * GameConstants.PX_PER_TILE
+	if data.homing:
+		_target = AimAssist.nearest_in_group(get_tree(), "enemies",
+			_aim_point, data.homing_aim_tiles * GameConstants.PX_PER_TILE)
 
 	explosion.damage = roundi(data.base_damage + skill * data.skill_scaling)
 	explosion_sprite.sprite_frames = data.explosion_frames
@@ -41,6 +47,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if _exploded:
 		return
+	# Aim assist (cone-gated steering — see AimAssist.steer) toward the enemy
+	# locked at cast; if it dies mid-flight the fireball flies straight.
+	if data.homing and is_instance_valid(_target):
+		velocity = AimAssist.steer(velocity, global_position, _target.global_position,
+			data.homing_turn_deg, data.homing_cone_deg, delta)
 	if move_and_collide(velocity * delta):
 		_explode()
 

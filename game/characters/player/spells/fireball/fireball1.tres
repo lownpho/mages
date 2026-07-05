@@ -41,6 +41,7 @@ region = Rect2(0, 0, 8, 8)
 [resource]
 script = ExtResource("1_script")
 explosion_frames = SubResource("SpriteFrames_explode")
+homing = true
 effect_scene = ExtResource("3_scene")
 cooldown = 6.0
 mana_cost = 15

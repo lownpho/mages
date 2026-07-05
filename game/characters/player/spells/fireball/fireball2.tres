@@ -43,6 +43,7 @@ script = ExtResource("1_script")
 range_tiles = 16
 aoe_tiles = 4.0
 explosion_frames = SubResource("SpriteFrames_explode")
+homing = true
 effect_scene = ExtResource("3_scene")
 cooldown = 6.0
 mana_cost = 20

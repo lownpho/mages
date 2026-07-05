@@ -37,15 +37,7 @@ func _physics_process(_delta: float) -> void:
 # of the cursor. Returns null when no enemy is near the cursor — the player is
 # aiming at empty space, so the bullet flies straight.
 func _find_closest_enemy_to_mouse() -> Node2D:
-	var mouse_pos = owner_ref.get_global_mouse_position()
 	# Aim radius is in tiles; convert to pixels to match world distances.
 	var aim_px = data.bullet_data.homing_aim_tiles * GameConstants.PX_PER_TILE
-	var aim_sq = aim_px * aim_px
-	var closest: Node2D = null
-	var closest_dist: float = aim_sq
-	for enemy in get_tree().get_nodes_in_group("enemies"):
-		var dist = enemy.global_position.distance_squared_to(mouse_pos)
-		if dist < closest_dist:
-			closest_dist = dist
-			closest = enemy
-	return closest
+	return AimAssist.nearest_in_group(get_tree(), "enemies",
+		owner_ref.get_global_mouse_position(), aim_px)

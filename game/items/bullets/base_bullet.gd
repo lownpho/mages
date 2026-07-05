@@ -50,19 +50,12 @@ func _ready() -> void:
 		$Sprite2D.texture = data.icon
 
 func _physics_process(delta: float) -> void:
-	# Aim assist: steer toward the target only within the homing range, and only
-	# while the target sits inside the assist cone of the current heading. The
-	# turn rate fades to zero at the cone edge, so a shot aimed deliberately away
-	# from the locked target is never hijacked, and a bullet that overshoots
-	# (target now behind it) drops the assist instead of orbiting.
+	# Aim assist (cone-gated steering — see AimAssist.steer), only within the
+	# homing range; beyond it the bullet keeps its heading and flies straight.
 	if data.homing and is_instance_valid(target) and _distance_travelled < _homing_range_px:
-		var to_target := velocity.angle_to(global_position.direction_to(target.global_position))
-		var cone := deg_to_rad(data.homing_cone_deg)
-		if cone > 0.0 and absf(to_target) < cone:
-			var fade := 1.0 - absf(to_target) / cone
-			var max_turn := deg_to_rad(data.homing_turn_deg) * fade * delta
-			velocity = velocity.rotated(clampf(to_target, -max_turn, max_turn))
-			rotation = velocity.angle() + PI / 2
+		velocity = AimAssist.steer(velocity, global_position, target.global_position,
+			data.homing_turn_deg, data.homing_cone_deg, delta)
+		rotation = velocity.angle() + PI / 2
 
 	# Terrain is the only thing in a bullet's collision mask, so a collision is
 	# always a wall. Ricochet if any bounces remain — the leg restarts so total

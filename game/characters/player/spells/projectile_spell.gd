@@ -44,13 +44,4 @@ func _ready() -> void:
 # space locks nothing, so the bullet flies straight in the cast direction.
 func _nearest_enemy() -> Node2D:
 	var aim_px: float = data.bullet.homing_aim_tiles * GameConstants.PX_PER_TILE
-	var best_d: float = aim_px * aim_px
-	var best: Node2D = null
-	for enemy in get_tree().get_nodes_in_group("enemies"):
-		if enemy.is_queued_for_deletion():
-			continue
-		var d: float = _aim_point.distance_squared_to(enemy.global_position)
-		if d < best_d:
-			best_d = d
-			best = enemy
-	return best
+	return AimAssist.nearest_in_group(get_tree(), "enemies", _aim_point, aim_px)
