@@ -62,10 +62,15 @@ script = ExtResource("4_ste")
 enemy_id = &"hopper"
 group_max = 2
 
+[sub_resource type="Resource" id="sp_seedling"]
+script = ExtResource("4_ste")
+enemy_id = &"seedling"
+group_max = 2
+
 [sub_resource type="Resource" id="st_field"]
 script = ExtResource("3_rst")
 room_type = &"field"
-enemies = Array[ExtResource("4_ste")]([SubResource("sp_sproutling"), SubResource("sp_hopper")])
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_sproutling"), SubResource("sp_hopper"), SubResource("sp_seedling")])
 
 [sub_resource type="Resource" id="sp_arena_hopper"]
 script = ExtResource("4_ste")
