@@ -1,0 +1,147 @@
+[gd_scene format=3 uid="uid://c4oru71kqyus"]
+
+[ext_resource type="Resource" uid="uid://pbgstoikp5ux" path="res://characters/enemies/viper/viper_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://d2tg5f64k4xr" path="res://characters/enemies/viper/viper.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
+[ext_resource type="Resource" uid="uid://cvsk6ojwyfxjb" path="res://characters/enemies/viper/viper_barrage.tres" id="6_weapon"]
+[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
+[ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="8_wander"]
+[ext_resource type="Script" uid="uid://cruthwjtelx2y" path="res://characters/enemies/behaviours/flee.gd" id="9_flee"]
+[ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="10_volley"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_viper"]
+radius = 3.5
+
+[sub_resource type="AtlasTexture" id="AT_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_viper"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk1")
+}],
+"loop": 1,
+"name": &"attack",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_run0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run3")
+}],
+"loop": 1,
+"name": &"run",
+"speed": 8.0
+}]
+
+[node name="Viper" type="CharacterBody2D" unique_id=2002644384 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=163826825]
+shape = SubResource("CircleShape2D_viper")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1219121210]
+sprite_frames = SubResource("SpriteFrames_viper")
+animation = &"run"
+autoplay = "idle"
+offset = Vector2(0, -1)
+
+[node name="Hurtbox" parent="." unique_id=290912643 instance=ExtResource("2_hbox")]
+collision_mask = 256
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1196500675]
+target_position = Vector2(96, 0)
+collision_mask = 17
+
+[node name="RetreatProbe" type="RayCast2D" parent="." unique_id=766254124]
+target_position = Vector2(12, 0)
+collision_mask = 17
+
+[node name="Weapon" parent="." unique_id=2066202282 instance=ExtResource("5_weap")]
+
+[node name="FSM" parent="." unique_id=549676314 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=1932343703]
+script = ExtResource("7_idle")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Flee"
+
+[node name="Wander" type="Node" parent="FSM" unique_id=904489032]
+script = ExtResource("8_wander")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Flee"
+speed = 16.0
+
+[node name="Flee" type="Node" parent="FSM" unique_id=63509835]
+script = ExtResource("9_flee")
+retreat_probe_path = NodePath("../../RetreatProbe")
+chase_probe_path = NodePath("../../DetectProbe")
+attack_probe_path = NodePath("../../RetreatProbe")
+speed = 32.0
+
+[node name="Barrage" type="Node" parent="FSM" unique_id=676626049]
+script = ExtResource("10_volley")
+weapon_path = NodePath("../../Weapon")
+weapon_data = ExtResource("6_weapon")
+shot_count = 1
+done_state = "Flee"
