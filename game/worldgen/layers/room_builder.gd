@@ -129,46 +129,41 @@ static func _opening_tiles(spec: RoomSpec, w: int, h: int) -> PackedInt32Array:
 	return out
 
 
-## Step 2b — organic shell. Each wall thickens inward by 0..wall_extra_depth extra rings of
-## smoothed value noise, and each corner gets a quarter-disc of WALL (radius corner_radius ±1).
-## All inputs are WORLD tile coordinates hashed under NS_WALL_SHAPE — never room identity or
-## the attempt index — so the wobble survives retries and flows continuously across the
-## collinear walls of adjacent rooms. Perimeter columns whose shell tile is an opening keep
-## depth 0 (no ledge looming behind a door or open side); protected tiles are never written.
+## Step 2b — organic shell. Each wall is a treeline band: its inner edge thickens inward by
+## 0..wall_extra_depth extra rings of two-octave value noise, and its clearing-facing outer edge
+## recedes by 0..wall_outer_erode tiles (occasionally gapping the wall entirely), so no straight
+## grid-aligned wall line survives. Each corner gets a quarter-disc of WALL (radius corner_radius
+## ±1). All inputs are WORLD tile coordinates hashed under NS_WALL_SHAPE — never room identity or
+## the attempt index — so the wobble survives retries and flows continuously across the collinear
+## walls of adjacent rooms. Protected tiles (openings, corridors) are never written. World-boundary
+## sides face the void and never erode (their perimeter ring stays sealed).
 static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
 		spec: RoomSpec, config: GenConfig, world_seed: int) -> void:
 	var depth := mini(config.wall_extra_depth, (mini(w, h) >> 1) - 1)
 	var radius := config.corner_radius
-	if depth <= 0 and radius <= 0:
+	var erode := clampi(config.wall_outer_erode, 0, maxi(mini(w, h) >> 2, 0))
+	if depth <= 0 and radius <= 0 and erode <= 0:
 		return
 	var base := config.seed_for([world_seed, WgHash.NS_WALL_SHAPE] as Array[int])
 	var ox := spec.origin_slot.x * config.room_slot_tiles
 	var oy := spec.origin_slot.y * config.room_slot_tiles
 	var period := maxi(config.wall_noise_period, 1)
 
-	if depth > 0:
-		for x in w:
-			if prot[x] == 0:
-				var dn := _band_depth(base, 0, oy, ox + x, depth, period)
-				for k in range(1, dn + 1):
-					if prot[k * w + x] == 0:
-						grid[k * w + x] = WALL
-			if prot[(h - 1) * w + x] == 0:
-				var ds := _band_depth(base, 0, oy + h - 1, ox + x, depth, period)
-				for k in range(1, ds + 1):
-					if prot[(h - 1 - k) * w + x] == 0:
-						grid[(h - 1 - k) * w + x] = WALL
-		for y in h:
-			if prot[y * w] == 0:
-				var dw := _band_depth(base, 1, ox, oy + y, depth, period)
-				for k in range(1, dw + 1):
-					if prot[y * w + k] == 0:
-						grid[y * w + k] = WALL
-			if prot[y * w + w - 1] == 0:
-				var de := _band_depth(base, 1, ox + w - 1, oy + y, depth, period)
-				for k in range(1, de + 1):
-					if prot[y * w + w - 1 - k] == 0:
-						grid[y * w + w - 1 - k] = WALL
+	# A side facing the world boundary must stay sealed — no erosion there. The world is a solid
+	# biome rectangle (GenConfig.validate), so a side is void-facing iff its edge slot is extremal.
+	var wslots_x := config.world_width_biomes * config.biome_slots
+	var wslots_y := config.world_height_biomes() * config.biome_slots
+	var end := spec.origin_slot + spec.size_slots
+	if depth > 0 or erode > 0:
+		# NORTH row 0 / SOUTH row h-1 (inward +y / -y); WEST col 0 / EAST col w-1 (inward +x / -x).
+		_shape_side(grid, prot, base, period, depth, erode, w, oy, 0, ox,
+				spec.origin_slot.y == 0, func(i, k): return k * w + i)
+		_shape_side(grid, prot, base, period, depth, erode, w, oy + h - 1, 0, ox,
+				end.y == wslots_y, func(i, k): return (h - 1 - k) * w + i)
+		_shape_side(grid, prot, base, period, depth, erode, h, ox, 1, oy,
+				spec.origin_slot.x == 0, func(i, k): return i * w + k)
+		_shape_side(grid, prot, base, period, depth, erode, h, ox + w - 1, 1, oy,
+				end.x == wslots_x, func(i, k): return i * w + (w - 1 - k))
 
 	if radius > 0:
 		_round_corner(grid, prot, w, h, 0, 0, 1, 1, base, ox, oy, radius)
@@ -177,21 +172,52 @@ static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h
 		_round_corner(grid, prot, w, h, w - 1, h - 1, -1, -1, base, ox + w - 1, oy + h - 1, radius)
 
 
-## Wall-band depth at position t along a wall line: 1-D value noise — lattice samples every
-## `period` tiles, linearly interpolated, rounded to 0..max_extra. `axis` disambiguates
+## Shape one wall of the shell: for each column `i` along it, erode the outer `lo` tiles to FLOOR
+## and lay WALL over the band [lo .. hi] inward, where `hi` is the inner-edge noise depth and `lo`
+## the (decorrelated) outer erosion. `idx_fn(i, k)` maps (column, inward depth) → grid index for
+## this side. Erosion is skipped on `void_side` and clamped two tiles off each corner, so it can
+## never open the world edge or breach a perpendicular wall's shared corner tiles.
+static func _shape_side(grid: PackedByteArray, prot: PackedByteArray,
+		base: int, period: int, depth: int, erode: int, length: int, line: int, axis: int,
+		wcoord0: int, void_side: bool, idx_fn: Callable) -> void:
+	var er := 0 if void_side else erode
+	for i in length:
+		var wt := wcoord0 + i
+		var hi := _band_depth(base, axis, line, wt, depth, period) if depth > 0 else 0
+		var lo := 0
+		if er > 0 and i >= 2 and i < length - 2:
+			lo = _band_depth(base ^ 0x632BE5AB, axis, line, wt, er, period)
+		for k in lo:
+			var idx: int = idx_fn.call(i, k)
+			if prot[idx] == 0:
+				grid[idx] = FLOOR
+		for k in range(lo, hi + 1):
+			var idx2: int = idx_fn.call(i, k)
+			if prot[idx2] == 0:
+				grid[idx2] = WALL
+
+
+## Wall-band depth at position t along a wall line: 1-D value noise summed over TWO octaves —
+## a coarse meander (period tiles) plus a half-period octave at a third the weight for bushy,
+## ragged edges rather than a smooth sine. Rounded to 0..max_extra. `axis` disambiguates
 ## horizontal walls (line = world row, t = world column) from vertical ones (transposed).
 static func _band_depth(base: int, axis: int, line: int, t: int, max_extra: int, period: int) -> int:
+	var coarse := _octave(base, axis, line, t, period)
+	var fine := _octave(base ^ 0x9E3779B9, axis, line, t, maxi(period >> 1, 2))
+	return int(round((coarse * 0.7 + fine * 0.3) * float(max_extra)))
+
+
+## One octave of 1-D value noise in [0,1]: lattice samples every `period` tiles, lerped.
+static func _octave(base: int, axis: int, line: int, t: int, period: int) -> float:
 	var t0 := t - posmod(t, period)
 	var f := float(t - t0) / float(period)
-	var v0 := _lattice_val(base, axis, line, t0, max_extra)
-	var v1 := _lattice_val(base, axis, line, t0 + period, max_extra)
-	return int(round(lerpf(v0, v1, f)))
+	return lerpf(_lattice_val(base, axis, line, t0), _lattice_val(base, axis, line, t0 + period), f)
 
 
-static func _lattice_val(base: int, axis: int, line: int, t: int, max_extra: int) -> float:
+static func _lattice_val(base: int, axis: int, line: int, t: int) -> float:
 	var m := WgHash.splitmix64(WgHash.splitmix64(line) ^ WgHash.splitmix64(t))
 	m = WgHash.splitmix64(m ^ axis)
-	return float(WgHash.splitmix64(base ^ m) & 0xFFFF) / 65535.0 * float(max_extra)
+	return float(WgHash.splitmix64(base ^ m) & 0xFFFF) / 65535.0
 
 
 ## Quarter-disc of WALL at room corner (cx0, cy0), growing inward along (sx, sy). The radius

@@ -26,6 +26,7 @@ extends Resource
 @export_range(0.0, 1.0, 0.01) var min_reachable_floor_ratio: float = 0.20  ## validation floor fraction
 @export var spawn_min_dist_from_doors: int = 6                           ## tiles between a spawn and any opening
 @export var wall_extra_depth: int = 2                                    ## max extra wall rings of shell noise (0 = straight shell)
+@export var wall_outer_erode: int = 0                                    ## max tiles the clearing-facing wall edge recedes (0 = straight outer edge); void-facing world edges never erode
 @export var wall_noise_period: int = 4                                   ## tiles between wall-noise lattice samples
 @export var corner_radius: int = 3                                       ## room-corner rounding radius, varied ±1 per corner (0 = square)
 
@@ -104,6 +105,7 @@ func _compute_hash_uncached() -> int:
 	h = WgHash.fold_var(h, min_reachable_floor_ratio)
 	h = WgHash.fold_var(h, spawn_min_dist_from_doors)
 	h = WgHash.fold_var(h, wall_extra_depth)
+	h = WgHash.fold_var(h, wall_outer_erode)
 	h = WgHash.fold_var(h, wall_noise_period)
 	h = WgHash.fold_var(h, corner_radius)
 	h = WgHash.fold_var(h, starting_biome)
