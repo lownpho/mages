@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://z909i360mcs26" path="res://characters/enemies/fae/fae_rest.gd" id="11_rest"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="12_volley"]
 [ext_resource type="Script" uid="uid://ovocewe8fv5y7" path="res://characters/enemies/fae/fae_summon.gd" id="13_summon"]
+[ext_resource type="Script" uid="uid://ct1medch4se99" path="res://characters/enemies/behaviours/timed_chase.gd" id="16_chase"]
 [ext_resource type="PackedScene" uid="uid://pciv4krdo720" path="res://characters/enemies/mandrake/mandrake.tscn" id="14_mandrake"]
 [ext_resource type="PackedScene" uid="uid://ch4o18qib0k6a" path="res://characters/enemies/wasp/wasp.tscn" id="15_wasp"]
 
@@ -164,8 +165,8 @@ next_state = "Idle"
 
 [node name="Pattern" type="Node" parent="FSM"]
 script = ExtResource("9_pattern")
-states = Array[String](["Rings", "Rest", "Shotgun", "Summon"])
-weights = Array[float]([3.0, 1.0, 3.0, 2.0])
+states = Array[String](["Rings", "Rest", "Shotgun", "Summon", "Chase"])
+weights = Array[float]([3.0, 1.0, 3.0, 2.0, 3.0])
 detect_probe_path = NodePath("../../DetectProbe")
 lost_state = "Idle"
 
@@ -192,6 +193,13 @@ weapon_data = ExtResource("7_shotgun")
 shot_count = 5
 attack_anim = "shotgun"
 done_state = "Pattern"
+
+[node name="Chase" type="Node" parent="FSM"]
+script = ExtResource("16_chase")
+duration = 4.0
+speed = 40.0
+done_state = "Pattern"
+run_anim = "idle"
 
 [node name="Summon" type="Node" parent="FSM"]
 script = ExtResource("13_summon")
