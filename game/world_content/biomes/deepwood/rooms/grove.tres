@@ -11,6 +11,6 @@ write_blockers = true
 [resource]
 script = ExtResource("1_grv")
 id = &"grove"
-footprint_blob = true
 generator = SubResource("Resource_grvg")
+footprint_blob = true
 enemy_groups_max = 1

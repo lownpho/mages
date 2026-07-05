@@ -193,6 +193,11 @@ static func _shape_side(grid: PackedByteArray, prot: PackedByteArray,
 		axis: int, wcoord0: int, void_side: bool, idx_fn: Callable) -> void:
 	var er := 0 if void_side else erode
 	for i in length:
+		# Opening column (OPEN span or door): no band at all. Without this the band SEALS the
+		# passage one tile behind its protected perimeter ring, and every open border renders
+		# as two straight tree lines with a dead floor channel between them.
+		if prot[idx_fn.call(i, 0)] == 1:
+			continue
 		var wt := wcoord0 + i
 		var hi := inset + (_band_depth(base, axis, line, wt, depth, period) if depth > 0 else 0)
 		var lo := 0

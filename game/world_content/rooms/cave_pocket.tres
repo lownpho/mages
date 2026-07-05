@@ -9,7 +9,7 @@ script = ExtResource("2_cvgen")
 [resource]
 script = ExtResource("1_n2eaj")
 id = &"cave_pocket"
-footprint_blob = true
 generator = SubResource("Resource_cvgen")
+footprint_blob = true
 enemy_groups_min = 1
 enemy_groups_max = 2
