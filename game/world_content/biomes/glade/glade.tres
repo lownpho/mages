@@ -14,14 +14,14 @@ max_per_biome = 20
 
 [sub_resource type="Resource" id="rtt_arena"]
 script = ExtResource("2_rtte")
-type_id = &"arena"
+type_id = &"glade_arena"
 min_per_biome = 1
-max_per_biome = 1
+max_per_biome = 3
 
 [sub_resource type="Resource" id="rtt_traversal"]
 script = ExtResource("2_rtte")
 type_id = &"traversal"
-weight = 3
+weight = 2
 
 [sub_resource type="Resource" id="rtt_cave"]
 script = ExtResource("2_rtte")
@@ -98,7 +98,7 @@ enemies = Array[ExtResource("4_ste")]([SubResource("sp_thornback")])
 
 [sub_resource type="Resource" id="sp_boss"]
 script = ExtResource("4_ste")
-enemy_id = &"golem"
+enemy_id = &"dummy"
 
 [sub_resource type="Resource" id="st_boss"]
 script = ExtResource("3_rst")
@@ -114,6 +114,26 @@ script = ExtResource("3_rst")
 room_type = &"rare"
 enemies = Array[ExtResource("4_ste")]([SubResource("sp_rare")])
 
+[sub_resource type="Resource" id="Resource_ujgbb"]
+script = ExtResource("4_ste")
+enemy_id = &"sproutling"
+weight = 2
+group_min = 4
+group_max = 2
+metadata/_custom_type_script = "uid://85nnqx50mcsn"
+
+[sub_resource type="Resource" id="Resource_ymtxa"]
+script = ExtResource("4_ste")
+enemy_id = &"hopper"
+group_max = 2
+metadata/_custom_type_script = "uid://85nnqx50mcsn"
+
+[sub_resource type="Resource" id="Resource_3cyeu"]
+script = ExtResource("3_rst")
+room_type = &"transit"
+enemies = Array[ExtResource("4_ste")]([SubResource("Resource_ujgbb"), SubResource("Resource_ymtxa")])
+metadata/_custom_type_script = "uid://pic86hrjalpg"
+
 [resource]
 script = ExtResource("1_biome")
 id = &"glade"
@@ -121,5 +141,5 @@ display_color = Color(0.55, 0.82, 0.42, 1)
 open_passage_chance = 0.8
 decor_density = 0.05
 room_type_table = Array[ExtResource("2_rtte")]([SubResource("rtt_field"), SubResource("rtt_arena"), SubResource("rtt_traversal"), SubResource("rtt_cave"), SubResource("rtt_boss"), SubResource("rtt_rare"), SubResource("rtt_exit")])
-spawn_tables = Array[ExtResource("3_rst")]([SubResource("st_field"), SubResource("st_arena"), SubResource("st_cave"), SubResource("st_boss"), SubResource("st_rare")])
+spawn_tables = Array[ExtResource("3_rst")]([SubResource("st_field"), SubResource("st_arena"), SubResource("st_cave"), SubResource("st_boss"), SubResource("st_rare"), SubResource("Resource_3cyeu")])
 presentation = ExtResource("7_pres")

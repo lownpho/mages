@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://c2auqwdd0do82"]
+
+[ext_resource type="Script" uid="uid://baei7k8g6qa03" path="res://worldgen/debug/room_lab.gd" id="1"]
+[ext_resource type="Script" uid="uid://cj76my2ypskpv" path="res://worldgen/debug/room_lab_view.gd" id="2"]
+[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="3"]
+
+[node name="RoomLab" type="Node2D" unique_id=1893614426]
+script = ExtResource("1")
+config = ExtResource("3")
+
+[node name="RoomsView" type="Node2D" parent="." unique_id=738600487]
+script = ExtResource("2")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=928617047]
+
+[node name="Panel" type="PanelContainer" parent="UI" unique_id=443607958]
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 320.0
+grow_vertical = 2
+
+[node name="Scroll" type="ScrollContainer" parent="UI/Panel" unique_id=692616105]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VBox" type="VBoxContainer" parent="UI/Panel/Scroll" unique_id=1667272577]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6

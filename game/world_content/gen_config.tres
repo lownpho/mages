@@ -18,7 +18,7 @@
 
 [resource]
 script = ExtResource("13_lk1mk")
-gen_version = 10
+gen_version = 1
 room_slot_tiles = 32
 biome_slots = 8
 world_width_biomes = 1
@@ -27,7 +27,6 @@ big_merge_chance = 0.25
 doors_per_biome_border = 4
 spawn_min_dist_from_doors = 3
 wall_extra_depth = 5
-wall_outer_erode = 0
 wall_noise_period = 10
 corner_radius = 6
 wall_inset_max = 4

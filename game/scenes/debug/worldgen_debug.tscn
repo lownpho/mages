@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://b2d2vms63idp2" path="res://worldgen/debug/biome_view.gd" id="4"]
 [ext_resource type="Script" uid="uid://bf1p6xtoktfmt" path="res://worldgen/debug/room_view.gd" id="5"]
 [ext_resource type="Script" uid="uid://vyytyrgsxtwl" path="res://worldgen/streaming/world_streamer.gd" id="6"]
-[ext_resource type="Script" uid="uid://1171x6b5dj8p" path="res://scenes/flycam.gd" id="7"]
+[ext_resource type="Script" uid="uid://1171x6b5dj8p" path="res://scenes/debug/flycam.gd" id="7"]
 
 [node name="WorldgenDebug" type="Node2D" unique_id=375936698]
 script = ExtResource("1")
