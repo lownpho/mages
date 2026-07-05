@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://amdho72nxe2dp"]
+
+[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="1_uc26l"]
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/weapons/ring_pattern.gd" id="3_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fae_ring"]
+atlas = ExtResource("1_uc26l")
+region = Rect2(40, 24, 8, 8)
+
+[sub_resource type="Resource" id="BulletData_1"]
+script = ExtResource("50_bres")
+icon = SubResource("AtlasTexture_fae_ring")
+base_damage = 8.0
+range_tiles = 7
+speed_tiles = 5
+
+[sub_resource type="Resource" id="RingPattern_1"]
+script = ExtResource("3_pattern")
+num_bullets = 12
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("RingPattern_1")
+bullet_data = SubResource("BulletData_1")
+fire_cooldown = 0.5
+mana_cost = 0

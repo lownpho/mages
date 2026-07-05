@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://scd47z59gcnmv"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
+[ext_resource type="Resource" uid="uid://ebvbvvwonp16" path="res://characters/player/robes/health_robe2.tres" id="2_hr2"]
+[ext_resource type="Resource" uid="uid://nmyidifg3vat" path="res://characters/player/robes/mana_robe2.tres" id="3_mr2"]
+[ext_resource type="Resource" uid="uid://ce0jxntvow1h2" path="res://characters/player/robes/vitality_robe2.tres" id="4_vr2"]
+[ext_resource type="Resource" uid="uid://m0uq0gpm52ck" path="res://characters/player/weapons/rune/rune2.tres" id="5_rune2"]
+[ext_resource type="Resource" uid="uid://o0434amjj1t8" path="res://characters/player/weapons/staff/staff2.tres" id="6_staff2"]
+[ext_resource type="Resource" uid="uid://d2h6buka54kcn" path="res://characters/player/weapons/wand/wand2.tres" id="7_wand2"]
+[ext_resource type="Resource" uid="uid://c1sm2y5p435xa" path="res://characters/player/spells/jimmy/jimmy1.tres" id="8_jimmy"]
+
+[sub_resource type="Resource" id="Resource_fae_hr2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("2_hr2")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fae_mr2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("3_mr2")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fae_vr2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("4_vr2")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fae_rune2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("5_rune2")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fae_staff2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("6_staff2")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fae_wand2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("7_wand2")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fae_jimmy"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("8_jimmy")
+chance = 1.0
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[resource]
+script = ExtResource("1")
+display_name = "Fae"
+max_health = 1000
+drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_fae_hr2"), SubResource("Resource_fae_mr2"), SubResource("Resource_fae_vr2"), SubResource("Resource_fae_rune2"), SubResource("Resource_fae_staff2"), SubResource("Resource_fae_wand2"), SubResource("Resource_fae_jimmy")])
