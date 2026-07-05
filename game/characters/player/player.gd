@@ -11,11 +11,15 @@ extends CharacterBody2D
 @export var focus_mana_per_second: float = 5.0
 @export var focus_ramp_time: float = 3.0
 @export var focus_curve: Curve
+## Fraction of max health/mana at or below which the low-resource warning aura shows.
+@export var low_resource_warning_fraction: float = 0.25
 
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var focus_aura: AnimatedSprite2D = $FocusAura
+@onready var low_health_aura: AnimatedSprite2D = $LowHealthAura
+@onready var low_mana_aura: AnimatedSprite2D = $LowManaAura
 
 var health: int
 var mana: int
@@ -63,6 +67,10 @@ func _ready() -> void:
 	hurtbox.hurt.connect(_on_hurt)
 
 	GlobalEvent.equipment_changed.connect(_on_equipment_changed)
+	GlobalEvent.player_health_changed.connect(_on_health_or_max_health_changed)
+	GlobalEvent.player_max_health_changed.connect(_on_health_or_max_health_changed)
+	GlobalEvent.player_mana_changed.connect(_on_mana_or_max_mana_changed)
+	GlobalEvent.player_max_mana_changed.connect(_on_mana_or_max_mana_changed)
 
 	# equipment_changed only fires on slot edits, not when a fresh player spawns in a
 	# new scene — so drive the equip logic once from the persisted GlobalInventory slots
@@ -141,6 +149,12 @@ func _on_cast_enter() -> void:
 
 func _on_cast_exit() -> void:
 	can_use_weapon = true
+
+func _on_health_or_max_health_changed(_value: int) -> void:
+	low_health_aura.visible = health > 0 and health <= max_health * low_resource_warning_fraction
+
+func _on_mana_or_max_mana_changed(_value: int) -> void:
+	low_mana_aura.visible = mana <= max_mana * low_resource_warning_fraction
 
 func _die() -> void:
 	queue_free()
