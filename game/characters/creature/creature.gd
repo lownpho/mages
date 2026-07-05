@@ -45,6 +45,13 @@ func _ready() -> void:
 	var enabler := VisibleOnScreenEnabler2D.new()
 	enabler.rect = SLEEP_RECT
 	add_child(enabler)
+	# RayCast2D defaults hit_from_inside to false, so a probe whose origin sits inside the
+	# target's own collider (the player standing on/overlapping this creature) reports no
+	# hit at all — the creature goes blind at melee range. Force every LOS probe on so
+	# adjacency never breaks targeting.
+	for child in get_children():
+		if child is RayCast2D:
+			child.hit_from_inside = true
 	# Deferred: the freshly instantiated tree is still blocked during _ready, so
 	# behaviours can't parent their timers yet. Deferred calls flush FIFO and the
 	# behaviours' _ready run before ours, so every timer exists before start().

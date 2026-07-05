@@ -27,6 +27,7 @@ func _ready() -> void:
 	_exit_probe = RayCast2D.new()
 	_exit_probe.collision_mask = _probe.collision_mask
 	_exit_probe.target_position = Vector2(_probe.target_position.length() + EXIT_MARGIN, 0)
+	_exit_probe.hit_from_inside = true
 	_exit_probe.enabled = false
 	_probe.add_child(_exit_probe)
 
