@@ -15,7 +15,6 @@ icon = SubResource("AtlasTexture_seedling_ring")
 base_damage = 10.0
 range_tiles = 6
 speed_tiles = 8
-homing_weight = 0.0
 
 [sub_resource type="Resource" id="RingPattern_1"]
 script = ExtResource("3_pattern")

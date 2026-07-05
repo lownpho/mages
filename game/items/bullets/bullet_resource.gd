@@ -7,7 +7,14 @@ class_name BulletResource
 @export var speed_tiles: int = 128
 @export var skill_scaling: float = 1.0
 @export var homing: bool = false
-@export var homing_weight: float = 5.0
+## Aim assist: max steering rate in degrees per second. Low (~120) gives a light
+## nudge that fast targets can outrun; very high (~1000+) snaps onto anything
+## inside the cone.
+@export var homing_turn_deg: float = 360.0
+## Assist engages only while the target sits within this angle of the bullet's
+## heading, and its strength fades to zero at the edge — shots aimed deliberately
+## away from a locked target are never hijacked. 180 = always steer (full homing).
+@export var homing_cone_deg: float = 60.0
 ## Target selection: only lock an enemy within this many tiles of the mouse
 ## cursor. Aiming at empty space locks nothing, so the shot flies straight.
 @export var homing_aim_tiles: float = 6.0

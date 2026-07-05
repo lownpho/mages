@@ -16,7 +16,6 @@ icon = SubResource("AtlasTexture_1")
 base_damage = 16.0
 range_tiles = 3
 speed_tiles = 8
-homing_weight = 0.0
 
 [sub_resource type="Resource" id="ShotgunPattern_1"]
 script = ExtResource("4_pattern")

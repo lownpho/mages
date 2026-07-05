@@ -17,7 +17,8 @@ base_damage = 8.0
 range_tiles = 12
 speed_tiles = 16
 homing = true
-homing_weight = 2.0
+homing_turn_deg = 180.0
+homing_cone_deg = 30.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")

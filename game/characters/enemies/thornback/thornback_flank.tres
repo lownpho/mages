@@ -15,7 +15,6 @@ icon = SubResource("AtlasTexture_tb_flank")
 base_damage = 6.0
 range_tiles = 4
 speed_tiles = 4
-homing_weight = 0.0
 
 [sub_resource type="Resource" id="FlankPattern_1"]
 script = ExtResource("3_pattern")

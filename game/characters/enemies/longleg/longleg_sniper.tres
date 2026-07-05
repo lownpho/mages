@@ -14,7 +14,6 @@ script = ExtResource("50_bres")
 icon = SubResource("AtlasTexture_ll_snipe")
 base_damage = 24.0
 speed_tiles = 18
-homing_weight = 0.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("3_pattern")
