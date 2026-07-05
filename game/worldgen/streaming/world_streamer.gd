@@ -15,12 +15,28 @@ class_name WorldStreamer
 ## Single-threaded (WorkerThreadPool is the contingency plan).
 extends Node2D
 
-## Floor/wall/blocker/decor variant channels for the pure-hash tile pick (kept distinct so a
+## Floor/wall/object/object_bg variant channels for the pure-hash tile pick (kept distinct so a
 ## tile's wall variant never correlates with its floor variant).
 const _CH_FLOOR := 1
 const _CH_WALL := 2
-const _CH_BLOCKER := 3
-const _CH_DECOR := 4
+const _CH_OBJECT := 3
+const _CH_OBJECT_BG := 4
+
+## The 8 neighbours of the autotile mask, bit i = _NB[i] is same-terrain. Order (N, NE, E, SE, S,
+## SW, W, NW) pairs each offset with the TileSet peering bit it corresponds to, so masks computed
+## from the logical grid line up with masks read from the tileset's authored terrain data.
+const _NB: Array[Vector2i] = [
+	Vector2i(0, -1), Vector2i(1, -1), Vector2i(1, 0), Vector2i(1, 1),
+	Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(-1, -1),
+]
+const _NB_PEERING: Array[int] = [
+	TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_TOP_RIGHT_CORNER,
+	TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_RIGHT_CORNER,
+	TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_LEFT_CORNER,
+	TileSet.CELL_NEIGHBOR_LEFT_SIDE, TileSet.CELL_NEIGHBOR_TOP_LEFT_CORNER,
+]
+## Which logical classes count as "same terrain" for each autotiled layer.
+enum _Terrain { T_FLOOR, T_WALL }
 
 const _MAX_LOADS_PER_FRAME := 3   ## smooth the initial burst; remaining chunks stream next frame
 const _UNLOAD_MARGIN := 2         ## chunks; unload radius = load radius + this (hysteresis)
@@ -60,6 +76,7 @@ var _chunks: Dictionary = {}                  # Vector2i chunk_coord -> WgChunk
 var _fallback_pres: BiomePresentation = null  # starting biome's mapping; fallback for biomes without one
 var _world_chunks := Vector2i.ZERO            # world size in chunks (finite bounds)
 var _tile_tables: Dictionary = {}             # TileSet -> weighted pick table (built once, see _tile_table)
+var _terrain_tables: Dictionary = {}          # TileSet -> { canonical mask -> pick table } (see _terrain_table)
 
 
 ## (Re)build the world for a seed and reset all caches/chunks.
@@ -219,11 +236,13 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int, covered: P
 	var ry1 := mini(ty0 + cs, uty0 + room.height)
 	var pres := _presentation_for(room.biome_id)
 	var lyr := chunk.layers_for(room.biome_id, pres)
-	# Resolve the per-class pick tables once per room (each is cached; keeps the per-cell loop lean).
+	# Resolve the per-layer pick tables once per room (each is cached; keeps the per-cell loop lean).
 	var t_floor := _tile_table(pres.floor_tileset)
 	var t_wall := _tile_table(pres.wall_tileset)
-	var t_blocker := _tile_table(pres.blocker_tileset)
-	var t_decor := _tile_table(pres.decor_tileset)
+	var t_object := _tile_table(pres.object_tileset)
+	var t_object_bg := _tile_table(pres.object_bg_tileset)
+	var tt_floor := _terrain_table(pres.floor_tileset) if pres.floor_autotile else {}
+	var tt_wall := _terrain_table(pres.wall_tileset) if pres.wall_autotile else {}
 
 	for wy in range(ry0, ry1):
 		for wx in range(rx0, rx1):
@@ -232,18 +251,20 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int, covered: P
 			covered[cell.y * cs + cell.x] = 1
 			# Every non-floor object (wall/blocker/decor) also lays a floor tile beneath it, so
 			# tree-walls and blockers — which are transparent around the trunk — never sit on void.
+			_place_floor(lyr.floor, cell, room, wx, wy, t_floor, tt_floor)
 			match cls:
 				RoomBuilder.WALL:
-					_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
-					_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
+					if tt_wall.is_empty():
+						_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
+					else:
+						_place_auto(lyr.wall, cell, wx, wy, _CH_WALL,
+								_mask_for(room, wx, wy, _Terrain.T_WALL), tt_wall, t_wall)
 				RoomBuilder.BLOCKER:
-					_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
-					_place(lyr.blocker, cell, wx, wy, _CH_BLOCKER, t_blocker)
+					_place(lyr.object, cell, wx, wy, _CH_OBJECT, t_object)
 				RoomBuilder.DECOR_FLOOR:
-					_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
-					_place(lyr.decor, cell, wx, wy, _CH_DECOR, t_decor)
-				_:   # FLOOR
-					_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
+					_place(lyr.object_bg, cell, wx, wy, _CH_OBJECT_BG, t_object_bg)
+				_:
+					pass   # FLOOR: already laid above
 
 	# Spawn data for this chunk: entries overlapping it, with the world tile resolved.
 	# Debug markers only in the debug scene; the game spawns real entities via chunk_loaded.
@@ -270,6 +291,7 @@ func _fill_border(chunk: WgChunk, covered: PackedByteArray, tx0: int, ty0: int) 
 	var lyr := chunk.layers_for(config.starting_biome, _fallback_pres)
 	var t_floor := _tile_table(_fallback_pres.floor_tileset)
 	var t_wall := _tile_table(_fallback_pres.wall_tileset)
+	var tt_wall := _terrain_table(_fallback_pres.wall_tileset) if _fallback_pres.wall_autotile else {}
 	for cy in cs:
 		for cx in cs:
 			if covered[cy * cs + cx] == 1:
@@ -279,7 +301,11 @@ func _fill_border(chunk: WgChunk, covered: PackedByteArray, tx0: int, ty0: int) 
 			var wy := ty0 + cy
 			# Floor beneath the wall so transparent-around-trunk wall art never shows void.
 			_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
-			_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
+			if tt_wall.is_empty():
+				_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
+			else:
+				_place_auto(lyr.wall, cell, wx, wy, _CH_WALL,
+						_mask_world(wx, wy, _Terrain.T_WALL), tt_wall, t_wall)
 
 
 # --- Room cache (LRU) ---------------------------------------------------------------------------
@@ -376,6 +402,149 @@ func _pick_weighted(wx: int, wy: int, channel: int, t: Dictionary) -> Vector2i:
 		else:
 			hi = mid
 	return coords[lo]
+
+
+# --- Autotile ------------------------------------------------------------------------------------
+
+## Scatter-pick floor unless the presentation autotiles it (then the neighbour mask picks the tile).
+func _place_floor(layer: TileMapLayer, cell: Vector2i, room: RoomOutput, wx: int, wy: int,
+		t: Dictionary, tt: Dictionary) -> void:
+	if tt.is_empty():
+		_place(layer, cell, wx, wy, _CH_FLOOR, t)
+	else:
+		_place_auto(layer, cell, wx, wy, _CH_FLOOR,
+				_mask_for(room, wx, wy, _Terrain.T_FLOOR), tt, t)
+
+
+## Set one autotiled cell: the canonical neighbour mask selects the terrain pick table; masks the
+## tileset doesn't author fall back to the scatter pick, so partial terrain sets degrade gracefully.
+func _place_auto(layer: TileMapLayer, cell: Vector2i, wx: int, wy: int, channel: int,
+		mask: int, tt: Dictionary, fallback: Dictionary) -> void:
+	if layer == null:
+		return
+	var t: Dictionary = tt.get(mask, {})
+	if t.is_empty():
+		_place(layer, cell, wx, wy, channel, fallback)
+		return
+	layer.set_cell(cell, t.source_id, _pick_weighted(wx, wy, channel, t))
+
+
+## 8-neighbour same-terrain mask for a tile inside `room` — neighbours still inside the room read
+## its grid directly; neighbours past the room edge resolve through the room cache. Pure function
+## of the deterministic class grids, so seams agree no matter which chunk/room computes them.
+func _mask_for(room: RoomOutput, wx: int, wy: int, kind: int) -> int:
+	var ss := config.room_slot_tiles
+	var lx := wx - room.origin_slot.x * ss
+	var ly := wy - room.origin_slot.y * ss
+	var m := 0
+	for i in 8:
+		var nx := lx + _NB[i].x
+		var ny := ly + _NB[i].y
+		var cls: int
+		if nx >= 0 and ny >= 0 and nx < room.width and ny < room.height:
+			cls = room.tile_grid[ny * room.width + nx]
+		else:
+			cls = _class_at(wx + _NB[i].x, wy + _NB[i].y)
+		if _same_terrain(cls, kind):
+			m |= 1 << i
+	return _canonical_mask(m)
+
+
+## Mask for a tile with no room context (border fill outside the sealed world).
+func _mask_world(wx: int, wy: int, kind: int) -> int:
+	var m := 0
+	for i in 8:
+		if _same_terrain(_class_at(wx + _NB[i].x, wy + _NB[i].y), kind):
+			m |= 1 << i
+	return _canonical_mask(m)
+
+
+## Whether a logical class continues a layer's terrain. Walls connect to walls and to the sealed
+## void past the world edge; floors connect to walkable ground only, so floor terrain sets get
+## edge tiles against walls/blockers (the floor laid BENEATH those solids reads as edge too, which
+## is fine — it is covered by the solid's art).
+func _same_terrain(cls: int, kind: int) -> bool:
+	if kind == _Terrain.T_WALL:
+		return cls == RoomBuilder.WALL or cls == -1
+	return cls == RoomBuilder.FLOOR or cls == RoomBuilder.DECOR_FLOOR
+
+
+## Logical tile class at any world tile, resolved through the room cache; -1 outside the world.
+func _class_at(wx: int, wy: int) -> int:
+	if wx < 0 or wy < 0:
+		return -1
+	var ss := config.room_slot_tiles
+	var bs := config.biome_slots
+	@warning_ignore_start("integer_division")
+	var sx := wx / ss
+	var sy := wy / ss
+	var bc := Vector2i(sx / bs, sy / bs)
+	@warning_ignore_restore("integer_division")
+	if sx >= world_spec.grid_w * bs or sy >= world_spec.grid_h * bs:
+		return -1
+	if world_spec.biome_at(bc) == &"":
+		return -1
+	var graph := _room_graphs.get_biome_graph(world_spec, bc, config)
+	var spec := graph.room_at(Vector2i(sx % bs, sy % bs))
+	var room := get_room_output(spec)
+	var lx := wx - room.origin_slot.x * ss
+	var ly := wy - room.origin_slot.y * ss
+	return room.tile_grid[ly * room.width + lx]
+
+
+## Corner bits only matter when both adjacent sides are set (the standard 47-blob rule) — clearing
+## the meaningless ones collapses the 256 raw masks onto the ones tilesets actually author.
+static func _canonical_mask(m: int) -> int:
+	if (m & 0b0000_0101) != 0b0000_0101:
+		m &= ~0b0000_0010   # NE needs N+E
+	if (m & 0b0001_0100) != 0b0001_0100:
+		m &= ~0b0000_1000   # SE needs E+S
+	if (m & 0b0101_0000) != 0b0101_0000:
+		m &= ~0b0010_0000   # SW needs S+W
+	if (m & 0b0100_0001) != 0b0100_0001:
+		m &= ~0b1000_0000   # NW needs W+N
+	return m
+
+
+## Per-tileset autotile table, built once and cached: canonical mask -> weighted pick table over
+## the tiles of source 0 that declare that mask via terrain peering bits (standard Godot terrain
+## painting; any terrain set/index counts). Tiles with no terrain are ignored here — they stay
+## available to the scatter table. Empty dict when the tileset authors no terrain at all.
+func _terrain_table(tileset: TileSet) -> Dictionary:
+	if _terrain_tables.has(tileset):
+		return _terrain_tables[tileset]
+	var groups: Dictionary = {}   # mask -> Array of [coord, weight]
+	var source_id := -1
+	if tileset != null and tileset.get_source_count() > 0:
+		source_id = tileset.get_source_id(0)
+		var src := tileset.get_source(source_id) as TileSetAtlasSource
+		if src != null:
+			for i in src.get_tiles_count():
+				var coord := src.get_tile_id(i)
+				var td := src.get_tile_data(coord, 0)
+				if td == null or td.terrain_set < 0 or td.terrain < 0 or td.probability <= 0.0:
+					continue
+				var mask := 0
+				for b in 8:
+					if td.is_valid_terrain_peering_bit(_NB_PEERING[b]) \
+							and td.get_terrain_peering_bit(_NB_PEERING[b]) == td.terrain:
+						mask |= 1 << b
+				mask = _canonical_mask(mask)
+				if not groups.has(mask):
+					groups[mask] = []
+				groups[mask].append([coord, maxi(1, roundi(td.probability * 1000.0))])
+	var by_mask: Dictionary = {}
+	for mask in groups:
+		var coords: Array[Vector2i] = []
+		var cum := PackedInt64Array()
+		var acc := 0
+		for pair in groups[mask]:
+			acc += pair[1]
+			coords.append(pair[0])
+			cum.append(acc)
+		by_mask[mask] = {"source_id": source_id, "coords": coords, "cum": cum, "total": acc}
+	_terrain_tables[tileset] = by_mask
+	return by_mask
 
 
 ## Deterministic player spawn: the center of the fallback-room-type room nearest the center

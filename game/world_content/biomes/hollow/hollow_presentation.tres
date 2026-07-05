@@ -9,5 +9,5 @@
 script = ExtResource("1")
 floor_tileset = ExtResource("2")
 wall_tileset = ExtResource("3")
-blocker_tileset = ExtResource("3")
-decor_tileset = ExtResource("4")
+object_tileset = ExtResource("3")
+object_bg_tileset = ExtResource("4")

@@ -6,10 +6,11 @@ class_name WgChunk
 ## Layers are built in code (not a .tscn) because chunks are procedural. A chunk may overlap more
 ## than one biome, and each biome has its OWN per-class tilesets, so a single shared TileMapLayer
 ## (which holds one tile_set) cannot serve both. Instead layers are created lazily per biome via
-## layers_for(): one floor/wall/blocker/decor TileMapLayer group per biome present in the chunk,
-## each backed by that biome's tileset (skipping null slots). Biome regions never share a cell, so
-## cross-biome draw order is irrelevant; within a biome order is floor < wall < blocker < decor.
-## Wall/blocker layers get physics_quadrant_size == chunk_tiles so the engine batches colliders.
+## layers_for(): one floor/wall/object/object_bg TileMapLayer group per biome present in the
+## chunk, each backed by that biome's tileset (skipping null slots). Biome regions never share a
+## cell, so cross-biome draw order is irrelevant; within a biome order is
+## floor < object_bg < wall/object. Wall/object layers get physics_quadrant_size == chunk_tiles
+## so the engine batches colliders.
 extends Node2D
 
 var chunk_coord: Vector2i
@@ -18,14 +19,15 @@ var chunk_coord: Vector2i
 var spawn_data: Array = []
 
 var _quadrant: int = 16
-var _biome_layers: Dictionary = {}   # StringName biome_id -> { "floor"/"wall"/"blocker"/"decor": TileMapLayer|null }
+var _biome_layers: Dictionary = {}   # StringName biome_id -> { "floor"/"wall"/"object"/"object_bg": TileMapLayer|null }
 
 
-## Z-bands: floor/decor sit BEHIND every entity (flat ground), trees share the entity band (0) so
-## they Y-sort against the player/enemies. y_sort_enabled here propagates the tree layers' per-tile
-## sort up to the world's shared Y-sort root (World → WorldRoot → WorldStreamer → chunk → layer).
+## Z-bands: floor/object_bg sit BEHIND every entity (flat ground), trees share the entity band (0)
+## so they Y-sort against the player/enemies. y_sort_enabled here propagates the tree layers'
+## per-tile sort up to the world's shared Y-sort root (World → WorldRoot → WorldStreamer → chunk →
+## layer).
 const _Z_FLOOR := -2
-const _Z_DECOR := -1
+const _Z_OBJECT_BG := -1
 const _Z_OBJECT := 0
 
 
@@ -37,23 +39,22 @@ func setup(coord: Vector2i, origin_px: Vector2, quadrant: int) -> void:
 
 
 ## The (up to four) TileMapLayers for one biome, created + cached on first request. Each slot is a
-## TileMapLayer or null (when the presentation leaves that class's tileset unset). Order of
-## add_child is floor < wall < blocker < decor so the decor overlay draws on top within a biome.
+## TileMapLayer or null (when the presentation leaves that layer's tileset unset).
 func layers_for(biome_id: StringName, pres: BiomePresentation) -> Dictionary:
 	if _biome_layers.has(biome_id):
 		return _biome_layers[biome_id]
 	var group := {
 		"floor": _make_layer("%s_floor" % biome_id, pres.floor_tileset, _Z_FLOOR, false),
 		"wall": _make_layer("%s_wall" % biome_id, pres.wall_tileset, _Z_OBJECT, true),
-		"blocker": _make_layer("%s_blocker" % biome_id, pres.blocker_tileset, _Z_OBJECT, true),
-		"decor": _make_layer("%s_decor" % biome_id, pres.decor_tileset, _Z_DECOR, false),
+		"object": _make_layer("%s_object" % biome_id, pres.object_tileset, _Z_OBJECT, true),
+		"object_bg": _make_layer("%s_object_bg" % biome_id, pres.object_bg_tileset, _Z_OBJECT_BG, false),
 	}
 	_biome_layers[biome_id] = group
 	return group
 
 
 ## `solid` layers (trees) collide AND Y-sort so tall props render in front/behind by base position;
-## flat layers (floor/decor) do neither and are pinned to a background z-band.
+## flat layers (floor/object_bg) do neither and are pinned to a background z-band.
 func _make_layer(layer_name: String, tileset: TileSet, z: int, solid: bool) -> TileMapLayer:
 	if tileset == null:
 		return null
