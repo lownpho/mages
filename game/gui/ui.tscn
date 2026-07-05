@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="3_vuvel"]
 [ext_resource type="Texture2D" uid="uid://dh4pvghdubtap" path="res://gui/spellslot_atlas.tres" id="5_cl6af"]
 [ext_resource type="Texture2D" uid="uid://ju3vyif5e1uy" path="res://gui/bagslot_atlas.tres" id="6_4n41m"]
+[ext_resource type="Script" path="res://gui/minimap/minimap_view.gd" id="7_mmap"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame"]
 atlas = ExtResource("3_vuvel")
@@ -93,7 +94,7 @@ theme_override_constants/margin_bottom = 2
 [node name="VBox" type="VBoxContainer" parent="Strip" unique_id=167552663]
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="Bars" type="VBoxContainer" parent="Strip/VBox" unique_id=1002]
 layout_mode = 2
@@ -366,3 +367,15 @@ slot_texture = ExtResource("6_4n41m")
 [node name="BagSlot9" parent="Strip/VBox/PanelContainer/Bag" unique_id=1143770706 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("6_4n41m")
+
+[node name="MapPanel" type="PanelContainer" parent="Strip/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_bar")
+
+[node name="Minimap" type="Control" parent="Strip/VBox/MapPanel"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+clip_contents = true
+script = ExtResource("7_mmap")
