@@ -8,13 +8,13 @@
 [sub_resource type="Resource" id="Resource_rune"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("2_rune")
-chance = 0.1
+chance = 0.25
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_heal"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("3_heal")
-chance = 0.1
+chance = 0.25
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]

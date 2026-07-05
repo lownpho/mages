@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://p5m3264e3n3h"]
 
-[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_dpl6y"]
 [ext_resource type="Resource" uid="uid://vn3e6lww7ex0" path="res://characters/player/weapons/wand/wand1.tres" id="3_wand"]
 [ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="4_zaap"]

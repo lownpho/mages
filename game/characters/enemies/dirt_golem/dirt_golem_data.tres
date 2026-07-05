@@ -11,31 +11,31 @@
 [sub_resource type="Resource" id="Resource_healthrobe"]
 script = ExtResource("1_toonh")
 item = ExtResource("2_healthrobe")
-chance = 0.1
+chance = 0.3
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_manarobe"]
 script = ExtResource("1_toonh")
 item = ExtResource("3_manarobe")
-chance = 0.1
+chance = 0.3
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_vitalityrobe"]
 script = ExtResource("1_toonh")
 item = ExtResource("4_vitalityrobe")
-chance = 0.1
+chance = 0.3
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_vitalityhat"]
 script = ExtResource("1_toonh")
 item = ExtResource("5_vitalityhat")
-chance = 0.1
+chance = 0.3
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_nope"]
 script = ExtResource("1_toonh")
 item = ExtResource("6_nope")
-chance = 0.04
+chance = 0.15
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]

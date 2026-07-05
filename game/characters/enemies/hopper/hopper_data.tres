@@ -8,13 +8,13 @@
 [sub_resource type="Resource" id="Resource_speedhat"]
 script = ExtResource("1_aqukq")
 item = ExtResource("2_speedhat")
-chance = 0.1
+chance = 0.25
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_zaap"]
 script = ExtResource("1_aqukq")
 item = ExtResource("3_zaap")
-chance = 0.1
+chance = 0.25
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]

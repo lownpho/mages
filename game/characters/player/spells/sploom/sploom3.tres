@@ -35,7 +35,6 @@ range_tiles = 14
 speed_tiles = 4
 skill_scaling = 2.0
 homing = true
-homing_turn_deg = 360.0
 homing_cone_deg = 150.0
 explode_radius_tiles = 3.0
 burst_pattern = SubResource("RingPattern_burst")

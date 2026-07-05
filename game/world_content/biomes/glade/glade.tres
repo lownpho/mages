@@ -76,6 +76,7 @@ group_max = 4
 [sub_resource type="Resource" id="sp_dirt_golem"]
 script = ExtResource("4_ste")
 enemy_id = &"dirt_golem"
+weight = 2
 
 [sub_resource type="Resource" id="sp_wasp"]
 script = ExtResource("4_ste")
