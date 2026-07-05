@@ -11,7 +11,7 @@ const SEEDS := 100
 
 func _ready() -> void:
 	var fails: Array[String] = []
-	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
+	var config: GenConfig = load("res://world_content/gen_config.tres")
 	var max_x := config.world_width_biomes * config.biome_slots
 	var max_y := config.world_height_biomes() * config.biome_slots
 

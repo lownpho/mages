@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="GenConfig" format=3 uid="uid://cqn8sbnhwkmop"]
+
+[ext_resource type="Resource" uid="uid://70gxdakwf6l8" path="res://world_content/adjacency.tres" id="1_nh5px"]
+[ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="2_101ut"]
+[ext_resource type="Resource" uid="uid://4oigyor383wv" path="res://world_content/biomes/glade/glade.tres" id="3_nry5q"]
+[ext_resource type="Resource" uid="uid://yd0ixxnn8n1s" path="res://world_content/biomes/deepwood/deepwood.tres" id="4_i5b0q"]
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="7_lpl1d"]
+[ext_resource type="Resource" uid="uid://cabfcbml2awjp" path="res://world_content/rooms/traversal.tres" id="8_wsaof"]
+[ext_resource type="Resource" uid="uid://3l001xvpnfnb" path="res://world_content/rooms/field.tres" id="9_gtcgy"]
+[ext_resource type="Resource" uid="uid://d0h5cm6myal0v" path="res://world_content/rooms/cave_pocket.tres" id="10_r5d6f"]
+[ext_resource type="Resource" uid="uid://bg5d4ckwn2y5" path="res://world_content/rooms/arena.tres" id="11_pfvbv"]
+[ext_resource type="Resource" uid="uid://kgsugx3jw1n1" path="res://world_content/rooms/boss.tres" id="12_nh5px"]
+[ext_resource type="Resource" uid="uid://20q0pufflg76" path="res://world_content/biomes/glade/rooms/glade_to_deepwood.tres" id="12_nry5q"]
+[ext_resource type="Resource" uid="uid://nnkmg3avvpqj" path="res://world_content/rooms/shrine.tres" id="12_qd75r"]
+[ext_resource type="Resource" uid="uid://csjkalxk7yin4" path="res://world_content/rooms/rare.tres" id="13_i5b0q"]
+[ext_resource type="Script" uid="uid://ebitj0qutpum" path="res://worldgen/core/gen_config.gd" id="13_lk1mk"]
+[ext_resource type="Resource" uid="uid://brnk0og0kuexr" path="res://world_content/biomes/deepwood/rooms/grove.tres" id="14_grove"]
+
+[resource]
+script = ExtResource("13_lk1mk")
+gen_version = 8
+room_slot_tiles = 32
+biome_slots = 8
+world_width_biomes = 1
+room_merge_chance = 0.33
+doors_per_biome_border = 4
+spawn_min_dist_from_doors = 3
+wall_extra_depth = 5
+wall_outer_erode = 3
+wall_noise_period = 10
+corner_radius = 6
+biomes = Array[ExtResource("2_101ut")]([ExtResource("3_nry5q"), ExtResource("4_i5b0q")])
+adjacency = ExtResource("1_nh5px")
+room_types = Array[ExtResource("7_lpl1d")]([ExtResource("8_wsaof"), ExtResource("9_gtcgy"), ExtResource("10_r5d6f"), ExtResource("11_pfvbv"), ExtResource("12_qd75r"), ExtResource("14_grove"), ExtResource("13_i5b0q"), ExtResource("12_nh5px"), ExtResource("12_nry5q")])

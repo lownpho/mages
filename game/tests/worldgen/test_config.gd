@@ -4,7 +4,7 @@ extends Node
 ## dials and presentation fields must NOT move the hash. Run:
 ##   godot --headless --path game res://tests/worldgen/test_config.tscn
 
-const CONFIG_PATH := "res://worldgen/content/gen_config.tres"
+const CONFIG_PATH := "res://world_content/gen_config.tres"
 
 
 func _ready() -> void:

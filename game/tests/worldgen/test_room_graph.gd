@@ -12,7 +12,7 @@ var _T: int
 
 func _ready() -> void:
 	var fails: Array[String] = []
-	_config = load("res://worldgen/content/gen_config.tres")
+	_config = load("res://world_content/gen_config.tres")
 	_S = _config.biome_slots
 	_T = _config.room_slot_tiles
 

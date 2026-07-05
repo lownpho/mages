@@ -1,0 +1,101 @@
+[gd_resource type="Resource" script_class="BiomeDef" format=3 uid="uid://yd0ixxnn8n1s"]
+
+[ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="1_biome"]
+[ext_resource type="Script" uid="uid://cmerejb1v5l5p" path="res://worldgen/core/room_type_table_entry.gd" id="2_rtte"]
+[ext_resource type="Script" uid="uid://pic86hrjalpg" path="res://worldgen/core/room_spawn_table.gd" id="3_rst"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_ste"]
+[ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="7_pres"]
+
+[sub_resource type="Resource" id="rtt_field"]
+script = ExtResource("2_rtte")
+type_id = &"field"
+weight = 3
+max_per_biome = 10
+
+[sub_resource type="Resource" id="rtt_cave"]
+script = ExtResource("2_rtte")
+type_id = &"cave_pocket"
+weight = 4
+max_per_biome = 12
+
+[sub_resource type="Resource" id="rtt_arena"]
+script = ExtResource("2_rtte")
+type_id = &"arena"
+max_per_biome = 1
+
+[sub_resource type="Resource" id="rtt_traversal"]
+script = ExtResource("2_rtte")
+type_id = &"traversal"
+weight = 2
+
+[sub_resource type="Resource" id="rtt_grove"]
+script = ExtResource("2_rtte")
+type_id = &"grove"
+weight = 3
+max_per_biome = 4
+
+[sub_resource type="Resource" id="sp_field_owl"]
+script = ExtResource("4_ste")
+enemy_id = &"owl"
+weight = 2
+group_max = 2
+
+[sub_resource type="Resource" id="sp_field_snake"]
+script = ExtResource("4_ste")
+enemy_id = &"snake"
+weight = 3
+group_max = 3
+
+[sub_resource type="Resource" id="sp_field_stalker"]
+script = ExtResource("4_ste")
+enemy_id = &"stalker"
+weight = 2
+group_max = 2
+
+[sub_resource type="Resource" id="st_field"]
+script = ExtResource("3_rst")
+room_type = &"field"
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_field_owl"), SubResource("sp_field_snake"), SubResource("sp_field_stalker")])
+
+[sub_resource type="Resource" id="sp_cave_snake"]
+script = ExtResource("4_ste")
+enemy_id = &"snake"
+weight = 3
+group_max = 3
+
+[sub_resource type="Resource" id="st_cave"]
+script = ExtResource("3_rst")
+room_type = &"cave_pocket"
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_cave_snake")])
+
+[sub_resource type="Resource" id="sp_arena_owl"]
+script = ExtResource("4_ste")
+enemy_id = &"owl"
+group_min = 2
+group_max = 4
+
+[sub_resource type="Resource" id="st_arena"]
+script = ExtResource("3_rst")
+room_type = &"arena"
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_arena_owl")])
+
+[sub_resource type="Resource" id="sp_grove_stalker"]
+script = ExtResource("4_ste")
+enemy_id = &"stalker"
+weight = 2
+group_max = 2
+
+[sub_resource type="Resource" id="st_grove"]
+script = ExtResource("3_rst")
+room_type = &"grove"
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_grove_stalker")])
+
+[resource]
+script = ExtResource("1_biome")
+id = &"deepwood"
+display_color = Color(0.12, 0.3, 0.18, 1)
+open_passage_chance = 0.15
+decor_density = 0.07
+room_type_table = Array[ExtResource("2_rtte")]([SubResource("rtt_field"), SubResource("rtt_cave"), SubResource("rtt_arena"), SubResource("rtt_traversal"), SubResource("rtt_grove")])
+spawn_tables = Array[ExtResource("3_rst")]([SubResource("st_field"), SubResource("st_cave"), SubResource("st_arena"), SubResource("st_grove")])
+presentation = ExtResource("7_pres")

@@ -7,8 +7,8 @@ extends Node2D
 ##
 ## R rerolls the base seed, P / M toggle the PROTECTED / reachability overlays.
 
-const ROOM_TYPES_DIR := "res://worldgen/content/room_types"
-const BIOMES_DIR := "res://worldgen/content/biomes"
+const ROOM_TYPES_DIR := "res://world_content/room_types"
+const BIOMES_DIR := "res://world_content/biomes"
 const GENERATORS_DIR := "res://worldgen/generators"
 const PANEL_W := 320.0
 const FROM_ROOM_TYPE := "(from room type)"

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://worldgen/debug/room_lab.gd" id="1"]
 [ext_resource type="Script" path="res://worldgen/debug/room_lab_view.gd" id="2"]
-[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://worldgen/content/gen_config.tres" id="3"]
+[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="3"]
 
 [node name="RoomLab" type="Node2D"]
 script = ExtResource("1")

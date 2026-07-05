@@ -6,7 +6,7 @@ extends Node
 
 func _ready() -> void:
 	var fails: Array[String] = []
-	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
+	var config: GenConfig = load("res://world_content/gen_config.tres")
 	var w := config.world_width_biomes
 	var h := config.world_height_biomes()
 

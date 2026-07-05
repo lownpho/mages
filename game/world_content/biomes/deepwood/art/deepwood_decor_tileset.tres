@@ -1,0 +1,25 @@
+[gd_resource type="TileSet" format=3 uid="uid://dxurhs1likqp7"]
+
+[ext_resource type="Texture2D" uid="uid://bvsms7qjoqcer" path="res://world_content/biomes/deepwood/art/deepwood_decor.png" id="1_decor"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_decor"]
+texture = ExtResource("1_decor")
+texture_region_size = Vector2i(8, 8)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+2:0/0/probability = 0.6
+3:0/0 = 0
+3:0/0/probability = 0.6
+4:0/0 = 0
+4:0/0/probability = 0.4
+5:0/0 = 0
+5:0/0/probability = 0.4
+6:0/0 = 0
+6:0/0/probability = 0.25
+7:0/0 = 0
+7:0/0/probability = 0.25
+
+[resource]
+tile_size = Vector2i(8, 8)
+sources/0 = SubResource("TileSetAtlasSource_decor")

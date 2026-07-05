@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BiomePresentation" format=3 uid="uid://cfp7eapvlt2rp"]
+
+[ext_resource type="Script" path="res://worldgen/core/biome_presentation.gd" id="1"]
+[ext_resource type="TileSet" uid="uid://cjgnppt7rvo1g" path="res://world_content/biomes/deepwood/art/deepwood_floor_tileset.tres" id="2"]
+[ext_resource type="TileSet" uid="uid://brf5ixc7tgubc" path="res://world_content/biomes/deepwood/art/deepwood_trees.tres" id="3"]
+[ext_resource type="TileSet" uid="uid://dxurhs1likqp7" path="res://world_content/biomes/deepwood/art/deepwood_decor_tileset.tres" id="4"]
+
+[resource]
+script = ExtResource("1")
+floor_tileset = ExtResource("2")
+wall_tileset = ExtResource("3")
+blocker_tileset = ExtResource("3")
+decor_tileset = ExtResource("4")

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BiomePresentation" format=3 uid="uid://c2xb6qd7ustlb"]
+
+[ext_resource type="Script" uid="uid://8c2ouwfg7awf" path="res://worldgen/core/biome_presentation.gd" id="1"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://world_content/biomes/glade/art/glade_floor_tileset.tres" id="2"]
+[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="3"]
+[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://world_content/biomes/glade/art/glade_decor_tileset.tres" id="4"]
+
+[resource]
+script = ExtResource("1")
+floor_tileset = ExtResource("2")
+wall_tileset = ExtResource("3")
+blocker_tileset = ExtResource("3")
+decor_tileset = ExtResource("4")

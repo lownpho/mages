@@ -14,7 +14,7 @@ const SAMPLES := 200
 
 func _ready() -> void:
 	var fails: Array[String] = []
-	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
+	var config: GenConfig = load("res://world_content/gen_config.tres")
 	var seed := 918_273_645
 
 	var streamer := WorldStreamer.new()

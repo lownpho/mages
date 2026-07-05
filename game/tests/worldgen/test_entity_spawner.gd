@@ -10,7 +10,7 @@ const SEED := 777_003
 
 func _ready() -> void:
 	var fails: Array[String] = []
-	var config: GenConfig = load("res://worldgen/content/gen_config.tres")
+	var config: GenConfig = load("res://world_content/gen_config.tres")
 
 	# World A.
 	var a := await _build_world(config, SEED)

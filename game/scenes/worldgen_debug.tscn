@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bdrdivq4cgt08" path="res://worldgen/debug/worldgen_debug.gd" id="1"]
 [ext_resource type="Script" uid="uid://b6l6vh2qj3g1q" path="res://worldgen/debug/world_view.gd" id="2"]
-[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://worldgen/content/gen_config.tres" id="3"]
+[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="3"]
 [ext_resource type="Script" uid="uid://b2d2vms63idp2" path="res://worldgen/debug/biome_view.gd" id="4"]
 [ext_resource type="Script" uid="uid://bf1p6xtoktfmt" path="res://worldgen/debug/room_view.gd" id="5"]
 [ext_resource type="Script" uid="uid://vyytyrgsxtwl" path="res://worldgen/streaming/world_streamer.gd" id="6"]

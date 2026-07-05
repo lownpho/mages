@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="79_dmgnum"]
 [ext_resource type="Script" uid="uid://vyytyrgsxtwl" path="res://worldgen/streaming/world_streamer.gd" id="80_stream"]
 [ext_resource type="Script" uid="uid://bkrdnakhdrujm" path="res://worldgen/streaming/entity_spawner.gd" id="81_spawn"]
-[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://worldgen/content/gen_config.tres" id="82_cfg"]
+[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="82_cfg"]
 
 [node name="World" type="Node2D" unique_id=606710024]
 script = ExtResource("7_world")
