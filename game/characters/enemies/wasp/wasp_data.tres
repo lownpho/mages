@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://p5m3264e3n3h"]
+
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Wasp"
+max_health = 12
