@@ -1,13 +1,16 @@
 extends Node2D
 ## Room Lab — a live room-tuning tool. Pick a room type / biome / generator from dropdowns
-## populated by scanning the content folders, tweak every dial (generator params are
-## introspected from the selected generator's @exports), and see a whole grid of rooms
-## rebuild instantly. Rooms are synthesized RoomSpecs (not pulled from a real world graph),
-## each cell seeded distinctly so one parameter set shows its variety at a glance.
+## populated by scanning the content folders (shared world_content/rooms/ plus each biome's
+## rooms/), tweak every dial — the organic wall shape (band depth, side inset, erosion, noise
+## period, corner radius), blob footprint, and the selected generator's @exports, introspected —
+## and see a whole grid of rooms rebuild instantly. Rooms are synthesized RoomSpecs (not pulled
+## from a real world graph), each cell seeded distinctly so one parameter set shows its variety
+## at a glance. NOTE: cells in grid row/column 0 sit on the synthetic world edge, so their
+## north/west walls stay sealed and un-eroded — that's the real edge-of-world behaviour.
 ##
 ## R rerolls the base seed, P / M toggle the PROTECTED / reachability overlays.
 
-const ROOM_TYPES_DIR := "res://world_content/room_types"
+const SHARED_ROOMS_DIR := "res://world_content/rooms"
 const BIOMES_DIR := "res://world_content/biomes"
 const GENERATORS_DIR := "res://worldgen/generators"
 const PANEL_W := 320.0
@@ -35,6 +38,12 @@ var _door_width := 3
 var _decor_density := 0.05
 var _max_retries := 5
 var _min_reach := 0.20
+var _wall_depth := 5
+var _wall_erode := 0
+var _wall_period := 10
+var _corner_radius := 6
+var _wall_inset := 4
+var _blob := false
 var _force_fallback := false
 var _sides := {WorldSpec.SIDE_NORTH: true, WorldSpec.SIDE_EAST: true,
 		WorldSpec.SIDE_SOUTH: true, WorldSpec.SIDE_WEST: true}
@@ -42,6 +51,8 @@ var _open_passages := false      ## doors vs fully-open sides
 var _generator: RoomGenBase = null   ## the live-edited generator instance (may be null)
 
 var _gen_dd: OptionButton
+var _blob_cb: CheckBox
+var _seed_label: Label
 var _regen_queued := false
 
 
@@ -53,6 +64,17 @@ func _ready() -> void:
 	_door_width = config.door_width_tiles
 	_max_retries = config.max_room_retries
 	_min_reach = config.min_reachable_floor_ratio
+	_wall_depth = config.wall_extra_depth
+	_wall_erode = config.wall_outer_erode
+	_wall_period = config.wall_noise_period
+	_corner_radius = config.corner_radius
+	_wall_inset = config.wall_inset_max
+	var b0 := config.biome_by_id(_biome_id)
+	if b0 != null:
+		_decor_density = b0.decor_density
+	var rt0 := config.room_type_by_id(_type_id)
+	if rt0 != null:
+		_blob = rt0.footprint_blob
 	_base_seed = randi()
 	_build_ui()
 	_sync_generator_from_selection()
@@ -76,10 +98,16 @@ func _unhandled_key_input(event: InputEvent) -> void:
 # --- Content scan ------------------------------------------------------------------------
 
 func _scan_content() -> void:
-	for f in _list_dir(ROOM_TYPES_DIR, ".tres"):
-		var rt: RoomTypeDef = load(ROOM_TYPES_DIR + "/" + f)
-		if rt != null and rt.id != &"":
-			_room_type_ids.append(rt.id)
+	# Room types: the shared folder plus each biome's rooms/ subfolder.
+	var room_dirs: Array[String] = [SHARED_ROOMS_DIR]
+	for sub in _list_subdirs(BIOMES_DIR):
+		room_dirs.append("%s/%s/rooms" % [BIOMES_DIR, sub])
+	for dir in room_dirs:
+		for f in _list_dir(dir, ".tres"):
+			var res := load(dir + "/" + f)
+			var rt := res as RoomTypeDef
+			if rt != null and rt.id != &"":
+				_room_type_ids.append(rt.id)
 	# Biomes live in per-biome subfolders as <id>/<id>.tres.
 	for sub in _list_subdirs(BIOMES_DIR):
 		var path := "%s/%s/%s.tres" % [BIOMES_DIR, sub, sub]
@@ -137,13 +165,29 @@ func _build_ui() -> void:
 
 	_add_int(vbox, "Grid columns", _cols, 1, 6, func(v): _cols = v)
 	_add_int(vbox, "Grid rows", _rows, 1, 6, func(v): _rows = v)
-	_add_int(vbox, "Size slots W", _size.x, 1, 2, func(v): _size.x = v)
-	_add_int(vbox, "Size slots H", _size.y, 1, 2, func(v): _size.y = v)
+	_add_int(vbox, "Size slots W", _size.x, 1, 3, func(v): _size.x = v)
+	_add_int(vbox, "Size slots H", _size.y, 1, 3, func(v): _size.y = v)
 	_add_int(vbox, "Slot tiles", _slot_tiles, 8, 96, func(v): _slot_tiles = v)
 	_add_int(vbox, "Door width", _door_width, 1, 9, func(v): _door_width = v)
 	_add_float(vbox, "Decor density", _decor_density, 0.0, 0.4, 0.005, func(v): _decor_density = v)
 	_add_int(vbox, "Max retries", _max_retries, 0, 20, func(v): _max_retries = v)
 	_add_float(vbox, "Min reach ratio", _min_reach, 0.0, 1.0, 0.01, func(v): _min_reach = v)
+
+	var wall_hdr := Label.new()
+	wall_hdr.text = "— Wall shape —"
+	vbox.add_child(wall_hdr)
+	_add_int(vbox, "Band depth (noise)", _wall_depth, 0, 12, func(v): _wall_depth = v)
+	_add_int(vbox, "Side inset max", _wall_inset, 0, 12, func(v): _wall_inset = v)
+	_add_int(vbox, "Outer erode", _wall_erode, 0, 8, func(v): _wall_erode = v)
+	_add_int(vbox, "Noise period", _wall_period, 2, 32, func(v): _wall_period = v)
+	_add_int(vbox, "Corner radius", _corner_radius, 0, 16, func(v): _corner_radius = v)
+	_blob_cb = CheckBox.new()
+	_blob_cb.text = "Blob footprint"
+	_blob_cb.button_pressed = _blob
+	_blob_cb.toggled.connect(func(on):
+		_blob = on
+		_schedule_regen())
+	vbox.add_child(_blob_cb)
 
 	_add_checkbox(vbox, "Force fallback", _force_fallback, func(v): _force_fallback = v)
 	_add_checkbox(vbox, "Open sides (not doors)", _open_passages, func(v): _open_passages = v)
@@ -160,6 +204,9 @@ func _build_ui() -> void:
 		_base_seed = randi()
 		_regenerate())
 	vbox.add_child(reroll)
+	_seed_label = Label.new()
+	_seed_label.add_theme_font_size_override("font_size", 12)
+	vbox.add_child(_seed_label)
 
 	var hdr := Label.new()
 	hdr.text = "— Generator params —"
@@ -288,6 +335,9 @@ func _add_checkbox(parent: VBoxContainer, text: String, value: bool, cb: Callabl
 func _on_type_changed(idx: int) -> void:
 	_type_id = _room_type_ids[idx]
 	_gen_dd.selected = 0   # reset override to "from room type"
+	var rt := config.room_type_by_id(_type_id)
+	_blob = rt != null and rt.footprint_blob
+	_blob_cb.set_pressed_no_signal(_blob)
 	_sync_generator_from_selection()
 	_regenerate()
 
@@ -336,6 +386,11 @@ func _regenerate() -> void:
 	cfg.door_width_tiles = _door_width
 	cfg.max_room_retries = _max_retries
 	cfg.min_reachable_floor_ratio = _min_reach
+	cfg.wall_extra_depth = _wall_depth
+	cfg.wall_outer_erode = _wall_erode
+	cfg.wall_noise_period = _wall_period
+	cfg.corner_radius = _corner_radius
+	cfg.wall_inset_max = _wall_inset
 	# duplicate(true) SHARES external .tres subresources, so the biome/room-type defs are still
 	# the authored instances — duplicate the two we edit before mutating, or we corrupt the project.
 	for i in cfg.biomes.size():
@@ -347,6 +402,7 @@ func _regenerate() -> void:
 		if cfg.room_types[i] != null and cfg.room_types[i].id == _type_id:
 			var rt: RoomTypeDef = cfg.room_types[i].duplicate(true)
 			rt.generator = _generator   # live-edited generator overrides the authored one
+			rt.footprint_blob = _blob
 			cfg.room_types[i] = rt
 
 	var outputs: Array = []
@@ -355,6 +411,8 @@ func _regenerate() -> void:
 		var spec := _make_spec(i)
 		outputs.append(RoomBuilder.build(spec, cfg, _base_seed + i, _force_fallback))
 	_view.set_data(cfg, outputs, _cols, _rows)
+	if _seed_label != null:
+		_seed_label.text = "seed: %d" % _base_seed
 
 
 ## Synthesize a standalone RoomSpec: one type/biome/size with a passage on each enabled side,
