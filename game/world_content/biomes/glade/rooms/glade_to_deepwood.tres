@@ -13,7 +13,5 @@ metadata/_custom_type_script = "uid://b2bcviskgpwl7"
 script = ExtResource("4_wgtm2")
 id = &"glade_to_deepwood"
 generator = SubResource("Resource_egp3m")
-unique_scope = 1
-unique_allowed_biomes = Array[StringName]([&"glade"])
 feature_scene = ExtResource("2_5en2i")
 feature_data = ExtResource("1_sfdxi")

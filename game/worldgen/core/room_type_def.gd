@@ -1,15 +1,17 @@
 class_name RoomTypeDef
-## A room type: which structure generator builds its interior, how unique it is, and its
-## population budget. Where a NON-unique type may appear is decided solely by
-## each biome's room_type_table — listing it there is the opt-in.
+## A room type: which structure generator builds its interior and its population budget.
+## Where a type may appear — and any per-biome guarantees (at least one, exactly one) — is
+## decided solely by each biome's room_type_table quotas; listing it there is the opt-in.
+## WORLD-unique types (one per world, placed at L1) are the exception: they use unique_scope
+## + unique_allowed_biomes instead of the tables.
 extends Resource
 
-enum UniqueScope { NONE, BIOME, WORLD }
+enum UniqueScope { NONE, WORLD }
 
 @export var id: StringName                                     ## unique room-type identity
 @export var generator: RoomGenBase = null                      ## structure generator + its params; null = leave the room empty
-@export var unique_scope: UniqueScope = UniqueScope.NONE       ## NONE / BIOME / WORLD
-@export var unique_allowed_biomes: Array[StringName] = []      ## BIOME/WORLD-unique placement only; ignored for NONE
+@export var unique_scope: UniqueScope = UniqueScope.NONE       ## NONE / WORLD
+@export var unique_allowed_biomes: Array[StringName] = []      ## WORLD-unique placement only; ignored for NONE
 @export var enemy_groups_min: int = 0                          ## population budget
 @export var enemy_groups_max: int = 0
 

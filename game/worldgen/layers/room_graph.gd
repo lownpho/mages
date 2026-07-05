@@ -13,8 +13,9 @@ class_name RoomGraph
 ##   3. Loops + geometry: one keep-roll per NON-tree edge in canonical order; then, for every kept
 ##      edge (tree + kept loops) in canonical order, one openness roll → OPEN, else DOOR with one
 ##      offset roll. Border-contract crossings are appended afterwards (they consume NO biome RNG).
-##   4. Type assignment: pass 1 world-unique stamps (no RNG); pass 2 biome-unique, one pick-roll per
-##      placed type; pass 3 weighted fill, one sample-roll per remaining room.
+##   4. Type assignment: pass 1 world-unique stamps (no RNG); pass 2 table minimums (quotas), one
+##      pick-roll per placed room, entries in authored table order; pass 3 weighted fill, one
+##      sample-roll per remaining room.
 extends RefCounted
 
 var _cache: Dictionary = {}   ## Vector2i biome_coord -> BiomeGraph; never evicted, never iterated
@@ -127,22 +128,9 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	for ur in world_spec.unique_rooms:
 		if ur.biome_coord == biome_coord:
 			types[owner[ur.local_slot.y * s + ur.local_slot.x]] = ur.type_id
-	# Pass 2: biome-unique types, sorted by type_id, each onto a uniformly-chosen free room.
-	var biome_unique: Array[StringName] = []
-	for rt in config.room_types:
-		if rt.unique_scope == RoomTypeDef.UniqueScope.BIOME and bid in rt.unique_allowed_biomes:
-			biome_unique.append(rt.id)
-	biome_unique.sort_custom(func(p, q): return String(p) < String(q))
-	for tid in biome_unique:
-		var free: Array[int] = []
-		for i in n_rooms:
-			if types[i] == &"":
-				free.append(i)
-		if free.is_empty():
-			continue
-		types[free[rng.randi_range(0, free.size() - 1)]] = tid
-	# Pass 3: weighted fill from the biome's room-type table (the table IS the opt-in — no other
-	# filter), in canonical room order. Rooms already typed by pass 1/2 count toward max_per_biome.
+	# Pass 2: table minimums — every entry's min_per_biome is guaranteed (as far as free rooms
+	# allow): one uniform pick-roll per placed room, entries in authored table order. min == max
+	# pins an exact count (exactly one boss room); rooms stamped by pass 1 count toward quotas.
 	var table: Array = []       # applicable entries (known room type ids)
 	for e in biome.room_type_table:
 		if config.room_type_by_id(e.type_id) != null:
@@ -151,6 +139,18 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	for i in n_rooms:
 		if types[i] != &"":
 			placed[types[i]] = int(placed.get(types[i], 0)) + 1
+	for e in table:
+		for _k in range(e.min_per_biome - int(placed.get(e.type_id, 0))):
+			var free: Array[int] = []
+			for i in n_rooms:
+				if types[i] == &"":
+					free.append(i)
+			if free.is_empty():
+				break
+			types[free[rng.randi_range(0, free.size() - 1)]] = e.type_id
+			placed[e.type_id] = int(placed.get(e.type_id, 0)) + 1
+	# Pass 3: weighted fill from the biome's room-type table (the table IS the opt-in — no other
+	# filter), in canonical room order. Everything already placed counts toward max_per_biome.
 	for i in n_rooms:
 		if types[i] != &"":
 			continue

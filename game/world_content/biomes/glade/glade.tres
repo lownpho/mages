@@ -15,6 +15,7 @@ max_per_biome = 20
 [sub_resource type="Resource" id="rtt_arena"]
 script = ExtResource("2_rtte")
 type_id = &"arena"
+min_per_biome = 1
 max_per_biome = 1
 
 [sub_resource type="Resource" id="rtt_traversal"]
@@ -27,6 +28,27 @@ script = ExtResource("2_rtte")
 type_id = &"cave_pocket"
 weight = 2
 max_per_biome = 6
+
+[sub_resource type="Resource" id="rtt_boss"]
+script = ExtResource("2_rtte")
+type_id = &"boss"
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
+
+[sub_resource type="Resource" id="rtt_rare"]
+script = ExtResource("2_rtte")
+type_id = &"rare"
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
+
+[sub_resource type="Resource" id="rtt_exit"]
+script = ExtResource("2_rtte")
+type_id = &"glade_to_deepwood"
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
 
 [sub_resource type="Resource" id="sp_sproutling"]
 script = ExtResource("4_ste")
@@ -98,6 +120,6 @@ id = &"glade"
 display_color = Color(0.55, 0.82, 0.42, 1)
 open_passage_chance = 0.8
 decor_density = 0.05
-room_type_table = Array[ExtResource("2_rtte")]([SubResource("rtt_field"), SubResource("rtt_arena"), SubResource("rtt_traversal"), SubResource("rtt_cave")])
+room_type_table = Array[ExtResource("2_rtte")]([SubResource("rtt_field"), SubResource("rtt_arena"), SubResource("rtt_traversal"), SubResource("rtt_cave"), SubResource("rtt_boss"), SubResource("rtt_rare"), SubResource("rtt_exit")])
 spawn_tables = Array[ExtResource("3_rst")]([SubResource("st_field"), SubResource("st_arena"), SubResource("st_cave"), SubResource("st_boss"), SubResource("st_rare")])
 presentation = ExtResource("7_pres")

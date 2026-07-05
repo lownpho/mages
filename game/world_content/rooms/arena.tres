@@ -14,7 +14,5 @@ gap_width = 3
 script = ExtResource("1_30v7j")
 id = &"arena"
 generator = SubResource("Resource_argen")
-unique_scope = 1
-unique_allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
 enemy_groups_min = 2
 enemy_groups_max = 4

@@ -9,7 +9,7 @@ extends Resource
 @export_range(0.0, 1.0, 0.01) var open_passage_chance: float = 0.5   ## P(passage is OPEN vs DOOR) in L2
 @export_range(-1.0, 1.0, 0.01) var room_merge_chance: float = -1.0   ## P(slot merges into a bigger room) in L2; -1 = inherit GenConfig.room_merge_chance
 @export_range(0.0, 1.0, 0.005) var decor_density: float = 0.0  ## per-tile P(FLOOR -> DECOR_FLOOR)
-@export var room_type_table: Array[RoomTypeTableEntry] = []    ## weighted fill table — the SOLE opt-in for non-unique room types
+@export var room_type_table: Array[RoomTypeTableEntry] = []    ## quota (min/max) + weighted fill table — the SOLE opt-in for non-WORLD-unique room types
 @export var spawn_tables: Array[RoomSpawnTable] = []           ## one enemy table per room type
 
 ## Logical-class → tileset art mapping. PRESENTATION only: deliberately outside CONFIG_HASH

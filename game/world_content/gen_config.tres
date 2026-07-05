@@ -18,7 +18,7 @@
 
 [resource]
 script = ExtResource("13_lk1mk")
-gen_version = 8
+gen_version = 9
 room_slot_tiles = 32
 biome_slots = 8
 world_width_biomes = 1

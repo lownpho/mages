@@ -5,7 +5,5 @@
 [resource]
 script = ExtResource("1_rare")
 id = &"rare"
-unique_scope = 1
-unique_allowed_biomes = Array[StringName]([&"glade"])
 enemy_groups_min = 1
 enemy_groups_max = 1

@@ -21,6 +21,7 @@ max_per_biome = 10
 [sub_resource type="Resource" id="rtt_arena"]
 script = ExtResource("2_rtte")
 type_id = &"arena"
+min_per_biome = 1
 max_per_biome = 1
 
 [sub_resource type="Resource" id="rtt_traversal"]

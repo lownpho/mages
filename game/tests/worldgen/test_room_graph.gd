@@ -22,6 +22,7 @@ func _ready() -> void:
 	_test_contracts(fails)
 	_test_partition(fails)
 	_test_world_unique(fails)
+	_test_quotas(fails)
 
 	if fails.is_empty():
 		print("ALL PASS")
@@ -268,3 +269,27 @@ func _test_world_unique(fails: Array[String]) -> void:
 						% [rt.id, count, expected, seed])
 				return
 	print("world_unique: 30 seeds, each world-unique type placed at most once")
+
+
+## Every biome's room-type table quotas hold: min_per_biome <= count <= max_per_biome.
+func _test_quotas(fails: Array[String]) -> void:
+	for i in 30:
+		var seed := 48_611 * i + 3
+		var world := _build_world(seed)
+		var spec: WorldSpec = world["spec"]
+		var graphs: Dictionary = world["graphs"]
+		for by in spec.grid_h:
+			for bx in spec.grid_w:
+				var c := Vector2i(bx, by)
+				var biome := _config.biome_by_id(spec.biome_at(c))
+				var g: BiomeGraph = graphs[c]
+				for e in biome.room_type_table:
+					var count := 0
+					for u in g.rooms:
+						if u.type_id == e.type_id:
+							count += 1
+					if count < e.min_per_biome or count > e.max_per_biome:
+						fails.append("quotas: %s '%s' count %d outside [%d, %d] at seed %d"
+								% [biome.id, e.type_id, count, e.min_per_biome, e.max_per_biome, seed])
+						return
+	print("quotas: 30 seeds, every table min/max satisfied")

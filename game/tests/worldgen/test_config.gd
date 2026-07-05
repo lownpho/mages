@@ -54,15 +54,17 @@ func _ready() -> void:
 	if cfg.biome_by_id(cfg.starting_biome) == null:
 		fails.append("starting biome '%s' missing" % cfg.starting_biome)
 
-	# 3. Per-biome free rooms >= biome-unique type count.
-	var slots_per_biome := cfg.biome_slots * cfg.biome_slots
+	# 3. Per-biome quotas must fit the worst-case room count (all 2x2 merges), and min <= max.
+	@warning_ignore("integer_division")
+	var worst_case_rooms := (cfg.biome_slots * cfg.biome_slots) / 4
 	for b in cfg.biomes:
-		var unique_count := 0
-		for rt in cfg.room_types:
-			if rt.unique_scope == RoomTypeDef.UniqueScope.BIOME and rt.unique_allowed_biomes.has(b.id):
-				unique_count += 1
-		if slots_per_biome < unique_count:
-			fails.append("biome %s: %d slots < %d biome-unique types" % [b.id, slots_per_biome, unique_count])
+		var quota := 0
+		for e in b.room_type_table:
+			quota += e.min_per_biome
+			if e.min_per_biome > e.max_per_biome:
+				fails.append("biome %s: '%s' min_per_biome > max_per_biome" % [b.id, e.type_id])
+		if quota > worst_case_rooms:
+			fails.append("biome %s: quota sum %d > worst-case %d rooms" % [b.id, quota, worst_case_rooms])
 
 	# 4. Adjacency rule ids reference existing biomes.
 	if cfg.adjacency == null:
@@ -113,6 +115,9 @@ func _ready() -> void:
 	cfg.room_types[0].enemy_groups_max += 1
 	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "room type budget")
 	cfg.room_types[0].enemy_groups_max -= 1
+	cfg.biomes[0].room_type_table[0].min_per_biome += 1
+	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "table min_per_biome")
+	cfg.biomes[0].room_type_table[0].min_per_biome -= 1
 	var scatter: RoomGenScatter = null
 	for rt in cfg.room_types:
 		if rt.generator is RoomGenScatter:
