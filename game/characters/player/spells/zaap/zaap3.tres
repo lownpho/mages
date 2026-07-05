@@ -15,12 +15,13 @@ region = Rect2(40, 56, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-bounces = 6
+bounces = 24
+speed_tiles = 32.0
 projectile_texture = SubResource("AtlasTexture_bolt")
 effect_scene = ExtResource("2_scene")
 cooldown = 2.0
 mana_cost = 15
-base_damage = 25.0
+base_damage = 30.0
 skill_scaling = 1.2
 icon = SubResource("AtlasTexture_f45xv")
-max_mana_modifier = 20
+speed_modifier = 6
