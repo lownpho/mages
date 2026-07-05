@@ -3,7 +3,7 @@ extends CharacterBody2D
 ## Debug target: stands still and never dies. Hits still flow through its
 ## Hurtbox, so GlobalEvent.entity_damaged fires and the debug overlay tallies
 ## the damage — it just absorbs everything instead of losing health.
-## Reuses the small demon sprite.
+## Uses the generic placeholder sprite.
 
 func _ready() -> void:
 	add_to_group("enemies")

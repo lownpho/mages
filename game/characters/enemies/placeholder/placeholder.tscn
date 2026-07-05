@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://characters/enemies/placeholder/placeholder.gd" id="1_placeholder"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
+[ext_resource type="Texture2D" uid="uid://d4art0jayid4k" path="res://characters/enemies/placeholder/placeholder.png" id="3_placeholder"]
+[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="4_theme"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_placeholder"]
+radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_placeholder0"]
+atlas = ExtResource("3_placeholder")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_placeholder1"]
+atlas = ExtResource("3_placeholder")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_placeholder"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_placeholder0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_placeholder1")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[node name="Placeholder" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_placeholder")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_placeholder")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_placeholder")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." instance=ExtResource("2_hurt")]
+collision_mask = 256
+
+[node name="NameLabel" type="Label" parent="."]
+offset_left = -30.0
+offset_top = -16.0
+offset_right = 30.0
+offset_bottom = -8.0
+theme = ExtResource("4_theme")
+text = "that's a placeholder"
+horizontal_alignment = 1
+vertical_alignment = 1

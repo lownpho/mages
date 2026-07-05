@@ -98,7 +98,7 @@ enemies = Array[ExtResource("4_ste")]([SubResource("sp_thornback")])
 
 [sub_resource type="Resource" id="sp_boss"]
 script = ExtResource("4_ste")
-enemy_id = &"dummy"
+enemy_id = &"placeholder"
 
 [sub_resource type="Resource" id="st_boss"]
 script = ExtResource("3_rst")
