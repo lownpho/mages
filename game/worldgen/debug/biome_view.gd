@@ -106,7 +106,7 @@ func _draw() -> void:
 		var outline := Color(0.6, 0.6, 0.7)
 		if rt != null and rt.unique_scope == RoomTypeDef.UniqueScope.WORLD:
 			outline = Color.GOLD
-		elif rt != null and rt.unique_scope == RoomTypeDef.UniqueScope.BIOME:
+		elif rt != null and _is_quota_type(u.type_id):
 			outline = Color.CYAN
 		draw_rect(rect.grow(-2.0), outline, false, 2.0)
 		var tag := String(u.type_id).substr(0, 3).to_upper()
@@ -120,6 +120,18 @@ func _draw() -> void:
 	draw_string(font, Vector2(MARGIN, view.y - 12), "biome %s  [%s]  rooms:%d   arrows/click select"
 			% [bc, _graph.rooms[0].biome_id, _graph.rooms.size()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
+
+
+## Types this biome's table guarantees (min_per_biome >= 1) — replaces the old BIOME-unique
+## highlight.
+func _is_quota_type(tid: StringName) -> bool:
+	var biome := _config.biome_by_id(_graph.rooms[0].biome_id)
+	if biome == null:
+		return false
+	for e in biome.room_type_table:
+		if e.type_id == tid:
+			return e.min_per_biome >= 1
+	return false
 
 
 func _draw_passage(lt: Vector2, size: Vector2i, p, origin: Vector2, slot_px: float, ppt: float) -> void:
