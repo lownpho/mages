@@ -6,8 +6,9 @@ class_name RoomGraph
 ## SINGLE per-biome RNG, seeded seed_for([world_seed, NS_ROOM_GRAPH, bx, by]), consumed in EXACTLY
 ## this order:
 ##   1. Slot merging: row-major over slots; ONE merge roll per ELIGIBLE slot (not already merged,
-##      not a world-unique host), regardless of outcome. On a hit, shapes 2x2, 2x1, 1x2 are tried
-##      in that fixed order (geometry only, no RNG); first fit wins.
+##      not a world-unique host), regardless of outcome. On a hit, ONE shape roll picks the ladder
+##      — big shapes (3x3, 3x2, 2x3) prepended at big_merge_chance — then shapes are tried in
+##      fixed order (geometry only, no further RNG); first fit wins.
 ##   2. Spanning tree: canonical edge list (rooms row-major, then neighbour), Fisher-Yates shuffle,
 ##      randomized Kruskal via union-find.
 ##   3. Loops + geometry: one keep-roll per NON-tree edge in canonical order; then, for every kept
@@ -43,6 +44,7 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	# Per-biome override (sentinel -1 inherits the global dial), mirroring open_passage_chance.
 	var merge_chance := biome.room_merge_chance if biome.room_merge_chance >= 0.0 else config.room_merge_chance
 	var threshold_merge := WgHash.threshold(merge_chance)
+	var threshold_big := WgHash.threshold(config.big_merge_chance)
 	var threshold_loop := WgHash.threshold(config.extra_connection_chance)
 	var openness_threshold := WgHash.threshold(biome.open_passage_chance)
 
@@ -67,10 +69,14 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 			if unique_here.has(here):
 				_claim(owner, room_top, room_size, s, here, Vector2i.ONE)
 				continue
-			# Eligible slot: consume exactly one merge roll regardless of outcome.
+			# Eligible slot: consume exactly one merge roll regardless of outcome; on a hit,
+			# exactly one shape roll picks the candidate ladder.
 			var shape := Vector2i.ONE
 			if WgHash.chance(rng, threshold_merge):
-				for sh in [Vector2i(2, 2), Vector2i(2, 1), Vector2i(1, 2)]:
+				var ladder: Array = [Vector2i(2, 2), Vector2i(2, 1), Vector2i(1, 2)]
+				if WgHash.chance(rng, threshold_big):
+					ladder = [Vector2i(3, 3), Vector2i(3, 2), Vector2i(2, 3)] + ladder
+				for sh in ladder:
 					if _shape_fits(owner, unique_here, s, here, sh):
 						shape = sh
 						break
@@ -140,14 +146,21 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 		if types[i] != &"":
 			placed[types[i]] = int(placed.get(types[i], 0)) + 1
 	for e in table:
+		# Quota placement prefers rooms with at least the type's min_slots merged slots (a boss
+		# wants a big arena) but falls back to any free room — merging never guarantees sizes.
+		var want_slots: int = config.room_type_by_id(e.type_id).min_slots
 		for _k in range(e.min_per_biome - int(placed.get(e.type_id, 0))):
 			var free: Array[int] = []
+			var free_big: Array[int] = []
 			for i in n_rooms:
 				if types[i] == &"":
 					free.append(i)
-			if free.is_empty():
+					if room_size[i].x * room_size[i].y >= want_slots:
+						free_big.append(i)
+			var pool := free_big if not free_big.is_empty() else free
+			if pool.is_empty():
 				break
-			types[free[rng.randi_range(0, free.size() - 1)]] = e.type_id
+			types[pool[rng.randi_range(0, pool.size() - 1)]] = e.type_id
 			placed[e.type_id] = int(placed.get(e.type_id, 0)) + 1
 	# Pass 3: weighted fill from the biome's room-type table (the table IS the opt-in — no other
 	# filter), in canonical room order. Everything already placed counts toward max_per_biome.

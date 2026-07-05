@@ -12,6 +12,8 @@ enum UniqueScope { NONE, WORLD }
 @export var generator: RoomGenBase = null                      ## structure generator + its params; null = leave the room empty
 @export var unique_scope: UniqueScope = UniqueScope.NONE       ## NONE / WORLD
 @export var unique_allowed_biomes: Array[StringName] = []      ## WORLD-unique placement only; ignored for NONE
+@export var min_slots: int = 1                                 ## quota placement prefers rooms of >= this many merged slots (soft — falls back to any free room)
+@export var footprint_blob := false                            ## interior becomes an organic blob pocket; corridors tunnel through the surrounding mass
 @export var enemy_groups_min: int = 0                          ## population budget
 @export var enemy_groups_max: int = 0
 
@@ -35,6 +37,8 @@ func hash_fold(h: int) -> int:
 		h = WgHash.fold_var(h, 0)
 	for b in unique_allowed_biomes:
 		h = WgHash.fold_var(h, b)
+	h = WgHash.fold_var(h, min_slots)
+	h = WgHash.fold_var(h, footprint_blob)
 	h = WgHash.fold_var(h, enemy_groups_min)
 	h = WgHash.fold_var(h, enemy_groups_max)
 	return h

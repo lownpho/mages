@@ -108,6 +108,12 @@ func _ready() -> void:
 	dup = cfg.duplicate(true)
 	dup.corner_radius += 1
 	_expect_changed(fails, h1, dup.compute_hash(), "corner_radius")
+	dup = cfg.duplicate(true)
+	dup.wall_inset_max += 1
+	_expect_changed(fails, h1, dup.compute_hash(), "wall_inset_max")
+	dup = cfg.duplicate(true)
+	dup.big_merge_chance += 0.1
+	_expect_changed(fails, h1, dup.compute_hash(), "big_merge_chance")
 
 	cfg.biomes[0].open_passage_chance += 0.1
 	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "biome open_passage_chance")

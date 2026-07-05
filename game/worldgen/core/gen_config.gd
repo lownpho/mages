@@ -19,6 +19,7 @@ extends Resource
 @export_group("Graph shape")
 @export_range(0.0, 1.0, 0.01) var extra_connection_chance: float = 0.25  ## keep-prob for non-tree edges (loops)
 @export_range(0.0, 1.0, 0.01) var room_merge_chance: float = 0.15        ## per-slot merge attempt prob
+@export_range(0.0, 1.0, 0.01) var big_merge_chance: float = 0.0          ## P(a merge hit tries 3-slot shapes first)
 @export var doors_per_biome_border: int = 2                              ## crossings per shared biome border
 
 @export_group("Interior")
@@ -29,6 +30,7 @@ extends Resource
 @export var wall_outer_erode: int = 0                                    ## max tiles the clearing-facing wall edge recedes (0 = straight outer edge); void-facing world edges never erode
 @export var wall_noise_period: int = 4                                   ## tiles between wall-noise lattice samples
 @export var corner_radius: int = 3                                       ## room-corner rounding radius, varied ±1 per corner (0 = square)
+@export var wall_inset_max: int = 0                                      ## max per-side base wall inset, hashed per room side — asymmetric margins so rooms stop filling their slots evenly
 
 @export_group("Well-known ids")
 @export var starting_biome: StringName = &"glade"           ## hosts the player spawn; presentation fallback
@@ -100,6 +102,7 @@ func _compute_hash_uncached() -> int:
 	h = WgHash.fold_var(h, door_width_tiles)
 	h = WgHash.fold_var(h, extra_connection_chance)
 	h = WgHash.fold_var(h, room_merge_chance)
+	h = WgHash.fold_var(h, big_merge_chance)
 	h = WgHash.fold_var(h, doors_per_biome_border)
 	h = WgHash.fold_var(h, max_room_retries)
 	h = WgHash.fold_var(h, min_reachable_floor_ratio)
@@ -108,6 +111,7 @@ func _compute_hash_uncached() -> int:
 	h = WgHash.fold_var(h, wall_outer_erode)
 	h = WgHash.fold_var(h, wall_noise_period)
 	h = WgHash.fold_var(h, corner_radius)
+	h = WgHash.fold_var(h, wall_inset_max)
 	h = WgHash.fold_var(h, starting_biome)
 	h = WgHash.fold_var(h, fallback_room_type)
 	# Content registries, fixed order.
