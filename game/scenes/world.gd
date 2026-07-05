@@ -14,3 +14,4 @@ func _ready() -> void:
 	# Deterministic spawn: the fallback-type room nearest the starting biome's center.
 	_player.global_position = _streamer.find_spawn_position()
 	_streamer.target = _player
+	GlobalEvent.world_ready.emit(_streamer)

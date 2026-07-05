@@ -26,6 +26,11 @@ signal loot_dropped(item: ItemResource, position: Vector2)
 # Cooldowns are keyed by the spell resource, not the slot it was cast from.
 signal spell_cooldown_started(spell: SpellResource, duration: float)
 
+# World signals
+# Emitted by world.gd once the overworld is built and the player is placed; carries the
+# streamer so listeners (minimap) can read the deterministic room caches.
+signal world_ready(streamer: WorldStreamer)
+
 # Debug signals
 # Emitted by every Hurtbox on a successful hit. victim is the character struck,
 # source is the bullet/damage area. The debug overlay tallies these.

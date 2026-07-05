@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
 [ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
 [ext_resource type="Texture2D" uid="uid://cwj1lrhgbuqph" path="res://characters/player/focus_aura.png" id="8_aura"]
+[ext_resource type="Texture2D" uid="uid://dhg4w5reodlbn" path="res://characters/player/low_health_aura.png" id="9_lowhp"]
+[ext_resource type="Texture2D" uid="uid://beaugy60bvijb" path="res://characters/player/low_mana_aura.png" id="10_lowmp"]
 
 [sub_resource type="Curve" id="Curve_5dc8e"]
 _data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -71,7 +73,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_58jvb")
 }],
-"loop": true,
+"loop": 1,
 "name": &"channel",
 "speed": 2.0
 }, {
@@ -82,7 +84,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_gqopd")
 }],
-"loop": true,
+"loop": 1,
 "name": &"focus",
 "speed": 2.0
 }, {
@@ -99,7 +101,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dirf7")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 5.0
 }, {
@@ -116,7 +118,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3t07l")
 }],
-"loop": true,
+"loop": 1,
 "name": &"run",
 "speed": 5.0
 }]
@@ -152,8 +154,52 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_aura3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"flow",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lowhp0"]
+atlas = ExtResource("9_lowhp")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lowhp1"]
+atlas = ExtResource("9_lowhp")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lowhp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lowhp0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lowhp1")
+}],
+"loop": 1,
+"name": &"pulse",
+"speed": 3.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lowmp0"]
+atlas = ExtResource("10_lowmp")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lowmp1"]
+atlas = ExtResource("10_lowmp")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lowmp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lowmp0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lowmp1")
+}],
+"loop": 1,
+"name": &"pulse",
 "speed": 8.0
 }]
 
@@ -163,8 +209,8 @@ motion_mode = 1
 script = ExtResource("1_xxgcw")
 base_skill = 0
 base_speed = 30
-focus_mana_per_second = 20.0
-focus_ramp_time = 2.0
+focus_mana_per_second = 36.0
+focus_ramp_time = 1.0
 focus_curve = SubResource("Curve_5dc8e")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1775160487]
@@ -182,6 +228,20 @@ z_index = 1
 sprite_frames = SubResource("SpriteFrames_aura")
 animation = &"flow"
 autoplay = "flow"
+
+[node name="LowHealthAura" type="AnimatedSprite2D" parent="." unique_id=555001001]
+visible = false
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_lowhp")
+animation = &"pulse"
+autoplay = "pulse"
+
+[node name="LowManaAura" type="AnimatedSprite2D" parent="." unique_id=555001002]
+visible = false
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_lowmp")
+animation = &"pulse"
+autoplay = "pulse"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=832949489]
 

@@ -469,10 +469,11 @@ func _same_terrain(cls: int, kind: int) -> bool:
 	return cls == RoomBuilder.FLOOR or cls == RoomBuilder.DECOR_FLOOR
 
 
-## Logical tile class at any world tile, resolved through the room cache; -1 outside the world.
-func _class_at(wx: int, wy: int) -> int:
-	if wx < 0 or wy < 0:
-		return -1
+## RoomSpec covering a world tile, resolved through the graph cache; null outside the world.
+## Public read-through — the minimap uses it to map the player's tile to a discoverable room.
+func room_spec_at_tile(wx: int, wy: int) -> RoomSpec:
+	if world_spec == null or wx < 0 or wy < 0:
+		return null
 	var ss := config.room_slot_tiles
 	var bs := config.biome_slots
 	@warning_ignore_start("integer_division")
@@ -481,14 +482,21 @@ func _class_at(wx: int, wy: int) -> int:
 	var bc := Vector2i(sx / bs, sy / bs)
 	@warning_ignore_restore("integer_division")
 	if sx >= world_spec.grid_w * bs or sy >= world_spec.grid_h * bs:
-		return -1
+		return null
 	if world_spec.biome_at(bc) == &"":
-		return -1
+		return null
 	var graph := _room_graphs.get_biome_graph(world_spec, bc, config)
-	var spec := graph.room_at(Vector2i(sx % bs, sy % bs))
+	return graph.room_at(Vector2i(sx % bs, sy % bs))
+
+
+## Logical tile class at any world tile, resolved through the room cache; -1 outside the world.
+func _class_at(wx: int, wy: int) -> int:
+	var spec := room_spec_at_tile(wx, wy)
+	if spec == null:
+		return -1
 	var room := get_room_output(spec)
-	var lx := wx - room.origin_slot.x * ss
-	var ly := wy - room.origin_slot.y * ss
+	var lx := wx - room.origin_slot.x * config.room_slot_tiles
+	var ly := wy - room.origin_slot.y * config.room_slot_tiles
 	return room.tile_grid[ly * room.width + lx]
 
 
