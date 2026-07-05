@@ -1,8 +1,24 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://p5m3264e3n3h"]
 
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_dpl6y"]
+[ext_resource type="Resource" uid="uid://vn3e6lww7ex0" path="res://characters/player/weapons/wand/wand1.tres" id="3_wand"]
+[ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="4_zaap"]
+
+[sub_resource type="Resource" id="Resource_wand"]
+script = ExtResource("2_dpl6y")
+item = ExtResource("3_wand")
+chance = 0.1
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_zaap"]
+script = ExtResource("2_dpl6y")
+item = ExtResource("4_zaap")
+chance = 0.1
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]
 script = ExtResource("1")
 display_name = "Wasp"
-max_health = 12
+max_health = 18
+drops = Array[ExtResource("2_dpl6y")]([SubResource("Resource_wand"), SubResource("Resource_zaap")])

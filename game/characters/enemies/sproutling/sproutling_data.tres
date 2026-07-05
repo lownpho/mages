@@ -2,65 +2,23 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
-[ext_resource type="Resource" uid="uid://dmai2k7j00tt2" path="res://characters/player/robes/health_robe1.tres" id="2_wnf53"]
-[ext_resource type="Resource" uid="uid://dam52y7jqs7hp" path="res://characters/player/robes/mana_robe1.tres" id="3_2p38k"]
-[ext_resource type="Resource" uid="uid://ue4m1mm47la" path="res://characters/player/robes/vitality_robe1.tres" id="4_yqwyk"]
-[ext_resource type="Resource" uid="uid://j00f2n4yqpe1" path="res://characters/player/weapons/rune/rune1.tres" id="5_h4tn1"]
-[ext_resource type="Resource" uid="uid://cjmpm744t7n6h" path="res://characters/player/weapons/staff/staff1.tres" id="6_10tuk"]
-[ext_resource type="Resource" uid="uid://vn3e6lww7ex0" path="res://characters/player/weapons/wand/wand1.tres" id="7_rpk1l"]
-[ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="8_gkpcc"]
-[ext_resource type="Resource" uid="uid://3kojoil7mnhh" path="res://characters/player/spells/fireball/fireball1.tres" id="9_5ng4x"]
+[ext_resource type="Resource" uid="uid://cjmpm744t7n6h" path="res://characters/player/weapons/staff/staff1.tres" id="2_staff"]
+[ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="3_heal"]
 
-[sub_resource type="Resource" id="Resource_oaiiy"]
+[sub_resource type="Resource" id="Resource_staff"]
 script = ExtResource("1_dpl6y")
-item = ExtResource("2_wnf53")
-chance = 0.05
+item = ExtResource("2_staff")
+chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
-[sub_resource type="Resource" id="Resource_v01xi"]
+[sub_resource type="Resource" id="Resource_heal"]
 script = ExtResource("1_dpl6y")
-item = ExtResource("3_2p38k")
-chance = 0.05
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_sd7d4"]
-script = ExtResource("1_dpl6y")
-item = ExtResource("4_yqwyk")
-chance = 0.05
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_qlsg3"]
-script = ExtResource("1_dpl6y")
-item = ExtResource("5_h4tn1")
-chance = 0.05
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_j068l"]
-script = ExtResource("1_dpl6y")
-item = ExtResource("6_10tuk")
-chance = 0.05
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_bcpp6"]
-script = ExtResource("1_dpl6y")
-item = ExtResource("7_rpk1l")
-chance = 0.05
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_cxen8"]
-script = ExtResource("1_dpl6y")
-item = ExtResource("8_gkpcc")
-chance = 0.05
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_o7waf"]
-script = ExtResource("1_dpl6y")
-item = ExtResource("9_5ng4x")
-chance = 0.02
+item = ExtResource("3_heal")
+chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]
 script = ExtResource("1")
 display_name = "Sproutling"
-max_health = 15
-drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_oaiiy"), SubResource("Resource_v01xi"), SubResource("Resource_sd7d4"), SubResource("Resource_qlsg3"), SubResource("Resource_j068l"), SubResource("Resource_bcpp6"), SubResource("Resource_cxen8"), SubResource("Resource_o7waf")])
+max_health = 23
+drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_staff"), SubResource("Resource_heal")])

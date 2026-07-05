@@ -55,5 +55,5 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 [resource]
 script = ExtResource("1")
 display_name = "Fae"
-max_health = 1000
+max_health = 1500
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_fae_hr2"), SubResource("Resource_fae_mr2"), SubResource("Resource_fae_vr2"), SubResource("Resource_fae_rune2"), SubResource("Resource_fae_staff2"), SubResource("Resource_fae_wand2"), SubResource("Resource_fae_jimmy")])

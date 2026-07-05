@@ -6,4 +6,4 @@
 [resource]
 script = ExtResource("1")
 display_name = "Viper"
-max_health = 120
+max_health = 180
