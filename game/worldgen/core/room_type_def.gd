@@ -16,6 +16,7 @@ enum UniqueScope { NONE, WORLD }
 @export var footprint_blob := false                            ## interior becomes an organic blob pocket; corridors tunnel through the surrounding mass
 @export var enemy_groups_min: int = 0                          ## population budget
 @export var enemy_groups_max: int = 0
+@export var scale_groups_with_size := true                     ## multiply the budget by merged slot area (w*h); off for exactly-one encounters (boss/rare/shrine)
 
 ## One specific scene (door, sign, altar, portal) placed at the room centre and instantiated by
 ## WgEntitySpawner. `feature_data` is an optional Resource applied to the instance via its
@@ -41,4 +42,5 @@ func hash_fold(h: int) -> int:
 	h = WgHash.fold_var(h, footprint_blob)
 	h = WgHash.fold_var(h, enemy_groups_min)
 	h = WgHash.fold_var(h, enemy_groups_max)
+	h = WgHash.fold_var(h, scale_groups_with_size)
 	return h

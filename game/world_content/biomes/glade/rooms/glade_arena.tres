@@ -13,5 +13,5 @@ gap_count = 8
 script = ExtResource("2_3shig")
 id = &"glade_arena"
 generator = SubResource("Resource_argen")
-enemy_groups_min = 2
-enemy_groups_max = 4
+enemy_groups_min = 4
+enemy_groups_max = 8

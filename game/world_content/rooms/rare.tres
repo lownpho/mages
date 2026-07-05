@@ -7,3 +7,4 @@ script = ExtResource("1_rare")
 id = &"rare"
 enemy_groups_min = 1
 enemy_groups_max = 1
+scale_groups_with_size = false

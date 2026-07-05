@@ -13,4 +13,4 @@ script = ExtResource("1_grv")
 id = &"grove"
 generator = SubResource("Resource_grvg")
 footprint_blob = true
-enemy_groups_max = 1
+enemy_groups_max = 2

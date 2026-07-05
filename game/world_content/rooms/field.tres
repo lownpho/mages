@@ -14,5 +14,5 @@ clump_max = 8
 script = ExtResource("1_to306")
 id = &"field"
 generator = SubResource("Resource_scgen")
-enemy_groups_min = 1
-enemy_groups_max = 3
+enemy_groups_min = 2
+enemy_groups_max = 6

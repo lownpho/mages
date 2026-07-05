@@ -36,7 +36,13 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 	# and survives interior retries.
 	var identities: Array = []   # of {"enemy_id": ...}
 	var spawn_entries: Array = _entries_for(biome.spawn_tables, spec.type_id, "enemies")
-	var groups := rng.randi_range(rt.enemy_groups_min, rt.enemy_groups_max)
+	var groups_min := rt.enemy_groups_min
+	var groups_max := rt.enemy_groups_max
+	if rt.scale_groups_with_size:
+		var area := maxi(1, spec.size_slots.x * spec.size_slots.y)
+		groups_min *= area
+		groups_max *= area
+	var groups := rng.randi_range(groups_min, groups_max)
 	for _g in groups:
 		var entry: SpawnTableEntry = _weighted_pick(rng, spawn_entries)
 		if entry == null:
