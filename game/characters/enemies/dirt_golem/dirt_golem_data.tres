@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://bomg127lnuwmk"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_toonh"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Dirt Golem"
+max_health = 120
