@@ -9,6 +9,7 @@
 [ext_resource type="Resource" uid="uid://o0434amjj1t8" path="res://characters/player/weapons/staff/staff2.tres" id="6_staff2"]
 [ext_resource type="Resource" uid="uid://d2h6buka54kcn" path="res://characters/player/weapons/wand/wand2.tres" id="7_wand2"]
 [ext_resource type="Resource" uid="uid://c1sm2y5p435xa" path="res://characters/player/spells/jimmy/jimmy1.tres" id="8_jimmy"]
+[ext_resource type="Texture2D" uid="uid://cril2nlvqb5im" path="res://characters/enemies/fae/fae.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_fae_hr2"]
 script = ExtResource("1_dpl6y")
@@ -52,8 +53,15 @@ item = ExtResource("8_jimmy")
 chance = 1.0
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 16)
+
 [resource]
 script = ExtResource("1")
 display_name = "Fae"
+icon = SubResource("AtlasTexture_icon")
+biome = &"glade"
+rarity = 2
 max_health = 1500
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_fae_hr2"), SubResource("Resource_fae_mr2"), SubResource("Resource_fae_vr2"), SubResource("Resource_fae_rune2"), SubResource("Resource_fae_staff2"), SubResource("Resource_fae_wand2"), SubResource("Resource_fae_jimmy")])

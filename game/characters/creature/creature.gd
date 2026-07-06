@@ -106,6 +106,8 @@ func face(dir_x: float) -> void:
 		sprite.flip_h = dir_x < 0.0
 
 func die() -> void:
+	if data:
+		GlobalEvent.creature_died.emit(data, global_position)
 	for drop in drops:
 		if drop.roll():
 			GlobalEvent.loot_dropped.emit(drop.item, global_position)

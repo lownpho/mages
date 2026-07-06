@@ -22,6 +22,20 @@ signal item_dropped(item: ItemResource)
 # Emitted when an enemy dies and a loot roll succeeds, once per dropped item
 signal loot_dropped(item: ItemResource, position: Vector2)
 
+# Emitted when the player steps into a biome, including the starting biome at spawn.
+# Relayed from WorldStreamer.biome_entered by world.gd; dungeon scenes can emit it
+# directly on entry. The bestiary reveals a biome's section on first visit.
+signal biome_entered(biome_id: StringName)
+
+# Bestiary signals
+# Emitted by Creature.die() for any creature with an authored stat sheet (summons
+# carry no `data`, so they never register).
+signal creature_died(data: CreatureResource, position: Vector2)
+# First kill of an enemy type — its bestiary entry just unlocked.
+signal bestiary_entry_unlocked(enemy_id: StringName)
+# Every counted kill, the unlocking one included.
+signal bestiary_updated(enemy_id: StringName, kills: int)
+
 # Spell signals
 # Cooldowns are keyed by the spell resource, not the slot it was cast from.
 signal spell_cooldown_started(spell: SpellResource, duration: float)

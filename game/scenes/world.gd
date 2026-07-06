@@ -13,5 +13,8 @@ func _ready() -> void:
 	_streamer.build_world(world_seed if world_seed != 0 else randi())
 	# Deterministic spawn: the fallback-type room nearest the starting biome's center.
 	_player.global_position = _streamer.find_spawn_position()
+	# Relay onto the game-wide bus: worldgen stays self-contained, game systems
+	# (bestiary) listen on GlobalEvent.
+	_streamer.biome_entered.connect(GlobalEvent.biome_entered.emit)
 	_streamer.target = _player
 	GlobalEvent.world_ready.emit(_streamer)

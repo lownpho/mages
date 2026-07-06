@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_aqukq"]
 [ext_resource type="Resource" uid="uid://dhro38eswi754" path="res://characters/player/hats/skill_speed_hat1.tres" id="2_speedhat"]
 [ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="3_zaap"]
+[ext_resource type="Texture2D" uid="uid://smdd7tg3b041" path="res://characters/enemies/hopper/hopper.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_speedhat"]
 script = ExtResource("1_aqukq")
@@ -17,8 +18,14 @@ item = ExtResource("3_zaap")
 chance = 0.25
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
 [resource]
 script = ExtResource("1")
 display_name = "Hopper"
+icon = SubResource("AtlasTexture_icon")
+biome = &"glade"
 max_health = 38
 drops = Array[ExtResource("1_aqukq")]([SubResource("Resource_speedhat"), SubResource("Resource_zaap")])

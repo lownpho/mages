@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3]
 
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ca1evdbxy8s54" path="res://characters/enemies/golem/golem.png" id="icon_png"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 16)
 
 [resource]
 script = ExtResource("1")
 display_name = "Golem"
+icon = SubResource("AtlasTexture_icon")
+biome = &"dungeon"
 max_health = 120

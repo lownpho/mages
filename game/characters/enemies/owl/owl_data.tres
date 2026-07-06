@@ -2,8 +2,15 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_ldb4g"]
+[ext_resource type="Texture2D" uid="uid://cvuwtrt0gmqdj" path="res://characters/enemies/owl/owl.png" id="icon_png"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
 
 [resource]
 script = ExtResource("1")
 display_name = "Owl"
+icon = SubResource("AtlasTexture_icon")
+biome = &"deepwood"
 max_health = 25

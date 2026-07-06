@@ -50,6 +50,11 @@ const _BORDER_CHUNKS := 4
 ## instantiates/frees enemy scenes from these — "spawn data, not nodes").
 signal chunk_loaded(coord: Vector2i, spawns: Array)
 signal chunk_unloaded(coord: Vector2i)
+## Emitted when the streaming target crosses into a different biome cell, including the
+## biome it starts in on the first streamed frame. Pure observation of the target's
+## position against the layout — no generation state, so GEN_VERSION is unaffected.
+## world.gd relays this onto GlobalEvent for game systems (bestiary).
+signal biome_entered(biome_id: StringName)
 
 @export var config: GenConfig
 @export var debug_spawn_markers := true   ## debug scene only; the game scene turns these off
@@ -75,6 +80,7 @@ var _room_cache: Dictionary = {}              # Vector2i origin_slot -> RoomOutp
 var _chunks: Dictionary = {}                  # Vector2i chunk_coord -> WgChunk
 var _fallback_pres: BiomePresentation = null  # starting biome's mapping; fallback for biomes without one
 var _world_chunks := Vector2i.ZERO            # world size in chunks (finite bounds)
+var _last_biome: StringName = &""             # target's biome cell on the previous streamed frame
 var _tile_tables: Dictionary = {}             # TileSet -> weighted pick table (built once, see _tile_table)
 var _terrain_tables: Dictionary = {}          # TileSet -> { canonical mask -> pick table } (see _terrain_table)
 
@@ -84,6 +90,7 @@ func build_world(seed_value: int) -> void:
 	world_seed = seed_value
 	_clear_chunks()
 	_room_cache.clear()
+	_last_biome = &""
 	cache_hits = 0
 	cache_misses = 0
 	world_spec = WorldLayout.build(seed_value, config)
@@ -126,6 +133,12 @@ func _update_streaming() -> void:
 	var chunk_px := config.chunk_tiles * GameConstants.PX_PER_TILE
 	var gp := target.global_position
 	var cc := Vector2i(floori(gp.x / chunk_px), floori(gp.y / chunk_px))
+
+	var biome_px := config.biome_slots * config.room_slot_tiles * GameConstants.PX_PER_TILE
+	var biome := world_spec.biome_at(Vector2i(floori(gp.x / biome_px), floori(gp.y / biome_px)))
+	if biome != &"" and biome != _last_biome:
+		_last_biome = biome
+		biome_entered.emit(biome)
 
 	# Visible half-extent in chunks (from the active camera's zoom), padded by the prefetch radius.
 	var half_chunks := Vector2(config.prefetch_radius_chunks, config.prefetch_radius_chunks)

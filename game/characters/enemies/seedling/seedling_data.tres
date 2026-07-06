@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
 [ext_resource type="Resource" uid="uid://j00f2n4yqpe1" path="res://characters/player/weapons/rune/rune1.tres" id="2_rune"]
 [ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="3_heal"]
+[ext_resource type="Texture2D" uid="uid://bher6cuar4fky" path="res://characters/enemies/seedling/seedling.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_rune"]
 script = ExtResource("1_dpl6y")
@@ -17,8 +18,14 @@ item = ExtResource("3_heal")
 chance = 0.25
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
 [resource]
 script = ExtResource("1")
 display_name = "Seedling"
+icon = SubResource("AtlasTexture_icon")
+biome = &"glade"
 max_health = 45
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_rune"), SubResource("Resource_heal")])

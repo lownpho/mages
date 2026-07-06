@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3]
 
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bw8eycv5es5bb" path="res://characters/enemies/snake/snake.png" id="icon_png"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 8, 8, 8)
 
 [resource]
 script = ExtResource("1")
 display_name = "Snake"
+icon = SubResource("AtlasTexture_icon")
+biome = &"deepwood"
 max_health = 40

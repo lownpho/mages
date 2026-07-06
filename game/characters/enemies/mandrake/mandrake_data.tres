@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_35d20"]
 [ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://characters/player/hats/skill_hat1.tres" id="2_skillhat"]
 [ext_resource type="Resource" uid="uid://3kojoil7mnhh" path="res://characters/player/spells/fireball/fireball1.tres" id="3_fireball"]
+[ext_resource type="Texture2D" uid="uid://ba6s2v6jeq17f" path="res://characters/enemies/mandrake/mandrake.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_skillhat"]
 script = ExtResource("1_35d20")
@@ -17,8 +18,14 @@ item = ExtResource("3_fireball")
 chance = 0.12
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
 [resource]
 script = ExtResource("1")
 display_name = "Mandrake"
+icon = SubResource("AtlasTexture_icon")
+biome = &"glade"
 max_health = 30
 drops = Array[ExtResource("1_35d20")]([SubResource("Resource_skillhat"), SubResource("Resource_fireball")])

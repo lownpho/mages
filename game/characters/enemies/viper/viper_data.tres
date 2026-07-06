@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://m0uq0gpm52ck" path="res://characters/player/weapons/rune/rune2.tres" id="2_rune2"]
 [ext_resource type="Resource" uid="uid://o0434amjj1t8" path="res://characters/player/weapons/staff/staff2.tres" id="3_staff2"]
 [ext_resource type="Resource" uid="uid://d2h6buka54kcn" path="res://characters/player/weapons/wand/wand2.tres" id="4_wand2"]
+[ext_resource type="Texture2D" uid="uid://d2tg5f64k4xr" path="res://characters/enemies/viper/viper.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_rune2"]
 script = ExtResource("1_ql65p")
@@ -24,8 +25,15 @@ item = ExtResource("4_wand2")
 chance = 0.33
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
 [resource]
 script = ExtResource("1")
 display_name = "Viper"
+icon = SubResource("AtlasTexture_icon")
+biome = &"glade"
+rarity = 1
 max_health = 180
 drops = Array[ExtResource("1_ql65p")]([SubResource("Resource_rune2"), SubResource("Resource_staff2"), SubResource("Resource_wand2")])

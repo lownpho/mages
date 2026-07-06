@@ -24,6 +24,14 @@ func _ready() -> void:
 	_setup_bar_hover(%HealthBar, %HealthValue)
 	_setup_bar_hover(%ManaBar, %ManaValue)
 
+	%BestiaryButton.pressed.connect(func() -> void:
+		%BestiaryPanel.visible = not %BestiaryPanel.visible)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("menu") and %BestiaryPanel.visible:
+		%BestiaryPanel.hide()
+		get_viewport().set_input_as_handled()
+
 func _setup_bar_hover(bar: ProgressBar, label: Label) -> void:
 	# self_modulate hides the bar's own fill/bg drawing without affecting the child label.
 	bar.mouse_entered.connect(func() -> void:
