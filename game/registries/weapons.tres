@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="Registry" format=3 uid="uid://dw51hmwy3ww48"]
+
+[ext_resource type="Script" uid="uid://dqtv77mng5dyh" path="res://addons/yard/registry.gd" id="1_743ff"]
+
+[resource]
+script = ExtResource("1_743ff")
+_version = 2
+_scan_rulesets = Array[Dictionary]([{
+&"allowed_file_extensions": Array[String]([]),
+&"class_restrictions": Array[StringName]([&"\"res://items/item_resource.gd\""]),
+&"recursive_scan": true,
+&"scan_directories": Array[String](["res://characters/player/weapons"]),
+&"scan_regex_exclude": "",
+&"scan_regex_include": ""
+}])
+_uids_to_string_ids = Dictionary[StringName, StringName]({
+&"uid://4fcvmlx13a4a": &"wand5",
+&"uid://74gh6yh7f1py": &"rune4",
+&"uid://bnp0413il6bh8": &"staff4",
+&"uid://bsm2wkf63rmeq": &"rune3",
+&"uid://cc1dfum3wyk6a": &"staff3",
+&"uid://cjmpm744t7n6h": &"staff1",
+&"uid://d2h6buka54kcn": &"wand2",
+&"uid://dfpe0ik3dqap5": &"rune5",
+&"uid://du3ofwl654jwg": &"wand3",
+&"uid://dv4258dafmkwn": &"staff5",
+&"uid://dwpubkkh14e55": &"wand4",
+&"uid://j00f2n4yqpe1": &"rune1",
+&"uid://m0uq0gpm52ck": &"rune2",
+&"uid://o0434amjj1t8": &"staff2",
+&"uid://vn3e6lww7ex0": &"wand1"
+})
+_string_ids_to_uids = Dictionary[StringName, StringName]({
+&"rune1": &"uid://j00f2n4yqpe1",
+&"rune2": &"uid://m0uq0gpm52ck",
+&"rune3": &"uid://bsm2wkf63rmeq",
+&"rune4": &"uid://74gh6yh7f1py",
+&"rune5": &"uid://dfpe0ik3dqap5",
+&"staff1": &"uid://cjmpm744t7n6h",
+&"staff2": &"uid://o0434amjj1t8",
+&"staff3": &"uid://cc1dfum3wyk6a",
+&"staff4": &"uid://bnp0413il6bh8",
+&"staff5": &"uid://dv4258dafmkwn",
+&"wand1": &"uid://vn3e6lww7ex0",
+&"wand2": &"uid://d2h6buka54kcn",
+&"wand3": &"uid://du3ofwl654jwg",
+&"wand4": &"uid://dwpubkkh14e55",
+&"wand5": &"uid://4fcvmlx13a4a"
+})
