@@ -12,4 +12,4 @@ script = ExtResource("1_script")
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 5
 max_health_modifier = 10
-max_mana_modifier = 10
+max_mana_modifier = 20

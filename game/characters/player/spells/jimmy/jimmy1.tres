@@ -48,6 +48,6 @@ minion_sheet = ExtResource("9_sheet")
 effect_scene = ExtResource("3_effect")
 cooldown = 20.0
 mana_cost = 20
-cast_time = 0.5
+cast_time = 1.0
 icon = SubResource("AtlasTexture_icon")
 max_health_modifier = 10
