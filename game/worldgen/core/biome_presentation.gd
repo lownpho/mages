@@ -33,5 +33,5 @@ extends Resource
 @export var object_bg_tileset: TileSet = null  ## DECOR_FLOOR layer (flat overlay, no collision)
 
 @export_group("Minimap")
-@export var map_floor_color := Color("5a5353")  ## minimap pixel for this biome's discovered room mass (Zughy 32)
-@export var map_wall_color := Color("302c2e")   ## minimap pixel for WALL/BLOCKER at the closest zoom (Zughy 32)
+@export var map_floor_color := Palette.GREY_DARK  ## minimap pixel for this biome's discovered room mass (Zughy 32)
+@export var map_wall_color := Palette.BLACK       ## minimap pixel for WALL/BLOCKER at the closest zoom (Zughy 32)

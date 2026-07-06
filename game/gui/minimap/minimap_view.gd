@@ -9,11 +9,11 @@ const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
 const ENEMIES_MAX_TPP := 4  ## live enemy dots hidden at zooms coarser than this
 
 # Marker colors, all Zughy 32.
-const COLOR_UNKNOWN := Color("302c2e")
-const COLOR_PLAYER := Color("dff6f5")
-const COLOR_ENEMY := Color("e6482e")
-const COLOR_BOSS := Color("f4b41b")
-const COLOR_FEATURE := Color("28ccdf")
+const COLOR_UNKNOWN := Palette.BLACK
+const COLOR_PLAYER := Palette.WHITE
+const COLOR_ENEMY := Palette.RED
+const COLOR_BOSS := Palette.YELLOW
+const COLOR_FEATURE := Palette.CYAN
 
 var _state: MinimapState = null
 var _player: Node2D = null

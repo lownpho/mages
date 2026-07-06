@@ -4,8 +4,8 @@ const _FLATTEN_SHADER = preload("res://gui/flatten.gdshader")
 const _SLOT_PX = 8
 # Zughy 32 entries — cooldown overlays must stay in palette, so they only ever
 # show these colors raw: no alpha blending, no modulate, no color tweens.
-const _CURTAIN_COLOR = Color("302c2e")
-const _FLASH_COLOR = Color("dff6f5")
+const _CURTAIN_COLOR = Palette.BLACK
+const _FLASH_COLOR = Palette.WHITE
 
 # Tooltip stat icons: x offset of each 8x8 glyph in the y=8 row of ui.png.
 const _UI = preload("res://gui/ui.png")

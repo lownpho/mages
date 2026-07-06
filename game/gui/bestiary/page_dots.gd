@@ -5,9 +5,9 @@ extends Control
 
 const _DOT := 2
 const _GAP := 2
-const _ON := Color("dff6f5")
+const _ON := Palette.WHITE
 # Bag-slot gray, not the palette dark — the dark vanishes against the panel background.
-const _OFF := Color("7d7071")
+const _OFF := Palette.GREY
 
 var pages: int = 1:
 	set(value):

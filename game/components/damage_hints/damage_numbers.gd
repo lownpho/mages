@@ -9,8 +9,8 @@ extends Node2D
 const NUMBER := preload("res://components/damage_hints/damage_number.tscn")
 const HEAD_OFFSET := Vector2(0, -14)  # above the victim's head
 # Zughy 32 palette.
-const DEALT_COLOR := Color("dff6f5")  # damage the player deals — palette white
-const TAKEN_COLOR := Color("e6482e")  # damage the player takes — red
+const DEALT_COLOR := Palette.WHITE  # damage the player deals — palette white
+const TAKEN_COLOR := Palette.RED    # damage the player takes — red
 
 var _active: Dictionary = {}  # victim -> DamageNumber currently accumulating
 

@@ -10,11 +10,11 @@ extends Control
 @onready var _new_btn: Button = %NewButton
 @onready var _continue_btn: Button = %ContinueButton
 
-# Only the theme's Label mint exists as a UI colour; selection and the disabled state
-# are opaque brightness steps of it (no invented hues, no transparency).
-const COLOR_SELECTED := Color(0.8745098, 0.9647059, 0.9607843)  # theme mint, full
-const COLOR_IDLE := Color(0.481, 0.531, 0.528)                  # mint dimmed
-const COLOR_DISABLED := Color(0.262, 0.29, 0.288)               # mint dimmer
+# Only the theme's Label mint (Palette.WHITE) exists as a UI colour; selection and the
+# disabled state are opaque brightness steps of it (no invented hues, no transparency).
+const COLOR_SELECTED := Palette.WHITE                     # theme mint, full
+static var COLOR_IDLE: Color = Palette.WHITE.darkened(0.45)      # mint dimmed
+static var COLOR_DISABLED: Color = Palette.WHITE.darkened(0.70)  # mint dimmer
 
 
 func _ready() -> void:

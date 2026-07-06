@@ -8,7 +8,7 @@ const _FLATTEN_SHADER = preload("res://gui/flatten.gdshader")
 # The bag-slot gray: silhouettes must contrast with the panel, whose frame texture is
 # the palette dark. The flatten shader keeps the output a single raw palette color,
 # never a modulate blend.
-const _SILHOUETTE_COLOR = Color("7d7071")
+const _SILHOUETTE_COLOR = Palette.GREY
 
 static var _silhouette_material: ShaderMaterial
 

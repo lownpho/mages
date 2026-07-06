@@ -7,7 +7,7 @@ extends Node2D
 ## shield ring spins overlaid on the caster and flashes on each absorbed hit.
 
 const _FLATTEN_SHADER = preload("res://gui/flatten.gdshader")
-const _FLASH_COLOR = Color("dff6f5")  # Zughy 32 light — same as the UI ready-flash
+const _FLASH_COLOR = Palette.WHITE  # Zughy 32 light — same as the UI ready-flash
 
 var data: NopeResource
 
