@@ -88,6 +88,18 @@ func _ready() -> void:
 	bag_slots = ArraySlot.new(ItemType.BAG, BAG_SIZE, [ItemType.BAG, ItemType.WEAPON, ItemType.ROBE, ItemType.HAT, ItemType.SPELL])
 	spell_slots = ArraySlot.new(ItemType.SPELL, SPELL_SLOT_SIZE)
 
+# Empty every slot — equipment, bag, and spells. Called when starting a new game so
+# nothing carries over from a previous run. Each clear re-emits slot_updated /
+# equipment_changed, so any live UI and player stats reset too.
+func reset() -> void:
+	weapon_slot.clear_item()
+	robe_slot.clear_item()
+	hat_slot.clear_item()
+	for slot in bag_slots.slots:
+		slot.clear_item()
+	for slot in spell_slots.slots:
+		slot.clear_item()
+
 func get_equipment_slot_for_item(item: ItemResource) -> Slot:
 	match item.get_item_type():
 		ItemType.WEAPON: return weapon_slot

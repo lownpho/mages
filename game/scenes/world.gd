@@ -10,7 +10,13 @@ extends Node2D
 func _ready() -> void:
 	if not generate_world:
 		return
-	_streamer.build_world(world_seed if world_seed != 0 else randi())
+	# The title screen chooses the seed (New rolls one, Continue loads the saved one).
+	# Fall back to the scene's own seed when a game scene is launched directly.
+	var chosen_seed := GameState.active_seed
+	if chosen_seed == 0:
+		chosen_seed = world_seed if world_seed != 0 else randi()
+		GameState.active_seed = chosen_seed
+	_streamer.build_world(chosen_seed)
 	# Deterministic spawn: the fallback-type room nearest the starting biome's center.
 	_player.global_position = _streamer.find_spawn_position()
 	# Relay onto the game-wide bus: worldgen stays self-contained, game systems

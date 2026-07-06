@@ -157,7 +157,9 @@ func _on_mana_or_max_mana_changed(_value: int) -> void:
 	low_mana_aura.visible = mana <= max_mana * low_resource_warning_fraction
 
 func _die() -> void:
-	queue_free()
+	# Permadeath: clear the save so there is nothing to Continue, then bounce to
+	# the title screen (which frees this scene, so no queue_free needed here).
+	GameState.game_over()
 
 func _on_hurt(damage: int, source: Node) -> void:
 	if damage_absorber and is_instance_valid(damage_absorber):

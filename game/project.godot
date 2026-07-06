@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="mages"
-run/main_scene="res://scenes/tutorial.tscn"
+run/main_scene="res://scenes/title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="uid://bcfc6y0mj5eou"
 config/windows_native_icon="res://icon.ico"
@@ -28,6 +28,7 @@ GlobalInventory="*res://autoload/global_inventory.gd"
 GlobalPickups="*res://autoload/global_pickups.gd"
 SceneManager="*res://autoload/scene_manager.gd"
 GlobalBestiary="*res://autoload/global_bestiary.gd"
+GameState="*res://autoload/game_state.gd"
 
 [debug]
 
