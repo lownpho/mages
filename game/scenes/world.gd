@@ -29,7 +29,12 @@ func _ready() -> void:
 	# Continue resumes exactly where the player left off; a fresh run uses the
 	# deterministic spawn (the fallback-type room nearest the starting biome's center).
 	if GameState.has_pending_position:
-		_player.global_position = GameState.pending_player_position
+		# A save made under an older world layout can point into what is now a wall, so
+		# snap the restored spot onto the nearest floor; if the layout diverged too far to
+		# find any, fall back to the deterministic spawn rather than trapping the player.
+		var restored := _streamer.nearest_walkable(GameState.pending_player_position)
+		_player.global_position = restored if restored != Vector2.INF \
+				else _streamer.find_spawn_position()
 		GameState.has_pending_position = false
 	else:
 		_player.global_position = _streamer.find_spawn_position()

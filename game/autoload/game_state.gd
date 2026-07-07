@@ -8,6 +8,13 @@ extends Node
 
 const SAVE_PATH := "user://save.cfg"
 
+## The world is a pure function of (seed, gen_version, CONFIG_HASH); the same seed lays out
+## a different map once the generation code or config changes. We stamp the save with the
+## current world signature so Continue can tell whether a stored player position still lands
+## where it did — a mismatch means the layout moved under it, so the position is discarded
+## and the run respawns at the deterministic spawn instead of inside what is now a wall.
+const CONFIG_PATH := "res://world_content/gen_config.tres"
+
 ## How often to resave the player's position while playing. Inventory changes persist
 ## immediately (they're user-driven and rare); position drifts every frame, so it's
 ## only snapshotted periodically instead of on every movement.
@@ -43,8 +50,13 @@ func _ready() -> void:
 	_save_timer.wait_time = POSITION_SAVE_INTERVAL
 	_save_timer.timeout.connect(persist)
 	add_child(_save_timer)
+	# Autosave on inventory edits, but only once a player is being tracked: persist() rebuilds
+	# the save from scratch and would otherwise write a position-less save (it only stores the
+	# position when a player is tracked), which Continue then reads back as (0,0). Inventory
+	# changes during scene transitions — before world.gd calls track_player — are exactly that
+	# window, so gate on it.
 	GlobalEvent.slot_updated.connect(func(_slot: GlobalInventory.Slot) -> void:
-		if not _suspend_autosave:
+		if not _suspend_autosave and is_instance_valid(_tracked_player):
 			persist())
 
 
@@ -79,7 +91,13 @@ func continue_game() -> bool:
 	if active_seed == 0:
 		return false
 	pending_player_position = cfg.get_value("player", "position", Vector2.ZERO)
-	has_pending_position = true
+	# Only resume at the stored position when it's actually present AND was saved under the
+	# current world layout. A missing key (a position-less save) must NOT fall back to the
+	# Vector2.ZERO default — that drops the player at the world origin — and a stale signature
+	# means the same seed now lays out a different map. Either way, defer to the deterministic
+	# spawn (see world.gd, which also snaps a surviving position onto floor as a further guard).
+	var signature_ok: bool = cfg.get_value("world", "signature", "") == _world_signature()
+	has_pending_position = signature_ok and cfg.has_section_key("player", "position")
 	notable_kills = cfg.get_value("world", "notable_kills", {})
 	_load_inventory(cfg)
 	return true
@@ -125,11 +143,23 @@ func game_over() -> void:
 func persist() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("world", "seed", active_seed)
+	cfg.set_value("world", "signature", _world_signature())
 	cfg.set_value("world", "notable_kills", notable_kills)
 	if is_instance_valid(_tracked_player):
 		cfg.set_value("player", "position", _tracked_player.global_position)
 	_save_inventory(cfg)
 	cfg.save(SAVE_PATH)
+
+
+## "gen_version:config_hash" for the authored world config — the identity of the current
+## map generator. Loading the resource is cheap (Godot caches it; the streamer loads the
+## same instance) and read-only. Empty string if the config can't be loaded, which simply
+## never matches a stored signature, so the position guard fails safe to a fresh spawn.
+func _world_signature() -> String:
+	var config: GenConfig = load(CONFIG_PATH)
+	if config == null:
+		return ""
+	return "%d:%d" % [config.gen_version, config.compute_hash()]
 
 
 func _save_inventory(cfg: ConfigFile) -> void:
