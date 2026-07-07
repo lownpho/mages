@@ -3,9 +3,13 @@
 [ext_resource type="Script" uid="uid://b0rpmwkav8qck" path="res://worldgen/runtime/under_construction_sign.gd" id="1_sign"]
 [ext_resource type="Texture2D" uid="uid://dsr8yakwoxv1y" path="res://worldgen/runtime/doors.png" id="2_g1lei"]
 [ext_resource type="FontFile" uid="uid://kkmwqdvog3u7" path="res://gui/m3x6.ttf" id="3_font"]
+[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="3_supj0"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_supj0"]
 radius = 16.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_supj0"]
+line_spacing = 0.0
 
 [node name="UnderConstructionSign" type="Area2D" unique_id=757026110]
 collision_layer = 0
@@ -26,12 +30,21 @@ shape = SubResource("CircleShape2D_supj0")
 [node name="Label" type="Label" parent="." unique_id=726373298]
 z_index = 100
 z_as_relative = false
-offset_left = -48.0
-offset_top = -44.0
-offset_right = 48.0
-offset_bottom = -18.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -70.0
+offset_top = -41.0
+offset_right = 71.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("3_supj0")
 theme_override_fonts/font = ExtResource("3_font")
-text = "Area under construction
-Go fuck yourself elsewhere"
+text = "The old ammargelluted lonfo is
+working on this feature, be patient!"
+label_settings = SubResource("LabelSettings_supj0")
 horizontal_alignment = 1
 vertical_alignment = 1

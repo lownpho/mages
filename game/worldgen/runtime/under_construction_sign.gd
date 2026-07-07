@@ -7,7 +7,7 @@ extends Area2D
 ## to it, a message floats above telling them the area is under construction and to go
 ## explore elsewhere. The art is a single blank 16×16 frame for now.
 
-const _DEFAULT_MESSAGE := "Under construction\nCome back later — explore elsewhere!"
+const _DEFAULT_MESSAGE := "The old ammargelluted lonfo is\nworking on this feature, be patient!"
 
 ## The text shown above the sign while the player stands on it. Override per placement.
 @export_multiline var message := _DEFAULT_MESSAGE:

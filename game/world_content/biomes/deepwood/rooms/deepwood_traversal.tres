@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://dxuv5igm7vss"]
 
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="1_534xj"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
 [ext_resource type="PackedScene" uid="uid://d1nucsign8wqk" path="res://worldgen/runtime/under_construction_sign.tscn" id="3_sign"]
 

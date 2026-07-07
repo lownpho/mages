@@ -3,22 +3,11 @@
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
 
-[sub_resource type="Resource" id="sp_snake"]
-script = ExtResource("2_ste")
-enemy_id = &"snake"
-weight = 2
-group_max = 2
-
-[sub_resource type="Resource" id="sp_stalker"]
-script = ExtResource("2_ste")
-enemy_id = &"stalker"
-
 [resource]
 script = ExtResource("1_def")
 id = &"deepwood_traversal_deep"
 biome = &"deepwood"
 difficulty = 2
 weight = 2
-enemies = Array[ExtResource("2_ste")]([SubResource("sp_snake"), SubResource("sp_stalker")])
 enemy_groups_min = 1
 enemy_groups_max = 2

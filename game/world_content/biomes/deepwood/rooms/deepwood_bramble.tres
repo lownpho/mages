@@ -4,23 +4,6 @@
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_gen"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="3_ste"]
 
-[sub_resource type="Resource" id="sp_thornback"]
-script = ExtResource("3_ste")
-enemy_id = &"thornback"
-weight = 2
-
-[sub_resource type="Resource" id="sp_stalker"]
-script = ExtResource("3_ste")
-enemy_id = &"stalker"
-weight = 2
-group_min = 2
-group_max = 3
-
-[sub_resource type="Resource" id="sp_snake"]
-script = ExtResource("3_ste")
-enemy_id = &"snake"
-group_max = 2
-
 [sub_resource type="Resource" id="Resource_gen"]
 script = ExtResource("2_gen")
 write_blockers = true
@@ -34,6 +17,5 @@ difficulty = 3
 footprint_blob = true
 weight = 3
 max_per_biome = 6
-enemies = Array[ExtResource("3_ste")]([SubResource("sp_thornback"), SubResource("sp_stalker"), SubResource("sp_snake")])
 enemy_groups_min = 2
 enemy_groups_max = 5
