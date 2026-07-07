@@ -38,7 +38,7 @@ const _NB_PEERING: Array[int] = [
 ## Which logical classes count as "same terrain" for each autotiled layer.
 enum _Terrain { T_FLOOR, T_WALL }
 
-const _MAX_LOADS_PER_FRAME := 3   ## smooth the initial burst; remaining chunks stream next frame
+const _MAX_LOADS_PER_FRAME := 1   ## smooth the initial burst; remaining chunks stream next frame
 const _UNLOAD_MARGIN := 2         ## chunks; unload radius = load radius + this (hysteresis)
 ## Ring of solid-wall chunks streamed just OUTSIDE the finite world so the player never sees void
 ## past the sealed edge. Cells beyond any room are filled with the starting biome's wall tiles
@@ -612,6 +612,35 @@ func find_spawn_position() -> Vector2:
 						tile = Vector2i(tx, ty)
 	var wt := best.origin_slot * config.room_slot_tiles + tile
 	return (Vector2(wt) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+
+
+## True when the world pixel position sits on a walkable floor tile (not a wall, blocker,
+## or outside the world). Used to validate a restored save position against the live world.
+func is_walkable(world_pos: Vector2) -> bool:
+	var t := Vector2i((world_pos / GameConstants.PX_PER_TILE).floor())
+	var cls := _class_at(t.x, t.y)
+	return cls == RoomBuilder.FLOOR or cls == RoomBuilder.DECOR_FLOOR
+
+
+## Nudge a world pixel position onto the nearest walkable floor tile, searching outward in
+## rings up to `max_radius_tiles`. Returns the input unchanged if it's already walkable, or
+## Vector2.INF if nothing walkable is found in range (caller should fall back to a fresh
+## spawn). Guards Continue against saves made under an older world layout, where the stored
+## position can now land inside a wall.
+func nearest_walkable(world_pos: Vector2, max_radius_tiles: int = 16) -> Vector2:
+	if is_walkable(world_pos):
+		return world_pos
+	var t := Vector2i((world_pos / GameConstants.PX_PER_TILE).floor())
+	for r in range(1, max_radius_tiles + 1):
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				if absi(dx) != r and absi(dy) != r:
+					continue   # ring perimeter only; interiors were covered by smaller r
+				var cls := _class_at(t.x + dx, t.y + dy)
+				if cls == RoomBuilder.FLOOR or cls == RoomBuilder.DECOR_FLOOR:
+					return (Vector2(t + Vector2i(dx, dy)) + Vector2(0.5, 0.5)) \
+							* GameConstants.PX_PER_TILE
+	return Vector2.INF
 
 
 func _clear_chunks() -> void:

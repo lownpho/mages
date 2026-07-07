@@ -34,6 +34,7 @@ world_width_biomes = 1
 big_merge_chance = 0.25
 doors_per_biome_border = 4
 spawn_min_dist_from_doors = 3
+prefetch_radius_chunks = 1
 wall_extra_depth = 5
 corner_radius = 6
 wall_inset_max = 4
