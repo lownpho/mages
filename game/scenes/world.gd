@@ -33,6 +33,9 @@ func _ready() -> void:
 		GameState.has_pending_position = false
 	else:
 		_player.global_position = _streamer.find_spawn_position()
+	# Spawn buffer: enemies placed near the spawn point can't chip the player before
+	# they've taken control (Continue resumes mid-world, so it wants the grace too).
+	_player.grant_spawn_grace()
 	# Relay onto the game-wide bus: worldgen stays self-contained, game systems
 	# (bestiary) listen on GlobalEvent.
 	_streamer.biome_entered.connect(GlobalEvent.biome_entered.emit)

@@ -44,6 +44,9 @@ var damage_absorber: Node2D = null
 ## any buff effect reuses it by handing over a modifier-carrying resource.
 var active_buffs: Array = []
 var can_use_weapon: bool = true
+## While Time.get_ticks_msec() < this, incoming damage is ignored — a spawn buffer so
+## enemies placed near the spawn point can't chip you before you've taken control.
+var _grace_until_ms: int = 0
 var focus_time: float = 0.0
 var focus_mana_remainder: float = 0.0
 
@@ -161,7 +164,13 @@ func _die() -> void:
 	# the title screen (which frees this scene, so no queue_free needed here).
 	GameState.game_over()
 
+# Ignore all incoming damage for `seconds`, starting now (see world.gd spawn placement).
+func grant_spawn_grace(seconds: float = 2.0) -> void:
+	_grace_until_ms = Time.get_ticks_msec() + int(seconds * 1000.0)
+
 func _on_hurt(damage: int, source: Node) -> void:
+	if Time.get_ticks_msec() < _grace_until_ms:
+		return
 	if damage_absorber and is_instance_valid(damage_absorber):
 		damage = damage_absorber.absorb(damage)
 		if damage <= 0:
