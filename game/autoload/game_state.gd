@@ -10,20 +10,26 @@ const SAVE_PATH := "user://save.cfg"
 ## scene directly), so scenes fall back to their own default.
 var active_seed := 0
 
+## True for the first world entry of a brand-new run, so world.gd can drop starter gear
+## next to the player exactly once. Runtime-only (never saved); Continue leaves it false.
+var fresh_start := false
+
 
 func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 
-## Roll a fresh world and persist it so it becomes the thing "Continue" resumes.
+## Roll a fresh world in memory and start it in the glade. The save is written once the
+## world scene loads (world.gd calls persist()); fresh_start flags that first entry so the
+## player is handed a starter weapon and heal.
 func new_game() -> void:
 	active_seed = randi()
 	if active_seed == 0:
 		active_seed = 1  # keep 0 reserved for "unset"
+	fresh_start = true
 	# Fresh run: nothing carries over. The bestiary (its own autoload) is intentionally
 	# left alone so kill discoveries persist across runs.
 	GlobalInventory.reset()
-	_write()
 
 
 ## Load the saved seed into the session. Returns false if there is nothing to continue.
@@ -50,7 +56,9 @@ func game_over() -> void:
 	SceneManager.go_to(load("res://scenes/title.tscn"))
 
 
-func _write() -> void:
+## Persist the current run so "Continue" can resume it. Called on world entry (world.gd),
+## not on new_game() — a run isn't saved until the player reaches the world.
+func persist() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("world", "seed", active_seed)
 	cfg.save(SAVE_PATH)

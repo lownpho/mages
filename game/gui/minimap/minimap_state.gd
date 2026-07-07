@@ -9,8 +9,9 @@ extends RefCounted
 
 enum { MARKER_BOSS, MARKER_FEATURE }
 
-## Room types whose discovery drops a MARKER_BOSS at the room centre.
-const BOSS_TYPE := &"boss"
+## Room types whose discovery drops a MARKER_BOSS at the room centre — each biome's summit
+## encounter (room ids are per-biome, so this is an explicit list).
+const BOSS_TYPES: Array[StringName] = [&"glade_boss_d3", &"deepwood_arena"]
 
 var world_seed: int = 0
 var world_tiles := Vector2i.ZERO      ## image dimensions (1 px per tile)
@@ -109,7 +110,7 @@ func _paint_room(room: RoomOutput) -> void:
 			_floor_img.set_pixel(ox + x, oy + y, fc)
 			if cls == RoomBuilder.WALL or cls == RoomBuilder.BLOCKER:
 				_wall_img.set_pixel(ox + x, oy + y, wc)
-	if room.type_id == BOSS_TYPE:
+	if room.type_id in BOSS_TYPES:
 		markers.append({"tile": Vector2i(ox + (room.width >> 1), oy + (room.height >> 1)),
 				"kind": MARKER_BOSS})
 	for sp in room.spawns:

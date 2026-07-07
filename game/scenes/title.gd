@@ -1,8 +1,8 @@
 extends Control
 
-## The startup screen. Two options: New (roll a fresh world and start from the tutorial)
-## and Continue (resume the saved seed straight into the streamed world). Continue is
-## disabled until a save exists.
+## The startup screen. Two options: New (roll a fresh world and start in the glade with
+## starter gear) and Continue (resume the saved seed). Both open the streamed world;
+## Continue is disabled until a save exists.
 
 @export var new_game_scene: PackedScene
 @export var continue_scene: PackedScene
