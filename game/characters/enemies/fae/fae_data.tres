@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://scd47z59gcnmv"]
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cuqnush86i5lt"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
@@ -50,7 +50,6 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 [sub_resource type="Resource" id="Resource_fae_jimmy"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("8_jimmy")
-chance = 1.0
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]

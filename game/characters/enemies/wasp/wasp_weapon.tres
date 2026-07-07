@@ -7,7 +7,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wasp_sting"]
 atlas = ExtResource("1_uc26l")
-region = Rect2(8, 8, 8, 8)
+region = Rect2(8, 16, 8, 8)
 
 [sub_resource type="Resource" id="BulletData_1"]
 script = ExtResource("50_bres")

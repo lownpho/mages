@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://amdho72nxe2dp"]
+[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://mdho72nxe2dp"]
 
 [ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="1_uc26l"]
@@ -7,7 +7,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fae_ring"]
 atlas = ExtResource("1_uc26l")
-region = Rect2(40, 24, 8, 8)
+region = Rect2(16, 24, 8, 8)
 
 [sub_resource type="Resource" id="BulletData_1"]
 script = ExtResource("50_bres")
@@ -24,5 +24,4 @@ num_bullets = 12
 script = ExtResource("1_script")
 fire_pattern = SubResource("RingPattern_1")
 bullet_data = SubResource("BulletData_1")
-fire_cooldown = 0.5
 mana_cost = 0

@@ -1,41 +1,25 @@
-[gd_scene format=3 uid="uid://aqgurfegj21am"]
+[gd_scene format=3 uid="uid://qgurfegj21am"]
 
-[ext_resource type="Resource" uid="uid://scd47z59gcnmv" path="res://characters/enemies/fae/fae_data.tres" id="1_data"]
+[ext_resource type="Resource" uid="uid://cuqnush86i5lt" path="res://characters/enemies/fae/fae_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
 [ext_resource type="Texture2D" uid="uid://cril2nlvqb5im" path="res://characters/enemies/fae/fae.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
-[ext_resource type="Resource" uid="uid://amdho72nxe2dp" path="res://characters/enemies/fae/fae_rings_weapon.tres" id="6_rings"]
-[ext_resource type="Resource" uid="uid://3pkh4rbqh1xmn" path="res://characters/enemies/fae/fae_shotgun_weapon.tres" id="7_shotgun"]
+[ext_resource type="Resource" uid="uid://mdho72nxe2dp" path="res://characters/enemies/fae/fae_rings_weapon.tres" id="6_rings"]
+[ext_resource type="Resource" uid="uid://bnpe0duyjmtcb" path="res://characters/enemies/fae/fae_shotgun_weapon.tres" id="7_shotgun"]
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="8_idle"]
 [ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/enemies/behaviours/pattern_picker.gd" id="9_pattern"]
-[ext_resource type="Script" uid="uid://inbtmxu0vjy3y" path="res://characters/enemies/fae/fae_rings.gd" id="10_rings"]
-[ext_resource type="Script" uid="uid://z909i360mcs26" path="res://characters/enemies/fae/fae_rest.gd" id="11_rest"]
+[ext_resource type="Script" uid="uid://wh3gt1iq48lg" path="res://characters/enemies/fae/fae_rings.gd" id="10_rings"]
+[ext_resource type="Script" uid="uid://c3k1yroh74kjl" path="res://characters/enemies/fae/fae_rest.gd" id="11_rest"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="12_volley"]
-[ext_resource type="Script" uid="uid://ovocewe8fv5y7" path="res://characters/enemies/fae/fae_summon.gd" id="13_summon"]
-[ext_resource type="Script" uid="uid://ct1medch4se99" path="res://characters/enemies/behaviours/timed_chase.gd" id="16_chase"]
+[ext_resource type="Script" uid="uid://dbgpmqnhqbjpw" path="res://characters/enemies/fae/fae_summon.gd" id="13_summon"]
 [ext_resource type="PackedScene" uid="uid://pciv4krdo720" path="res://characters/enemies/mandrake/mandrake.tscn" id="14_mandrake"]
 [ext_resource type="PackedScene" uid="uid://ch4o18qib0k6a" path="res://characters/enemies/wasp/wasp.tscn" id="15_wasp"]
+[ext_resource type="Script" uid="uid://ct1medch4sfba" path="res://characters/enemies/behaviours/timed_chase.gd" id="16_chase"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fae"]
 radius = 7.0
-
-[sub_resource type="AtlasTexture" id="AT_idle0"]
-atlas = ExtResource("3_tex")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AT_idle1"]
-atlas = ExtResource("3_tex")
-region = Rect2(16, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AT_summon0"]
-atlas = ExtResource("3_tex")
-region = Rect2(0, 16, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AT_summon1"]
-atlas = ExtResource("3_tex")
-region = Rect2(16, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AT_attack0"]
 atlas = ExtResource("3_tex")
@@ -49,13 +33,13 @@ region = Rect2(16, 32, 16, 16)
 atlas = ExtResource("3_tex")
 region = Rect2(32, 32, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AT_shotgun0"]
+[sub_resource type="AtlasTexture" id="AT_idle0"]
 atlas = ExtResource("3_tex")
-region = Rect2(0, 48, 16, 16)
+region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AT_shotgun1"]
+[sub_resource type="AtlasTexture" id="AT_idle1"]
 atlas = ExtResource("3_tex")
-region = Rect2(16, 48, 16, 16)
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AT_rest0"]
 atlas = ExtResource("3_tex")
@@ -65,30 +49,24 @@ region = Rect2(0, 64, 16, 16)
 atlas = ExtResource("3_tex")
 region = Rect2(16, 64, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AT_shotgun0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_shotgun1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_summon0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_summon1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 16, 16)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_fae"]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AT_idle0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_idle1")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 3.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AT_summon0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AT_summon1")
-}],
-"loop": true,
-"name": &"summon",
-"speed": 3.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AT_attack0")
@@ -99,20 +77,20 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_attack2")
 }],
-"loop": true,
+"loop": 1,
 "name": &"attack",
 "speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AT_shotgun0")
+"texture": SubResource("AT_idle0")
 }, {
 "duration": 1.0,
-"texture": SubResource("AT_shotgun1")
+"texture": SubResource("AT_idle1")
 }],
-"loop": true,
-"name": &"shotgun",
-"speed": 8.0
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -121,72 +99,85 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_rest1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"rest",
 "speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_shotgun0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_shotgun1")
+}],
+"loop": 1,
+"name": &"shotgun",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_summon0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_summon1")
+}],
+"loop": 1,
+"name": &"summon",
+"speed": 3.0
 }]
 
-[node name="Fae" type="CharacterBody2D" groups=["enemies"]]
+[node name="Fae" type="CharacterBody2D" unique_id=686272824 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_enemy")
 data = ExtResource("1_data")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=187877948]
 shape = SubResource("CircleShape2D_fae")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1063244582]
 sprite_frames = SubResource("SpriteFrames_fae")
 animation = &"idle"
 autoplay = "idle"
 offset = Vector2(0, -3)
 
-[node name="Hurtbox" parent="." instance=ExtResource("2_hbox")]
+[node name="Hurtbox" parent="." unique_id=709764732 instance=ExtResource("2_hbox")]
 collision_mask = 256
 radius = 7.0
 
-[node name="DetectProbe" type="RayCast2D" parent="."]
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1705191339]
 target_position = Vector2(112, 0)
 collision_mask = 17
 
-[node name="RingWeapon" parent="." instance=ExtResource("5_weap")]
+[node name="RingWeapon" parent="." unique_id=1575661819 instance=ExtResource("5_weap")]
 
-[node name="ShotgunWeapon" parent="." instance=ExtResource("5_weap")]
+[node name="ShotgunWeapon" parent="." unique_id=841557569 instance=ExtResource("5_weap")]
 
-[node name="FSM" parent="." instance=ExtResource("4_fsm")]
+[node name="FSM" parent="." unique_id=1709816967 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM"]
+[node name="Idle" type="Node" parent="FSM" unique_id=96985684]
 script = ExtResource("8_idle")
 detect_probe_path = NodePath("../../DetectProbe")
 alert_state = "Pattern"
 next_state = "Idle"
 
-[node name="Pattern" type="Node" parent="FSM"]
+[node name="Pattern" type="Node" parent="FSM" unique_id=40597610]
 script = ExtResource("9_pattern")
 states = Array[String](["Rings", "Rest", "Shotgun", "Summon", "Chase"])
 weights = Array[float]([3.0, 1.0, 3.0, 2.0, 3.0])
 detect_probe_path = NodePath("../../DetectProbe")
-lost_state = "Idle"
 
-[node name="Rings" type="Node" parent="FSM"]
+[node name="Rings" type="Node" parent="FSM" unique_id=856810349]
 script = ExtResource("10_rings")
 weapon_path = NodePath("../../RingWeapon")
 weapon_data = ExtResource("6_rings")
-duration = 6.0
-pulse_interval = 0.6
-rotation_per_pulse = 40.0
-done_state = "Pattern"
-attack_anim = "attack"
 
-[node name="Rest" type="Node" parent="FSM"]
+[node name="Rest" type="Node" parent="FSM" unique_id=1941855823]
 script = ExtResource("11_rest")
-duration = 2.5
-done_state = "Pattern"
-rest_anim = "rest"
 
-[node name="Shotgun" type="Node" parent="FSM"]
+[node name="Shotgun" type="Node" parent="FSM" unique_id=556189170]
 script = ExtResource("12_volley")
 weapon_path = NodePath("../../ShotgunWeapon")
 weapon_data = ExtResource("7_shotgun")
@@ -194,18 +185,11 @@ shot_count = 5
 attack_anim = "shotgun"
 done_state = "Pattern"
 
-[node name="Chase" type="Node" parent="FSM"]
+[node name="Chase" type="Node" parent="FSM" unique_id=1381285073]
 script = ExtResource("16_chase")
-duration = 4.0
-speed = 40.0
-done_state = "Pattern"
+duration = 3.0
 run_anim = "idle"
 
-[node name="Summon" type="Node" parent="FSM"]
+[node name="Summon" type="Node" parent="FSM" unique_id=1779430659]
 script = ExtResource("13_summon")
 summon_scenes = Array[PackedScene]([ExtResource("14_mandrake"), ExtResource("15_wasp")])
-summon_count = 3
-spawn_radius = 48.0
-timeout = 20.0
-done_state = "Pattern"
-summon_anim = "summon"

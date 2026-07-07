@@ -44,7 +44,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_idle1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 3.0
 }, {
@@ -58,7 +58,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_run2")
 }],
-"loop": true,
+"loop": 1,
 "name": &"run",
 "speed": 8.0
 }]
