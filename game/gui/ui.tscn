@@ -392,6 +392,7 @@ size_flags_horizontal = 4
 [node name="BestiaryButton" type="TextureButton" parent="Strip/VBox/BestiaryChip"]
 unique_name_in_owner = true
 layout_mode = 2
+focus_mode = 0
 texture_normal = SubResource("AtlasTexture_skull")
 
 [node name="BestiaryPanel" parent="." instance=ExtResource("8_besty")]
