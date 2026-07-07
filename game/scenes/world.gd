@@ -25,16 +25,24 @@ func _ready() -> void:
 	if chosen_seed == 0:
 		chosen_seed = world_seed if world_seed != 0 else randi()
 		GameState.active_seed = chosen_seed
-	# Reaching the world commits the run to the save.
-	GameState.persist()
 	_streamer.build_world(chosen_seed)
-	# Deterministic spawn: the fallback-type room nearest the starting biome's center.
-	_player.global_position = _streamer.find_spawn_position()
+	# Continue resumes exactly where the player left off; a fresh run uses the
+	# deterministic spawn (the fallback-type room nearest the starting biome's center).
+	if GameState.has_pending_position:
+		_player.global_position = GameState.pending_player_position
+		GameState.has_pending_position = false
+	else:
+		_player.global_position = _streamer.find_spawn_position()
 	# Relay onto the game-wide bus: worldgen stays self-contained, game systems
 	# (bestiary) listen on GlobalEvent.
 	_streamer.biome_entered.connect(GlobalEvent.biome_entered.emit)
 	_streamer.target = _player
 	GlobalEvent.world_ready.emit(_streamer)
+
+	# Reaching the world (with the player placed) commits the run to the save, and
+	# arms the periodic position autosave.
+	GameState.track_player(_player)
+	GameState.persist()
 
 	if GameState.fresh_start:
 		GameState.fresh_start = false

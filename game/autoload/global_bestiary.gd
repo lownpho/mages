@@ -9,6 +9,11 @@ extends Node
 const ENEMIES_ROOT := "res://characters/enemies/"
 const GEN_CONFIG_PATH := "res://world_content/gen_config.tres"
 
+## Its own save file, separate from GameState's run save: kill counts and visited
+## biomes persist across new games and death, so they can't live in a file that
+## GameState.clear_save() deletes.
+const SAVE_PATH := "user://bestiary.cfg"
+
 # enemy_id -> kill count. An id is unlocked iff it has a key here.
 var _kills: Dictionary = {}
 # biome id -> true, for every biome the player has ever stepped into.
@@ -20,6 +25,7 @@ var _group_biomes: Array[StringName] = []  # biome label of each group, same ord
 func _ready() -> void:
 	_scan_roster()
 	_build_groups()
+	_load()
 	GlobalEvent.creature_died.connect(_on_creature_died)
 	GlobalEvent.biome_entered.connect(_on_biome_entered)
 
@@ -54,14 +60,29 @@ func kill_count(enemy_id: StringName) -> int:
 func is_unlocked(enemy_id: StringName) -> bool:
 	return _kills.has(enemy_id)
 
-## Minimal save payload; the roster is re-derived from disk (see MinimapState for the
-## convention — there is no save system yet, this is the shape it will serialize).
+## Save payload; the roster is re-derived from disk, only progress is serialized.
 func to_dict() -> Dictionary:
 	return {"kills": _kills.duplicate(), "visited": _visited.duplicate()}
 
 func restore(dict: Dictionary) -> void:
 	_kills = dict.get("kills", {}).duplicate()
 	_visited = dict.get("visited", {}).duplicate()
+
+func _save() -> void:
+	var cfg := ConfigFile.new()
+	var data := to_dict()
+	cfg.set_value("bestiary", "kills", data["kills"])
+	cfg.set_value("bestiary", "visited", data["visited"])
+	cfg.save(SAVE_PATH)
+
+func _load() -> void:
+	var cfg := ConfigFile.new()
+	if cfg.load(SAVE_PATH) != OK:
+		return
+	restore({
+		"kills": cfg.get_value("bestiary", "kills", {}),
+		"visited": cfg.get_value("bestiary", "visited", {}),
+	})
 
 func _data_path(enemy_id: StringName) -> String:
 	return ENEMIES_ROOT + "%s/%s_data.tres" % [enemy_id, enemy_id]
@@ -76,7 +97,10 @@ func _scan_roster() -> void:
 	_roster.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
 
 func _on_biome_entered(biome_id: StringName) -> void:
+	if _visited.has(biome_id):
+		return
 	_visited[biome_id] = true
+	_save()
 
 func _build_groups() -> void:
 	_groups.clear()
@@ -111,6 +135,7 @@ func _on_creature_died(data: CreatureResource, _position: Vector2) -> void:
 		return
 	var first: bool = not _kills.has(id)
 	_kills[id] = _kills.get(id, 0) + 1
+	_save()
 	if first:
 		GlobalEvent.bestiary_entry_unlocked.emit(id)
 	GlobalEvent.bestiary_updated.emit(id, _kills[id])
