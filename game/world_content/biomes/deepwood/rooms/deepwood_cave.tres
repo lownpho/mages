@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://d0wfld0cave01"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_gen"]
+[ext_resource type="PackedScene" uid="uid://d1nucsign8wqk" path="res://worldgen/runtime/under_construction_sign.tscn" id="3_sign"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_ste"]
+
+[sub_resource type="Resource" id="sp_snake"]
+script = ExtResource("4_ste")
+enemy_id = &"snake"
+weight = 3
+group_min = 2
+group_max = 3
+
+[sub_resource type="Resource" id="sp_owl"]
+script = ExtResource("4_ste")
+enemy_id = &"owl"
+group_max = 2
+
+[sub_resource type="Resource" id="Resource_gen"]
+script = ExtResource("2_gen")
+
+[resource]
+script = ExtResource("1_def")
+id = &"deepwood_cave"
+biome = &"deepwood"
+generator = SubResource("Resource_gen")
+difficulty = 1
+footprint_blob = true
+weight = 4
+max_per_biome = 12
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_snake"), SubResource("sp_owl")])
+enemy_groups_min = 2
+enemy_groups_max = 4
+feature_scene = ExtResource("3_sign")

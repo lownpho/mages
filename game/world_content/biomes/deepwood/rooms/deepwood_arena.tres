@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://d0wfld0arena1"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://b2bcviskgpwl7" path="res://worldgen/generators/generator_arena.gd" id="2_gen"]
+[ext_resource type="PackedScene" uid="uid://d1nucsign8wqk" path="res://worldgen/runtime/under_construction_sign.tscn" id="3_sign"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_ste"]
+
+[sub_resource type="Resource" id="sp_snake"]
+script = ExtResource("4_ste")
+enemy_id = &"snake"
+weight = 2
+group_min = 2
+group_max = 4
+
+[sub_resource type="Resource" id="sp_stalker"]
+script = ExtResource("4_ste")
+enemy_id = &"stalker"
+weight = 2
+group_min = 2
+group_max = 3
+
+[sub_resource type="Resource" id="sp_thornback"]
+script = ExtResource("4_ste")
+enemy_id = &"thornback"
+weight = 2
+group_max = 2
+
+[sub_resource type="Resource" id="Resource_gen"]
+script = ExtResource("2_gen")
+inset = 3
+thickness = 1
+gap_count = 3
+gap_width = 3
+
+[resource]
+script = ExtResource("1_def")
+id = &"deepwood_arena"
+biome = &"deepwood"
+generator = SubResource("Resource_gen")
+difficulty = 3
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_snake"), SubResource("sp_stalker"), SubResource("sp_thornback")])
+enemy_groups_min = 4
+enemy_groups_max = 8
+feature_scene = ExtResource("3_sign")

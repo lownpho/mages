@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://dx0lwlxvc0dii"]
+
+[ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_ujgbb"]
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="2_x405x"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="3_ste"]
+
+[sub_resource type="Resource" id="sp_hopper"]
+script = ExtResource("3_ste")
+enemy_id = &"hopper"
+weight = 2
+group_min = 3
+group_max = 5
+
+[sub_resource type="Resource" id="sp_mandrake"]
+script = ExtResource("3_ste")
+enemy_id = &"mandrake"
+weight = 2
+group_min = 4
+group_max = 6
+
+[sub_resource type="Resource" id="sp_dirt_golem"]
+script = ExtResource("3_ste")
+enemy_id = &"dirt_golem"
+group_max = 2
+
+[sub_resource type="Resource" id="Resource_p61jk"]
+script = ExtResource("2_ujgbb")
+fill_prob = 0.4
+iterations = 8
+metadata/_custom_type_script = "uid://db0bep0rrmqws"
+
+[resource]
+script = ExtResource("2_x405x")
+id = &"glade_cave_d2_guaranteed"
+biome = &"glade"
+generator = SubResource("Resource_p61jk")
+difficulty = 2
+min_per_biome = 1
+max_per_biome = 3
+enemies = Array[ExtResource("3_ste")]([SubResource("sp_hopper"), SubResource("sp_mandrake"), SubResource("sp_dirt_golem")])
+enemy_groups_min = 4
+enemy_groups_max = 8

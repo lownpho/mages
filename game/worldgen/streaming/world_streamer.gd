@@ -568,8 +568,9 @@ func _terrain_table(tileset: TileSet) -> Dictionary:
 	return by_mask
 
 
-## Deterministic player spawn: the center of the fallback-room-type room nearest the center
-## of the starting biome, validated against the room's reachability map (never a BLOCKER, never
+## Deterministic player spawn: the lowest-difficulty room, ties broken by entrance depth then by
+## distance to the starting biome's center — so the spawn sits at the easy end of the difficulty
+## ramp. Validated against the room's reachability map (never a BLOCKER, never
 ## a sealed pocket — falls back to the nearest reachable tile). Returns a world pixel position.
 func find_spawn_position() -> Vector2:
 	var bc := Vector2i(-1, -1)
@@ -583,16 +584,19 @@ func find_spawn_position() -> Vector2:
 	var bs := config.biome_slots
 	var center_slot := Vector2(bc * bs) + Vector2(bs, bs) * 0.5
 	var best: RoomSpec = null
+	var best_diff := 99
 	var best_d := INF
 	for u in graph.rooms:
-		if u.type_id != config.fallback_room_type:
-			continue
+		var rt := config.room_type_by_id(u.type_id)
+		var diff: int = rt.difficulty if rt != null else 0
 		var d := (Vector2(u.origin_slot) + Vector2(u.size_slots) * 0.5).distance_squared_to(center_slot)
-		if d < best_d:
+		if best == null or diff < best_diff or (diff == best_diff \
+				and (u.depth < best.depth or (u.depth == best.depth and d < best_d))):
+			best_diff = diff
 			best_d = d
 			best = u
 	if best == null:
-		best = graph.rooms[0]   # a biome with zero fallback-type rooms — config would have to force it
+		best = graph.rooms[0]   # unreachable: every biome has at least one room
 	var out := get_room_output(best)
 	var cx := out.width >> 1
 	var cy := out.height >> 1

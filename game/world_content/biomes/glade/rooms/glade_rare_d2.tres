@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://csjkalxk7yin4"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_rare"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+
+[sub_resource type="Resource" id="sp_viper"]
+script = ExtResource("2_ste")
+enemy_id = &"viper"
+
+[resource]
+script = ExtResource("1_rare")
+id = &"glade_rare_d2"
+biome = &"glade"
+difficulty = 2
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
+enemies = Array[ExtResource("2_ste")]([SubResource("sp_viper")])
+enemy_groups_min = 1
+enemy_groups_max = 1
+scale_groups_with_size = false

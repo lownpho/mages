@@ -35,7 +35,7 @@ func _ready() -> void:
 			if not picked.has(key):
 				picked[key] = u
 		var units: Array = []
-		for key in ["traversal", "field", "cave_pocket", "arena", "shrine"]:
+		for key in ["glade_open_d0_empty", "glade_scatter_d1", "glade_blob_d1", "glade_cave_d2_guaranteed", "deepwood_arena", "shrine"]:
 			for shape in ["1x1", "2x1", "1x2", "2x2"]:
 				if picked.has("%s|%s" % [key, shape]):
 					units.append(picked["%s|%s" % [key, shape]])

@@ -4,8 +4,9 @@ class_name Population
 ## (no attempt index): spawn IDENTITY — group count, enemy ids, group sizes, entity_ids — is
 ## invariant under interior retries; only positions re-sample against the final reachability
 ## map. Draw order is fixed: groups → per group (weighted pick, size, per-entity
-## tile). An empty table consumes no draws (tables are config, so the stream is stable for a
-## given CONFIG_HASH).
+## tile). An empty pool consumes no draws (pools are config, so the stream is stable for a
+## given CONFIG_HASH). The pool is the room type's OWN `enemies` list (RoomTypeDef) — each
+## room .tres is a complete hand-authored encounter; difficulty placement happens in L2.
 extends RefCounted
 
 const MIN_SPAWN_DIST2 := 4      # ≥ 2 tiles from other spawns
@@ -16,8 +17,7 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 		openings: PackedInt32Array) -> void:
 	out.spawns = []
 	var rt := config.room_type_by_id(spec.type_id)
-	var biome := config.biome_by_id(spec.biome_id)
-	if rt == null or biome == null:
+	if rt == null:
 		return
 	var rng := config.rng_for([world_seed, WgHash.NS_POPULATION,
 			spec.origin_slot.x, spec.origin_slot.y] as Array[int])
@@ -35,7 +35,7 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 	# until the whole identity list exists, so identity never depends on the reachability map
 	# and survives interior retries.
 	var identities: Array = []   # of {"enemy_id": ...}
-	var spawn_entries: Array = _entries_for(biome.spawn_tables, spec.type_id, "enemies")
+	var spawn_entries: Array = rt.enemies
 	var groups_min := rt.enemy_groups_min
 	var groups_max := rt.enemy_groups_max
 	if rt.scale_groups_with_size:
@@ -95,16 +95,7 @@ static func _feature_tile(out: RoomOutput) -> Vector2i:
 	return best
 
 
-## The entry list of the FIRST table matching room_type ([] if none). `field` is the entry
-## array's property name — "enemies" on RoomSpawnTable.
-static func _entries_for(tables: Array, room_type: StringName, field: String) -> Array:
-	for t in tables:
-		if t != null and t.room_type == room_type:
-			return t.get(field)
-	return []
-
-
-## Integer cumulative-weight pick; null on an empty/zero-weight table (consumes no draw then).
+## Integer cumulative-weight pick; null on an empty/zero-weight pool (consumes no draw then).
 static func _weighted_pick(rng: RandomNumberGenerator, table: Array) -> Variant:
 	var total := 0
 	for e in table:

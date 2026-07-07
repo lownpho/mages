@@ -34,7 +34,6 @@ extends Resource
 
 @export_group("Well-known ids")
 @export var starting_biome: StringName = &"glade"           ## hosts the player spawn; presentation fallback
-@export var fallback_room_type: StringName = &"traversal"   ## assigned when a biome's fill table runs dry
 
 @export_group("Runtime (not hashed — cannot affect the generated world)")
 @export var chunk_tiles: int = 32              ## tiles per streaming chunk side (a view, not content)
@@ -68,6 +67,14 @@ func validate() -> bool:
 		push_error("GenConfig: %d biomes don't fill a width-%d grid (each biome appears exactly once — add/remove biomes or change world_width_biomes)"
 				% [biomes.size(), world_width_biomes])
 		return false
+	# Every biome needs its own fallback room (an owned, registered type) — it is what a room
+	# becomes when a tier fill finds nothing, so a missing one would leave rooms untyped.
+	for b in biomes:
+		var fb := room_type_by_id(b.fallback_room_type)
+		if fb == null or fb.biome != b.id:
+			push_error("GenConfig: biome '%s' fallback room type '%s' missing or not owned by it"
+					% [b.id, b.fallback_room_type])
+			return false
 	return true
 
 
@@ -113,7 +120,6 @@ func _compute_hash_uncached() -> int:
 	h = WgHash.fold_var(h, corner_radius)
 	h = WgHash.fold_var(h, wall_inset_max)
 	h = WgHash.fold_var(h, starting_biome)
-	h = WgHash.fold_var(h, fallback_room_type)
 	# Content registries, fixed order.
 	for b in biomes:
 		h = b.hash_fold(h)
@@ -138,3 +144,13 @@ func room_type_by_id(rid: StringName) -> RoomTypeDef:
 		if rt != null and rt.id == rid:
 			return rt
 	return null
+
+
+## A biome's room roster: the registered types it owns, in REGISTRY order (the canonical
+## iteration order for L2's placement draws — authored, deterministic).
+func rooms_for_biome(bid: StringName) -> Array[RoomTypeDef]:
+	var out: Array[RoomTypeDef] = []
+	for rt in room_types:
+		if rt != null and rt.biome == bid:
+			out.append(rt)
+	return out

@@ -164,22 +164,33 @@ static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h
 	var wslots_y := config.world_height_biomes() * config.biome_slots
 	var end := spec.origin_slot + spec.size_slots
 	var inset_max := clampi(config.wall_inset_max, 0, mini(w, h) >> 2)
+
+	# A corner is OPEN when both walls meeting there have dissolved into OPEN passages — otherwise the
+	# never-carved corner stubs of the four rooms round the same junction fuse into a solid wall island
+	# stranded in open ground (the repeating tree knot). Open corners drop their stub + rounding and get
+	# a sparse organic scatter instead. Both sides being open guarantees no perpendicular wall — and no
+	# world-edge (crossings there are DOORs, never OPEN) — needs the corner sealed.
+	var open_nw := _side_open(spec, WorldSpec.SIDE_NORTH, false, w, h) and _side_open(spec, WorldSpec.SIDE_WEST, false, w, h)
+	var open_ne := _side_open(spec, WorldSpec.SIDE_NORTH, true, w, h) and _side_open(spec, WorldSpec.SIDE_EAST, false, w, h)
+	var open_sw := _side_open(spec, WorldSpec.SIDE_SOUTH, false, w, h) and _side_open(spec, WorldSpec.SIDE_WEST, true, w, h)
+	var open_se := _side_open(spec, WorldSpec.SIDE_SOUTH, true, w, h) and _side_open(spec, WorldSpec.SIDE_EAST, true, w, h)
+
 	if depth > 0 or erode > 0 or inset_max > 0:
 		# NORTH row 0 / SOUTH row h-1 (inward +y / -y); WEST col 0 / EAST col w-1 (inward +x / -x).
+		# Each side skips the stub band on a corner column whose corner is open (i==0 / i==length-1).
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 0, inset_max),
-				w, oy, 0, ox, spec.origin_slot.y == 0, func(i, k): return k * w + i)
+				w, oy, 0, ox, spec.origin_slot.y == 0, open_nw, open_ne, func(i, k): return k * w + i)
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 1, inset_max),
-				w, oy + h - 1, 0, ox, end.y == wslots_y, func(i, k): return (h - 1 - k) * w + i)
+				w, oy + h - 1, 0, ox, end.y == wslots_y, open_sw, open_se, func(i, k): return (h - 1 - k) * w + i)
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 2, inset_max),
-				h, ox, 1, oy, spec.origin_slot.x == 0, func(i, k): return i * w + k)
+				h, ox, 1, oy, spec.origin_slot.x == 0, open_nw, open_sw, func(i, k): return i * w + k)
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 3, inset_max),
-				h, ox + w - 1, 1, oy, end.x == wslots_x, func(i, k): return i * w + (w - 1 - k))
+				h, ox + w - 1, 1, oy, end.x == wslots_x, open_ne, open_se, func(i, k): return i * w + (w - 1 - k))
 
-	if radius > 0:
-		_round_corner(grid, prot, w, h, 0, 0, 1, 1, base, ox, oy, radius)
-		_round_corner(grid, prot, w, h, w - 1, 0, -1, 1, base, ox + w - 1, oy, radius)
-		_round_corner(grid, prot, w, h, 0, h - 1, 1, -1, base, ox, oy + h - 1, radius)
-		_round_corner(grid, prot, w, h, w - 1, h - 1, -1, -1, base, ox + w - 1, oy + h - 1, radius)
+	_corner(grid, prot, w, h, 0, 0, 1, 1, base, ox, oy, radius, open_nw)
+	_corner(grid, prot, w, h, w - 1, 0, -1, 1, base, ox + w - 1, oy, radius, open_ne)
+	_corner(grid, prot, w, h, 0, h - 1, 1, -1, base, ox, oy + h - 1, radius, open_sw)
+	_corner(grid, prot, w, h, w - 1, h - 1, -1, -1, base, ox + w - 1, oy + h - 1, radius, open_se)
 
 
 ## Shape one wall of the shell: for each column `i` along it, erode the outer `lo` tiles to FLOOR
@@ -190,9 +201,13 @@ static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h
 ## perpendicular wall's shared corner tiles.
 static func _shape_side(grid: PackedByteArray, prot: PackedByteArray,
 		base: int, period: int, depth: int, erode: int, inset: int, length: int, line: int,
-		axis: int, wcoord0: int, void_side: bool, idx_fn: Callable) -> void:
+		axis: int, wcoord0: int, void_side: bool, open_start: bool, open_end: bool, idx_fn: Callable) -> void:
 	var er := 0 if void_side else erode
 	for i in length:
+		# Open-corner column (i==0 / i==length-1 with both its sides open): skip the stub band so the
+		# junction stays clear — the corner is opened by _open_corner, not sealed here.
+		if (i == 0 and open_start) or (i == length - 1 and open_end):
+			continue
 		# Opening column (OPEN span or door): no band at all. Without this the band SEALS the
 		# passage one tile behind its protected perimeter ring, and every open border renders
 		# as two straight tree lines with a dead floor channel between them.
@@ -244,6 +259,63 @@ static func _lattice_val(base: int, axis: int, line: int, t: int) -> float:
 	var m := WgHash.splitmix64(WgHash.splitmix64(line) ^ WgHash.splitmix64(t))
 	m = WgHash.splitmix64(m ^ axis)
 	return float(WgHash.splitmix64(base ^ m) & 0xFFFF) / 65535.0
+
+
+## True when `side` has an OPEN passage reaching the requested end (LOW=offset≈0, HIGH=offset+
+## width≈side length). Offsets run from the side's low-coordinate end (WEST for N/S, NORTH for
+## E/W), per RoomSpec.Passage. DOOR and external crossings never count — only fully-open borders.
+static func _side_open(spec: RoomSpec, side: int, at_high: bool, w: int, h: int) -> bool:
+	var side_len: int = w if (side == WorldSpec.SIDE_NORTH or side == WorldSpec.SIDE_SOUTH) else h
+	for p in spec.passages:
+		if p.side != side or p.kind != RoomSpec.KIND_OPEN:
+			continue
+		if at_high:
+			if p.offset_tiles + p.width_tiles >= side_len - 1:
+				return true
+		elif p.offset_tiles <= 1:
+			return true
+	return false
+
+
+## Room-corner shaping: a solid rounded quarter-disc where a wall genuinely turns, or a sparse
+## organic tree scatter where the corner is open (both its sides dissolved into passages).
+static func _corner(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
+		cx0: int, cy0: int, sx: int, sy: int, base: int, wx: int, wy: int,
+		base_radius: int, is_open: bool) -> void:
+	if is_open:
+		_open_corner(grid, prot, w, h, cx0, cy0, sx, sy, base, wx, wy, base_radius)
+	elif base_radius > 0:
+		_round_corner(grid, prot, w, h, cx0, cy0, sx, sy, base, wx, wy, base_radius)
+
+
+## Open corner: erase the lone leftover perimeter stub so the two open spans meet, then scatter a
+## few isolated trees over the corner quadrant — a loose cluster at the junction instead of a solid
+## knot. Density is a pure hash of WORLD tile coords (retry-stable, continuous across the seam with
+## the three rooms sharing this junction, each scattering its own corner). Never touches PROTECTED
+## tiles (openings, corridors) or non-FLOOR tiles.
+const _OPEN_CORNER_TREE_CHANCE := 0.06
+
+static func _open_corner(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
+		cx0: int, cy0: int, sx: int, sy: int, base: int, wx: int, wy: int, base_radius: int) -> void:
+	var cidx := cy0 * w + cx0
+	if prot[cidx] == 0:
+		grid[cidx] = FLOOR
+	var r := maxi(base_radius, 3)
+	for j in r:
+		var y := cy0 + sy * j
+		if y < 0 or y >= h:
+			break
+		var row := y * w
+		for i in r:
+			var x := cx0 + sx * i
+			if x < 0 or x >= w:
+				continue
+			var idx := row + x
+			if prot[idx] == 1 or grid[idx] != FLOOR:
+				continue
+			var m := WgHash.splitmix64(WgHash.splitmix64(wx + sx * i) ^ WgHash.splitmix64(wy + sy * j))
+			if float(WgHash.splitmix64(base ^ m) & 0xFFFF) / 65535.0 < _OPEN_CORNER_TREE_CHANCE:
+				grid[idx] = WALL
 
 
 ## Quarter-disc of WALL at room corner (cx0, cy0), growing inward along (sx, sy). The radius

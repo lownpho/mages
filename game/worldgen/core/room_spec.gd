@@ -48,6 +48,19 @@ var size_slots: Vector2i      ## (w, h) in {1x1, 2x1, 1x2, 2x2}
 var type_id: StringName       ## room type
 var biome_id: StringName      ## biome definition id
 var passages: Array = []      ## of Passage
+var depth: int = 0            ## BFS hops from the biome entrance over internal passages (L2)
+var biome_max_depth: int = 0  ## max depth over this biome's rooms
+
+
+## Difficulty tier of this room's position: the biome's depth range split into quarters → 0..3.
+## Room types are placed by matching their authored `difficulty` against this.
+func tier() -> int:
+	return tier_for(depth, biome_max_depth)
+
+
+static func tier_for(p_depth: int, p_max_depth: int) -> int:
+	@warning_ignore("integer_division")
+	return mini(3, 4 * p_depth / maxi(1, p_max_depth))
 
 
 func _init(p_origin := Vector2i.ZERO, p_size := Vector2i.ONE, p_biome_id := &"") -> void:

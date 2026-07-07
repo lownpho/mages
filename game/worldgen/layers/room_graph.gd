@@ -14,9 +14,20 @@ class_name RoomGraph
 ##   3. Loops + geometry: one keep-roll per NON-tree edge in canonical order; then, for every kept
 ##      edge (tree + kept loops) in canonical order, one openness roll → OPEN, else DOOR with one
 ##      offset roll. Border-contract crossings are appended afterwards (they consume NO biome RNG).
-##   4. Type assignment: pass 1 world-unique stamps (no RNG); pass 2 table minimums (quotas), one
-##      pick-roll per placed room, entries in authored table order; pass 3 weighted fill, one
-##      sample-roll per remaining room.
+##   4. Type assignment over the biome's ROSTER — the registered RoomTypeDefs whose `biome` is this
+##      one, in registry order: pass 1 world-unique stamps (no RNG); pass 2 quota minimums, one
+##      pick-roll per placed room — each pick drawn from the free rooms whose depth TIER is nearest
+##      the type's authored difficulty (>= min_slots preferred within that pool); pass 3 weighted
+##      fill, one sample-roll per remaining room among the types whose difficulty equals the room's
+##      tier, falling through to lower tiers when a tier's pool is empty/exhausted (the biome's
+##      fallback_room_type when nothing fits).
+##
+## Between steps 3 and 4 each room gets an entrance DEPTH (no RNG): BFS over the kept internal
+## edges from the biome's entrance rooms — every room carrying an external border-contract door,
+## or the room covering the central slot for the starting biome (which has no entrance; the
+## player spawns near its centre) and for a sealed biome. The depth range splits into quarters
+## (RoomSpec.tier, 0..3) and each RoomTypeDef's `difficulty` is matched against it — so the
+## hand-authored rooms themselves form the difficulty ramp from entrance to boss.
 extends RefCounted
 
 var _cache: Dictionary = {}   ## Vector2i biome_coord -> BiomeGraph; never evicted, never iterated
@@ -45,7 +56,8 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	var merge_chance := biome.room_merge_chance if biome.room_merge_chance >= 0.0 else config.room_merge_chance
 	var threshold_merge := WgHash.threshold(merge_chance)
 	var threshold_big := WgHash.threshold(config.big_merge_chance)
-	var threshold_loop := WgHash.threshold(config.extra_connection_chance)
+	var loop_chance := biome.room_extra_connection_chance if biome.room_extra_connection_chance >= 0.0 else config.extra_connection_chance
+	var threshold_loop := WgHash.threshold(loop_chance)
 	var openness_threshold := WgHash.threshold(biome.open_passage_chance)
 
 	# World-unique host slots in THIS biome (local coords). Lookup-only dict, never iterated for RNG.
@@ -126,6 +138,12 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	# Border-contract crossings — forced external doors; NO biome RNG consumed here.
 	_append_contracts(world_spec, biome_coord, s, t, owner, room_top, room_passages)
 
+	# --- Step 3b: entrance depth (pure BFS, no RNG) -----------------------------------------------
+	var depth := _compute_depth(bid == config.starting_biome, owner, s, n_rooms, kept, room_passages)
+	var max_depth := 0
+	for i in n_rooms:
+		max_depth = maxi(max_depth, depth[i])
+
 	# --- Step 4: type assignment ----------------------------------------------------------------
 	var types: Array[StringName] = []
 	types.resize(n_rooms)
@@ -134,55 +152,61 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 	for ur in world_spec.unique_rooms:
 		if ur.biome_coord == biome_coord:
 			types[owner[ur.local_slot.y * s + ur.local_slot.x]] = ur.type_id
-	# Pass 2: table minimums — every entry's min_per_biome is guaranteed (as far as free rooms
-	# allow): one uniform pick-roll per placed room, entries in authored table order. min == max
+	# Pass 2: quota minimums — every room type's min_per_biome is guaranteed (as far as free rooms
+	# allow): one uniform pick-roll per placed room, types in REGISTRY order. min == max
 	# pins an exact count (exactly one boss room); rooms stamped by pass 1 count toward quotas.
-	var table: Array = []       # applicable entries (known room type ids)
-	for e in biome.room_type_table:
-		if config.room_type_by_id(e.type_id) != null:
-			table.append(e)
+	# The pool is the free rooms whose depth tier is NEAREST the type's difficulty (a difficulty-3
+	# boss lands in the deepest quarter), preferring >= min_slots merged slots inside that pool.
+	var roster := config.rooms_for_biome(bid)   # this biome's room types, registry order
 	var placed: Dictionary = {}   # type_id -> count; lookup-only
 	for i in n_rooms:
 		if types[i] != &"":
 			placed[types[i]] = int(placed.get(types[i], 0)) + 1
-	for e in table:
-		# Quota placement prefers rooms with at least the type's min_slots merged slots (a boss
-		# wants a big arena) but falls back to any free room — merging never guarantees sizes.
-		var want_slots: int = config.room_type_by_id(e.type_id).min_slots
-		for _k in range(e.min_per_biome - int(placed.get(e.type_id, 0))):
+	for rt_def in roster:
+		for _k in range(rt_def.min_per_biome - int(placed.get(rt_def.id, 0))):
+			var best_gap := 99
+			for i in n_rooms:
+				if types[i] == &"":
+					best_gap = mini(best_gap,
+							absi(RoomSpec.tier_for(depth[i], max_depth) - rt_def.difficulty))
+			if best_gap == 99:
+				break   # no free room left
 			var free: Array[int] = []
 			var free_big: Array[int] = []
 			for i in n_rooms:
-				if types[i] == &"":
+				if types[i] == &"" \
+						and absi(RoomSpec.tier_for(depth[i], max_depth) - rt_def.difficulty) == best_gap:
 					free.append(i)
-					if room_size[i].x * room_size[i].y >= want_slots:
+					if room_size[i].x * room_size[i].y >= rt_def.min_slots:
 						free_big.append(i)
 			var pool := free_big if not free_big.is_empty() else free
-			if pool.is_empty():
-				break
-			types[pool[rng.randi_range(0, pool.size() - 1)]] = e.type_id
-			placed[e.type_id] = int(placed.get(e.type_id, 0)) + 1
-	# Pass 3: weighted fill from the biome's room-type table (the table IS the opt-in — no other
-	# filter), in canonical room order. Everything already placed counts toward max_per_biome.
+			types[pool[rng.randi_range(0, pool.size() - 1)]] = rt_def.id
+			placed[rt_def.id] = int(placed.get(rt_def.id, 0)) + 1
+	# Pass 3: weighted fill from the biome's roster, in canonical room order. A room only takes
+	# types of its own difficulty tier, falling through tier-1, tier-2… when a tier offers
+	# nothing (empty pool or all at max_per_biome) — so hard rooms never land shallow, but a
+	# thin roster still fills. One sample-roll per room whose chosen tier has weight; the
+	# biome's fallback_room_type when none does.
 	for i in n_rooms:
 		if types[i] != &"":
 			continue
-		var total := 0
-		for e in table:
-			if placed.get(e.type_id, 0) < e.max_per_biome:
-				total += e.weight
-		if total <= 0:
-			types[i] = config.fallback_room_type
-			continue
-		var r := rng.randi_range(0, total - 1)
-		var chosen: StringName = config.fallback_room_type
-		for e in table:
-			if placed.get(e.type_id, 0) >= e.max_per_biome:
+		var chosen: StringName = biome.fallback_room_type
+		for tier in range(RoomSpec.tier_for(depth[i], max_depth), -1, -1):
+			var total := 0
+			for rt_def in roster:
+				if rt_def.difficulty == tier and placed.get(rt_def.id, 0) < rt_def.max_per_biome:
+					total += rt_def.weight
+			if total <= 0:
 				continue
-			r -= e.weight
-			if r < 0:
-				chosen = e.type_id
-				break
+			var r := rng.randi_range(0, total - 1)
+			for rt_def in roster:
+				if rt_def.difficulty != tier or placed.get(rt_def.id, 0) >= rt_def.max_per_biome:
+					continue
+				r -= rt_def.weight
+				if r < 0:
+					chosen = rt_def.id
+					break
+			break
 		types[i] = chosen
 		placed[chosen] = int(placed.get(chosen, 0)) + 1
 
@@ -195,8 +219,53 @@ static func build(world_spec: WorldSpec, biome_coord: Vector2i, config: GenConfi
 		var spec := RoomSpec.new(biome_coord * s + room_top[i], room_size[i], bid)
 		spec.type_id = types[i]
 		spec.passages = room_passages[i]
+		spec.depth = depth[i]
+		spec.biome_max_depth = max_depth
 		graph.rooms.append(spec)
 	return graph
+
+
+## Per-room BFS hops from the biome entrance, over the kept internal edges. Sources: every room
+## with an external border-contract door — or, for the starting biome (the player spawns near its
+## centre, so difficulty must ramp outward from there) and for a sealed biome, the room covering
+## the central slot. The spanning tree guarantees every room is reached.
+static func _compute_depth(is_starting: bool, owner: PackedInt32Array, s: int, n_rooms: int,
+		kept: Array, room_passages: Array) -> PackedInt32Array:
+	var depth := PackedInt32Array()
+	depth.resize(n_rooms)
+	depth.fill(-1)
+	var queue: Array[int] = []
+	if not is_starting:
+		for i in n_rooms:
+			for p in room_passages[i]:
+				if p.external:
+					depth[i] = 0
+					queue.append(i)
+					break
+	if queue.is_empty():
+		var centre := owner[(s >> 1) * s + (s >> 1)]
+		depth[centre] = 0
+		queue.append(centre)
+
+	var adj: Array = []   # per room: PackedInt32Array of neighbour room indices
+	for _i in n_rooms:
+		adj.append(PackedInt32Array())
+	for entry in kept:
+		var e: Vector2i = entry["edge"]
+		adj[e.x].append(e.y)
+		adj[e.y].append(e.x)
+	var head := 0
+	while head < queue.size():
+		var cur := queue[head]
+		head += 1
+		for nb in adj[cur]:
+			if depth[nb] == -1:
+				depth[nb] = depth[cur] + 1
+				queue.append(nb)
+	for i in n_rooms:
+		if depth[i] < 0:   # unreachable can't happen (spanning tree); keep the invariant depth >= 0
+			depth[i] = 0
+	return depth
 
 
 # --- Merge helpers ------------------------------------------------------------------------------

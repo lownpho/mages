@@ -44,12 +44,17 @@ func _ready() -> void:
 		fails.append("biome count %d != %dx%d grid"
 				% [cfg.biomes.size(), cfg.world_width_biomes, cfg.world_height_biomes()])
 
-	# 2. The fallback room type exists and has no generator (empty interior by construction).
-	var fallback := cfg.room_type_by_id(cfg.fallback_room_type)
-	if fallback == null:
-		fails.append("fallback room type '%s' missing" % cfg.fallback_room_type)
-	elif fallback.generator != null:
-		fails.append("fallback room type '%s' has a generator — must be empty" % cfg.fallback_room_type)
+	# 2. Every biome's fallback room type exists, is its own, and has no generator (empty
+	# interior by construction). NONE-scope room types must name an existing owner biome.
+	for b in cfg.biomes:
+		var fallback := cfg.room_type_by_id(b.fallback_room_type)
+		if fallback == null or fallback.biome != b.id:
+			fails.append("biome %s: fallback room type '%s' missing or not owned" % [b.id, b.fallback_room_type])
+		elif fallback.generator != null:
+			fails.append("biome %s: fallback room type '%s' has a generator — must be empty" % [b.id, b.fallback_room_type])
+	for rt in cfg.room_types:
+		if rt.unique_scope == RoomTypeDef.UniqueScope.NONE and cfg.biome_by_id(rt.biome) == null:
+			fails.append("room type '%s' names unknown biome '%s'" % [rt.id, rt.biome])
 	# The starting biome must exist too (player spawn + presentation fallback).
 	if cfg.biome_by_id(cfg.starting_biome) == null:
 		fails.append("starting biome '%s' missing" % cfg.starting_biome)
@@ -59,10 +64,10 @@ func _ready() -> void:
 	var worst_case_rooms := (cfg.biome_slots * cfg.biome_slots) / 4
 	for b in cfg.biomes:
 		var quota := 0
-		for e in b.room_type_table:
-			quota += e.min_per_biome
-			if e.min_per_biome > e.max_per_biome:
-				fails.append("biome %s: '%s' min_per_biome > max_per_biome" % [b.id, e.type_id])
+		for rt in cfg.rooms_for_biome(b.id):
+			quota += rt.min_per_biome
+			if rt.min_per_biome > rt.max_per_biome:
+				fails.append("biome %s: '%s' min_per_biome > max_per_biome" % [b.id, rt.id])
 		if quota > worst_case_rooms:
 			fails.append("biome %s: quota sum %d > worst-case %d rooms" % [b.id, quota, worst_case_rooms])
 
@@ -121,9 +126,12 @@ func _ready() -> void:
 	cfg.room_types[0].enemy_groups_max += 1
 	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "room type budget")
 	cfg.room_types[0].enemy_groups_max -= 1
-	cfg.biomes[0].room_type_table[0].min_per_biome += 1
-	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "table min_per_biome")
-	cfg.biomes[0].room_type_table[0].min_per_biome -= 1
+	cfg.room_types[0].min_per_biome += 1
+	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "room type min_per_biome")
+	cfg.room_types[0].min_per_biome -= 1
+	cfg.room_types[0].difficulty = (cfg.room_types[0].difficulty + 1) % 4
+	_expect_changed(fails, h1, cfg._compute_hash_uncached(), "room type difficulty")
+	cfg.room_types[0].difficulty = (cfg.room_types[0].difficulty + 3) % 4
 	var scatter: RoomGenScatter = null
 	for rt in cfg.room_types:
 		if rt.generator is RoomGenScatter:

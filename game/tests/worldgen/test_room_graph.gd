@@ -23,6 +23,7 @@ func _ready() -> void:
 	_test_partition(fails)
 	_test_world_unique(fails)
 	_test_quotas(fails)
+	_test_depth(fails)
 
 	if fails.is_empty():
 		print("ALL PASS")
@@ -134,6 +135,8 @@ func _graphs_equal(a: BiomeGraph, b: BiomeGraph) -> bool:
 		var ua: RoomSpec = a.rooms[i]
 		var ub: RoomSpec = b.rooms[i]
 		if ua.origin_slot != ub.origin_slot or ua.size_slots != ub.size_slots or ua.type_id != ub.type_id:
+			return false
+		if ua.depth != ub.depth or ua.biome_max_depth != ub.biome_max_depth:
 			return false
 		if ua.passages.size() != ub.passages.size():
 			return false
@@ -271,7 +274,88 @@ func _test_world_unique(fails: Array[String]) -> void:
 	print("world_unique: 30 seeds, each world-unique type placed at most once")
 
 
-## Every biome's room-type table quotas hold: min_per_biome <= count <= max_per_biome.
+## Entrance depth: recompute per-biome BFS depth independently from passage GEOMETRY (internal
+## passages only; sources = external-door rooms, or the centre-slot room for the starting biome)
+## and require an exact match; biome_max_depth consistent. Difficulty placement: weighted-fill
+## rooms never carry a type harder than their tier (fill only falls DOWN), and the difficulty-3
+## quota encounters (boss, deepwood_arena) land in the deepest quarter.
+func _test_depth(fails: Array[String]) -> void:
+	for i in 40:
+		var seed := 67_867_967 * i + 9
+		var world := _build_world(seed)
+		var spec: WorldSpec = world["spec"]
+		var graphs: Dictionary = world["graphs"]
+		for c in graphs:
+			var g: BiomeGraph = graphs[c]
+			var is_starting: bool = spec.biome_at(c) == _config.starting_biome
+			var by_origin: Dictionary = {}
+			for idx in g.rooms.size():
+				by_origin[g.rooms[idx].origin_slot] = idx
+			# Independent BFS over internal passages.
+			var depth: Array[int] = []
+			depth.resize(g.rooms.size())
+			depth.fill(-1)
+			var queue: Array[int] = []
+			if not is_starting:
+				for idx in g.rooms.size():
+					for p in g.rooms[idx].passages:
+						if p.external:
+							depth[idx] = 0
+							queue.append(idx)
+							break
+			if queue.is_empty():
+				var centre: int = by_origin[g.room_at(Vector2i(_S >> 1, _S >> 1)).origin_slot]
+				depth[centre] = 0
+				queue.append(centre)
+			var head := 0
+			while head < queue.size():
+				var cur: int = queue[head]
+				head += 1
+				for p in g.rooms[cur].passages:
+					if p.external:
+						continue
+					var nb_origin := _neighbour_id(g.rooms[cur], p, graphs)
+					if not by_origin.has(nb_origin):
+						continue
+					var nb: int = by_origin[nb_origin]
+					if depth[nb] == -1:
+						depth[nb] = depth[cur] + 1
+						queue.append(nb)
+			var max_depth := 0
+			for idx in g.rooms.size():
+				max_depth = maxi(max_depth, depth[idx])
+			for idx in g.rooms.size():
+				var u: RoomSpec = g.rooms[idx]
+				if u.depth != depth[idx]:
+					fails.append("depth: room %s has depth %d, geometry says %d (seed %d biome %s)"
+							% [u.origin_slot, u.depth, depth[idx], seed, c])
+					return
+				if u.biome_max_depth != max_depth:
+					fails.append("depth: biome_max_depth %d != %d (seed %d biome %s)"
+							% [u.biome_max_depth, max_depth, seed, c])
+					return
+			# Difficulty placement. Quota types (min_per_biome > 0 on the def) place on the
+			# nearest tier; everything else came from weighted fill, which only falls DOWN —
+			# so a fill room's type difficulty never exceeds its tier.
+			for u in g.rooms:
+				var rt := _config.room_type_by_id(u.type_id)
+				if rt == null or rt.min_per_biome > 0 \
+						or rt.unique_scope == RoomTypeDef.UniqueScope.WORLD:
+					continue
+				if rt.difficulty > u.tier():
+					fails.append("depth: fill room '%s' (difficulty %d) on tier-%d room (seed %d biome %s)"
+							% [u.type_id, rt.difficulty, u.tier(), seed, c])
+					return
+			# The difficulty-3 summit encounters sit in the deepest quarter.
+			for u in g.rooms:
+				if (u.type_id == &"glade_boss_d3" or u.type_id == &"deepwood_arena") and u.tier() != 3:
+					fails.append("depth: summit '%s' on tier-%d room (seed %d biome %s)"
+							% [u.type_id, u.tier(), seed, c])
+					return
+	print("depth: 40 seeds, BFS depth matches geometry; fill respects tiers; summits sit tier 3")
+
+
+## Every room type's quota holds in its biome: min_per_biome <= count <= max_per_biome.
 func _test_quotas(fails: Array[String]) -> void:
 	for i in 30:
 		var seed := 48_611 * i + 3
@@ -283,13 +367,13 @@ func _test_quotas(fails: Array[String]) -> void:
 				var c := Vector2i(bx, by)
 				var biome := _config.biome_by_id(spec.biome_at(c))
 				var g: BiomeGraph = graphs[c]
-				for e in biome.room_type_table:
+				for rt in _config.rooms_for_biome(biome.id):
 					var count := 0
 					for u in g.rooms:
-						if u.type_id == e.type_id:
+						if u.type_id == rt.id:
 							count += 1
-					if count < e.min_per_biome or count > e.max_per_biome:
+					if count < rt.min_per_biome or count > rt.max_per_biome:
 						fails.append("quotas: %s '%s' count %d outside [%d, %d] at seed %d"
-								% [biome.id, e.type_id, count, e.min_per_biome, e.max_per_biome, seed])
+								% [biome.id, rt.id, count, rt.min_per_biome, rt.max_per_biome, seed])
 						return
-	print("quotas: 30 seeds, every table min/max satisfied")
+	print("quotas: 30 seeds, every room type's min/max satisfied")

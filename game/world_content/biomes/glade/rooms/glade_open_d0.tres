@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://cp7iobrogm4ja"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+
+[sub_resource type="Resource" id="sp_sproutling"]
+script = ExtResource("2_ste")
+enemy_id = &"sproutling"
+weight = 3
+group_min = 2
+group_max = 4
+
+[sub_resource type="Resource" id="sp_wasp"]
+script = ExtResource("2_ste")
+enemy_id = &"wasp"
+weight = 2
+group_min = 2
+group_max = 3
+
+[resource]
+script = ExtResource("1_def")
+id = &"glade_open_d0"
+biome = &"glade"
+weight = 4
+max_per_biome = 12
+enemies = Array[ExtResource("2_ste")]([SubResource("sp_sproutling"), SubResource("sp_wasp")])
+enemy_groups_min = 1
+enemy_groups_max = 3

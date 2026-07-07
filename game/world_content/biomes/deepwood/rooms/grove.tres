@@ -2,6 +2,20 @@
 
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_grv"]
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_grvg"]
+[ext_resource type="PackedScene" uid="uid://d1nucsign8wqk" path="res://worldgen/runtime/under_construction_sign.tscn" id="3_sign"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_ste"]
+
+[sub_resource type="Resource" id="sp_stalker"]
+script = ExtResource("4_ste")
+enemy_id = &"stalker"
+weight = 2
+group_max = 2
+
+[sub_resource type="Resource" id="sp_owl"]
+script = ExtResource("4_ste")
+enemy_id = &"owl"
+group_min = 2
+group_max = 3
 
 [sub_resource type="Resource" id="Resource_grvg"]
 script = ExtResource("2_grvg")
@@ -11,6 +25,12 @@ write_blockers = true
 [resource]
 script = ExtResource("1_grv")
 id = &"grove"
+biome = &"deepwood"
 generator = SubResource("Resource_grvg")
+difficulty = 2
 footprint_blob = true
+weight = 3
+max_per_biome = 4
+enemies = Array[ExtResource("4_ste")]([SubResource("sp_stalker"), SubResource("sp_owl")])
 enemy_groups_max = 2
+feature_scene = ExtResource("3_sign")

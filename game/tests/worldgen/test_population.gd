@@ -40,14 +40,27 @@ func _ready() -> void:
 				if sp.has("enemy_id"):
 					enemies += 1
 			var max_group := 0
-			for t in config.biome_by_id(u.biome_id).spawn_tables:
-				if t.room_type == u.type_id:
-					for e in t.enemies:
-						max_group = maxi(max_group, e.group_max)
-			if enemies > rt.enemy_groups_max * max_group:
+			for e in rt.enemies:
+				max_group = maxi(max_group, e.group_max)
+			var groups_cap := rt.enemy_groups_max
+			if rt.scale_groups_with_size:
+				groups_cap *= u.size_slots.x * u.size_slots.y
+			if enemies > groups_cap * max_group:
 				fails.append("enemy count over budget (seed %d %s)" % [seed, u.type_id])
-			if u.type_id == &"traversal" and not out.spawns.is_empty():
-				fails.append("traversal room populated (seed %d)" % seed)
+			if rt.enemies.is_empty() and enemies > 0:
+				fails.append("empty-pool room '%s' populated (seed %d)" % [u.type_id, seed])
+
+			# Every spawned enemy must come from the room type's OWN pool.
+			for sp in out.spawns:
+				if not sp.has("enemy_id"):
+					continue
+				var explained := false
+				for e in rt.enemies:
+					if e.enemy_id == sp["enemy_id"]:
+						explained = true
+				if not explained:
+					fails.append("spawn '%s' not in room type's pool (seed %d %s)"
+							% [sp["enemy_id"], seed, u.type_id])
 
 			# Distance constraints apply to ENEMIES only (feature entries aren't subject to the
 			# door-distance / anti-stacking rules — they're placed deterministically at the centre).
@@ -91,7 +104,15 @@ func _ready() -> void:
 			break
 	print("population: %d rooms checked (%d with spawns) over %d seeds" % [checked, with_spawns, SEEDS])
 	if with_spawns == 0:
-		fails.append("no room ever spawned anything — tables broken?")
+		fails.append("no room ever spawned anything — pools broken?")
+
+	# Content lint: a room type with an enemy budget needs a non-empty pool (and vice versa),
+	# or its rooms silently spawn nothing / its pool is dead weight.
+	for rt in config.room_types:
+		if rt.enemy_groups_max > 0 and rt.enemies.is_empty() and rt.unique_scope == RoomTypeDef.UniqueScope.NONE:
+			fails.append("room type '%s' has an enemy budget but an empty pool" % rt.id)
+		if rt.enemy_groups_max == 0 and not rt.enemies.is_empty():
+			fails.append("room type '%s' has a pool but a zero budget" % rt.id)
 
 	# Entity ids unique across a whole biome (all units, one seed per biome cell).
 	var world := WorldLayout.build(31337, config)
