@@ -27,8 +27,26 @@ func _ready() -> void:
 	%BestiaryButton.pressed.connect(func() -> void:
 		%BestiaryPanel.visible = not %BestiaryPanel.visible)
 
+	# There's no pause menu by design and no process to "quit" on the web build, so this
+	# leaves the run to the title screen. The run autosaves continuously; persist() first
+	# flushes the player's current position (only snapshotted every few seconds) so
+	# Continue resumes exactly here.
+	%QuitButton.pressed.connect(func() -> void:
+		GameState.persist()
+		SceneManager.go_to(load("res://scenes/title.tscn")))
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("menu") and %BestiaryPanel.visible:
+	if not %BestiaryPanel.visible:
+		return
+	# Reaching _unhandled_input at all means the click missed every Control (the
+	# panel included, since its mouse_filter stops input) — so any mouse press
+	# here is, by construction, a click outside the pane.
+	var outside_click: bool = event is InputEventMouseButton and event.pressed
+	# Web's Fullscreen API reserves Esc to exit fullscreen and can't be
+	# preventDefault()'d, so sharing it with a UI action there is a losing fight —
+	# skip the shortcut on web and rely on the button/outside-click instead.
+	var menu_close := OS.get_name() != "Web" and event.is_action_pressed("menu")
+	if outside_click or menu_close:
 		%BestiaryPanel.hide()
 		get_viewport().set_input_as_handled()
 
