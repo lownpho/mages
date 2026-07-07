@@ -26,6 +26,13 @@ var fresh_start := false
 var pending_player_position: Vector2 = Vector2.ZERO
 var has_pending_position := false
 
+## entity_id -> true for defeated rare/boss enemies in the current world, so closing and
+## reopening the game (or streaming a chunk out and back) can't refarm a one-of-a-kind
+## encounter. Entity ids are a pure hash of [world_seed, room, index] (see Population),
+## so they never collide across different seeds — a fresh new_game() naturally starts
+## empty and stale entries from an abandoned seed are simply never matched again.
+var notable_kills: Dictionary = {}
+
 var _tracked_player: Node2D = null
 var _save_timer: Timer
 var _suspend_autosave := false
@@ -54,6 +61,7 @@ func new_game() -> void:
 		active_seed = 1  # keep 0 reserved for "unset"
 	fresh_start = true
 	has_pending_position = false
+	notable_kills = {}
 	# Fresh run: nothing carries over. The bestiary (its own autoload) is intentionally
 	# left alone so kill discoveries persist across runs.
 	_suspend_autosave = true
@@ -72,8 +80,16 @@ func continue_game() -> bool:
 		return false
 	pending_player_position = cfg.get_value("player", "position", Vector2.ZERO)
 	has_pending_position = true
+	notable_kills = cfg.get_value("world", "notable_kills", {})
 	_load_inventory(cfg)
 	return true
+
+
+## Record a defeated rare/boss enemy and persist immediately (rare enough that this is
+## cheap, and important enough not to lose to a crash between now and the next autosave).
+func record_notable_kill(entity_id: int) -> void:
+	notable_kills[entity_id] = true
+	persist()
 
 
 ## Called once by world.gd after placing the (possibly restored) player, so the
@@ -109,6 +125,7 @@ func game_over() -> void:
 func persist() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("world", "seed", active_seed)
+	cfg.set_value("world", "notable_kills", notable_kills)
 	if is_instance_valid(_tracked_player):
 		cfg.set_value("player", "position", _tracked_player.global_position)
 	_save_inventory(cfg)
