@@ -188,6 +188,7 @@ done_state = "Pattern"
 [node name="Chase" type="Node" parent="FSM" unique_id=1381285073]
 script = ExtResource("16_chase")
 duration = 3.0
+speed = 30.0
 run_anim = "idle"
 
 [node name="Summon" type="Node" parent="FSM" unique_id=1779430659]
