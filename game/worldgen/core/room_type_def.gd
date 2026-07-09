@@ -13,7 +13,13 @@ enum UniqueScope { NONE, WORLD }
 @export var generator: RoomGenBase = null                      ## structure generator + its params; null = leave the room empty
 @export var unique_scope: UniqueScope = UniqueScope.NONE       ## NONE / WORLD
 @export var unique_allowed_biomes: Array[StringName] = []      ## WORLD-unique placement only; ignored for NONE
-@export var min_slots: int = 1                                 ## quota placement prefers rooms of >= this many merged slots (soft — falls back to any free room)
+
+## Size window in slots (either orientation counts: a room fits iff (w,h) or (h,w) lies within
+## [min..max] per axis). Quota placements (min_per_biome) get a leaf of at least min_size_slots
+## carved by the BSP subdivision BY CONSTRUCTION; weighted fill only assigns this type to rooms
+## inside the window.
+@export var min_size_slots := Vector2i.ONE
+@export var max_size_slots := Vector2i(99, 99)
 
 ## Difficulty tier 0..3 — dictates WHERE the room is placed: the biome's entrance-depth range
 ## splits into quarters (RoomSpec.tier()), weighted fill only assigns a type to rooms of tier
@@ -33,14 +39,12 @@ enum UniqueScope { NONE, WORLD }
 @export var enemy_groups_max: int = 0
 @export var scale_groups_with_size := true                     ## multiply the budget by merged slot area (w*h); off for exactly-one encounters (boss/rare/shrine)
 
-## One specific scene (door, sign, altar, portal) placed at the room centre and instantiated by
-## WgEntitySpawner. `feature_data` is an optional Resource applied to the instance via its
-## `setup(data)` method (e.g. a DoorResource onto door.tscn) — scene and data are kept separate
-## so one scene can be reused with different data. Deliberately NOT hashed (see hash_fold): like
-## presentation these are an overlay on the finished room, not terrain, so swapping them never
-## re-rolls a saved world.
-@export var feature_scene: PackedScene = null
-@export var feature_data: Resource = null
+## Specific scenes (doors, signs, altars, portals) placed on the finished room and instantiated
+## by WgEntitySpawner — each RoomFeature carries its scene, optional setup(data) Resource,
+## placement hint and count range. Deliberately NOT hashed (see hash_fold): like presentation
+## these are an overlay on the finished room, not terrain, so swapping them never re-rolls a
+## saved world. Placement draws use the NS_FEATURES stream, never the population RNG.
+@export var features: Array[RoomFeature] = []
 
 
 func hash_fold(h: int) -> int:
@@ -54,7 +58,8 @@ func hash_fold(h: int) -> int:
 		h = WgHash.fold_var(h, 0)
 	for b in unique_allowed_biomes:
 		h = WgHash.fold_var(h, b)
-	h = WgHash.fold_var(h, min_slots)
+	h = WgHash.fold_var(h, min_size_slots)
+	h = WgHash.fold_var(h, max_size_slots)
 	h = WgHash.fold_var(h, difficulty)
 	h = WgHash.fold_var(h, weight)
 	h = WgHash.fold_var(h, min_per_biome)

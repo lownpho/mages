@@ -1,8 +1,10 @@
 class_name BorderContracts
-## Border contracts: the deterministic shared decision between two adjacent biome
-## cells. Pure static function — no state, callable lazily from either side. The seed is
-## symmetric in (A,B) via coordinate-wise min/max, so both neighbours compute the
-## identical crossings in any generation order.
+## Border contracts: the deterministic shared decision at a macro-cell edge where the two
+## cells belong to DIFFERENT biomes — callers guarantee this. (Now that a biome can claim a
+## multi-cell `size_cells` region, an edge between two cells of the SAME biome is an interior
+## seam within that region, not a border, and has no contract.) Pure static function — no
+## state, callable lazily from either side. The seed is symmetric in (A,B) via coordinate-wise
+## min/max, so both neighbours compute the identical crossings in any generation order.
 extends RefCounted
 
 

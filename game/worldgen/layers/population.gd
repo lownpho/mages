@@ -1,16 +1,37 @@
 class_name Population
-## Layer 4: enemy groups for one room, as data only — no nodes, no scenes.
-## Runs as pipeline step 7 with its OWN RNG seeded [world_seed, NS_POPULATION, slot_x, slot_y]
-## (no attempt index): spawn IDENTITY — group count, enemy ids, group sizes, entity_ids — is
-## invariant under interior retries; only positions re-sample against the final reachability
-## map. Draw order is fixed: groups → per group (weighted pick, size, per-entity
-## tile). An empty pool consumes no draws (pools are config, so the stream is stable for a
-## given CONFIG_HASH). The pool is the room type's OWN `enemies` list (RoomTypeDef) — each
-## room .tres is a complete hand-authored encounter; difficulty placement happens in L2.
+## Layer 4: enemy groups + feature placements for one room, as data only — no nodes, no scenes.
+## Single pass — there are no interior retries any more, so identity and position are drawn
+## together. TWO independent RNG streams:
+##
+## 1. Population rng  [world_seed, NS_POPULATION, origin_slot.x, origin_slot.y]:
+##    one group-count draw, then per group IN ORDER: weighted entry pick, group size, then per
+##    entity in that group ONE candidate-index draw (`rng.randi_range(0, candidates.size()-1)`).
+##    An empty pool consumes no draw (`_weighted_pick` returns null without drawing). If the
+##    candidate list is empty when an entity's turn comes, that entity (and every later one,
+##    since the list only shrinks) is skipped with no draw — a `push_warning` fires once per
+##    room — but every later group still performs its own weighted-pick/size draws, so the
+##    stream order above holds regardless of how many entities actually land. A room with a
+##    non-empty pool and a non-empty candidate list always spawns at least one entity.
+##    Candidates are the room's reachable tiles (row-major) at least `spawn_min_dist_from_doors`
+##    tiles from every opening. After each pick, every candidate within squared distance < 4 of
+##    the picked tile is dropped (order-preserving linear filter — deterministic, no Dictionary).
+##
+## 2. Features rng  [world_seed, NS_FEATURES, origin_slot.x, origin_slot.y]: consumed once per
+##    `RoomTypeDef.features` entry, IN ARRAY ORDER. Per feature: one count draw
+##    (`randi_range(count_min, count_max)`), then per instance a tile is picked by placement —
+##    CENTER (first instance only) consumes NO draw: the deterministic room-centre / nearest
+##    reachable tile. Every other instance (RANDOM_REACHABLE, NEAR_WALL, or a CENTER feature's
+##    2nd+ instance falling through to RANDOM_REACHABLE) consumes exactly one candidate-index
+##    draw against a single reachable-tile candidate list shared by every feature in the room
+##    (row-major, no door-distance requirement; NEAR_WALL draws from that list filtered to tiles
+##    4-adjacent to a WALL/BLOCKER, falling back to the unfiltered list, then to CENTER, when its
+##    filtered pool is empty). A picked tile is removed from the shared list exactly once (no
+##    radius — unlike enemy candidates). Draws happen even when `scene` is null so a feature
+##    left without a scene never shifts a later feature's stream; the resulting entry is simply
+##    not appended to `out.spawns`.
 extends RefCounted
 
 const MIN_SPAWN_DIST2 := 4      # ≥ 2 tiles from other spawns
-const PLACE_ATTEMPTS := 100
 
 
 static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_seed: int,
@@ -19,8 +40,6 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 	var rt := config.room_type_by_id(spec.type_id)
 	if rt == null:
 		return
-	var rng := config.rng_for([world_seed, WgHash.NS_POPULATION,
-			spec.origin_slot.x, spec.origin_slot.y] as Array[int])
 
 	var ox := PackedInt32Array()
 	var oy := PackedInt32Array()
@@ -28,13 +47,24 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 		ox.append(openings[i] % out.width)
 		@warning_ignore("integer_division")
 		oy.append(openings[i] / out.width)
-	var sx := PackedInt32Array()   # placed spawn positions
-	var sy := PackedInt32Array()
 
-	# Phase 1 — IDENTITY: group count, weighted picks, group sizes. No position draws happen
-	# until the whole identity list exists, so identity never depends on the reachability map
-	# and survives interior retries.
-	var identities: Array = []   # of {"enemy_id": ...}
+	_populate_enemies(out, spec, config, world_seed, rt, ox, oy)
+	_populate_features(out, spec, config, world_seed, rt)
+
+	# Stable entity ids by list index.
+	for i in out.spawns.size():
+		out.spawns[i]["entity_id"] = config.seed_for([world_seed, WgHash.NS_POPULATION,
+				spec.origin_slot.x, spec.origin_slot.y, i] as Array[int])
+
+
+static func _populate_enemies(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_seed: int,
+		rt: RoomTypeDef, ox: PackedInt32Array, oy: PackedInt32Array) -> void:
+	var rng := config.rng_for([world_seed, WgHash.NS_POPULATION,
+			spec.origin_slot.x, spec.origin_slot.y] as Array[int])
+
+	var opening_dist2 := config.spawn_min_dist_from_doors * config.spawn_min_dist_from_doors
+	var candidates := _door_clear_candidates(out, ox, oy, opening_dist2)
+
 	var spawn_entries: Array = rt.enemies
 	var groups_min := rt.enemy_groups_min
 	var groups_max := rt.enemy_groups_max
@@ -43,37 +73,54 @@ static func populate(out: RoomOutput, spec: RoomSpec, config: GenConfig, world_s
 		groups_min *= area
 		groups_max *= area
 	var groups := rng.randi_range(groups_min, groups_max)
+	var warned := false
 	for _g in groups:
 		var entry: SpawnTableEntry = _weighted_pick(rng, spawn_entries)
 		if entry == null:
 			continue
 		var size := rng.randi_range(entry.group_min, entry.group_max)
 		for _s in size:
-			identities.append({"enemy_id": entry.enemy_id})
-	# Phase 2 — POSITIONS: rejection-sample against this attempt's reachability map, in
-	# identity order. Only these draws (and the resulting positions) may vary across retries.
-	var opening_dist2 := config.spawn_min_dist_from_doors * config.spawn_min_dist_from_doors
-	for ident in identities:
-		var tile := _sample_tile(rng, out, ox, oy, sx, sy, opening_dist2)
-		if tile.x < 0:
-			continue   # 100 attempts exhausted — entity skipped
-		sx.append(tile.x)
-		sy.append(tile.y)
-		ident["tile"] = tile
-		out.spawns.append(ident)
+			if candidates.is_empty():
+				if not warned:
+					push_warning("Population: room at slot %s ran out of spawn candidates" %
+							[spec.origin_slot])
+					warned = true
+				continue
+			var i := rng.randi_range(0, candidates.size() - 1)
+			var tile := _tile_from_index(out.width, candidates[i])
+			out.spawns.append({"enemy_id": entry.enemy_id, "tile": tile})
+			candidates = _remove_within(candidates, tile, out.width, MIN_SPAWN_DIST2)
 
-	# A room type may carry ONE specific scene (door, sign, altar) — placed deterministically at
-	# the room centre (nearest reachable tile), NOT an RNG draw, so it never shifts enemy identity.
-	if rt.feature_scene != null:
-		var ftile := _feature_tile(out)
-		if ftile.x >= 0:
-			out.spawns.append({"feature": rt.feature_scene, "feature_data": rt.feature_data,
-					"tile": ftile})
 
-	# Stable entity ids by list index.
-	for i in out.spawns.size():
-		out.spawns[i]["entity_id"] = config.seed_for([world_seed, WgHash.NS_POPULATION,
-				spec.origin_slot.x, spec.origin_slot.y, i] as Array[int])
+static func _populate_features(out: RoomOutput, spec: RoomSpec, config: GenConfig,
+		world_seed: int, rt: RoomTypeDef) -> void:
+	if rt.features.is_empty():
+		return
+	var rng := config.rng_for([world_seed, WgHash.NS_FEATURES,
+			spec.origin_slot.x, spec.origin_slot.y] as Array[int])
+	var reachable := _reachable_candidates(out)   # shared across every feature in this room
+
+	for f in rt.features:
+		var count := rng.randi_range(f.count_min, f.count_max)
+		for n in count:
+			var tile := Vector2i(-1, -1)
+			if f.placement == RoomFeature.Placement.CENTER and n == 0:
+				tile = _feature_tile(out)
+			else:
+				var pool := reachable
+				if f.placement == RoomFeature.Placement.NEAR_WALL:
+					var walled := _filter_near_wall(out, reachable)
+					if not walled.is_empty():
+						pool = walled
+				if pool.is_empty():
+					tile = _feature_tile(out)
+				else:
+					var i := rng.randi_range(0, pool.size() - 1)
+					var idx := pool[i]
+					tile = _tile_from_index(out.width, idx)
+					reachable = _remove_index(reachable, idx)
+			if tile.x >= 0 and f.scene != null:
+				out.spawns.append({"feature": f.scene, "feature_data": f.data, "tile": tile})
 
 
 ## Room-centre tile, or the nearest reachable tile when the centre is blocked ((-1,-1) if the
@@ -110,31 +157,79 @@ static func _weighted_pick(rng: RandomNumberGenerator, table: Array) -> Variant:
 	return table[table.size() - 1]
 
 
-## Rejection-sample a reachable tile ≥ spawn_min_dist_from_doors tiles from every opening and
-## ≥2 from other spawns; (-1,-1) when 100 attempts exhaust.
-static func _sample_tile(rng: RandomNumberGenerator, out: RoomOutput,
-		ox: PackedInt32Array, oy: PackedInt32Array,
-		sx: PackedInt32Array, sy: PackedInt32Array, opening_dist2: int) -> Vector2i:
-	for _a in PLACE_ATTEMPTS:
-		var x := rng.randi_range(0, out.width - 1)
-		var y := rng.randi_range(0, out.height - 1)
-		if out.reachability_map[y * out.width + x] == 0:
+## Every reachable tile at least `dist2`-clear (squared) of every opening, row-major.
+static func _door_clear_candidates(out: RoomOutput, ox: PackedInt32Array, oy: PackedInt32Array,
+		dist2: int) -> PackedInt32Array:
+	var candidates := PackedInt32Array()
+	for y in out.height:
+		for x in out.width:
+			if out.reachability_map[y * out.width + x] != 1:
+				continue
+			var clear := true
+			for i in ox.size():
+				var dx := ox[i] - x
+				var dy := oy[i] - y
+				if dx * dx + dy * dy < dist2:
+					clear = false
+					break
+			if clear:
+				candidates.append(y * out.width + x)
+	return candidates
+
+
+## Every reachable tile, row-major, no door-distance filter (used by features).
+static func _reachable_candidates(out: RoomOutput) -> PackedInt32Array:
+	var candidates := PackedInt32Array()
+	for y in out.height:
+		for x in out.width:
+			if out.reachability_map[y * out.width + x] == 1:
+				candidates.append(y * out.width + x)
+	return candidates
+
+
+## Subset of `candidates` that is 4-adjacent to a WALL or BLOCKER tile, order preserved.
+static func _filter_near_wall(out: RoomOutput, candidates: PackedInt32Array) -> PackedInt32Array:
+	var result := PackedInt32Array()
+	for idx in candidates:
+		var t := _tile_from_index(out.width, idx)
+		if _touches_wall(out, t.x, t.y):
+			result.append(idx)
+	return result
+
+
+static func _touches_wall(out: RoomOutput, x: int, y: int) -> bool:
+	var neighbours := [Vector2i(x - 1, y), Vector2i(x + 1, y), Vector2i(x, y - 1), Vector2i(x, y + 1)]
+	for n in neighbours:
+		if n.x < 0 or n.y < 0 or n.x >= out.width or n.y >= out.height:
 			continue
-		var ok := true
-		for i in ox.size():
-			var dx := ox[i] - x
-			var dy := oy[i] - y
-			if dx * dx + dy * dy < opening_dist2:
-				ok = false
-				break
-		if not ok:
-			continue
-		for i in sx.size():
-			var dx := sx[i] - x
-			var dy := sy[i] - y
-			if dx * dx + dy * dy < MIN_SPAWN_DIST2:
-				ok = false
-				break
-		if ok:
-			return Vector2i(x, y)
-	return Vector2i(-1, -1)
+		var cls := out.tile_grid[n.y * out.width + n.x]
+		if cls == RoomBuilder.WALL or cls == RoomBuilder.BLOCKER:
+			return true
+	return false
+
+
+## Order-preserving filter dropping every candidate within squared distance < dist2 of `tile`.
+static func _remove_within(candidates: PackedInt32Array, tile: Vector2i, width: int,
+		dist2: int) -> PackedInt32Array:
+	var result := PackedInt32Array()
+	for idx in candidates:
+		var t := _tile_from_index(width, idx)
+		var dx := t.x - tile.x
+		var dy := t.y - tile.y
+		if dx * dx + dy * dy >= dist2:
+			result.append(idx)
+	return result
+
+
+## Order-preserving filter dropping exactly one candidate index.
+static func _remove_index(candidates: PackedInt32Array, idx_to_remove: int) -> PackedInt32Array:
+	var result := PackedInt32Array()
+	for idx in candidates:
+		if idx != idx_to_remove:
+			result.append(idx)
+	return result
+
+
+static func _tile_from_index(width: int, idx: int) -> Vector2i:
+	@warning_ignore("integer_division")
+	return Vector2i(idx % width, idx / width)

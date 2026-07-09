@@ -31,12 +31,13 @@ func set_data(spec: WorldSpec, config: GenConfig, graph: BiomeGraph, selected: V
 
 
 ## Main-grid layout shared by _draw and hit-testing: [origin: Vector2, slot_px: float].
+## The region is rectangular now (graph.size_slots).
 func _layout() -> Array:
 	var view := get_viewport_rect().size
-	var s := _config.biome_slots
+	var s := _graph.size_slots
 	var main_top: float = TOP + _spec.grid_h * OVERVIEW_CELL + 16.0
-	var slot_px := minf((view.x - 2.0 * MARGIN) / s, (view.y - main_top - MARGIN) / s)
-	return [Vector2((view.x - slot_px * s) * 0.5, main_top), slot_px]
+	var slot_px := minf((view.x - 2.0 * MARGIN) / s.x, (view.y - main_top - MARGIN) / s.y)
+	return [Vector2((view.x - slot_px * s.x) * 0.5, main_top), slot_px]
 
 
 ## Index (into _graph.rooms) of the room under a screen position, or -1 outside the main grid.
@@ -46,13 +47,13 @@ func room_at_screen_pos(pos: Vector2) -> int:
 	var lay := _layout()
 	var origin: Vector2 = lay[0]
 	var slot_px: float = lay[1]
-	var s := _config.biome_slots
+	var s := _graph.size_slots
 	var rel := (pos - origin) / slot_px
 	var lx := int(floor(rel.x))
 	var ly := int(floor(rel.y))
-	if lx < 0 or ly < 0 or lx >= s or ly >= s:
+	if lx < 0 or ly < 0 or lx >= s.x or ly >= s.y:
 		return -1
-	return _graph.slot_to_room[ly * s + lx]
+	return _graph.slot_to_room[ly * s.x + lx]
 
 
 ## Top-left corner of the overview grid in screen space.
@@ -75,30 +76,33 @@ func cell_at_screen_pos(pos: Vector2) -> Vector2i:
 
 
 func _draw() -> void:
-	if _graph == null:
-		return
 	var view := get_viewport_rect().size
-	var s := _config.biome_slots
-	var t := float(_config.room_slot_tiles)
 	var font := ThemeDB.fallback_font
+	if _graph == null:
+		_draw_overview()
+		draw_string(font, Vector2(MARGIN, view.y - 12), "unclaimed cell — no biome here",
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
+		return
+	var s := _graph.size_slots
+	var t := float(_config.room_slot_tiles)
 
-	# Main 9x9 slot grid, below the overview band.
+	# Main slot grid (rectangular region), below the overview band.
 	var lay := _layout()
 	var origin: Vector2 = lay[0]
 	var slot_px: float = lay[1]
 	var ppt := slot_px / t   # pixels per tile
 
 	# Faint slot lattice.
-	for i in s + 1:
+	for i in s.x + 1:
 		var gx := origin.x + i * slot_px
+		draw_line(Vector2(gx, origin.y), Vector2(gx, origin.y + s.y * slot_px), Color(1, 1, 1, 0.08))
+	for i in s.y + 1:
 		var gy := origin.y + i * slot_px
-		draw_line(Vector2(gx, origin.y), Vector2(gx, origin.y + s * slot_px), Color(1, 1, 1, 0.08))
-		draw_line(Vector2(origin.x, gy), Vector2(origin.x + s * slot_px, gy), Color(1, 1, 1, 0.08))
+		draw_line(Vector2(origin.x, gy), Vector2(origin.x + s.x * slot_px, gy), Color(1, 1, 1, 0.08))
 
-	var bc := _graph.biome_coord
 	for ui in _graph.rooms.size():
 		var u: RoomSpec = _graph.rooms[ui]
-		var lt := Vector2(u.origin_slot - bc * s)
+		var lt := Vector2(u.origin_slot - _graph.origin_slot)
 		var rect := Rect2(origin + lt * slot_px, Vector2(u.size_slots) * slot_px)
 		draw_rect(rect.grow(-1.0), Color(.25*(u.tier()+1), .3, .3, 0.15))
 		var rt := _config.room_type_by_id(u.type_id)
@@ -116,8 +120,8 @@ func _draw() -> void:
 
 	_draw_overview()
 
-	draw_string(font, Vector2(MARGIN, view.y - 12), "biome %s  [%s]  rooms:%d   arrows/click select"
-			% [bc, _graph.rooms[0].biome_id, _graph.rooms.size()],
+	draw_string(font, Vector2(MARGIN, view.y - 12), "biome %s  %s slots  rooms:%d   arrows/click select"
+			% [_graph.biome_id, _graph.size_slots, _graph.rooms.size()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
 
 
@@ -158,7 +162,10 @@ func _draw_overview() -> void:
 			var bid := _spec.biome_at(Vector2i(x, y))
 			var biome := _config.biome_by_id(bid)
 			var rect := Rect2(o + Vector2(x, y) * OVERVIEW_CELL, Vector2(OVERVIEW_CELL, OVERVIEW_CELL))
-			draw_rect(rect, biome.display_color if biome else Color.MAGENTA)
+			if bid == &"":
+				draw_rect(rect, Color(0.12, 0.12, 0.14))   # unclaimed = sealed mass
+			else:
+				draw_rect(rect, biome.display_color if biome else Color.MAGENTA)
 			draw_rect(rect, Color.BLACK, false, 1.0)
 			if Vector2i(x, y) == _selected:
 				draw_rect(rect.grow(-1.0), Color.WHITE, false, 2.0)

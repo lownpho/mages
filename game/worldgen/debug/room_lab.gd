@@ -36,7 +36,6 @@ var _size := Vector2i.ONE
 var _slot_tiles := 32
 var _door_width := 3
 var _decor_density := 0.05
-var _max_retries := 5
 var _min_reach := 0.20
 var _wall_depth := 5
 var _wall_erode := 0
@@ -44,7 +43,6 @@ var _wall_period := 10
 var _corner_radius := 6
 var _wall_inset := 4
 var _blob := false
-var _force_fallback := false
 var _sides := {WorldSpec.SIDE_NORTH: true, WorldSpec.SIDE_EAST: true,
 		WorldSpec.SIDE_SOUTH: true, WorldSpec.SIDE_WEST: true}
 var _open_passages := false      ## doors vs fully-open sides
@@ -62,7 +60,6 @@ func _ready() -> void:
 	_scan_content()
 	_slot_tiles = config.room_slot_tiles
 	_door_width = config.door_width_tiles
-	_max_retries = config.max_room_retries
 	_min_reach = config.min_reachable_floor_ratio
 	_wall_depth = config.wall_extra_depth
 	_wall_erode = config.wall_outer_erode
@@ -170,7 +167,6 @@ func _build_ui() -> void:
 	_add_int(vbox, "Slot tiles", _slot_tiles, 8, 96, func(v): _slot_tiles = v)
 	_add_int(vbox, "Door width", _door_width, 1, 9, func(v): _door_width = v)
 	_add_float(vbox, "Decor density", _decor_density, 0.0, 0.4, 0.005, func(v): _decor_density = v)
-	_add_int(vbox, "Max retries", _max_retries, 0, 20, func(v): _max_retries = v)
 	_add_float(vbox, "Min reach ratio", _min_reach, 0.0, 1.0, 0.01, func(v): _min_reach = v)
 
 	var wall_hdr := Label.new()
@@ -189,7 +185,6 @@ func _build_ui() -> void:
 		_schedule_regen())
 	vbox.add_child(_blob_cb)
 
-	_add_checkbox(vbox, "Force fallback", _force_fallback, func(v): _force_fallback = v)
 	_add_checkbox(vbox, "Open sides (not doors)", _open_passages, func(v): _open_passages = v)
 	var sides_row := HBoxContainer.new()
 	sides_row.add_child(_side_check("N", WorldSpec.SIDE_NORTH))
@@ -384,7 +379,6 @@ func _regenerate() -> void:
 	var cfg: GenConfig = config.duplicate(true)
 	cfg.room_slot_tiles = _slot_tiles
 	cfg.door_width_tiles = _door_width
-	cfg.max_room_retries = _max_retries
 	cfg.min_reachable_floor_ratio = _min_reach
 	cfg.wall_extra_depth = _wall_depth
 	cfg.wall_outer_erode = _wall_erode
@@ -409,7 +403,7 @@ func _regenerate() -> void:
 	var count := _cols * _rows
 	for i in count:
 		var spec := _make_spec(i)
-		outputs.append(RoomBuilder.build(spec, cfg, _base_seed + i, _force_fallback))
+		outputs.append(RoomBuilder.build(spec, cfg, _base_seed + i))
 	_view.set_data(cfg, outputs, _cols, _rows)
 	if _seed_label != null:
 		_seed_label.text = "seed: %d" % _base_seed

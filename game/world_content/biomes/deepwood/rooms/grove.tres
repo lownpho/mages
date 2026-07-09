@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_grvg"]
 [ext_resource type="PackedScene" uid="uid://d1nucsign8wqk" path="res://worldgen/runtime/under_construction_sign.tscn" id="3_sign"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_ste"]
+[ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="rf"]
 
 [sub_resource type="Resource" id="sp_stalker"]
 script = ExtResource("4_ste")
@@ -16,6 +17,10 @@ script = ExtResource("4_ste")
 enemy_id = &"owl"
 group_min = 2
 group_max = 3
+
+[sub_resource type="Resource" id="feat_1"]
+script = ExtResource("rf")
+scene = ExtResource("3_sign")
 
 [sub_resource type="Resource" id="Resource_grvg"]
 script = ExtResource("2_grvg")
@@ -33,4 +38,4 @@ weight = 3
 max_per_biome = 4
 enemies = Array[ExtResource("4_ste")]([SubResource("sp_stalker"), SubResource("sp_owl")])
 enemy_groups_max = 2
-feature_scene = ExtResource("3_sign")
+features = Array[ExtResource("rf")]([SubResource("feat_1")])

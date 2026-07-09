@@ -107,11 +107,21 @@ func _move_selection(keycode: int) -> void:
 
 
 func _cycle_room(dir: int) -> void:
-	if spec == null:
+	var graph := _selected_graph()
+	if graph == null:
 		return
-	var graph := _room_graphs.get_biome_graph(spec, selected_biome, config)
 	selected_room = posmod(selected_room + dir, graph.rooms.size())
 	_refresh_room_view()
+
+
+## Graph of the biome owning the selected cell, or null for an unclaimed (sealed) cell.
+func _selected_graph() -> BiomeGraph:
+	if spec == null:
+		return null
+	var bid := spec.biome_at(selected_biome)
+	if bid == &"":
+		return null
+	return _room_graphs.get_biome_graph(spec, bid, config)
 
 
 func _on_seed_submitted(text: String) -> void:
@@ -141,14 +151,13 @@ func _rebuild() -> void:
 func _refresh_biome_view() -> void:
 	if spec == null:
 		return
-	var graph := _room_graphs.get_biome_graph(spec, selected_biome, config)
-	_biome_view.set_data(spec, config, graph, selected_biome, selected_room)
+	_biome_view.set_data(spec, config, _selected_graph(), selected_biome, selected_room)
 
 
 func _refresh_room_view() -> void:
-	if spec == null:
+	var graph := _selected_graph()
+	if graph == null:
 		return
-	var graph := _room_graphs.get_biome_graph(spec, selected_biome, config)
 	selected_room = clampi(selected_room, 0, graph.rooms.size() - 1)
 	var out := RoomBuilder.build(graph.rooms[selected_room], config, world_seed)
 	_room_view.set_data(config, out, selected_room, graph.rooms.size())

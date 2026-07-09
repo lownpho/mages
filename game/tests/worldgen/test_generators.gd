@@ -1,9 +1,10 @@
 extends Node
 ## Headless tests for Layer 3 with all structure generators + decoration. Covers every
-## room type × merge shape across seeds:
-## validation within max_room_retries, opening reachability, PROTECTED star, world-edge
-## sealing, determinism per generator, fallback ladder, and a per-generator stats table
-## (rooms, retry rate, mean reachable-floor ratio, mean build time — budget 10 ms).
+## room type × leaf shape across seeds. The pipeline is single-attempt + repair now, so the
+## invariants are HARD: every opening reachable, EVERY walkable tile reachable (repair seals or
+## connects every pocket), floor ratio met, PROTECTED star intact, void sides sealed,
+## byte-identical rebuilds. Plus a per-generator stats table (rooms, mean reachable-floor
+## ratio, mean build time).
 ## Run: godot --headless --path game res://tests/worldgen/test_generators.tscn
 
 const SEEDS := 100
@@ -12,114 +13,86 @@ const SEEDS := 100
 func _ready() -> void:
 	var fails: Array[String] = []
 	var config: GenConfig = load("res://world_content/gen_config.tres")
-	var max_x := config.world_width_biomes * config.biome_slots
-	var max_y := config.world_height_biomes() * config.biome_slots
 
-	# gen_id -> [rooms, retried, fallbacks, ratio_sum, usec, determinism_checks]
+	# gen_id -> [rooms, ratio_sum, usec, determinism_checks]
 	var stats := {}
 	var built := 0
 	for i in SEEDS:
 		if i % 20 == 0:
 			print("  seed %d/%d (%d rooms)" % [i, SEEDS, built])
-		var seed := 32_452_843 * i + 7
-		var world := WorldLayout.build(seed, config)
-		var bc := Vector2i(i % config.world_width_biomes,
-				(i / config.world_width_biomes) % config.world_height_biomes())
-		var graph := RoomGraph.build(world, bc, config)
+		var seed_v := 32_452_843 * i + 7
+		var world := WorldLayout.build(seed_v, config)
 
-		# One unit per (type, shape) combo in this biome; plus the shrine's host unit
-		# (world-unique — it usually lives in another biome).
-		var picked := {}
-		for u in graph.rooms:
-			var key := "%s|%dx%d" % [u.type_id, u.size_slots.x, u.size_slots.y]
-			if not picked.has(key):
-				picked[key] = u
+		# One room per (type, shape) combo per biome; the world-unique shrine host is always
+		# included via its own graph.
 		var units: Array = []
-		for key in ["glade_open_d0_empty", "glade_scatter_d1", "glade_blob_d1", "glade_cave_d2_guaranteed", "deepwood_arena", "shrine"]:
-			for shape in ["1x1", "2x1", "1x2", "2x2"]:
-				if picked.has("%s|%s" % [key, shape]):
-					units.append(picked["%s|%s" % [key, shape]])
-		var ur: WorldSpec.UniqueRoom = world.unique_rooms[0]
-		if ur.biome_coord != bc:
-			var sg := RoomGraph.build(world, ur.biome_coord, config)
-			units.append(sg.room_at(ur.local_slot))
+		var picked := {}
+		for p in world.placements:
+			var graph := RoomGraph.build(world, p.id, config)
+			for u in graph.rooms:
+				var key := "%s|%dx%d" % [u.type_id, u.size_slots.x, u.size_slots.y]
+				if not picked.has(key):
+					picked[key] = true
+					units.append(u)
 
 		for u in units:
 			var rt := config.room_type_by_id(u.type_id)
 			var gen_id := _gen_name(rt)
 			if not stats.has(gen_id):
-				stats[gen_id] = [0, 0, 0, 0.0, 0, 0]
+				stats[gen_id] = [0, 0.0, 0, 0]
 			var t0 := Time.get_ticks_usec()
-			var out := RoomBuilder.build(u, config, seed)
+			var out := RoomBuilder.build(u, config, seed_v)
 			var s: Array = stats[gen_id]
-			s[4] += Time.get_ticks_usec() - t0
+			s[2] += Time.get_ticks_usec() - t0
 			s[0] += 1
 			built += 1
-			if out.attempt_used > 0:
-				s[1] += 1
-			if out.attempt_used >= config.max_room_retries:
-				s[2] += 1
 			var total := out.width * out.height
 			var ratio := out.reachability_map.count(1) / float(total)
-			s[3] += ratio
+			s[1] += ratio
 			if ratio < config.min_reachable_floor_ratio:
-				fails.append("floor ratio %.2f below min (seed %d %s)" % [ratio, seed, u.type_id])
+				fails.append("floor ratio %.2f below min (seed %d %s)" % [ratio, seed_v, u.type_id])
+
+			# HARD post-repair invariant: no unreachable walkable tile anywhere.
+			for j in total:
+				var cls := out.tile_grid[j]
+				if (cls == RoomBuilder.FLOOR or cls == RoomBuilder.DECOR_FLOOR) \
+						and out.reachability_map[j] == 0:
+					fails.append("unreachable walkable tile at %d (seed %d %s %s)"
+							% [j, seed_v, u.type_id, u.origin_slot])
+					break
 
 			var openings := RoomBuilder._opening_tiles(u, out.width, out.height)
 			for j in openings.size():
 				if out.reachability_map[openings[j]] == 0:
-					fails.append("opening unreachable (seed %d %s unit %s)" % [seed, u.type_id, u.origin_slot])
+					fails.append("opening unreachable (seed %d %s unit %s)" % [seed_v, u.type_id, u.origin_slot])
 					break
 				if out.protected_map[openings[j]] == 0:
-					fails.append("opening not PROTECTED (seed %d %s)" % [seed, u.type_id])
+					fails.append("opening not PROTECTED (seed %d %s)" % [seed_v, u.type_id])
 					break
 			if not openings.is_empty() and not _star_connected(out, openings):
-				fails.append("PROTECTED star broken (seed %d %s)" % [seed, u.type_id])
-			_check_world_edges(out, u, max_x, max_y, fails, seed)
+				fails.append("PROTECTED star broken (seed %d %s)" % [seed_v, u.type_id])
+			_check_void_sides(out, u, fails, seed_v)
 
 			# Determinism per generator, sampled.
 			if s[0] % 10 == 1:
-				s[5] += 1
-				var out2 := RoomBuilder.build(u, config, seed)
+				s[3] += 1
+				var out2 := RoomBuilder.build(u, config, seed_v)
 				if out2.tile_grid != out.tile_grid or out2.reachability_map != out.reachability_map:
-					fails.append("rebuild not byte-identical (seed %d %s)" % [seed, u.type_id])
+					fails.append("rebuild not byte-identical (seed %d %s)" % [seed_v, u.type_id])
 
 			if not fails.is_empty():
 				break
 		if not fails.is_empty():
 			break
 
-	print("generator          rooms  retry%%  fallback  mean_ratio  mean_ms  det_checks")
-	var total_fallbacks := 0
+	print("generator          rooms  mean_ratio  mean_ms  det_checks")
 	for gen_id in ["(none)", "RoomGenScatter", "RoomGenCave", "RoomGenArena"]:
 		if not stats.has(gen_id):
 			fails.append("generator '%s' never exercised" % gen_id)
 			continue
 		var s: Array = stats[gen_id]
-		total_fallbacks += s[2]
-		print("%-16s %6d  %5.1f  %8d  %10.2f  %7.2f  %10d"
-				% [gen_id, s[0], 100.0 * s[1] / s[0], s[2], s[3] / s[0], s[4] / 1000.0 / s[0], s[5]])
-	# ≥ 99.9% of rooms validate within max_room_retries (i.e. no fallback).
-	if built > 0 and total_fallbacks / float(built) > 0.001:
-		fails.append("fallback rate too high: %d/%d" % [total_fallbacks, built])
-
-	# Forced fallback (test-only) must validate for every room type.
-	var world := WorldLayout.build(424242, config)
-	for bx in config.world_width_biomes:
-		for by in config.world_height_biomes():
-			var graph := RoomGraph.build(world, Vector2i(bx, by), config)
-			var done := {}
-			for u in graph.rooms:
-				if done.has(u.type_id):
-					continue
-				done[u.type_id] = true
-				var out := RoomBuilder.build(u, config, 424242, true)
-				var openings := RoomBuilder._opening_tiles(u, out.width, out.height)
-				for j in openings.size():
-					if out.reachability_map[openings[j]] == 0:
-						fails.append("fallback opening unreachable (%s)" % u.type_id)
-						break
-	print("forced fallback validated for all room types")
+		print("%-16s %6d  %10.2f  %7.2f  %10d"
+				% [gen_id, s[0], s[1] / s[0], s[2] / 1000.0 / s[0], s[3]])
 
 	if fails.is_empty():
 		print("ALL PASS")
@@ -179,38 +152,34 @@ func _star_connected(out: RoomOutput, openings: PackedInt32Array) -> bool:
 	return true
 
 
-## Assert world-edge sides are fully walled with no passages.
-func _check_world_edges(out: RoomOutput, u: RoomSpec,
-		max_x: int, max_y: int, fails: Array[String], seed: int) -> void:
+## Void sides (RoomSpec.void_sides — world edge or unclaimed neighbouring cell along at least
+## one slot) must keep a walled perimeter row/column everywhere EXCEPT protected opening tiles:
+## a room straddling two macro-cells can be void along part of a side and legitimately carry an
+## external door toward a real biome on the rest, so openings are exempt — but nothing else
+## (erosion, generators, repair) may breach the ring.
+func _check_void_sides(out: RoomOutput, u: RoomSpec, fails: Array[String], seed_v: int) -> void:
 	var w := out.width
 	var h := out.height
-	var edge_sides: Array[int] = []
-	if u.origin_slot.y == 0:
-		edge_sides.append(WorldSpec.SIDE_NORTH)
-	if u.origin_slot.x == 0:
-		edge_sides.append(WorldSpec.SIDE_WEST)
-	if u.origin_slot.x + u.size_slots.x == max_x:
-		edge_sides.append(WorldSpec.SIDE_EAST)
-	if u.origin_slot.y + u.size_slots.y == max_y:
-		edge_sides.append(WorldSpec.SIDE_SOUTH)
-	for side in edge_sides:
-		for p in u.passages:
-			if p.side == side:
-				fails.append("passage on world-edge side (seed %d unit %s)" % [seed, u.origin_slot])
+	for side in [WorldSpec.SIDE_NORTH, WorldSpec.SIDE_EAST, WorldSpec.SIDE_SOUTH, WorldSpec.SIDE_WEST]:
+		if (u.void_sides & (1 << side)) == 0:
+			continue
 		var ok := true
 		match side:
 			WorldSpec.SIDE_NORTH:
 				for x in w:
-					ok = ok and out.tile_grid[x] == RoomBuilder.WALL
+					ok = ok and (out.tile_grid[x] == RoomBuilder.WALL or out.protected_map[x] == 1)
 			WorldSpec.SIDE_SOUTH:
 				for x in w:
-					ok = ok and out.tile_grid[(h - 1) * w + x] == RoomBuilder.WALL
+					var idx := (h - 1) * w + x
+					ok = ok and (out.tile_grid[idx] == RoomBuilder.WALL or out.protected_map[idx] == 1)
 			WorldSpec.SIDE_WEST:
 				for y in h:
-					ok = ok and out.tile_grid[y * w] == RoomBuilder.WALL
-			WorldSpec.SIDE_EAST:
+					var idx := y * w
+					ok = ok and (out.tile_grid[idx] == RoomBuilder.WALL or out.protected_map[idx] == 1)
+			_:
 				for y in h:
-					ok = ok and out.tile_grid[y * w + w - 1] == RoomBuilder.WALL
+					var idx := y * w + w - 1
+					ok = ok and (out.tile_grid[idx] == RoomBuilder.WALL or out.protected_map[idx] == 1)
 		if not ok:
-			fails.append("world-edge side not fully walled (seed %d unit %s side %d)"
-					% [seed, u.origin_slot, side])
+			fails.append("void side breached outside an opening (seed %d unit %s side %d)"
+					% [seed_v, u.origin_slot, side])

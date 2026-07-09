@@ -213,7 +213,7 @@ func _blit_chunk(chunk: WgChunk, cx: int, cy: int) -> void:
 	var covered := PackedByteArray()
 	covered.resize(cs * cs)
 
-	# ≤ 4 overlapped slots; merged rooms span 2 slots, so dedupe rooms by origin_slot.
+	# ≤ 4 overlapped slots; merged rooms span multiple slots, so dedupe rooms by origin_slot.
 	var world_slots_w := world_spec.grid_w * bs
 	var world_slots_h := world_spec.grid_h * bs
 	var done: Dictionary = {}
@@ -224,12 +224,12 @@ func _blit_chunk(chunk: WgChunk, cx: int, cy: int) -> void:
 			# alias to slot 0 / a negative modulo into room_at.
 			if sx < 0 or sy < 0 or sx >= world_slots_w or sy >= world_slots_h:
 				continue
-			@warning_ignore("integer_division")
-			var bc := Vector2i(sx / bs, sy / bs)
-			if world_spec.biome_at(bc) == &"":
+			var slot := Vector2i(sx, sy)
+			var bid := world_spec.biome_at_slot(slot)
+			if bid == &"":
 				continue
-			var graph := _room_graphs.get_biome_graph(world_spec, bc, config)
-			var spec := graph.room_at(Vector2i(sx % bs, sy % bs))
+			var graph := _room_graphs.get_biome_graph(world_spec, bid, config)
+			var spec := graph.room_at(slot - graph.origin_slot)
 			if done.has(spec.origin_slot):
 				continue
 			done[spec.origin_slot] = true
@@ -492,14 +492,15 @@ func room_spec_at_tile(wx: int, wy: int) -> RoomSpec:
 	@warning_ignore_start("integer_division")
 	var sx := wx / ss
 	var sy := wy / ss
-	var bc := Vector2i(sx / bs, sy / bs)
 	@warning_ignore_restore("integer_division")
 	if sx >= world_spec.grid_w * bs or sy >= world_spec.grid_h * bs:
 		return null
-	if world_spec.biome_at(bc) == &"":
+	var slot := Vector2i(sx, sy)
+	var bid := world_spec.biome_at_slot(slot)
+	if bid == &"":
 		return null
-	var graph := _room_graphs.get_biome_graph(world_spec, bc, config)
-	return graph.room_at(Vector2i(sx % bs, sy % bs))
+	var graph := _room_graphs.get_biome_graph(world_spec, bid, config)
+	return graph.room_at(slot - graph.origin_slot)
 
 
 ## Logical tile class at any world tile, resolved through the room cache; -1 outside the world.
@@ -573,16 +574,11 @@ func _terrain_table(tileset: TileSet) -> Dictionary:
 ## ramp. Validated against the room's reachability map (never a BLOCKER, never
 ## a sealed pocket — falls back to the nearest reachable tile). Returns a world pixel position.
 func find_spawn_position() -> Vector2:
-	var bc := Vector2i(-1, -1)
-	for y in world_spec.grid_h:
-		for x in world_spec.grid_w:
-			if world_spec.biome_at(Vector2i(x, y)) == config.starting_biome:
-				bc = Vector2i(x, y)
-	if bc.x < 0:
-		bc = Vector2i.ZERO
-	var graph := _room_graphs.get_biome_graph(world_spec, bc, config)
-	var bs := config.biome_slots
-	var center_slot := Vector2(bc * bs) + Vector2(bs, bs) * 0.5
+	var place := world_spec.placement_for(config.starting_biome)
+	if place == null and not world_spec.placements.is_empty():
+		place = world_spec.placements[0]
+	var graph := _room_graphs.get_biome_graph(world_spec, place.id, config)
+	var center_slot := Vector2(graph.origin_slot) + Vector2(graph.size_slots) * 0.5
 	var best: RoomSpec = null
 	var best_diff := 99
 	var best_d := INF

@@ -92,9 +92,9 @@ func _draw() -> void:
 		draw_string(font, pos + Vector2(4, -3), String(sid),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 10, col)
 
-	var status := "room %d/%d  %s  [%s]  %dx%d slots  %dx%d tiles  attempt %d   [P] protected:%s  [M] reach:%s  [←/→] cycle" % [
+	var status := "room %d/%d  %s  [%s]  %dx%d slots  %dx%d tiles   [P] protected:%s  [M] reach:%s  [←/→] cycle" % [
 		_room_index + 1, _room_count, _out.origin_slot, _out.type_id,
 		_out.width / _config.room_slot_tiles, _out.height / _config.room_slot_tiles,
-		w, h, _out.attempt_used, "on" if show_protected else "off", "on" if show_reach else "off"]
+		w, h, "on" if show_protected else "off", "on" if show_reach else "off"]
 	draw_string(ThemeDB.fallback_font, Vector2(MARGIN, view.y - 10), status,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.85, 0.88, 0.92))

@@ -107,7 +107,7 @@ func _draw_room(out: RoomOutput, cell_pos: Vector2, cell_size: Vector2) -> void:
 		var stile: Vector2i = sp.get("tile", Vector2i.ZERO)
 		draw_circle(origin + (Vector2(stile) + Vector2(0.5, 0.5)) * ppt, maxf(2.0, ppt * 0.6), col)
 
-	var label := "%s  %dx%d  attempt %d  %d spawns" % [
-		out.type_id, w, h, out.attempt_used, out.spawns.size()]
+	var label := "%s  %dx%d  %d spawns" % [
+		out.type_id, w, h, out.spawns.size()]
 	draw_string(ThemeDB.fallback_font, cell_pos + Vector2(2, cell_size.y - 3), label,
 			HORIZONTAL_ALIGNMENT_LEFT, cell_size.x, 12, Color(0.82, 0.85, 0.9))

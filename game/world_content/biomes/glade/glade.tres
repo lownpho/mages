@@ -7,8 +7,9 @@
 script = ExtResource("3_k4pa1")
 id = &"glade"
 display_color = Color(0.55, 0.82, 0.42, 1)
+size_cells = Vector2i(2, 1)
 open_passage_chance = 0.8
-room_merge_chance = 0.5
+bsp_stop_chance = 0.5
 room_extra_connection_chance = 0.75
 decor_density = 0.05
 fallback_room_type = &"glade_open_d0_empty"

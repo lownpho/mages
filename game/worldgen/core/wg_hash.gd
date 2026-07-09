@@ -11,6 +11,7 @@ const NS_INTERIOR := 4
 const NS_POPULATION := 5
 const NS_UNIQUE := 6
 const NS_WALL_SHAPE := 7
+const NS_FEATURES := 8
 
 # SplitMix64 constants written as their two's-complement signed-64 values: GDScript clamps
 # any int literal above INT64_MAX, so the raw 0x9E37... hex forms would silently corrupt.

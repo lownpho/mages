@@ -1,7 +1,8 @@
 class_name RoomSpec
 ## One room's graph-level description: where it sits, how big it is, its type,
-## and the passages on its four sides. A room covers one slot, or 2x1/1x2/2x2 merged slots.
-## Produced by Layer 2 (RoomGraph); consumed by Layer 3. Pure data, RefCounted — no tiles here.
+## and the passages on its four sides. A room is a BSP leaf — any w×h rectangle of slots up to
+## the whole biome region. Produced by Layer 2 (RoomGraph); consumed by Layer 3. Pure data,
+## RefCounted — no tiles here.
 extends RefCounted
 
 ## Passage kind. Fixed order — a change bumps GEN_VERSION.
@@ -44,12 +45,16 @@ class Passage extends RefCounted:
 
 
 var origin_slot: Vector2i     ## top-left slot coord, WORLD slot space; also the cache key
-var size_slots: Vector2i      ## (w, h) in {1x1, 2x1, 1x2, 2x2}
+var size_slots: Vector2i      ## (w, h) in slots — any BSP leaf rectangle
 var type_id: StringName       ## room type
 var biome_id: StringName      ## biome definition id
 var passages: Array = []      ## of Passage
 var depth: int = 0            ## BFS hops from the biome entrance over internal passages (L2)
 var biome_max_depth: int = 0  ## max depth over this biome's rooms
+## Bitmask (bit = WorldSpec.SIDE_*): the side borders sealed void — the world edge or an
+## unclaimed macro-cell — along at least one of its slots. L3 never erodes a void side; its
+## perimeter ring stays sealed.
+var void_sides: int = 0
 
 
 ## Difficulty tier of this room's position: the biome's depth range split into quarters → 0..3.

@@ -1,15 +1,22 @@
 class_name RoomBuilder
 ## Layer 3: builds one room's interior from its RoomSpec. Pure function of
-## (room_spec, config, world_seed) — doors/open sides are immutable inputs; retries re-roll
-## everything else via the attempt index in the seed.
+## (room_spec, config, world_seed) — doors/open sides are immutable inputs. Single attempt,
+## no retry ladder: correctness is restored afterward by a deterministic, RNG-free repair pass
+## rather than by re-rolling.
 ##
-## Pipeline per attempt: base FLOOR fill → wall shell with openings erased → organic
-## shaping (noise-thickened wall band with per-side asymmetric insets + rounded corners, hashed
-## from WORLD tile coords so it is attempt-independent and continuous across collinear walls of
-## adjacent rooms) → blob footprint for footprint_blob room types → jittered corridors from every
-## opening to the center (all carved tiles PROTECTED) → structure generator → decoration →
-## reachability flood fill → validate. After max_room_retries failures the fallback runs
-## steps 1–3 only, which validates by construction.
+## Pipeline: base FLOOR fill → wall shell with openings erased → organic shaping
+## (noise-thickened wall band with per-side asymmetric insets + rounded corners, hashed from
+## WORLD tile coords so it is continuous across collinear walls of adjacent rooms; void-facing
+## sides — spec.void_sides — never erode) → blob footprint for footprint_blob room types →
+## jittered corridors from every opening to the center (all carved tiles PROTECTED) → structure
+## generator → decoration → **repair** (seal small unreachable pockets, corridor-connect big
+## ones, ratio-erode until the reachable floor fraction holds) → final reachability flood fill →
+## debug validate → populate.
+##
+## RNG: one rng, seeded [world_seed, NS_INTERIOR, origin_slot.x, origin_slot.y]. Consumption
+## order: corridor walks (spec.passages order), then the structure generator, then decoration.
+## The repair pass draws no RNG at all — it is pure grid surgery, so it can run after generation
+## without disturbing any of the above draws or their downstream (Population) stream.
 extends RefCounted
 
 # Logical tile classes. Byte values in RoomOutput.tile_grid; PROTECTED is the
@@ -20,23 +27,13 @@ const BLOCKER := 2
 const DECOR_FLOOR := 3
 
 
-## Build the interior. `force_fallback` is test-only (exercises the step-8 ladder).
-static func build(spec: RoomSpec, config: GenConfig, world_seed: int, force_fallback := false) -> RoomOutput:
+## Build the interior.
+static func build(spec: RoomSpec, config: GenConfig, world_seed: int) -> RoomOutput:
 	var w := spec.size_slots.x * config.room_slot_tiles
 	var h := spec.size_slots.y * config.room_slot_tiles
 	var openings := _opening_tiles(spec, w, h)
-	if not force_fallback:
-		for attempt in config.max_room_retries:
-			var out := _attempt(spec, config, world_seed, attempt, true, w, h, openings)
-			if _validate(out, openings, config):
-				return out
-	return _attempt(spec, config, world_seed, config.max_room_retries, false, w, h, openings)
-
-
-static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt: int,
-		with_structure: bool, w: int, h: int, openings: PackedInt32Array) -> RoomOutput:
 	var rng := config.rng_for([world_seed, WgHash.NS_INTERIOR,
-			spec.origin_slot.x, spec.origin_slot.y, attempt] as Array[int])
+			spec.origin_slot.x, spec.origin_slot.y] as Array[int])
 
 	var grid := PackedByteArray()
 	grid.resize(w * h)               # zero-filled == FLOOR (step 1)
@@ -44,7 +41,7 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 	prot.resize(w * h)
 
 	# Step 2 — shell: wall the whole perimeter, then erase (and protect) the openings.
-	# World-edge and passage-less sides simply keep their wall.
+	# Void-facing sides simply keep their wall.
 	for x in w:
 		grid[x] = WALL
 		grid[(h - 1) * w + x] = WALL
@@ -55,9 +52,25 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 		grid[openings[i]] = FLOOR
 		prot[openings[i]] = 1
 
+	# Per-biome shell overrides: resolve once, thread explicitly (no config reads inside the
+	# shell shaping itself, so it stays a pure function of its inputs).
+	var biome := config.biome_by_id(spec.biome_id)
+	var depth_dial := config.wall_extra_depth
+	var erode_dial := config.wall_outer_erode
+	var period_dial := config.wall_noise_period
+	var radius_dial := config.corner_radius
+	var inset_dial := config.wall_inset_max
+	if biome != null:
+		depth_dial = _dial(biome.wall_extra_depth, config.wall_extra_depth)
+		erode_dial = _dial(biome.wall_outer_erode, config.wall_outer_erode)
+		period_dial = _dial(biome.wall_noise_period, config.wall_noise_period)
+		radius_dial = _dial(biome.corner_radius, config.corner_radius)
+		inset_dial = _dial(biome.wall_inset_max, config.wall_inset_max)
+
 	# Step 2b — organic shaping: erode the straight shell into a wobbly band and round the
 	# corners. Runs before the corridor star, which carves (and protects) its way through.
-	_shape_shell(grid, prot, w, h, spec, config, world_seed)
+	_shape_shell(grid, prot, w, h, spec, config, world_seed,
+			depth_dial, erode_dial, period_dial, radius_dial, inset_dial)
 
 	# Step 2c — blob footprint: the room's usable area becomes an organic pocket; everything
 	# outside the noise-warped radius turns WALL, and corridors tunnel through the mass.
@@ -72,38 +85,46 @@ static func _attempt(spec: RoomSpec, config: GenConfig, world_seed: int, attempt
 		_carve_corridor(grid, prot, w, h, p, cx, cy, config.door_width_tiles, rng)
 
 	# Step 4 — structure generator (respects `prot`). A null generator = leave the room empty.
-	if with_structure:
-		if rt != null and rt.generator != null:
-			rt.generator.run(grid, prot, w, h, rng, spec)
+	if rt != null and rt.generator != null:
+		rt.generator.run(grid, prot, w, h, rng, spec)
 
-		# Step 5 — decoration: non-blocking DECOR_FLOOR at the biome's density;
-		# PROTECTED tiles are fair game because decor never blocks. Blocking decor is the
-		# structure generators' business. Skipped on the fallback path (steps 1–3 only).
-		var biome := config.biome_by_id(spec.biome_id)
-		if biome != null and biome.decor_density > 0.0:
-			var th := WgHash.threshold(biome.decor_density)
-			# rng.randi() < th inlined (== WgHash.chance) — the call overhead dominates
-			# this per-tile loop in GDScript.
-			for i in grid.size():
-				if grid[i] == FLOOR and rng.randi() < th:
-					grid[i] = DECOR_FLOOR
+	# Step 5 — decoration: non-blocking DECOR_FLOOR at the biome's density; PROTECTED tiles are
+	# fair game because decor never blocks. Blocking decor is the structure generators' business.
+	if biome != null and biome.decor_density > 0.0:
+		var th := WgHash.threshold(biome.decor_density)
+		# rng.randi() < th inlined (== WgHash.chance) — the call overhead dominates this
+		# per-tile loop in GDScript.
+		for i in grid.size():
+			if grid[i] == FLOOR and rng.randi() < th:
+				grid[i] = DECOR_FLOOR
 
-	# Step 6 — reachability from center over non-blocking tiles.
+	# Step 6 — repair: pure, RNG-free grid surgery restoring the reachability invariant that the
+	# retry ladder used to gamble on. See _repair for the six-step spec.
+	var reach := _repair(grid, prot, w, h, cx, cy, config)
+
 	var out := RoomOutput.new()
 	out.origin_slot = spec.origin_slot
-	out.attempt_used = attempt
 	out.width = w
 	out.height = h
 	out.type_id = spec.type_id
 	out.biome_id = spec.biome_id
 	out.tile_grid = grid
 	out.protected_map = prot
-	out.reachability_map = _flood_fill(grid, w, h, cx, cy)
+	out.reachability_map = reach
 
-	# Step 7 — population: own RNG, no attempt index — spawn identity survives
-	# retries; positions sample this attempt's reachability map. Runs on the fallback too.
+	# Debug assertion only — repair guarantees this by construction; a failure here is a bug,
+	# never an expected outcome to retry around.
+	_validate(out, openings, config)
+
+	# Step 7 — population: own RNG stream, independent of everything above.
 	Population.populate(out, spec, config, world_seed, openings)
 	return out
+
+
+## override_val >= 0 wins (an explicit per-biome shell override); -1 means inherit the
+## GenConfig-wide dial.
+static func _dial(override_val: int, config_val: int) -> int:
+	return override_val if override_val >= 0 else config_val
 
 
 ## Opening tiles per passage: the erased perimeter tiles, in this room's tile frame.
@@ -142,34 +163,35 @@ static func _opening_tiles(spec: RoomSpec, w: int, h: int) -> PackedInt32Array:
 ## while the clearing-facing outer edge recedes by 0..wall_outer_erode tiles (occasionally
 ## gapping the wall entirely) — so no straight grid-aligned wall line survives. Each corner gets
 ## a quarter-disc of WALL (radius corner_radius ±1). Noise inputs are WORLD tile coordinates
-## hashed under NS_WALL_SHAPE — never the attempt index — so the wobble survives retries and
-## flows continuously across the collinear walls of adjacent rooms. Protected tiles (openings,
-## corridors) are never written. World-boundary sides face the void and never erode (their
-## perimeter ring stays sealed).
+## hashed under NS_WALL_SHAPE, so the wobble flows continuously across the collinear walls of
+## adjacent rooms. Protected tiles (openings, corridors) are never written. Void-facing sides
+## (spec.void_sides, bit == WorldSpec.SIDE_*) face the sealed outside of the world and never
+## erode (their perimeter ring stays sealed). depth/erode/period/radius/inset are the
+## already-resolved per-biome dials — this function reads no config.
 static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
-		spec: RoomSpec, config: GenConfig, world_seed: int) -> void:
-	var depth := mini(config.wall_extra_depth, (mini(w, h) >> 1) - 1)
-	var radius := config.corner_radius
-	var erode := clampi(config.wall_outer_erode, 0, maxi(mini(w, h) >> 2, 0))
+		spec: RoomSpec, config: GenConfig, world_seed: int,
+		depth_dial: int, erode_dial: int, period_dial: int, radius_dial: int, inset_dial: int) -> void:
+	var depth := mini(depth_dial, (mini(w, h) >> 1) - 1)
+	var radius := radius_dial
+	var erode := clampi(erode_dial, 0, maxi(mini(w, h) >> 2, 0))
 	if depth <= 0 and radius <= 0 and erode <= 0:
 		return
 	var base := config.seed_for([world_seed, WgHash.NS_WALL_SHAPE] as Array[int])
 	var ox := spec.origin_slot.x * config.room_slot_tiles
 	var oy := spec.origin_slot.y * config.room_slot_tiles
-	var period := maxi(config.wall_noise_period, 1)
+	var period := maxi(period_dial, 1)
+	var inset_max := clampi(inset_dial, 0, mini(w, h) >> 2)
 
-	# A side facing the world boundary must stay sealed — no erosion there. The world is a solid
-	# biome rectangle (GenConfig.validate), so a side is void-facing iff its edge slot is extremal.
-	var wslots_x := config.world_width_biomes * config.biome_slots
-	var wslots_y := config.world_height_biomes() * config.biome_slots
-	var end := spec.origin_slot + spec.size_slots
-	var inset_max := clampi(config.wall_inset_max, 0, mini(w, h) >> 2)
+	var void_n := (spec.void_sides & (1 << WorldSpec.SIDE_NORTH)) != 0
+	var void_e := (spec.void_sides & (1 << WorldSpec.SIDE_EAST)) != 0
+	var void_s := (spec.void_sides & (1 << WorldSpec.SIDE_SOUTH)) != 0
+	var void_w := (spec.void_sides & (1 << WorldSpec.SIDE_WEST)) != 0
 
 	# A corner is OPEN when both walls meeting there have dissolved into OPEN passages — otherwise the
 	# never-carved corner stubs of the four rooms round the same junction fuse into a solid wall island
 	# stranded in open ground (the repeating tree knot). Open corners drop their stub + rounding and get
 	# a sparse organic scatter instead. Both sides being open guarantees no perpendicular wall — and no
-	# world-edge (crossings there are DOORs, never OPEN) — needs the corner sealed.
+	# void edge (crossings there are DOORs, never OPEN) — needs the corner sealed.
 	var open_nw := _side_open(spec, WorldSpec.SIDE_NORTH, false, w, h) and _side_open(spec, WorldSpec.SIDE_WEST, false, w, h)
 	var open_ne := _side_open(spec, WorldSpec.SIDE_NORTH, true, w, h) and _side_open(spec, WorldSpec.SIDE_EAST, false, w, h)
 	var open_sw := _side_open(spec, WorldSpec.SIDE_SOUTH, false, w, h) and _side_open(spec, WorldSpec.SIDE_WEST, true, w, h)
@@ -179,13 +201,13 @@ static func _shape_shell(grid: PackedByteArray, prot: PackedByteArray, w: int, h
 		# NORTH row 0 / SOUTH row h-1 (inward +y / -y); WEST col 0 / EAST col w-1 (inward +x / -x).
 		# Each side skips the stub band on a corner column whose corner is open (i==0 / i==length-1).
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 0, inset_max),
-				w, oy, 0, ox, spec.origin_slot.y == 0, open_nw, open_ne, func(i, k): return k * w + i)
+				w, oy, 0, ox, void_n, open_nw, open_ne, func(i, k): return k * w + i)
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 1, inset_max),
-				w, oy + h - 1, 0, ox, end.y == wslots_y, open_sw, open_se, func(i, k): return (h - 1 - k) * w + i)
+				w, oy + h - 1, 0, ox, void_s, open_sw, open_se, func(i, k): return (h - 1 - k) * w + i)
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 2, inset_max),
-				h, ox, 1, oy, spec.origin_slot.x == 0, open_nw, open_sw, func(i, k): return i * w + k)
+				h, ox, 1, oy, void_w, open_nw, open_sw, func(i, k): return i * w + k)
 		_shape_side(grid, prot, base, period, depth, erode, _side_inset(base, spec, 3, inset_max),
-				h, ox + w - 1, 1, oy, end.x == wslots_x, open_ne, open_se, func(i, k): return i * w + (w - 1 - k))
+				h, ox + w - 1, 1, oy, void_e, open_ne, open_se, func(i, k): return i * w + (w - 1 - k))
 
 	_corner(grid, prot, w, h, 0, 0, 1, 1, base, ox, oy, radius, open_nw)
 	_corner(grid, prot, w, h, w - 1, 0, -1, 1, base, ox + w - 1, oy, radius, open_ne)
@@ -374,7 +396,7 @@ static func _blob_footprint(grid: PackedByteArray, prot: PackedByteArray, w: int
 ## each step moves toward the centre on a randomly chosen pending axis — organic staircases where
 ## the old L-corridor put a right angle — with occasional perpendicular drift on straight
 ## stretches. Positions clamp inside the perimeter so stamps never breach another side's wall.
-## Consumes the attempt RNG in spec.passages order (deterministic; re-rolled per attempt).
+## Consumes the rng in spec.passages order.
 static func _carve_corridor(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
 		p: RoomSpec.Passage, cx: int, cy: int, door_width: int, rng: RandomNumberGenerator) -> void:
 	var mid := p.offset_tiles + (p.width_tiles >> 1)
@@ -497,10 +519,215 @@ static func _flood_fill(grid: PackedByteArray, w: int, h: int, cx: int, cy: int)
 	return reach
 
 
-## every opening tile reachable, and reachable tiles ≥ min_reachable_floor_ratio.
+## Step 6 — deterministic, RNG-free repair. Guarantees on return: every walkable
+## (FLOOR/DECOR_FLOOR) tile is reachable from the room centre, and the reachable count meets
+## config.min_reachable_floor_ratio. Six sub-steps:
+##   1. Flood fill from centre.
+##   2. Row-major scan for a walkable tile with reach==0 → BFS its whole connected component
+##      (the pocket), in discovery order (N,E,S,W).
+##   3. Pocket size <= pocket_seal_max_tiles → seal every pocket tile to WALL (skipping any
+##      PROTECTED tile — corridor/opening tiles are reachable by construction, so one can never
+##      appear in an unreachable pocket; the skip is a can't-happen guard, not a real branch).
+##   4. Bigger pocket → multi-source BFS from every pocket tile, stepping only through
+##      non-walkable (WALL/BLOCKER) tiles in neighbour order N,E,S,W, until the frontier meets a
+##      reach==1 tile; walk the parent chain back and door-width-stamp (_carve: FLOOR+PROTECTED)
+##      every tile on it, clamped inside the perimeter ring ([1,w-2]/[1,h-2]). Re-flood and
+##      restart the scan (a connect can absorb pockets discovered later in the same pass; each
+##      restart strictly grows `reach`, so this terminates).
+##   5. Ratio repair: while reach.count(1) is under the ratio target, collect every WALL/BLOCKER
+##      tile inside the ring that 4-neighbours a reach==1 tile, flip them all to FLOOR in one
+##      pass, and re-flood. A no-op pass is impossible with a reachable centre (push_error+break
+##      as a can't-happen guard).
+##   6. Final flood fill is whatever the loop above left in `reach` — returned directly.
+static func _repair(grid: PackedByteArray, prot: PackedByteArray, w: int, h: int,
+		cx: int, cy: int, config: GenConfig) -> PackedByteArray:
+	var reach := _flood_fill(grid, w, h, cx, cy)
+
+	var restart := true
+	while restart:
+		restart = false
+		var visited := PackedByteArray()
+		visited.resize(w * h)
+		for i in w * h:
+			if reach[i] == 1 or visited[i] == 1:
+				continue
+			if grid[i] != FLOOR and grid[i] != DECOR_FLOOR:
+				continue
+			var pocket := _collect_pocket(grid, reach, visited, w, h, i)
+			if pocket.size() <= config.pocket_seal_max_tiles:
+				for j in pocket.size():
+					var idx: int = pocket[j]
+					if prot[idx] == 0:   # can't-happen guard: PROTECTED tiles are reachable by construction
+						grid[idx] = WALL
+				# Sealing doesn't change `reach` (these tiles were already unreachable) — keep scanning.
+			else:
+				_connect_pocket(grid, prot, reach, w, h, pocket, config.door_width_tiles)
+				reach = _flood_fill(grid, w, h, cx, cy)
+				restart = true
+				break
+
+	var total := w * h
+	var target := int(config.min_reachable_floor_ratio * total)
+	while reach.count(1) < target:
+		var to_flip := PackedInt32Array()
+		for y in range(1, h - 1):
+			var row := y * w
+			for x in range(1, w - 1):
+				var idx := row + x
+				if grid[idx] != WALL and grid[idx] != BLOCKER:
+					continue
+				if reach[idx - 1] == 1 or reach[idx + 1] == 1 or reach[idx - w] == 1 or reach[idx + w] == 1:
+					to_flip.append(idx)
+		if to_flip.is_empty():
+			push_error("RoomBuilder: ratio repair stalled at %d/%d reachable tiles (target %d) — cannot happen with a reachable centre"
+					% [reach.count(1), total, target])
+			break
+		for j in to_flip.size():
+			grid[to_flip[j]] = FLOOR
+		reach = _flood_fill(grid, w, h, cx, cy)
+
+	return reach
+
+
+## BFS the connected component of walkable (FLOOR/DECOR_FLOOR), reach==0 tiles starting at
+## `start`, in neighbour order N,E,S,W. Marks `visited` as it goes; does not touch `reach`.
+static func _collect_pocket(grid: PackedByteArray, reach: PackedByteArray, visited: PackedByteArray,
+		w: int, h: int, start: int) -> PackedInt32Array:
+	var pocket := PackedInt32Array()
+	var stack := PackedInt32Array()
+	stack.resize(w * h)
+	var sp := 0
+	stack[sp] = start
+	sp += 1
+	visited[start] = 1
+	while sp > 0:
+		sp -= 1
+		var idx := stack[sp]
+		pocket.append(idx)
+		var x := idx % w
+		@warning_ignore("integer_division")
+		var y := idx / w
+		if y > 0:
+			var n := idx - w
+			if visited[n] == 0 and reach[n] == 0 and (grid[n] == FLOOR or grid[n] == DECOR_FLOOR):
+				visited[n] = 1
+				stack[sp] = n
+				sp += 1
+		if x < w - 1:
+			var e := idx + 1
+			if visited[e] == 0 and reach[e] == 0 and (grid[e] == FLOOR or grid[e] == DECOR_FLOOR):
+				visited[e] = 1
+				stack[sp] = e
+				sp += 1
+		if y < h - 1:
+			var s := idx + w
+			if visited[s] == 0 and reach[s] == 0 and (grid[s] == FLOOR or grid[s] == DECOR_FLOOR):
+				visited[s] = 1
+				stack[sp] = s
+				sp += 1
+		if x > 0:
+			var wv := idx - 1
+			if visited[wv] == 0 and reach[wv] == 0 and (grid[wv] == FLOOR or grid[wv] == DECOR_FLOOR):
+				visited[wv] = 1
+				stack[sp] = wv
+				sp += 1
+	return pocket
+
+
+## Multi-source BFS from every tile of `pocket`, stepping only through non-walkable
+## (WALL/BLOCKER) tiles — walkable neighbours can only be pocket tiles themselves (already
+## visited) or the reach==1 target (the search goal), since `pocket` is already a maximal
+## walkable component. Neighbour order N,E,S,W. On reaching a reach==1 tile, backtracks the
+## parent chain and door-width-stamps every tile on it via `_carve`, clamped inside the
+## perimeter ring so a connect can never breach the outer sealed shell.
+static func _connect_pocket(grid: PackedByteArray, prot: PackedByteArray, reach: PackedByteArray,
+		w: int, h: int, pocket: PackedInt32Array, door_width: int) -> void:
+	var visited := PackedByteArray()
+	visited.resize(w * h)
+	var parent := PackedInt32Array()
+	parent.resize(w * h)
+	for i in w * h:
+		parent[i] = -1
+	var queue := PackedInt32Array()
+	queue.resize(w * h)
+	var qh := 0
+	var qt := 0
+	for j in pocket.size():
+		var idx: int = pocket[j]
+		if visited[idx] == 0:
+			visited[idx] = 1
+			queue[qt] = idx
+			qt += 1
+
+	var hit := -1
+	while qh < qt:
+		var idx := queue[qh]
+		qh += 1
+		if reach[idx] == 1:
+			hit = idx
+			break
+		var x := idx % w
+		@warning_ignore("integer_division")
+		var y := idx / w
+		if y > 0:
+			var n := idx - w
+			if visited[n] == 0 and (grid[n] == WALL or grid[n] == BLOCKER or reach[n] == 1):
+				visited[n] = 1
+				parent[n] = idx
+				queue[qt] = n
+				qt += 1
+		if x < w - 1:
+			var e := idx + 1
+			if visited[e] == 0 and (grid[e] == WALL or grid[e] == BLOCKER or reach[e] == 1):
+				visited[e] = 1
+				parent[e] = idx
+				queue[qt] = e
+				qt += 1
+		if y < h - 1:
+			var s := idx + w
+			if visited[s] == 0 and (grid[s] == WALL or grid[s] == BLOCKER or reach[s] == 1):
+				visited[s] = 1
+				parent[s] = idx
+				queue[qt] = s
+				qt += 1
+		if x > 0:
+			var wv := idx - 1
+			if visited[wv] == 0 and (grid[wv] == WALL or grid[wv] == BLOCKER or reach[wv] == 1):
+				visited[wv] = 1
+				parent[wv] = idx
+				queue[qt] = wv
+				qt += 1
+
+	if hit < 0:
+		push_error("RoomBuilder: repair could not find a wall-through path to connect an unreachable pocket")
+		return
+
+	var half := door_width >> 1
+	var cur := hit
+	while cur != -1:
+		var x := cur % w
+		@warning_ignore("integer_division")
+		var y := cur / w
+		var x0 := clampi(x - half, 1, w - 2)
+		var x1 := clampi(x + half, 1, w - 2)
+		var y0 := clampi(y - half, 1, h - 2)
+		var y1 := clampi(y + half, 1, h - 2)
+		_carve(grid, prot, w, h, x0, x1, y0, y1)
+		cur = parent[cur]
+
+
+## Debug assertion only, run after repair — a failure here is always a bug (repair guarantees
+## these invariants by construction), never a case that retries. push_error and keep going.
 static func _validate(out: RoomOutput, openings: PackedInt32Array, config: GenConfig) -> bool:
+	var ok := true
 	for i in openings.size():
 		if out.reachability_map[openings[i]] == 0:
-			return false
+			push_error("RoomBuilder: opening tile unreachable after repair, origin_slot %s" % out.origin_slot)
+			ok = false
 	var total := out.width * out.height
-	return out.reachability_map.count(1) >= int(config.min_reachable_floor_ratio * total)
+	var reachable := out.reachability_map.count(1)
+	if reachable < int(config.min_reachable_floor_ratio * total):
+		push_error("RoomBuilder: reachable ratio %.3f below min_reachable_floor_ratio after repair, origin_slot %s"
+				% [float(reachable) / total, out.origin_slot])
+		ok = false
+	return ok

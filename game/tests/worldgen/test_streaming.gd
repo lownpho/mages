@@ -28,8 +28,15 @@ func _ready() -> void:
 
 	# --- Chunk determinism ----------------------------------------------------------------------
 	print("== chunk determinism ==")
-	# In-world chunks covering both biomes (world is 2 chunks wide × 4 tall: glade y0-1, deepwood y2-3).
-	for coord in [Vector2i(0, 0), Vector2i(1, 1), Vector2i(0, 3)]:
+	# In-world chunk coords derived from the packed world size (origin, centre, far corner).
+	var wtiles := Vector2i(streamer.world_spec.grid_w, streamer.world_spec.grid_h) \
+			* config.biome_slots * config.room_slot_tiles
+	var wchunks := Vector2i(
+			maxi(1, wtiles.x / config.chunk_tiles), maxi(1, wtiles.y / config.chunk_tiles))
+	var far := Vector2i(wchunks.x - 1, wchunks.y - 1)
+	@warning_ignore("integer_division")
+	var mid := Vector2i(wchunks.x / 2, wchunks.y / 2)
+	for coord in [Vector2i(0, 0), mid, far]:
 		streamer.clear_room_cache()
 		var a := streamer.assemble_chunk(coord.x, coord.y)
 		var sa := _serialize(a)
@@ -68,14 +75,13 @@ func _ready() -> void:
 
 	# --- Performance (report only) --------------------------------------------------------------
 	print("== performance (%d samples each; budgets: L2 5ms / L3 10ms / assembly 1ms) ==" % SAMPLES)
-	var bw := config.world_width_biomes
-	var bh := config.world_height_biomes()
+	var placements: Array = streamer.world_spec.placements
 
 	var l2_us := 0
 	for i in SAMPLES:
-		var bc := Vector2i(i % bw, (i / bw) % bh)
+		var p: WorldSpec.BiomePlacement = placements[i % placements.size()]
 		var t0 := Time.get_ticks_usec()
-		RoomGraph.build(streamer.world_spec, bc, config)   # fresh, no cache
+		RoomGraph.build(streamer.world_spec, p.id, config)   # fresh, no cache
 		l2_us += Time.get_ticks_usec() - t0
 
 	var l3_us := 0
@@ -85,12 +91,12 @@ func _ready() -> void:
 		RoomBuilder.build(spec, config, seed)
 		l3_us += Time.get_ticks_usec() - t0
 
-	# Chunk assembly from CACHED rooms: warm chunk (2,2)'s rooms, then re-assemble repeatedly.
-	streamer.assemble_chunk(0, 3).free()
+	# Chunk assembly from CACHED rooms: warm the far chunk's rooms, then re-assemble repeatedly.
+	streamer.assemble_chunk(far.x, far.y).free()
 	var asm_us := 0
 	for _i in SAMPLES:
 		var t0 := Time.get_ticks_usec()
-		var c := streamer.assemble_chunk(0, 3)
+		var c := streamer.assemble_chunk(far.x, far.y)
 		asm_us += Time.get_ticks_usec() - t0
 		c.free()
 
@@ -110,14 +116,13 @@ func _ready() -> void:
 	get_tree().quit(0 if fails.is_empty() else 1)
 
 
-## Every room unit across the whole world, as flat RoomSpec list (canonical order per biome).
+## Every room across the whole world, as flat RoomSpec list (canonical order per biome).
 func _all_units(streamer: WorldStreamer, config: GenConfig) -> Array:
 	var out: Array = []
-	for by in config.world_height_biomes():
-		for bx in config.world_width_biomes:
-			var g := RoomGraph.build(streamer.world_spec, Vector2i(bx, by), config)
-			for u in g.rooms:
-				out.append(u)
+	for p in streamer.world_spec.placements:
+		var g := RoomGraph.build(streamer.world_spec, p.id, config)
+		for u in g.rooms:
+			out.append(u)
 	return out
 
 
