@@ -34,16 +34,16 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_s3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"spin",
 "speed": 8.0
 }]
 
-[node name="Nope" type="Node2D"]
+[node name="Nope" type="Node2D" unique_id=2010943911]
 z_index = 30
 script = ExtResource("1_script")
 
-[node name="Ring" type="AnimatedSprite2D" parent="."]
+[node name="Ring" type="AnimatedSprite2D" parent="." unique_id=1935832035]
 sprite_frames = SubResource("SpriteFrames_spin")
 animation = &"spin"
 autoplay = "spin"
