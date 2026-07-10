@@ -28,6 +28,7 @@ GlobalInventory="*res://autoload/global_inventory.gd"
 GlobalPickups="*res://autoload/global_pickups.gd"
 SceneManager="*res://autoload/scene_manager.gd"
 GlobalBestiary="*res://autoload/global_bestiary.gd"
+GlobalMap="*res://autoload/global_map.gd"
 GameState="*res://autoload/game_state.gd"
 
 [debug]

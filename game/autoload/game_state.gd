@@ -48,7 +48,7 @@ var _suspend_autosave := false
 func _ready() -> void:
 	_save_timer = Timer.new()
 	_save_timer.wait_time = POSITION_SAVE_INTERVAL
-	_save_timer.timeout.connect(persist)
+	_save_timer.timeout.connect(_on_autosave_tick)
 	add_child(_save_timer)
 	# Autosave on inventory edits, but only once a player is being tracked: persist() rebuilds
 	# the save from scratch and would otherwise write a position-less save (it only stores the
@@ -76,6 +76,7 @@ func new_game() -> void:
 	notable_kills = {}
 	# Fresh run: nothing carries over. The bestiary (its own autoload) is intentionally
 	# left alone so kill discoveries persist across runs.
+	GlobalMap.reset()
 	_suspend_autosave = true
 	GlobalInventory.reset()
 	_suspend_autosave = false
@@ -98,6 +99,13 @@ func continue_game() -> bool:
 	# spawn (see world.gd, which also snaps a surviving position onto floor as a further guard).
 	var signature_ok: bool = cfg.get_value("world", "signature", "") == _world_signature()
 	has_pending_position = signature_ok and cfg.has_section_key("player", "position")
+	# The discovered map is slot coords into the layout, so it only means anything under the same
+	# signature; a diverged layout starts fully fogged rather than revealing the wrong rooms.
+	# GlobalMap stashes this until world_ready builds the state (Continue runs before the world).
+	if signature_ok:
+		GlobalMap.restore(cfg.get_value("map", "state", {}))
+	else:
+		GlobalMap.reset()
 	notable_kills = cfg.get_value("world", "notable_kills", {})
 	_load_inventory(cfg)
 	return true
@@ -107,6 +115,17 @@ func continue_game() -> bool:
 ## cheap, and important enough not to lose to a crash between now and the next autosave).
 func record_notable_kill(entity_id: int) -> void:
 	notable_kills[entity_id] = true
+	persist()
+
+
+## Periodic position autosave. Once the run is left (Quit to title frees the world, so the
+## tracked player is gone) the timer must stop, or it would keep rewriting the save from scratch
+## without a position — dropping the stored spot back to spawn while the map (read from a
+## still-alive stale MapState) survives. Stopping here catches every world-exit path in one place.
+func _on_autosave_tick() -> void:
+	if not is_instance_valid(_tracked_player):
+		_save_timer.stop()
+		return
 	persist()
 
 
@@ -122,6 +141,7 @@ func clear_save() -> void:
 	active_seed = 0
 	has_pending_position = false
 	_tracked_player = null
+	GlobalMap.reset()
 	_save_timer.stop()
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)
@@ -145,6 +165,7 @@ func persist() -> void:
 	cfg.set_value("world", "seed", active_seed)
 	cfg.set_value("world", "signature", _world_signature())
 	cfg.set_value("world", "notable_kills", notable_kills)
+	cfg.set_value("map", "state", GlobalMap.to_dict())
 	if is_instance_valid(_tracked_player):
 		cfg.set_value("player", "position", _tracked_player.global_position)
 	_save_inventory(cfg)

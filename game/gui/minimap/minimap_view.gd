@@ -1,11 +1,11 @@
 extends Control
-## The strip minimap: draws MapState's discovered-world textures with the player fixed at
-## the centre, north-up. The widget never resizes — the scroll wheel steps tiles-per-pixel
-## (ZOOM_TILES_PER_PX). Walls render at every zoom from a per-level majority-downsampled
-## image, so explored dead ends stay flagged when zoomed out. Live enemies show only inside
-## discovered rooms, so nothing leaks through fog of war.
+## The strip minimap: draws the shared MapState's discovered-world textures with the player fixed
+## at the centre, north-up. The state (fog-of-war discovery, textures, markers) is owned by
+## GlobalMap; this widget only renders the active one and steps its own zoom. The widget never
+## resizes — the scroll wheel steps tiles-per-pixel (MapState.ZOOM_TILES_PER_PX). Walls render at
+## every zoom from a per-level majority-downsampled image, so explored dead ends stay flagged when
+## zoomed out. Live enemies show only inside discovered rooms, so nothing leaks through fog of war.
 
-const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
 const ENEMIES_MAX_TPP := 4  ## live enemy dots hidden at zooms coarser than this
 
 # Marker colors, all Zughy 32.
@@ -18,31 +18,26 @@ const COLOR_FEATURE := Palette.CYAN
 var _state: MapState = null
 var _player: Node2D = null
 var _zoom_idx := 0
-var _last_tile := Vector2i(-1, -1)
 
 
 func _ready() -> void:
-	GlobalEvent.world_ready.connect(_on_world_ready)
+	GlobalMap.map_changed.connect(_on_map_changed)
+	if GlobalMap.active != null:   # world already up (widget re-added, or late scene load)
+		_on_map_changed()
 	set_process(false)
 
 
-func _on_world_ready(streamer: WorldStreamer) -> void:
-	_state = MapState.new()
-	_state.setup(streamer, ZOOM_TILES_PER_PX)
+func _on_map_changed() -> void:
+	_state = GlobalMap.active
 	_player = get_tree().get_first_node_in_group("player")
-	_last_tile = Vector2i(-1, -1)
-	set_process(true)
+	set_process(_state != null)
 	queue_redraw()
 
 
 func _process(_dt: float) -> void:
 	if _player == null or not is_instance_valid(_player):
 		return
-	var tile := Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor())
-	if tile != _last_tile:
-		_last_tile = tile
-		_state.discover_at(tile)
-	queue_redraw()   # enemies move even when the player doesn't
+	queue_redraw()   # enemies move even when the player doesn't; discovery is GlobalMap's job
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -51,7 +46,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("minimap_zoom_in") and _zoom_idx > 0:
 		_zoom_idx -= 1
 		queue_redraw()
-	elif event.is_action_pressed("minimap_zoom_out") and _zoom_idx < ZOOM_TILES_PER_PX.size() - 1:
+	elif event.is_action_pressed("minimap_zoom_out") \
+			and _zoom_idx < MapState.ZOOM_TILES_PER_PX.size() - 1:
 		_zoom_idx += 1
 		queue_redraw()
 
@@ -60,7 +56,7 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), COLOR_UNKNOWN)
 	if _state == null or _player == null or not is_instance_valid(_player):
 		return
-	var tpp := ZOOM_TILES_PER_PX[_zoom_idx]
+	var tpp := MapState.ZOOM_TILES_PER_PX[_zoom_idx]
 	var center := _player.global_position / GameConstants.PX_PER_TILE   # in tiles
 	var region := Rect2(center - size * tpp * 0.5, size * tpp)          # visible world tiles
 

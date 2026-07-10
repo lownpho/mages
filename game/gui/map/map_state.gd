@@ -10,6 +10,11 @@ extends RefCounted
 
 enum { MARKER_BOSS, MARKER_FEATURE }
 
+## Canonical tiles-per-pixel zoom steps. A downsampled wall image is pre-built for every level
+## > 1 (see setup), so both the minimap and the full map read walls legibly at any zoom from the
+## same state. Views step through this array for their own zoom index.
+const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
+
 ## Room types whose discovery drops a MARKER_BOSS at the room centre — each biome's summit
 ## encounter (room ids are per-biome, so this is an explicit list).
 const BOSS_TYPES: Array[StringName] = [&"glade_boss_d3", &"deepwood_arena"]
