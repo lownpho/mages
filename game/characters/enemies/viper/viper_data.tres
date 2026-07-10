@@ -33,7 +33,6 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Viper"
 icon = SubResource("AtlasTexture_icon")
-biome = &"glade"
 rarity = 1
 max_health = 180
 drops = Array[ExtResource("1_ql65p")]([SubResource("Resource_rune2"), SubResource("Resource_staff2"), SubResource("Resource_wand2")])

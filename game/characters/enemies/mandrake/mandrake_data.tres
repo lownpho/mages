@@ -26,6 +26,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Mandrake"
 icon = SubResource("AtlasTexture_icon")
-biome = &"glade"
 max_health = 30
 drops = Array[ExtResource("1_35d20")]([SubResource("Resource_skillhat"), SubResource("Resource_fireball")])

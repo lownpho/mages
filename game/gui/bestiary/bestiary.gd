@@ -46,7 +46,7 @@ func _set_page(page: int) -> void:
 	# Badge the page with its boss (a living idle loop once slain, a silhouette until then).
 	%BossIcon.show_creature(boss, GlobalBestiary.is_unlocked(boss))
 	%BiomeCount.text = _fraction(GlobalBestiary.completion(ids))
-	%TotalCount.text = _fraction(GlobalBestiary.completion(GlobalBestiary.roster()))
+	%TotalCount.text = _fraction(GlobalBestiary.completion(GlobalBestiary.filed_ids()))
 	# Arrows dim at the ends instead of hiding, so the nav row never shifts.
 	_set_arrow(%PrevPage, _page > 0)
 	_set_arrow(%NextPage, _page < count - 1)

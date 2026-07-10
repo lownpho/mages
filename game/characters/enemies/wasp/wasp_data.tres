@@ -26,6 +26,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Wasp"
 icon = SubResource("AtlasTexture_icon")
-biome = &"glade"
 max_health = 18
 drops = Array[ExtResource("2_dpl6y")]([SubResource("Resource_wand"), SubResource("Resource_zaap")])

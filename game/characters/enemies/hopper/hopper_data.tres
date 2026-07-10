@@ -26,6 +26,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Hopper"
 icon = SubResource("AtlasTexture_icon")
-biome = &"glade"
 max_health = 38
 drops = Array[ExtResource("1_aqukq")]([SubResource("Resource_speedhat"), SubResource("Resource_zaap")])

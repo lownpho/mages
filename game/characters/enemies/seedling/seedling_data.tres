@@ -26,6 +26,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Seedling"
 icon = SubResource("AtlasTexture_icon")
-biome = &"glade"
 max_health = 45
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_rune"), SubResource("Resource_heal")])

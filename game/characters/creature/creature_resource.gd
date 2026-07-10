@@ -10,10 +10,10 @@ class_name CreatureResource
 ## Bestiary icon — the creature's idle frame at native size, an AtlasTexture into the
 ## creature's own sprite sheet (never a scaled or redrawn copy).
 @export var icon: Texture2D
-## Bestiary grouping: the biome this enemy is filed under. Free-form label — biomes wired
-## into gen_config get their own pages first (world order), other labels follow.
-@export var biome: StringName = &""
 ## Bestiary ordering within a biome: commons first (alphabetical), rares after, boss last.
+## Which biome page(s) an enemy is filed under is NOT stored here — it's derived from where
+## the enemy actually spawns (the room spawn tables), so it can never drift from reality and
+## a shared enemy files onto every biome it appears in. See GlobalBestiary._build_groups.
 enum Rarity {COMMON, RARE, BOSS}
 @export var rarity: Rarity = Rarity.COMMON
 @export var max_health: int = 100

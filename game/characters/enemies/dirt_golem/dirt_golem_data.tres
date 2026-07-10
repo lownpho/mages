@@ -47,6 +47,5 @@ region = Rect2(0, 0, 16, 16)
 script = ExtResource("1")
 display_name = "Dirt Golem"
 icon = SubResource("AtlasTexture_icon")
-biome = &"glade"
 max_health = 180
 drops = Array[ExtResource("1_toonh")]([SubResource("Resource_healthrobe"), SubResource("Resource_manarobe"), SubResource("Resource_vitalityrobe"), SubResource("Resource_vitalityhat"), SubResource("Resource_nope")])

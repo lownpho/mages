@@ -11,5 +11,4 @@ region = Rect2(0, 0, 16, 16)
 script = ExtResource("1")
 display_name = "Golem"
 icon = SubResource("AtlasTexture_icon")
-biome = &"dungeon"
 max_health = 120
