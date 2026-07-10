@@ -24,8 +24,16 @@ func _ready() -> void:
 	_setup_bar_hover(%HealthBar, %HealthValue)
 	_setup_bar_hover(%ManaBar, %ManaValue)
 
+	# The bestiary and the map are the two HUD-strip overlays; opening one closes the other so
+	# only ever one is up (Esc / an outside click closes whichever is open — see _unhandled_input).
 	%BestiaryButton.pressed.connect(func() -> void:
-		%BestiaryPanel.visible = not %BestiaryPanel.visible)
+		%BestiaryPanel.visible = not %BestiaryPanel.visible
+		if %BestiaryPanel.visible:
+			%MapPanel.hide())
+	%MapButton.pressed.connect(func() -> void:
+		%MapPanel.visible = not %MapPanel.visible
+		if %MapPanel.visible:
+			%BestiaryPanel.hide())
 
 	# There's no pause menu by design and no process to "quit" on the web build, so this
 	# leaves the run to the title screen. The run autosaves continuously; persist() first
@@ -36,18 +44,23 @@ func _ready() -> void:
 		SceneManager.go_to(load("res://scenes/title.tscn")))
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not %BestiaryPanel.visible:
+	if not (%BestiaryPanel.visible or %MapPanel.visible):
 		return
-	# Reaching _unhandled_input at all means the click missed every Control (the
-	# panel included, since its mouse_filter stops input) — so any mouse press
-	# here is, by construction, a click outside the pane.
-	var outside_click: bool = event is InputEventMouseButton and event.pressed
+	# Reaching _unhandled_input at all means the click missed every Control (the open
+	# panel included, since its mouse_filter stops input) — so any mouse press here is,
+	# by construction, a click outside the pane. (The map consumes its own clicks for
+	# pins/pan, so only clicks that miss it land here.) Wheel notches don't count as clicks,
+	# so scrolling — over the map or the strip — never closes an open panel.
+	var outside_click: bool = event is InputEventMouseButton and event.pressed \
+			and event.button_index != MOUSE_BUTTON_WHEEL_UP \
+			and event.button_index != MOUSE_BUTTON_WHEEL_DOWN
 	# Web's Fullscreen API reserves Esc to exit fullscreen and can't be
 	# preventDefault()'d, so sharing it with a UI action there is a losing fight —
 	# skip the shortcut on web and rely on the button/outside-click instead.
 	var menu_close := OS.get_name() != "Web" and event.is_action_pressed("menu")
 	if outside_click or menu_close:
 		%BestiaryPanel.hide()
+		%MapPanel.hide()
 		get_viewport().set_input_as_handled()
 
 func _setup_bar_hover(bar: ProgressBar, label: Label) -> void:

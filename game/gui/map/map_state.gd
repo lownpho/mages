@@ -105,6 +105,13 @@ func discover_at(world_tile: Vector2i) -> bool:
 	return true
 
 
+## Bounding box (in world tiles) of everything discovered so far — the painted floor pixels.
+## Empty (zero-size) until the first room is revealed. Used by the full map to frame what the
+## player has actually seen instead of the whole (mostly-undiscovered) world.
+func discovered_bounds() -> Rect2i:
+	return _floor_img.get_used_rect() if _floor_img != null else Rect2i()
+
+
 ## True once the room under a world tile has been revealed. Reads the painted image (any
 ## discovered pixel is opaque), so callers need no room lookup.
 func is_tile_discovered(world_tile: Vector2i) -> bool:
