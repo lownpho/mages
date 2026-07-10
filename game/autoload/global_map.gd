@@ -12,6 +12,7 @@ extends Node
 ## into a dungeon.
 
 signal map_changed   ## active MapState was (re)built or swapped — views re-bind on this
+signal pins_changed  ## a pin was dropped or removed — non-frame-driven views redraw, save persists
 
 var active: MapState = null
 
@@ -50,6 +51,16 @@ func _process(_dt: float) -> void:
 	if tile != _last_tile:
 		_last_tile = tile
 		active.discover_at(tile)
+
+
+## Toggle a pin at a world tile: remove one already within `remove_radius_tiles`, else drop a new
+## one. This is the whole pin UI contract — the minimap and the full map both just call this.
+func toggle_pin(world_tile: Vector2i, remove_radius_tiles: int) -> void:
+	if active == null:
+		return
+	if not active.remove_pin_near(world_tile, remove_radius_tiles):
+		active.add_pin(world_tile)
+	pins_changed.emit()
 
 
 ## Minimal save payload for the whole map. Empty when no world is active yet.

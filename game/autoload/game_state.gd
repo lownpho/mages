@@ -58,6 +58,11 @@ func _ready() -> void:
 	GlobalEvent.slot_updated.connect(func(_slot: GlobalInventory.Slot) -> void:
 		if not _suspend_autosave and is_instance_valid(_tracked_player):
 			persist())
+	# Pins are user-driven and rare (like inventory edits), so persist immediately rather than
+	# waiting for the periodic tick — same tracked-player gate to avoid a position-less write.
+	GlobalMap.pins_changed.connect(func() -> void:
+		if not _suspend_autosave and is_instance_valid(_tracked_player):
+			persist())
 
 
 func has_save() -> bool:

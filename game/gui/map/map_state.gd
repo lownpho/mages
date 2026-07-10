@@ -22,7 +22,8 @@ const BOSS_TYPES: Array[StringName] = [&"glade_boss_d3", &"deepwood_arena"]
 var world_seed: int = 0
 var world_tiles := Vector2i.ZERO      ## image dimensions (1 px per tile)
 var discovered: Dictionary = {}       ## origin_slot (Vector2i) -> true
-var markers: Array = []               ## of {tile: Vector2i (world), kind: MARKER_*}
+var markers: Array = []               ## of {tile: Vector2i (world), kind: MARKER_*} — auto, from rooms
+var pins: Array = []                  ## of Vector2i (world tile) — player-dropped, saved
 var floor_texture: ImageTexture = null
 var wall_texture: ImageTexture = null
 
@@ -52,6 +53,31 @@ func setup(streamer: WorldStreamer, zoom_levels: Array[int]) -> void:
 		_wall_levels[tpp] = {"img": img, "tex": ImageTexture.create_from_image(img)}
 	discovered.clear()
 	markers.clear()
+	pins.clear()
+
+
+## Drop a pin at a world tile (dedup). Player-placed markers, unlike the auto room markers,
+## are free-standing and can sit anywhere — including undiscovered tiles (a pin at a goal you
+## haven't reached yet).
+func add_pin(world_tile: Vector2i) -> void:
+	if world_tile not in pins:
+		pins.append(world_tile)
+
+
+## Remove the pin nearest `world_tile` within `radius_tiles`; true if one was removed. Lets a
+## click near an existing pin clear it instead of stacking a second one on top.
+func remove_pin_near(world_tile: Vector2i, radius_tiles: int) -> bool:
+	var best := -1
+	var best_d := radius_tiles * radius_tiles + 1
+	for i in pins.size():
+		var d: int = (pins[i] - world_tile).length_squared()
+		if d <= radius_tiles * radius_tiles and d < best_d:
+			best_d = d
+			best = i
+	if best >= 0:
+		pins.remove_at(best)
+		return true
+	return false
 
 
 ## Wall overlay texture for a zoom level (1 px per `tpp` tiles); the full-res image at tpp 1.
@@ -89,15 +115,19 @@ func is_tile_discovered(world_tile: Vector2i) -> bool:
 
 
 ## Minimal save payload; images and markers are re-derived by restore() through the
-## deterministic room cache.
+## deterministic room cache. Only discovery and the player's pins are stored — the pins are the
+## one thing that can't be re-derived (auto room markers come back with the rooms).
 func to_dict() -> Dictionary:
-	return {"world_seed": world_seed, "discovered": discovered.keys()}
+	return {"world_seed": world_seed, "discovered": discovered.keys(), "pins": pins}
 
 
 func restore(dict: Dictionary) -> void:
 	var ss: int = _streamer.config.room_slot_tiles
 	for slot in dict.get("discovered", []):
 		discover_at(slot * ss)   # a room's origin slot's top-left tile is inside the room
+	pins.clear()
+	for p in dict.get("pins", []):
+		pins.append(p)   # stored as Vector2i; copy into our own array
 
 
 ## Blit one room's tile classes into the images and record its static markers. The floor image
