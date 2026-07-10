@@ -4,24 +4,43 @@
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="2_0llbv"]
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="2_gen"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="3_ste"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="4_pm"]
 
-[sub_resource type="Resource" id="sp_seedling"]
-script = ExtResource("3_ste")
+[sub_resource type="Resource" id="pm_hopper"]
+script = ExtResource("4_pm")
+enemy_id = &"hopper"
+count_min = 3
+count_max = 4
+
+[sub_resource type="Resource" id="pm_seedling"]
+script = ExtResource("4_pm")
 enemy_id = &"seedling"
-weight = 2
-group_max = 2
+count_min = 1
+count_max = 1
+
+[sub_resource type="Resource" id="pm_dirt_golem"]
+script = ExtResource("4_pm")
+enemy_id = &"dirt_golem"
+count_min = 1
+count_max = 1
+
+[sub_resource type="Resource" id="pm_seedling_pair"]
+script = ExtResource("4_pm")
+enemy_id = &"seedling"
+count_min = 1
+count_max = 2
 
 [sub_resource type="Resource" id="sp_hopper_pack"]
 script = ExtResource("3_ste")
-enemy_id = &"hopper"
-weight = 2
-group_min = 3
-group_max = 4
+weight = 3
+pack_spread = 2.0
+members = Array[ExtResource("4_pm")]([SubResource("pm_hopper"), SubResource("pm_seedling")])
 
-[sub_resource type="Resource" id="sp_dirt_golem"]
+[sub_resource type="Resource" id="sp_guardian"]
 script = ExtResource("3_ste")
-enemy_id = &"dirt_golem"
 weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("4_pm")]([SubResource("pm_dirt_golem"), SubResource("pm_seedling_pair")])
 
 [sub_resource type="Resource" id="Resource_gen"]
 script = ExtResource("2_gen")
@@ -37,6 +56,6 @@ generator = SubResource("Resource_gen")
 difficulty = 2
 weight = 4
 max_per_biome = 10
-enemies = Array[ExtResource("3_ste")]([SubResource("sp_seedling"), SubResource("sp_hopper_pack"), SubResource("sp_dirt_golem")])
+enemies = Array[ExtResource("3_ste")]([SubResource("sp_hopper_pack"), SubResource("sp_guardian")])
 enemy_groups_min = 2
 enemy_groups_max = 5

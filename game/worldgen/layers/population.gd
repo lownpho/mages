@@ -4,8 +4,11 @@ class_name Population
 ## together. TWO independent RNG streams:
 ##
 ## 1. Population rng  [world_seed, NS_POPULATION, origin_slot.x, origin_slot.y]:
-##    one group-count draw, then per group IN ORDER: weighted entry pick, group size, then per
-##    entity in that group ONE candidate-index draw (`rng.randi_range(0, candidates.size()-1)`).
+##    one group-count draw, then per group IN ORDER: weighted entry pick, then —
+##    single-type entry: one size draw (`randi_range(group_min, group_max)`);
+##    mixed pack (members non-empty): one count draw per member
+##    (`randi_range(count_min, count_max)`); then per entity ONE candidate-index draw
+##    (`rng.randi_range(0, candidates.size()-1)`).
 ##    An empty pool consumes no draw (`_weighted_pick` returns null without drawing). If the
 ##    candidate list is empty when an entity's turn comes, that entity (and every later one,
 ##    since the list only shrinks) is skipped with no draw — a `push_warning` fires once per
@@ -15,6 +18,8 @@ class_name Population
 ##    Candidates are the room's reachable tiles (row-major) at least `spawn_min_dist_from_doors`
 ##    tiles from every opening. After each pick, every candidate within squared distance < 4 of
 ##    the picked tile is dropped (order-preserving linear filter — deterministic, no Dictionary).
+##    When `pack_spread > 0`, all members of a group (single-type or mixed) cluster around the
+##    first placed entity's tile; `_filter_within` constrains subsequent picks to that radius.
 ##
 ## 2. Features rng  [world_seed, NS_FEATURES, origin_slot.x, origin_slot.y]: consumed once per
 ##    `RoomTypeDef.features` entry, IN ARRAY ORDER. Per feature: one count draw
@@ -78,18 +83,38 @@ static func _populate_enemies(out: RoomOutput, spec: RoomSpec, config: GenConfig
 		var entry: SpawnTableEntry = _weighted_pick(rng, spawn_entries)
 		if entry == null:
 			continue
-		var size := rng.randi_range(entry.group_min, entry.group_max)
-		for _s in size:
-			if candidates.is_empty():
-				if not warned:
-					push_warning("Population: room at slot %s ran out of spawn candidates" %
-							[spec.origin_slot])
-					warned = true
-				continue
-			var i := rng.randi_range(0, candidates.size() - 1)
-			var tile := _tile_from_index(out.width, candidates[i])
-			out.spawns.append({"enemy_id": entry.enemy_id, "tile": tile})
-			candidates = _remove_within(candidates, tile, out.width, MIN_SPAWN_DIST2)
+		var pack_spread2 := entry.pack_spread * entry.pack_spread
+		var pack_centre := Vector2i(-1, -1)
+
+		# Build flat list of {enemy_id, count} — single-type or mixed pack.
+		var spawn_queue: Array[Dictionary] = []
+		if entry.members.is_empty():
+			var size := rng.randi_range(entry.group_min, entry.group_max)
+			spawn_queue.append({"enemy_id": entry.enemy_id, "count": size})
+		else:
+			for m in entry.members:
+				var count := rng.randi_range(m.count_min, m.count_max)
+				spawn_queue.append({"enemy_id": m.enemy_id, "count": count})
+
+		for q in spawn_queue:
+			for _s in q["count"]:
+				if candidates.is_empty():
+					if not warned:
+						push_warning("Population: room at slot %s ran out of spawn candidates" %
+								[spec.origin_slot])
+						warned = true
+					continue
+				var pool := candidates
+				if pack_spread2 > 0 and pack_centre.x >= 0:
+					pool = _filter_within(candidates, pack_centre, out.width, pack_spread2)
+					if pool.is_empty():
+						pool = candidates
+				var i := rng.randi_range(0, pool.size() - 1)
+				var tile := _tile_from_index(out.width, pool[i])
+				if pack_centre.x < 0:
+					pack_centre = tile
+				out.spawns.append({"enemy_id": q["enemy_id"], "tile": tile})
+				candidates = _remove_within(candidates, tile, out.width, MIN_SPAWN_DIST2)
 
 
 static func _populate_features(out: RoomOutput, spec: RoomSpec, config: GenConfig,
@@ -217,6 +242,19 @@ static func _remove_within(candidates: PackedInt32Array, tile: Vector2i, width: 
 		var dx := t.x - tile.x
 		var dy := t.y - tile.y
 		if dx * dx + dy * dy >= dist2:
+			result.append(idx)
+	return result
+
+
+## Order-preserving filter keeping only candidates within squared distance ≤ max_dist2 of `centre`.
+static func _filter_within(candidates: PackedInt32Array, centre: Vector2i, width: int,
+		max_dist2: float) -> PackedInt32Array:
+	var result := PackedInt32Array()
+	for idx in candidates:
+		var t := _tile_from_index(width, idx)
+		var dx := t.x - centre.x
+		var dy := t.y - centre.y
+		if dx * dx + dy * dy <= max_dist2:
 			result.append(idx)
 	return result
 

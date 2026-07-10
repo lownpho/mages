@@ -4,25 +4,39 @@
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="2_ujgbb"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="2_x405x"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="3_ste"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="4_pm"]
 
-[sub_resource type="Resource" id="sp_hopper"]
+[sub_resource type="Resource" id="pm_hopper"]
+script = ExtResource("4_pm")
+enemy_id = &"hopper"
+count_min = 3
+count_max = 5
+
+[sub_resource type="Resource" id="pm_mandrake"]
+script = ExtResource("4_pm")
+enemy_id = &"mandrake"
+count_min = 4
+count_max = 6
+
+[sub_resource type="Resource" id="pm_dirt_golem"]
+script = ExtResource("4_pm")
+enemy_id = &"dirt_golem"
+count_min = 1
+count_max = 1
+
+[sub_resource type="Resource" id="sp_hopper_cavern"]
 script = ExtResource("3_ste")
 enemy_id = &"hopper"
 weight = 2
 group_min = 3
 group_max = 5
+pack_spread = 2.0
 
-[sub_resource type="Resource" id="sp_mandrake"]
+[sub_resource type="Resource" id="sp_mandrake_den"]
 script = ExtResource("3_ste")
-enemy_id = &"mandrake"
-weight = 2
-group_min = 4
-group_max = 6
-
-[sub_resource type="Resource" id="sp_dirt_golem"]
-script = ExtResource("3_ste")
-enemy_id = &"dirt_golem"
-group_max = 2
+weight = 3
+pack_spread = 2.0
+members = Array[ExtResource("4_pm")]([SubResource("pm_mandrake"), SubResource("pm_dirt_golem")])
 
 [sub_resource type="Resource" id="Resource_p61jk"]
 script = ExtResource("2_ujgbb")
@@ -38,6 +52,6 @@ generator = SubResource("Resource_p61jk")
 difficulty = 2
 min_per_biome = 1
 max_per_biome = 3
-enemies = Array[ExtResource("3_ste")]([SubResource("sp_hopper"), SubResource("sp_mandrake"), SubResource("sp_dirt_golem")])
+enemies = Array[ExtResource("3_ste")]([SubResource("sp_hopper_cavern"), SubResource("sp_mandrake_den")])
 enemy_groups_min = 4
 enemy_groups_max = 8

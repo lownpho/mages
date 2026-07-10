@@ -4,31 +4,43 @@
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="2_55y8j"]
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="2_scgen"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="3_ste"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="4_pm"]
 
-[sub_resource type="Resource" id="sp_mandrake"]
-script = ExtResource("3_ste")
+[sub_resource type="Resource" id="pm_mandrake"]
+script = ExtResource("4_pm")
 enemy_id = &"mandrake"
-weight = 2
-group_min = 3
-group_max = 4
+count_min = 3
+count_max = 4
 
-[sub_resource type="Resource" id="sp_hopper"]
-script = ExtResource("3_ste")
-enemy_id = &"hopper"
-weight = 2
-group_max = 2
-
-[sub_resource type="Resource" id="sp_wasp"]
-script = ExtResource("3_ste")
-enemy_id = &"wasp"
-group_min = 2
-group_max = 3
-
-[sub_resource type="Resource" id="sp_sproutling"]
-script = ExtResource("3_ste")
+[sub_resource type="Resource" id="pm_sproutling"]
+script = ExtResource("4_pm")
 enemy_id = &"sproutling"
-group_min = 2
-group_max = 3
+count_min = 1
+count_max = 2
+
+[sub_resource type="Resource" id="pm_wasp"]
+script = ExtResource("4_pm")
+enemy_id = &"wasp"
+count_min = 2
+count_max = 3
+
+[sub_resource type="Resource" id="pm_hopper"]
+script = ExtResource("4_pm")
+enemy_id = &"hopper"
+count_min = 1
+count_max = 2
+
+[sub_resource type="Resource" id="sp_patrol"]
+script = ExtResource("3_ste")
+weight = 3
+pack_spread = 2.0
+members = Array[ExtResource("4_pm")]([SubResource("pm_mandrake"), SubResource("pm_sproutling")])
+
+[sub_resource type="Resource" id="sp_skirmishers"]
+script = ExtResource("3_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("4_pm")]([SubResource("pm_wasp"), SubResource("pm_hopper")])
 
 [sub_resource type="Resource" id="Resource_scgen"]
 script = ExtResource("2_scgen")
@@ -45,6 +57,6 @@ generator = SubResource("Resource_scgen")
 difficulty = 1
 weight = 6
 max_per_biome = 20
-enemies = Array[ExtResource("3_ste")]([SubResource("sp_mandrake"), SubResource("sp_hopper"), SubResource("sp_wasp"), SubResource("sp_sproutling")])
+enemies = Array[ExtResource("3_ste")]([SubResource("sp_patrol"), SubResource("sp_skirmishers")])
 enemy_groups_min = 2
 enemy_groups_max = 6

@@ -45,7 +45,13 @@ func _ready() -> void:
 			with_features += 1 if features > 0 else 0
 			var max_group := 0
 			for e in rt.enemies:
-				max_group = maxi(max_group, e.group_max)
+				if not e.members.is_empty():
+					var _sum := 0
+					for m in e.members:
+						_sum += m.count_max
+					max_group = maxi(max_group, _sum)
+				else:
+					max_group = maxi(max_group, e.group_max)
 			var groups_cap := rt.enemy_groups_max
 			if rt.scale_groups_with_size:
 				groups_cap *= u.size_slots.x * u.size_slots.y
@@ -79,6 +85,14 @@ func _ready() -> void:
 				for e in rt.enemies:
 					if e.enemy_id == sp["enemy_id"]:
 						explained = true
+						break
+					if not e.members.is_empty():
+						for m in e.members:
+							if m.enemy_id == sp["enemy_id"]:
+								explained = true
+								break
+						if explained:
+							break
 				if not explained:
 					fails.append("spawn '%s' not in room type's pool (seed %d %s)"
 							% [sp["enemy_id"], seed_v, u.type_id])
