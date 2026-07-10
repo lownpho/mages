@@ -423,11 +423,13 @@ texture_normal = SubResource("AtlasTexture_quit")
 [node name="BestiaryPanel" parent="." unique_id=1285211236 instance=ExtResource("8_besty")]
 unique_name_in_owner = true
 visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 
