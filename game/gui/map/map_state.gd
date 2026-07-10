@@ -1,5 +1,6 @@
-class_name MinimapState
-## Discovered-world model behind the strip minimap: which rooms the player has entered, two
+class_name MapState
+## Discovered-world model shared by the strip minimap and the full-screen map: which rooms the
+## player has entered, two
 ## world-sized images (1 px per world tile — floor silhouette + wall/blocker overlay) plus one
 ## majority-downsampled wall image per coarser zoom level, and the
 ## static markers recorded when a room is discovered. Pure presentation over the deterministic

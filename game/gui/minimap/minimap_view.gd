@@ -1,5 +1,5 @@
 extends Control
-## The strip minimap: draws MinimapState's discovered-world textures with the player fixed at
+## The strip minimap: draws MapState's discovered-world textures with the player fixed at
 ## the centre, north-up. The widget never resizes — the scroll wheel steps tiles-per-pixel
 ## (ZOOM_TILES_PER_PX). Walls render at every zoom from a per-level majority-downsampled
 ## image, so explored dead ends stay flagged when zoomed out. Live enemies show only inside
@@ -15,7 +15,7 @@ const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
 
-var _state: MinimapState = null
+var _state: MapState = null
 var _player: Node2D = null
 var _zoom_idx := 0
 var _last_tile := Vector2i(-1, -1)
@@ -27,7 +27,7 @@ func _ready() -> void:
 
 
 func _on_world_ready(streamer: WorldStreamer) -> void:
-	_state = MinimapState.new()
+	_state = MapState.new()
 	_state.setup(streamer, ZOOM_TILES_PER_PX)
 	_player = get_tree().get_first_node_in_group("player")
 	_last_tile = Vector2i(-1, -1)
@@ -68,7 +68,7 @@ func _draw() -> void:
 	_draw_layer(_state.wall_texture_for(tpp), region, tpp, tpp)
 
 	for m in _state.markers:
-		if m["kind"] == MinimapState.MARKER_BOSS:
+		if m["kind"] == MapState.MARKER_BOSS:
 			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_BOSS, 2)
 		else:
 			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_FEATURE, 1)
