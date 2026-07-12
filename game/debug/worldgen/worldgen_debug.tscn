@@ -1,12 +1,16 @@
 [gd_scene format=3 uid="uid://cs0x7b01kvem3"]
 
-[ext_resource type="Script" uid="uid://bdrdivq4cgt08" path="res://worldgen/debug/worldgen_debug.gd" id="1"]
-[ext_resource type="Script" uid="uid://b6l6vh2qj3g1q" path="res://worldgen/debug/world_view.gd" id="2"]
+[ext_resource type="Script" uid="uid://bdrdivq4cgt08" path="res://debug/worldgen/worldgen_debug.gd" id="1"]
+[ext_resource type="Script" uid="uid://b6l6vh2qj3g1q" path="res://debug/worldgen/world_view.gd" id="2"]
 [ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="3"]
-[ext_resource type="Script" uid="uid://b2d2vms63idp2" path="res://worldgen/debug/biome_view.gd" id="4"]
-[ext_resource type="Script" uid="uid://bf1p6xtoktfmt" path="res://worldgen/debug/room_view.gd" id="5"]
+[ext_resource type="Script" uid="uid://b2d2vms63idp2" path="res://debug/worldgen/biome_view.gd" id="4"]
+[ext_resource type="Script" uid="uid://dn7x5ytfgvm3p" path="res://debug/worldgen/room_view.gd" id="5"]
 [ext_resource type="Script" uid="uid://vyytyrgsxtwl" path="res://worldgen/streaming/world_streamer.gd" id="6"]
-[ext_resource type="Script" uid="uid://1171x6b5dj8p" path="res://scenes/debug/flycam.gd" id="7"]
+[ext_resource type="Script" uid="uid://1171x6b5dj8p" path="res://debug/flycam/flycam.gd" id="7"]
+[ext_resource type="Script" uid="uid://bkrdnakhdrujm" path="res://worldgen/streaming/entity_spawner.gd" id="8"]
+[ext_resource type="Script" uid="uid://bqbad1oij6ljp" path="res://debug/worldgen/fly_overlay.gd" id="9"]
+[ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://debug/overlay/debug_overlay.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="11"]
 
 [node name="WorldgenDebug" type="Node2D" unique_id=375936698]
 script = ExtResource("1")
@@ -19,16 +23,39 @@ script = ExtResource("2")
 visible = false
 script = ExtResource("4")
 
-[node name="RoomView" type="Node2D" parent="." unique_id=1117656007]
+[node name="RoomView" type="Node2D" parent="." unique_id=929772973]
 visible = false
 script = ExtResource("5")
 
+[node name="DebugOverlay" parent="." unique_id=960066282 instance=ExtResource("10")]
+
+[node name="DamageNumbers" parent="." unique_id=302631935 instance=ExtResource("11")]
+
 [node name="FlyView" type="Node2D" parent="." unique_id=1831091126]
 visible = false
+y_sort_enabled = true
 
 [node name="Streamer" type="Node2D" parent="FlyView" unique_id=1220894362]
+y_sort_enabled = true
 script = ExtResource("6")
 config = ExtResource("3")
+debug_spawn_markers = false
+
+[node name="Entities" type="Node2D" parent="FlyView" unique_id=2065871734]
+y_sort_enabled = true
+
+[node name="Enemies" type="Node2D" parent="FlyView/Entities" unique_id=1592004821]
+y_sort_enabled = true
+
+[node name="EntitySpawner" type="Node" parent="FlyView" unique_id=1985330771 node_paths=PackedStringArray("streamer", "enemies_parent")]
+script = ExtResource("8")
+streamer = NodePath("../Streamer")
+enemies_parent = NodePath("../Entities/Enemies")
+
+[node name="FlyOverlay" type="Node2D" parent="FlyView" unique_id=1806976058]
+z_index = 900
+z_as_relative = false
+script = ExtResource("9")
 
 [node name="FlyCam" type="Node2D" parent="FlyView" unique_id=419300742 groups=["player"]]
 z_index = 1000

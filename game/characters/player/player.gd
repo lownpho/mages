@@ -13,6 +13,9 @@ extends CharacterBody2D
 @export var focus_curve: Curve
 ## Fraction of max health/mana at or below which the low-resource warning aura shows.
 @export var low_resource_warning_fraction: float = 0.25
+## Debug scenes only: dying refills health instead of wiping the save and bouncing to the
+## title (permadeath would clobber the player's real run from inside a test arena).
+@export var debug_never_die := false
 
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
@@ -160,6 +163,12 @@ func _on_mana_or_max_mana_changed(_value: int) -> void:
 	low_mana_aura.visible = mana <= max_mana * low_resource_warning_fraction
 
 func _die() -> void:
+	if debug_never_die:
+		health = max_health
+		mana = max_mana
+		GlobalEvent.player_health_changed.emit(health)
+		GlobalEvent.player_mana_changed.emit(mana)
+		return
 	# Permadeath: clear the save so there is nothing to Continue, then bounce to
 	# the title screen (which frees this scene, so no queue_free needed here).
 	GameState.game_over()

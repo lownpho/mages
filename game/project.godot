@@ -30,6 +30,7 @@ SceneManager="*res://autoload/scene_manager.gd"
 GlobalBestiary="*res://autoload/global_bestiary.gd"
 GlobalMap="*res://autoload/global_map.gd"
 GameState="*res://autoload/game_state.gd"
+DebugConsole="*res://debug/console/debug_console.gd"
 
 [debug]
 

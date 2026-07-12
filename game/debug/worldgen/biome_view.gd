@@ -104,23 +104,28 @@ func _draw() -> void:
 		var u: RoomSpec = _graph.rooms[ui]
 		var lt := Vector2(u.origin_slot - _graph.origin_slot)
 		var rect := Rect2(origin + lt * slot_px, Vector2(u.size_slots) * slot_px)
-		draw_rect(rect.grow(-1.0), Color(.25*(u.tier()+1), .3, .3, 0.15))
+		draw_rect(rect.grow(-1.0), _type_fill(u.type_id, u.tier()))
 		var rt := _config.room_type_by_id(u.type_id)
-		var outline := Color(0.6, 0.6, 0.7)
+		var outline := Color(0.95, 0.95, 1.0)
 		if rt != null and rt.unique_scope == RoomTypeDef.UniqueScope.WORLD:
 			outline = Color.GOLD
 		elif rt != null and _is_quota_type(u.type_id):
 			outline = Color.CYAN
 		draw_rect(rect.grow(-2.0), outline, false, 2.0)
+		if ui == _selected_room:
+			draw_rect(rect.grow(-5.0), Color.WHITE, false, 3.0)
 		var tag := String(u.type_id).to_upper()
+		draw_string(font, rect.position + Vector2(7, 19), tag,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0, 0, 0, 0.85))
 		draw_string(font, rect.position + Vector2(6, 18), tag,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0.9, 0.9, 0.95))
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color.WHITE)
 		for p in u.passages:
 			_draw_passage(lt, u.size_slots, p, origin, slot_px, ppt)
 
 	_draw_overview()
 
-	draw_string(font, Vector2(MARGIN, view.y - 12), "biome %s  %s slots  rooms:%d   arrows/click select"
+	draw_string(font, Vector2(MARGIN, view.y - 12),
+			"biome %s  %s slots  rooms:%d   arrows/click select — Enter/double-click opens the room, T flies there"
 			% [_graph.biome_id, _graph.size_slots, _graph.rooms.size()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
 
@@ -130,6 +135,17 @@ func _draw() -> void:
 func _is_quota_type(tid: StringName) -> bool:
 	var rt := _config.room_type_by_id(tid)
 	return rt != null and rt.min_per_biome >= 1
+
+
+## Room fill colour: hue is a stable hash of the type id (so each room TYPE reads as its own
+## colour at a glance, not just a shade of the same hue), saturation/value climb with `tier`
+## (0..3) so harder rooms visibly run hotter. Opaque enough to actually separate neighbours —
+## the old flat 0.15-alpha wash made every room blend into the next.
+func _type_fill(type_id: StringName, tier: int) -> Color:
+	var hue := float(hash(String(type_id)) % 360) / 360.0
+	var sat := 0.55 + 0.15 * tier
+	var val := 0.55 + 0.12 * tier
+	return Color.from_hsv(hue, sat, val, 0.6)
 
 
 func _draw_passage(lt: Vector2, size: Vector2i, p, origin: Vector2, slot_px: float, ppt: float) -> void:
@@ -154,6 +170,10 @@ func _draw_passage(lt: Vector2, size: Vector2i, p, origin: Vector2, slot_px: flo
 	draw_line(a, b, col, 3.0)
 
 
+## A biome can claim several macro-cells (BiomeDef.size_cells); drawing a black border per
+## CELL made a 2-wide biome look like two separate (but identically-coloured) biomes stacked
+## side by side. Fill stays per-cell, but the border is drawn once per PLACEMENT region (like
+## world_view's main grid) so a multi-cell biome reads as one shape.
 func _draw_overview() -> void:
 	var o := _overview_origin()
 	var font := ThemeDB.fallback_font
@@ -164,9 +184,15 @@ func _draw_overview() -> void:
 			var rect := Rect2(o + Vector2(x, y) * OVERVIEW_CELL, Vector2(OVERVIEW_CELL, OVERVIEW_CELL))
 			if bid == &"":
 				draw_rect(rect, Color(0.12, 0.12, 0.14))   # unclaimed = sealed mass
+				draw_rect(rect, Color.BLACK, false, 1.0)
 			else:
 				draw_rect(rect, biome.display_color if biome else Color.MAGENTA)
-			draw_rect(rect, Color.BLACK, false, 1.0)
+	for p in _spec.placements:
+		var prect := Rect2(o + Vector2(p.rect.position) * OVERVIEW_CELL, Vector2(p.rect.size) * OVERVIEW_CELL)
+		draw_rect(prect, Color.BLACK, false, 1.5)   # one outline per region, not per cell
+	for y in _spec.grid_h:
+		for x in _spec.grid_w:
 			if Vector2i(x, y) == _selected:
+				var rect := Rect2(o + Vector2(x, y) * OVERVIEW_CELL, Vector2(OVERVIEW_CELL, OVERVIEW_CELL))
 				draw_rect(rect.grow(-1.0), Color.WHITE, false, 2.0)
 	draw_string(font, o + Vector2(0, -4), "world", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.8, 0.8, 0.85))

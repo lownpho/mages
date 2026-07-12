@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bgm51iqgos7b5"]
 
-[ext_resource type="Script" uid="uid://bihjhmmyls2yr" path="res://gui/debug_overlay.gd" id="1_dbgov"]
+[ext_resource type="Script" uid="uid://bihjhmmyls2yr" path="res://debug/overlay/debug_overlay.gd" id="1_dbgov"]
 [ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="2_dbgov"]
 
 [node name="DebugOverlay" type="CanvasLayer" unique_id=1391801490]

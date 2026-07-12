@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://d2c3dffkcdnyl"]
+
+[ext_resource type="Script" uid="uid://crjgvyneoi75q" path="res://debug/combat_lab/combat_lab.gd" id="1_lab"]
+[ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="2_ui"]
+[ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://debug/overlay/debug_overlay.tscn" id="3_dbg"]
+[ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="4_dmgnum"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://world_content/biomes/glade/art/glade_floor_tileset.tres" id="5_floor_ts"]
+[ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="6_player"]
+
+[node name="CombatLab" type="Node2D" unique_id=1583139370]
+process_mode = 3
+script = ExtResource("1_lab")
+
+[node name="Floor" type="TileMapLayer" parent="." unique_id=764900076]
+process_mode = 1
+z_index = -20
+tile_set = ExtResource("5_floor_ts")
+
+[node name="UI" parent="." unique_id=697903496 instance=ExtResource("2_ui")]
+process_mode = 1
+
+[node name="DebugOverlay" parent="." unique_id=311511588 instance=ExtResource("3_dbg")]
+process_mode = 1
+
+[node name="DamageNumbers" parent="." unique_id=1646113690 instance=ExtResource("4_dmgnum")]
+process_mode = 1
+
+[node name="Pickups" type="Node2D" parent="." unique_id=888907902 groups=["pickups"]]
+process_mode = 1
+z_index = 10
+z_as_relative = false
+
+[node name="Entities" type="Node2D" parent="." unique_id=661903176]
+process_mode = 1
+y_sort_enabled = true
+
+[node name="Enemies" type="Node2D" parent="Entities" unique_id=500243341]
+y_sort_enabled = true
+
+[node name="Player" parent="Entities" unique_id=1802092115 instance=ExtResource("6_player")]
+debug_never_die = true
+
+[node name="LabUI" type="CanvasLayer" parent="." unique_id=385333478]
+process_mode = 3

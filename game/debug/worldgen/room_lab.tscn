@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c2auqwdd0do82"]
 
-[ext_resource type="Script" uid="uid://baei7k8g6qa03" path="res://worldgen/debug/room_lab.gd" id="1"]
-[ext_resource type="Script" uid="uid://cj76my2ypskpv" path="res://worldgen/debug/room_lab_view.gd" id="2"]
+[ext_resource type="Script" uid="uid://baei7k8g6qa03" path="res://debug/worldgen/room_lab.gd" id="1"]
+[ext_resource type="Script" uid="uid://cj76my2ypskpv" path="res://debug/worldgen/room_lab_view.gd" id="2"]
 [ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="3"]
 
 [node name="RoomLab" type="Node2D" unique_id=1893614426]

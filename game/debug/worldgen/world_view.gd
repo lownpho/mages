@@ -9,6 +9,7 @@ const MARGIN := 24.0
 
 var _spec: WorldSpec = null
 var _config: GenConfig = null
+var _selected := Vector2i(-1, -1)
 
 
 func _ready() -> void:
@@ -21,12 +22,38 @@ func set_data(spec: WorldSpec, config: GenConfig) -> void:
 	queue_redraw()
 
 
+func set_selected(cell: Vector2i) -> void:
+	_selected = cell
+	queue_redraw()
+
+
+## [origin: Vector2, cell_px: float] of the biome grid — shared by _draw and hit-testing.
+func _layout() -> Array:
+	var view := get_viewport_rect().size
+	var cell := minf((view.x - 2.0 * MARGIN) / _spec.grid_w, (view.y - TOP - MARGIN) / _spec.grid_h)
+	return [Vector2((view.x - cell * _spec.grid_w) * 0.5, TOP), cell]
+
+
+## Biome cell under a screen position, or (-1,-1) outside the grid.
+func cell_at_screen_pos(pos: Vector2) -> Vector2i:
+	if _spec == null:
+		return Vector2i(-1, -1)
+	var lay := _layout()
+	var origin: Vector2 = lay[0]
+	var cell: float = lay[1]
+	var rel := (pos - origin) / cell
+	var c := Vector2i(int(floor(rel.x)), int(floor(rel.y)))
+	if c.x < 0 or c.y < 0 or c.x >= _spec.grid_w or c.y >= _spec.grid_h:
+		return Vector2i(-1, -1)
+	return c
+
+
 func _draw() -> void:
 	if _spec == null:
 		return
-	var view := get_viewport_rect().size
-	var cell := minf((view.x - 2.0 * MARGIN) / _spec.grid_w, (view.y - TOP - MARGIN) / _spec.grid_h)
-	var origin := Vector2((view.x - cell * _spec.grid_w) * 0.5, TOP)
+	var lay := _layout()
+	var origin: Vector2 = lay[0]
+	var cell: float = lay[1]
 	var font := ThemeDB.fallback_font
 	var s := float(_config.biome_slots)
 
@@ -80,3 +107,8 @@ func _draw() -> void:
 		draw_circle(pos, 6.0, Color.BLACK, false, 1.5)
 		draw_string(ThemeDB.fallback_font, pos + Vector2(8, 4), String(ur.type_id),
 				HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.BLACK)
+
+	# Selection ring (click to move it; Enter/double-click drills into the biome view).
+	if _selected.x >= 0 and _selected.x < _spec.grid_w and _selected.y < _spec.grid_h:
+		var srect := Rect2(origin + Vector2(_selected) * cell, Vector2(cell, cell))
+		draw_rect(srect.grow(-3.0), Color.WHITE, false, 3.0)
