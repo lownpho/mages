@@ -22,6 +22,11 @@ var max_health: int
 var drops: Array[LootDrop] = []
 var health: int
 
+# Multiplier applied to incoming damage in _on_hurt. A behaviour that armours the
+# creature for a beat (e.g. rosebud's Guard reload pose) drops this below 1.0 in
+# enter() and restores it to 1.0 in exit(); left at 1.0 it's a no-op for everyone else.
+var incoming_damage_scale: float = 1.0
+
 # Off-screen sleep margin: the area (centred on the creature) that must touch the screen
 # for it to stay awake. 8 tiles each side so a creature wakes well before it scrolls into
 # view rather than popping into motion at the edge.
@@ -90,6 +95,11 @@ func look_for_target(probe: RayCast2D) -> bool:
 	if not target:
 		return false
 	probe.look_at(target.global_position)
+	# RayCast2D only recasts once per physics step; without forcing an update here,
+	# probe_sees would read the collision from *before* this frame's look_at, which is
+	# harmless for callers polling every physics frame (the lag self-corrects) but wrong
+	# for a one-shot check like Guard's post-windup decision.
+	probe.force_raycast_update()
 	return probe_sees(probe)
 
 func play(anim: String) -> void:
@@ -114,6 +124,8 @@ func die() -> void:
 	queue_free()
 
 func _on_hurt(damage: int, source: Node) -> void:
+	if incoming_damage_scale != 1.0:
+		damage = maxi(1, int(ceil(damage * incoming_damage_scale)))
 	health -= damage
 	# Emit before die() frees us so the floating number still spawns on a live node.
 	GlobalEvent.entity_damaged.emit(self, damage, source)
