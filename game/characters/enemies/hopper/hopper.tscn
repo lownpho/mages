@@ -122,3 +122,4 @@ weapon_path = NodePath("../../Weapon")
 weapon_data = ExtResource("6_weapon")
 attack_probe_path = NodePath("../../AttackProbe")
 attack_anim = "run"
+animation_driven = false

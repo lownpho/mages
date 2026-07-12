@@ -142,3 +142,4 @@ script = ExtResource("9_fire")
 weapon_path = NodePath("../../Weapon")
 weapon_data = ExtResource("5_snake")
 attack_probe_path = NodePath("../../AttackProbe")
+animation_driven = false
