@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://cr0s3budsc3n3"]
+
+[ext_resource type="Resource" path="res://characters/enemies/rosebud/rosebud_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
+[ext_resource type="Texture2D" uid="uid://du0qsbdjksoj" path="res://characters/enemies/rosebud/rosebud.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="4_weap"]
+[ext_resource type="Resource" uid="uid://br0s3budthrn" path="res://characters/enemies/rosebud/rosebud_ring.tres" id="5_thorn"]
+[ext_resource type="Script" uid="uid://c4qrfe6uxlccn" path="res://characters/enemies/behaviours/hit_alert_idle.gd" id="6_idle"]
+[ext_resource type="Script" path="res://characters/enemies/behaviours/rotating_volley.gd" id="7_rotvolley"]
+[ext_resource type="Script" uid="uid://dr0s3budgu4rd" path="res://characters/enemies/rosebud/rosebud_guard.gd" id="8_guard"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_guard0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_guard1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_atk1")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_guard0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_guard1")
+}],
+"loop": 1,
+"name": &"guard",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[node name="Rosebud" type="CharacterBody2D" unique_id=412651656 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2008324334]
+shape = SubResource("CircleShape2D_1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=946694367]
+sprite_frames = SubResource("SpriteFrames_1")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." unique_id=286489752 instance=ExtResource("2_hurt")]
+collision_mask = 256
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1737511439]
+target_position = Vector2(40, 0)
+collision_mask = 17
+
+[node name="Weapon" parent="." unique_id=1605100280 instance=ExtResource("4_weap")]
+
+[node name="FSM" parent="." unique_id=1939025263 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=591212806]
+script = ExtResource("6_idle")
+detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Guard"
+next_state = "Idle"
+
+[node name="Attack" type="Node" parent="FSM" unique_id=1496746162]
+script = ExtResource("7_rotvolley")
+weapon_path = NodePath("../../Weapon")
+weapon_data = ExtResource("5_thorn")
+shot_count = 4
+rotation_per_pulse = 30.0
+attack_anim = "attack"
+done_state = "Idle"
+
+[node name="Guard" type="Node" parent="FSM" unique_id=1909355522]
+script = ExtResource("8_guard")
+damage_scale = 0.2
