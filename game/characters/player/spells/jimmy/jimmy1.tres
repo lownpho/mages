@@ -21,7 +21,7 @@ region = Rect2(24, 24, 8, 8)
 [sub_resource type="Resource" id="RingData"]
 script = ExtResource("7_bullet")
 icon = SubResource("AtlasTexture_ring")
-base_damage = 8.0
+base_damage = 20.0
 range_tiles = 5
 speed_tiles = 6
 skill_scaling = 0.3
@@ -34,14 +34,14 @@ num_bullets = 8
 script = ExtResource("5_weapon")
 fire_pattern = SubResource("RingPattern")
 bullet_data = SubResource("RingData")
-fire_cooldown = 1.4
+fire_cooldown = 1.0
 mana_cost = 0
 
 [resource]
 script = ExtResource("1_script")
 minion_scene = ExtResource("4_minion")
 count = 1
-minion_health = 60
+minion_health = 200
 minion_lifetime = 20.0
 minion_weapon = SubResource("RingWeapon")
 minion_sheet = ExtResource("9_sheet")
