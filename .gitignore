@@ -5,3 +5,7 @@ addons/
 
 docs/
 tools/
+
+# WIP deepwood enemies, not ready to commit yet
+/game/characters/enemies/ent/
+/game/characters/enemies/swarm/
