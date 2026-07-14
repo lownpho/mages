@@ -2,14 +2,22 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_4pmy6"]
+[ext_resource type="Resource" uid="uid://beq6ob6afbo20" path="res://characters/player/spells/pew/pew2.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://dy6fuae783ai" path="res://characters/enemies/stalker/stalker.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
 
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("1_4pmy6")
+item = ExtResource("drop_1")
+chance = 0.25
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [resource]
 script = ExtResource("1")
 display_name = "Stalker"
 icon = SubResource("AtlasTexture_icon")
 max_health = 40
+drops = Array[ExtResource("1_4pmy6")]([SubResource("Drop_1")])

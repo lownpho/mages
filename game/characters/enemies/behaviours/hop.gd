@@ -6,13 +6,13 @@ class_name Hop
 # dangerous even while it's airborne; pairing it after a Volley makes the beetle hard to pin.
 
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource
+@export var weapon_data: SpellResource
 @export var duration: float = 0.4
 @export var speed: float = 90.0
 @export var done_state: String = "Chase"
 @export var hop_anim: String = "attack"
 
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 var _timer: Timer
 var _dir: Vector2 = Vector2.RIGHT
 
@@ -27,7 +27,7 @@ func enter() -> void:
 	var cardinals := [Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN]
 	_dir = cardinals[randi() % cardinals.size()]
 	# The ring fires as it launches — a RingPattern ignores aim, so any direction is fine.
-	_weapon.try_fire(creature.global_position, creature.global_position + _dir)
+	_weapon.try_cast(creature.global_position, creature.global_position + _dir)
 	_timer.start(duration)
 
 func exit() -> void:

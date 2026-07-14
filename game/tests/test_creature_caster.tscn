@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://chuh2st48qkmg"]
+
+[ext_resource type="Script" uid="uid://cqgg6klq25ncp" path="res://tests/test_creature_caster.gd" id="1_script"]
+
+[node name="TestCreatureCaster" type="Node" unique_id=1]
+script = ExtResource("1_script")

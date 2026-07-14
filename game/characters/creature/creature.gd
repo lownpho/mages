@@ -22,6 +22,14 @@ var max_health: int
 var drops: Array[LootDrop] = []
 var health: int
 
+# Creature damage never scales with a stat — it's authored flat on each spell's
+# bullet — but spell effects read caster.skill through the shared contract.
+var skill: int = 0
+# Where this creature's spells aim, stamped by CreatureSpellCaster.try_cast from
+# the behaviour's chosen target point; effects sample it via get_aim_direction()
+# (the same call they make on the player).
+var aim_direction: Vector2 = Vector2.RIGHT
+
 # Multiplier applied to incoming damage in _on_hurt. A behaviour that armours the
 # creature for a beat (e.g. rosebud's Guard reload pose) drops this below 1.0 in
 # enter() and restores it to 1.0 in exit(); left at 1.0 it's a no-op for everyone else.
@@ -80,6 +88,9 @@ func get_target() -> Node2D:
 				best = dist
 				nearest = node
 	return nearest
+
+func get_aim_direction() -> Vector2:
+	return aim_direction
 
 func probe_sees(probe: RayCast2D) -> bool:
 	var collider = probe.get_collider()

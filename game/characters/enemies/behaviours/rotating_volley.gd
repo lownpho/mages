@@ -15,7 +15,7 @@ func enter() -> void:
 
 func _fire(player: Node2D) -> bool:
 	var aim := (player.global_position - creature.global_position).rotated(deg_to_rad(_bonus_angle))
-	var fired := _weapon.try_fire(creature.global_position, creature.global_position + aim)
+	var fired := _weapon.try_cast(creature.global_position, creature.global_position + aim)
 	if fired:
 		_bonus_angle += rotation_per_pulse
 	return fired

@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dxco26urewc3w" path="res://characters/player/spells/projectile_spell.tscn" id="3_scene"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="4_bullets"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="5_bullet_res"]
-[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/weapons/ring_pattern.gd" id="6_ring_pattern"]
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/bullets/ring_pattern.gd" id="6_ring_pattern"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ring"]
 atlas = ExtResource("4_bullets")
@@ -49,6 +49,6 @@ script = ExtResource("1_script")
 bullet = SubResource("BulletResource_bomb")
 effect_scene = ExtResource("3_scene")
 cooldown = 5.0
-mana_cost = 40
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 15
+skill_modifier = 8
+defence_modifier = 8

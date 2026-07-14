@@ -12,10 +12,16 @@ const _UI = preload("res://gui/ui.png")
 const _THEME = preload("res://gui/theme.tres")
 const _ICON_X = {
 	"damage": 0, "cooldown": 8, "cast": 16,
-	"health": 24, "mana": 32, "defence": 40, "skill": 48, "speed": 56,
+	"health": 24, "defence": 40, "skill": 48, "speed": 56,
 }
 
-@export var slot_texture: AtlasTexture
+@export var slot_texture: AtlasTexture:
+	set(value):
+		slot_texture = value
+		# Settable at runtime: the spell rows swap frames when SHIFT flips the
+		# active page.
+		if is_node_ready() and slot_texture:
+			$SlotTexture.texture = slot_texture
 
 # YES THIS IS A REFERENCE, OBJECTS ARE PASSED BY REFERENCE!
 # Binding a slot repaints immediately: slot_updated only fires on edits, so a slot
@@ -25,6 +31,9 @@ var slot: GlobalInventory.Slot = null:
 		slot = value
 		if is_node_ready():
 			update_texture()
+			# Rebinding (e.g. a spell-page flip) must also move the cooldown
+			# curtain to whatever the slot now shows.
+			_refresh_cooldown_overlay()
 
 static var _drag_source: MarginContainer = null
 static var _drag_accepted: bool = false

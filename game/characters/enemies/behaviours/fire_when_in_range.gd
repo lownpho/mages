@@ -9,7 +9,7 @@ class_name FireWhenInRange
 const EXIT_MARGIN := 8.0
 
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource
+@export var weapon_data: SpellResource
 @export var attack_probe_path: NodePath
 @export var out_of_range_state: String = "Chase"
 ## The wind-up-to-strike animation played per shot when `animation_driven`; the pose held
@@ -20,7 +20,7 @@ const EXIT_MARGIN := 8.0
 ## only when the weapon is off cooldown does it play `attack_anim` as a wind-up, firing when
 ## the sprite reaches `release_frame`, then drops back to idle. So the animation always
 ## precedes and triggers the shot and the player gets reaction time; the rest between shots is
-## the weapon's `fire_cooldown`. Works whether `attack_anim` loops or not (it plays a single
+## the spell's `cooldown`. Works whether `attack_anim` loops or not (it plays a single
 ## pass per shot either way). Set false for the legacy fire-every-cooldown-frame behaviour.
 @export var animation_driven: bool = true
 ## Frame of `attack_anim` the shot leaves on. -1 = the last frame. Keep it > 0 so the wind-up
@@ -29,7 +29,7 @@ const EXIT_MARGIN := 8.0
 ## Resting pose shown between telegraphed shots. Ignored unless `animation_driven`.
 @export var idle_anim: String = "idle"
 
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 @onready var _probe: RayCast2D = get_node(attack_probe_path)
 var _exit_probe: RayCast2D
 # animation_driven bookkeeping: whether an attack anim is mid-play, and whether this pass has
@@ -93,7 +93,7 @@ func physics_update(_delta: float) -> void:
 	if animation_driven:
 		# Kick off a telegraphed shot when idle and the weapon has come off cooldown. Once a
 		# wind-up is running we're committed — the frame handlers finish it.
-		if not _winding_up and _weapon.can_fire:
+		if not _winding_up and _weapon.can_cast:
 			_winding_up = true
 			_fired = false
 			creature.play(attack_anim)
@@ -104,7 +104,7 @@ func physics_update(_delta: float) -> void:
 # hook in here instead of duplicating physics_update. Reached from both the legacy per-frame
 # path and the animation-driven release frame.
 func _fire(player: Node2D) -> void:
-	_weapon.try_fire(creature.global_position, player.global_position)
+	_weapon.try_cast(creature.global_position, player.global_position)
 
 # The wind-up's strike frame: release the shot once, committed regardless of current aim (we
 # already decided to attack when the wind-up began).

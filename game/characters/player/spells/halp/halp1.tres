@@ -4,8 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
 [ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="3_effect"]
 [ext_resource type="PackedScene" uid="uid://vpse15rfm1lx" path="res://characters/player/spells/halp/halp_minion.tscn" id="4_minion"]
-[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="5_weapon"]
-[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="6_pattern"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="5_weapon"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="99_effect"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
 [ext_resource type="Texture2D" uid="uid://dfbev8nxy1840" path="res://characters/player/spells/halp/halp.png" id="9_sheet"]
@@ -31,10 +32,11 @@ script = ExtResource("6_pattern")
 
 [sub_resource type="Resource" id="MinionWeapon"]
 script = ExtResource("5_weapon")
+effect_scene = ExtResource("99_effect")
+max_shots = 1
 fire_pattern = SubResource("SinglePattern")
-bullet_data = SubResource("BulletData")
-fire_cooldown = 1.0
-mana_cost = 0
+bullet = SubResource("BulletData")
+cooldown = 1.0
 
 [resource]
 script = ExtResource("1_script")
@@ -43,7 +45,7 @@ minion_weapon = SubResource("MinionWeapon")
 minion_sheet = ExtResource("9_sheet")
 effect_scene = ExtResource("3_effect")
 cooldown = 14.0
-mana_cost = 15
 cast_time = 0.5
 icon = SubResource("AtlasTexture_icon")
-max_mana_modifier = 5
+max_health_modifier = 20
+skill_modifier = 1

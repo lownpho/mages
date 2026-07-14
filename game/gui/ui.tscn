@@ -175,52 +175,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="ManaPanel" type="PanelContainer" parent="Strip/VBox/Bars" unique_id=801238385]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxTexture_barpad")
-
-[node name="GridThingy" type="GridContainer" parent="Strip/VBox/Bars/ManaPanel" unique_id=801238386]
-layout_mode = 2
-theme_override_constants/h_separation = 1
-theme_override_constants/v_separation = 0
-columns = 2
-
-[node name="Mana" type="TextureRect" parent="Strip/VBox/Bars/ManaPanel/GridThingy" unique_id=801238387]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-texture = SubResource("AtlasTexture_mana")
-
-[node name="ManaBar" type="ProgressBar" parent="Strip/VBox/Bars/ManaPanel/GridThingy" unique_id=801238388]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(8, 4)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_override_styles/fill = SubResource("StyleBoxFlat_mana")
-step = 1.0
-value = 100.0
-rounded = true
-allow_greater = true
-show_percentage = false
-
-[node name="ManaValue" type="Label" parent="Strip/VBox/Bars/ManaPanel/GridThingy/ManaBar" unique_id=801238389]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -2.0
-offset_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "100/100"
-horizontal_alignment = 1
-vertical_alignment = 1
-clip_text = true
-
 [node name="StatsPanel" type="PanelContainer" parent="Strip/VBox" unique_id=463522697]
 layout_mode = 2
 size_flags_horizontal = 4
@@ -281,68 +235,47 @@ text = "2"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="EquipItems" type="PanelContainer" parent="Strip/VBox" unique_id=1265894855]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="BoxContainer" type="BoxContainer" parent="Strip/VBox/EquipItems" unique_id=1094627259]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_constants/separation = 2
-alignment = 1
-
-[node name="WeaponSlot" parent="Strip/VBox/EquipItems/BoxContainer" unique_id=597161953 instance=ExtResource("3_cemxd")]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-slot_texture = SubResource("AtlasTexture_jw18c")
-
-[node name="HatSlot" parent="Strip/VBox/EquipItems/BoxContainer" unique_id=1186311428 instance=ExtResource("3_cemxd")]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-slot_texture = SubResource("AtlasTexture_gr1wa")
-
-[node name="RobeSlot" parent="Strip/VBox/EquipItems/BoxContainer" unique_id=184403077 instance=ExtResource("3_cemxd")]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-slot_texture = SubResource("AtlasTexture_fo2ah")
-
 [node name="EquipSpellsPanel" type="PanelContainer" parent="Strip/VBox" unique_id=1261662778]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="EquipSpells" type="GridContainer" parent="Strip/VBox/EquipSpellsPanel" unique_id=978616163]
+[node name="SpellVBox" type="VBoxContainer" parent="Strip/VBox/EquipSpellsPanel" unique_id=1261662779]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="EquipSpells" type="GridContainer" parent="Strip/VBox/EquipSpellsPanel/SpellVBox" unique_id=978616163]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
-columns = 2
+columns = 3
 
-[node name="SpellSlot" parent="Strip/VBox/EquipSpellsPanel/EquipSpells" unique_id=1145388472 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1145388472 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="SpellSlot2" parent="Strip/VBox/EquipSpellsPanel/EquipSpells" unique_id=2070639545 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot2" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=2070639545 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="SpellSlot3" parent="Strip/VBox/EquipSpellsPanel/EquipSpells" unique_id=1731597423 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot3" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1731597423 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="SpellSlot4" parent="Strip/VBox/EquipSpellsPanel/EquipSpells" unique_id=1224079580 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot4" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079581 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_4n41m")
+
+[node name="SpellSlot5" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079582 instance=ExtResource("3_cemxd")]
+layout_mode = 2
+slot_texture = ExtResource("6_4n41m")
+
+[node name="SpellSlot6" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079583 instance=ExtResource("3_cemxd")]
+layout_mode = 2
+slot_texture = ExtResource("6_4n41m")
 
 [node name="PanelContainer" type="PanelContainer" parent="Strip/VBox" unique_id=1787820405]
 layout_mode = 2

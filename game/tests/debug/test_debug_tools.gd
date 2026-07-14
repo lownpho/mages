@@ -32,7 +32,7 @@ func _check(cond: bool, what: String) -> void:
 
 func _test_scan_items() -> void:
 	var items := DebugContent.scan_items()
-	for cat in ["weapons", "hats", "robes", "spells"]:
+	for cat in ["spells"]:
 		_check(items.has(cat) and not items[cat].is_empty(), "scan_items has %s" % cat)
 	for cat in items:
 		for entry in items[cat]:
@@ -48,8 +48,8 @@ func _test_scan_enemies() -> void:
 
 
 func _test_find_item() -> void:
-	var exact := DebugContent.find_item("staff3")
-	_check(exact != null and exact is WeaponResource, "find_item exact staff3")
+	var exact := DebugContent.find_item("blam1")
+	_check(exact != null and exact is WeaponSpellResource, "find_item exact blam1")
 	_check(DebugContent.find_item("zzz_no_such_item") == null, "find_item miss is null")
 
 
@@ -96,9 +96,13 @@ func _test_combat_lab() -> void:
 	await get_tree().process_frame
 	_check(lab._enemies.get_child_count() == 1 and "max_health" in lab._enemies.get_child(0),
 			"dummy spawned with health dial")
-	var staff := DebugContent.find_item("staff3")
-	lab._equip_item(staff)
-	_check(GlobalInventory.weapon_slot.item == staff, "palette click equipped the weapon")
+	var pew := DebugContent.find_item("pew1")
+	lab._equip_item(pew)
+	var slotted := false
+	for slot in GlobalInventory.spell_slots.slots:
+		if slot.item == pew:
+			slotted = true
+	_check(slotted, "palette click equipped the spell")
 	GlobalInventory.reset()
 	lab.queue_free()
 	await get_tree().process_frame

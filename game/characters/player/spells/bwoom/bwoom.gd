@@ -3,7 +3,7 @@ extends CharacterBody2D
 ## Bwoom channel effect: a ball charges in front of the caster, growing one
 ## sprite frame per tick while the button is held — the caster keeps moving
 ## (channel_while_moving) and the ball follows, tracking the cursor.
-## channel_released() — called by SpellCaster on button release, mana-out, or
+## channel_released() — called by SpellCaster on button release or
 ## the channel cap — fires it toward the cursor. It sits on the player-bullets
 ## layer but stays out of the "bullets" group, so hurtboxes damage it without
 ## despawning it — that's the piercing. Only walls stop it; dies on walls,

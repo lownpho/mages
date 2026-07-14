@@ -23,4 +23,5 @@ cooldown = 2.0
 base_damage = 12.0
 skill_scaling = 0.5
 icon = SubResource("AtlasTexture_03h40")
-speed_modifier = 2
+skill_modifier = 3
+speed_modifier = 3

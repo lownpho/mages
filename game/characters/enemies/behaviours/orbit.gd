@@ -8,7 +8,7 @@ class_name Orbit
 
 @export var detect_probe_path: NodePath
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource ## leave null for a non-firing recharge orbit
+@export var weapon_data: SpellResource ## leave null for a non-firing recharge orbit
 @export var lost_state: String = "Idle"
 @export var done_state: String = "Recharge"
 @export var radius: float = 64.0
@@ -18,7 +18,7 @@ class_name Orbit
 @export var move_anim: String = "fly"
 
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 var _timer: Timer
 
 func _ready() -> void:
@@ -50,4 +50,4 @@ func physics_update(_delta: float) -> void:
 	creature.move_and_slide()
 	creature.face(to_target.x)
 	if weapon_data:
-		_weapon.try_fire(creature.global_position, target.global_position)
+		_weapon.try_cast(creature.global_position, target.global_position)

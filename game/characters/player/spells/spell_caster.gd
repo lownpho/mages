@@ -1,22 +1,26 @@
 extends Node
 class_name SpellCaster
 
-## Casts the spells equipped in GlobalInventory.spell_slots. The generic flow
-## lives here — input, cooldown, mana, and the cast-time root (the player FSM's
+## Casts the spells equipped on GlobalInventory's active spell page. The generic
+## flow lives here — input (cast1/cast2/cast3 = LMB/RMB/Space; cycle_page = SHIFT
+## flips the page), per-spell cooldowns, and the cast-time root (the player FSM's
 ## "Cast" state). Everything spell-specific lives in the spell's effect scene,
 ## spawned through the setup(spell, caster) contract (see SpellResource).
 
-const SPELL_ACTIONS = ["spell1", "spell2", "spell3", "spell4"]
+const SPELL_ACTIONS = ["cast1", "cast2", "cast3"]
 
 @onready var player: CharacterBody2D = get_parent()
 
 var _cooldowns: Dictionary = {}  # SpellResource -> one-shot cooldown Timer
+# SpellResource -> live effect that runs over time (it has a "finished" signal,
+# e.g. a weapon burst): the cooldown starts when the effect ends, not at spawn,
+# and the spell can't be re-cast while its effect is live.
+var _await_finish: Dictionary = {}
 var _cast_timer: Timer
 var _pending_spell: SpellResource
 var _channel_spell: SpellResource
 var _channel_effect: Node
 var _channel_action: String
-var _channel_drain: float = 0.0  # fractional mana owed by the per-second drain
 
 func _ready() -> void:
 	_cast_timer = Timer.new()
@@ -25,72 +29,64 @@ func _ready() -> void:
 	add_child(_cast_timer)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("cycle_page"):
+		GlobalInventory.cycle_spell_page()
+		return
 	for i in SPELL_ACTIONS.size():
 		if event.is_action_pressed(SPELL_ACTIONS[i]):
 			_try_cast(i)
 			return
 
-func _try_cast(slot_index: int) -> void:
-	var slot := GlobalInventory.spell_slots.at(slot_index)
+func _try_cast(action_index: int) -> void:
+	var slot := GlobalInventory.active_spell_slot(action_index)
 	if slot == null or slot.item == null:
 		return
 	var spell := slot.item as SpellResource
 	if spell == null or spell.effect_scene == null:
 		return
 	# Cooldowns are keyed by the spell itself, not the slot, so moving a spell
-	# to another slot mid-cooldown can't dodge it. Tiers are distinct spells.
+	# to another slot or page mid-cooldown can't dodge it. Tiers are distinct spells.
 	var cooldown: Timer = _cooldowns.get(spell)
 	if cooldown and not cooldown.is_stopped():
 		return
-	# can_use_weapon doubles as "free to act": false while focusing or mid-cast.
+	var live = _await_finish.get(spell)
+	if live != null and is_instance_valid(live):
+		return
+	# can_use_weapon doubles as "free to act": false while mid-cast.
 	if not player.can_use_weapon:
 		return
 	# A moving channel doesn't enter the Cast state, so can_use_weapon can't
 	# block a second cast mid-channel — gate explicitly: one channel at a time.
 	if _channel_spell != null:
 		return
-	if player.mana < spell.mana_cost:
-		return
 
 	if spell.channeled:
-		# Channeled: mana drains per second instead of upfront; cast_time is
-		# the channel cap. The effect spawns at press, so aim locks there.
+		# Channeled: the effect spawns at press (aim locks there); cast_time is
+		# the channel cap (0 = uncapped).
+		player.cancel_bursts()
 		if not spell.channel_while_moving:
 			player.fsm.transition_to("Cast")
 		_channel_spell = spell
-		_channel_action = SPELL_ACTIONS[slot_index]
-		_channel_drain = 0.0
+		_channel_action = SPELL_ACTIONS[action_index]
 		_channel_effect = _spawn_effect(spell)
-		# cast_time == 0 on a channel means no cap — hold as long as you like.
 		if spell.cast_time > 0.0:
 			_cast_timer.start(spell.cast_time)
 		return
 
-	# Mana commits at cast start; the cooldown only starts when the cast
-	# resolves — it's downtime after the spell, not overlapping the cast.
-	player.mana -= spell.mana_cost
-	GlobalEvent.player_mana_changed.emit(player.mana)
-
 	if spell.cast_time > 0.0:
+		player.cancel_bursts()
 		player.fsm.transition_to("Cast")
 		_cast_timer.start(spell.cast_time)
 		_pending_spell = spell
 		if spell.effect_at_cast_start:
 			_spawn_effect(spell)
 	else:
-		_spawn_effect(spell)
-		_start_cooldown(spell)
+		_resolve_cooldown(spell, _spawn_effect(spell))
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if _channel_spell == null:
 		return
-	_channel_drain += _channel_spell.mana_cost * delta
-	var whole := int(_channel_drain)
-	if whole > 0:
-		_channel_drain -= whole
-		player.mana = maxi(player.mana - whole, 0)
-		GlobalEvent.player_mana_changed.emit(player.mana)
-	if player.mana <= 0 or not Input.is_action_pressed(_channel_action):
+	if not Input.is_action_pressed(_channel_action):
 		_end_channel()
 
 func _end_channel() -> void:
@@ -112,8 +108,21 @@ func _on_cast_time_finished() -> void:
 	_pending_spell = null
 	player.fsm.transition_to("Idle")
 	if spell:
-		if not spell.effect_at_cast_start:
-			_spawn_effect(spell)
+		if spell.effect_at_cast_start:
+			_start_cooldown(spell)
+		else:
+			_resolve_cooldown(spell, _spawn_effect(spell))
+
+# Cooldown for a freshly spawned effect: an over-time effect (one exposing a
+# "finished" signal) holds its spell live and starts the cooldown when it ends;
+# anything else cools down immediately.
+func _resolve_cooldown(spell: SpellResource, effect: Node) -> void:
+	if effect.has_signal("finished"):
+		_await_finish[spell] = effect
+		effect.finished.connect(func() -> void:
+			_await_finish.erase(spell)
+			_start_cooldown(spell))
+	else:
 		_start_cooldown(spell)
 
 func _start_cooldown(spell: SpellResource) -> void:

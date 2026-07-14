@@ -4,14 +4,14 @@ class_name KiteRetreat
 @export var detect_probe_path: NodePath
 @export var close_probe_path: NodePath
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource
+@export var weapon_data: SpellResource
 @export var retreat_speed: float = 34.0
 @export var lost_state: String = "Idle"
 @export var regain_state: String = "Snipe"
 
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
 @onready var _close: RayCast2D = get_node(close_probe_path)
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 
 func _ready() -> void:
 	super()
@@ -40,7 +40,7 @@ func physics_update(_delta: float) -> void:
 
 	creature.velocity = -to_player.normalized() * retreat_speed
 	creature.move_and_slide()
-	_weapon.try_fire(creature.global_position, player.global_position)
+	_weapon.try_cast(creature.global_position, player.global_position)
 
 	if not creature.probe_sees(_detect):
 		creature.fsm.transition_to(lost_state)

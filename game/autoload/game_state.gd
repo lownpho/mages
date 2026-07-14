@@ -8,6 +8,11 @@ extends Node
 
 const SAVE_PATH := "user://save.cfg"
 
+## Bumped when the save shape changes incompatibly (v2: the spell-only loadout —
+## no weapon/hat/robe slots, no mana). An older save simply reads as "nothing to
+## continue" rather than being migrated.
+const SAVE_VERSION := 2
+
 ## The world is a pure function of (seed, gen_version, CONFIG_HASH); the same seed lays out
 ## a different map once the generation code or config changes. We stamp the save with the
 ## current world signature so Continue can tell whether a stored player position still lands
@@ -66,7 +71,13 @@ func _ready() -> void:
 
 
 func has_save() -> bool:
-	return FileAccess.file_exists(SAVE_PATH)
+	if not FileAccess.file_exists(SAVE_PATH):
+		return false
+	# A save from an older shape is invisible: Continue never offers it.
+	var cfg := ConfigFile.new()
+	if cfg.load(SAVE_PATH) != OK:
+		return false
+	return int(cfg.get_value("world", "version", 1)) == SAVE_VERSION
 
 
 ## Roll a fresh world in memory and start it in the glade. The save is written once the
@@ -92,6 +103,8 @@ func new_game() -> void:
 func continue_game() -> bool:
 	var cfg := ConfigFile.new()
 	if cfg.load(SAVE_PATH) != OK:
+		return false
+	if int(cfg.get_value("world", "version", 1)) != SAVE_VERSION:
 		return false
 	active_seed = int(cfg.get_value("world", "seed", 0))
 	if active_seed == 0:
@@ -167,6 +180,7 @@ func game_over() -> void:
 ## inventory change, and periodically while playing.
 func persist() -> void:
 	var cfg := ConfigFile.new()
+	cfg.set_value("world", "version", SAVE_VERSION)
 	cfg.set_value("world", "seed", active_seed)
 	cfg.set_value("world", "signature", _world_signature())
 	cfg.set_value("world", "notable_kills", notable_kills)
@@ -189,9 +203,6 @@ func _world_signature() -> String:
 
 
 func _save_inventory(cfg: ConfigFile) -> void:
-	_save_slot(cfg, "weapon", GlobalInventory.weapon_slot)
-	_save_slot(cfg, "hat", GlobalInventory.hat_slot)
-	_save_slot(cfg, "robe", GlobalInventory.robe_slot)
 	for i in range(GlobalInventory.bag_slots.slots.size()):
 		_save_slot(cfg, "bag_%d" % i, GlobalInventory.bag_slots.at(i))
 	for i in range(GlobalInventory.spell_slots.slots.size()):
@@ -205,9 +216,6 @@ func _save_slot(cfg: ConfigFile, key: String, slot: GlobalInventory.Slot) -> voi
 func _load_inventory(cfg: ConfigFile) -> void:
 	_suspend_autosave = true
 	GlobalInventory.reset()
-	_load_slot(cfg, "weapon", GlobalInventory.weapon_slot)
-	_load_slot(cfg, "hat", GlobalInventory.hat_slot)
-	_load_slot(cfg, "robe", GlobalInventory.robe_slot)
 	for i in range(GlobalInventory.bag_slots.slots.size()):
 		_load_slot(cfg, "bag_%d" % i, GlobalInventory.bag_slots.at(i))
 	for i in range(GlobalInventory.spell_slots.slots.size()):

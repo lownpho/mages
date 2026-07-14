@@ -14,7 +14,7 @@ class_name SummonResource
 @export var minion_health: int = 8
 ## Seconds each minion survives before it expires.
 @export var minion_lifetime: float = 15.0
-@export var minion_weapon: WeaponResource
+@export var minion_weapon: SpellResource
 ## The spritesheet for this tier. The minion scene authors the animation layout
 ## (regions/frames/durations, identical across a summon's tiers); the spawner swaps
 ## this texture onto it, so one minion scene serves tiers that look different

@@ -3,7 +3,7 @@ extends Node2D
 ## Brrr channel effect: an ice patch grows at the cursor point captured at
 ## button press. Each tick adds 1 tile of burst radius (starting at 1) and one
 ## base_damage of damage. channel_released() — called by SpellCaster on button
-## release, mana-out, or the channel cap — bursts at the current size: damage
+## release or the channel cap — bursts at the current size: damage
 ## through the Burst DamageZone, the tier icon flying outward as ice shards.
 
 const _SHEET_FRAME := 64.0  # px, one brrr.png frame — the growth art's max diameter

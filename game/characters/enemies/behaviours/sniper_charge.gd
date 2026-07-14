@@ -9,7 +9,7 @@ class_name SniperCharge
 @export var sniper_probe_path: NodePath
 @export var close_probe_path: NodePath
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource
+@export var weapon_data: SpellResource
 @export var charge_time: float = 0.9 ## Wind-up before each shot.
 @export var lost_state: String = "Idle"
 @export var too_close_state: String = "Ring"
@@ -18,7 +18,7 @@ class_name SniperCharge
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
 @onready var _sniper: RayCast2D = get_node(sniper_probe_path)
 @onready var _close: RayCast2D = get_node(close_probe_path)
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 var _charge: Timer
 
 func _ready() -> void:
@@ -70,4 +70,4 @@ func physics_update(_delta: float) -> void:
 func _fire_shot() -> void:
 	var player := creature.get_target()
 	if player:
-		_weapon.try_fire(creature.global_position, player.global_position)
+		_weapon.try_cast(creature.global_position, player.global_position)

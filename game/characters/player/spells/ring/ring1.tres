@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="WeaponSpellResource" format=3 uid="uid://qjq7lp1l3b7s"]
+
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/spells/weapon_icons.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/bullets/ring_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="5_bres"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="6_btex"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bullet"]
+atlas = ExtResource("6_btex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="Resource" id="BulletData_1"]
+script = ExtResource("5_bres")
+icon = SubResource("AtlasTexture_bullet")
+base_damage = 5.0
+range_tiles = 5
+speed_tiles = 8
+skill_scaling = 0.3
+
+[sub_resource type="Resource" id="Pattern_1"]
+script = ExtResource("4_pattern")
+num_bullets = 8
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("Pattern_1")
+bullet = SubResource("BulletData_1")
+shot_interval = 0.6
+max_shots = 2
+burst_window = 1.8
+effect_scene = ExtResource("3_scene")
+cooldown = 2.5
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 3
+defence_modifier = 3

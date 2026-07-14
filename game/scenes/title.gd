@@ -64,7 +64,7 @@ func _gather_owned_icons() -> Array[Texture2D]:
 	var cfg := ConfigFile.new()
 	if cfg.load(GameState.SAVE_PATH) != OK:
 		return icons
-	var keys := ["weapon", "hat", "robe"]
+	var keys := []
 	for i in range(GlobalInventory.BAG_SIZE):
 		keys.append("bag_%d" % i)
 	for i in range(GlobalInventory.SPELL_SLOT_SIZE):

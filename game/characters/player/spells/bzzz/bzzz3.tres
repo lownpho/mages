@@ -4,8 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
 [ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="3_effect"]
 [ext_resource type="PackedScene" uid="uid://fs7pg6h57wed" path="res://characters/player/spells/bzzz/bzzz_minion.tscn" id="4_minion"]
-[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="5_weapon"]
-[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="6_pattern"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="5_weapon"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="99_effect"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
 [ext_resource type="Texture2D" uid="uid://djfsuil3brels" path="res://characters/player/spells/bzzz/bzzz.png" id="9_sheet"]
@@ -31,9 +32,11 @@ script = ExtResource("6_pattern")
 
 [sub_resource type="Resource" id="StingWeapon"]
 script = ExtResource("5_weapon")
+effect_scene = ExtResource("99_effect")
+max_shots = 1
+cooldown = 0.5
 fire_pattern = SubResource("SinglePattern")
-bullet_data = SubResource("StingData")
-mana_cost = 0
+bullet = SubResource("StingData")
 
 [resource]
 script = ExtResource("1_script")
@@ -45,7 +48,7 @@ minion_weapon = SubResource("StingWeapon")
 minion_sheet = ExtResource("9_sheet")
 effect_scene = ExtResource("3_effect")
 cooldown = 8.0
-mana_cost = 30
 cast_time = 0.3
 icon = SubResource("AtlasTexture_icon")
-max_mana_modifier = 20
+max_health_modifier = 40
+defence_modifier = 8

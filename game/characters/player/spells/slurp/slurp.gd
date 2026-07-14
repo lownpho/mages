@@ -4,7 +4,7 @@ extends Node2D
 ## tick_interval the player drains every enemy within range_tiles — each takes damage
 ## and bleeds a red drop of life that streams into the player, healing the caster for
 ## heal_fraction of the damage dealt. channel_released() — called by SpellCaster on
-## button release, mana-out, or the channel cap — stops the drain and frees the node.
+## button release or the channel cap — stops the drain and frees the node.
 
 const _PulseScene = preload("res://characters/player/spells/slurp/slurp_pulse.tscn")
 

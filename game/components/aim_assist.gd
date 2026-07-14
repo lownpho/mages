@@ -18,6 +18,27 @@ static func nearest_in_group(tree: SceneTree, group: StringName, point: Vector2,
 			best = node
 	return best
 
+## Nearest member of `group` within `max_px` of `from` that lies inside
+## `cone_deg` of `dir` — aim-direction target selection (no cursor position),
+## so a controller stick can drive it unchanged. Pointing at empty space locks
+## nothing and the shot flies straight.
+static func nearest_in_cone(tree: SceneTree, group: StringName, from: Vector2, dir: Vector2, max_px: float, cone_deg: float) -> Node2D:
+	var best_d := max_px * max_px
+	var best: Node2D = null
+	var cone := deg_to_rad(cone_deg)
+	for node in tree.get_nodes_in_group(group):
+		if node.is_queued_for_deletion():
+			continue
+		var to: Vector2 = node.global_position - from
+		var d := to.length_squared()
+		if d >= best_d:
+			continue
+		if absf(dir.angle_to(to)) > cone:
+			continue
+		best_d = d
+		best = node
+	return best
+
 ## One frame of steering: rotate `velocity` toward `target_pos` at up to
 ## `turn_deg` degrees/second, but only while the target sits inside the
 ## `cone_deg` assist cone of the current heading, with the turn rate fading to

@@ -2,6 +2,6 @@ extends SpellResource
 class_name NopeResource
 
 @export_group("Nope")
-## Mana drained per point of incoming damage while the shield holds.
-## 0 = full absorb at no mana cost.
-@export var mana_per_damage: float = 0.5
+## Total damage the bubble soaks before it breaks. 0 = unlimited for the
+## channel's duration.
+@export var absorb_amount: int = 0

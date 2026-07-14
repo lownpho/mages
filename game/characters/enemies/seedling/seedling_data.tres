@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
-[ext_resource type="Resource" uid="uid://j00f2n4yqpe1" path="res://characters/player/weapons/rune/rune1.tres" id="2_rune"]
+[ext_resource type="Resource" uid="uid://qjq7lp1l3b7s" path="res://characters/player/spells/ring/ring1.tres" id="2_rune"]
 [ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="3_heal"]
 [ext_resource type="Texture2D" uid="uid://bher6cuar4fky" path="res://characters/enemies/seedling/seedling.png" id="icon_png"]
 

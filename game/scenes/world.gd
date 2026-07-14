@@ -4,13 +4,9 @@ extends Node2D
 @export var generate_world := true
 @export var world_seed := 0          # 0 = random each run, captured once for the session
 
-## A random tier-1 weapon (rolled fresh each new game) and the heal spell are dropped next
-## to the player on a brand-new run — the whole starter kit, no tutorial.
-const STARTER_WEAPONS := [
-	preload("res://characters/player/weapons/rune/rune1.tres"),
-	preload("res://characters/player/weapons/staff/staff1.tres"),
-	preload("res://characters/player/weapons/wand/wand1.tres"),
-]
+## The tier-1 weapon spell and the heal spell are dropped next to the player on a
+## brand-new run — the whole starter kit, no tutorial.
+const STARTER_WEAPON := preload("res://characters/player/spells/pew/pew1.tres")
 const STARTER_HEAL := preload("res://characters/player/spells/heal/heal1.tres")
 
 @onready var _streamer: WorldStreamer = $WorldRoot/WorldStreamer
@@ -56,14 +52,9 @@ func _ready() -> void:
 		GameState.fresh_start = false
 		_drop_starter_gear()
 
-# Roll a random tier-1 weapon from the loot facility and drop it plus the heal beside the
-# player, using the same loot_dropped path enemies use (GlobalPickups makes the pickups).
+# Drop the starter weapon spell plus the heal beside the player, using the same
+# loot_dropped path enemies use (GlobalPickups makes the pickups).
 func _drop_starter_gear() -> void:
-	var table := LootTable.new()
-	for weapon in STARTER_WEAPONS:
-		var drop := LootDrop.new()
-		drop.item = weapon
-		table.entries.append(drop)
 	var origin := _player.global_position
-	GlobalEvent.loot_dropped.emit(table.pick(), origin + Vector2(20, 0))
+	GlobalEvent.loot_dropped.emit(STARTER_WEAPON, origin + Vector2(20, 0))
 	GlobalEvent.loot_dropped.emit(STARTER_HEAL, origin + Vector2(-20, 0))

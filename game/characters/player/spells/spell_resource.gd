@@ -6,16 +6,14 @@ class_name SpellResource
 ## setup(spell: SpellResource, caster: Node2D) and position itself from the caster.
 @export var effect_scene: PackedScene
 @export var cooldown: float = 1.0
-@export var mana_cost: int = 5
 ## Seconds the player is rooted in the Cast state before the effect spawns. 0 = instant.
 @export var cast_time: float = 0.0
 ## Spawn the effect when the cast begins instead of when it resolves — aim is
 ## sampled at button press and the effect runs during the wind-up (e.g. Kaboom
 ## marking its impact points while the player is still casting).
 @export var effect_at_cast_start: bool = false
-## Hold-to-channel: the effect spawns at press (aim locks there), mana_cost
-## drains per second while the button is held, and cast_time caps the channel
-## (0 = uncapped). When the button is released, mana runs out, or the cap
+## Hold-to-channel: the effect spawns at press (aim locks there) and cast_time
+## caps the channel (0 = uncapped). When the button is released or the cap
 ## hits, the caster calls channel_released() on the effect — channeled
 ## effects must implement it.
 @export var channeled: bool = false
@@ -31,7 +29,6 @@ func get_item_type() -> GlobalInventory.ItemType:
 func get_stats() -> Array:
 	var rows := []
 	if base_damage > 0.0: rows.append(["damage", "%d" % int(base_damage)])
-	rows.append(["mana", "%d" % mana_cost])
 	rows.append(["cooldown", "%.1f" % cooldown])
 	if cast_time > 0.0: rows.append(["cast", "%.1f" % cast_time])
 	return rows

@@ -1,17 +1,13 @@
 extends CharacterBody2D
 
 @export var base_max_health: int = 100
-@export var base_max_mana: int = 100
 @export var base_skill: int = 25
 @export var base_speed: int = 80
 @export var base_defence: int = 0
 ## Defence never blocks more than this fraction of a hit, so chip damage from
 ## weak enemies always lands and armour can't make you immune.
 @export var defence_floor_fraction: float = 0.20
-@export var focus_mana_per_second: float = 5.0
-@export var focus_ramp_time: float = 3.0
-@export var focus_curve: Curve
-## Fraction of max health/mana at or below which the low-resource warning aura shows.
+## Fraction of max health at or below which the low-health warning aura shows.
 @export var low_resource_warning_fraction: float = 0.25
 ## Debug scenes only: dying refills health instead of wiping the save and bouncing to the
 ## title (permadeath would clobber the player's real run from inside a test arena).
@@ -20,24 +16,17 @@ extends CharacterBody2D
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var focus_aura: AnimatedSprite2D = $FocusAura
 @onready var low_health_aura: AnimatedSprite2D = $LowHealthAura
-@onready var low_mana_aura: AnimatedSprite2D = $LowManaAura
 
 var health: int
-var mana: int
 
-# Derived stats: base values + modifiers from equipped items.
+# Derived stats: base values + modifiers from equipped spells.
 # Always read these; never write them directly — call _recompute_stats() instead.
 var max_health: int
-var max_mana: int
 var skill: int
 var speed: int
 var defence: int
 
-var weapon: PlayerWeapon
-var hat: ItemResource
-var robe: ItemResource
 ## While set, incoming damage is filtered through its absorb(damage) -> int
 ## (the remainder) before touching health — Nope's shield registers here.
 var damage_absorber: Node2D = null
@@ -47,11 +36,13 @@ var damage_absorber: Node2D = null
 ## any buff effect reuses it by handing over a modifier-carrying resource.
 var active_buffs: Array = []
 var can_use_weapon: bool = true
+## Weapon-spell bursts currently firing. Starting an exclusive spell cancels
+## them onto their cooldowns: a new burst (register_burst) or a cast/channel
+## (cancel_bursts, called by SpellCaster). Instant spells leave them firing.
+var _live_bursts: Array[Node] = []
 ## While Time.get_ticks_msec() < this, incoming damage is ignored — a spawn buffer so
 ## enemies placed near the spawn point can't chip you before you've taken control.
 var _grace_until_ms: int = 0
-var focus_time: float = 0.0
-var focus_mana_remainder: float = 0.0
 
 func _ready() -> void:
 	add_to_group("player")
@@ -62,10 +53,6 @@ func _ready() -> void:
 	var move_state = $FSM/Move
 	move_state.on_enter.connect(func(): animated_sprite.play("run"))
 	move_state.on_physics_update.connect(_on_move_physics_update)
-	var focus_state = $FSM/Focus
-	focus_state.on_physics_update.connect(_on_focus_physics_update)
-	focus_state.on_enter.connect(_on_focus_enter)
-	focus_state.on_exit.connect(_on_focus_exit)
 	var cast_state = $FSM/Cast
 	cast_state.on_enter.connect(_on_cast_enter)
 	cast_state.on_exit.connect(_on_cast_exit)
@@ -75,17 +62,34 @@ func _ready() -> void:
 	GlobalEvent.equipment_changed.connect(_on_equipment_changed)
 	GlobalEvent.player_health_changed.connect(_on_health_or_max_health_changed)
 	GlobalEvent.player_max_health_changed.connect(_on_health_or_max_health_changed)
-	GlobalEvent.player_mana_changed.connect(_on_mana_or_max_mana_changed)
-	GlobalEvent.player_max_mana_changed.connect(_on_mana_or_max_mana_changed)
 
 	# equipment_changed only fires on slot edits, not when a fresh player spawns in a
-	# new scene — so drive the equip logic once from the persisted GlobalInventory slots
-	# to rebuild the weapon node and re-apply hat/robe. Each call also recomputes stats.
-	for slot in [GlobalInventory.weapon_slot, GlobalInventory.hat_slot, GlobalInventory.robe_slot]:
-		_on_equipment_changed(slot)
+	# new scene — so fold the persisted GlobalInventory loadout into the stats once.
+	_recompute_stats()
 	health = max_health
-	mana = max_mana
 	_broadcast_stats()
+
+# Aim for spells and weapon bursts: the direction from the player toward the
+# mouse. The single cursor read in the spell path — effects take a direction,
+# never a position, so a controller stick can replace this later.
+func get_aim_direction() -> Vector2:
+	return (get_global_mouse_position() - global_position).normalized()
+
+func register_burst(burst: Node) -> void:
+	cancel_bursts()  # one weapon at a time: the new burst cancels any live one
+	_live_bursts.append(burst)
+
+func unregister_burst(burst: Node) -> void:
+	_live_bursts.erase(burst)
+
+## Interrupt every live burst — each ends onto its full cooldown. Called when
+## an exclusive spell starts: a new weapon burst, a cast, or a channel.
+func cancel_bursts() -> void:
+	for burst in _live_bursts.duplicate():
+		burst.interrupt()
+
+func can_burst_fire(burst: Node) -> bool:
+	return can_use_weapon and not _live_bursts.is_empty() and _live_bursts.back() == burst
 
 func get_input_direction() -> Vector2:
 	var direction_x := Input.get_axis("left", "right")
@@ -93,10 +97,6 @@ func get_input_direction() -> Vector2:
 	return Vector2(direction_x, direction_y).normalized()
 
 func _on_idle_physics_update(_delta: float) -> void:
-	if Input.is_action_just_pressed("focus"):
-		fsm.transition_to("Focus")
-		return
-
 	var direction = get_input_direction()
 
 	if direction != Vector2.ZERO:
@@ -119,33 +119,6 @@ func _on_move_physics_update(_delta: float) -> void:
 	velocity = direction * speed
 	move_and_slide()
 
-func _on_focus_enter() -> void:
-	can_use_weapon = false
-	focus_time = 0.0
-	focus_mana_remainder = 0.0
-	animated_sprite.play("focus")
-	focus_aura.visible = true
-
-func _on_focus_exit() -> void:
-	can_use_weapon = true
-	focus_aura.visible = false
-
-func _on_focus_physics_update(delta: float) -> void:
-	if Input.is_action_just_released("focus"):
-		fsm.transition_to("Idle")
-		return
-
-	focus_time += delta
-	var t = clampf(focus_time / focus_ramp_time, 0.0, 1.0)
-	var rate = focus_curve.sample(t) * focus_mana_per_second if focus_curve else t * focus_mana_per_second
-
-	focus_mana_remainder += rate * delta
-	var whole = int(focus_mana_remainder)
-	if whole > 0 and mana < max_mana:
-		focus_mana_remainder -= whole
-		mana = mini(mana + whole, max_mana)
-		GlobalEvent.player_mana_changed.emit(mana)
-
 # Spells with a cast time root the player here; SpellCaster drives the
 # transition in and back out when the cast resolves.
 func _on_cast_enter() -> void:
@@ -159,15 +132,10 @@ func _on_cast_exit() -> void:
 func _on_health_or_max_health_changed(_value: int) -> void:
 	low_health_aura.visible = health > 0 and health <= max_health * low_resource_warning_fraction
 
-func _on_mana_or_max_mana_changed(_value: int) -> void:
-	low_mana_aura.visible = mana <= max_mana * low_resource_warning_fraction
-
 func _die() -> void:
 	if debug_never_die:
 		health = max_health
-		mana = max_mana
 		GlobalEvent.player_health_changed.emit(health)
-		GlobalEvent.player_mana_changed.emit(mana)
 		return
 	# Permadeath: clear the save so there is nothing to Continue, then bounce to
 	# the title screen (which frees this scene, so no queue_free needed here).
@@ -197,52 +165,27 @@ func _on_hurt(damage: int, source: Node) -> void:
 	if health <= 0:
 		_die()
 
-# Computes derived stats from base values and equipped item modifiers.
+# Computes derived stats from base values and equipped spell modifiers.
 # Call this whenever equipment changes or on init.
 func _recompute_stats() -> void:
 	max_health = base_max_health
-	max_mana = base_max_mana
 	skill = base_skill
 	speed = base_speed
 	defence = base_defence
 
-	if weapon and weapon.data:
-		max_health += weapon.data.max_health_modifier
-		max_mana += weapon.data.max_mana_modifier
-		skill += weapon.data.skill_modifier
-		speed += weapon.data.speed_modifier
-		defence += weapon.data.defence_modifier
-	if hat:
-		max_health += hat.max_health_modifier
-		max_mana += hat.max_mana_modifier
-		skill += hat.skill_modifier
-		speed += hat.speed_modifier
-		defence += hat.defence_modifier
-	if robe:
-		max_health += robe.max_health_modifier
-		max_mana += robe.max_mana_modifier
-		skill += robe.skill_modifier
-		speed += robe.speed_modifier
-		defence += robe.defence_modifier
 	for slot in GlobalInventory.spell_slots.slots:
 		if slot.item:
 			max_health += slot.item.max_health_modifier
-			max_mana += slot.item.max_mana_modifier
 			skill += slot.item.skill_modifier
 			speed += slot.item.speed_modifier
 			defence += slot.item.defence_modifier
 	for buff in active_buffs:
 		max_health += buff.max_health_modifier
-		max_mana += buff.max_mana_modifier
 		skill += buff.skill_modifier
 		speed += buff.speed_modifier
 		defence += buff.defence_modifier
 
 	health = clamp(health, 0, max_health)
-	mana = clamp(mana, 0, max_mana)
-
-	if weapon:
-		weapon.update_fire_rate(float(speed) / float(base_speed))
 
 # Registers/removes a timed stat buff and refreshes derived stats. The buff is
 # any resource carrying the ItemResource *_modifier fields; the effect that owns
@@ -261,26 +204,10 @@ func remove_buff(buff: ItemResource) -> void:
 func _broadcast_stats() -> void:
 	GlobalEvent.player_max_health_changed.emit(max_health)
 	GlobalEvent.player_health_changed.emit(health)
-	GlobalEvent.player_max_mana_changed.emit(max_mana)
-	GlobalEvent.player_mana_changed.emit(mana)
 	GlobalEvent.player_skill_changed.emit(skill)
 	GlobalEvent.player_speed_changed.emit(speed)
 	GlobalEvent.player_defence_changed.emit(defence)
 
-func _on_equipment_changed(slot: GlobalInventory.Slot) -> void:
-	match slot.type:
-		GlobalInventory.ItemType.WEAPON:
-			if weapon:
-				weapon.queue_free()
-				weapon = null
-			if slot.item:
-				weapon = PlayerWeapon.new()
-				weapon.name = "Weapon"
-				add_child(weapon)
-				weapon.setup_for_player(slot.item as WeaponResource, self)
-		GlobalInventory.ItemType.HAT:
-			hat = slot.item
-		GlobalInventory.ItemType.ROBE:
-			robe = slot.item
+func _on_equipment_changed(_slot: GlobalInventory.Slot) -> void:
 	_recompute_stats()
 	_broadcast_stats()

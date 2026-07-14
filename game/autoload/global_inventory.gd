@@ -1,10 +1,14 @@
 extends Node
 
 const BAG_SIZE = 9
-const SPELL_SLOT_SIZE = 4
+# The spell loadout: SPELL_PAGES pages of SPELL_PAGE_SIZE slots each. The cast
+# buttons (LMB/RMB/Space) drive the active page's slots; SHIFT cycles pages.
+const SPELL_PAGE_SIZE = 3
+const SPELL_PAGES = 2
+const SPELL_SLOT_SIZE = SPELL_PAGE_SIZE * SPELL_PAGES
 
-# ItemType.BAG is used as the slot category for bag slots — no item should ever have type BAG
-enum ItemType {BAG, WEAPON, ROBE, HAT, SPELL, OTHER}
+# ItemType.BAG is used as the slot category for bag slots — no item should ever have type BAG.
+enum ItemType {BAG, SPELL, OTHER}
 
 class Slot:
 	var type: ItemType
@@ -32,10 +36,7 @@ class Slot:
 
 	func _emit_changed() -> void:
 		GlobalEvent.slot_updated.emit(self)
-		if type == GlobalInventory.ItemType.WEAPON \
-				or type == GlobalInventory.ItemType.HAT \
-				or type == GlobalInventory.ItemType.ROBE \
-				or type == GlobalInventory.ItemType.SPELL:
+		if type == GlobalInventory.ItemType.SPELL:
 			GlobalEvent.equipment_changed.emit(self)
 
 class ArraySlot:
@@ -75,39 +76,40 @@ class ArraySlot:
 		slots[p_index].clear_item()
 		return true
 
-var weapon_slot: Slot
-var robe_slot: Slot
-var hat_slot: Slot
 var bag_slots: ArraySlot
 var spell_slots: ArraySlot
 
+## Which spell page (row of SPELL_PAGE_SIZE slots) the cast buttons drive.
+var active_spell_page: int = 0
+
 func _ready() -> void:
-	weapon_slot = Slot.new(ItemType.WEAPON)
-	robe_slot = Slot.new(ItemType.ROBE)
-	hat_slot = Slot.new(ItemType.HAT)
-	bag_slots = ArraySlot.new(ItemType.BAG, BAG_SIZE, [ItemType.BAG, ItemType.WEAPON, ItemType.ROBE, ItemType.HAT, ItemType.SPELL])
+	bag_slots = ArraySlot.new(ItemType.BAG, BAG_SIZE, [ItemType.BAG, ItemType.SPELL, ItemType.OTHER])
 	spell_slots = ArraySlot.new(ItemType.SPELL, SPELL_SLOT_SIZE)
 
-# Empty every slot — equipment, bag, and spells. Called when starting a new game so
-# nothing carries over from a previous run. Each clear re-emits slot_updated /
+## Slot behind a cast button (0..SPELL_PAGE_SIZE-1) on the active page.
+func active_spell_slot(index: int) -> Slot:
+	return spell_slots.at(active_spell_page * SPELL_PAGE_SIZE + index)
+
+func cycle_spell_page() -> void:
+	active_spell_page = (active_spell_page + 1) % SPELL_PAGES
+	GlobalEvent.spell_page_changed.emit(active_spell_page)
+
+# Empty every slot — bag and spells. Called when starting a new game so nothing
+# carries over from a previous run. Each clear re-emits slot_updated /
 # equipment_changed, so any live UI and player stats reset too.
 func reset() -> void:
-	weapon_slot.clear_item()
-	robe_slot.clear_item()
-	hat_slot.clear_item()
 	for slot in bag_slots.slots:
 		slot.clear_item()
 	for slot in spell_slots.slots:
 		slot.clear_item()
+	if active_spell_page != 0:
+		active_spell_page = 0
+		GlobalEvent.spell_page_changed.emit(0)
 
 func get_equipment_slot_for_item(item: ItemResource) -> Slot:
-	match item.get_item_type():
-		ItemType.WEAPON: return weapon_slot
-		ItemType.ROBE: return robe_slot
-		ItemType.HAT: return hat_slot
-		ItemType.SPELL:
-			var idx = spell_slots.first_empty()
-			return spell_slots.at(idx if idx != -1 else 0)
+	if item.get_item_type() == ItemType.SPELL:
+		var idx = spell_slots.first_empty()
+		return spell_slots.at(idx if idx != -1 else 0)
 	return null
 
 # Swaps items between two slots atomically: both slot_updated (and equipment_changed

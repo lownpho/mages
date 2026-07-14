@@ -2,50 +2,29 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_toonh"]
-[ext_resource type="Resource" uid="uid://dmai2k7j00tt2" path="res://characters/player/robes/health_robe1.tres" id="2_healthrobe"]
-[ext_resource type="Resource" uid="uid://dam52y7jqs7hp" path="res://characters/player/robes/mana_robe1.tres" id="3_manarobe"]
-[ext_resource type="Resource" uid="uid://ue4m1mm47la" path="res://characters/player/robes/vitality_robe1.tres" id="4_vitalityrobe"]
-[ext_resource type="Resource" uid="uid://bvf03yq5wefno" path="res://characters/player/hats/skill_vitality_hat1.tres" id="5_vitalityhat"]
-[ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="6_nope"]
+[ext_resource type="Resource" uid="uid://qjq7lp1l3b7s" path="res://characters/player/spells/ring/ring1.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="drop_2"]
 [ext_resource type="Texture2D" uid="uid://bb2nfkd30d27k" path="res://characters/enemies/dirt_golem/dirt_golem.png" id="icon_png"]
-
-[sub_resource type="Resource" id="Resource_healthrobe"]
-script = ExtResource("1_toonh")
-item = ExtResource("2_healthrobe")
-chance = 0.3
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_manarobe"]
-script = ExtResource("1_toonh")
-item = ExtResource("3_manarobe")
-chance = 0.3
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_vitalityrobe"]
-script = ExtResource("1_toonh")
-item = ExtResource("4_vitalityrobe")
-chance = 0.3
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_vitalityhat"]
-script = ExtResource("1_toonh")
-item = ExtResource("5_vitalityhat")
-chance = 0.3
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_nope"]
-script = ExtResource("1_toonh")
-item = ExtResource("6_nope")
-chance = 0.15
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("1_toonh")
+item = ExtResource("drop_1")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_2"]
+script = ExtResource("1_toonh")
+item = ExtResource("drop_2")
+chance = 0.15
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]
 script = ExtResource("1")
 display_name = "Dirt Golem"
 icon = SubResource("AtlasTexture_icon")
 max_health = 180
-drops = Array[ExtResource("1_toonh")]([SubResource("Resource_healthrobe"), SubResource("Resource_manarobe"), SubResource("Resource_vitalityrobe"), SubResource("Resource_vitalityhat"), SubResource("Resource_nope")])
+drops = Array[ExtResource("1_toonh")]([SubResource("Drop_1"), SubResource("Drop_2")])

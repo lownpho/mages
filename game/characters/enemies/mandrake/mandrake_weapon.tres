@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="WeaponResource" format=3 uid="uid://dup06l7wgsuh2"]
+[gd_resource type="Resource" script_class="WeaponSpellResource" format=3 uid="uid://dup06l7wgsuh2"]
 
-[ext_resource type="Script" uid="uid://bvkb3ncngod23" path="res://items/weapons/weapon_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="99_effect"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="1_uc26l"]
-[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/weapons/single_pattern.gd" id="3_pattern"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="3_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="50_bres"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mandrake_wave"]
@@ -21,7 +22,8 @@ script = ExtResource("3_pattern")
 
 [resource]
 script = ExtResource("1_script")
+effect_scene = ExtResource("99_effect")
+max_shots = 1
 fire_pattern = SubResource("SinglePattern_1")
-bullet_data = SubResource("BulletData_1")
-fire_cooldown = 1.2
-mana_cost = 0
+bullet = SubResource("BulletData_1")
+cooldown = 1.2

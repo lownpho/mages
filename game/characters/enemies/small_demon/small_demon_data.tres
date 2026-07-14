@@ -1,14 +1,23 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3]
 
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="90_loot"]
+[ext_resource type="Resource" uid="uid://cw4l5kuo0b3m8" path="res://characters/player/spells/fireball/fireball2.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://c5vsistthr4ym" path="res://characters/enemies/small_demon/small_demon.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
 
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("90_loot")
+item = ExtResource("drop_1")
+chance = 0.2
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [resource]
 script = ExtResource("1")
 display_name = "Small Demon"
 icon = SubResource("AtlasTexture_icon")
 max_health = 50
+drops = Array[ExtResource("90_loot")]([SubResource("Drop_1")])

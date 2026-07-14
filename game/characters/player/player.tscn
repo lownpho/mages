@@ -5,13 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://b6f8woc2sylt2" path="res://characters/player/player.png" id="2_c6leb"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
 [ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
-[ext_resource type="Texture2D" uid="uid://cwj1lrhgbuqph" path="res://characters/player/focus_aura.png" id="8_aura"]
 [ext_resource type="Texture2D" uid="uid://dhg4w5reodlbn" path="res://characters/player/low_health_aura.png" id="9_lowhp"]
-[ext_resource type="Texture2D" uid="uid://beaugy60bvijb" path="res://characters/player/low_mana_aura.png" id="10_lowmp"]
-
-[sub_resource type="Curve" id="Curve_5dc8e"]
-_data = [Vector2(0, 0), 0.0, 1.4, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 2
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 3.5
@@ -123,42 +117,6 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura0"]
-atlas = ExtResource("8_aura")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura1"]
-atlas = ExtResource("8_aura")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura2"]
-atlas = ExtResource("8_aura")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aura3"]
-atlas = ExtResource("8_aura")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_aura"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura1")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura2")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aura3")
-}],
-"loop": 1,
-"name": &"flow",
-"speed": 8.0
-}]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_lowhp0"]
 atlas = ExtResource("9_lowhp")
 region = Rect2(0, 0, 24, 24)
@@ -181,37 +139,12 @@ animations = [{
 "speed": 3.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_lowmp0"]
-atlas = ExtResource("10_lowmp")
-region = Rect2(0, 0, 24, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lowmp1"]
-atlas = ExtResource("10_lowmp")
-region = Rect2(24, 0, 24, 24)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_lowmp"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lowmp0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_lowmp1")
-}],
-"loop": 1,
-"name": &"pulse",
-"speed": 8.0
-}]
-
 [node name="Player" type="CharacterBody2D" unique_id=49056211]
 collision_layer = 16
 motion_mode = 1
 script = ExtResource("1_xxgcw")
 base_skill = 0
 base_speed = 35
-focus_mana_per_second = 36.0
-focus_ramp_time = 1.0
-focus_curve = SubResource("Curve_5dc8e")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1775160487]
 shape = SubResource("CircleShape2D_e5uuo")
@@ -222,24 +155,10 @@ animation = &"idle"
 autoplay = "idle"
 metadata/_edit_lock_ = true
 
-[node name="FocusAura" type="AnimatedSprite2D" parent="." unique_id=701338245]
-visible = false
-z_index = 1
-sprite_frames = SubResource("SpriteFrames_aura")
-animation = &"flow"
-autoplay = "flow"
-
 [node name="LowHealthAura" type="AnimatedSprite2D" parent="." unique_id=555001001]
 visible = false
 z_index = 1
 sprite_frames = SubResource("SpriteFrames_lowhp")
-animation = &"pulse"
-autoplay = "pulse"
-
-[node name="LowManaAura" type="AnimatedSprite2D" parent="." unique_id=555001002]
-visible = false
-z_index = 1
-sprite_frames = SubResource("SpriteFrames_lowmp")
 animation = &"pulse"
 autoplay = "pulse"
 
@@ -252,7 +171,7 @@ radius = 3.5
 [node name="FSM" parent="." unique_id=890434761 instance=ExtResource("2_5dc8e")]
 initial_state = "Idle"
 auto_start = true
-state_names = Array[String](["Idle", "Move", "Focus", "Cast"])
+state_names = Array[String](["Idle", "Move", "Cast"])
 
 [node name="SpellCaster" type="Node" parent="." unique_id=1093247518]
 script = ExtResource("7_caster")

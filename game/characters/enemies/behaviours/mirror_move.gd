@@ -7,14 +7,14 @@ class_name MirrorMove
 
 @export var detect_probe_path: NodePath
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource
+@export var weapon_data: SpellResource
 @export var lost_state: String = "Idle"
 @export var standoff: float = 72.0 ## Distance (px) it tries to keep from the target.
 @export var speed: float = 42.0
 @export var run_anim: String = "run"
 
 @onready var _detect: RayCast2D = get_node(detect_probe_path)
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 var _prev_target: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
@@ -56,4 +56,4 @@ func physics_update(_delta: float) -> void:
 	creature.velocity = strafe + closing
 	creature.move_and_slide()
 	creature.face(fwd.x)
-	_weapon.try_fire(creature.global_position, target.global_position)
+	_weapon.try_cast(creature.global_position, target.global_position)

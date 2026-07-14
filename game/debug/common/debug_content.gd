@@ -5,9 +5,6 @@ class_name DebugContent
 extends RefCounted
 
 const ITEM_DIRS := {
-	"weapons": "res://characters/player/weapons",
-	"hats": "res://characters/player/hats",
-	"robes": "res://characters/player/robes",
 	"spells": "res://characters/player/spells",
 }
 const ENEMIES_DIR := "res://characters/enemies"
@@ -73,8 +70,7 @@ static func find_item(query: String) -> ItemResource:
 ## equip/stat/UI pipeline. Returns how many items were reloaded.
 static func reload_slotted_items() -> int:
 	var n := 0
-	var slots: Array = [GlobalInventory.weapon_slot, GlobalInventory.hat_slot,
-			GlobalInventory.robe_slot]
+	var slots: Array = []
 	slots.append_array(GlobalInventory.bag_slots.slots)
 	slots.append_array(GlobalInventory.spell_slots.slots)
 	for slot in slots:

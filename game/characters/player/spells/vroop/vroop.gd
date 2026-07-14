@@ -2,8 +2,8 @@ extends Node2D
 
 ## Vroop: a vortex pinned at the cursor that drags every enemy within pull_radius toward
 ## its centre — pure crowd control, no damage. A moving channel: it spawns at button
-## press (aim locks to the cursor), drains mana per second while you keep moving and
-## shooting, and ends on release, mana-out, or the duration cap (cast_time).
+## press (aim locks to the cursor), stays active while you keep moving and
+## shooting, and ends on release or the duration cap (cast_time).
 ## channel_released() frees the node.
 
 const _SPIN := 0.8  # gentle swirl-art spin, radians/sec

@@ -6,8 +6,6 @@ extends Node
 # Player signals
 signal player_max_health_changed(max_health: int)
 signal player_health_changed(health: int)
-signal player_max_mana_changed(max_mana: int)
-signal player_mana_changed(mana: int)
 signal player_skill_changed(skill: int)
 signal player_speed_changed(speed: int)
 signal player_defence_changed(defence: int)
@@ -15,8 +13,10 @@ signal player_defence_changed(defence: int)
 # Inventory signals
 signal slot_updated(slot: GlobalInventory.Slot)
 signal item_picked_up(slot: GlobalInventory.Slot)
-# Emitted only for weapon/hat/robe slots — players and characters connect here
+# Emitted only for spell (loadout) slots — the player recomputes stats here
 signal equipment_changed(slot: GlobalInventory.Slot)
+# Emitted when SHIFT cycles which spell page the cast buttons drive
+signal spell_page_changed(page: int)
 # Emitted when a player drops an item from the inventory to the ground
 signal item_dropped(item: ItemResource)
 # Emitted when an enemy dies and a loot roll succeeds, once per dropped item

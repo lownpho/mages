@@ -2,32 +2,18 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_ql65p"]
-[ext_resource type="Resource" uid="uid://m0uq0gpm52ck" path="res://characters/player/weapons/rune/rune2.tres" id="2_rune2"]
-[ext_resource type="Resource" uid="uid://o0434amjj1t8" path="res://characters/player/weapons/staff/staff2.tres" id="3_staff2"]
-[ext_resource type="Resource" uid="uid://d2h6buka54kcn" path="res://characters/player/weapons/wand/wand2.tres" id="4_wand2"]
+[ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://d2tg5f64k4xr" path="res://characters/enemies/viper/viper.png" id="icon_png"]
-
-[sub_resource type="Resource" id="Resource_rune2"]
-script = ExtResource("1_ql65p")
-item = ExtResource("2_rune2")
-chance = 0.33
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_staff2"]
-script = ExtResource("1_ql65p")
-item = ExtResource("3_staff2")
-chance = 0.33
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
-
-[sub_resource type="Resource" id="Resource_wand2"]
-script = ExtResource("1_ql65p")
-item = ExtResource("4_wand2")
-chance = 0.33
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("1_ql65p")
+item = ExtResource("drop_1")
+chance = 1
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]
 script = ExtResource("1")
@@ -35,4 +21,4 @@ display_name = "Viper"
 icon = SubResource("AtlasTexture_icon")
 rarity = 1
 max_health = 180
-drops = Array[ExtResource("1_ql65p")]([SubResource("Resource_rune2"), SubResource("Resource_staff2"), SubResource("Resource_wand2")])
+drops = Array[ExtResource("1_ql65p")]([SubResource("Drop_1")])

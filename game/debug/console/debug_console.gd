@@ -130,7 +130,7 @@ func _run(line: String) -> void:
 	match cmd:
 		"help":
 			_say("give/equip <item>  spawn <enemy> [n]  killall  clearenemies")
-			_say("tp <x> <y>  pos  god [on|off]  heal  mana  seed [n]  reload  fps")
+			_say("tp <x> <y>  pos  god [on|off]  heal  seed [n]  reload  fps")
 		"give":
 			_cmd_give(args, false)
 		"equip":
@@ -149,8 +149,6 @@ func _run(line: String) -> void:
 			_cmd_god(args)
 		"heal":
 			_cmd_heal()
-		"mana":
-			_cmd_mana()
 		"seed":
 			_cmd_seed(args)
 		"reload":
@@ -269,16 +267,6 @@ func _cmd_heal() -> void:
 	p.health = p.max_health
 	GlobalEvent.player_health_changed.emit(p.health)
 	_say("healed to %d" % p.health)
-
-
-func _cmd_mana() -> void:
-	var p := _player()
-	if p == null:
-		_say("no player in scene")
-		return
-	p.mana = p.max_mana
-	GlobalEvent.player_mana_changed.emit(p.mana)
-	_say("mana refilled to %d" % p.mana)
 
 
 func _cmd_seed(args: PackedStringArray) -> void:

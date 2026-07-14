@@ -2,14 +2,22 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_ldb4g"]
+[ext_resource type="Resource" uid="uid://b6clkhxmrwn8o" path="res://characters/player/spells/bwoom/bwoom2.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://cvuwtrt0gmqdj" path="res://characters/enemies/owl/owl.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
 
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("1_ldb4g")
+item = ExtResource("drop_1")
+chance = 0.25
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [resource]
 script = ExtResource("1")
 display_name = "Owl"
 icon = SubResource("AtlasTexture_icon")
 max_health = 25
+drops = Array[ExtResource("1_ldb4g")]([SubResource("Drop_1")])

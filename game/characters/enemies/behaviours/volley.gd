@@ -3,16 +3,16 @@ class_name Volley
 
 # Plants its feet and lobs a fixed burst of shots at the player, then → done_state.
 # A parting reaction with no range gate: it keeps firing in the player's direction
-# even once they're out of detection. Cadence is the weapon's own fire_cooldown —
+# even once they're out of detection. Cadence is the spell's own cooldown —
 # each frame it tries to fire and only counts a shot when the weapon lets one go.
 
 @export var weapon_path: NodePath
-@export var weapon_data: WeaponResource
+@export var weapon_data: SpellResource
 @export var shot_count: int = 3
 @export var attack_anim: String = "attack"
 @export var done_state: String = "Idle"
 
-@onready var _weapon: CreatureWeapon = get_node(weapon_path)
+@onready var _weapon: CreatureSpellCaster = get_node(weapon_path)
 var _shots_left: int = 0
 
 func _ready() -> void:
@@ -39,4 +39,4 @@ func physics_update(_delta: float) -> void:
 # Override point: subclasses that need to alter the fired direction (e.g. a
 # rotating ring) hook in here instead of duplicating physics_update.
 func _fire(player: Node2D) -> bool:
-	return _weapon.try_fire(creature.global_position, player.global_position)
+	return _weapon.try_cast(creature.global_position, player.global_position)

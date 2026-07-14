@@ -90,9 +90,8 @@ func _process(_dt: float) -> void:
 	var cc := Vector2i(floori(gp.x / chunk_px), floori(gp.y / chunk_px))
 	var t := Vector2i((gp / GameConstants.PX_PER_TILE).floor())
 	var crumb := _breadcrumb(t)
-	var mode := "[P] exit player  hp %d/%d  mana %d/%d" % [_player.health, _player.max_health,
-			_player.mana, _player.max_mana] if _player != null \
-			else "[P] drop in as player"
+	var mode := "[P] exit player  hp %d/%d" % [_player.health, _player.max_health] \
+			if _player != null else "[P] drop in as player"
 	_overlay_label.text = "%s\nchunk %d,%d  loaded %d   cache %d/%d   assembly %.2f ms\n%s   [O]bounds [G]grid [H]heat [V]borders" % [
 			crumb, cc.x, cc.y, _streamer.loaded_chunks(),
 			_streamer.cache_hits, _streamer.cache_misses,

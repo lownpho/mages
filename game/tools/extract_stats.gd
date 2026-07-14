@@ -59,13 +59,10 @@ func _collect_tres(dir_path: String, out: PackedStringArray) -> void:
 		entry = dir.get_next()
 	dir.list_dir_end()
 
-# Most specific class first: spell/hat/robe/weapon all extend ItemResource.
+# Most specific class first: every equippable is a spell now.
 func _classify(res: Resource) -> String:
 	if res is CreatureResource: return "enemy"
 	if res is SpellResource: return "spell"
-	if res is HatResource: return "hat"
-	if res is RobeResource: return "robe"
-	if res is WeaponResource: return "weapon"
 	if res is BulletResource: return "bullet"
 	if res is ItemResource: return "item"
 	return ""
@@ -83,15 +80,27 @@ func _stats(res: Resource) -> Dictionary:
 	var stats := {}
 	_add_numeric(res, stats, "")
 
-	# Weapons embed their bullet — flatten its stats and a derived DPS so the
-	# sheet has real damage numbers, not just an opaque sub-resource reference.
-	if res is WeaponResource and res.bullet_data != null:
-		_add_numeric(res.bullet_data, stats, "bullet_")
-		if res.fire_cooldown > 0.0:
-			stats["dps_derived"] = res.bullet_data.base_damage / res.fire_cooldown
+	# Weapon spells embed their bullet — flatten its stats and a derived DPS
+	# (full burst damage over one burst+cooldown cycle, pattern multiplier in).
+	if res is WeaponSpellResource and res.bullet != null:
+		_add_numeric(res.bullet, stats, "bullet_")
+		var cycle: float = res.shot_interval * res.max_shots + res.cooldown
+		if cycle > 0.0:
+			stats["dps_derived"] = res.bullet.base_damage * _pattern_count(res.fire_pattern) \
+					* res.max_shots / cycle
 	elif res is SpellResource and res.base_damage > 0.0 and res.cooldown > 0.0:
 		stats["dps_derived"] = res.base_damage / res.cooldown
 	return stats
+
+# Bullets per trigger pull for a fire pattern (shotgun pellets, ring bullets, 1 otherwise).
+func _pattern_count(pattern: FirePattern) -> int:
+	if pattern == null:
+		return 1
+	if "num_pellets" in pattern:
+		return pattern.num_pellets
+	if "num_bullets" in pattern:
+		return pattern.num_bullets
+	return 1
 
 # Only the script's own exported int/float/bool vars — skips inherited Resource
 # bookkeeping, group headers, and texture/scene/array references.

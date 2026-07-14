@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_35d20"]
-[ext_resource type="Resource" uid="uid://bdnmwu8pcssmo" path="res://characters/player/hats/skill_hat1.tres" id="2_skillhat"]
+[ext_resource type="Resource" uid="uid://r3xy642wdffe" path="res://characters/player/spells/blam/blam1.tres" id="2_skillhat"]
 [ext_resource type="Resource" uid="uid://3kojoil7mnhh" path="res://characters/player/spells/fireball/fireball1.tres" id="3_fireball"]
 [ext_resource type="Texture2D" uid="uid://ba6s2v6jeq17f" path="res://characters/enemies/mandrake/mandrake.png" id="icon_png"]
 

@@ -8,7 +8,7 @@ extends Node2D
 ##                nearest enemy; item icons: LMB equips, RMB drops as a real pickup
 ##   F3           damage overlay (dealt/taken tallies), ` console (give/spawn/tp/...)
 ##
-## Cheats: god mode, infinite mana, stat overrides (applied as a player buff), heal.
+## Cheats: god mode, stat overrides (applied as a player buff), heal.
 ## "Kill all" runs real deaths (drops + bestiary count!); "Clear" silently despawns.
 ## "Reload .tres" re-reads every slotted item from disk — tune stats in a text editor
 ## and click it, no restart. Panel/cheat state persists across runs (user://debug_state.cfg).
@@ -32,7 +32,6 @@ var _brush: StringName = DUMMY_ID
 var _brush_buttons: Dictionary = {}    ## enemy id -> Button, for highlight
 var _freeze := false
 var _god := false
-var _inf_mana := false
 var _dummy_hp := 0
 var _dummy_def := 0
 var _cheat_buff := ItemResource.new()  ## stat overrides ride the player's buff pipeline
@@ -45,12 +44,6 @@ func _ready() -> void:
 	_build_ui()
 	_apply_god()
 	_set_panel_open(false)
-
-
-func _process(_dt: float) -> void:
-	if _inf_mana and _player.mana < _player.max_mana:
-		_player.mana = _player.max_mana
-		GlobalEvent.player_mana_changed.emit(_player.mana)
 
 
 # _input (not _unhandled) so Tab still toggles when a panel control holds keyboard focus —
@@ -241,9 +234,6 @@ func _build_cheats_tab(box: VBoxContainer) -> void:
 		_god = on
 		_apply_god()
 		_save_state())
-	_check(box, "infinite mana", _inf_mana, func(on):
-		_inf_mana = on
-		_save_state())
 	var stats := GridContainer.new()
 	stats.columns = 2
 	box.add_child(stats)
@@ -256,11 +246,9 @@ func _build_cheats_tab(box: VBoxContainer) -> void:
 	_grid_spin(stats, "+def", _cheat_buff.defence_modifier, -50, 200, func(v):
 		_apply_cheat_stats(_cheat_buff.skill_modifier, _cheat_buff.speed_modifier, v)
 		_save_state())
-	_button(box, "heal + mana", func():
+	_button(box, "heal", func():
 		_player.health = _player.max_health
-		_player.mana = _player.max_mana
-		GlobalEvent.player_health_changed.emit(_player.health)
-		GlobalEvent.player_mana_changed.emit(_player.mana))
+		GlobalEvent.player_health_changed.emit(_player.health))
 	_button(box, "reload item .tres", func():
 		DebugContent.reload_slotted_items())
 
@@ -346,21 +334,12 @@ func _build_item_palette(box: VBoxContainer) -> void:
 
 
 func _equip_item(item: ItemResource) -> void:
-	match item.get_item_type():
-		GlobalInventory.ItemType.WEAPON:
-			GlobalInventory.weapon_slot.set_item(item)
-		GlobalInventory.ItemType.HAT:
-			GlobalInventory.hat_slot.set_item(item)
-		GlobalInventory.ItemType.ROBE:
-			GlobalInventory.robe_slot.set_item(item)
-		GlobalInventory.ItemType.SPELL:
-			var idx := GlobalInventory.spell_slots.first_empty()
-			if idx >= 0:
-				GlobalInventory.spell_slots.add_at(idx, item)
-			else:
-				GlobalInventory.bag_slots.add_at_first_empty(item)
-		_:
-			GlobalInventory.bag_slots.add_at_first_empty(item)
+	if item.get_item_type() == GlobalInventory.ItemType.SPELL:
+		var idx := GlobalInventory.spell_slots.first_empty()
+		if idx >= 0:
+			GlobalInventory.spell_slots.add_at(idx, item)
+			return
+	GlobalInventory.bag_slots.add_at_first_empty(item)
 
 
 # --- Theme (game theme + compact chrome so controls match the 8px HUD) ----------------------
@@ -459,7 +438,6 @@ func _grid_spin(grid: GridContainer, text: String, value: int, lo: int, hi: int,
 
 func _restore_state() -> void:
 	_god = DebugState.get_value("combat_lab", "god", false)
-	_inf_mana = DebugState.get_value("combat_lab", "inf_mana", false)
 	_freeze = DebugState.get_value("combat_lab", "freeze", false)
 	_dummy_hp = DebugState.get_value("combat_lab", "dummy_hp", 0)
 	_dummy_def = DebugState.get_value("combat_lab", "dummy_def", 0)
@@ -473,7 +451,6 @@ func _restore_state() -> void:
 
 func _save_state() -> void:
 	DebugState.set_value("combat_lab", "god", _god)
-	DebugState.set_value("combat_lab", "inf_mana", _inf_mana)
 	DebugState.set_value("combat_lab", "freeze", _freeze)
 	DebugState.set_value("combat_lab", "dummy_hp", _dummy_hp)
 	DebugState.set_value("combat_lab", "dummy_def", _dummy_def)

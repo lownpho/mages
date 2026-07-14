@@ -92,7 +92,6 @@ func _build_text() -> String:
 	lines.append("-- STATS ----------------")
 	if p:
 		lines.append("HP    %d / %d" % [p.health, p.max_health])
-		lines.append("Mana  %d / %d" % [p.mana, p.max_mana])
 		lines.append("Skill %d" % p.skill)
 		lines.append("Speed %d" % p.speed)
 		lines.append("Def   %d" % p.defence)
