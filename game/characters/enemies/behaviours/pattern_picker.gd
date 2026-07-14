@@ -12,6 +12,15 @@ class_name PatternPicker
 @export var detect_probe_path: NodePath ## optional; leave empty to always roll
 @export var lost_state: String = "Idle"
 
+## One-shot phase trigger: the first time the dispatcher is entered at or below this
+## fraction of max_health it diverts to `phase_state` instead of rolling — the boss's
+## enrage/summon beat. Leave phase_state empty (or the fraction at 0) to disable. The
+## phase hands back to this dispatcher, which then rolls normally forever after.
+@export_range(0.0, 1.0) var phase_health_fraction: float = 0.0
+@export var phase_state: String = ""
+
+var _phase_fired: bool = false
+
 func enter() -> void:
 	creature.velocity = Vector2.ZERO
 	call_deferred("_dispatch")
@@ -22,6 +31,12 @@ func _dispatch() -> void:
 		if not creature.look_for_target(probe):
 			creature.fsm.transition_to(lost_state)
 			return
+
+	if not _phase_fired and phase_state != "" \
+			and creature.health <= creature.max_health * phase_health_fraction:
+		_phase_fired = true
+		creature.fsm.transition_to(phase_state)
+		return
 
 	if states.is_empty():
 		return

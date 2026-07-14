@@ -1,5 +1,5 @@
 extends Behaviour
-class_name FaeSummon
+class_name SummonAllies
 
 # Calls in a knot of allies (plain hostile Creature scenes, no faction flip needed —
 # they're already enemies) spread in a ring around the boss, then hangs back and waits

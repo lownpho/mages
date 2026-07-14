@@ -1,5 +1,5 @@
 extends Behaviour
-class_name FaeRings
+class_name RotatingRingBurst
 
 # Offset rings: a full RingPattern fired repeatedly, its aim angle nudged a fixed amount
 # each pulse. No single pulse has a gap, but the gaps between successive pulses drift, so

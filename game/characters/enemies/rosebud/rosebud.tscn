@@ -9,7 +9,7 @@
 [ext_resource type="Resource" uid="uid://br0s3budthrn" path="res://characters/enemies/rosebud/rosebud_ring.tres" id="5_thorn"]
 [ext_resource type="Script" uid="uid://c4qrfe6uxlccn" path="res://characters/enemies/behaviours/hit_alert_idle.gd" id="6_idle"]
 [ext_resource type="Script" path="res://characters/enemies/behaviours/rotating_volley.gd" id="7_rotvolley"]
-[ext_resource type="Script" uid="uid://dr0s3budgu4rd" path="res://characters/enemies/rosebud/rosebud_guard.gd" id="8_guard"]
+[ext_resource type="Script" path="res://characters/enemies/behaviours/guard.gd" id="8_guard"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 4.0
@@ -119,4 +119,5 @@ done_state = "Idle"
 
 [node name="Guard" type="Node" parent="FSM" unique_id=1909355522]
 script = ExtResource("8_guard")
+done_state = "Attack"
 damage_scale = 0.2

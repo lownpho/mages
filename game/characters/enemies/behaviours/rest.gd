@@ -1,5 +1,5 @@
 extends Behaviour
-class_name FaeRest
+class_name Rest
 
 # Stops and does nothing for a beat: the burn window between patterns. A plain timed
 # hold, no detection — the fight is already committed once the boss is engaged.

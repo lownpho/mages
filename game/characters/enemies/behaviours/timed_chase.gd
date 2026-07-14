@@ -29,7 +29,15 @@ func physics_update(_delta: float) -> void:
 	if not target:
 		creature.fsm.transition_to(done_state)
 		return
+	if _reached(target):
+		creature.fsm.transition_to(done_state)
+		return
 	var to_target := target.global_position - creature.global_position
 	creature.face(to_target.x)
 	creature.velocity = to_target.normalized() * speed
 	creature.move_and_slide()
+
+# Override point: subclasses that should stop chasing early (e.g. once within a
+# pattern's own attack range) hook in here instead of duplicating physics_update.
+func _reached(_target: Node2D) -> bool:
+	return false

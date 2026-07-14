@@ -31,7 +31,12 @@ func physics_update(_delta: float) -> void:
 		creature.fsm.transition_to(done_state)
 		return
 	creature.face(player.global_position.x - creature.global_position.x)
-	if _weapon.try_fire(creature.global_position, player.global_position):
+	if _fire(player):
 		_shots_left -= 1
 		if _shots_left <= 0:
 			creature.fsm.transition_to(done_state)
+
+# Override point: subclasses that need to alter the fired direction (e.g. a
+# rotating ring) hook in here instead of duplicating physics_update.
+func _fire(player: Node2D) -> bool:
+	return _weapon.try_fire(creature.global_position, player.global_position)
