@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spell Catalogue — Design View</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1a1d21; --muted: #626873;
+    --line: #e2e5ea; --accent: #4b6bfb; --chip: #eef1f6; --chip-on: #4b6bfb;
+    --chip-on-ink: #ffffff; --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 14px rgba(0,0,0,.05);
+    --dps: #e4572e; --nukes: #b5179e; --summon: #2a9d8f; --utility: #3a86ff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a; --panel: #1c1f26; --ink: #e7eaef; --muted: #9aa2b1;
+      --line: #2a2e37; --accent: #7f97ff; --chip: #262a33; --chip-on: #7f97ff;
+      --chip-on-ink: #10121a; --shadow: 0 1px 2px rgba(0,0,0,.4);
+      --dps: #ff7a52; --nukes: #e368cd; --summon: #4fc9b9; --utility: #6ea8ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header { padding: 28px 24px 8px; max-width: 1200px; margin: 0 auto; }
+  h1 { margin: 0 0 4px; font-size: 24px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 5; background: var(--bg);
+    padding: 12px 24px; border-bottom: 1px solid var(--line);
+  }
+  .toolbar-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+  .row1 { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input[type=search], select {
+    font: inherit; color: inherit; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  }
+  input[type=search] { flex: 1 1 260px; min-width: 200px; }
+  .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  button.reset {
+    font: inherit; color: var(--muted); background: transparent;
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer;
+  }
+  button.reset:hover { color: var(--ink); border-color: var(--muted); }
+  .facets { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  .facet { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .facet > .flabel { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .chip {
+    font: inherit; font-size: 12.5px; cursor: pointer; user-select: none;
+    background: var(--chip); border: 1px solid transparent; color: var(--ink);
+    border-radius: 999px; padding: 3px 10px; line-height: 1.4;
+  }
+  .chip[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); }
+  main { max-width: 1200px; margin: 0 auto; padding: 18px 24px 60px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px 15px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 9px;
+  }
+  .card-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .card-head .name { font-weight: 650; font-size: 16px; }
+  .badge { font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .03em;
+           padding: 2px 8px; border-radius: 999px; color: #fff; }
+  .badge.cat-dps { background: var(--dps); } .badge.cat-nukes { background: var(--nukes); }
+  .badge.cat-summon { background: var(--summon); } .badge.cat-utility { background: var(--utility); }
+  .badge.hold { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  .desc { color: var(--muted); font-size: 13.5px; margin: 0; }
+  .stats { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; font-size: 13px; }
+  .stats dt { color: var(--muted); }
+  .stats dd { margin: 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pill { font-size: 11.5px; background: var(--chip); border-radius: 6px; padding: 1px 7px; }
+  .empty { text-align: center; color: var(--muted); padding: 60px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Spell Catalogue</h1>
+  <div class="sub">Design view generated from <code>design/data/spells.yaml</code>. Filter, search, and sort while balancing.</div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="row1">
+      <input type="search" id="q" placeholder="Search name or description…" autocomplete="off">
+      <label class="count">Sort
+        <select id="sort">
+          <option value="cat">Category</option>
+          <option value="name">Name</option>
+          <option value="cooldown">Cooldown</option>
+          <option value="range">Range</option>
+          <option value="cast_time">Cast time</option>
+        </select>
+      </label>
+      <span class="count" id="count"></span>
+      <button class="reset" id="reset">Reset</button>
+    </div>
+    <div class="facets" id="facets"></div>
+  </div>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>No spells match these filters.</div>
+</main>
+
+<script id="data" type="application/json">{{ data_json }}</script>
+<script>
+(function () {
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var SPELLS = DATA.spells;
+  var SCALES = DATA.ordered_scales;
+
+  // Facets: label -> accessor returning an array of values for a spell.
+  var STAT_RE = /^([a-z]+)/;
+  function grantStats(sp) {
+    var seen = {};
+    sp.grants.forEach(function (g) {
+      var m = STAT_RE.exec(g.trim());
+      if (m) seen[m[1]] = true;
+    });
+    return Object.keys(seen);
+  }
+  var FACETS = [
+    { key: "category", label: "Type", vals: function (s) { return [s.category]; } },
+    { key: "hold", label: "Hold", vals: function (s) { return [s.hold]; } },
+    { key: "scaling", label: "Scaling", vals: function (s) { return [s.scaling]; } },
+    { key: "grants", label: "Grants", vals: grantStats },
+    { key: "range", label: "Range", vals: function (s) { return [s.range]; } },
+    { key: "cooldown", label: "Cooldown", vals: function (s) { return [s.cooldown]; } },
+    { key: "cast_time", label: "Cast", vals: function (s) { return [s.cast_time]; } }
+  ];
+
+  // Ordinal rank for sortable/ordered facets; -1 keeps insertion order otherwise.
+  function rankFor(key, value) {
+    var scale = null;
+    if (key === "range") scale = SCALES.range;
+    else if (key === "cooldown") scale = SCALES.cooldown;
+    else if (key === "cast_time") scale = SCALES.cast_time;
+    if (!scale) return -1;
+    var i = scale.indexOf(value);
+    return i < 0 ? 99 : i;
+  }
+
+  // Collect the distinct values present for each facet, ordered where we can.
+  function optionsFor(f) {
+    var present = {};
+    SPELLS.forEach(function (s) { f.vals(s).forEach(function (v) { present[v] = true; }); });
+    var vals = Object.keys(present);
+    if (rankFor(f.key, vals[0]) >= 0) {
+      vals.sort(function (a, b) { return rankFor(f.key, a) - rankFor(f.key, b); });
+    } else {
+      vals.sort();
+    }
+    return vals;
+  }
+
+  var active = {};            // key -> Set of selected values
+  FACETS.forEach(function (f) { active[f.key] = new Set(); });
+
+  // Build the facet chip UI.
+  var facetsEl = document.getElementById("facets");
+  FACETS.forEach(function (f) {
+    var wrap = document.createElement("div");
+    wrap.className = "facet";
+    var lab = document.createElement("span");
+    lab.className = "flabel";
+    lab.textContent = f.label;
+    wrap.appendChild(lab);
+    optionsFor(f).forEach(function (v) {
+      var b = document.createElement("button");
+      b.className = "chip";
+      b.type = "button";
+      b.textContent = v;
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function () {
+        var on = b.getAttribute("aria-pressed") === "true";
+        b.setAttribute("aria-pressed", on ? "false" : "true");
+        if (on) active[f.key].delete(v); else active[f.key].add(v);
+        render();
+      });
+      wrap.appendChild(b);
+    });
+    facetsEl.appendChild(wrap);
+  });
+
+  var qEl = document.getElementById("q");
+  var sortEl = document.getElementById("sort");
+  var gridEl = document.getElementById("grid");
+  var emptyEl = document.getElementById("empty");
+  var countEl = document.getElementById("count");
+
+  function matches(s) {
+    for (var i = 0; i < FACETS.length; i++) {
+      var f = FACETS[i];
+      var sel = active[f.key];
+      if (sel.size === 0) continue;
+      var vals = f.vals(s);
+      var hit = vals.some(function (v) { return sel.has(v); });
+      if (!hit) return false;
+    }
+    var q = qEl.value.trim().toLowerCase();
+    if (q) {
+      var hay = (s.name + " " + s.description + " " + s.grants.join(" ") + " " + s.per_tier).toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  }
+
+  function sortKey(mode) {
+    return function (a, b) {
+      if (mode === "name") return a.name.localeCompare(b.name);
+      if (mode === "cat") {
+        if (a.category_id !== b.category_id) {
+          return catOrder(a.category_id) - catOrder(b.category_id);
+        }
+        return a.name.localeCompare(b.name);
+      }
+      var r = rankFor(mode, a[mode]) - rankFor(mode, b[mode]);
+      return r !== 0 ? r : a.name.localeCompare(b.name);
+    };
+  }
+  var CAT_ORDER = DATA.categories.map(function (c) { return c.id; });
+  function catOrder(id) { var i = CAT_ORDER.indexOf(id); return i < 0 ? 99 : i; }
+
+  function card(s) {
+    var el = document.createElement("article");
+    el.className = "card";
+
+    var head = document.createElement("div");
+    head.className = "card-head";
+    var nm = document.createElement("span");
+    nm.className = "name";
+    nm.textContent = s.name;
+    head.appendChild(nm);
+    var cb = document.createElement("span");
+    cb.className = "badge cat-" + s.category_id;
+    cb.textContent = s.category;
+    head.appendChild(cb);
+    if (s.hold !== "no") {
+      var hb = document.createElement("span");
+      hb.className = "badge hold";
+      hb.textContent = s.hold;
+      head.appendChild(hb);
+    }
+    el.appendChild(head);
+
+    var d = document.createElement("p");
+    d.className = "desc";
+    d.textContent = s.description;
+    el.appendChild(d);
+
+    var dl = document.createElement("dl");
+    dl.className = "stats";
+    function stat(k, node) {
+      var dt = document.createElement("dt"); dt.textContent = k;
+      var dd = document.createElement("dd");
+      if (typeof node === "string") dd.textContent = node; else dd.appendChild(node);
+      dl.appendChild(dt); dl.appendChild(dd);
+    }
+    stat("Scaling", s.scaling);
+    var pills = document.createElement("div");
+    pills.className = "pills";
+    s.grants.forEach(function (g) {
+      var p = document.createElement("span"); p.className = "pill"; p.textContent = g;
+      pills.appendChild(p);
+    });
+    stat("Grants", pills);
+    stat("Range", s.range);
+    stat("Cooldown", s.cooldown);
+    stat("Cast time", s.cast_time);
+    if (s.per_tier) stat("Per tier", s.per_tier);
+    el.appendChild(dl);
+    return el;
+  }
+
+  function render() {
+    var list = SPELLS.filter(matches).sort(sortKey(sortEl.value));
+    gridEl.innerHTML = "";
+    list.forEach(function (s) { gridEl.appendChild(card(s)); });
+    emptyEl.hidden = list.length !== 0;
+    countEl.textContent = list.length + " / " + SPELLS.length + " spells";
+  }
+
+  qEl.addEventListener("input", render);
+  sortEl.addEventListener("change", render);
+  document.getElementById("reset").addEventListener("click", function () {
+    qEl.value = "";
+    FACETS.forEach(function (f) { active[f.key].clear(); });
+    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
+      c.setAttribute("aria-pressed", "false");
+    });
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
