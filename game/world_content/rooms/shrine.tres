@@ -6,6 +6,6 @@
 script = ExtResource("1_3wlll")
 id = &"shrine"
 unique_scope = 1
-unique_allowed_biomes = Array[StringName]([&"glade", &"deepwood", &"marsh", &"hollow"])
+unique_allowed_biomes = Array[StringName]([&"glade_start", &"glade_veggie", &"deepwood"])
 enemy_groups_max = 1
 scale_groups_with_size = false

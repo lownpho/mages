@@ -26,6 +26,4 @@ difficulty = 3
 weight = 0
 min_per_biome = 1
 max_per_biome = 1
-enemy_groups_min = 4
-enemy_groups_max = 8
 features = Array[ExtResource("rf")]([SubResource("feat_1")])

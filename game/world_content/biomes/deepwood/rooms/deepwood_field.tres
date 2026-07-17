@@ -25,6 +25,4 @@ generator = SubResource("Resource_gen")
 difficulty = 1
 weight = 3
 max_per_biome = 10
-enemy_groups_min = 2
-enemy_groups_max = 6
 features = Array[ExtResource("rf")]([SubResource("feat_1")])

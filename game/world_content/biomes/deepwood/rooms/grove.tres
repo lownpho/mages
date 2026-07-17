@@ -6,18 +6,6 @@
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="4_ste"]
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="rf"]
 
-[sub_resource type="Resource" id="sp_stalker"]
-script = ExtResource("4_ste")
-enemy_id = &"stalker"
-weight = 2
-group_max = 2
-
-[sub_resource type="Resource" id="sp_owl"]
-script = ExtResource("4_ste")
-enemy_id = &"owl"
-group_min = 2
-group_max = 3
-
 [sub_resource type="Resource" id="feat_1"]
 script = ExtResource("rf")
 scene = ExtResource("3_sign")
@@ -36,6 +24,4 @@ difficulty = 2
 footprint_blob = true
 weight = 3
 max_per_biome = 4
-enemies = Array[ExtResource("4_ste")]([SubResource("sp_stalker"), SubResource("sp_owl")])
-enemy_groups_max = 2
 features = Array[ExtResource("rf")]([SubResource("feat_1")])

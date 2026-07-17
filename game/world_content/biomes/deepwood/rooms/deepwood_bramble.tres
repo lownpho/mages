@@ -18,5 +18,3 @@ difficulty = 3
 footprint_blob = true
 weight = 3
 max_per_biome = 6
-enemy_groups_min = 2
-enemy_groups_max = 5

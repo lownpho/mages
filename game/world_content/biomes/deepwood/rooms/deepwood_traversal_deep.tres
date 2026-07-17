@@ -9,5 +9,3 @@ id = &"deepwood_traversal_deep"
 biome = &"deepwood"
 difficulty = 2
 weight = 2
-enemy_groups_min = 1
-enemy_groups_max = 2

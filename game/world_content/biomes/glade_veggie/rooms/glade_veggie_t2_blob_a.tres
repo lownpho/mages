@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://biawme5houll"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
+[ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="4_gen"]
+
+[sub_resource type="Resource" id="pm_0_0"]
+script = ExtResource("3_pm")
+enemy_id = &"dirt_golem"
+count_min = 1
+count_max = 1
+
+[sub_resource type="Resource" id="pm_0_1"]
+script = ExtResource("3_pm")
+enemy_id = &"thornthrower"
+count_min = 3
+count_max = 3
+
+[sub_resource type="Resource" id="ste_0"]
+script = ExtResource("2_ste")
+weight = 1
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_0_0"), SubResource("pm_0_1")])
+
+[sub_resource type="Resource" id="pm_1_0"]
+script = ExtResource("3_pm")
+enemy_id = &"dirt_golem"
+count_min = 1
+count_max = 1
+
+[sub_resource type="Resource" id="pm_1_1"]
+script = ExtResource("3_pm")
+enemy_id = &"rosebud"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="ste_1"]
+script = ExtResource("2_ste")
+weight = 1
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_1_0"), SubResource("pm_1_1")])
+
+[sub_resource type="Resource" id="gen"]
+script = ExtResource("4_gen")
+fill_prob = 0.4
+
+[resource]
+script = ExtResource("1_def")
+id = &"glade_veggie_t2_blob_a"
+biome = &"glade_veggie"
+generator = SubResource("gen")
+min_size_slots = Vector2i(2, 2)
+difficulty = 2
+footprint_blob = true
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
+enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1")])
+enemy_groups_min = 1
+enemy_groups_max = 1
+scale_groups_with_size = false
