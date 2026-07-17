@@ -8,6 +8,10 @@
 # Edit spells HERE, then run:  python3 design/tools/build.py
 # Do NOT hand-edit the generated Catalogue in spells.md or the .html.
 #
+# Structure: `spells` is a flat list — each spell names the `category` it belongs
+# to (see `categories` below for the label + blurb of each). The category order
+# in `categories` is the order sections appear in the rendered docs.
+#
 # Field vocabulary (kept faithful to the design doc so the values read the same
 # way in the tables). `ordered_scales` below tells the tooling how to sort them.
 
@@ -28,243 +32,15 @@ categories:
     description: >
       The primary-damage core: hold-to-fire spells that loose a burst then cool
       down, the player's mirror of an enemy attack.
-    spells:
-      - name: Pew
-        description: >
-          One burst of single bullets at the cursor, then cooldown, rather than a
-          sustained hose. The burst is short enough to read as a single commitment:
-          you aim and fire, then move on. It is the reliable all-rounder, the spell
-          every other weapon is measured against.
-        scaling: speed
-        grants: ["speed (med)"]
-        range: med
-        cooldown: low
-        cast_time: instant
-        hold: "no"
-
-      - name: Snipe
-        description: >
-          A few homing bullets toward the first enemy in the cursor direction. They
-          all launch on the same frame rather than staggering, so the volley lands as
-          one clustered hit instead of a trickle: a target either eats the whole thing
-          or none of it. Accurate, but low DPS for the cooldown. Use it to pick off a
-          specific enemy, not to clear a room.
-        scaling: skill
-        grants: ["skill (med)"]
-        range: high
-        cooldown: high
-        cast_time: instant
-        hold: "no"
-
-      - name: Blam
-        description: >
-          Two shotgun blasts back-to-back at the cursor, then cooldown: a double
-          barrel, capped at two rather than a sustained run. Both barrels are the whole
-          spell, so a miss on either half is a real cost. It is a close-range shredder:
-          at point blank the two cones overlap almost entirely and the whole pellet
-          count lands on one body.
-        scaling: skill
-        grants: ["skill (med)", "defence (med)"]
-        range: low
-        cooldown: med
-        cast_time: instant
-        hold: "no"
-
-      - name: Ring
-        description: >
-          A few fast rings of bullets pulsed out of the caster. Every pulse spawns at
-          the caster's exact centre and expands outward, and each one is rotated off
-          the last, so the gaps between bullets in one ring are covered by the next.
-          There is no aim: the spell is pure area denial around your own body. Walk into
-          a crowd and let the pulses do the sorting.
-        scaling: skill
-        grants: ["skill (med)", "health (med)"]
-        range: med
-        cooldown: med
-        cast_time: instant
-        hold: "no"
-        per_tier: "damage, bullet count, pulses"
-
-      - name: Halo
-        description: >
-          Orbs orbit the caster for a duration, damaging anything they sweep. Proximity
-          does the work; walk enemies into the orbits. High base damage.
-        scaling: defence
-        grants: ["speed (low)", "defence (high)"]
-        range: "very low"
-        cooldown: med
-        cast_time: instant
-        hold: "no"
-
-      - name: Chomp
-        description: >
-          A short lunge-bite: the caster steps in and shreds at melee, then cools down.
-          Where Blam plants you and fires two cones, Chomp closes the gap itself, a
-          mobile brawler's opener that trades Blam's spread for a committed step into
-          the target. The lunge is the aim, so a whiffed dash wastes the whole burst.
-        scaling: skill
-        grants: ["skill (med)", "defence (med)"]
-        range: "very low"
-        cooldown: low
-        cast_time: instant
-        hold: "no"
-
   - id: nukes
     name: Nukes
     description: >
       Long cooldown, big single payload.
-    spells:
-      - name: Fireball
-        description: >
-          The starting spell: the first thing a new player has in a slot, and the
-          baseline every other nuke is read against. A homing orb toward the enemy
-          nearest the cursor; it explodes on impact, wall, or max range. All damage is
-          the explosion, so a shot that expires in open air still deals it. The homing
-          and the guaranteed detonation make it hard to waste, which is what a first
-          spell should be.
-        scaling: skill
-        grants: ["skill (high)"]
-        range: high
-        cooldown: med
-        cast_time: low
-        hold: "no"
-        per_tier: "damage, explosion radius"
-
-      - name: Zaap
-        description: >
-          An instant chain-lightning bolt that leaps between packed enemies; one lone
-          target gets a single zap.
-        scaling: speed
-        grants: ["speed (med)"]
-        range: med
-        cooldown: low
-        cast_time: instant
-        hold: "no"
-
-      - name: Zoing
-        description: >
-          A fast piercing bullet that ricochets off walls; each bounce is a fresh leg of
-          travel and adds damage.
-        scaling: skill
-        grants: ["skill (high)", "speed (low)"]
-        range: high
-        cooldown: med
-        cast_time: instant
-        hold: "no"
-
-      - name: Kaboom
-        description: >
-          A scattered meteor rain across the whole screen; ground marks telegraph, then
-          each meteor explodes for its own AoE.
-        scaling: skill
-        grants: ["skill (very high)"]
-        range: "very high"
-        cooldown: "very high"
-        cast_time: high
-        hold: "no"
-
-      - name: Piercing Lights
-        description: >
-          Projectiles spawn in a wide ring around the caster and converge into the aim
-          direction, each piercing every hurtbox it crosses. Because they start spread
-          and close on a single line, the damage stacks up along that line: an enemy
-          standing in the aim direction is crossed by most of the fan at once, while
-          anything off-axis is only clipped by the outermost lights. It rewards lining a
-          target up rather than raw volume.
-        scaling: speed
-        grants: ["speed (med)"]
-        range: high
-        cooldown: med
-        cast_time: low
-        hold: "no"
-
-      - name: Bwoom
-        description: >
-          Charges in front of the caster while held, growing per tick; on release it
-          fires a piercing line whose damage scales with charge.
-        scaling: defence
-        grants: ["skill (med)", "health (med)"]
-        range: high
-        cooldown: high
-        cast_time: high
-        hold: charged
-
-      - name: Krak
-        description: >
-          A line of spikes erupts from the floor toward the aim after a short telegraph
-          (Trapdoor volley). A delayed ground nuke: it ignores intervening cover,
-          striking wherever the line lands rather than travelling to it. The telegraph
-          is the cost: the payload only pays off against an enemy that can't clear the
-          marked ground in time.
-        scaling: skill
-        grants: ["skill (high)", "defence (low)"]
-        range: high
-        cooldown: med
-        cast_time: low
-        hold: "no"
-
-      - name: Splay
-        description: >
-          Projectiles spawn around the caster one at a time, each at a random position,
-          then fly off in a random direction, a scatter that unfolds over a short window
-          rather than landing all at once. It sits between Piercing Lights' aimed fan and
-          Ring's tidy pulses: unaimed and shapeless, just a cloud of chaos you stand
-          inside. It rewards being in the middle of a crowd over lining anything up.
-        scaling: speed
-        grants: ["speed (med)", "health (med)"]
-        range: med
-        cooldown: high
-        cast_time: instant
-        hold: "no"
-
   - id: summon
     name: Summon
     description: >
       Minions you cast into the fight — they run their own AI and keep working while
       you move and cast other things.
-    spells:
-      - name: Halp
-        description: >
-          A small squad of ranged minions firing single bullets. A walking gunline.
-        scaling: health
-        grants: ["health (high)", "skill (low)"]
-        range: med
-        cooldown: high
-        cast_time: low
-        hold: "no"
-
-      - name: Bzzz
-        description: >
-          A fragile swarm of fast, short-range minions; chaff that dumps damage then
-          dies.
-        scaling: speed
-        grants: ["health (med)", "speed (low)"]
-        range: low
-        cooldown: med
-        cast_time: low
-        hold: "no"
-
-      - name: Jimmy
-        description: >
-          One heavy minion firing a ring around itself; a walking turret that denies an
-          area.
-        scaling: defence
-        grants: ["health (very high)", "defence (low)"]
-        range: med
-        cooldown: "very high"
-        cast_time: med
-        hold: "no"
-
-      - name: Beep Boop
-        description: >
-          One steady single-shot minion, long-lived. The dependable second firing line.
-        scaling: skill
-        grants: ["health (med)", "skill (med)"]
-        range: high
-        cooldown: med
-        cast_time: low
-        hold: "no"
-
   - id: utility
     name: Utility
     description: >
@@ -272,155 +48,413 @@ categories:
       denial, and mitigation. Some are instant and layer on top of your damage; others
       are channeled or charged holds that trade a slot of offence to shape or survive
       the fight.
-    spells:
-      - name: Blink
-        description: >
-          Instant teleport to the cursor, range-clamped. Pure mobility.
-        scaling: "-"
-        grants: ["speed (high)", "skill (low)"]
-        range: med
-        cooldown: med
-        cast_time: instant
-        hold: "no"
 
-      - name: Nyoom
-        description: >
-          Converts skill into speed for a duration; casting another spell breaks it. For
-          fast travel.
-        scaling: skill
-        grants: ["speed (med)", "skill (med)"]
-        range: self
-        cooldown: high
-        cast_time: med
-        hold: "no"
+spells:
+  - name: Pew
+    category: dps
+    description: >
+      One burst of single bullets at the cursor, then cooldown, rather than a
+      sustained hose. The burst is short enough to read as a single commitment:
+      you aim and fire, then move on. It is the reliable all-rounder, the spell
+      every other weapon is measured against.
+    scaling: speed
+    grants: ["speed (med)"]
+    range: med
+    cooldown: low
+    cast_time: instant
+    hold: "no"
 
-      - name: Shing
-        description: >
-          Your next spell casts twice.
-        scaling: "-"
-        grants: ["health (med)"]
-        range: self
-        cooldown: high
-        cast_time: instant
-        hold: "no"
+  - name: Snipe
+    category: dps
+    description: >
+      A few homing bullets toward the first enemy in the cursor direction. They
+      all launch on the same frame rather than staggering, so the volley lands as
+      one clustered hit instead of a trickle: a target either eats the whole thing
+      or none of it. Accurate, but low DPS for the cooldown. Use it to pick off a
+      specific enemy, not to clear a room.
+    scaling: skill
+    grants: ["skill (med)"]
+    range: high
+    cooldown: high
+    cast_time: instant
+    hold: "no"
 
-      - name: Clang
-        description: >
-          For a short window, all your bullets are piercing.
-        scaling: "-"
-        grants: ["skill (med)"]
-        range: self
-        cooldown: high
-        cast_time: instant
-        hold: "no"
+  - name: Blam
+    category: dps
+    description: >
+      Two shotgun blasts back-to-back at the cursor, then cooldown: a double
+      barrel, capped at two rather than a sustained run. Both barrels are the whole
+      spell, so a miss on either half is a real cost. It is a close-range shredder:
+      at point blank the two cones overlap almost entirely and the whole pellet
+      count lands on one body.
+    scaling: skill
+    grants: ["skill (med)", "defence (med)"]
+    range: low
+    cooldown: med
+    cast_time: instant
+    hold: "no"
 
-      - name: ChargeDash
-        description: >
-          Charges in a direction for a short duration at high speed. Sends bullets at 90
-          degrees.
-        scaling: skill
-        grants: ["skill (med)", "defence (med)"]
-        range: med
-        cooldown: high
-        cast_time: instant
-        hold: "no"
+  - name: Ring
+    category: dps
+    description: >
+      A few fast rings of bullets pulsed out of the caster. Every pulse spawns at
+      the caster's exact centre and expands outward, and each one is rotated off
+      the last, so the gaps between bullets in one ring are covered by the next.
+      There is no aim: the spell is pure area denial around your own body. Walk into
+      a crowd and let the pulses do the sorting.
+    scaling: skill
+    grants: ["skill (med)", "health (med)"]
+    range: med
+    cooldown: med
+    cast_time: instant
+    hold: "no"
+    per_tier: "damage, bullet count, pulses"
 
-      - name: Vroop
-        description: >
-          Shoots a fireball-like bullet. When it hits an enemy, a wall, or the end of the
-          range, creates a vortex that drags enemies to its center. Sets up an AoE
-          follow-up on the whole clump.
-        scaling: "-"
-        grants: ["defence (high)", "skill (low)"]
-        range: med
-        cooldown: high
-        cast_time: high
-        hold: "no"
+  - name: Halo
+    category: dps
+    description: >
+      Orbs orbit the caster for a duration, damaging anything they sweep. Proximity
+      does the work; walk enemies into the orbits. High base damage.
+    scaling: defence
+    grants: ["speed (low)", "defence (high)"]
+    range: "very low"
+    cooldown: med
+    cast_time: instant
+    hold: "no"
 
-      - name: Thwomp
-        description: >
-          An instant radial knockback pulse; more damage the closer the enemy, chip at
-          the edge. The "get off me" button.
-        scaling: defence
-        grants: ["defence (high)", "health (med)"]
-        range: low
-        cooldown: med
-        cast_time: "very low"
-        hold: "no"
+  - name: Chomp
+    category: dps
+    description: >
+      A short lunge-bite: the caster steps in and shreds at melee, then cools down.
+      Where Blam plants you and fires two cones, Chomp closes the gap itself, a
+      mobile brawler's opener that trades Blam's spread for a committed step into
+      the target. The lunge is the aim, so a whiffed dash wastes the whole burst.
+    scaling: skill
+    grants: ["skill (med)", "defence (med)"]
+    range: "very low"
+    cooldown: low
+    cast_time: instant
+    hold: "no"
 
-      - name: Brrr
-        description: >
-          An ice patch that grows in a line towards the direction of the cursor; on
-          release the whole area bursts and throws shards.
-        scaling: skill
-        grants: ["skill (med)", "health (med)"]
-        range: high
-        cooldown: med
-        cast_time: instant
-        hold: charged
+  - name: Fireball
+    category: nukes
+    description: >
+      The starting spell: the first thing a new player has in a slot, and the
+      baseline every other nuke is read against. A homing orb toward the enemy
+      nearest the cursor; it explodes on impact, wall, or max range. All damage is
+      the explosion, so a shot that expires in open air still deals it. The homing
+      and the guaranteed detonation make it hard to waste, which is what a first
+      spell should be.
+    scaling: skill
+    grants: ["skill (high)"]
+    range: high
+    cooldown: med
+    cast_time: low
+    hold: "no"
+    per_tier: "damage, explosion radius"
 
-      - name: Fwoosh
-        description: >
-          A short-lived wall of fire along a line toward the cursor. Enemies pay HP to
-          cross it, and it blocks their bullets (not yours).
-        scaling: skill
-        grants: ["skill (low)", "health (med)"]
-        range: med
-        cooldown: med
-        cast_time: low
-        hold: "no"
+  - name: Zaap
+    category: nukes
+    description: >
+      An instant chain-lightning bolt that leaps between packed enemies; one lone
+      target gets a single zap.
+    scaling: speed
+    grants: ["speed (med)"]
+    range: med
+    cooldown: low
+    cast_time: instant
+    hold: "no"
 
-      - name: Ploop
-        description: >
-          Drops a floating mine that arms after a delay, then erupts into piercing darts
-          on proximity. Several can be out at once. Prep a room or cover a retreat.
-        scaling: speed
-        grants: ["defence (med)", "speed (med)"]
-        range: low
-        cooldown: low
-        cast_time: instant
-        hold: "no"
+  - name: Zoing
+    category: nukes
+    description: >
+      A fast piercing bullet that ricochets off walls; each bounce is a fresh leg of
+      travel and adds damage.
+    scaling: skill
+    grants: ["skill (high)", "speed (low)"]
+    range: high
+    cooldown: med
+    cast_time: instant
+    hold: "no"
 
-      - name: Oop
-        description: >
-          Drops a floating mine that arms after a delay, then erupts into a
-          fireball-like explosion on proximity.
-        scaling: speed
-        grants: ["skill (med)", "speed (med)"]
-        range: low
-        cooldown: low
-        cast_time: "very low"
-        hold: "no"
+  - name: Kaboom
+    category: nukes
+    description: >
+      A scattered meteor rain across the whole screen; ground marks telegraph, then
+      each meteor explodes for its own AoE.
+    scaling: skill
+    grants: ["skill (very high)"]
+    range: "very high"
+    cooldown: "very high"
+    cast_time: high
+    hold: "no"
 
-      - name: Nope
-        description: >
-          On a long cooldown, raises a bubble that absorbs incoming damage; a white ring
-          flashes on each absorbed hit.
-        scaling: defence
-        grants: ["defence (high)", "health (med)"]
-        range: self
-        cooldown: low
-        cast_time: instant
-        hold: channeled
+  - name: Piercing Lights
+    category: nukes
+    description: >
+      Projectiles spawn in a wide ring around the caster and converge into the aim
+      direction, each piercing every hurtbox it crosses. Because they start spread
+      and close on a single line, the damage stacks up along that line: an enemy
+      standing in the aim direction is crossed by most of the fan at once, while
+      anything off-axis is only clipped by the outermost lights. It rewards lining a
+      target up rather than raw volume.
+    scaling: speed
+    grants: ["speed (med)"]
+    range: high
+    cooldown: med
+    cast_time: low
+    hold: "no"
 
-      - name: Slurp
-        description: >
-          An aura that drains every enemy in range each tick and heals the caster for a
-          fraction. Steady damage and self-healing on one button.
-        scaling: health
-        grants: ["health (med)", "defence (med)"]
-        range: low
-        cooldown: med
-        cast_time: instant
-        hold: channeled
+  - name: Bwoom
+    category: nukes
+    description: >
+      Charges in front of the caster while held, growing per tick; on release it
+      fires a piercing line whose damage scales with charge.
+    scaling: defence
+    grants: ["skill (med)", "health (med)"]
+    range: high
+    cooldown: high
+    cast_time: high
+    hold: charged
 
-      - name: Heal
-        description: >
-          Instantly restores health. The safety net every survivability loadout
-          considers.
-        scaling: defence
-        grants: ["health (high)", "defence (low)"]
-        range: self
-        cooldown: high
-        cast_time: med
-        hold: "no"
+  - name: Krak
+    category: nukes
+    description: >
+      A line of spikes erupts from the floor toward the aim after a short telegraph
+      (Trapdoor volley). A delayed ground nuke: it ignores intervening cover,
+      striking wherever the line lands rather than travelling to it. The telegraph
+      is the cost: the payload only pays off against an enemy that can't clear the
+      marked ground in time.
+    scaling: skill
+    grants: ["skill (high)", "defence (low)"]
+    range: high
+    cooldown: med
+    cast_time: low
+    hold: "no"
+
+  - name: Splay
+    category: nukes
+    description: >
+      Projectiles spawn around the caster one at a time, each at a random position,
+      then fly off in a random direction, a scatter that unfolds over a short window
+      rather than landing all at once. It sits between Piercing Lights' aimed fan and
+      Ring's tidy pulses: unaimed and shapeless, just a cloud of chaos you stand
+      inside. It rewards being in the middle of a crowd over lining anything up.
+    scaling: speed
+    grants: ["speed (med)", "health (med)"]
+    range: med
+    cooldown: high
+    cast_time: instant
+    hold: "no"
+
+  - name: Halp
+    category: summon
+    description: >
+      A small squad of ranged minions firing single bullets. A walking gunline.
+    scaling: health
+    grants: ["health (high)", "skill (low)"]
+    range: med
+    cooldown: high
+    cast_time: low
+    hold: "no"
+
+  - name: Bzzz
+    category: summon
+    description: >
+      A fragile swarm of fast, short-range minions; chaff that dumps damage then
+      dies.
+    scaling: speed
+    grants: ["health (med)", "speed (low)"]
+    range: low
+    cooldown: med
+    cast_time: low
+    hold: "no"
+
+  - name: Jimmy
+    category: summon
+    description: >
+      One heavy minion firing a ring around itself; a walking turret that denies an
+      area.
+    scaling: defence
+    grants: ["health (very high)", "defence (low)"]
+    range: med
+    cooldown: "very high"
+    cast_time: med
+    hold: "no"
+
+  - name: Beep Boop
+    category: summon
+    description: >
+      One steady single-shot minion, long-lived. The dependable second firing line.
+    scaling: skill
+    grants: ["health (med)", "skill (med)"]
+    range: high
+    cooldown: med
+    cast_time: low
+    hold: "no"
+
+  - name: Blink
+    category: utility
+    description: >
+      Instant teleport to the cursor, range-clamped. Pure mobility.
+    scaling: "-"
+    grants: ["speed (high)", "skill (low)"]
+    range: med
+    cooldown: med
+    cast_time: instant
+    hold: "no"
+
+  - name: Nyoom
+    category: utility
+    description: >
+      Converts skill into speed for a duration; casting another spell breaks it. For
+      fast travel.
+    scaling: skill
+    grants: ["speed (med)", "skill (med)"]
+    range: self
+    cooldown: high
+    cast_time: med
+    hold: "no"
+
+  - name: Shing
+    category: utility
+    description: >
+      Your next spell casts twice.
+    scaling: "-"
+    grants: ["health (med)"]
+    range: self
+    cooldown: high
+    cast_time: instant
+    hold: "no"
+
+  - name: Clang
+    category: utility
+    description: >
+      For a short window, all your bullets are piercing.
+    scaling: "-"
+    grants: ["skill (med)"]
+    range: self
+    cooldown: high
+    cast_time: instant
+    hold: "no"
+
+  - name: ChargeDash
+    category: utility
+    description: >
+      Charges in a direction for a short duration at high speed. Sends bullets at 90
+      degrees.
+    scaling: skill
+    grants: ["skill (med)", "defence (med)"]
+    range: med
+    cooldown: high
+    cast_time: instant
+    hold: "no"
+
+  - name: Vroop
+    category: utility
+    description: >
+      Shoots a fireball-like bullet. When it hits an enemy, a wall, or the end of the
+      range, creates a vortex that drags enemies to its center. Sets up an AoE
+      follow-up on the whole clump.
+    scaling: "-"
+    grants: ["defence (high)", "skill (low)"]
+    range: med
+    cooldown: high
+    cast_time: high
+    hold: "no"
+
+  - name: Thwomp
+    category: utility
+    description: >
+      An instant radial knockback pulse; more damage the closer the enemy, chip at
+      the edge. The "get off me" button.
+    scaling: defence
+    grants: ["defence (high)", "health (med)"]
+    range: low
+    cooldown: med
+    cast_time: "very low"
+    hold: "no"
+
+  - name: Brrr
+    category: utility
+    description: >
+      An ice patch that grows in a line towards the direction of the cursor; on
+      release the whole area bursts and throws shards.
+    scaling: skill
+    grants: ["skill (med)", "health (med)"]
+    range: high
+    cooldown: med
+    cast_time: instant
+    hold: charged
+
+  - name: Fwoosh
+    category: utility
+    description: >
+      A short-lived wall of fire along a line toward the cursor. Enemies pay HP to
+      cross it, and it blocks their bullets (not yours).
+    scaling: skill
+    grants: ["skill (low)", "health (med)"]
+    range: med
+    cooldown: med
+    cast_time: low
+    hold: "no"
+
+  - name: Ploop
+    category: utility
+    description: >
+      Drops a floating mine that arms after a delay, then erupts into piercing darts
+      on proximity. Several can be out at once. Prep a room or cover a retreat.
+    scaling: speed
+    grants: ["defence (med)", "speed (med)"]
+    range: low
+    cooldown: low
+    cast_time: instant
+    hold: "no"
+
+  - name: Oop
+    category: utility
+    description: >
+      Drops a floating mine that arms after a delay, then erupts into a
+      fireball-like explosion on proximity.
+    scaling: speed
+    grants: ["skill (med)", "speed (med)"]
+    range: low
+    cooldown: low
+    cast_time: "very low"
+    hold: "no"
+
+  - name: Nope
+    category: utility
+    description: >
+      On a long cooldown, raises a bubble that absorbs incoming damage; a white ring
+      flashes on each absorbed hit.
+    scaling: defence
+    grants: ["defence (high)", "health (med)"]
+    range: self
+    cooldown: low
+    cast_time: instant
+    hold: channeled
+
+  - name: Slurp
+    category: utility
+    description: >
+      An aura that drains every enemy in range each tick and heals the caster for a
+      fraction. Steady damage and self-healing on one button.
+    scaling: health
+    grants: ["health (med)", "defence (med)"]
+    range: low
+    cooldown: med
+    cast_time: instant
+    hold: channeled
+
+  - name: Heal
+    category: utility
+    description: >
+      Instantly restores health. The safety net every survivability loadout
+      considers.
+    scaling: defence
+    grants: ["health (high)", "defence (low)"]
+    range: self
+    cooldown: high
+    cast_time: med
+    hold: "no"

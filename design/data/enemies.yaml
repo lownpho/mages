@@ -1,0 +1,338 @@
+# Enemy catalogue — design source of truth.
+#
+# A flat list of every (implemented) enemy — one entry per enemy, keyed by `name`.
+# This file holds NO biome information: which biome an enemy belongs to, where it
+# sits in the roster, and which sub-biome a boss caps all live in biomes.yaml. An
+# enemy that appears in several biomes is still defined once, here.
+#
+# `design/tools/build.py` renders this into design/docs/enemies.md (the section
+# between the GENERATED markers, grouped under each biome per biomes.yaml) and
+# feeds the per-enemy drops table in design/docs/biomes.md — an enemy's `drops`
+# live HERE and nowhere else.
+#
+# Edit enemies HERE, then run:  python3 design/tools/build.py
+# Do NOT hand-edit the generated section of enemies.md.
+#
+# Only shipped enemies belong in this file. Proposals stay in the hand-written
+# "ideas" section of enemies.md, out of the generated region.
+#
+# Per enemy:
+#   name / rarity (common|rare|boss)
+#   description : literal markdown block, emitted verbatim (may carry a bullet list)
+#   art         : the "**Art:**" line
+#   hp/speed/detection/attack : the stat table's prose cells
+#   casts       : spell names the enemy casts
+#   drops       : {spell, tier} pairs — canonical drop data, reused by biomes.md
+#   notes       : optional "**Notes:**" line
+#   fsm         : the AI state machine as data — { start: <initial state>,
+#                 transitions: [ {from, to, when?}, ... ] }. build.py renders it to a
+#                 mermaid stateDiagram-v2 block; `when` (the trigger) is optional.
+#                 (Named `when`, not `on`: YAML reads a bare `on` key as boolean.)
+
+enemies:
+  - name: sproutling
+    rarity: common
+    description: |
+      Rooted in place, watching. It sits in `Idle` until the player is in sight, then spits a
+      single slow seed at a steady pace. This is the first enemy the player meets. The seed is slow
+      enough to sidestep on reflex, so it teaches that enemies shoot without much risk.
+    art: "a stem, a leaf, and two eyes. The simplest sprite in the biome, in glade green."
+    hp: low
+    speed: stationary
+    detection: med
+    attack: "`SinglePattern` seed, low dmg, slow cadence"
+    casts: [Pew]
+    drops:
+      - {spell: Pew, tier: 1}
+      - {spell: Heal, tier: 1}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Attack, when: sees player}
+        - {from: Attack, to: Idle, when: lost sight}
+
+  - name: hopper
+    rarity: common
+    description: |
+      A quick closer, and the first enemy that actually comes at you. It `Wander`s until it spots
+      you, then weaves in and pokes at short range with a fast single shot. Fragile and low-damage
+      alone; it turns up in pairs with sproutlings, so it teaches you to keep moving while something
+      crowds your space.
+    art: "a small round critter with two eyes and stubby legs, glade green (8×8): a two-frame idle and a three-frame hop."
+    hp: low
+    speed: fast (weaving chase)
+    detection: med
+    attack: "`SinglePattern` poke, low dmg, fast cadence"
+    casts: [Pew]
+    drops:
+      - {spell: Pew, tier: 1}
+      - {spell: Heal, tier: 1}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Attack, when: in range}
+        - {from: Attack, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+
+  - name: wasp
+    rarity: common
+    description: |
+      A hostile version of the player's Bzzz summon. It flits in on the same flying-minion
+      behaviour and pesters you with quick stings. Fragile and never a real threat alone. Its job is
+      to show the summon's logic from the other side, and to drop the spell that turns wasps to your
+      side. It also appears in the insect deepwood.
+    art: "a small bee in a hostile ochre two-tone (the Bzzz summon recoloured), with eye pixels."
+    hp: very low
+    speed: fast (flitting)
+    detection: long
+    attack: "`SinglePattern` sting, low dmg, fast cadence"
+    casts: [Pew]
+    drops:
+      - {spell: Bzzz, tier: 1}
+      - {spell: Pew, tier: 1}
+      - {spell: Zaap, tier: 1}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Attack, when: in range}
+        - {from: Attack, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+
+  - name: mandrake
+    rarity: common
+    description: |
+      Low HP, high tempo, always in a pack. Mandrakes uproot and sprint straight at you, wailing a
+      slow sound wave as they close. One is trivial. The point is the group: three or four converge
+      so the waves overlap and force you to move. This is the glade's lesson in what the AoE spells
+      are *for*, and they spawn in exactly the clumps that reward one.
+    art: "a root-bodied figure with a screaming face; the wave is two expanding arcs."
+    hp: low
+    speed: fast (straight chase, packs)
+    detection: med
+    attack: "`SinglePattern` sound wave, low dmg, med cadence"
+    casts: [Blam]
+    drops:
+      - {spell: Blam, tier: 1}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Attack, when: in range}
+        - {from: Attack, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+
+  - name: seedling
+    rarity: common
+    description: |
+      A sproutling that grew up: the same rooted plant, but instead of one lazy seed it opens into a
+      slow ring. Where the sproutling teaches that enemies shoot, the seedling teaches you not to
+      stand next to the thing that shoots. The ring makes its own tile expensive even though it never
+      chases. It works as area denial, and it stays a speed bump in both glade flavours.
+    art: "the sproutling sprite crowned with a ring of buds."
+    hp: low
+    speed: stationary
+    detection: med
+    attack: "`RingPattern` of seeds, low dmg, slow cadence"
+    casts: [Ring]
+    drops:
+      - {spell: Ring, tier: 1}
+      - {spell: Heal, tier: 1}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Ring, when: sees player}
+        - {from: Ring, to: Idle, when: lost sight}
+
+  - name: dirt golem
+    rarity: common
+    description: |
+      The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings
+      barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You
+      learn to read an area denier that sits still and then lumbers after you, and here a misread is
+      cheap. You can always outrun it, so the threat is the space it fills.
+    art: "the golem sprite in packed-earth browns with grass tufts on its shoulders."
+    hp: very high
+    speed: slow
+    detection: long
+    attack: "`RingPattern`, low dmg, med cadence"
+    casts: [Ring]
+    drops:
+      - {spell: Nope, tier: 1}
+      - {spell: Ring, tier: 1}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Ring, when: in range}
+        - {from: Ring, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost sight}
+
+  - name: thornthrower
+    rarity: common
+    description: |
+      `Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing
+      thorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.
+    art: "an uprooted thorn-plant on root legs, muted glade green with red thorn tips; the missile is a spinning thorn."
+    hp: med
+    speed: med (chase)
+    detection: med
+    attack: "single `Homing` thorn, low dmg, slow cadence"
+    casts: [Snipe]
+    drops:
+      - {spell: Snipe, tier: 1}
+    fsm:
+      start: Wander
+      transitions:
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Chase, to: Attack, when: in range}
+        - {from: Attack, to: Chase, when: out of range}
+        - {from: Chase, to: Wander, when: lost}
+
+  - name: rosebud
+    rarity: common
+    description: |
+      Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into
+      a defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it
+      blooms into a `RingPattern` whose aim rotates slightly each pulse, and idles again. It teaches
+      you to read the telegraph instead of face-tanking.
+    art: "a closed rose bud on a stem, glade greens with red petals; a petal-spread frame to bloom, a clamped-shut frame for the shell."
+    hp: low
+    speed: stationary
+    detection: short
+    attack: "rotating `RingPattern`, low dmg, med cadence"
+    casts: [Ring]
+    drops:
+      - {spell: Ring, tier: 1}
+      - {spell: Nope, tier: 1}
+    notes: "Defensive Shell on the windup: wait out the telegraph, then burn during the bloom."
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Bud, when: player too close / hit}
+        - {from: Bud, to: Bloom, when: windup done}
+        - {from: Bloom, to: Idle, when: ring fired}
+
+  - name: viper
+    rarity: rare
+    description: |
+      The one enemy that runs from you. The instant it sees you it picks a random direction and
+      slithers off, and it turns to fight only when it can't flee: cornered, it unloads a wide
+      shotgun barrage and bolts again in a fresh direction. It carries tier-2 gear, so it is worth
+      chasing. Cut the angle, trap it against a tree, and eat the barrage to claim the drop.
+    art: "the snake sprite in a rare venom-green with gold banding."
+    hp: very high
+    speed: med idling, fast fleeing
+    detection: long
+    attack: "`ShotgunPattern` barrage, high dmg, on corner"
+    casts: [Blam]
+    drops:
+      - {spell: Blam, tier: 2}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Flee, when: sees player (random dir)}
+        - {from: Flee, to: Barrage, when: cornered}
+        - {from: Barrage, to: Flee, when: shots fired (new dir)}
+        - {from: Flee, to: Idle, when: lost}
+
+  - name: mandraker
+    rarity: rare
+    description: |
+      Rare mandrake that casts fireball
+    art: "a root-bodied figure with a screaming face; the wave is two expanding arcs. Palette towards red"
+    hp: low
+    speed: fast (straight chase, packs)
+    detection: med
+    attack: "`SinglePattern` sound wave, low dmg, med cadence"
+    casts: [Blam, fireball]
+    drops:
+      - {spell: Fireball, tier: 2}
+      - {spell: Blam, tier: 2}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Attack, when: in range}
+        - {from: Chase, to: Fireball, when: in range}
+        - {from: Attack, to: Chase, when: out of range}
+        - {from: Fireball, to: Chase, when: done}
+        - {from: Chase, to: Idle, when: lost}
+
+  - name: fae
+    rarity: boss
+    description: |
+      The glade's floral capstone. It is a flitting sprite that hangs at range and rolls a fresh
+      attack each phase on a `PatternPicker`, so the fight never settles into one rhythm. No single
+      phase is deadly, but each one runs long, so you win by dealing steady damage while avoiding
+      chip over many cycles.
+
+      - **Rings** (`RingPattern`): pulses full rings for several seconds to weave through.
+      - **Aimed shotgun** (`Volley` + `ShotgunPattern`): a tight cone fired several times in a row.
+        Punishes standing still.
+      - **Rest** (`FaeRest`): does nothing briefly. Your burn window.
+      - **Chase**: flits straight at you at half your speed without shooting, just to shove you out of
+        position. It breaks off and rolls a new phase once it gets close enough.
+    art: "a small winged figure, one bright fill and a trail of light (16×16 boss sheet)."
+    hp: very high (boss)
+    speed: stationary mid-pattern; med during Chase
+    detection: long
+    attack: "rings / aimed shotgun / chase, med dmg"
+    casts: [Ring, Blam]
+    drops:
+      - {spell: Blam, tier: 2}
+      - {spell: Ring, tier: 2}
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Pattern, when: sees player}
+        - {from: Pattern, to: Rings, when: roll}
+        - {from: Pattern, to: Shotgun, when: roll}
+        - {from: Pattern, to: Rest, when: roll}
+        - {from: Pattern, to: Chase, when: roll}
+        - {from: Rings, to: Pattern}
+        - {from: Shotgun, to: Pattern}
+        - {from: Rest, to: Pattern}
+        - {from: Chase, to: Pattern, when: close enough}
+        - {from: Pattern, to: Idle, when: lost}
+
+  - name: thornmess
+    rarity: boss
+    description: |
+      The rooted capstone. It stays on the ground and runs a `PatternPicker`
+      split into two HP-gated pools. It idles until you are in range, then fires thornthrower
+      missiles. If you break range it uproots and sprints to close, where it behaves like a rosebud
+      or fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen,
+      seeds the room with the biome's rooted plants, then returns to the cycle.
+    art: "a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red thorn tips (boss sheet)."
+    hp: very high (boss)
+    speed: stationary rooted; fast when re-closing
+    detection: med
+    attack: "homing missiles / rosebud bloom / shotgun volleys"
+    casts: [Snipe, Ring, Blam, "Jimmy (summon)"]
+    drops:
+      - {spell: Jimmy, tier: 2}
+      - {spell: Snipe, tier: 2}
+      - {spell: Ring, tier: 2}
+    notes: "the low-HP phase swaps in a spore and summon wave rather than layering a summon on top."
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Missiles, when: in range}
+        - {from: Missiles, to: Uproot, when: player fled}
+        - {from: Uproot, to: Missiles, when: back in range}
+        - {from: Missiles, to: Bloom, when: roll}
+        - {from: Missiles, to: Shotgun, when: roll}
+        - {from: Bloom, to: Missiles}
+        - {from: Shotgun, to: Missiles}
+        - {from: Missiles, to: Desperation, when: low HP}
+        - {from: Desperation, to: Missiles, when: wave placed}
