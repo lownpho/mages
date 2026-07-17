@@ -36,6 +36,13 @@ var damage_absorber: Node2D = null
 ## any buff effect reuses it by handing over a modifier-carrying resource.
 var active_buffs: Array = []
 var can_use_weapon: bool = true
+# ChargeDash: while Time.get_ticks_msec() < _dash_until_ms the player is driven
+# by _dash_velocity, overriding FSM movement (see start_dash).
+var _dash_velocity: Vector2 = Vector2.ZERO
+var _dash_until_ms: int = 0
+## While true, weapon-spell bullets fired pass through hurtboxes (Clang buff).
+## A spell effect sets it on cast and clears it when its window ends.
+var bullets_pierce: bool = false
 ## Weapon-spell bursts currently firing. Starting an exclusive spell cancels
 ## them onto their cooldowns: a new burst (register_burst) or a cast/channel
 ## (cancel_bursts, called by SpellCaster). Instant spells leave them firing.
@@ -96,7 +103,31 @@ func get_input_direction() -> Vector2:
 	var direction_y := Input.get_axis("up", "down")
 	return Vector2(direction_x, direction_y).normalized()
 
+# Generic dash: an effect (ChargeDash) drives the player in a fixed direction at
+# dash_speed for `duration`, overriding normal movement and locking casts. Any
+# future dash/charge spell reuses it — the effect fires its own side bullets.
+func start_dash(direction: Vector2, dash_speed: float, duration: float) -> void:
+	_dash_velocity = direction.normalized() * dash_speed
+	_dash_until_ms = Time.get_ticks_msec() + int(duration * 1000.0)
+	can_use_weapon = false
+
+func _is_dashing() -> bool:
+	return Time.get_ticks_msec() < _dash_until_ms
+
+func _physics_process(_delta: float) -> void:
+	if _is_dashing():
+		velocity = _dash_velocity
+		move_and_slide()
+	elif _dash_velocity != Vector2.ZERO:
+		# Dash just ended: stop and hand control back. Casts can't start mid-dash
+		# (can_use_weapon is false), so restoring it here is always correct.
+		_dash_velocity = Vector2.ZERO
+		velocity = Vector2.ZERO
+		can_use_weapon = true
+
 func _on_idle_physics_update(_delta: float) -> void:
+	if _is_dashing():
+		return
 	var direction = get_input_direction()
 
 	if direction != Vector2.ZERO:
@@ -108,6 +139,8 @@ func _on_idle_physics_update(_delta: float) -> void:
 	move_and_slide()
 
 func _on_move_physics_update(_delta: float) -> void:
+	if _is_dashing():
+		return
 	var direction = get_input_direction()
 
 	if direction == Vector2.ZERO:

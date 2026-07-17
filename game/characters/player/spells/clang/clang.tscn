@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyhvklaj8f7rl"]
+
+[ext_resource type="Script" uid="uid://bbmi1saw6v1he" path="res://characters/player/spells/clang/clang.gd" id="1"]
+
+[node name="Clang" type="Node2D"]
+script = ExtResource("1")

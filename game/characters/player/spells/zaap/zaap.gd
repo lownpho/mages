@@ -9,6 +9,7 @@ extends CharacterBody2D
 
 var data: ZaapResource
 var skill: int = 0
+var speed: int = 0
 
 var _direction: Vector2 = Vector2.RIGHT
 var _target: Node2D = null
@@ -19,6 +20,8 @@ var _leg_timer: Timer
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
 	skill = caster.skill
+	var spd = caster.get("speed")
+	speed = spd if spd != null else 0
 	global_position = caster.global_position
 	_direction = (caster.get_global_mouse_position() - caster.global_position).normalized()
 
@@ -54,7 +57,7 @@ func _physics_process(delta: float) -> void:
 		queue_free()  # wall
 
 func get_damage() -> int:
-	return roundi(data.base_damage + skill * data.skill_scaling)
+	return data.damage_for(skill, speed)
 
 # Called by the Hurtbox we just zapped (bullets-group contract). The hurt was
 # already applied; here we only decide where the chain goes next.

@@ -18,5 +18,5 @@ channeled = true
 base_damage = 30.0
 skill_scaling = 0.8
 icon = SubResource("AtlasTexture_icon")
-defence_modifier = 7
-skill_modifier = 2
+skill_modifier = 5
+max_health_modifier = 20

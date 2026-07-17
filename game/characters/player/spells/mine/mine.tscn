@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ufj2vka58gt1"]
+
+[ext_resource type="Script" uid="uid://dxuf1afnhcvmd" path="res://characters/player/spells/mine/mine.gd" id="1"]
+
+[node name="Mine" type="Node2D"]
+script = ExtResource("1")

@@ -6,6 +6,10 @@ class_name BulletResource
 @export var range_tiles: int = 16
 @export var speed_tiles: int = 128
 @export var skill_scaling: float = 1.0
+## Extra damage per point of the caster's speed stat. Lets a weapon scale with
+## speed instead of (or alongside) skill — the caster's speed is stamped on the
+## bullet like skill is. 0 = no speed scaling. Enemy bullets leave this at 0.
+@export var speed_scaling: float = 0.0
 @export var homing: bool = false
 ## Aim assist: max steering rate in degrees per second. Low (~120) gives a light
 ## nudge that fast targets can outrun; very high (~1000+) snaps onto anything

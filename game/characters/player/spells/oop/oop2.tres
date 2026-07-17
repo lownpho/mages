@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="MineResource" format=3 uid="uid://dwwm8uqcg8vml"]
+
+[ext_resource type="Script" uid="uid://bra1hj36i1rxn" path="res://characters/player/spells/mine/mine_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://ufj2vka58gt1" path="res://characters/player/spells/mine/mine.tscn" id="3"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="6"]
+
+[sub_resource type="AtlasTexture" id="minetex"]
+atlas = ExtResource("6")
+region = Rect2(48, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="icon"]
+atlas = ExtResource("2")
+region = Rect2(48, 64, 8, 8)
+
+[resource]
+script = ExtResource("1")
+mine_count = 2
+arm_delay = 0.6
+trigger_radius_tiles = 2.5
+scatter_tiles = 1.5
+mine_texture = SubResource("minetex")
+explode_radius_tiles = 3.5
+effect_scene = ExtResource("3")
+cooldown = 3.5
+base_damage = 28.0
+speed_scaling = 0.1
+icon = SubResource("icon")
+skill_modifier = 4
+speed_modifier = 5

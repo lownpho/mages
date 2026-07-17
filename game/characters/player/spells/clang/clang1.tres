@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ClangResource" format=3 uid="uid://vetvacc5dmbr"]
+
+[ext_resource type="Script" uid="uid://bto0l5ycpiff1" path="res://characters/player/spells/clang/clang_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://cyhvklaj8f7rl" path="res://characters/player/spells/clang/clang.tscn" id="3"]
+
+[sub_resource type="AtlasTexture" id="icon"]
+atlas = ExtResource("2")
+region = Rect2(64, 56, 8, 8)
+
+[resource]
+script = ExtResource("1")
+duration = 5.0
+effect_scene = ExtResource("3")
+cooldown = 12.0
+icon = SubResource("icon")
+skill_modifier = 4

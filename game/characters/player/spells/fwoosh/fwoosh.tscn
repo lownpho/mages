@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://fkjvbuh5w76g"]
+
+[ext_resource type="Script" uid="uid://8y74f357annm" path="res://characters/player/spells/fwoosh/fwoosh.gd" id="1"]
+
+[node name="Fwoosh" type="Node2D"]
+script = ExtResource("1")

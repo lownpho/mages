@@ -80,6 +80,9 @@ func _fire() -> void:
 			+ dirs[i] * (randf() * data.fire_pattern.spawn_offset) + lateral
 		bullet.base_direction = dirs[i]
 		bullet.skill = skill
+		var spd = caster.get("speed")
+		bullet.speed = spd if spd != null else 0
+		bullet.pierce = caster.get("bullets_pierce") == true
 		bullet.target = target
 		get_tree().root.add_child(bullet)
 

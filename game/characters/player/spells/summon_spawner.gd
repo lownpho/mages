@@ -12,18 +12,25 @@ extends Node2D
 var data: SummonResource
 var _origin: Vector2
 var _facing: Vector2 = Vector2.RIGHT
+var _damage_bonus: int = 0
 
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
 	_origin = caster.global_position
 	_facing = (caster.get_global_mouse_position() - caster.global_position).normalized()
+	# Snapshot the archetype's scaling stat and turn it into a flat per-bullet
+	# damage bonus the minions carry (see summon_resource.scaling_stat).
+	var stat_key := "max_health" if data.scaling_stat == "health" else data.scaling_stat
+	var stat_value = caster.get(stat_key)
+	if stat_value != null:
+		_damage_bonus = roundi(float(stat_value) * data.damage_per_stat)
 
 func _ready() -> void:
 	var perp := _facing.orthogonal()
 	for i in data.count:
 		var minion: Creature = data.minion_scene.instantiate()
 		minion.max_health = data.minion_health  # Creature uses this directly when `data` is null
-		minion.get_node("FSM/Attack").weapon_data = data.minion_weapon
+		minion.get_node("FSM/Attack").weapon_data = _scaled_weapon()
 		_apply_sheet(minion, data.minion_sheet)
 		var offset := (i - (data.count - 1) / 2.0) * spread
 		minion.global_position = _origin + _facing * spawn_distance + perp * offset
@@ -33,6 +40,21 @@ func _ready() -> void:
 		if data.minion_lifetime > 0.0:
 			get_tree().create_timer(data.minion_lifetime).timeout.connect(minion.queue_free)
 	queue_free()
+
+# The minion weapon with the caster-stat damage bonus folded into its bullet.
+# Deep-copied once (shared read-only across this cast's minions) so the authored
+# .tres is never mutated; returns the original untouched when there's no bonus.
+var _scaled_cache: SpellResource
+
+func _scaled_weapon() -> SpellResource:
+	if _damage_bonus == 0 or data.minion_weapon == null:
+		return data.minion_weapon
+	if _scaled_cache == null:
+		_scaled_cache = data.minion_weapon.duplicate(true)
+		var bullet = _scaled_cache.get("bullet")
+		if bullet:
+			bullet.base_damage += _damage_bonus
+	return _scaled_cache
 
 # Swap this tier's spritesheet onto the minion's authored frames, so one minion scene
 # serves tiers that look different (e.g. Jimmy's three sizes). Deep-copy first so the

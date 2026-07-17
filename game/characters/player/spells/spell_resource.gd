@@ -22,9 +22,21 @@ class_name SpellResource
 @export var channel_while_moving: bool = false
 @export var base_damage: float = 0.0
 @export var skill_scaling: float = 0.0
+## Extra damage per point of caster speed, mirroring skill_scaling. Lets a spell
+## scale with the speed stat instead of skill. 0 = no speed scaling.
+@export var speed_scaling: float = 0.0
+## Extra damage per point of caster defence (Halo, Bwoom, …). 0 = none.
+@export var defence_scaling: float = 0.0
 
 func get_item_type() -> GlobalInventory.ItemType:
 	return GlobalInventory.ItemType.SPELL
+
+# Standard spell-damage formula: base plus per-stat scaling. Effects that deal
+# damage should call this so speed_scaling is honoured uniformly. speed defaults
+# to 0 so skill-only callers (and enemy casts) are unaffected.
+func damage_for(p_skill: int, p_speed: int = 0, p_defence: int = 0) -> int:
+	return roundi(base_damage + p_skill * skill_scaling + p_speed * speed_scaling \
+		+ p_defence * defence_scaling)
 
 func get_stats() -> Array:
 	var rows := []

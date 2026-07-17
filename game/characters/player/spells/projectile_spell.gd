@@ -3,8 +3,8 @@ extends Node2D
 ## Generic projectile-spell effect: spawns one BaseBullet from the spell's
 ## BulletResource, aimed at the cursor, then frees itself. Every behaviour —
 ## ricochet, homing, detonating into an AoE + ring — lives on the bullet, so this
-## one effect drives Zoing (a ricochet bullet), Sploom (a homing bullet that
-## explodes into a RingPattern), and any future projectile spell with no new code.
+## one effect drives Zoing (a ricochet bullet), Oop (a proximity mine that
+## explodes into an AoE), and any future projectile spell with no new code.
 ##
 ## Like a weapon, but triggered by the spell pipeline. Aim and the player-bullet
 ## layer are still player-coupled (the mouse, the "enemies" group) the way every

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpellResource" format=3 uid="uid://bycdawkctvoxq"]
+
+[ext_resource type="Script" uid="uid://byx6j10csjj2x" path="res://characters/player/spells/spell_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://5vb3ft6bm6l" path="res://characters/player/spells/shing/shing.tscn" id="3"]
+
+[sub_resource type="AtlasTexture" id="icon"]
+atlas = ExtResource("2")
+region = Rect2(24, 64, 8, 8)
+
+[resource]
+script = ExtResource("1")
+effect_scene = ExtResource("3")
+cooldown = 12.0
+icon = SubResource("icon")
+max_health_modifier = 15

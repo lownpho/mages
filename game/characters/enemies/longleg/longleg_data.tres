@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="90_loot"]
-[ext_resource type="Resource" uid="uid://0q30f2pf4ff1" path="res://characters/player/spells/sploom/sploom2.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://dwwm8uqcg8vml" path="res://characters/player/spells/oop/oop2.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://b6ba5cn0bc48j" path="res://characters/enemies/longleg/longlegs.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]

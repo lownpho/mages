@@ -35,6 +35,12 @@ var aim_direction: Vector2 = Vector2.RIGHT
 # enter() and restores it to 1.0 in exit(); left at 1.0 it's a no-op for everyone else.
 var incoming_damage_scale: float = 1.0
 
+# Decaying knockback impulse (px/s), applied on top of whatever the FSM state
+# does each physics frame. A spell pushes the creature by calling apply_knockback;
+# it bleeds off at KNOCKBACK_DECAY so the shove is a brief slide, not teleportation.
+var _knockback: Vector2 = Vector2.ZERO
+const KNOCKBACK_DECAY := 1200.0
+
 # Off-screen sleep margin: the area (centred on the creature) that must touch the screen
 # for it to stay awake. 8 tiles each side so a creature wakes well before it scrolls into
 # view rather than popping into motion at the edge.
@@ -69,6 +75,17 @@ func _ready() -> void:
 	# behaviours can't parent their timers yet. Deferred calls flush FIFO and the
 	# behaviours' _ready run before ours, so every timer exists before start().
 	fsm.start.call_deferred()
+
+# Push this creature with a velocity impulse (px/s) that decays to zero. Generic
+# and faction-agnostic — any radial-push spell (Thwomp) reuses it by capability.
+func apply_knockback(impulse: Vector2) -> void:
+	_knockback += impulse
+
+func _physics_process(delta: float) -> void:
+	if _knockback == Vector2.ZERO:
+		return
+	move_and_collide(_knockback * delta)
+	_knockback = _knockback.move_toward(Vector2.ZERO, KNOCKBACK_DECAY * delta)
 
 func make_timer(on_timeout: Callable) -> Timer:
 	var timer := Timer.new()

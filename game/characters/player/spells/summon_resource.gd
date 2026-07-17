@@ -20,3 +20,12 @@ class_name SummonResource
 ## this texture onto it, so one minion scene serves tiers that look different
 ## (e.g. Jimmy's three sizes) without per-tier scenes.
 @export var minion_sheet: Texture2D
+
+@export_group("Scaling")
+## Which of the caster's stats the minions' damage grows with (the summon's
+## archetype scaling: Halp=health, Bzzz=speed, Jimmy=defence, Beep Boop=skill).
+@export_enum("skill", "speed", "health", "defence") var scaling_stat: String = "skill"
+## Flat damage added to each minion's bullet per point of scaling_stat at cast
+## time. The spawner deep-copies the weapon before bumping it, so the shared
+## resource is never mutated. 0 = minions don't scale with the caster.
+@export var damage_per_stat: float = 0.0

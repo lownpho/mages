@@ -18,6 +18,10 @@ var _cooldowns: Dictionary = {}  # SpellResource -> one-shot cooldown Timer
 var _await_finish: Dictionary = {}
 var _cast_timer: Timer
 var _pending_spell: SpellResource
+# Shing: when armed, the NEXT spell's effect spawns a second time (a delayed
+# echo). Arming is deferred so the spell that arms it (Shing) never echoes itself.
+var _echo_active: bool = false
+const _ECHO_DELAY := 0.18
 var _channel_spell: SpellResource
 var _channel_effect: Node
 var _channel_action: String
@@ -139,4 +143,28 @@ func _spawn_effect(spell: SpellResource) -> Node:
 	var effect = spell.effect_scene.instantiate()
 	effect.setup(spell, player)
 	get_tree().root.add_child(effect)
+	# Consume a pending Shing echo: re-spawn this spell's effect once, shortly
+	# after. The echo spawn re-enters here with _echo_active already false, so it
+	# never chains. Weapon-spell bursts are the one caveat — a second burst
+	# cancels the first — but nukes (Shing's intended target) echo cleanly.
+	if _echo_active:
+		_echo_active = false
+		_schedule_echo(spell)
 	return effect
+
+func _schedule_echo(spell: SpellResource) -> void:
+	var timer := Timer.new()
+	timer.one_shot = true
+	timer.wait_time = _ECHO_DELAY
+	add_child(timer)
+	timer.timeout.connect(func() -> void:
+		if is_instance_valid(player):
+			_spawn_effect(spell)
+		timer.queue_free())
+	timer.start()
+
+# Called by Shing's effect. Deferred activation means the arming cast (Shing
+# itself) has already spawned its own effect before the echo goes live, so Shing
+# never doubles itself — the very next spell does.
+func arm_echo() -> void:
+	set_deferred("_echo_active", true)

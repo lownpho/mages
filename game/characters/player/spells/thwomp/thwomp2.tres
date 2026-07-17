@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ThwompResource" format=3 uid="uid://dn875wjkmexld"]
+
+[ext_resource type="Script" uid="uid://bpmqnbte0wkwm" path="res://characters/player/spells/thwomp/thwomp_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://b7hb80p7f8dn" path="res://characters/player/spells/thwomp/thwomp.tscn" id="3"]
+
+[sub_resource type="AtlasTexture" id="icon"]
+atlas = ExtResource("2")
+region = Rect2(32, 64, 8, 8)
+
+[resource]
+script = ExtResource("1")
+radius_tiles = 3.5
+knockback_force = 1000.0
+effect_scene = ExtResource("3")
+cooldown = 5.0
+base_damage = 16.0
+defence_scaling = 1.5
+icon = SubResource("icon")
+defence_modifier = 6
+max_health_modifier = 20

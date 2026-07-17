@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b7hb80p7f8dn"]
+
+[ext_resource type="Script" uid="uid://b0bp5okkjxfrd" path="res://characters/player/spells/thwomp/thwomp.gd" id="1"]
+
+[node name="Thwomp" type="Node2D"]
+script = ExtResource("1")

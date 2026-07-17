@@ -7,6 +7,9 @@ const PX_PER_TILE := 8
 ## Physics layer bitmasks for bullets (see project settings layer names).
 const LAYER_PLAYER_BULLETS := 256
 const LAYER_ENEMY_BULLETS := 512
+## Barrier that stops enemy bullets (Fwoosh's fire wall). Only enemy bullets mask
+## it, so it blocks their fire while player bullets and creatures pass through.
+const LAYER_SPELL_BARRIER := 1024
 
 ## Canvas z ladder (world space), authored in the editor: each scene carries
 ## its value as a literal, and these constants are the reference list — keep

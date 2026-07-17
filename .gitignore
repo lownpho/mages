@@ -3,8 +3,9 @@
 addons/
 /android/
 
-docs/
-tools/
+/docs/
+/tools/
+design/docs/*.html
 
 # WIP deepwood enemies, not ready to commit yet
 /game/characters/enemies/ent/

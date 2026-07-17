@@ -8,17 +8,20 @@ const _LightScene = preload("res://characters/player/spells/piercing_lights/pier
 
 var data: PiercingLightsResource
 var skill: int = 0
+var caster_speed: int = 0
 
 var _direction: Vector2 = Vector2.RIGHT
 
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
 	skill = caster.skill
+	var spd = caster.get("speed")
+	caster_speed = spd if spd != null else 0
 	global_position = caster.global_position
 	_direction = (caster.get_global_mouse_position() - caster.global_position).normalized()
 
 func _ready() -> void:
-	var damage := roundi(data.base_damage + skill * data.skill_scaling)
+	var damage := data.damage_for(skill, caster_speed)
 	var speed := data.speed_tiles * GameConstants.PX_PER_TILE
 	var radius := data.spawn_radius_tiles * GameConstants.PX_PER_TILE
 	for i in data.projectile_count:

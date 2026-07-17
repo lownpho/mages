@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://5vb3ft6bm6l"]
+
+[ext_resource type="Script" uid="uid://cq3dvbpjjhuvw" path="res://characters/player/spells/shing/shing.gd" id="1"]
+
+[node name="Shing" type="Node2D"]
+script = ExtResource("1")

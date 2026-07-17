@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="WeaponSpellResource" format=3 uid="uid://br5jxq2xs1ns6"]
 
 [ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://ptqtdgoor86k" path="res://characters/player/spells/weapon_icons.png" id="2_atlas"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
 [ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="3_scene"]
 [ext_resource type="Script" uid="uid://d3hnuqjbp2epb" path="res://items/bullets/shotgun_pattern.gd" id="4_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="5_bres"]
@@ -26,7 +26,7 @@ spread_angle = 40.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(8, 16, 8, 8)
+region = Rect2(32, 56, 8, 8)
 
 [resource]
 script = ExtResource("1_script")

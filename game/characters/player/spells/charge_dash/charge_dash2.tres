@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ChargeDashResource" format=3 uid="uid://bmn47rkr68fxd"]
+
+[ext_resource type="Script" uid="uid://cbl8ahc2xacm8" path="res://characters/player/spells/charge_dash/charge_dash_resource.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2"]
+[ext_resource type="PackedScene" uid="uid://77lwlu8qw4gv" path="res://characters/player/spells/charge_dash/charge_dash.tscn" id="3"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="4"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="5"]
+
+[sub_resource type="AtlasTexture" id="proj"]
+atlas = ExtResource("5")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="Resource" id="bullet"]
+script = ExtResource("4")
+icon = SubResource("proj")
+base_damage = 8.0
+range_tiles = 6
+speed_tiles = 14
+skill_scaling = 0.3
+
+[sub_resource type="AtlasTexture" id="icon"]
+atlas = ExtResource("2")
+region = Rect2(56, 64, 8, 8)
+
+[resource]
+script = ExtResource("1")
+dash_speed = 560.0
+duration = 0.45
+fire_interval = 0.08
+bullet = SubResource("bullet")
+effect_scene = ExtResource("3")
+cooldown = 8.0
+icon = SubResource("icon")
+skill_modifier = 5
+defence_modifier = 4

@@ -7,6 +7,10 @@ var data: BulletResource
 var base_direction: Vector2 = Vector2.UP
 var target: Node2D
 var skill: int = 0
+var speed: int = 0  ## caster speed stat, for data.speed_scaling (0 on enemy bullets)
+## Pass through hurtboxes instead of despawning on contact (Clang buff). Leaves
+## the "bullets" group so Hurtbox damages but never calls reached_hurtbox().
+var pierce: bool = false
 
 var lifetime_timer: Timer
 var _bounces_left: int = 0
@@ -31,6 +35,12 @@ func _ready() -> void:
 		return
 
 	_bounces_left = data.wall_bounces
+	if pierce:
+		remove_from_group("bullets")
+	# Enemy bullets also collide with spell barriers (Fwoosh's fire wall); player
+	# bullets don't mask that layer, so the wall is one-way by construction.
+	if collision_layer & GameConstants.LAYER_ENEMY_BULLETS:
+		collision_mask |= GameConstants.LAYER_SPELL_BARRIER
 
 	var homing_tiles := data.homing_range_tiles if data.homing_range_tiles > 0.0 \
 		else data.range_tiles * _DEFAULT_HOMING_FRACTION
@@ -73,7 +83,7 @@ func _physics_process(delta: float) -> void:
 			_expire()
 
 func get_damage() -> int:
-	return round(data.base_damage + skill * data.skill_scaling)
+	return round(data.base_damage + skill * data.skill_scaling + speed * data.speed_scaling)
 
 func reached_hurtbox() -> void:
 	_expire()
@@ -119,5 +129,6 @@ func _spawn_burst() -> void:
 		bullet.collision_layer = collision_layer  # faction inherited
 		bullet.base_direction = dir
 		bullet.skill = skill
+		bullet.speed = speed
 		bullet.position = origin
 		get_tree().root.add_child.call_deferred(bullet)
