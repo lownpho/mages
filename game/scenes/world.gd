@@ -4,10 +4,13 @@ extends Node2D
 @export var generate_world := true
 @export var world_seed := 0          # 0 = random each run, captured once for the session
 
-## The tier-1 weapon spell and the heal spell are dropped next to the player on a
-## brand-new run — the whole starter kit, no tutorial.
-const STARTER_WEAPON := preload("res://characters/player/spells/pew/pew1.tres")
-const STARTER_HEAL := preload("res://characters/player/spells/heal/heal1.tres")
+## The design's spawn_with kit, dropped next to the player on a brand-new run — the whole
+## starter loadout, no tutorial.
+const STARTER_SPELLS: Array[Resource] = [
+	preload("res://characters/player/spells/fireball/fireball1.tres"),
+	preload("res://characters/player/spells/heal/heal1.tres"),
+	preload("res://characters/player/spells/blam/blam1.tres"),
+]
 
 @onready var _streamer: WorldStreamer = $WorldRoot/WorldStreamer
 @onready var _player: Node2D = $WorldRoot/Entities/Player
@@ -52,9 +55,10 @@ func _ready() -> void:
 		GameState.fresh_start = false
 		_drop_starter_gear()
 
-# Drop the starter weapon spell plus the heal beside the player, using the same
-# loot_dropped path enemies use (GlobalPickups makes the pickups).
+# Drop the starter spells beside the player, using the same loot_dropped path enemies
+# use (GlobalPickups makes the pickups).
 func _drop_starter_gear() -> void:
 	var origin := _player.global_position
-	GlobalEvent.loot_dropped.emit(STARTER_WEAPON, origin + Vector2(20, 0))
-	GlobalEvent.loot_dropped.emit(STARTER_HEAL, origin + Vector2(-20, 0))
+	for i in STARTER_SPELLS.size():
+		var angle := TAU * i / STARTER_SPELLS.size()
+		GlobalEvent.loot_dropped.emit(STARTER_SPELLS[i], origin + Vector2(20, 0).rotated(angle))

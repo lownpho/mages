@@ -1,9 +1,10 @@
 extends Node2D
 
-## Heal effect: instantly restores health to the caster, capped at max. A red
-## plus-sign aura rises over the caster (mirroring the focus aura) as feedback,
-## then the node frees.
-## Uses the base SpellResource — healing is base_damage + skill × scaling.
+## Heal effect: restores health to the caster, capped at max. A red plus-sign
+## aura rises over the caster (mirroring the focus aura) as feedback, then the
+## node frees.
+## Uses the base SpellResource — healing is damage_for(), defence-scaled per the
+## design (the survivability stat feeds the survivability button).
 
 var data: SpellResource
 var caster: CharacterBody2D
@@ -14,7 +15,7 @@ func setup(spell: SpellResource, p_caster: Node2D) -> void:
 	global_position = p_caster.global_position
 
 func _ready() -> void:
-	var amount := roundi(data.base_damage + caster.skill * data.skill_scaling)
+	var amount := data.damage_for(caster.skill, 0, caster.defence)
 	caster.health = mini(caster.health + amount, caster.max_health)
 	GlobalEvent.player_health_changed.emit(caster.health)
 
