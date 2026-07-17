@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_dpl6y"]
 [ext_resource type="Resource" uid="uid://dyfiiuptqgttr" path="res://characters/player/spells/bzzz/bzzz1.tres" id="3_wand"]
 [ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="4_zaap"]
+[ext_resource type="Resource" uid="uid://dyjwr0o44wf6k" path="res://characters/player/spells/pew/pew1.tres" id="5_pew"]
 [ext_resource type="Texture2D" uid="uid://c4xedo0ba0q25" path="res://characters/enemies/wasp/wasp.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_wand"]
@@ -22,9 +23,15 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
 
+[sub_resource type="Resource" id="Resource_pew"]
+script = ExtResource("2_dpl6y")
+item = ExtResource("5_pew")
+chance = 0.1
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [resource]
 script = ExtResource("1")
 display_name = "Wasp"
 icon = SubResource("AtlasTexture_icon")
 max_health = 18
-drops = Array[ExtResource("2_dpl6y")]([SubResource("Resource_wand"), SubResource("Resource_zaap")])
+drops = Array[ExtResource("2_dpl6y")]([SubResource("Resource_wand"), SubResource("Resource_pew"), SubResource("Resource_zaap")])

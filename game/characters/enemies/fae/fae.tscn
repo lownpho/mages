@@ -13,9 +13,6 @@
 [ext_resource type="Script" path="res://characters/enemies/behaviours/rotating_ring_burst.gd" id="10_rings"]
 [ext_resource type="Script" path="res://characters/enemies/behaviours/rest.gd" id="11_rest"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="12_volley"]
-[ext_resource type="Script" path="res://characters/enemies/behaviours/summon_allies.gd" id="13_summon"]
-[ext_resource type="PackedScene" uid="uid://pciv4krdo720" path="res://characters/enemies/mandrake/mandrake.tscn" id="14_mandrake"]
-[ext_resource type="PackedScene" uid="uid://ch4o18qib0k6a" path="res://characters/enemies/wasp/wasp.tscn" id="15_wasp"]
 [ext_resource type="Script" uid="uid://ct1medch4sfba" path="res://characters/enemies/behaviours/timed_chase.gd" id="16_chase"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fae"]
@@ -165,8 +162,8 @@ next_state = "Idle"
 
 [node name="Pattern" type="Node" parent="FSM" unique_id=40597610]
 script = ExtResource("9_pattern")
-states = Array[String](["Rings", "Rest", "Shotgun", "Summon", "Chase"])
-weights = Array[float]([3.0, 1.0, 3.0, 2.0, 3.0])
+states = Array[String](["Rings", "Rest", "Shotgun", "Chase"])
+weights = Array[float]([3.0, 1.0, 3.0, 3.0])
 detect_probe_path = NodePath("../../DetectProbe")
 
 [node name="Rings" type="Node" parent="FSM" unique_id=856810349]
@@ -190,7 +187,3 @@ script = ExtResource("16_chase")
 duration = 3.0
 speed = 30.0
 run_anim = "idle"
-
-[node name="Summon" type="Node" parent="FSM" unique_id=1779430659]
-script = ExtResource("13_summon")
-summon_scenes = Array[PackedScene]([ExtResource("14_mandrake"), ExtResource("15_wasp")])

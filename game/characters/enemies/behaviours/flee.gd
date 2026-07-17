@@ -1,11 +1,9 @@
 extends Chase
 class_name Flee
 
-# Chase in reverse: closes the gap becomes opening it (_velocity inverted), and the
-# "reached the target" handoff becomes "backed into a wall" instead. RetreatProbe is kept
-# pointed opposite the player each frame (mirroring how Chase aims _chase/_attack at them)
-# and going wall-first there is what "cornered" means, since there's no fixed retreat
-# direction to probe up front.
+# Bolts in a RANDOM direction picked on enter (not simply away from the player), so every
+# re-entry — including the post-Barrage one — rolls a fresh escape line. RetreatProbe is kept
+# pointed along the flee direction; hitting a wall there is what "cornered" means.
 
 @export var retreat_probe_path: NodePath
 @export var cornered_state: String = "Barrage"
@@ -13,13 +11,28 @@ class_name Flee
 
 @onready var _retreat: RayCast2D = get_node(retreat_probe_path)
 
+var _dir := Vector2.RIGHT
+
 func enter() -> void:
 	super()
 	_retreat.enabled = true
+	_dir = _pick_direction()
 
 func exit() -> void:
 	super()
 	_retreat.enabled = false
+
+# A handful of rolls, keeping the first that isn't wall-blocked at probe range; a fully
+# boxed-in viper keeps the last roll and corners immediately, which is the fight trigger.
+func _pick_direction() -> Vector2:
+	var dir := Vector2.RIGHT
+	for _i in 8:
+		dir = Vector2.from_angle(randf() * TAU)
+		_retreat.target_position = dir * retreat_range
+		_retreat.force_raycast_update()
+		if not _retreat.is_colliding():
+			return dir
+	return dir
 
 func physics_update(delta: float) -> void:
 	var player := creature.get_target()
@@ -35,8 +48,7 @@ func physics_update(delta: float) -> void:
 		creature.fsm.transition_to(lost_state)
 		return
 
-	var away := -to_player.normalized()
-	_retreat.target_position = away * retreat_range
+	_retreat.target_position = _dir * retreat_range
 	_retreat.force_raycast_update()
 	if _retreat.is_colliding():
 		creature.fsm.transition_to(cornered_state)
@@ -45,5 +57,5 @@ func physics_update(delta: float) -> void:
 	creature.velocity = _velocity(to_player, delta)
 	creature.move_and_slide()
 
-func _velocity(to_player: Vector2, _delta: float) -> Vector2:
-	return -to_player.normalized() * speed
+func _velocity(_to_player: Vector2, _delta: float) -> Vector2:
+	return _dir * speed

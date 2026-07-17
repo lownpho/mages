@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_aqukq"]
 [ext_resource type="Resource" uid="uid://dyjwr0o44wf6k" path="res://characters/player/spells/pew/pew1.tres" id="2_speedhat"]
-[ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="3_zaap"]
+[ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="3_zaap"]
 [ext_resource type="Texture2D" uid="uid://smdd7tg3b041" path="res://characters/enemies/hopper/hopper.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_speedhat"]

@@ -109,7 +109,7 @@ collision_mask = 17
 [node name="Weapon" parent="." unique_id=1687896626 instance=ExtResource("4_weap")]
 
 [node name="FSM" parent="." unique_id=567561061 instance=ExtResource("4_fsm")]
-initial_state = "Idle"
+initial_state = "Wander"
 
 [node name="Idle" type="Node" parent="FSM" unique_id=889653992]
 script = ExtResource("6_idle")

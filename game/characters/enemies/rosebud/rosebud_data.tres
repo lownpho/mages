@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_yolio"]
 [ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://qjq7lp1l3b7s" path="res://characters/player/spells/ring/ring1.tres" id="drop_2"]
 [ext_resource type="Texture2D" uid="uid://du0qsbdjksoj" path="res://characters/enemies/rosebud/rosebud.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -15,9 +16,15 @@ item = ExtResource("drop_1")
 chance = 0.2
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="Resource" id="Drop_2"]
+script = ExtResource("1_yolio")
+item = ExtResource("drop_2")
+chance = 0.2
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [resource]
 script = ExtResource("1")
 display_name = "Rosebud"
 icon = SubResource("AtlasTexture_icon")
 max_health = 45
-drops = Array[ExtResource("1_yolio")]([SubResource("Drop_1")])
+drops = Array[ExtResource("1_yolio")]([SubResource("Drop_2"), SubResource("Drop_1")])

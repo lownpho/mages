@@ -2,7 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
-[ext_resource type="Resource" uid="uid://c1sm2y5p435xa" path="res://characters/player/spells/jimmy/jimmy1.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://xhtt31bw1wvp" path="res://characters/player/spells/ring/ring2.tres" id="drop_2"]
 [ext_resource type="Texture2D" uid="uid://cril2nlvqb5im" path="res://characters/enemies/fae/fae.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -15,10 +16,16 @@ item = ExtResource("drop_1")
 chance = 1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="Resource" id="Drop_2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("drop_2")
+chance = 1.0
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [resource]
 script = ExtResource("1")
 display_name = "Fae"
 icon = SubResource("AtlasTexture_icon")
 rarity = 2
 max_health = 1500
-drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1")])
+drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1"), SubResource("Drop_2")])
