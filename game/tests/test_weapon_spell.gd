@@ -25,11 +25,13 @@ func _ready() -> void:
 	caster = player.get_node("SpellCaster")
 	pew1 = load("res://characters/player/spells/pew/pew1.tres")
 	pew2 = load("res://characters/player/spells/pew/pew2.tres")
-	# Page 0: pew1 / pew2 / fireball. Page 1: heal / nope / (hose, set later).
+	# Page 0: pew1 / pew2 / fireball. Page 1: zaap / nope / (hose, set later).
+	# zaap is the truly-instant spell here — heal grew a cast_time in the design
+	# alignment, so it now (correctly) cancels a live burst like any other cast.
 	GlobalInventory.spell_slots.at(0).set_item(pew1)
 	GlobalInventory.spell_slots.at(1).set_item(pew2)
 	GlobalInventory.spell_slots.at(2).set_item(load("res://characters/player/spells/fireball/fireball1.tres"))
-	GlobalInventory.spell_slots.at(3).set_item(load("res://characters/player/spells/heal/heal1.tres"))
+	GlobalInventory.spell_slots.at(3).set_item(load("res://characters/player/spells/zaap/zaap1.tres"))
 	GlobalInventory.spell_slots.at(4).set_item(load("res://characters/player/spells/nope/nope.tres"))
 	# Let the tree finish assembling before effects get added to the root.
 	await get_tree().physics_frame
@@ -132,10 +134,10 @@ func _test_instant_stacks() -> void:
 	spawned.clear()
 	caster._try_cast(0)
 	await _wait(0.3)
-	# Flip to page 1 mid-burst (must not disturb the live burst) and cast heal:
+	# Flip to page 1 mid-burst (must not disturb the live burst) and cast zaap:
 	# instant, must NOT touch the burst either.
 	GlobalInventory.cycle_spell_page()
-	caster._try_cast(0)  # heal (page 1, slot 0)
+	caster._try_cast(0)  # zaap (page 1, slot 0)
 	if not _burst_live(pew1):
 		fails.append("instant spell cancelled the burst")
 	if _cooling(pew1):
