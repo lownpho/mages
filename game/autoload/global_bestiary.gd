@@ -19,9 +19,10 @@ var _kills: Dictionary = {}
 # biome id -> true, for every biome the player has ever stepped into.
 var _visited: Dictionary = {}
 var _roster: Array[StringName] = []
-var _groups: Array = []  # Array of Array[StringName], one per biome, display-ordered
-var _group_biomes: Array[StringName] = []  # biome label of each group, same order
+var _groups: Array = []  # Array of Array[StringName], one per page, display-ordered
+var _group_biomes: Array[StringName] = []  # page label of each group, same order
 var _group_bosses: Array[StringName] = []  # the boss enemy id of each group (&"" if none), same order
+var _group_members: Array = []  # Array of Array[StringName]: the biome ids merged into each page
 
 func _ready() -> void:
 	_scan_roster()
@@ -64,7 +65,7 @@ func visible_pages() -> Array:
 	return out
 
 func _is_group_visible(i: int) -> bool:
-	return _visited.has(_group_biomes[i]) \
+	return _group_members[i].any(func(b: StringName) -> bool: return _visited.has(b)) \
 		or _groups[i].any(func(id: StringName) -> bool: return _kills.has(id))
 
 ## The distinct enemies filed on any biome page — the encounterable roster the book measures
@@ -162,39 +163,52 @@ func _on_biome_entered(biome_id: StringName) -> void:
 	_visited[biome_id] = true
 	_save()
 
-# Bestiary membership is DERIVED, not stored: an enemy files onto a biome page because some
-# room in that biome spawns it. So the book always matches where enemies are actually met, a
-# shared enemy files onto every biome it appears in, and an enemy in no spawn table (unreachable)
-# simply isn't in the book. Ordering (commons alpha → rares → boss) comes from CreatureResource.rarity.
+# Bestiary membership is DERIVED, not stored: an enemy files onto a page because some room
+# in that page's biome(s) spawns it. So the book always matches where enemies are actually
+# met, a shared enemy files onto every page it appears in, and an enemy in no spawn table
+# (unreachable) simply isn't in the book. Biomes sharing a BiomeDef.family merge into one
+# page labelled with the family (sub-biome variants read as one chapter); a boss per
+# sub-biome means a page can close with several bosses — _group_bosses keeps the first.
+# Ordering (commons alpha → rares → bosses) comes from CreatureResource.rarity.
 func _build_groups() -> void:
 	_groups.clear()
 	_group_biomes.clear()
 	_group_bosses.clear()
+	_group_members.clear()
 	var cfg: GenConfig = load(GEN_CONFIG_PATH)
-	var by_biome: Dictionary = {}  # biome StringName -> Array of {id, rarity}
-	var seen: Dictionary = {}      # "biome|id" -> true, dedupe an enemy repeated across a biome's rooms
+	var label_of: Dictionary = {}  # biome id -> page label (family when set)
+	for biome_def in cfg.biomes:
+		label_of[biome_def.id] = biome_def.family if biome_def.family != &"" else biome_def.id
+	var by_label: Dictionary = {}  # page label -> Array of {id, rarity}
+	var members: Dictionary = {}   # page label -> {biome id: true}
+	var seen: Dictionary = {}      # "label|id" -> true, dedupe an enemy repeated across a page's rooms
 	for rt in cfg.room_types:
 		for biome in _room_type_biomes(rt):
+			var label: StringName = label_of.get(biome, biome)
+			members.get_or_add(label, {})[biome] = true
 			for entry in rt.enemies:
-				var id: StringName = entry.enemy_id
-				if not _roster.has(id):
-					continue  # only trackable enemies (those with a <id>_data.tres)
-				var key := "%s|%s" % [biome, id]
-				if seen.has(key):
-					continue
-				seen[key] = true
-				by_biome.get_or_add(biome, []).append({"id": id, "rarity": load_data(id).rarity})
-	# Page order: gen_config biome order, then any stragglers alphabetically (room types name
-	# registered biomes, so this is just belt-and-braces).
-	var biome_order: Array = []
+				for id in _entry_enemy_ids(entry):
+					if not _roster.has(id):
+						continue  # only trackable enemies (those with a <id>_data.tres)
+					var key := "%s|%s" % [label, id]
+					if seen.has(key):
+						continue
+					seen[key] = true
+					by_label.get_or_add(label, []).append({"id": id, "rarity": load_data(id).rarity})
+	# Page order: gen_config biome order (first appearance of each label), then any
+	# stragglers alphabetically (room types name registered biomes, so this is just
+	# belt-and-braces).
+	var label_order: Array = []
 	for biome_def in cfg.biomes:
-		biome_order.append(biome_def.id)
-	var extra: Array = by_biome.keys().filter(func(b: StringName) -> bool: return b not in biome_order)
+		var label: StringName = label_of[biome_def.id]
+		if label not in label_order:
+			label_order.append(label)
+	var extra: Array = by_label.keys().filter(func(b: StringName) -> bool: return b not in label_order)
 	extra.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
-	for biome in biome_order + extra:
-		if not by_biome.has(biome):
+	for label in label_order + extra:
+		if not by_label.has(label):
 			continue
-		var entries: Array = by_biome[biome]
+		var entries: Array = by_label[label]
 		entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 			if a["rarity"] != b["rarity"]:
 				return a["rarity"] < b["rarity"]
@@ -203,11 +217,26 @@ func _build_groups() -> void:
 		var boss: StringName = &""
 		for e in entries:
 			group.append(e["id"])
-			if e["rarity"] == CreatureResource.Rarity.BOSS:
+			if boss == &"" and e["rarity"] == CreatureResource.Rarity.BOSS:
 				boss = e["id"]
 		_groups.append(group)
-		_group_biomes.append(biome)
+		_group_biomes.append(label)
 		_group_bosses.append(boss)
+		var member_ids: Array[StringName] = []
+		member_ids.assign(members.get(label, {label: true}).keys())
+		_group_members.append(member_ids)
+
+## Every enemy id a spawn-table entry can produce: a mixed pack lists them on its PackMembers
+## (and its own enemy_id is unset), a single-type entry carries enemy_id directly.
+func _entry_enemy_ids(entry: SpawnTableEntry) -> Array[StringName]:
+	var out: Array[StringName] = []
+	if not entry.members.is_empty():
+		for m in entry.members:
+			if not out.has(m.enemy_id):
+				out.append(m.enemy_id)
+	elif entry.enemy_id != &"":
+		out.append(entry.enemy_id)
+	return out
 
 ## The biome(s) a room type contributes its enemies to: its owning biome, or — for WORLD-unique
 ## rooms (which leave `biome` empty) — every biome they may be placed in.
