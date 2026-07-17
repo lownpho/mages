@@ -18,6 +18,11 @@ class_name PatternPicker
 ## phase hands back to this dispatcher, which then rolls normally forever after.
 @export_range(0.0, 1.0) var phase_health_fraction: float = 0.0
 @export var phase_state: String = ""
+## Optional low-HP pool: when the same threshold trips and this is non-empty, it
+## permanently REPLACES states/weights — the desperation cycle swaps moves out (a burn
+## window making way for a spore wave) instead of layering new ones on top.
+@export var phase_states: Array[String] = []
+@export var phase_weights: Array[float] = []
 
 var _phase_fired: bool = false
 
@@ -32,11 +37,15 @@ func _dispatch() -> void:
 			creature.fsm.transition_to(lost_state)
 			return
 
-	if not _phase_fired and phase_state != "" \
+	if not _phase_fired and (phase_state != "" or not phase_states.is_empty()) \
 			and creature.health <= creature.max_health * phase_health_fraction:
 		_phase_fired = true
-		creature.fsm.transition_to(phase_state)
-		return
+		if not phase_states.is_empty():
+			states = phase_states
+			weights = phase_weights
+		if phase_state != "":
+			creature.fsm.transition_to(phase_state)
+			return
 
 	if states.is_empty():
 		return

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://thrnmssdata1"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
+[ext_resource type="Resource" uid="uid://cf77nr3f15y7d" path="res://characters/player/spells/jimmy/jimmy2.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://c4sfcwn5016cw" path="res://characters/player/spells/snipe/snipe2.tres" id="drop_2"]
+[ext_resource type="Resource" uid="uid://xhtt31bw1wvp" path="res://characters/player/spells/ring/ring2.tres" id="drop_3"]
+[ext_resource type="Texture2D" path="res://characters/enemies/thornmess/thornmess.png" id="icon_png"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("drop_1")
+chance = 1.0
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_2"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("drop_2")
+chance = 1.0
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_3"]
+script = ExtResource("1_dpl6y")
+item = ExtResource("drop_3")
+chance = 1.0
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[resource]
+script = ExtResource("1")
+display_name = "Thornmess"
+icon = SubResource("AtlasTexture_icon")
+rarity = 2
+max_health = 1500
+drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1"), SubResource("Drop_2"), SubResource("Drop_3")])
