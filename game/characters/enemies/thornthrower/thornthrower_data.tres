@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_1p2hq"]
-[ext_resource type="Resource" uid="uid://7evvy470v3w5" path="res://characters/player/spells/oop/oop1.tres" id="drop_1"]
+[ext_resource type="Resource" uid="uid://8vvmq0ft11l1" path="res://characters/player/spells/snipe/snipe1.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://fx64q6j02wqu" path="res://characters/enemies/thornthrower/thornthrower.png" id="icon_png"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
