@@ -89,9 +89,9 @@ biomes:
           1x mandraker) and the biome boss.
         roster: "thornthrower, rosebud, thornmess *(boss)*."
         rooms:
-          - {tier: T0, room: open,    groups: "*(empty)*"}
-          - {tier: T0, room: scatter, groups: "*(empty)*"}
-          - {tier: T1, room: open,    groups: "*(empty)*"}
+          - {tier: T0, room: open,    groups: "2x sproutling - 3x hopper"}
+          - {tier: T0, room: scatter, groups: "1x sproutling + 1x hopper - 2x hopper"}
+          - {tier: T1, room: open,    groups: "3x sproutling - 2x hopper + 1x thornthrower"}
           - {tier: T1, room: scatter, groups: "2x thornthrower - 3x sproutling - 1x thornthrower + 2x hopper"}
           - {tier: T1, room: open,    groups: "2x rosebud - 2x thornthrower + 1x rosebud - 3x sproutling + 1x thornthrower"}
           - {tier: T1, room: blob,    groups: "1x rosebud + 2x wasp - 2x thornthrower + 2x hopper"}

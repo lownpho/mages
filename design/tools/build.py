@@ -360,7 +360,7 @@ def render_biomes_html(biomes_data: dict) -> str:
         for sub in biome["sub_biomes"]:
             for r in sub["rooms"]:
                 tiers.add(r["tier"])
-                variations = [v.strip() for v in r["groups"].split("·")]
+                variations = [v.strip() for v in r["groups"].split(" - ")]
                 rooms.append(
                     {
                         "biome": biome["name"],

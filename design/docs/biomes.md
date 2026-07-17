@@ -47,9 +47,9 @@ Roster: thornthrower, rosebud, thornmess *(boss)*.
 
 | Tier | Room | Enemy group variations |
 |---|---|---|
-| T0 | open | *(empty)* |
-| T0 | scatter | *(empty)* |
-| T1 | open | *(empty)* |
+| T0 | open | 2x sproutling - 3x hopper |
+| T0 | scatter | 1x sproutling + 1x hopper - 2x hopper |
+| T1 | open | 3x sproutling - 2x hopper + 1x thornthrower |
 | T1 | scatter | 2x thornthrower - 3x sproutling - 1x thornthrower + 2x hopper |
 | T1 | open | 2x rosebud - 2x thornthrower + 1x rosebud - 3x sproutling + 1x thornthrower |
 | T1 | blob | 1x rosebud + 2x wasp - 2x thornthrower + 2x hopper |
