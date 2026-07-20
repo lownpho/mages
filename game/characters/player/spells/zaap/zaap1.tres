@@ -28,7 +28,7 @@ behaviours = Array[ExtResource("1_mfdnx")]([SubResource("Resource_gmtb4")])
 [sub_resource type="Resource" id="ScalingProfile_zaap"]
 script = ExtResource("6_scaling")
 base_damage = 12.0
-skill_scaling = 1.0
+speed_scaling = 2.0
 
 [sub_resource type="Resource" id="SinglePattern_zaap"]
 script = ExtResource("9_pattern")

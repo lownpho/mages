@@ -1,9 +1,88 @@
 [gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://svbos4ln77cp"]
 
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
+
+[sub_resource type="Resource" id="ste_0"]
+script = ExtResource("2_ste")
+enemy_id = &"sproutling"
+weight = 2
+group_min = 1
+group_max = 2
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_1"]
+script = ExtResource("2_ste")
+enemy_id = &"hopper"
+weight = 2
+group_min = 1
+group_max = 2
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_2"]
+script = ExtResource("2_ste")
+enemy_id = &"wasp"
+weight = 2
+group_min = 1
+group_max = 2
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_3"]
+script = ExtResource("2_ste")
+enemy_id = &"mandrake"
+weight = 2
+group_min = 1
+group_max = 1
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_4"]
+script = ExtResource("2_ste")
+enemy_id = &"seedling"
+group_min = 1
+group_max = 1
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_5"]
+script = ExtResource("2_ste")
+enemy_id = &"dirt_golem"
+group_min = 1
+group_max = 1
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="pm_6_0"]
+script = ExtResource("3_pm")
+enemy_id = &"hopper"
+
+[sub_resource type="Resource" id="pm_6_1"]
+script = ExtResource("3_pm")
+enemy_id = &"sproutling"
+
+[sub_resource type="Resource" id="ste_6"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_6_0"), SubResource("pm_6_1")])
+
+[sub_resource type="Resource" id="pm_7_0"]
+script = ExtResource("3_pm")
+enemy_id = &"mandrake"
+
+[sub_resource type="Resource" id="pm_7_1"]
+script = ExtResource("3_pm")
+enemy_id = &"wasp"
+
+[sub_resource type="Resource" id="ste_7"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_7_0"), SubResource("pm_7_1")])
 
 [resource]
 script = ExtResource("1_def")
 id = &"glade_start_open_fallback"
 biome = &"glade_start"
 weight = 1
+enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7")])
+enemy_groups_min = 1
+enemy_groups_max = 1

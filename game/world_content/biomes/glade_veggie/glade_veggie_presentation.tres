@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BiomePresentation" format=3 uid="uid://dnvie6uf32gsw"]
+
+[ext_resource type="TileSet" uid="uid://djcoacmp65akt" path="res://world_content/biomes/glade_veggie/glade_veggie_floor_tileset.tres" id="1_hpa3w"]
+[ext_resource type="TileSet" uid="uid://dailhk5fdosey" path="res://world_content/biomes/glade_veggie/glade_veggie_decor_tileset.tres" id="2_7qrrg"]
+[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="3_xibuu"]
+[ext_resource type="Script" uid="uid://8c2ouwfg7awf" path="res://worldgen/core/biome_presentation.gd" id="4_a6bme"]
+
+[resource]
+script = ExtResource("4_a6bme")
+floor_tileset = ExtResource("1_hpa3w")
+wall_tileset = ExtResource("3_xibuu")
+object_tileset = ExtResource("3_xibuu")
+object_bg_tileset = ExtResource("2_7qrrg")
+map_floor_color = Color(0.443137, 0.666667, 0.203922, 1)
+map_wall_color = Color(0.223529, 0.482353, 0.266667, 1)

@@ -12,10 +12,10 @@ scene = ExtResource("3_sign")
 
 [sub_resource type="Resource" id="Resource_gen"]
 script = ExtResource("2_gen")
-inset = 3
+inset = 2
 thickness = 1
 gap_count = 3
-gap_width = 3
+gap_width = 2
 
 [resource]
 script = ExtResource("1_def")

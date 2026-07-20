@@ -245,9 +245,11 @@ static func build(world_spec: WorldSpec, biome_id: StringName, config: GenConfig
 			types[i] = leaves[i][1]
 	# Pass 2: quota minimums — every room type's min_per_biome is guaranteed a size-fitting room
 	# (the demand leaves exist by construction): one uniform pick-roll per placed room, types in
-	# DESCENDING difficulty (min-size area desc, registry order within a tie) so the boss picks
-	# its room before lesser set-pieces. The pool is the free FITTING rooms whose depth tier is
-	# NEAREST the type's difficulty; if a quota stole every fitting leaf, any free room (warned).
+	# DESCENDING min-size area (difficulty desc, registry order within a tie) so the size-hungry
+	# set-pieces claim the big leaves first — a 1x1 type fits anything, so ordering by difficulty
+	# first would let a deep 1x1 quota eat the only leaf a shallow 2x2 one could have used. The
+	# pool is the free FITTING rooms whose depth tier is NEAREST the type's difficulty; if a
+	# quota stole every fitting leaf, any free room (warned).
 	var placed: Dictionary = {}   # type_id -> count; lookup-only
 	for i in n_rooms:
 		if types[i] != &"":
@@ -257,12 +259,12 @@ static func build(world_spec: WorldSpec, biome_id: StringName, config: GenConfig
 		reg_index[roster[i]] = i
 	var quota_order := roster.duplicate()
 	quota_order.sort_custom(func(p, q):
-		if p.difficulty != q.difficulty:
-			return p.difficulty > q.difficulty
 		var pa: int = p.min_size_slots.x * p.min_size_slots.y
 		var qa: int = q.min_size_slots.x * q.min_size_slots.y
 		if pa != qa:
 			return pa > qa
+		if p.difficulty != q.difficulty:
+			return p.difficulty > q.difficulty
 		return reg_index[p] < reg_index[q])
 	for rt_def in quota_order:
 		for _k in range(rt_def.min_per_biome - int(placed.get(rt_def.id, 0))):

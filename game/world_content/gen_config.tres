@@ -6,68 +6,50 @@
 [ext_resource type="Resource" uid="uid://wttkg0m288iw" path="res://world_content/biomes/glade_veggie/glade_veggie.tres" id="b_gv"]
 [ext_resource type="Resource" uid="uid://yd0ixxnn8n1s" path="res://world_content/biomes/deepwood/deepwood.tres" id="b_dw"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="rtdef"]
-[ext_resource type="Resource" uid="uid://nnkmg3avvpqj" path="res://world_content/rooms/shrine.tres" id="r_shrine"]
-[ext_resource type="Resource" uid="uid://xprf40cln1m4" path="res://world_content/biomes/glade_start/rooms/glade_start_t0_open_a.tres" id="r_0"]
-[ext_resource type="Resource" uid="uid://kryjn0g440ro" path="res://world_content/biomes/glade_start/rooms/glade_start_t0_scatter_a.tres" id="r_1"]
-[ext_resource type="Resource" uid="uid://s5arrq3we5ua" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_open_empty.tres" id="r_2"]
-[ext_resource type="Resource" uid="uid://bwca7ct4h50a" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_scatter_a.tres" id="r_3"]
-[ext_resource type="Resource" uid="uid://kjnaezcyyw8s" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_open_a.tres" id="r_4"]
-[ext_resource type="Resource" uid="uid://x07ohxum0dzh" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_blob_a.tres" id="r_5"]
-[ext_resource type="Resource" uid="uid://aztuln2ah9o0" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_scatter_golem.tres" id="r_6"]
-[ext_resource type="Resource" uid="uid://inr6vq8ep7ii" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_scatter_empty.tres" id="r_7"]
-[ext_resource type="Resource" uid="uid://0k02z2t2kf7l" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_scatter_a.tres" id="r_8"]
-[ext_resource type="Resource" uid="uid://yf58nwh7dvnk" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_scatter_b.tres" id="r_9"]
-[ext_resource type="Resource" uid="uid://7sabx96duoio" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_blob_a.tres" id="r_10"]
-[ext_resource type="Resource" uid="uid://ka9f9gdfu4xd" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_open_a.tres" id="r_11"]
-[ext_resource type="Resource" uid="uid://kawrmzmnhxk2" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_open_b.tres" id="r_12"]
-[ext_resource type="Resource" uid="uid://6ymgaa4fdmwf" path="res://world_content/biomes/glade_start/rooms/glade_start_t3_blob_a.tres" id="r_13"]
-[ext_resource type="Resource" uid="uid://04x3pp1p0oui" path="res://world_content/biomes/glade_start/rooms/glade_start_t3_open_a.tres" id="r_14"]
-[ext_resource type="Resource" uid="uid://jdr9ba9i9wrx" path="res://world_content/biomes/glade_start/rooms/glade_start_rare_viper.tres" id="r_15"]
-[ext_resource type="Resource" uid="uid://l20abtfeub7b" path="res://world_content/biomes/glade_start/rooms/glade_start_rare_mandraker.tres" id="r_16"]
-[ext_resource type="Resource" uid="uid://73nahocq1lfg" path="res://world_content/biomes/glade_start/rooms/glade_start_boss.tres" id="r_17"]
-[ext_resource type="Resource" uid="uid://o8he3p705ska" path="res://world_content/biomes/glade_start/rooms/glade_start_gate_deepwood.tres" id="r_18"]
-[ext_resource type="Resource" uid="uid://svbos4ln77cp" path="res://world_content/biomes/glade_start/rooms/glade_start_open_fallback.tres" id="r_19"]
-[ext_resource type="Resource" uid="uid://9lt1utr9d8dj" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t0_open_a.tres" id="r_20"]
-[ext_resource type="Resource" uid="uid://w3ia83zgmhyv" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t0_scatter_a.tres" id="r_21"]
-[ext_resource type="Resource" uid="uid://7brwoy555n8q" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_open_a.tres" id="r_22"]
-[ext_resource type="Resource" uid="uid://nbmg4up3kf2h" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_scatter_a.tres" id="r_23"]
-[ext_resource type="Resource" uid="uid://a4tlu22smu08" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_open_b.tres" id="r_24"]
-[ext_resource type="Resource" uid="uid://cjs2ubgq7x2l" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_blob_a.tres" id="r_25"]
-[ext_resource type="Resource" uid="uid://5tcs5dfbk02z" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_scatter_golem.tres" id="r_26"]
-[ext_resource type="Resource" uid="uid://lga2vwwqoopf" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t2_scatter_a.tres" id="r_27"]
-[ext_resource type="Resource" uid="uid://4m9e9xclw4ut" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t2_scatter_b.tres" id="r_28"]
-[ext_resource type="Resource" uid="uid://biawme5houll" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t2_blob_a.tres" id="r_29"]
-[ext_resource type="Resource" uid="uid://m5ny7hq1filo" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t2_open_a.tres" id="r_30"]
-[ext_resource type="Resource" uid="uid://8cnhyjdig9ps" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t2_open_b.tres" id="r_31"]
-[ext_resource type="Resource" uid="uid://jb9x23t8n2y8" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t3_blob_a.tres" id="r_32"]
-[ext_resource type="Resource" uid="uid://m2llgt4kupfi" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t3_open_a.tres" id="r_33"]
-[ext_resource type="Resource" uid="uid://zlimu2d6001x" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_rare_viper.tres" id="r_34"]
-[ext_resource type="Resource" uid="uid://8vbyp69ku4t5" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_rare_mandraker.tres" id="r_35"]
-[ext_resource type="Resource" uid="uid://e969sot3bdgp" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_boss.tres" id="r_36"]
-[ext_resource type="Resource" uid="uid://777l9ccgt04m" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_gate_deepwood.tres" id="r_37"]
-[ext_resource type="Resource" uid="uid://xqetkw4t7x6g" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_open_fallback.tres" id="r_38"]
-[ext_resource type="Resource" uid="uid://dxuv5igm7vss" path="res://world_content/biomes/deepwood/rooms/deepwood_traversal.tres" id="r_dw0"]
-[ext_resource type="Resource" uid="uid://d0wfld0field1" path="res://world_content/biomes/deepwood/rooms/deepwood_field.tres" id="r_dw1"]
-[ext_resource type="Resource" uid="uid://d0wfld0cave01" path="res://world_content/biomes/deepwood/rooms/deepwood_cave.tres" id="r_dw2"]
-[ext_resource type="Resource" uid="uid://brnk0og0kuexr" path="res://world_content/biomes/deepwood/rooms/grove.tres" id="r_dw3"]
-[ext_resource type="Resource" uid="uid://dwtrvdeep0t2a" path="res://world_content/biomes/deepwood/rooms/deepwood_traversal_deep.tres" id="r_dw4"]
-[ext_resource type="Resource" uid="uid://dwbramble0t3a" path="res://world_content/biomes/deepwood/rooms/deepwood_bramble.tres" id="r_dw5"]
-[ext_resource type="Resource" uid="uid://d0wfld0arena1" path="res://world_content/biomes/deepwood/rooms/deepwood_arena.tres" id="r_dw6"]
+[ext_resource type="Resource" uid="uid://73nahocq1lfg" path="res://world_content/biomes/glade_start/rooms/glade_start_boss.tres" id="r0"]
+[ext_resource type="Resource" uid="uid://o8he3p705ska" path="res://world_content/biomes/glade_start/rooms/glade_start_gate_deepwood.tres" id="r1"]
+[ext_resource type="Resource" uid="uid://l20abtfeub7b" path="res://world_content/biomes/glade_start/rooms/glade_start_rare_mandraker.tres" id="r2"]
+[ext_resource type="Resource" uid="uid://jdsabbajawrx" path="res://world_content/biomes/glade_start/rooms/glade_start_rare_viper.tres" id="r3"]
+[ext_resource type="Resource" uid="uid://svbos4ln77cp" path="res://world_content/biomes/glade_start/rooms/glade_start_open_fallback.tres" id="r4"]
+[ext_resource type="Resource" uid="uid://gsvr0brth" path="res://world_content/biomes/glade_start/rooms/glade_start_breather.tres" id="r5"]
+[ext_resource type="Resource" uid="uid://gsvr0t1sc" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_scatter_var.tres" id="r6"]
+[ext_resource type="Resource" uid="uid://gsvr0t1bl" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_blob_var.tres" id="r7"]
+[ext_resource type="Resource" uid="uid://gsvr0t2sc" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_scatter_var.tres" id="r8"]
+[ext_resource type="Resource" uid="uid://gsvr0t3bl" path="res://world_content/biomes/glade_start/rooms/glade_start_t3_blob_var.tres" id="r9"]
+[ext_resource type="Resource" uid="uid://fa7asot3bdgp" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_boss.tres" id="r10"]
+[ext_resource type="Resource" uid="uid://777maccgt04m" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_gate_deepwood.tres" id="r11"]
+[ext_resource type="Resource" uid="uid://8vbyp7aku4t5" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_rare_mandraker.tres" id="r12"]
+[ext_resource type="Resource" uid="uid://0limu2d6001x" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_rare_viper.tres" id="r13"]
+[ext_resource type="Resource" uid="uid://xqetkw4t7x6g" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_open_fallback.tres" id="r14"]
+[ext_resource type="Resource" uid="uid://gvvr0brth" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_breather.tres" id="r15"]
+[ext_resource type="Resource" uid="uid://gvvr0t1sc" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_scatter_var.tres" id="r16"]
+[ext_resource type="Resource" uid="uid://gvvr0t1bl" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t1_blob_var.tres" id="r17"]
+[ext_resource type="Resource" uid="uid://gvvr0t2sc" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t2_scatter_var.tres" id="r18"]
+[ext_resource type="Resource" uid="uid://gvvr0t3bl" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_t3_blob_var.tres" id="r19"]
+[ext_resource type="Resource" uid="uid://d0wfld0arena1" path="res://world_content/biomes/deepwood/rooms/deepwood_arena.tres" id="r20"]
+[ext_resource type="Resource" uid="uid://dwbramble0t3a" path="res://world_content/biomes/deepwood/rooms/deepwood_bramble.tres" id="r21"]
+[ext_resource type="Resource" uid="uid://d0wfld0cave01" path="res://world_content/biomes/deepwood/rooms/deepwood_cave.tres" id="r22"]
+[ext_resource type="Resource" uid="uid://d0wfld0field1" path="res://world_content/biomes/deepwood/rooms/deepwood_field.tres" id="r23"]
+[ext_resource type="Resource" uid="uid://dxuv5igm7vss" path="res://world_content/biomes/deepwood/rooms/deepwood_traversal.tres" id="r24"]
+[ext_resource type="Resource" uid="uid://dwtrvdeep0t2a" path="res://world_content/biomes/deepwood/rooms/deepwood_traversal_deep.tres" id="r25"]
+[ext_resource type="Resource" uid="uid://brnk0og0kuexr" path="res://world_content/biomes/deepwood/rooms/grove.tres" id="r26"]
 [ext_resource type="Script" uid="uid://ebitj0qutpum" path="res://worldgen/core/gen_config.gd" id="cfg"]
 
 [resource]
 script = ExtResource("cfg")
-gen_version = 4
-room_slot_tiles = 32
-biome_slots = 7
+gen_version = 5
+room_slot_tiles = 16
+wall_noise_period = 2
+pocket_seal_max_tiles = 6
+biome_slots = 6
 world_width_cells = 2
 doors_per_biome_border = 4
-spawn_min_dist_from_doors = 3
-wall_extra_depth = 5
-corner_radius = 6
-wall_inset_max = 4
+spawn_min_dist_from_doors = 2
+wall_extra_depth = 2
+corner_radius = 3
+wall_inset_max = 2
 starting_biome = &"glade_start"
 prefetch_radius_chunks = 1
 biomes = Array[ExtResource("bdef")]([ExtResource("b_gs"), ExtResource("b_gv"), ExtResource("b_dw")])
 adjacency = ExtResource("adj")
-room_types = Array[ExtResource("rtdef")]([ExtResource("r_shrine"), ExtResource("r_0"), ExtResource("r_1"), ExtResource("r_2"), ExtResource("r_3"), ExtResource("r_4"), ExtResource("r_5"), ExtResource("r_6"), ExtResource("r_7"), ExtResource("r_8"), ExtResource("r_9"), ExtResource("r_10"), ExtResource("r_11"), ExtResource("r_12"), ExtResource("r_13"), ExtResource("r_14"), ExtResource("r_15"), ExtResource("r_16"), ExtResource("r_17"), ExtResource("r_18"), ExtResource("r_19"), ExtResource("r_20"), ExtResource("r_21"), ExtResource("r_22"), ExtResource("r_23"), ExtResource("r_24"), ExtResource("r_25"), ExtResource("r_26"), ExtResource("r_27"), ExtResource("r_28"), ExtResource("r_29"), ExtResource("r_30"), ExtResource("r_31"), ExtResource("r_32"), ExtResource("r_33"), ExtResource("r_34"), ExtResource("r_35"), ExtResource("r_36"), ExtResource("r_37"), ExtResource("r_38"), ExtResource("r_dw0"), ExtResource("r_dw1"), ExtResource("r_dw2"), ExtResource("r_dw3"), ExtResource("r_dw4"), ExtResource("r_dw5"), ExtResource("r_dw6")])
+room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r20"), ExtResource("r21"), ExtResource("r22"), ExtResource("r23"), ExtResource("r24"), ExtResource("r25"), ExtResource("r26")])

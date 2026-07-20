@@ -1,19 +1,17 @@
-[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://8vbyp69ku4t5"]
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://8vbyp7aku4t5"]
 
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+[ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="3_e5nyg"]
 [ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="4_gen"]
 
 [sub_resource type="Resource" id="pm_0_0"]
 script = ExtResource("3_pm")
 enemy_id = &"mandraker"
-count_min = 1
-count_max = 1
 
 [sub_resource type="Resource" id="ste_0"]
 script = ExtResource("2_ste")
-weight = 1
 pack_spread = 2.0
 members = Array[ExtResource("3_pm")]([SubResource("pm_0_0")])
 
