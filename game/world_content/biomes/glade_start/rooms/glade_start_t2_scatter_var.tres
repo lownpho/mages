@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
 [ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
+[ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="3_sos1c"]
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="4_gen"]
 
 [sub_resource type="Resource" id="ste_0"]
@@ -25,8 +26,6 @@ pack_spread = 2.0
 script = ExtResource("2_ste")
 enemy_id = &"mandrake"
 weight = 2
-group_min = 1
-group_max = 1
 pack_spread = 2.0
 
 [sub_resource type="Resource" id="pm_3_0"]
@@ -158,7 +157,6 @@ members = Array[ExtResource("3_pm")]([SubResource("pm_11_0"), SubResource("pm_11
 [sub_resource type="Resource" id="gen"]
 script = ExtResource("4_gen")
 count_per_slot = 2
-min_spacing = 4
 clump_min = 3
 clump_max = 9
 

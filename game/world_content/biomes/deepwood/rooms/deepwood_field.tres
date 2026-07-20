@@ -13,7 +13,6 @@ scene = ExtResource("3_sign")
 [sub_resource type="Resource" id="Resource_gen"]
 script = ExtResource("2_gen")
 count_per_slot = 2
-min_spacing = 4
 clump_min = 2
 clump_max = 4
 
