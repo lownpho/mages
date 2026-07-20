@@ -6,10 +6,6 @@
 [ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="drop_2"]
 [ext_resource type="Texture2D" uid="uid://bb2nfkd30d27k" path="res://characters/enemies/dirt_golem/dirt_golem.png" id="icon_png"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("icon_png")
-region = Rect2(0, 0, 16, 16)
-
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_toonh")
 item = ExtResource("drop_1")
@@ -21,6 +17,10 @@ script = ExtResource("1_toonh")
 item = ExtResource("drop_2")
 chance = 0.15
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 16)
 
 [resource]
 script = ExtResource("1")

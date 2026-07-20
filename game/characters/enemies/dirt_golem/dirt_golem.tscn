@@ -62,7 +62,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_atk2")
 }],
-"loop": false,
+"loop": 0,
 "name": &"attack",
 "speed": 4.0
 }, {
@@ -118,11 +118,11 @@ collision_mask = 256
 radius = 7.0
 
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=1249560010]
-target_position = Vector2(80, 0)
+target_position = Vector2(96, 0)
 collision_mask = 17
 
 [node name="RingProbe" type="RayCast2D" parent="." unique_id=818468644]
-target_position = Vector2(32, 0)
+target_position = Vector2(24, 0)
 collision_mask = 17
 
 [node name="RingCaster" parent="." unique_id=835362282 instance=ExtResource("5_weap")]
