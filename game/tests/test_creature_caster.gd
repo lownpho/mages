@@ -1,7 +1,7 @@
 extends Node
-## Headless creature-caster smoke: a sproutling (whose attack is now an ad-hoc
-## WeaponSpellResource cast through CreatureSpellCaster) sees a player-group
-## target and produces enemy-layer bullets through the same weapon_spell effect
+## Headless creature-caster smoke: a sproutling (whose attack is a BulletSpell
+## cast through the same unified SpellCaster the player uses) sees a player-group
+## target and produces enemy-layer bullets through the same bullet_spell effect
 ## the player uses. Run:
 ##   godot --headless --path game res://tests/test_creature_caster.tscn
 

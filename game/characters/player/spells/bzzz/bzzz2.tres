@@ -1,42 +1,47 @@
 [gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://c2qqc8m5qfmsw"]
 
-[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="3_effect"]
-[ext_resource type="PackedScene" uid="uid://fs7pg6h57wed" path="res://characters/player/spells/bzzz/bzzz_minion.tscn" id="4_minion"]
-[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="5_weapon"]
-[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="99_effect"]
-[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
-[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
-[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
-[ext_resource type="Texture2D" uid="uid://djfsuil3brels" path="res://characters/player/spells/bzzz/bzzz.png" id="9_sheet"]
+[ext_resource type="Script" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/summon_spawner.tscn" id="3_effect"]
+[ext_resource type="Script" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="4_ha7c8"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/bzzz/bzzz_minion.tscn" id="4_minion"]
+[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="5_3hq0a"]
+[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="5_weapon"]
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="6_atv5r"]
+[ext_resource type="Script" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="99_effect"]
+[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
 region = Rect2(56, 32, 8, 8)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_sting"]
-atlas = ExtResource("8_bullets")
+[sub_resource type="AtlasTexture" id="AtlasTexture_i4245"]
+atlas = ExtResource("5_3hq0a")
 region = Rect2(32, 8, 8, 8)
 
-[sub_resource type="Resource" id="StingData"]
-script = ExtResource("7_bullet")
-icon = SubResource("AtlasTexture_sting")
-base_damage = 9.0
+[sub_resource type="Resource" id="Resource_2lvjf"]
+script = ExtResource("6_atv5r")
+icon = SubResource("AtlasTexture_i4245")
 range_tiles = 3
 speed_tiles = 14
-skill_scaling = 0.5
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 9.0
+speed_scaling = 0.06
 
 [sub_resource type="Resource" id="SinglePattern"]
 script = ExtResource("6_pattern")
 
 [sub_resource type="Resource" id="StingWeapon"]
 script = ExtResource("5_weapon")
-effect_scene = ExtResource("99_effect")
-max_shots = 1
-cooldown = 0.5
 fire_pattern = SubResource("SinglePattern")
-bullet = SubResource("StingData")
+bullet = SubResource("Resource_2lvjf")
+damage = SubResource("ScalingProfile_bullet")
+max_shots = 1
+effect_scene = ExtResource("99_effect")
+cooldown = 0.5
 
 [resource]
 script = ExtResource("1_script")
@@ -44,13 +49,10 @@ minion_scene = ExtResource("4_minion")
 count = 6
 minion_health = 4
 minion_lifetime = 10.0
-minion_weapon = SubResource("StingWeapon")
-minion_sheet = ExtResource("9_sheet")
-scaling_stat = "speed"
-damage_per_stat = 0.06
+minion_spell = SubResource("StingWeapon")
 effect_scene = ExtResource("3_effect")
 cooldown = 8.0
 cast_time = 0.3
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 25
 speed_modifier = 3
+max_health_modifier = 25

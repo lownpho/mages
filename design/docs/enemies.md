@@ -950,3 +950,4 @@ deepwood covers a full tier-2 kit.
 ## other ideas
 
 enemies that scan for the same type in the room and shoot at each other not at the player
+bids that make wind

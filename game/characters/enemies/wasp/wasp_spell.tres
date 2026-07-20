@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://badcu3m31vj1b"]
+
+[ext_resource type="Script" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_n8k4p"]
+[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="2_ctonb"]
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="3_hg2rn"]
+[ext_resource type="Script" path="res://items/bullets/single_pattern.gd" id="3_pattern"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="99_effect"]
+[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2glay"]
+atlas = ExtResource("2_ctonb")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="Resource" id="Resource_52f0g"]
+script = ExtResource("3_hg2rn")
+icon = SubResource("AtlasTexture_2glay")
+range_tiles = 4
+speed_tiles = 8
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 7.0
+
+[sub_resource type="Resource" id="SinglePattern_1"]
+script = ExtResource("3_pattern")
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("SinglePattern_1")
+bullet = SubResource("Resource_52f0g")
+damage = SubResource("ScalingProfile_bullet")
+max_shots = 1
+effect_scene = ExtResource("99_effect")
+cooldown = 0.8

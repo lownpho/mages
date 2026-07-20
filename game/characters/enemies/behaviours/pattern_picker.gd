@@ -49,15 +49,35 @@ func _dispatch() -> void:
 
 	if states.is_empty():
 		return
+	_roll(_ready_candidates())
 
+# Indices of the states willing to run right now (see Behaviour.can_run) — a Volley whose
+# spell is still cooling would just stand there, so it's dropped from the roll and the
+# creature picks a different attack. Falls back to the full pool when nothing is ready, so
+# the dispatcher always hands off rather than deadlocking on a fully-cooling kit.
+func _ready_candidates() -> Array[int]:
+	var ready_states: Array[int] = []
+	var all: Array[int] = []
+	for i in range(states.size()):
+		all.append(i)
+		var node: State = creature.fsm.states.get(states[i])
+		if node is Behaviour and not node.can_run():
+			continue
+		ready_states.append(i)
+	return ready_states if not ready_states.is_empty() else all
+
+func _roll(candidates: Array[int]) -> void:
 	var total := 0.0
-	for w in weights:
-		total += w
+	for i in candidates:
+		total += _weight(i)
 	var roll := randf() * total
 	var acc := 0.0
-	for i in range(states.size()):
-		acc += weights[i]
+	for i in candidates:
+		acc += _weight(i)
 		if roll <= acc:
 			creature.fsm.transition_to(states[i])
 			return
-	creature.fsm.transition_to(states[states.size() - 1])
+	creature.fsm.transition_to(states[candidates[candidates.size() - 1]])
+
+func _weight(i: int) -> float:
+	return weights[i] if i < weights.size() else 1.0

@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://b6f8woc2sylt2" path="res://characters/player/player.png" id="2_c6leb"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="5_c6leb"]
 [ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
+[ext_resource type="Script" uid="uid://cvnv21hhr6o6f" path="res://characters/player/spells/player_cast_input.gd" id="8_castin"]
 [ext_resource type="Texture2D" uid="uid://dhg4w5reodlbn" path="res://characters/player/low_health_aura.png" id="9_lowhp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
@@ -175,3 +176,6 @@ state_names = Array[String](["Idle", "Move", "Cast"])
 
 [node name="SpellCaster" type="Node" parent="." unique_id=1093247518]
 script = ExtResource("7_caster")
+
+[node name="PlayerCastInput" type="Node" parent="."]
+script = ExtResource("8_castin")

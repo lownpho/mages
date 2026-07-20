@@ -21,9 +21,8 @@ func exit() -> void:
 	_attack.enabled = false
 
 func physics_update(delta: float) -> void:
-	var player := creature.get_target()
+	var player := target_or_go(lost_state)
 	if not player:
-		creature.fsm.transition_to(lost_state)
 		return
 
 	var to_player := player.global_position - creature.global_position
@@ -32,12 +31,12 @@ func physics_update(delta: float) -> void:
 	creature.face(to_player.x)
 
 	if creature.probe_sees(_attack):
-		creature.fsm.transition_to(attack_state)
+		go_to(attack_state)
 	elif creature.probe_sees(_chase):
 		creature.velocity = _velocity(to_player, delta)
 		creature.move_and_slide()
 	else:
-		creature.fsm.transition_to(lost_state)
+		go_to(lost_state)
 
 # Movement seam: subclasses (e.g. WeaveChase) override this to change how it closes.
 func _velocity(to_player: Vector2, _delta: float) -> Vector2:

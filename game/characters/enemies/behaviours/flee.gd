@@ -1,25 +1,35 @@
-extends Chase
+extends Behaviour
 class_name Flee
 
 # Bolts in a RANDOM direction picked on enter (not simply away from the player), so every
 # re-entry — including the post-Barrage one — rolls a fresh escape line. RetreatProbe is kept
 # pointed along the flee direction; hitting a wall there is what "cornered" means.
+#
+# Deliberately NOT a Chase subclass: it shares the run-toward/run-away silhouette but none of
+# the logic (no attack probe, no attack hand-off), so inheriting only left dead exports to
+# mis-wire.
 
+@export var chase_probe_path: NodePath ## LOS to the target; losing it ends the flight.
 @export var retreat_probe_path: NodePath
+@export var lost_state: String = "Idle"
 @export var cornered_state: String = "Barrage"
+@export var speed: float = 32.0
 @export var retreat_range: float = 12.0
+@export var run_anim: String = "run"
 
+@onready var _chase: RayCast2D = get_node(chase_probe_path)
 @onready var _retreat: RayCast2D = get_node(retreat_probe_path)
 
 var _dir := Vector2.RIGHT
 
 func enter() -> void:
-	super()
+	_chase.enabled = true
 	_retreat.enabled = true
+	creature.play(run_anim)
 	_dir = _pick_direction()
 
 func exit() -> void:
-	super()
+	_chase.enabled = false
 	_retreat.enabled = false
 
 # A handful of rolls, keeping the first that isn't wall-blocked at probe range; a fully
@@ -34,28 +44,23 @@ func _pick_direction() -> Vector2:
 			return dir
 	return dir
 
-func physics_update(delta: float) -> void:
-	var player := creature.get_target()
+func physics_update(_delta: float) -> void:
+	var player := target_or_go(lost_state)
 	if not player:
-		creature.fsm.transition_to(lost_state)
 		return
 
-	var to_player := player.global_position - creature.global_position
-	creature.face(to_player.x)
+	creature.face(player.global_position.x - creature.global_position.x)
 
 	_chase.look_at(player.global_position)
 	if not creature.probe_sees(_chase):
-		creature.fsm.transition_to(lost_state)
+		go_to(lost_state)
 		return
 
 	_retreat.target_position = _dir * retreat_range
 	_retreat.force_raycast_update()
 	if _retreat.is_colliding():
-		creature.fsm.transition_to(cornered_state)
+		go_to(cornered_state)
 		return
 
-	creature.velocity = _velocity(to_player, delta)
+	creature.velocity = _dir * speed
 	creature.move_and_slide()
-
-func _velocity(_to_player: Vector2, _delta: float) -> Vector2:
-	return _dir * speed

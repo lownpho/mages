@@ -1,29 +1,45 @@
 extends CharacterBody2D
 class_name BaseBullet
 
-## All bullet stats are read from this resource — the single source of truth.
-## Set by WeaponNode before the bullet enters the tree.
+## A projectile driven entirely by its BulletResource: kinematics here, every
+## trait beyond flying straight delegated to the resource's BulletBehaviours.
+## Set up by CastContext.spawn_bullet before the bullet enters the tree.
 var data: BulletResource
+## What this shot hits for. Comes from the CAST, not the shape — stamped by
+## CastContext.spawn_bullet — so the same def fires for 20 from the player and 8
+## from an enemy. null = a bullet that deals no damage of its own.
+var damage: ScalingProfile
 var base_direction: Vector2 = Vector2.UP
-var target: Node2D
+var target: Node2D  ## Homing lock, set by the firing effect. null = fly straight.
 var skill: int = 0
-var speed: int = 0  ## caster speed stat, for data.speed_scaling (0 on enemy bullets)
+var speed: int = 0  ## caster speed stat, for damage.speed_scaling (0 on enemy bullets)
+var defence: int = 0  ## caster defence stat, for damage.defence_scaling (0 on enemy bullets)
+var target_groups: Array = []  ## caster's hostiles, for behaviours that seek (chain)
 ## Pass through hurtboxes instead of despawning on contact (Clang buff). Leaves
 ## the "bullets" group so Hurtbox damages but never calls reached_hurtbox().
 var pierce: bool = false
 
+## How far the bullet has flown — behaviours (homing range) read this.
+var distance_travelled: float = 0.0
+## Per-bullet scratch for behaviours, keyed by the behaviour instance (which is
+## shared across bullets, so it can't hold state itself).
+var runtime: Dictionary = {}
+
 var lifetime_timer: Timer
-var _bounces_left: int = 0
-# How far the bullet steers before flying straight, and how far it has flown.
-var _homing_range_px: float = 0.0
-var _distance_travelled: float = 0.0
+var _deals_contact_damage: bool = true
 
-## Fraction of range_tiles a homing bullet steers for when the resource leaves
-## homing_range_tiles at 0 — it locks on early, then flies straight to the target.
-const _DEFAULT_HOMING_FRACTION := 0.6
-
-func _speed() -> float:
+func speed_px() -> float:
 	return data.speed_tiles * GameConstants.PX_PER_TILE
+
+## Point the sprite along the current velocity — behaviours call this after they
+## re-steer.
+func face_velocity() -> void:
+	rotation = velocity.angle() + PI / 2
+
+## Restart the flight-leg timer (a behaviour re-arming its range after a hop);
+## wait <= 0 reuses the current leg length.
+func restart_leg(wait: float = -1.0) -> void:
+	lifetime_timer.start(wait if wait > 0.0 else lifetime_timer.wait_time)
 
 func _ready() -> void:
 	# A bullet with no forward speed or no range can't travel — it would also make
@@ -34,7 +50,6 @@ func _ready() -> void:
 		queue_free()
 		return
 
-	_bounces_left = data.wall_bounces
 	if pierce:
 		remove_from_group("bullets")
 	# Enemy bullets also collide with spell barriers (Fwoosh's fire wall); player
@@ -42,9 +57,10 @@ func _ready() -> void:
 	if collision_layer & GameConstants.LAYER_ENEMY_BULLETS:
 		collision_mask |= GameConstants.LAYER_SPELL_BARRIER
 
-	var homing_tiles := data.homing_range_tiles if data.homing_range_tiles > 0.0 \
-		else data.range_tiles * _DEFAULT_HOMING_FRACTION
-	_homing_range_px = homing_tiles * GameConstants.PX_PER_TILE
+	for b in data.behaviours:
+		if b.suppresses_contact():
+			_deals_contact_damage = false
+		b.on_ready(self)
 
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
@@ -53,82 +69,47 @@ func _ready() -> void:
 	lifetime_timer.timeout.connect(_expire)
 	add_child(lifetime_timer)
 
-	velocity = base_direction * _speed()
-	rotation = velocity.angle() + PI / 2
+	velocity = base_direction * speed_px()
+	face_velocity()
 
 	if data.icon:
 		$Sprite2D.texture = data.icon
 
 func _physics_process(delta: float) -> void:
-	# Aim assist (cone-gated steering — see AimAssist.steer), only within the
-	# homing range; beyond it the bullet keeps its heading and flies straight.
-	if data.homing and is_instance_valid(target) and _distance_travelled < _homing_range_px:
-		velocity = AimAssist.steer(velocity, global_position, target.global_position,
-			data.homing_turn_deg, data.homing_cone_deg, delta)
-		rotation = velocity.angle() + PI / 2
+	for b in data.behaviours:
+		b.on_step(self, delta)
 
 	# Terrain is the only thing in a bullet's collision mask, so a collision is
-	# always a wall. Ricochet if any bounces remain — the leg restarts so total
-	# travel grows with bounces — otherwise expire.
+	# always a wall — the bullet expires (firing any on-expire payload).
 	var motion := velocity * delta
 	var collision := move_and_collide(motion)
-	_distance_travelled += motion.length()
+	distance_travelled += motion.length()
 	if collision:
-		if _bounces_left > 0:
-			_bounces_left -= 1
-			velocity = velocity.bounce(collision.get_normal())
-			rotation = velocity.angle() + PI / 2
-			lifetime_timer.start()
-		else:
-			_expire()
+		_expire()
+
+func computed_damage() -> int:
+	return damage.compute(skill, speed, defence) if damage else 0
 
 func get_damage() -> int:
-	return round(data.base_damage + skill * data.skill_scaling + speed * data.speed_scaling)
+	# A blast_only bomb deals nothing on contact — the expire blast carries it all.
+	return computed_damage() if _deals_contact_damage else 0
 
 func reached_hurtbox() -> void:
+	# Give behaviours first refusal (a chain consumes the hit and re-targets);
+	# otherwise the bullet expires as usual.
+	for b in data.behaviours:
+		if b.on_hurtbox(self):
+			return
 	_expire()
 
-# Single despawn path. Fires the on-expire payload (AoE blast and/or burst spray)
-# if the resource carries one, then frees. A plain bullet has no payload and just
-# frees — identical to the old behaviour.
+## Force the bullet to despawn now, firing its on-expire payloads — a behaviour
+## calls this when it dead-ends (e.g. a chain with no next target).
+func expire() -> void:
+	_expire()
+
+# Single despawn path: fire every on-expire payload, then free. A plain bullet
+# has no behaviours and just frees.
 func _expire() -> void:
-	if data.explode_radius_tiles > 0.0:
-		_spawn_blast()
-	if data.burst_pattern and data.burst_bullet:
-		_spawn_burst()
+	for b in data.behaviours:
+		b.on_expire(self)
 	queue_free()
-
-func _spawn_blast() -> void:
-	var zone := DamageZone.new()
-	zone.damage = get_damage()
-	zone.collision_layer = collision_layer  # faction inherited from this bullet
-	zone.collision_mask = 0
-	zone.monitoring = false
-	zone.position = global_position
-	var shape := CollisionShape2D.new()
-	var circle := CircleShape2D.new()
-	circle.radius = data.explode_radius_tiles * GameConstants.PX_PER_TILE / 2.0
-	shape.shape = circle
-	zone.add_child(shape)
-	# Brief life so hurtboxes register the overlap, then it cleans itself up.
-	var life := Timer.new()
-	life.one_shot = true
-	life.autostart = true
-	life.wait_time = 0.1
-	life.timeout.connect(zone.queue_free)
-	zone.add_child(life)
-	# Deferred: _expire can run mid-collision while the tree is busy.
-	get_tree().root.add_child.call_deferred(zone)
-
-func _spawn_burst() -> void:
-	var scene := load("res://items/bullets/base_bullet.tscn") as PackedScene
-	var origin := global_position
-	for dir in data.burst_pattern.get_directions(velocity.normalized()):
-		var bullet = scene.instantiate()
-		bullet.data = data.burst_bullet
-		bullet.collision_layer = collision_layer  # faction inherited
-		bullet.base_direction = dir
-		bullet.skill = skill
-		bullet.speed = speed
-		bullet.position = origin
-		get_tree().root.add_child.call_deferred(bullet)

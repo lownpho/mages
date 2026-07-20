@@ -67,7 +67,7 @@ func _classify(res: Resource) -> String:
 	if res is ItemResource: return "item"
 	return ""
 
-# Trailing digits are the tier (zaap1 -> zaap, 1; snake_weapon -> snake_weapon, "").
+# Trailing digits are the tier (zaap1 -> zaap, 1; hopper_spell -> hopper_spell, "").
 func _split_tier(base: String) -> Array:
 	var i := base.length()
 	while i > 0 and base[i - 1] >= "0" and base[i - 1] <= "9":
@@ -80,16 +80,24 @@ func _stats(res: Resource) -> Dictionary:
 	var stats := {}
 	_add_numeric(res, stats, "")
 
-	# Weapon spells embed their bullet — flatten its stats and a derived DPS
-	# (full burst damage over one burst+cooldown cycle, pattern multiplier in).
-	if res is WeaponSpellResource and res.bullet != null:
+	# Bullet spells reference a shared bullet def — flatten its stats and a derived DPS
+	# (full burst damage over one burst+cooldown cycle, pattern multiplier in). Damage
+	# lives on the spell, not the def, so it is read from the spell.
+	if res is BulletSpellResource and res.bullet != null:
 		_add_numeric(res.bullet, stats, "bullet_")
+		var base := 0.0
+		if res.damage != null:
+			_add_numeric(res.damage, stats, "bullet_")  # base_damage + scalings
+			base = res.damage.base_damage
 		var cycle: float = res.shot_interval * res.max_shots + res.cooldown
 		if cycle > 0.0:
-			stats["dps_derived"] = res.bullet.base_damage * _pattern_count(res.fire_pattern) \
+			stats["dps_derived"] = base * _pattern_count(res.fire_pattern) \
 					* res.max_shots / cycle
-	elif res is SpellResource and res.base_damage > 0.0 and res.cooldown > 0.0:
-		stats["dps_derived"] = res.base_damage / res.cooldown
+	elif res is HealResource and res.amount != null:
+		# Resource-intrinsic scaling (heal's restore) lives on a ScalingProfile component.
+		_add_numeric(res.amount, stats, "")
+		if res.cooldown > 0.0 and res.amount.base_damage > 0.0:
+			stats["dps_derived"] = res.amount.base_damage / res.cooldown
 	return stats
 
 # Bullets per trigger pull for a fire pattern (shotgun pellets, ring bullets, 1 otherwise).

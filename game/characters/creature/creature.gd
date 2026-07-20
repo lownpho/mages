@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Creature
 
-## A faction-agnostic AI combatant (FSM + hurtbox + weapon + targeting), shared by the
+## A faction-agnostic AI combatant (FSM + hurtbox + caster + targeting), shared by the
 ## hostile enemy roster and the player's summoned minions. Hostiles author a `data`
 ## resource and drops; summons leave `data` null and have their stats injected by the
 ## summon spawner before they enter the tree (see summon_spawner).
@@ -11,7 +11,7 @@ class_name Creature
 ## split aggro onto the player's minions for free. A summon flips this to the
 ## "enemies" group — the targeting code below is faction-agnostic.
 @export var target_groups: Array[String] = ["player", "summon"]
-## Physics layer the weapon stamps on bullets it fires. Enemies fire enemy bullets;
+## Physics layer the caster stamps on bullets it fires. Enemies fire enemy bullets;
 ## a summon overrides this to player bullets so its shots hit enemy hurtboxes.
 @export var bullet_collision_layer: int = GameConstants.LAYER_ENEMY_BULLETS
 
@@ -23,9 +23,13 @@ var drops: Array[LootDrop] = []
 var health: int
 
 # Creature damage never scales with a stat — it's authored flat on each spell's
-# bullet — but spell effects read caster.skill through the shared contract.
+# bullet — but spell effects read caster.skill/speed/defence through the shared
+# contract, and a summoned minion is a Creature stamped with the player's stats so
+# its bullet scales exactly as if the player cast it (see summon_spawner).
 var skill: int = 0
-# Where this creature's spells aim, stamped by CreatureSpellCaster.try_cast from
+var speed: int = 0
+var defence: int = 0
+# Where this creature's spells aim, stamped by SpellCaster.cast() from
 # the behaviour's chosen target point; effects sample it via get_aim_direction()
 # (the same call they make on the player).
 var aim_direction: Vector2 = Vector2.RIGHT

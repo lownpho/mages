@@ -18,10 +18,10 @@ func enter() -> void:
 
 func exit() -> void:
 	_probe.enabled = false
+	super()
 
 func physics_update(delta: float) -> void:
-	var player := creature.get_target()
-	if player and not creature.look_for_target(_probe):
-		creature.fsm.transition_to(out_of_range_state)
+	if creature.get_target() and not creature.look_for_target(_probe):
+		go_to(out_of_range_state)
 		return
 	super(delta)

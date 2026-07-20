@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
 [ext_resource type="Texture2D" path="res://characters/enemies/thornmess/thornmess.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://thrnmssmsl01" path="res://characters/enemies/thornmess/thornmess_missiles.tres" id="6_missiles"]
 [ext_resource type="Resource" uid="uid://thrnmsssht01" path="res://characters/enemies/thornmess/thornmess_shotgun.tres" id="7_shotgun"]
 [ext_resource type="Resource" uid="uid://thrnmssblm01" path="res://characters/enemies/thornmess/thornmess_bloom.tres" id="8_bloom"]
@@ -17,7 +17,6 @@
 [ext_resource type="Script" uid="uid://b2fghnxxvt8sb" path="res://characters/enemies/behaviours/guard.gd" id="14_guard"]
 [ext_resource type="Script" uid="uid://ctpnms0jhdsrg" path="res://characters/enemies/behaviours/rotating_volley.gd" id="15_rotvolley"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="16_volley"]
-[ext_resource type="Script" uid="uid://2tw72jvy8744" path="res://characters/enemies/behaviours/rotating_ring_burst.gd" id="17_ringburst"]
 [ext_resource type="Script" uid="uid://b6ic7k8dhqajd" path="res://characters/enemies/behaviours/summon_allies.gd" id="18_summon"]
 [ext_resource type="PackedScene" uid="uid://de2ihs354x1ge" path="res://characters/enemies/seedling/seedling.tscn" id="19_seedling"]
 [ext_resource type="PackedScene" uid="uid://cr0s3budsc3n3" path="res://characters/enemies/rosebud/rosebud.tscn" id="20_rosebud"]
@@ -151,13 +150,13 @@ collision_mask = 17
 target_position = Vector2(64, 0)
 collision_mask = 17
 
-[node name="MissileWeapon" parent="." unique_id=1900000007 instance=ExtResource("5_weap")]
+[node name="MissileCaster" parent="." unique_id=1900000007 instance=ExtResource("5_weap")]
 
-[node name="ShotgunWeapon" parent="." unique_id=1900000008 instance=ExtResource("5_weap")]
+[node name="ShotgunCaster" parent="." unique_id=1900000008 instance=ExtResource("5_weap")]
 
-[node name="BloomWeapon" parent="." unique_id=1900000009 instance=ExtResource("5_weap")]
+[node name="BloomCaster" parent="." unique_id=1900000009 instance=ExtResource("5_weap")]
 
-[node name="SporeWeapon" parent="." unique_id=1900000010 instance=ExtResource("5_weap")]
+[node name="SporeCaster" parent="." unique_id=1900000010 instance=ExtResource("5_weap")]
 
 [node name="FSM" parent="." unique_id=1900000011 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
@@ -182,8 +181,8 @@ phase_weights = Array[float]([3.0, 2.0, 2.0])
 script = ExtResource("12_rvolley")
 attack_probe_path = NodePath("../../MissileProbe")
 out_of_range_state = "Uproot"
-weapon_path = NodePath("../../MissileWeapon")
-weapon_data = ExtResource("6_missiles")
+caster_path = NodePath("../../MissileCaster")
+spell = ExtResource("6_missiles")
 shot_count = 4
 attack_anim = "attack"
 done_state = "Pick"
@@ -206,27 +205,28 @@ guard_anim = "guard"
 [node name="BloomBurst" type="Node" parent="FSM" unique_id=1900000017]
 script = ExtResource("15_rotvolley")
 rotation_per_pulse = 30.0
-weapon_path = NodePath("../../BloomWeapon")
-weapon_data = ExtResource("8_bloom")
+caster_path = NodePath("../../BloomCaster")
+spell = ExtResource("8_bloom")
 shot_count = 4
 attack_anim = "attack"
 done_state = "Pick"
 
 [node name="Shotgun" type="Node" parent="FSM" unique_id=1900000018]
 script = ExtResource("16_volley")
-weapon_path = NodePath("../../ShotgunWeapon")
-weapon_data = ExtResource("7_shotgun")
+caster_path = NodePath("../../ShotgunCaster")
+spell = ExtResource("7_shotgun")
 shot_count = 4
 attack_anim = "attack"
 done_state = "Pick"
 
 [node name="Spores" type="Node" parent="FSM" unique_id=1900000019]
-script = ExtResource("17_ringburst")
-weapon_path = NodePath("../../SporeWeapon")
-weapon_data = ExtResource("9_spores")
+script = ExtResource("15_rotvolley")
+aim_at_target = false
+rotation_per_pulse = 25.0
+caster_path = NodePath("../../SporeCaster")
+spell = ExtResource("9_spores")
 duration = 4.0
 pulse_interval = 0.5
-rotation_per_pulse = 25.0
 done_state = "Summon"
 attack_anim = "attack"
 

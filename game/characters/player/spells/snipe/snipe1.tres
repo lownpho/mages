@@ -1,26 +1,35 @@
-[gd_resource type="Resource" script_class="WeaponSpellResource" format=3 uid="uid://8vvmq0ft11l1"]
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://8vvmq0ft11l1"]
 
-[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/weapon_spell_resource.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/weapon_spell.tscn" id="3_scene"]
-[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="4_pattern"]
-[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="5_bres"]
-[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="6_btex"]
+[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Script" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_uuls8"]
+[ext_resource type="Texture2D" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="Script" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_d6fva"]
+[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="3_bjhcs"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="4_k0xiu"]
+[ext_resource type="Script" path="res://items/bullets/single_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_bullet"]
-atlas = ExtResource("6_btex")
+[sub_resource type="Resource" id="Resource_3ncnd"]
+script = ExtResource("2_d6fva")
+turn_deg = 540.0
+cone_deg = 90.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pnctl"]
+atlas = ExtResource("3_bjhcs")
 region = Rect2(0, 8, 8, 8)
 
-[sub_resource type="Resource" id="BulletData_1"]
-script = ExtResource("5_bres")
-icon = SubResource("AtlasTexture_bullet")
-base_damage = 6.0
+[sub_resource type="Resource" id="Resource_65jld"]
+script = ExtResource("4_k0xiu")
+icon = SubResource("AtlasTexture_pnctl")
 range_tiles = 18
 speed_tiles = 16
+behaviours = Array[ExtResource("1_uuls8")]([SubResource("Resource_3ncnd")])
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 6.0
 skill_scaling = 0.4
-homing = true
-homing_turn_deg = 540.0
-homing_cone_deg = 90.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")
@@ -32,10 +41,10 @@ region = Rect2(56, 56, 8, 8)
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
-bullet = SubResource("BulletData_1")
+bullet = SubResource("Resource_65jld")
+damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.15
 max_shots = 3
-burst_window = 1.5
 effect_scene = ExtResource("3_scene")
 cooldown = 5.0
 icon = SubResource("AtlasTexture_icon")

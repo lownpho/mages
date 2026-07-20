@@ -1,8 +1,14 @@
-[gd_resource type="Resource" script_class="SpellResource" format=3 uid="uid://c0nvpgtufjh8s"]
+[gd_resource type="Resource" script_class="HealResource" format=3 uid="uid://c0nvpgtufjh8s"]
 
-[ext_resource type="Script" uid="uid://byx6j10csjj2x" path="res://characters/player/spells/spell_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dg1jphswh84lg" path="res://characters/player/spells/heal/heal_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
 [ext_resource type="PackedScene" uid="uid://co8g2e1gvflhe" path="res://characters/player/spells/heal/heal.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="4_damage"]
+
+[sub_resource type="Resource" id="ScalingProfile_heal"]
+script = ExtResource("4_damage")
+base_damage = 100.0
+defence_scaling = 6.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
@@ -10,11 +16,10 @@ region = Rect2(0, 24, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
+amount = SubResource("ScalingProfile_heal")
 effect_scene = ExtResource("3_scene")
 cooldown = 12.0
 cast_time = 0.8
-base_damage = 100.0
-defence_scaling = 6.0
 icon = SubResource("AtlasTexture_icon")
 max_health_modifier = 20
 defence_modifier = 1

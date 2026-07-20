@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://characters/player/spells/fireball/fireball_1_explosion.png" id="1_0wful"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex1"]
+atlas = ExtResource("1_0wful")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex2"]
+atlas = ExtResource("1_0wful")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ex3"]
+atlas = ExtResource("1_0wful")
+region = Rect2(48, 0, 24, 24)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ex3")
+}],
+"loop": 0,
+"name": &"explode",
+"speed": 12.0
+}]

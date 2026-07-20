@@ -49,7 +49,7 @@ func _test_scan_enemies() -> void:
 
 func _test_find_item() -> void:
 	var exact := DebugContent.find_item("blam1")
-	_check(exact != null and exact is WeaponSpellResource, "find_item exact blam1")
+	_check(exact != null and exact is BulletSpellResource, "find_item exact blam1")
 	_check(DebugContent.find_item("zzz_no_such_item") == null, "find_item miss is null")
 
 

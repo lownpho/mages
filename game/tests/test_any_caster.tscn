@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b8ncaster0any"]
+
+[ext_resource type="Script" uid="uid://ddksw4eakjy47" path="res://tests/test_any_caster.gd" id="1_script"]
+
+[node name="TestAnyCaster" type="Node"]
+script = ExtResource("1_script")

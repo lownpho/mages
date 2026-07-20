@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
 [ext_resource type="Texture2D" uid="uid://fx64q6j02wqu" path="res://characters/enemies/thornthrower/thornthrower.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="4_weap"]
-[ext_resource type="Resource" uid="uid://b1thrnthrw0wp" path="res://characters/enemies/thornthrower/thorn_weapon.tres" id="5_thorn"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="4_weap"]
+[ext_resource type="Resource" uid="uid://b1thrnthrw0wp" path="res://characters/enemies/thornthrower/thorn_spell.tres" id="5_thorn"]
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="6_idle"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="7_wander"]
 [ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="8_chase"]
@@ -106,7 +106,7 @@ collision_mask = 17
 target_position = Vector2(48, 0)
 collision_mask = 17
 
-[node name="Weapon" parent="." unique_id=1687896626 instance=ExtResource("4_weap")]
+[node name="Caster" parent="." unique_id=1687896626 instance=ExtResource("4_weap")]
 
 [node name="FSM" parent="." unique_id=567561061 instance=ExtResource("4_fsm")]
 initial_state = "Wander"
@@ -127,7 +127,7 @@ speed = 32.0
 
 [node name="Attack" type="Node" parent="FSM" unique_id=574706568]
 script = ExtResource("9_fire")
-weapon_path = NodePath("../../Weapon")
-weapon_data = ExtResource("5_thorn")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("5_thorn")
 attack_probe_path = NodePath("../../AttackProbe")
 attack_anim = "attack"

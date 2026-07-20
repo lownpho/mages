@@ -3,15 +3,16 @@
 [ext_resource type="Resource" uid="uid://mdrkrdata001" path="res://characters/enemies/mandraker/mandraker_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
-[ext_resource type="Texture2D" path="res://characters/enemies/mandraker/mandraker.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://djwet4onrpe1y" path="res://characters/enemies/mandraker/mandraker.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
-[ext_resource type="Resource" uid="uid://mdrkrwave001" path="res://characters/enemies/mandraker/mandraker_weapon.tres" id="6_weapon"]
-[ext_resource type="Resource" uid="uid://mdrkrfire001" path="res://characters/enemies/mandraker/mandraker_fireball.tres" id="7_fireball"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
+[ext_resource type="Resource" uid="uid://mdrkrwave001" path="res://characters/enemies/mandraker/mandraker_spell.tres" id="6_weapon"]
+[ext_resource type="Resource" uid="uid://l8dbdfqogo3g" path="res://characters/enemies/mandraker/mandraker_fireball.tres" id="7_fireball"]
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="8_idle"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="9_wander"]
 [ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="10_chase"]
-[ext_resource type="Script" path="res://characters/enemies/behaviours/dual_cast.gd" id="11_dual"]
+[ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/enemies/behaviours/pattern_picker.gd" id="11_pattern"]
+[ext_resource type="Script" uid="uid://drngdvly7t8w2" path="res://characters/enemies/behaviours/ranged_volley.gd" id="12_rvolley"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_mandraker"]
 radius = 6.0
@@ -53,7 +54,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_atk1")
 }],
-"loop": false,
+"loop": 0,
 "name": &"attack",
 "speed": 4.0
 }, {
@@ -114,9 +115,11 @@ collision_mask = 17
 target_position = Vector2(24, 0)
 collision_mask = 17
 
-[node name="Weapon" parent="." unique_id=203592950 instance=ExtResource("5_weap")]
+[node name="FireballProbe" type="RayCast2D" parent="." unique_id=2019687301]
+target_position = Vector2(72, 0)
+collision_mask = 17
 
-[node name="FireballWeapon" parent="." unique_id=203592951 instance=ExtResource("5_weap")]
+[node name="Caster" parent="." unique_id=203592950 instance=ExtResource("5_weap")]
 
 [node name="FSM" parent="." unique_id=530778100 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
@@ -133,13 +136,30 @@ detect_probe_path = NodePath("../../DetectProbe")
 script = ExtResource("10_chase")
 chase_probe_path = NodePath("../../ChaseProbe")
 attack_probe_path = NodePath("../../AttackProbe")
+attack_state = "Pattern"
 speed = 28.0
 
-[node name="Attack" type="Node" parent="FSM" unique_id=1907545300]
-script = ExtResource("11_dual")
-weapon_path = NodePath("../../Weapon")
-weapon_data = ExtResource("6_weapon")
-secondary_weapon_path = NodePath("../../FireballWeapon")
-secondary_weapon_data = ExtResource("7_fireball")
+[node name="Pattern" type="Node" parent="FSM" unique_id=1907545300]
+script = ExtResource("11_pattern")
+states = Array[String](["Wave", "Fireball"])
+weights = Array[float]([3.0, 1.0])
+detect_probe_path = NodePath("../../ChaseProbe")
+lost_state = "Chase"
+
+[node name="Wave" type="Node" parent="FSM" unique_id=1907545301]
+script = ExtResource("12_rvolley")
 attack_probe_path = NodePath("../../AttackProbe")
-attack_anim = "attack"
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_weapon")
+shot_count = 2
+duration = 1.0
+done_state = "Pattern"
+
+[node name="Fireball" type="Node" parent="FSM" unique_id=1907545302]
+script = ExtResource("12_rvolley")
+attack_probe_path = NodePath("../../FireballProbe")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("7_fireball")
+shot_count = 1
+duration = 2.0
+done_state = "Pattern"

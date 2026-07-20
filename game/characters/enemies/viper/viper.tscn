@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
 [ext_resource type="Texture2D" uid="uid://d2tg5f64k4xr" path="res://characters/enemies/viper/viper.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
-[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_weapon.tscn" id="5_weap"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://cvsk6ojwyfxjb" path="res://characters/enemies/viper/viper_barrage.tres" id="6_weapon"]
 [ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="8_wander"]
@@ -116,7 +116,7 @@ collision_mask = 17
 target_position = Vector2(12, 0)
 collision_mask = 17
 
-[node name="Weapon" parent="." unique_id=2066202282 instance=ExtResource("5_weap")]
+[node name="Caster" parent="." unique_id=2066202282 instance=ExtResource("5_weap")]
 
 [node name="FSM" parent="." unique_id=549676314 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
@@ -134,14 +134,13 @@ speed = 16.0
 
 [node name="Flee" type="Node" parent="FSM" unique_id=63509835]
 script = ExtResource("9_flee")
-retreat_probe_path = NodePath("../../RetreatProbe")
 chase_probe_path = NodePath("../../DetectProbe")
-attack_probe_path = NodePath("../../RetreatProbe")
+retreat_probe_path = NodePath("../../RetreatProbe")
 speed = 32.0
 
 [node name="Barrage" type="Node" parent="FSM" unique_id=676626049]
 script = ExtResource("10_volley")
-weapon_path = NodePath("../../Weapon")
-weapon_data = ExtResource("6_weapon")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_weapon")
 shot_count = 1
 done_state = "Flee"

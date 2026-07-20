@@ -11,17 +11,9 @@ class_name ItemResource
 func get_item_type() -> GlobalInventory.ItemType:
 	return GlobalInventory.ItemType.OTHER
 
-# Tooltip rows as [icon_key, value] pairs; the view maps keys to icons and shows
-# active stats and modifiers in two separate groups.
-
-# Active stats — the item's own functional values (damage, cost, cooldown…),
-# shown plain. Base items have none; subclasses fill this in.
-func get_stats() -> Array:
-	return []
-
-# Equip modifiers — flat stat changes applied while the item is equipped, always
-# signed so a gain reads "+N". Shares icons with active stats; the group
-# separation disambiguates them.
+# Equip modifiers — flat stat changes applied while the item is equipped, as
+# [icon_key, value] rows (the view maps keys to icons), always signed so a gain
+# reads "+N". This is the only tooltip content the UI shows (see ui_slot.gd).
 func get_modifiers() -> Array:
 	var rows := []
 	if skill_modifier != 0: rows.append(["skill", "%+d" % skill_modifier])

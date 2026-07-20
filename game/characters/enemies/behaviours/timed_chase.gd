@@ -25,12 +25,11 @@ func exit() -> void:
 	creature.velocity = Vector2.ZERO
 
 func physics_update(_delta: float) -> void:
-	var target := creature.get_target()
+	var target := target_or_go(done_state)
 	if not target:
-		creature.fsm.transition_to(done_state)
 		return
 	if _reached(target):
-		creature.fsm.transition_to(done_state)
+		go_to(done_state)
 		return
 	var to_target := target.global_position - creature.global_position
 	creature.face(to_target.x)

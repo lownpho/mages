@@ -35,18 +35,19 @@ var damage_absorber: Node2D = null
 ## and _recompute_stats folds them in alongside equipment. Generic on purpose —
 ## any buff effect reuses it by handing over a modifier-carrying resource.
 var active_buffs: Array = []
-var can_use_weapon: bool = true
+var can_act: bool = true
 # ChargeDash: while Time.get_ticks_msec() < _dash_until_ms the player is driven
 # by _dash_velocity, overriding FSM movement (see start_dash).
 var _dash_velocity: Vector2 = Vector2.ZERO
 var _dash_until_ms: int = 0
-## While true, weapon-spell bullets fired pass through hurtboxes (Clang buff).
+## While true, bullet-spell bullets fired pass through hurtboxes (Clang buff).
 ## A spell effect sets it on cast and clears it when its window ends.
 var bullets_pierce: bool = false
-## Weapon-spell bursts currently firing. Starting an exclusive spell cancels
-## them onto their cooldowns: a new burst (register_burst) or a cast/channel
-## (cancel_bursts, called by SpellCaster). Instant spells leave them firing.
-var _live_bursts: Array[Node] = []
+## The bullet-spell burst currently firing, if any — only one is ever live.
+## Starting another burst (register_burst) or an exclusive spell, a cast or
+## channel (cancel_bursts, called by SpellCaster), ends it onto its cooldown;
+## instant spells leave it firing.
+var _live_burst: Node = null
 ## While Time.get_ticks_msec() < this, incoming damage is ignored — a spawn buffer so
 ## enemies placed near the spawn point can't chip you before you've taken control.
 var _grace_until_ms: int = 0
@@ -76,27 +77,29 @@ func _ready() -> void:
 	health = max_health
 	_broadcast_stats()
 
-# Aim for spells and weapon bursts: the direction from the player toward the
+# Aim for spells and bullet bursts: the direction from the player toward the
 # mouse. The single cursor read in the spell path — effects take a direction,
 # never a position, so a controller stick can replace this later.
 func get_aim_direction() -> Vector2:
 	return (get_global_mouse_position() - global_position).normalized()
 
 func register_burst(burst: Node) -> void:
-	cancel_bursts()  # one weapon at a time: the new burst cancels any live one
-	_live_bursts.append(burst)
+	cancel_bursts()  # one burst at a time: the new burst cancels any live one
+	_live_burst = burst
 
 func unregister_burst(burst: Node) -> void:
-	_live_bursts.erase(burst)
+	if _live_burst == burst:
+		_live_burst = null
 
-## Interrupt every live burst — each ends onto its full cooldown. Called when
-## an exclusive spell starts: a new weapon burst, a cast, or a channel.
+## Interrupt the live burst — it ends onto its full cooldown. Called when an
+## exclusive spell starts: a new bullet-spell burst, a cast, or a channel.
+## interrupt() unwinds through unregister_burst, which clears _live_burst.
 func cancel_bursts() -> void:
-	for burst in _live_bursts.duplicate():
-		burst.interrupt()
+	if is_instance_valid(_live_burst):
+		_live_burst.interrupt()
 
 func can_burst_fire(burst: Node) -> bool:
-	return can_use_weapon and not _live_bursts.is_empty() and _live_bursts.back() == burst
+	return can_act and _live_burst == burst
 
 func get_input_direction() -> Vector2:
 	var direction_x := Input.get_axis("left", "right")
@@ -109,7 +112,7 @@ func get_input_direction() -> Vector2:
 func start_dash(direction: Vector2, dash_speed: float, duration: float) -> void:
 	_dash_velocity = direction.normalized() * dash_speed
 	_dash_until_ms = Time.get_ticks_msec() + int(duration * 1000.0)
-	can_use_weapon = false
+	can_act = false
 
 func _is_dashing() -> bool:
 	return Time.get_ticks_msec() < _dash_until_ms
@@ -120,10 +123,10 @@ func _physics_process(_delta: float) -> void:
 		move_and_slide()
 	elif _dash_velocity != Vector2.ZERO:
 		# Dash just ended: stop and hand control back. Casts can't start mid-dash
-		# (can_use_weapon is false), so restoring it here is always correct.
+		# (can_act is false), so restoring it here is always correct.
 		_dash_velocity = Vector2.ZERO
 		velocity = Vector2.ZERO
-		can_use_weapon = true
+		can_act = true
 
 func _on_idle_physics_update(_delta: float) -> void:
 	if _is_dashing():
@@ -155,12 +158,12 @@ func _on_move_physics_update(_delta: float) -> void:
 # Spells with a cast time root the player here; SpellCaster drives the
 # transition in and back out when the cast resolves.
 func _on_cast_enter() -> void:
-	can_use_weapon = false
+	can_act = false
 	velocity = Vector2.ZERO
 	animated_sprite.play("channel")
 
 func _on_cast_exit() -> void:
-	can_use_weapon = true
+	can_act = true
 
 func _on_health_or_max_health_changed(_value: int) -> void:
 	low_health_aura.visible = health > 0 and health <= max_health * low_resource_warning_fraction

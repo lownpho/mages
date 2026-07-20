@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://b1thrnthrw0wp"]
+
+[ext_resource type="Script" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_r28sf"]
+[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Script" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_vvwmx"]
+[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="3_i16pc"]
+[ext_resource type="Script" path="res://items/bullets/single_pattern.gd" id="3_pattern"]
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="4_h4cyh"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="99_effect"]
+[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="Resource_y1q3d"]
+script = ExtResource("2_vvwmx")
+turn_deg = 70.0
+cone_deg = 120.0
+range_tiles = 5.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mklf1"]
+atlas = ExtResource("3_i16pc")
+region = Rect2(0, 64, 8, 8)
+
+[sub_resource type="Resource" id="Resource_ssihe"]
+script = ExtResource("4_h4cyh")
+icon = SubResource("AtlasTexture_mklf1")
+range_tiles = 10
+speed_tiles = 10
+behaviours = Array[ExtResource("1_r28sf")]([SubResource("Resource_y1q3d")])
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 16.0
+
+[sub_resource type="Resource" id="SinglePattern_1"]
+script = ExtResource("3_pattern")
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("SinglePattern_1")
+bullet = SubResource("Resource_ssihe")
+damage = SubResource("ScalingProfile_bullet")
+max_shots = 1
+effect_scene = ExtResource("99_effect")
