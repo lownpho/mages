@@ -2,7 +2,7 @@ extends Node2D
 
 ## A floating combat number: accumulates hits on its victim, then drifts up and fades.
 
-const RELEASE_DELAY := 0.15  # idle time before the number stops accumulating
+const RELEASE_DELAY := 0.3  # idle time before the number stops accumulating
 const DRIFT := 16.0          # pixels risen while fading
 const FADE_TIME := 0.5
 

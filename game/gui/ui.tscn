@@ -6,9 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="3_vuvel"]
 [ext_resource type="Texture2D" uid="uid://dh4pvghdubtap" path="res://gui/spellslot_atlas.tres" id="5_cl6af"]
 [ext_resource type="Texture2D" uid="uid://ju3vyif5e1uy" path="res://gui/bagslot_atlas.tres" id="6_4n41m"]
+[ext_resource type="Texture2D" uid="uid://djng2txhhbxl3" path="res://gui/spellslot_inactive_atlas.tres" id="7_jw18c"]
 [ext_resource type="Script" uid="uid://ccpwooxs0hukx" path="res://gui/minimap/minimap_view.gd" id="7_mmap"]
 [ext_resource type="PackedScene" uid="uid://c8w66s0eu7mav" path="res://gui/bestiary/bestiary.tscn" id="8_besty"]
-[ext_resource type="PackedScene" path="res://gui/map/map_panel.tscn" id="9_map"]
+[ext_resource type="PackedScene" uid="uid://b4c7i8maqnjuh" path="res://gui/map/map_panel.tscn" id="9_map"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_frame"]
 atlas = ExtResource("3_vuvel")
@@ -43,13 +44,6 @@ region = Rect2(24, 8, 8, 8)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health"]
 bg_color = Color(0.9019608, 0.28235295, 0.18039216, 1)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mana"]
-atlas = ExtResource("3_vuvel")
-region = Rect2(32, 8, 8, 8)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mana"]
-bg_color = Color(0.22352941, 0.47058824, 0.65882355, 1)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_2faxs"]
 atlas = ExtResource("3_vuvel")
 region = Rect2(48, 8, 8, 8)
@@ -64,18 +58,6 @@ region = Rect2(56, 8, 8, 8)
 [sub_resource type="AtlasTexture" id="AtlasTexture_defence"]
 atlas = ExtResource("3_vuvel")
 region = Rect2(40, 8, 8, 8)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jw18c"]
-atlas = ExtResource("3_vuvel")
-region = Rect2(8, 0, 8, 8)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_gr1wa"]
-atlas = ExtResource("3_vuvel")
-region = Rect2(16, 0, 8, 8)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fo2ah"]
-atlas = ExtResource("3_vuvel")
-region = Rect2(24, 0, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_skull"]
 atlas = ExtResource("3_vuvel")
@@ -251,7 +233,7 @@ size_flags_horizontal = 6
 size_flags_vertical = 4
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
-columns = 3
+columns = 2
 
 [node name="SpellSlot" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1145388472 instance=ExtResource("3_cemxd")]
 layout_mode = 2
@@ -261,21 +243,13 @@ slot_texture = ExtResource("5_cl6af")
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="SpellSlot3" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1731597423 instance=ExtResource("3_cemxd")]
-layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
-
 [node name="SpellSlot4" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079581 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("6_4n41m")
+slot_texture = ExtResource("7_jw18c")
 
 [node name="SpellSlot5" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079582 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("6_4n41m")
-
-[node name="SpellSlot6" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079583 instance=ExtResource("3_cemxd")]
-layout_mode = 2
-slot_texture = ExtResource("6_4n41m")
+slot_texture = ExtResource("7_jw18c")
 
 [node name="PanelContainer" type="PanelContainer" parent="Strip/VBox" unique_id=1787820405]
 layout_mode = 2

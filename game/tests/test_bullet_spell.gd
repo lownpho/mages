@@ -5,8 +5,8 @@ extends Node
 ## re-casting is blocked while the burst is live; starting an exclusive spell —
 ## a cast-time spell, a channel, or a second bullet spell — CANCELS the live burst
 ## onto its full cooldown (a single-shot instant bullet spell like zaap is a burst
-## too, so it's exclusive as well). Slots live on two pages of three
-## (cycle_spell_page flips which three the cast actions drive). Run:
+## too, so it's exclusive as well). Slots live on two pages of two
+## (cycle_spell_page flips which two the cast actions drive). Run:
 ##   godot --headless --path game res://tests/test_bullet_spell.tscn
 
 const PLAYER_SCENE := preload("res://characters/player/player.tscn")
@@ -27,14 +27,12 @@ func _ready() -> void:
 	input = player.get_node("PlayerCastInput")
 	pew1 = load("res://characters/player/spells/pew/pew1.tres")
 	pew2 = load("res://characters/player/spells/pew/pew2.tres")
-	# Page 0: pew1 / pew2 / fireball. Page 1: zaap / nope / (empty).
-	# zaap is a single-shot instant bullet spell (cast_time 0, max_shots 1) — still
-	# a burst, so casting it cancels a live burst like any other bullet spell.
+	# Page 0 holds the pews for every test; page 1 slot 0 is the swap slot each
+	# cancel test loads with the spell it cancels *with* (four slots don't fit them
+	# all at once), and page 1 slot 1 keeps nope.
 	GlobalInventory.spell_slots.at(0).set_item(pew1)
 	GlobalInventory.spell_slots.at(1).set_item(pew2)
-	GlobalInventory.spell_slots.at(2).set_item(load("res://characters/player/spells/fireball/fireball1.tres"))
-	GlobalInventory.spell_slots.at(3).set_item(load("res://characters/player/spells/zaap/zaap1.tres"))
-	GlobalInventory.spell_slots.at(4).set_item(load("res://characters/player/spells/nope/nope.tres"))
+	GlobalInventory.spell_slots.at(3).set_item(load("res://characters/player/spells/nope/nope.tres"))
 	# Let the tree finish assembling before effects get added to the root.
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -73,6 +71,10 @@ func _burst_live(spell: SpellResource) -> bool:
 	var effect = caster._await_finish.get(spell)
 	return effect != null and is_instance_valid(effect)
 
+# Page 1, slot 0 — the shared slot each cancel test loads with its own spell.
+func _equip_swap_slot(path: String) -> void:
+	GlobalInventory.spell_slots.at(2).set_item(load(path))
+
 func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
 
@@ -99,9 +101,12 @@ func _test_full_burst() -> void:
 
 func _test_cast_cancels_burst() -> void:
 	spawned.clear()
+	_equip_swap_slot("res://characters/player/spells/fireball/fireball1.tres")
 	input._try_cast(0)
 	await _wait(0.6)  # ~3 of 6 shots at 0.25s cadence
-	input._try_cast(2)  # fireball: cast_time > 0, must cancel the burst
+	GlobalInventory.cycle_spell_page()
+	input._try_cast(0)  # fireball: cast_time > 0, must cancel the burst
+	GlobalInventory.cycle_spell_page()  # back to page 0
 	var at_cancel := _count(pew1)
 	if at_cancel == 0 or at_cancel >= pew1.max_shots:
 		fails.append("unexpected shot count at cancel: %d" % at_cancel)
@@ -133,6 +138,7 @@ func _test_bullet_cancels_bullet() -> void:
 
 func _test_instant_bullet_cancels_burst() -> void:
 	spawned.clear()
+	_equip_swap_slot("res://characters/player/spells/zaap/zaap1.tres")
 	input._try_cast(0)
 	await _wait(0.3)
 	# Flip to page 1 mid-burst and cast zaap — a single-shot instant bullet spell

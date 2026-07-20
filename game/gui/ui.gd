@@ -3,7 +3,7 @@ extends CanvasLayer
 # Spell-row frames: the active page's row wears the spell-slot frame, the
 # inactive row the bag-slot frame — the palette-safe "which page is live" cue.
 const _ACTIVE_FRAME := preload("res://gui/spellslot_atlas.tres")
-const _INACTIVE_FRAME := preload("res://gui/bagslot_atlas.tres")
+const _INACTIVE_FRAME := preload("res://gui/spellslot_inactive_atlas.tres")
 
 func _ready() -> void:
 	GlobalEvent.player_max_health_changed.connect(_on_player_max_health_changed)
@@ -17,8 +17,8 @@ func _ready() -> void:
 	var ui_slots = %Bag.get_children()
 	for i in range(GlobalInventory.BAG_SIZE):
 		ui_slots[i].slot = GlobalInventory.bag_slots.at(i)
-	# Both spell pages are visible as two rows of three (LMB/RMB/Space left to
-	# right); SHIFT swaps which row is live, shown by the frame swap.
+	# Both spell pages are visible as two rows of two (LMB/RMB left to right);
+	# SPACE swaps which row is live, shown by the frame swap.
 	ui_slots = %EquipSpells.get_children()
 	for i in range(GlobalInventory.SPELL_SLOT_SIZE):
 		ui_slots[i].slot = GlobalInventory.spell_slots.at(i)

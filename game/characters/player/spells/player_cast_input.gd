@@ -2,12 +2,12 @@ extends Node
 class_name PlayerCastInput
 
 ## The player's trigger for the SpellCaster engine: maps input to casts and roots
-## the player during a cast. cast1/cast2/cast3 = LMB/RMB/Space fire the matching
-## slot on GlobalInventory's active page; cycle_page (SHIFT) flips the page. This
-## is the only player-specific piece of casting — the engine itself is caster-
-## agnostic, so enemies and minions mount the same SpellCaster with no input node.
+## the player during a cast. cast1/cast2 = LMB/RMB fire the matching slot on
+## GlobalInventory's active page; cycle_page (SPACE) flips the page. This is the
+## only player-specific piece of casting — the engine itself is caster-agnostic,
+## so enemies and minions mount the same SpellCaster with no input node.
 
-const SPELL_ACTIONS = ["cast1", "cast2", "cast3"]
+const SPELL_ACTIONS = ["cast1", "cast2"]
 
 @onready var player: CharacterBody2D = get_parent()
 @onready var caster: SpellCaster = get_parent().get_node("SpellCaster")
