@@ -24,7 +24,8 @@ func setup(spell: SpellResource, caster: Node2D) -> void:
 	# scales exactly as if the player cast it — the minion bullet's own
 	# skill/speed/defence_scaling pick which stat grows it (Bzzz=speed, Jimmy=defence).
 	_skill = _stat(caster, "skill")
-	_speed = _stat(caster, "speed")
+	# Bonus speed only — base_speed is the walk floor, not a power stat (see CastContext).
+	_speed = _stat(caster, "speed") - _stat(caster, "base_speed")
 	_defence = _stat(caster, "defence")
 
 func _stat(caster: Node2D, key: String) -> int:

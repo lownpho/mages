@@ -6,9 +6,11 @@
 [ext_resource type="Resource" uid="uid://qjq7lp1l3b7s" path="res://characters/player/spells/ring/ring1.tres" id="drop_2"]
 [ext_resource type="Texture2D" uid="uid://du0qsbdjksoj" path="res://characters/enemies/rosebud/rosebud.png" id="icon_png"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("icon_png")
-region = Rect2(0, 0, 8, 8)
+[sub_resource type="Resource" id="Drop_2"]
+script = ExtResource("1_yolio")
+item = ExtResource("drop_2")
+chance = 0.2
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_yolio")
@@ -16,11 +18,9 @@ item = ExtResource("drop_1")
 chance = 0.2
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
-[sub_resource type="Resource" id="Drop_2"]
-script = ExtResource("1_yolio")
-item = ExtResource("drop_2")
-chance = 0.2
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
 
 [resource]
 script = ExtResource("1")

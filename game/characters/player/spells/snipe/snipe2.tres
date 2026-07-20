@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://c4sfcwn5016cw"]
 
-[ext_resource type="Script" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_1ajny"]
-[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
-[ext_resource type="Script" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_6xlg7"]
-[ext_resource type="Texture2D" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
-[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="3_uovyi"]
-[ext_resource type="Script" path="res://items/bullets/single_pattern.gd" id="4_pattern"]
-[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="4_pvcxk"]
-[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_1ajny"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cabl55c7774jr" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_6xlg7"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="3_uovyi"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="4_pvcxk"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
 
 [sub_resource type="Resource" id="Resource_kxhox"]
 script = ExtResource("2_6xlg7")
@@ -17,35 +17,35 @@ cone_deg = 90.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pkdws"]
 atlas = ExtResource("3_uovyi")
-region = Rect2(0, 8, 8, 8)
+region = Rect2(8, 72, 8, 8)
 
 [sub_resource type="Resource" id="Resource_s6kgw"]
 script = ExtResource("4_pvcxk")
 icon = SubResource("AtlasTexture_pkdws")
 range_tiles = 18
-speed_tiles = 16
+speed_tiles = 18
 behaviours = Array[ExtResource("1_1ajny")]([SubResource("Resource_kxhox")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
 base_damage = 12.0
-skill_scaling = 0.4
+skill_scaling = 0.9
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(56, 56, 8, 8)
+region = Rect2(8, 16, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
 bullet = SubResource("Resource_s6kgw")
 damage = SubResource("ScalingProfile_bullet")
-shot_interval = 0.15
+shot_interval = 0.1
 max_shots = 5
 effect_scene = ExtResource("3_scene")
 cooldown = 5.0
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 5
+skill_modifier = 6

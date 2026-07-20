@@ -9,7 +9,8 @@ class_name ScalingProfile
 
 @export var base_damage: float = 0.0
 @export var skill_scaling: float = 0.0
-## Extra per point of caster speed, mirroring skill_scaling. 0 = no speed scaling.
+## Extra per point of caster *bonus* speed (speed above base_speed — an unequipped
+## caster contributes 0), mirroring skill_scaling. 0 = no speed scaling.
 @export var speed_scaling: float = 0.0
 ## Extra per point of caster defence (heal, Halo, …). 0 = none.
 @export var defence_scaling: float = 0.0

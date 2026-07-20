@@ -51,7 +51,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("atk3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"attack",
 "speed": 8.0
 }, {
@@ -62,7 +62,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("fly1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"fly",
 "speed": 6.0
 }]

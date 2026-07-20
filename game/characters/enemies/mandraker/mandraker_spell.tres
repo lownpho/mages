@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://mdrkrwave001"]
 
-[ext_resource type="Script" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_0c78q"]
-[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="2_vutwa"]
-[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="3_55xxv"]
-[ext_resource type="Script" path="res://items/bullets/single_pattern.gd" id="3_pattern"]
-[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="99_effect"]
-[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_0c78q"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_vutwa"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="3_55xxv"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="3_pattern"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="99_effect"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nv67f"]
 atlas = ExtResource("2_vutwa")

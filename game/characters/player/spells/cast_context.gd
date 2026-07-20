@@ -34,7 +34,7 @@ func _init(p_spell: SpellResource, p_caster: Node2D) -> void:
 	if aim == Vector2.ZERO:
 		aim = Vector2.RIGHT
 	skill = caster.skill
-	speed = _stat("speed")
+	speed = _scaling_speed()
 	defence = _stat("defence")
 	# The faction fields live on Creature; the player lacks them, so default to
 	# the player side (player-bullet layer, hostile = "enemies").
@@ -49,6 +49,13 @@ func _init(p_spell: SpellResource, p_caster: Node2D) -> void:
 func _stat(key: String) -> int:
 	var value = caster.get(key)
 	return int(value) if value != null else 0
+
+# Spells scale off *bonus* speed only: the player's base_speed is the walk floor,
+# not a power stat, so an unequipped caster contributes 0. Casters without a
+# base_speed (creatures, minions stamped by summon_spawner) already carry the
+# bonus alone.
+func _scaling_speed() -> int:
+	return _stat("speed") - _stat("base_speed")
 
 ## Spawn one BaseBullet along `direction` from `position`, stamped with this
 ## cast's faction, stats and pierce. Pass deferred=true when spawning from an

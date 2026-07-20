@@ -8,18 +8,18 @@
 [sub_resource type="Resource" id="ScalingProfile_heal"]
 script = ExtResource("4_damage")
 base_damage = 100.0
-defence_scaling = 6.0
+skill_scaling = 1.0
+defence_scaling = 4.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(0, 24, 8, 8)
+region = Rect2(80, 0, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
 amount = SubResource("ScalingProfile_heal")
 effect_scene = ExtResource("3_scene")
-cooldown = 12.0
+cooldown = 30.0
 cast_time = 0.8
 icon = SubResource("AtlasTexture_icon")
 max_health_modifier = 20
-defence_modifier = 1
