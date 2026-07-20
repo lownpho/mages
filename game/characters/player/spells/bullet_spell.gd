@@ -19,6 +19,9 @@ var ctx: CastContext
 var _shots_left: int = 0
 var _cadence: float = 0.0
 var _finished: bool = false
+# Accumulated rotation_per_shot, and (for aim_independent) the burst's random bearing.
+var _drift: float = 0.0
+var _base_angle: float = 0.0
 
 func setup(spell: SpellResource, p_caster: Node2D) -> void:
 	data = spell
@@ -28,6 +31,7 @@ func setup(spell: SpellResource, p_caster: Node2D) -> void:
 func _ready() -> void:
 	_shots_left = data.max_shots
 	_cadence = data.shot_interval  # banked, so shot 1 fires as soon as the gate opens
+	_base_angle = randf() * TAU
 	if caster.has_method("register_burst"):
 		caster.register_burst(self)
 
@@ -44,15 +48,19 @@ func _physics_process(delta: float) -> void:
 		return
 	_fire()
 	_cadence = 0.0
+	_drift += data.rotation_per_shot
 	_shots_left -= 1
 	if _shots_left <= 0:
 		_finish()
 
 func _fire() -> void:
-	# Re-sample aim per shot: the burst tracks the caster as it turns.
-	var direction: Vector2 = caster.get_aim_direction()
+	# Re-sample aim per shot: the burst tracks the caster as it turns — unless the spell
+	# is aim_independent, where it paints from its own fixed bearing instead.
+	var direction: Vector2 = Vector2.RIGHT.rotated(_base_angle) if data.aim_independent \
+		else caster.get_aim_direction()
 	if direction == Vector2.ZERO:
 		direction = Vector2.RIGHT
+	direction = direction.rotated(deg_to_rad(_drift))
 	var target: Node2D = null
 	var homing := data.bullet.homing()
 	if homing:

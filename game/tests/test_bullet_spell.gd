@@ -6,7 +6,9 @@ extends Node
 ## a cast-time spell, a channel, or a second bullet spell — CANCELS the live burst
 ## onto its full cooldown (a single-shot instant bullet spell like zaap is a burst
 ## too, so it's exclusive as well). Slots live on two pages of two
-## (cycle_spell_page flips which two the cast actions drive). Run:
+## (cycle_spell_page flips which two the cast actions drive). Last subtest covers the
+## burst's own shape — rotation_per_shot spiralling, aim_independent ignoring the
+## caster — off a bare SpellCaster. Run:
 ##   godot --headless --path game res://tests/test_bullet_spell.tscn
 
 const PLAYER_SCENE := preload("res://characters/player/player.tscn")
@@ -18,6 +20,7 @@ var input: PlayerCastInput
 var pew1: BulletSpellResource
 var pew2: BulletSpellResource
 var spawned: Dictionary = {}  # BulletResource -> bullets spawned carrying it
+var directions: Array[Vector2] = []  # every spawned bullet's launch direction, in order
 
 func _ready() -> void:
 	get_tree().root.child_entered_tree.connect(_on_root_child)
@@ -42,6 +45,7 @@ func _ready() -> void:
 	await _test_bullet_cancels_bullet()
 	await _test_instant_bullet_cancels_burst()
 	await _test_channel_cancels_burst()
+	await _test_burst_rotation()
 
 	# Leave no equipment behind for a later scene run in the same session.
 	for i in GlobalInventory.SPELL_SLOT_SIZE:
@@ -59,6 +63,7 @@ func _ready() -> void:
 func _on_root_child(node: Node) -> void:
 	if node is BaseBullet:
 		spawned[node.data] = spawned.get(node.data, 0) + 1
+		directions.append(node.base_direction)
 
 func _count(spell: BulletSpellResource) -> int:
 	return spawned.get(spell.bullet, 0)
@@ -170,3 +175,42 @@ func _test_channel_cancels_burst() -> void:
 		fails.append("channel-cancelled burst kept firing")
 	GlobalInventory.cycle_spell_page()  # back to page 0
 	await _wait_off_cooldown(pew1)
+
+# The burst-shaping dials that used to live on the RotatingVolley behaviour: a spell
+# with rotation_per_shot spirals its own aim shot to shot, and aim_independent ignores
+# the caster entirely so the spray paints the arena from its own bearing. Cast off a
+# bare SpellCaster — the point is that the spell carries the shape, not the caster.
+func _test_burst_rotation() -> void:
+	var rig := Node2D.new()
+	rig.set_script(load("res://tests/support/stub_caster.gd"))
+	add_child(rig)
+	var rig_caster := SpellCaster.new()
+	rig.add_child(rig_caster)
+	await get_tree().physics_frame
+
+	var spell: BulletSpellResource = load(
+		"res://characters/enemies/fae/fae_rings_spell.tres")
+	directions.clear()
+	rig_caster.cast(spell, Vector2.RIGHT)
+	await _wait(spell.shot_interval * spell.max_shots + 0.3)
+
+	var ring: int = spell.fire_pattern.num_bullets
+	if directions.size() != ring * spell.max_shots:
+		fails.append("ring burst spawned %d bullets, want %d" % [
+			directions.size(), ring * spell.max_shots])
+		rig.queue_free()
+		return
+	# Compare the first bullet of consecutive pulses: each is rotation_per_shot on.
+	for shot in spell.max_shots - 1:
+		var drift := _deg_between(directions[shot * ring], directions[(shot + 1) * ring])
+		if absf(drift - spell.rotation_per_shot) > 0.5:
+			fails.append("pulse %d drifted %.1f deg, want %.1f" % [
+				shot, drift, spell.rotation_per_shot])
+			break
+	# aim_independent: the burst must NOT sit on the aim we handed cast().
+	if absf(_deg_between(Vector2.RIGHT, directions[0])) < 0.5:
+		fails.append("aim_independent burst fired along the caster's aim")
+	rig.queue_free()
+
+func _deg_between(from: Vector2, to: Vector2) -> float:
+	return rad_to_deg(from.angle_to(to))

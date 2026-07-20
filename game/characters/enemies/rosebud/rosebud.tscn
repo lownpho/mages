@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="4_weap"]
 [ext_resource type="Resource" uid="uid://br0s3budthrn" path="res://characters/enemies/rosebud/rosebud_ring.tres" id="5_thorn"]
 [ext_resource type="Script" uid="uid://c4qrfe6uxlccn" path="res://characters/enemies/behaviours/hit_alert_idle.gd" id="6_idle"]
-[ext_resource type="Script" path="res://characters/enemies/behaviours/rotating_volley.gd" id="7_rotvolley"]
+[ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="7_volley"]
 [ext_resource type="Script" path="res://characters/enemies/behaviours/guard.gd" id="8_guard"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
@@ -109,11 +109,9 @@ alert_state = "Guard"
 next_state = "Idle"
 
 [node name="Attack" type="Node" parent="FSM" unique_id=1496746162]
-script = ExtResource("7_rotvolley")
+script = ExtResource("7_volley")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("5_thorn")
-shot_count = 4
-rotation_per_pulse = 30.0
 attack_anim = "attack"
 done_state = "Idle"
 

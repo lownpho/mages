@@ -38,6 +38,7 @@ y_sort_enabled = true
 y_sort_enabled = true
 
 [node name="Player" parent="Entities" unique_id=1802092115 instance=ExtResource("6_player")]
+base_speed = 30
 debug_never_die = true
 
 [node name="LabUI" type="CanvasLayer" parent="." unique_id=385333478]

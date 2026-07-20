@@ -142,5 +142,4 @@ speed = 32.0
 script = ExtResource("10_volley")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_weapon")
-shot_count = 1
 done_state = "Flee"

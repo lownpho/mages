@@ -20,3 +20,10 @@ class_name BulletSpellResource
 @export var shot_interval: float = 0.25
 ## Shots in one burst; 1 is a single projectile.
 @export var max_shots: int = 6
+## Degrees the aim drifts per shot within the burst, so a pattern's gaps move shot to shot
+## instead of firing the same lanes every time — a ring wave reads as a slow spiral to weave
+## through rather than a static wall. 0 = every shot on the same bearing.
+@export var rotation_per_shot: float = 0.0
+## Ignore the caster's aim: the burst starts from a random absolute angle and never tracks.
+## The arena-painting spray (fae's rings, thornmess's spores) rather than an aimed burst.
+@export var aim_independent: bool = false

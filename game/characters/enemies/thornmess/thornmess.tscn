@@ -15,7 +15,6 @@
 [ext_resource type="Script" uid="uid://drngdvly7t8w2" path="res://characters/enemies/behaviours/ranged_volley.gd" id="12_rvolley"]
 [ext_resource type="Script" uid="uid://b7qgec187544q" path="res://characters/enemies/behaviours/chase_into_range.gd" id="13_uproot"]
 [ext_resource type="Script" uid="uid://b2fghnxxvt8sb" path="res://characters/enemies/behaviours/guard.gd" id="14_guard"]
-[ext_resource type="Script" uid="uid://ctpnms0jhdsrg" path="res://characters/enemies/behaviours/rotating_volley.gd" id="15_rotvolley"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="16_volley"]
 [ext_resource type="Script" uid="uid://b6ic7k8dhqajd" path="res://characters/enemies/behaviours/summon_allies.gd" id="18_summon"]
 [ext_resource type="PackedScene" uid="uid://de2ihs354x1ge" path="res://characters/enemies/seedling/seedling.tscn" id="19_seedling"]
@@ -183,7 +182,6 @@ attack_probe_path = NodePath("../../MissileProbe")
 out_of_range_state = "Uproot"
 caster_path = NodePath("../../MissileCaster")
 spell = ExtResource("6_missiles")
-shot_count = 4
 attack_anim = "attack"
 done_state = "Pick"
 
@@ -203,11 +201,9 @@ damage_scale = 0.2
 guard_anim = "guard"
 
 [node name="BloomBurst" type="Node" parent="FSM" unique_id=1900000017]
-script = ExtResource("15_rotvolley")
-rotation_per_pulse = 30.0
+script = ExtResource("16_volley")
 caster_path = NodePath("../../BloomCaster")
 spell = ExtResource("8_bloom")
-shot_count = 4
 attack_anim = "attack"
 done_state = "Pick"
 
@@ -215,18 +211,13 @@ done_state = "Pick"
 script = ExtResource("16_volley")
 caster_path = NodePath("../../ShotgunCaster")
 spell = ExtResource("7_shotgun")
-shot_count = 4
 attack_anim = "attack"
 done_state = "Pick"
 
 [node name="Spores" type="Node" parent="FSM" unique_id=1900000019]
-script = ExtResource("15_rotvolley")
-aim_at_target = false
-rotation_per_pulse = 25.0
+script = ExtResource("16_volley")
 caster_path = NodePath("../../SporeCaster")
 spell = ExtResource("9_spores")
-duration = 4.0
-pulse_interval = 0.5
 done_state = "Summon"
 attack_anim = "attack"
 

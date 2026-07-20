@@ -54,6 +54,21 @@ func cast(spell: SpellResource, aim: Vector2 = Vector2.ZERO) -> bool:
 		_resolve_cooldown(spell, _spawn_effect(spell))
 	return true
 
+## True while `spell` is mid wind-up/channel or its over-time effect is still running.
+## A behaviour waits on this to hold its state open for exactly one burst.
+func is_casting(spell: SpellResource) -> bool:
+	if _pending_spell == spell or _channel_spell == spell:
+		return true
+	var live = _await_finish.get(spell)
+	return live != null and is_instance_valid(live)
+
+## Cut `spell`'s live effect short — it goes on cooldown exactly as if it had run out.
+## Lets a state that bails mid-burst (target out of range) take its shots with it.
+func interrupt(spell: SpellResource) -> void:
+	var live = _await_finish.get(spell)
+	if live != null and is_instance_valid(live) and live.has_method("interrupt"):
+		live.interrupt()
+
 ## True when `spell` is off cooldown and its last over-time effect has finished.
 func ready_for(spell: SpellResource) -> bool:
 	var cd: Timer = _cooldowns.get(spell)
@@ -130,6 +145,11 @@ func _start_cooldown(spell: SpellResource) -> void:
 		cd.one_shot = true
 		add_child(cd)
 		_cooldowns[spell] = cd
+	# Timer.start(0) keeps the previous wait_time instead of expiring at once, so a
+	# zero-cooldown spell would inherit a phantom wait — just leave it stopped.
+	if spell.cooldown <= 0.0:
+		cd.stop()
+		return
 	cd.start(spell.cooldown)
 	GlobalEvent.spell_cooldown_started.emit(spell, spell.cooldown)
 

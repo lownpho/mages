@@ -151,8 +151,6 @@ script = ExtResource("12_rvolley")
 attack_probe_path = NodePath("../../AttackProbe")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_weapon")
-shot_count = 2
-duration = 1.0
 done_state = "Pattern"
 
 [node name="Fireball" type="Node" parent="FSM" unique_id=1907545302]
@@ -160,6 +158,4 @@ script = ExtResource("12_rvolley")
 attack_probe_path = NodePath("../../FireballProbe")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("7_fireball")
-shot_count = 1
-duration = 2.0
 done_state = "Pattern"
