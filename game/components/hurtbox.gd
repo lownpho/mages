@@ -29,7 +29,11 @@ func _update_shape() -> void:
 # is victim-specific, so only the victim knows the damage actually taken.
 func _on_hit(node: Node2D) -> void:
 	if node.has_method("get_damage"):
-		hurt.emit(node.get_damage(), node)
+		# A blast_only bomb deals 0 on contact — its blast carries the whole hit,
+		# so don't announce an empty second one (a floating 0, a hit alert).
+		var damage: int = node.get_damage()
+		if damage > 0:
+			hurt.emit(damage, node)
 	else:
 		print("Node has no get_damage method! Node name: ", node.name)
 

@@ -2,7 +2,8 @@ extends Node
 ## Guards how a spell's damage reaches its bullets: a spell is self-contained (its own
 ## pattern, bullet and damage), the damage lives on the spell rather than the bullet, and
 ## the caster stamps it onto every shot. A spell that lost its damage in a copy deals 0
-## silently — nothing else in the suite would catch that.
+## silently — nothing else in the suite would catch that. Also guards that an exploding
+## bullet lands exactly one hit, of exactly the blast's number, on everything it catches.
 ##   godot --headless --path game res://tests/test_spell_damage.tscn
 
 # Distinct non-zero stats so a dropped term (skill vs speed vs defence) shows up.
@@ -25,6 +26,7 @@ func _ready() -> void:
 		checked += _check(res, path.get_file().get_basename(), caster)
 
 	print("spell damage: %d casts checked" % checked)
+	await _check_blast_lands_once(caster)
 	if _fails.is_empty():
 		print("ALL PASS")
 	else:
@@ -32,6 +34,33 @@ func _ready() -> void:
 			print("  FAIL: ", f)
 		print("FAILED: %d" % _fails.size())
 	get_tree().quit()
+
+# A blast_only bomb (fireball) fired into two touching hurtboxes: it reaches both in the
+# same frame, so an expire that isn't idempotent explodes twice and everything in radius
+# takes double. Each victim must take the blast's number exactly once — no contact hit
+# beside it, no second blast.
+func _check_blast_lands_once(caster: Node2D) -> void:
+	var spell: BulletSpellResource = load("res://characters/player/spells/fireball/fireball1.tres")
+	var hits: Array[int] = []
+	for i in 2:
+		var hb: Area2D = load("res://components/hurtbox.tscn").instantiate()
+		hb.collision_mask = GameConstants.LAYER_PLAYER_BULLETS
+		hb.radius = 8.0
+		hb.position = Vector2(40, -6 + 12 * i)
+		hb.hurt.connect(func(dmg: int, _src: Node) -> void: hits.append(dmg))
+		add_child(hb)
+
+	var ctx := CastContext.new(spell, caster)
+	ctx.spawn_bullet(spell.bullet, Vector2.RIGHT, Vector2.ZERO)
+	for _i in 40:
+		await get_tree().physics_frame
+
+	var expected: int = spell.damage.compute(SKILL, SPEED, DEFENCE)
+	if hits.size() != 2:
+		_fails.append("fireball hit two victims %d times, expected 2 (%s)" % [hits.size(), hits])
+	for dmg in hits:
+		if dmg != expected:
+			_fails.append("fireball landed %d, blast is worth %d" % [dmg, expected])
 
 func _check(res: Resource, label: String, caster: Node2D) -> int:
 	var checked := 0

@@ -27,6 +27,10 @@ var runtime: Dictionary = {}
 
 var lifetime_timer: Timer
 var _deals_contact_damage: bool = true
+# queue_free() only takes effect at the end of the frame, so a bullet that
+# reaches two hurtboxes (or a hurtbox and a wall) in the same frame would run
+# _expire twice and fire its payload twice — a double explosion.
+var _expired: bool = false
 
 func speed_px() -> float:
 	return data.speed_tiles * GameConstants.PX_PER_TILE
@@ -110,6 +114,9 @@ func expire() -> void:
 # Single despawn path: fire every on-expire payload, then free. A plain bullet
 # has no behaviours and just frees.
 func _expire() -> void:
+	if _expired:
+		return
+	_expired = true
 	for b in data.behaviours:
 		b.on_expire(self)
 	queue_free()
