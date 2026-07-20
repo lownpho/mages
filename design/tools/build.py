@@ -132,6 +132,42 @@ def render_html(template_name: str, payload: dict) -> str:
     return tpl.render(data_json=blob)
 
 
+def render_spells_balance_html(data: dict) -> str:
+    """The numbers view: every shipped tier's authored stats, DPS computed client-side.
+
+    Reads the `balance` blocks that design/tools/extract_balance.py pulls out of the
+    game's .tres files — spells with no block simply don't ship yet and are skipped.
+    """
+    cat_by_id = {c["id"]: c for c in data["categories"]}
+    spells = []
+    for sp in data["spells"]:
+        if not sp.get("balance"):
+            continue
+        cat = cat_by_id[sp["category"]]
+        spells.append(
+            {
+                "name": sp["name"],
+                "category": cat["name"],
+                "category_id": cat["id"],
+                "scaling": sp["scaling"],
+                "balance": sp["balance"],
+            }
+        )
+    payload = {
+        "spells": spells,
+        "categories": [
+            {"id": c["id"], "name": c["name"]}
+            for c in data["categories"]
+            if any(s["category_id"] == c["id"] for s in spells)
+        ],
+        # GameConstants.PX_PER_TILE, and the player's authored base stats — the
+        # sheet needs them to show tiles and to scale off *bonus* speed.
+        "px_per_tile": 8,
+        "base_stats": {"skill": 25, "speed": 80, "defence": 0},
+    }
+    return render_html("spells_balance.html.j2", payload)
+
+
 def render_spells_html(data: dict) -> str:
     cat_by_id = {c["id"]: c for c in data["categories"]}
     spells = []
@@ -382,20 +418,28 @@ def render_biomes_html(biomes_data: dict) -> str:
 # --- Driver -----------------------------------------------------------------
 
 def build() -> dict[Path, str]:
+    # The shared pixel theme is authored in tools/ and copied out beside the
+    # rendered pages, which link it — one home for the fact, and docs/ stays
+    # entirely generated.
+    theme = (TEMPLATES / "mages.css").read_text()
+
     spells = load("spells.yaml")
     enemies = load("enemies.yaml")
     biomes = load("biomes.yaml")
 
     spells_md = DOCS / "spells.md"
     spells_html = DOCS / "spells.html"
+    spells_balance_html = DOCS / "spells_balance.html"
     enemies_md = DOCS / "enemies.md"
     enemies_html = DOCS / "enemies.html"
     biomes_md = DOCS / "biomes.md"
     biomes_html = DOCS / "biomes.html"
 
     return {
+        DOCS / "mages.css": theme,
         spells_md: inject(spells_md, render_spells_md(spells)),
         spells_html: render_spells_html(spells),
+        spells_balance_html: render_spells_balance_html(spells),
         enemies_md: inject(enemies_md, render_enemies_md(enemies, biomes)),
         enemies_html: render_enemies_html(enemies, biomes),
         biomes_md: inject(biomes_md, render_biomes_md(biomes, enemies)),

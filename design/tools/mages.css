@@ -1,0 +1,222 @@
+/* ============================================
+   Mages — pixel-art design docs
+   Palette: Zughy 32 · Fonts: Silkscreen + VT323
+
+   Shared theme for every generated page in design/docs/. The four docs are
+   built from one component vocabulary (toolbar + facet chips + card grid, or
+   the balance sheet's table), so that vocabulary lives here once and the
+   templates carry only what is genuinely their own.
+   ============================================ */
+
+:root {
+  /* Zughy 32 — moody dungeon-crawler subset */
+  --bg:        #302c2e; /* near-black plum floor */
+  --bg-deep:   #211d1f; /* deeper shade for wells */
+  --indigo:    #39314b; /* panel */
+  --plum:      #472d3c; /* panel */
+  --text:      #dff6f5; /* off-white */
+  --dim:       #cfc6b8; /* silver */
+  --cyan:      #28ccdf; /* magic / interactive */
+  --lime:      #b6d53c; /* CTA */
+  --red:       #e6482e; /* damage / alert */
+  --yellow:    #f4b41b; /* highlight */
+  --green:     #71aa34; /* nature */
+  --green-dk:  #397b44; /* nature, deep */
+  --grey:      #5d6c6d; /* stone */
+  --shadow:    #17131a; /* hard drop */
+
+  /* Chart series — a categorical set validated for CVD separation and
+     contrast against --bg-deep (OKLCH L in band, worst-pair ΔE 8.9 under
+     deuteranopia, 20.0 normal vision). Assign in this fixed order, never
+     cycle: a 5th series is not a generated hue. */
+  --s1: #c8811f;
+  --s2: #397b44;
+  --s3: #0099db;
+  --s4: #b55088;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 18px; }
+
+body.mages {
+  min-height: 100dvh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  -webkit-font-smoothing: none;
+}
+
+/* ---- Pixel-stepped corners (chunky "rounded" look) ---- */
+.panel {
+  clip-path: polygon(
+    0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}
+.chip, button.btn {
+  clip-path: polygon(
+    0 4px, 2px 4px, 2px 2px, 4px 2px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 2px, calc(100% - 2px) 2px, calc(100% - 2px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 2px) calc(100% - 4px), calc(100% - 2px) calc(100% - 2px), calc(100% - 4px) calc(100% - 2px), calc(100% - 4px) 100%,
+    4px 100%, 4px calc(100% - 2px), 2px calc(100% - 2px), 2px calc(100% - 4px), 0 calc(100% - 4px)
+  );
+}
+
+/* =============================================
+   DOC SHELL
+   ============================================= */
+.doc { max-width: 1180px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+
+.doc-title {
+  font-family: 'Silkscreen', monospace;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+.doc-title .m { color: var(--yellow); }
+.doc-sub { color: var(--dim); max-width: 78ch; margin-bottom: 1.4rem; }
+
+code { font-family: 'VT323', monospace; color: var(--cyan); }
+
+.lbl {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* =============================================
+   TOOLBAR — search, sort, facet chips
+   ============================================= */
+.toolbar { background: var(--indigo); padding: 1rem 1.1rem; margin-bottom: 1.4rem; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.4rem; }
+.row + .row { margin-top: 0.9rem; }
+
+input[type=search], select {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  background: var(--bg-deep);
+  color: var(--text);
+  border: 2px solid var(--plum);
+  padding: 0.35rem 0.6rem;
+}
+input[type=search] { flex: 1 1 200px; min-width: 160px; }
+input[type=search]:focus, select:focus { outline: none; border-color: var(--cyan); }
+input[type=search]::placeholder { color: var(--grey); }
+
+.count { color: var(--grey); white-space: nowrap; }
+
+.chip {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  background: var(--plum);
+  color: var(--dim);
+  border: none;
+  cursor: pointer;
+  padding: 0.45rem 0.7rem;
+  transition: background 0.08s steps(2), color 0.08s steps(2);
+}
+.chip:hover { color: var(--text); }
+.chip[aria-pressed="true"] { background: var(--yellow); color: var(--bg); }
+
+button.btn {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  background: var(--green-dk);
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+  padding: 0.45rem 0.8rem;
+  transition: background 0.08s steps(2), color 0.08s steps(2);
+}
+button.btn:hover { background: var(--lime); color: var(--bg); }
+
+.facets { display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; }
+.facet { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+/* The group name in front of a facet's chips ("Biome", "Rarity", …). */
+.facet > .flabel {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--yellow);
+  text-transform: uppercase;
+}
+
+/* =============================================
+   CARD GRID (spells / enemies / biomes catalogues)
+   ============================================= */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.9rem; }
+
+.card {
+  background: var(--indigo);
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.card-head { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+.card-head .name { font-family: 'Silkscreen', monospace; font-size: 0.75rem; }
+.desc { color: var(--dim); }
+.note { color: var(--grey); }
+
+/* Label/value rows inside a card */
+.stats { display: grid; grid-template-columns: auto 1fr; gap: 0.15rem 0.75rem; }
+.stats dt {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.03em;
+  color: var(--grey);
+  text-transform: uppercase;
+  align-self: center;
+}
+.stats dd { color: var(--text); }
+
+.pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.pill { background: var(--bg-deep); color: var(--dim); padding: 0.1rem 0.4rem; }
+
+/* =============================================
+   BADGES — one shape, palette by meaning
+   ============================================= */
+.badge {
+  font-family: 'Silkscreen', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.03em;
+  padding: 0.2rem 0.4rem;
+  color: var(--bg);
+  white-space: nowrap;
+}
+.badge.cat-dps      { background: var(--red); }
+.badge.cat-nukes    { background: var(--yellow); }
+.badge.cat-summon   { background: var(--green); }
+.badge.cat-utility  { background: var(--cyan); }
+.badge.rar-common   { background: var(--grey); color: var(--bg-deep); }
+.badge.rar-rare     { background: var(--cyan); }
+.badge.rar-boss     { background: var(--red); }
+.badge.biome        { background: var(--plum); color: var(--dim); }
+.badge.tier         { background: var(--green-dk); color: var(--text); }
+.badge.hold, .badge.k { background: var(--grey); color: var(--bg-deep); }
+
+.empty { text-align: center; color: var(--grey); padding: 3rem 0; }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 620px) {
+  html { font-size: 16px; }
+  .doc { padding: 1rem 0.75rem 2rem; }
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spell Balance — Numbers View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mages.css">
+<style>
+  /* Page-specific only — palette, fonts, toolbar, chips and badges come from
+     the shared mages.css theme. */
+
+  /* ---- Stat sliders: the whole sheet recomputes from these ---- */
+  .stat { display: flex; align-items: center; gap: 0.55rem; }
+  .stat input[type=range] { width: 120px; accent-color: var(--cyan); }
+  .stat output {
+    font-family: 'Silkscreen', monospace; font-size: 0.62rem; color: var(--cyan);
+    min-width: 2.2ch; text-align: right;
+  }
+  .toggle { display: flex; align-items: center; gap: 0.45rem; color: var(--dim); cursor: pointer; }
+  .toggle input { accent-color: var(--cyan); }
+
+  /* Composition key for the two-part DPS bar. */
+  .key-swatch { display: inline-block; width: 10px; height: 10px; vertical-align: -1px; margin-right: 0.3rem; }
+  .key-swatch.base { background: var(--grey); }
+  .key-swatch.scaled { background: var(--cyan); }
+  .keys-row { display: flex; gap: 1rem; align-items: center; color: var(--grey); }
+
+  /* ---- Graph ---- */
+  .graph { background: var(--indigo); padding: 1rem 1.1rem 0.6rem; margin-bottom: 1.4rem; }
+  .graph[hidden] { display: none; }
+  .graph-head { display: flex; flex-wrap: wrap; gap: 0.75rem 1.4rem; align-items: center; margin-bottom: 0.6rem; }
+  .plot-wrap { position: relative; }
+  .plot { display: block; width: 100%; height: auto; background: var(--bg-deep); }
+  .plot .gridline { stroke: var(--bg); stroke-width: 1; }
+  .plot .axis { stroke: var(--grey); stroke-width: 1; }
+  .plot .tick {
+    font-family: 'Silkscreen', monospace; font-size: 8px; fill: var(--grey);
+  }
+  .plot .axis-name {
+    font-family: 'Silkscreen', monospace; font-size: 8px; fill: var(--dim);
+  }
+  .plot .series { fill: none; stroke-width: 2; }
+  .plot .endlabel { font-family: 'VT323', monospace; font-size: 13px; fill: var(--dim); }
+  .plot .crosshair { stroke: var(--dim); stroke-width: 1; stroke-dasharray: 2 3; }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.9rem; padding: 0.5rem 0 0.2rem; color: var(--dim); }
+  .legend .item { display: flex; align-items: center; gap: 0.35rem; }
+  .legend .sw { width: 12px; height: 12px; }
+  .tip {
+    position: absolute; pointer-events: none; background: var(--bg-deep);
+    border: 2px solid var(--plum); padding: 0.3rem 0.5rem; white-space: nowrap;
+    color: var(--text); display: none;
+  }
+  .tip .r { display: flex; align-items: center; gap: 0.35rem; }
+  .tip .sw { width: 9px; height: 9px; }
+  .tip .hdr { color: var(--grey); }
+
+  /* ---- The sheet ---- */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    position: sticky; top: 0; z-index: 2; background: var(--bg-deep);
+    font-family: 'Silkscreen', monospace; font-size: 0.55rem; letter-spacing: 0.04em;
+    color: var(--dim); font-weight: 400; text-align: right; white-space: nowrap;
+    padding: 0.7rem 0.6rem; cursor: pointer; user-select: none;
+    border-bottom: 3px solid var(--plum);
+  }
+  thead th:hover { color: var(--yellow); }
+  thead th.l { text-align: left; }
+  thead th.plain { cursor: default; }
+  thead th.plain:hover { color: var(--dim); }
+  thead th[aria-sort] { color: var(--yellow); }
+  thead th[aria-sort]:after { content: " ^"; }
+  thead th[aria-sort="descending"]:after { content: " v"; }
+
+  tbody td {
+    padding: 0.3rem 0.6rem; text-align: right; white-space: nowrap;
+    border-bottom: 2px solid var(--bg-deep); color: var(--text);
+  }
+  tbody td.l { text-align: left; }
+  tbody tr.data:hover td { background: var(--plum); }
+  tbody tr.tweaked td { background: rgba(244, 180, 27, 0.07); }
+  .name { font-family: 'Silkscreen', monospace; font-size: 0.68rem; }
+  .tier { color: var(--grey); }
+  .dim { color: var(--grey); }
+  .unit { color: var(--grey); font-size: 0.9em; }
+  .split { display: block; font-size: 0.9rem; color: var(--grey); line-height: 1.1; }
+  .split .sc { color: var(--cyan); }
+  input[type=checkbox] { accent-color: var(--cyan); cursor: pointer; }
+  input[type=checkbox]:disabled { cursor: not-allowed; opacity: 0.35; }
+
+  .val {
+    font-family: 'Silkscreen', monospace; font-size: 0.68rem; color: var(--text);
+    min-width: 4.5ch; text-align: right;
+  }
+  /* Two-part magnitude bar: authored base, then what the stats add. Hard pixel
+     edges (this theme commits to square corners) with a 2px surface gap. */
+  .barcell { width: 210px; }
+  .bar { display: flex; align-items: center; gap: 0.6rem; justify-content: flex-end; }
+  .bar .track { flex: 1; height: 10px; background: var(--bg-deep); display: flex; }
+  .bar .seg-base { height: 100%; background: var(--grey); }
+  .bar .seg-scaled { height: 100%; background: var(--cyan); margin-left: 2px; }
+
+  .expand {
+    font-family: 'VT323', monospace; font-size: 1rem; background: none; border: none;
+    color: var(--grey); cursor: pointer; padding: 0;
+  }
+  .expand:hover { color: var(--cyan); }
+  .expand:before { content: "+ "; color: var(--cyan); }
+  .expand[aria-expanded="true"]:before { content: "- "; }
+
+  /* ---- Per-row parameter editor ---- */
+  tr.editor > td { background: var(--bg-deep); padding: 0.8rem 0.9rem; }
+  .fields { display: flex; flex-wrap: wrap; gap: 0.6rem 1.1rem; align-items: flex-end; }
+  .field { display: flex; flex-direction: column; gap: 0.15rem; }
+  .field .lbl { font-size: 0.5rem; }
+  .field input {
+    width: 5.5rem; font-family: 'VT323', monospace; font-size: 1rem;
+    background: var(--bg); color: var(--text); border: 2px solid var(--plum);
+    padding: 0.15rem 0.35rem; text-align: right;
+  }
+  .field input:focus { outline: none; border-color: var(--cyan); }
+  .field input.changed { border-color: var(--yellow); color: var(--yellow); }
+  .editor-foot { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin-top: 0.7rem; }
+  .editor-foot .pills { flex: 1; }
+</style>
+</head>
+<body class="mages">
+<div class="doc">
+
+  <header>
+    <h1 class="doc-title"><span class="m">S</span>pell Balance</h1>
+    <p class="doc-sub">
+      Authored numbers read out of the game's <code>.tres</code> files, recomputed live at the
+      stats you set. Tick spells to graph them; expand a row to try different numbers — edits are
+      local to this page and never touch the game.
+    </p>
+  </header>
+
+  <div class="toolbar panel">
+    <div class="row">
+      <input type="search" id="q" placeholder="search spell..." autocomplete="off">
+      <span class="row" id="cats" style="gap:6px"></span>
+      <span class="count" id="count"></span>
+      <button class="btn" id="reset">reset all</button>
+    </div>
+    <div class="row">
+      <div class="stat">
+        <label class="lbl" for="skill">Skill</label>
+        <input type="range" id="skill" min="0" max="150" step="1">
+        <output id="skill_o"></output>
+      </div>
+      <div class="stat">
+        <label class="lbl" for="speed">Bonus speed</label>
+        <input type="range" id="speed" min="0" max="100" step="1">
+        <output id="speed_o"></output>
+      </div>
+      <div class="stat">
+        <label class="lbl" for="defence">Defence</label>
+        <input type="range" id="defence" min="0" max="60" step="1">
+        <output id="defence_o"></output>
+      </div>
+      <label class="toggle"><input type="checkbox" id="grants"> add each spell's own grants</label>
+      <span class="keys-row">
+        <span><span class="key-swatch base"></span>base</span>
+        <span><span class="key-swatch scaled"></span>from stats</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="graph panel" id="graph" hidden>
+    <div class="graph-head">
+      <span class="lbl">Graph</span>
+      <label class="toggle lbl" for="xaxis">x</label>
+      <select id="xaxis">
+        <option value="skill">skill</option>
+        <option value="speed">bonus speed</option>
+        <option value="defence">defence</option>
+      </select>
+      <label class="toggle lbl" for="ymetric">y</label>
+      <select id="ymetric">
+        <option value="dps">dps</option>
+        <option value="burst">burst</option>
+        <option value="hit">per hit</option>
+      </select>
+      <span class="count" id="graph_note"></span>
+    </div>
+    <div class="plot-wrap">
+      <svg class="plot" id="plot" viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet"
+           role="img" aria-label="Selected spells plotted against the chosen stat"></svg>
+      <div class="tip" id="tip"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="table-scroll">
+    <table id="sheet">
+      <thead>
+        <tr>
+          <th class="l plain" title="graph this spell">&#9634;</th>
+          <th class="l" data-sort="name">Spell</th>
+          <th data-sort="hit">Per hit</th>
+          <th data-sort="burst">Burst</th>
+          <th data-sort="cycle">Cycle</th>
+          <th data-sort="dps" class="barcell">DPS</th>
+          <th data-sort="range">Range</th>
+          <th data-sort="cooldown">Cooldown</th>
+          <th data-sort="cast">Cast</th>
+          <th class="l plain">Edit</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div class="empty" id="empty" hidden>No spells match these filters.</div>
+</div>
+
+<script id="data" type="application/json">{{ data_json }}</script>
+<script>
+(function () {
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var BASE = DATA.base_stats;
+  var SERIES = ["--s1", "--s2", "--s3", "--s4"];   // fixed order, never cycled
+  var MAX_SERIES = SERIES.length;
+
+  // --- one row per shipped tier -------------------------------------------
+  var ROWS = [];
+  DATA.spells.forEach(function (sp) {
+    sp.balance.forEach(function (b) {
+      ROWS.push({
+        id: sp.name + "-" + b.tier,
+        label: sp.name + (sp.balance.length > 1 ? " t" + b.tier : ""),
+        spell: sp, tier: b, name: sp.name,
+        category: sp.category, category_id: sp.category_id,
+        // A summon's damage lives on the minion's cast, not the spell itself.
+        cast: b.kind === "summon" ? "minion_cast." : "",
+        tweaks: {}, open: false, picked: false,
+      });
+    });
+  });
+
+  var els = {};
+  ["q", "cats", "rows", "count", "empty", "grants", "graph", "plot", "legend",
+   "tip", "xaxis", "ymetric", "graph_note"].forEach(function (k) {
+    els[k] = document.getElementById(k);
+  });
+  var STATS = ["skill", "speed", "defence"];
+  var LIMITS = { skill: 150, speed: 100, defence: 60 };
+  var DEFAULTS = { skill: BASE.skill, speed: 0, defence: BASE.defence };
+  var state = { q: "", cats: {}, sort: "dps", dir: -1 };
+
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  // --- parameters: authored value unless the row has been tweaked ----------
+
+  function authored(t, path) {
+    return path.split(".").reduce(function (o, k) {
+      return o === undefined || o === null ? undefined : o[k];
+    }, t);
+  }
+
+  function P(r, path) {
+    return r.tweaks[path] !== undefined ? r.tweaks[path] : authored(r.tier, path);
+  }
+
+  // --- the game's formulas -------------------------------------------------
+
+  function sliderStats() {
+    var s = {};
+    STATS.forEach(function (k) { s[k] = +document.getElementById(k).value; });
+    return s;
+  }
+
+  function statsFor(r, s) {
+    if (!els.grants.checked || !r.tier.grants) return s;
+    return {
+      skill: s.skill + (r.tier.grants.skill || 0),
+      speed: s.speed + (r.tier.grants.speed || 0),
+      defence: s.defence + (r.tier.grants.defence || 0),
+    };
+  }
+
+  // ScalingProfile.compute(), split into the authored base and what stats add.
+  function amount(r, prefix, s) {
+    var base = +P(r, prefix + "amount.base") || 0;
+    var total = Math.round(base
+      + s.skill * (+P(r, prefix + "amount.skill") || 0)
+      + s.speed * (+P(r, prefix + "amount.speed") || 0)
+      + s.defence * (+P(r, prefix + "amount.defence") || 0));
+    return { total: total, base: base, scaled: total - base };
+  }
+
+  function shots(r, prefix) {
+    return {
+      per: +P(r, prefix + "shots.per_shot") || 1,
+      count: +P(r, prefix + "shots.count") || 1,
+      interval: +P(r, prefix + "shots.interval") || 0,
+    };
+  }
+
+  // Everything the sheet shows for one row, at a given stat block. Damage
+  // numbers carry their base/scaled split so the bar can show the composition.
+  function metrics(r, rawStats) {
+    var t = r.tier, s = statsFor(r, rawStats);
+    var m = { hit: 0, burst: 0, cycle: 0, dps: 0, hitBase: 0, burstBase: 0, dpsBase: 0,
+              range: null, heal: false, none: false };
+
+    function fill(a, sh, cycle, mult) {
+      m.hit = a.total; m.hitBase = a.base;
+      m.burst = a.total * sh.per * sh.count * mult;
+      m.burstBase = a.base * sh.per * sh.count * mult;
+      m.cycle = cycle;
+      m.dps = cycle > 0 ? m.burst / cycle : 0;
+      m.dpsBase = cycle > 0 ? m.burstBase / cycle : 0;
+    }
+
+    if (t.kind === "bullet") {
+      var sh = shots(r, ""), a = amount(r, "", s);
+      fill(a, sh, (+P(r, "cast_time") || 0) + sh.interval * (sh.count - 1) + (+P(r, "cooldown") || 0), 1);
+      m.range = P(r, "projectile.range_tiles");
+
+    } else if (t.kind === "heal") {
+      m.heal = true;
+      var ah = amount(r, "", s);
+      m.hit = m.burst = ah.total; m.hitBase = m.burstBase = ah.base;
+      m.cycle = (+P(r, "cast_time") || 0) + (+P(r, "cooldown") || 0);
+      m.dps = m.cycle > 0 ? m.burst / m.cycle : 0;
+      m.dpsBase = m.cycle > 0 ? m.burstBase / m.cycle : 0;
+
+    } else if (t.kind === "summon" && t.minion_cast) {
+      var n = +P(r, "minion.count") || 1;
+      var life = +P(r, "minion.lifetime") || 0;
+      var ms = shots(r, "minion_cast."), ma = amount(r, "minion_cast.", s);
+      var mcycle = ms.interval * (ms.count - 1) + (+P(r, "minion_cast.cooldown") || 0);
+      // A minion fires on arrival, then once per cooldown: 20s of life on a
+      // 3s cycle is 7 volleys, not 6.
+      var volleys = mcycle > 0 ? Math.floor(life / mcycle) + 1 : 1;
+      var window = Math.max(+P(r, "cooldown") || 0, life);
+      m.hit = ma.total; m.hitBase = ma.base;
+      m.burst = ma.total * ms.per * ms.count * n;          // whole squad, one volley
+      m.burstBase = ma.base * ms.per * ms.count * n;
+      m.cycle = window;
+      m.dps = window > 0 ? (m.burst * volleys) / window : 0;
+      m.dpsBase = window > 0 ? (m.burstBase * volleys) / window : 0;
+      m.range = P(r, "minion_cast.projectile.range_tiles");
+
+    } else {
+      m.none = true;                                      // nope: timings only
+      m.cycle = (+P(r, "cast_time") || 0) + (+P(r, "cooldown") || 0);
+    }
+    return m;
+  }
+
+  // --- formatting ----------------------------------------------------------
+
+  function fmt(n, digits) {
+    if (n === null || n === undefined) return "-";
+    var d = digits === undefined ? 1 : digits;
+    return (Math.round(n * Math.pow(10, d)) / Math.pow(10, d)).toFixed(d).replace(/\.0+$/, "");
+  }
+
+  function traitsOf(r) {
+    var t = r.tier, out = [];
+    if (t.kind === "summon") {
+      out.push(P(r, "minion.count") + "x minion", t.minion.health + " hp",
+               P(r, "minion.lifetime") + "s life");
+    }
+    var sh = t.shots || (t.minion_cast && t.minion_cast.shots);
+    if (sh) {
+      var pat = sh.pattern.replace("Pattern", "").toLowerCase();
+      var n = +P(r, r.cast + "shots.count"), per = +P(r, r.cast + "shots.per_shot");
+      out.push(n > 1 ? n + "x " + pat : pat);
+      if (per > 1) out.push(per + " bullets/shot");
+      if (sh.spread_deg) out.push(sh.spread_deg + "deg spread");
+    }
+    (t.behaviours || []).forEach(function (b) {
+      if (b.type === "homing") out.push("homing " + b.cone_deg + "deg cone");
+      else if (b.type === "blast") out.push("blast r" + b.radius_tiles + (b.blast_only ? " (blast only)" : ""));
+      else if (b.type === "chain") out.push("chains x" + b.bounces);
+      else out.push(b.type);
+    });
+    if (t.channeled) out.push("channeled");
+    if (t.grants) {
+      Object.keys(t.grants).forEach(function (k) {
+        out.push("+" + t.grants[k] + " " + k.replace("max_health", "hp"));
+      });
+    }
+    return out;
+  }
+
+  // Which parameters a row exposes for editing, by kind.
+  function fieldsOf(r) {
+    var k = r.tier.kind, c = r.cast, f = [];
+    if (k === "summon") {
+      f.push(["minion.count", "minions", 1], ["minion.lifetime", "lifetime", 0.5]);
+    }
+    if (k !== "nope" && k !== "effect") {
+      f.push([c + "amount.base", k === "heal" ? "restore" : "damage", 1],
+             [c + "amount.skill", "per skill", 0.1],
+             [c + "amount.speed", "per speed", 0.1],
+             [c + "amount.defence", "per defence", 0.1]);
+    }
+    if (k === "bullet" || k === "summon") {
+      f.push([c + "shots.count", "shots", 1],
+             [c + "shots.interval", "interval", 0.05],
+             [c + "shots.per_shot", "bullets/shot", 1],
+             [c + "projectile.range_tiles", "range", 1]);
+    }
+    if (k === "summon") f.push(["minion_cast.cooldown", "minion cd", 0.5]);
+    f.push(["cooldown", "cooldown", 0.1], ["cast_time", "cast time", 0.1]);
+    return f;
+  }
+
+  // --- table ---------------------------------------------------------------
+
+  function visibleRows() {
+    var q = state.q.toLowerCase();
+    var on = Object.keys(state.cats).filter(function (k) { return state.cats[k]; });
+    return ROWS.filter(function (r) {
+      if (q && r.name.toLowerCase().indexOf(q) < 0) return false;
+      if (on.length && on.indexOf(r.category_id) < 0) return false;
+      return true;
+    });
+  }
+
+  function picked() { return ROWS.filter(function (r) { return r.picked; }); }
+
+  function render() {
+    var s = sliderStats();
+    var rows = visibleRows();
+    rows.forEach(function (r) { r.m = metrics(r, s); });
+
+    // The bar scale spans damage rows only — a 100-point heal must not flatten them.
+    var peak = 0;
+    rows.forEach(function (r) { if (!r.m.heal && !r.m.none) peak = Math.max(peak, r.m.dps); });
+
+    var key = state.sort;
+    rows.sort(function (a, b) {
+      if (key === "name") {
+        var an = a.label, bn = b.label;
+        return an < bn ? -state.dir : an > bn ? state.dir : 0;
+      }
+      var pick = {
+        hit: function (r) { return r.m.hit; }, burst: function (r) { return r.m.burst; },
+        cycle: function (r) { return r.m.cycle; }, dps: function (r) { return r.m.dps; },
+        range: function (r) { return r.m.range === null || r.m.range === undefined ? -1 : r.m.range; },
+        cooldown: function (r) { return +P(r, "cooldown"); },
+        cast: function (r) { return +P(r, "cast_time"); },
+      }[key];
+      var av = pick(a), bv = pick(b);
+      return av === bv ? (a.label < b.label ? -1 : 1) : (av - bv) * state.dir;
+    });
+
+    var full = picked().length >= MAX_SERIES;
+    els.rows.innerHTML = "";
+    rows.forEach(function (r) {
+      els.rows.appendChild(dataRow(r, peak, full));
+      if (r.open) els.rows.appendChild(editorRow(r));
+    });
+
+    els.count.textContent = rows.length + " of " + ROWS.length + " tiers";
+    els.empty.hidden = rows.length > 0;
+
+    document.querySelectorAll("thead th[data-sort]").forEach(function (th) {
+      if (th.dataset.sort === state.sort) {
+        th.setAttribute("aria-sort", state.dir > 0 ? "ascending" : "descending");
+      } else {
+        th.removeAttribute("aria-sort");
+      }
+    });
+
+    drawGraph();
+  }
+
+  function dataRow(r, peak, full) {
+    var t = r.tier, m = r.m;
+    var tr = document.createElement("tr");
+    tr.className = "data" + (Object.keys(r.tweaks).length ? " tweaked" : "");
+
+    var box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = r.picked;
+    box.disabled = !r.picked && full;
+    box.title = box.disabled ? "graph holds " + MAX_SERIES + " spells" : "graph this spell";
+    box.onchange = function () { r.picked = box.checked; render(); };
+
+    var head = '<span class="name">' + r.name + "</span>"
+      + (r.spell.balance.length > 1 ? ' <span class="tier">t' + t.tier + "</span>" : "")
+      + '<span class="badge cat-' + r.category_id + '">' + r.category + "</span>"
+      + (m.heal ? '<span class="badge k">heal</span>' : "");
+
+    // Per hit reads "total" with its base + stat contribution underneath.
+    var hitCell = m.none ? '<span class="dim">-</span>'
+      : fmt(m.hit, 0) + '<span class="split">' + fmt(m.hitBase, 0)
+        + (m.hit - m.hitBase > 0 ? ' <span class="sc">+' + fmt(m.hit - m.hitBase, 0) + "</span>" : "")
+        + "</span>";
+
+    var bar;
+    if (m.none) {
+      bar = '<span class="dim">-</span>';
+    } else if (m.heal) {
+      bar = '<span class="val">' + fmt(m.dps) + '</span><span class="unit"> hp/s</span>';
+    } else {
+      var pb = peak > 0 ? (m.dpsBase / peak) * 100 : 0;
+      var ps = peak > 0 ? ((m.dps - m.dpsBase) / peak) * 100 : 0;
+      bar = '<div class="bar"><div class="track">'
+          + '<div class="seg-base" style="width:' + Math.max(pb, 0) + '%"></div>'
+          + (ps > 0.2 ? '<div class="seg-scaled" style="width:' + ps + '%"></div>' : "")
+          + '</div><span class="val">' + fmt(m.dps) + "</span></div>";
+    }
+
+    var expand = document.createElement("button");
+    expand.className = "expand";
+    expand.textContent = r.open ? "close" : "edit";
+    expand.setAttribute("aria-expanded", r.open ? "true" : "false");
+    expand.onclick = function () { r.open = !r.open; render(); };
+
+    tr.innerHTML =
+        "<td></td>"
+      + '<td class="l">' + head + "</td>"
+      + "<td>" + hitCell + "</td>"
+      + "<td>" + (m.none ? '<span class="dim">-</span>' : fmt(m.burst, 0)) + "</td>"
+      + "<td>" + fmt(m.cycle) + '<span class="unit">s</span></td>'
+      + '<td class="barcell">' + bar + "</td>"
+      + "<td>" + (m.range === null || m.range === undefined ? '<span class="dim">-</span>'
+                  : m.range + '<span class="unit"> t</span>') + "</td>"
+      + "<td>" + fmt(P(r, "cooldown")) + '<span class="unit">s</span></td>'
+      + "<td>" + (+P(r, "cast_time") ? fmt(P(r, "cast_time")) + '<span class="unit">s</span>'
+                  : '<span class="dim">instant</span>') + "</td>"
+      + '<td class="l"></td>';
+    tr.children[0].appendChild(box);
+    tr.children[9].appendChild(expand);
+    return tr;
+  }
+
+  function editorRow(r) {
+    var tr = document.createElement("tr");
+    tr.className = "editor";
+    var td = document.createElement("td");
+    td.colSpan = 10;
+
+    var fields = document.createElement("div");
+    fields.className = "fields";
+    fieldsOf(r).forEach(function (spec) {
+      var path = spec[0], label = spec[1], step = spec[2];
+      var authoredVal = authored(r.tier, path);
+      if (authoredVal === undefined) return;
+
+      var wrap = document.createElement("div");
+      wrap.className = "field";
+      var lab = document.createElement("label");
+      lab.className = "lbl";
+      lab.textContent = label;
+      var input = document.createElement("input");
+      input.type = "number";
+      input.step = step;
+      input.min = 0;
+      input.value = P(r, path);
+      input.title = "authored: " + authoredVal;
+      if (r.tweaks[path] !== undefined) input.className = "changed";
+      input.oninput = function () {
+        var v = parseFloat(input.value);
+        if (isNaN(v)) return;
+        if (v === authoredVal) delete r.tweaks[path];
+        else r.tweaks[path] = v;
+        // The repaint rebuilds this input, so hand focus back to its replacement.
+        // (No caret restore: number inputs don't support setSelectionRange.)
+        var active = document.activeElement;
+        render();
+        if (active === input) {
+          var again = document.querySelector('tr.editor input[data-path="' + path + '"][data-row="' + r.id + '"]');
+          if (again) again.focus();
+        }
+      };
+      input.dataset.path = path;
+      input.dataset.row = r.id;
+      wrap.appendChild(lab);
+      wrap.appendChild(input);
+      fields.appendChild(wrap);
+    });
+
+    var foot = document.createElement("div");
+    foot.className = "editor-foot";
+    var pills = document.createElement("div");
+    pills.className = "pills";
+    traitsOf(r).forEach(function (p) {
+      var s = document.createElement("span");
+      s.className = "pill";
+      s.textContent = p;
+      pills.appendChild(s);
+    });
+    foot.appendChild(pills);
+
+    if (Object.keys(r.tweaks).length) {
+      var revert = document.createElement("button");
+      revert.className = "btn key";
+      revert.textContent = "revert " + r.name;
+      revert.onclick = function () { r.tweaks = {}; render(); };
+      foot.appendChild(revert);
+    }
+
+    td.appendChild(fields);
+    td.appendChild(foot);
+    tr.appendChild(td);
+    return tr;
+  }
+
+  // --- graph ---------------------------------------------------------------
+
+  // Top margin leaves the y-axis name its own line, clear of the top tick.
+  var PLOT = { w: 900, h: 320, l: 56, r: 96, t: 30, b: 34 };
+  var SAMPLES = 60;
+  var lastSeries = [];
+
+  function svgEl(name, attrs) {
+    var e = document.createElementNS("http://www.w3.org/2000/svg", name);
+    Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); });
+    return e;
+  }
+
+  function niceMax(v) {
+    if (v <= 0) return 1;
+    var mag = Math.pow(10, Math.floor(Math.log10(v)));
+    return Math.ceil(v / mag * 2) / 2 * mag;   // 1 / 1.5 / 2 / 2.5 … × 10^n
+  }
+
+  function drawGraph() {
+    var sel = picked();
+    els.graph.hidden = sel.length === 0;
+    if (!sel.length) { lastSeries = []; return; }
+
+    var xKey = els.xaxis.value, yKey = els.ymetric.value;
+    var xMax = LIMITS[xKey];
+    var fixed = sliderStats();
+
+    // One curve per selected spell: sweep the chosen stat, hold the others.
+    lastSeries = sel.map(function (r, i) {
+      var pts = [];
+      for (var k = 0; k <= SAMPLES; k++) {
+        var x = (xMax * k) / SAMPLES;
+        var st = { skill: fixed.skill, speed: fixed.speed, defence: fixed.defence };
+        st[xKey] = x;
+        pts.push([x, metrics(r, st)[yKey]]);
+      }
+      return { row: r, label: r.label, color: css(SERIES[i]), pts: pts };
+    });
+
+    var yPeak = 0;
+    lastSeries.forEach(function (s) {
+      s.pts.forEach(function (p) { yPeak = Math.max(yPeak, p[1]); });
+    });
+    yPeak = niceMax(yPeak);
+
+    var X = function (v) { return PLOT.l + (v / xMax) * (PLOT.w - PLOT.l - PLOT.r); };
+    var Y = function (v) { return PLOT.h - PLOT.b - (v / yPeak) * (PLOT.h - PLOT.t - PLOT.b); };
+
+    var svg = els.plot;
+    svg.innerHTML = "";
+
+    // Grid + ticks (recessive).
+    for (var gy = 0; gy <= 4; gy++) {
+      var yv = (yPeak * gy) / 4;
+      svg.appendChild(svgEl("line", { class: "gridline", x1: PLOT.l, x2: PLOT.w - PLOT.r,
+                                      y1: Y(yv), y2: Y(yv) }));
+      var ty = svgEl("text", { class: "tick", x: PLOT.l - 8, y: Y(yv) + 3, "text-anchor": "end" });
+      ty.textContent = fmt(yv, yPeak >= 20 ? 0 : 1);
+      svg.appendChild(ty);
+    }
+    for (var gx = 0; gx <= 5; gx++) {
+      var xv = (xMax * gx) / 5;
+      var tx = svgEl("text", { class: "tick", x: X(xv), y: PLOT.h - PLOT.b + 14, "text-anchor": "middle" });
+      tx.textContent = Math.round(xv);
+      svg.appendChild(tx);
+    }
+    svg.appendChild(svgEl("line", { class: "axis", x1: PLOT.l, x2: PLOT.w - PLOT.r,
+                                    y1: PLOT.h - PLOT.b, y2: PLOT.h - PLOT.b }));
+    svg.appendChild(svgEl("line", { class: "axis", x1: PLOT.l, x2: PLOT.l,
+                                    y1: PLOT.t, y2: PLOT.h - PLOT.b }));
+
+    var xname = svgEl("text", { class: "axis-name", x: (PLOT.l + PLOT.w - PLOT.r) / 2,
+                                y: PLOT.h - 4, "text-anchor": "middle" });
+    xname.textContent = els.xaxis.options[els.xaxis.selectedIndex].text;
+    svg.appendChild(xname);
+    var yname = svgEl("text", { class: "axis-name", x: 10, y: 12 });
+    yname.textContent = els.ymetric.options[els.ymetric.selectedIndex].text;
+    svg.appendChild(yname);
+
+    // Series, plus a direct label at each line's end (identity never rests on
+    // colour alone).
+    lastSeries.forEach(function (s) {
+      var d = s.pts.map(function (p, i) {
+        return (i ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1);
+      }).join(" ");
+      svg.appendChild(svgEl("path", { class: "series", d: d, stroke: s.color }));
+
+      var last = s.pts[s.pts.length - 1];
+      svg.appendChild(svgEl("rect", { x: PLOT.w - PLOT.r + 6, y: Y(last[1]) - 5,
+                                      width: 8, height: 8, fill: s.color }));
+      var lab = svgEl("text", { class: "endlabel", x: PLOT.w - PLOT.r + 18, y: Y(last[1]) + 4 });
+      lab.textContent = s.label;
+      svg.appendChild(lab);
+    });
+
+    var cross = svgEl("line", { class: "crosshair", y1: PLOT.t, y2: PLOT.h - PLOT.b,
+                                x1: 0, x2: 0, visibility: "hidden" });
+    cross.id = "cross";
+    svg.appendChild(cross);
+
+    els.legend.innerHTML = "";
+    lastSeries.forEach(function (s) {
+      var item = document.createElement("span");
+      item.className = "item";
+      item.innerHTML = '<span class="sw" style="background:' + s.color + '"></span>' + s.label;
+      els.legend.appendChild(item);
+    });
+
+    els.graph_note.textContent = sel.length + " of " + MAX_SERIES + " plotted";
+    svg._scale = { X: X, Y: Y, xMax: xMax };
+  }
+
+  // Crosshair + tooltip: read every series at the hovered stat value.
+  els.plot.addEventListener("mousemove", function (ev) {
+    if (!lastSeries.length) return;
+    var rect = els.plot.getBoundingClientRect();
+    var px = ((ev.clientX - rect.left) / rect.width) * PLOT.w;
+    var inner = PLOT.w - PLOT.l - PLOT.r;
+    if (px < PLOT.l || px > PLOT.w - PLOT.r) { hideTip(); return; }
+
+    var xMax = els.plot._scale.xMax;
+    var xv = ((px - PLOT.l) / inner) * xMax;
+    var idx = Math.round((xv / xMax) * SAMPLES);
+
+    var cross = document.getElementById("cross");
+    if (cross) {
+      cross.setAttribute("x1", els.plot._scale.X(lastSeries[0].pts[idx][0]));
+      cross.setAttribute("x2", els.plot._scale.X(lastSeries[0].pts[idx][0]));
+      cross.setAttribute("visibility", "visible");
+    }
+
+    var head = els.xaxis.options[els.xaxis.selectedIndex].text;
+    var html = '<div class="hdr">' + head + " " + Math.round(lastSeries[0].pts[idx][0]) + "</div>";
+    lastSeries.forEach(function (s) {
+      html += '<div class="r"><span class="sw" style="background:' + s.color + '"></span>'
+            + s.label + " " + fmt(s.pts[idx][1], 1) + "</div>";
+    });
+    els.tip.innerHTML = html;
+    els.tip.style.display = "block";
+    var tw = els.tip.offsetWidth;
+    var left = (ev.clientX - rect.left) + 14;
+    if (left + tw > rect.width) left = (ev.clientX - rect.left) - tw - 14;
+    els.tip.style.left = left + "px";
+    els.tip.style.top = Math.max(0, ev.clientY - rect.top - 10) + "px";
+  });
+  els.plot.addEventListener("mouseleave", hideTip);
+
+  function hideTip() {
+    els.tip.style.display = "none";
+    var cross = document.getElementById("cross");
+    if (cross) cross.setAttribute("visibility", "hidden");
+  }
+
+  // --- wiring --------------------------------------------------------------
+
+  DATA.categories.forEach(function (c) {
+    var b = document.createElement("button");
+    b.className = "chip";
+    b.textContent = c.name;
+    b.setAttribute("aria-pressed", "false");
+    b.onclick = function () {
+      state.cats[c.id] = !state.cats[c.id];
+      b.setAttribute("aria-pressed", state.cats[c.id] ? "true" : "false");
+      render();
+    };
+    els.cats.appendChild(b);
+  });
+
+  STATS.forEach(function (k) {
+    var input = document.getElementById(k), out = document.getElementById(k + "_o");
+    input.value = DEFAULTS[k];
+    out.textContent = input.value;
+    input.oninput = function () { out.textContent = input.value; render(); };
+  });
+  els.grants.onchange = render;
+  els.q.oninput = function () { state.q = els.q.value; render(); };
+  els.xaxis.onchange = render;
+  els.ymetric.onchange = render;
+
+  document.querySelectorAll("thead th[data-sort]").forEach(function (th) {
+    th.onclick = function () {
+      var key = th.dataset.sort;
+      if (state.sort === key) state.dir = -state.dir;
+      else { state.sort = key; state.dir = key === "name" ? 1 : -1; }
+      render();
+    };
+  });
+
+  document.getElementById("reset").onclick = function () {
+    state = { q: "", cats: {}, sort: "dps", dir: -1 };
+    els.q.value = "";
+    els.grants.checked = false;
+    ROWS.forEach(function (r) { r.tweaks = {}; r.picked = false; r.open = false; });
+    STATS.forEach(function (k) {
+      document.getElementById(k).value = DEFAULTS[k];
+      document.getElementById(k + "_o").textContent = DEFAULTS[k];
+    });
+    els.cats.querySelectorAll(".chip").forEach(function (c) {
+      c.setAttribute("aria-pressed", "false");
+    });
+    render();
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
