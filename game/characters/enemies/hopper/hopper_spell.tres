@@ -15,7 +15,7 @@ region = Rect2(40, 8, 8, 8)
 [sub_resource type="Resource" id="Resource_witr3"]
 script = ExtResource("3_31lbh")
 icon = SubResource("AtlasTexture_ugkbn")
-range_tiles = 4
+range_tiles = 5
 speed_tiles = 10
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
@@ -30,6 +30,7 @@ script = ExtResource("1_script")
 fire_pattern = SubResource("SinglePattern_1")
 bullet = SubResource("Resource_witr3")
 damage = SubResource("ScalingProfile_bullet")
-max_shots = 1
+shot_interval = 0.3
+max_shots = 3
 effect_scene = ExtResource("99_effect")
 cooldown = 0.7

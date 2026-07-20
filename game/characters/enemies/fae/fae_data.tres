@@ -9,11 +9,13 @@
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("drop_1")
+chance = 0.66
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_2"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("drop_2")
+chance = 0.66
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
