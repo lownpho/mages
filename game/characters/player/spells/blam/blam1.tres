@@ -21,8 +21,8 @@ speed_tiles = 16
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 10.0
-skill_scaling = 0.5
+base_damage = 8.0
+skill_scaling = 0.4
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
