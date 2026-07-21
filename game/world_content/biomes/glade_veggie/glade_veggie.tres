@@ -12,6 +12,6 @@ size_cells = Vector2i(2, 1)
 open_passage_chance = 0.8
 bsp_stop_chance = 0.5
 room_extra_connection_chance = 0.75
-decor_density = 0.05
+decor_density = 0.08
 fallback_room_type = &"glade_veggie_open_fallback"
 presentation = ExtResource("1_77f8n")
