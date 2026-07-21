@@ -110,6 +110,20 @@ func _snap_cam() -> void:
 	_cam = (_cam / _tpp).round() * _tpp
 
 
+## +/- zoom the open map around its centre. Marked handled so the strip minimap — which binds the
+## same actions — doesn't zoom underneath the panel as well.
+func _unhandled_input(event: InputEvent) -> void:
+	if _state == null or not is_visible_in_tree():
+		return
+	if event.is_action_pressed("minimap_zoom_in"):
+		_zoom(size * 0.5, 1)
+	elif event.is_action_pressed("minimap_zoom_out"):
+		_zoom(size * 0.5, -1)
+	else:
+		return
+	get_viewport().set_input_as_handled()
+
+
 func _gui_input(event: InputEvent) -> void:
 	if _state == null:
 		return

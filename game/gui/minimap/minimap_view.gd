@@ -2,7 +2,8 @@ extends Control
 ## The strip minimap: draws the shared MapState's discovered-world textures with the player fixed
 ## at the centre, north-up. The state (fog-of-war discovery, textures, markers) is owned by
 ## GlobalMap; this widget only renders the active one and steps its own zoom. The widget never
-## resizes — the scroll wheel steps tiles-per-pixel (MapState.ZOOM_TILES_PER_PX). Walls render at
+## resizes — +/-, or the wheel while hovering it, step tiles-per-pixel (MapState.ZOOM_TILES_PER_PX;
+## off the map the wheel cycles the spell page instead). Walls render at
 ## every zoom from a per-level majority-downsampled image, so explored dead ends stay flagged when
 ## zoomed out. Live enemies show only inside discovered rooms, so nothing leaks through fog of war.
 
@@ -43,25 +44,38 @@ func _process(_dt: float) -> void:
 	queue_redraw()   # enemies move even when the player doesn't; discovery is GlobalMap's job
 
 
+## The +/- keys zoom wherever the cursor is; the wheel only zooms while hovering the widget
+## (see _gui_input), since elsewhere it cycles the player's spell page.
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == null:
 		return
-	if event.is_action_pressed("minimap_zoom_in") and _zoom_idx > 0:
-		_zoom_idx -= 1
-		queue_redraw()
-	elif event.is_action_pressed("minimap_zoom_out") \
-			and _zoom_idx < MapState.ZOOM_TILES_PER_PX.size() - 1:
-		_zoom_idx += 1
-		queue_redraw()
+	if event.is_action_pressed("minimap_zoom_in"):
+		_step_zoom(-1)
+	elif event.is_action_pressed("minimap_zoom_out"):
+		_step_zoom(1)
+
+
+func _step_zoom(dir: int) -> void:
+	var ni := clampi(_zoom_idx + dir, 0, MapState.ZOOM_TILES_PER_PX.size() - 1)
+	if ni == _zoom_idx:
+		return
+	_zoom_idx = ni
+	queue_redraw()
 
 
 ## Left-click a spot on the minimap to drop a pin there; click near an existing pin to clear it.
 ## The click's widget-local position maps back to a world tile through the same centre/zoom the
 ## draw uses. (Runs as _gui_input because the widget's mouse_filter stops events at the GUI layer.)
+## The wheel zooms here too, and is consumed so it doesn't also flip the spell page.
 func _gui_input(event: InputEvent) -> void:
 	if _state == null or _player == null or not is_instance_valid(_player):
 		return
 	if event is InputEventMouseButton and event.pressed \
+			and (event.button_index == MOUSE_BUTTON_WHEEL_UP
+				or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+		_step_zoom(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
+		accept_event()
+	elif event is InputEventMouseButton and event.pressed \
 			and event.button_index == MOUSE_BUTTON_LEFT:
 		var tpp := MapState.ZOOM_TILES_PER_PX[_zoom_idx]
 		var center := _player.global_position / GameConstants.PX_PER_TILE

@@ -3,7 +3,9 @@ class_name PlayerCastInput
 
 ## The player's trigger for the SpellCaster engine: maps input to casts and roots
 ## the player during a cast. cast1/cast2 = LMB/RMB fire the matching slot on
-## GlobalInventory's active page; cycle_page (SPACE) flips the page. This is the
+## GlobalInventory's active page; cycle_page (SPACE or the mouse wheel) flips the
+## page — the wheel only reaches here when the cursor isn't over a map, which
+## consumes it for zoom. This is the
 ## only player-specific piece of casting — the engine itself is caster-agnostic,
 ## so enemies and minions mount the same SpellCaster with no input node.
 

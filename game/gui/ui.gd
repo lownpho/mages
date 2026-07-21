@@ -18,7 +18,7 @@ func _ready() -> void:
 	for i in range(GlobalInventory.BAG_SIZE):
 		ui_slots[i].slot = GlobalInventory.bag_slots.at(i)
 	# Both spell pages are visible as two rows of two (LMB/RMB left to right);
-	# SPACE swaps which row is live, shown by the frame swap.
+	# SPACE / the mouse wheel swap which row is live, shown by the frame swap.
 	ui_slots = %EquipSpells.get_children()
 	for i in range(GlobalInventory.SPELL_SLOT_SIZE):
 		ui_slots[i].slot = GlobalInventory.spell_slots.at(i)
