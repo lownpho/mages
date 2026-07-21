@@ -48,6 +48,14 @@ region = Rect2(0, 0, 16, 16)
 atlas = ExtResource("3_tex")
 region = Rect2(16, 0, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AT_rest0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_rest1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 80, 16, 16)
+
 [sub_resource type="AtlasTexture" id="AT_run0"]
 atlas = ExtResource("3_tex")
 region = Rect2(0, 64, 16, 16)
@@ -55,6 +63,22 @@ region = Rect2(0, 64, 16, 16)
 [sub_resource type="AtlasTexture" id="AT_run1"]
 atlas = ExtResource("3_tex")
 region = Rect2(16, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_shotgun0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_shotgun1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_spores0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 112, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_spores1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 112, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AT_summon0"]
 atlas = ExtResource("3_tex")
@@ -101,6 +125,17 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AT_rest0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_rest1")
+}],
+"loop": 1,
+"name": &"rest",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AT_run0")
 }, {
 "duration": 1.0,
@@ -109,6 +144,28 @@ animations = [{
 "loop": 1,
 "name": &"run",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_shotgun0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_shotgun1")
+}],
+"loop": 0,
+"name": &"shotgun",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_spores0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_spores1")
+}],
+"loop": 1,
+"name": &"spores",
+"speed": 4.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -134,7 +191,7 @@ shape = SubResource("CircleShape2D_thornmess")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1900000003]
 sprite_frames = SubResource("SpriteFrames_thornmess")
-animation = &"idle"
+animation = &"run"
 autoplay = "idle"
 offset = Vector2(0, -3)
 
@@ -202,7 +259,6 @@ windup_damage_scale = 0.2
 script = ExtResource("14_rest")
 duration = 4.0
 done_state = "Uproot"
-rest_anim = "idle"
 
 [node name="Shotgun" type="Node" parent="FSM" unique_id=1900000018]
 script = ExtResource("12_rvolley")
@@ -210,12 +266,14 @@ attack_probe_path = NodePath("../../CloseProbe")
 out_of_range_state = "Uproot"
 caster_path = NodePath("../../Caster")
 spell = ExtResource("7_shotgun")
+attack_anim = "shotgun"
 done_state = "Rest"
 
 [node name="Spores" type="Node" parent="FSM" unique_id=1900000019]
 script = ExtResource("16_volley")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("9_spores")
+attack_anim = "spores"
 done_state = "Summon"
 
 [node name="Summon" type="Node" parent="FSM" unique_id=1900000020]
