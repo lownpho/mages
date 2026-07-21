@@ -9,13 +9,13 @@
 [sub_resource type="Resource" id="Drop_2"]
 script = ExtResource("1_yolio")
 item = ExtResource("drop_2")
-chance = 0.2
+chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_yolio")
 item = ExtResource("drop_1")
-chance = 0.2
+chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -26,5 +26,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Rosebud"
 icon = SubResource("AtlasTexture_icon")
-max_health = 45
+max_health = 30
 drops = Array[ExtResource("1_yolio")]([SubResource("Drop_2"), SubResource("Drop_1")])

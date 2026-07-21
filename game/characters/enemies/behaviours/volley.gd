@@ -14,8 +14,19 @@ class_name Volley
 @export var spell: SpellResource
 @export var attack_anim: String = "attack"
 @export var done_state: String = "Idle"
+## The telegraph, for a spell with a cast_time: the wind-up is the spell's own number, so
+## the beat only supplies its look — a pose and, under 1.0, armour that makes the tell a
+## bad time to trade. Both lapse the moment the spell resolves into its burst.
+@export var windup_anim: String = ""
+@export var windup_damage_scale: float = 1.0
 
 @onready var _caster: SpellCaster = get_node(caster_path)
+
+var _winding_up: bool = false
+
+func _ready() -> void:
+	super()
+	_caster.cast_resolved.connect(_on_cast_resolved)
 
 # Don't let a dispatcher roll this beat while the spell is still cooling — it would
 # stand there doing nothing until the cooldown lapsed.
@@ -24,24 +35,49 @@ func can_run() -> bool:
 
 func enter() -> void:
 	creature.velocity = Vector2.ZERO
-	creature.play(attack_anim)
+	_winding_up = spell.cast_time > 0.0 and not spell.channeled
+	creature.play(windup_anim if _winding_up and windup_anim != "" else attack_anim)
+	if _winding_up:
+		creature.incoming_damage_scale = windup_damage_scale
 	var player := creature.get_target()
 	_caster.cast(spell, aim_at(player) if player else Vector2.ZERO)
 
 func exit() -> void:
-	# Leaving mid-burst takes the remaining shots with us, onto the full cooldown.
+	# Leaving mid-beat takes the rest of it with us, onto the full cooldown — whether
+	# that's a spent telegraph or the shots still owed.
+	_end_windup()
+	_caster.cancel(spell)
 	_caster.interrupt(spell)
 
 func physics_update(_delta: float) -> void:
 	var player := creature.get_target()
 	if player:
 		creature.face(player.global_position.x - creature.global_position.x)
-	elif _requires_target():
+		# cast() stamps aim once, at the first shot. bullet_spell re-samples the caster
+		# every shot so a burst can track a strafing target — but only the beat knows
+		# where the target went, so it has to keep the aim honest for shots 2..n.
+		if _is_aimed():
+			creature.aim_direction = aim_at(player)
+	elif _is_aimed():
 		go_to(done_state)
 		return
 	if not _caster.is_casting(spell):
 		go_to(done_state)
 
-# An absolute-aim spray doesn't care whether the player is still there.
-func _requires_target() -> bool:
+# The caster is shared across every beat, so only our own spell landing counts.
+func _on_cast_resolved(resolved: SpellResource) -> void:
+	if resolved != spell or not _winding_up:
+		return
+	_end_windup()
+	creature.play(attack_anim)
+
+func _end_windup() -> void:
+	if not _winding_up:
+		return
+	_winding_up = false
+	creature.incoming_damage_scale = 1.0
+
+# Whether this beat is pointed at someone: an absolute-aim spray fires from its own
+# bearing, so it neither tracks the target nor cares that they left.
+func _is_aimed() -> bool:
 	return not (spell is BulletSpellResource and spell.aim_independent)

@@ -15,7 +15,7 @@ region = Rect2(32, 40, 8, 8)
 [sub_resource type="Resource" id="Resource_f5weq"]
 script = ExtResource("3_js7td")
 icon = SubResource("AtlasTexture_boivc")
-range_tiles = 14
+range_tiles = 8
 speed_tiles = 12
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
@@ -31,8 +31,8 @@ script = ExtResource("1_script")
 fire_pattern = SubResource("RingPattern_1")
 bullet = SubResource("Resource_f5weq")
 damage = SubResource("ScalingProfile_bullet")
-shot_interval = 0.9
+shot_interval = 1.0
 max_shots = 4
 rotation_per_shot = 30.0
 effect_scene = ExtResource("99_effect")
-cooldown = 0.9
+cooldown = 0.0

@@ -27,5 +27,5 @@ script = ExtResource("1")
 display_name = "Mandraker"
 icon = SubResource("AtlasTexture_icon")
 rarity = 1
-max_health = 75
+max_health = 200
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1"), SubResource("Drop_2")])

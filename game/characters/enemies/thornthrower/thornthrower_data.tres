@@ -5,15 +5,15 @@
 [ext_resource type="Resource" uid="uid://8vvmq0ft11l1" path="res://characters/player/spells/snipe/snipe1.tres" id="drop_1"]
 [ext_resource type="Texture2D" uid="uid://fx64q6j02wqu" path="res://characters/enemies/thornthrower/thornthrower.png" id="icon_png"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("icon_png")
-region = Rect2(0, 0, 8, 8)
-
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_1p2hq")
 item = ExtResource("drop_1")
-chance = 0.25
+chance = 0.2
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
 
 [resource]
 script = ExtResource("1")

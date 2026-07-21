@@ -27,5 +27,5 @@ script = ExtResource("1")
 display_name = "Fae"
 icon = SubResource("AtlasTexture_icon")
 rarity = 2
-max_health = 1500
+max_health = 800
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1"), SubResource("Drop_2")])

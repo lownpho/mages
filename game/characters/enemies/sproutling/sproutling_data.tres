@@ -26,5 +26,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1")
 display_name = "Sproutling"
 icon = SubResource("AtlasTexture_icon")
-max_health = 23
+max_health = 25
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_staff"), SubResource("Resource_heal")])

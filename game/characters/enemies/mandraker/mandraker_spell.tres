@@ -10,17 +10,17 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nv67f"]
 atlas = ExtResource("2_vutwa")
-region = Rect2(48, 24, 8, 8)
+region = Rect2(8, 24, 8, 8)
 
 [sub_resource type="Resource" id="Resource_3nchx"]
 script = ExtResource("3_55xxv")
 icon = SubResource("AtlasTexture_nv67f")
-range_tiles = 4
-speed_tiles = 5
+range_tiles = 7
+speed_tiles = 12
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 8.0
+base_damage = 15.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("3_pattern")
@@ -32,4 +32,4 @@ bullet = SubResource("Resource_3nchx")
 damage = SubResource("ScalingProfile_bullet")
 max_shots = 1
 effect_scene = ExtResource("99_effect")
-cooldown = 1.2
+cooldown = 2.0

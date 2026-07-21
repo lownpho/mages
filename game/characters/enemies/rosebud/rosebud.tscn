@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cr0s3budsc3n3"]
 
-[ext_resource type="Resource" path="res://characters/enemies/rosebud/rosebud_data.tres" id="1_data"]
+[ext_resource type="Resource" uid="uid://371d6i7w0y33" path="res://characters/enemies/rosebud/rosebud_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
 [ext_resource type="Texture2D" uid="uid://du0qsbdjksoj" path="res://characters/enemies/rosebud/rosebud.png" id="3_tex"]
@@ -9,7 +9,7 @@
 [ext_resource type="Resource" uid="uid://br0s3budthrn" path="res://characters/enemies/rosebud/rosebud_ring.tres" id="5_thorn"]
 [ext_resource type="Script" uid="uid://c4qrfe6uxlccn" path="res://characters/enemies/behaviours/hit_alert_idle.gd" id="6_idle"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="7_volley"]
-[ext_resource type="Script" path="res://characters/enemies/behaviours/guard.gd" id="8_guard"]
+[ext_resource type="Script" uid="uid://b2fghnxxvt8sb" path="res://characters/enemies/behaviours/guard.gd" id="8_guard"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 4.0
@@ -47,7 +47,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_atk1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"attack",
 "speed": 8.0
 }, {
@@ -112,10 +112,9 @@ next_state = "Idle"
 script = ExtResource("7_volley")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("5_thorn")
-attack_anim = "attack"
-done_state = "Idle"
 
 [node name="Guard" type="Node" parent="FSM" unique_id=1909355522]
 script = ExtResource("8_guard")
 done_state = "Attack"
+duration = 3.0
 damage_scale = 0.2

@@ -69,6 +69,16 @@ func interrupt(spell: SpellResource) -> void:
 	if live != null and is_instance_valid(live) and live.has_method("interrupt"):
 		live.interrupt()
 
+## Abandon `spell`'s wind-up before it resolves — the beat that started it bailed (target
+## gone) — putting it on cooldown as if it had fired. Without this the caster would sit
+## with a pending spell forever and refuse every later cast.
+func cancel(spell: SpellResource) -> void:
+	if _pending_spell != spell:
+		return
+	_pending_spell = null
+	_cast_timer.stop()
+	_start_cooldown(spell)
+
 ## True when `spell` is off cooldown and its last over-time effect has finished.
 func ready_for(spell: SpellResource) -> bool:
 	var cd: Timer = _cooldowns.get(spell)

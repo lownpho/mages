@@ -9,6 +9,11 @@ class_name ChaseIntoRange
 # of reach or ducks behind a wall.
 
 @export var attack_probe_path: NodePath
+## Where a *successful* close hands off, when that differs from done_state: getting there
+## is the cue for the attack the range was for, while a timeout or a target that slipped
+## away must still fall back to the dispatcher — otherwise a boss that can't catch a
+## kiting player ping-pongs between the chase and an attack it's never in range to use.
+@export var reached_state: String = ""
 
 @onready var _probe: RayCast2D = get_node(attack_probe_path)
 
@@ -23,3 +28,6 @@ func exit() -> void:
 func _reached(target: Node2D) -> bool:
 	_probe.look_at(target.global_position)
 	return creature.probe_sees(_probe)
+
+func _reached_state() -> String:
+	return reached_state if reached_state != "" else done_state

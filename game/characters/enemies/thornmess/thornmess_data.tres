@@ -5,34 +5,33 @@
 [ext_resource type="Resource" uid="uid://c1sm2y5p435xa" path="res://characters/player/spells/jimmy/jimmy1.tres" id="drop_1"]
 [ext_resource type="Resource" uid="uid://c4sfcwn5016cw" path="res://characters/player/spells/snipe/snipe2.tres" id="drop_2"]
 [ext_resource type="Resource" uid="uid://xhtt31bw1wvp" path="res://characters/player/spells/ring/ring2.tres" id="drop_3"]
-[ext_resource type="Texture2D" path="res://characters/enemies/thornmess/thornmess.png" id="icon_png"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("icon_png")
-region = Rect2(0, 0, 16, 16)
+[ext_resource type="Texture2D" uid="uid://d3u2um3f3quox" path="res://characters/enemies/thornmess/thornmess.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("drop_1")
-chance = 1.0
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_2"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("drop_2")
-chance = 1.0
+chance = 0.66
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_3"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("drop_3")
-chance = 1.0
+chance = 0.66
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 16)
 
 [resource]
 script = ExtResource("1")
 display_name = "Thornmess"
 icon = SubResource("AtlasTexture_icon")
 rarity = 2
-max_health = 1500
+max_health = 1300
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1"), SubResource("Drop_2"), SubResource("Drop_3")])

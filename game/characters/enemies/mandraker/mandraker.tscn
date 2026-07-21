@@ -96,7 +96,7 @@ shape = SubResource("CircleShape2D_mandraker")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2022937300]
 sprite_frames = SubResource("SpriteFrames_mandraker")
-animation = &"idle"
+animation = &"attack"
 autoplay = "idle"
 offset = Vector2(0, -2)
 
@@ -108,11 +108,11 @@ target_position = Vector2(64, 0)
 collision_mask = 17
 
 [node name="ChaseProbe" type="RayCast2D" parent="." unique_id=542783300]
-target_position = Vector2(96, 0)
+target_position = Vector2(128, 0)
 collision_mask = 17
 
 [node name="AttackProbe" type="RayCast2D" parent="." unique_id=2019687300]
-target_position = Vector2(24, 0)
+target_position = Vector2(32, 0)
 collision_mask = 17
 
 [node name="FireballProbe" type="RayCast2D" parent="." unique_id=2019687301]
@@ -142,7 +142,7 @@ speed = 28.0
 [node name="Pattern" type="Node" parent="FSM" unique_id=1907545300]
 script = ExtResource("11_pattern")
 states = Array[String](["Wave", "Fireball"])
-weights = Array[float]([3.0, 1.0])
+weights = Array[float]([4.0, 1.0])
 detect_probe_path = NodePath("../../ChaseProbe")
 lost_state = "Chase"
 

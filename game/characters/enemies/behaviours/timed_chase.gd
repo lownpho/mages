@@ -29,7 +29,7 @@ func physics_update(_delta: float) -> void:
 	if not target:
 		return
 	if _reached(target):
-		go_to(done_state)
+		go_to(_reached_state())
 		return
 	var to_target := target.global_position - creature.global_position
 	creature.face(to_target.x)
@@ -40,3 +40,9 @@ func physics_update(_delta: float) -> void:
 # pattern's own attack range) hook in here instead of duplicating physics_update.
 func _reached(_target: Node2D) -> bool:
 	return false
+
+# Where arriving hands off. Timing out and losing the target both mean the pursuit
+# failed and belong back at the dispatcher, so only a subclass that can actually
+# arrive has a second destination to offer.
+func _reached_state() -> String:
+	return done_state

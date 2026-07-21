@@ -13,6 +13,12 @@ item = ExtResource("3_wand")
 chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="Resource" id="Resource_pew"]
+script = ExtResource("2_dpl6y")
+item = ExtResource("5_pew")
+chance = 0.1
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [sub_resource type="Resource" id="Resource_zaap"]
 script = ExtResource("2_dpl6y")
 item = ExtResource("4_zaap")
@@ -22,12 +28,6 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
-
-[sub_resource type="Resource" id="Resource_pew"]
-script = ExtResource("2_dpl6y")
-item = ExtResource("5_pew")
-chance = 0.1
-metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [resource]
 script = ExtResource("1")

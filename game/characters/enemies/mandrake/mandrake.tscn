@@ -52,7 +52,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AT_atk1")
 }],
-"loop": false,
+"loop": 0,
 "name": &"attack",
 "speed": 4.0
 }, {
@@ -112,7 +112,7 @@ target_position = Vector2(96, 0)
 collision_mask = 17
 
 [node name="AttackProbe" type="RayCast2D" parent="." unique_id=2019687273]
-target_position = Vector2(24, 0)
+target_position = Vector2(32, 0)
 collision_mask = 17
 
 [node name="Caster" parent="." unique_id=203592923 instance=ExtResource("5_weap")]

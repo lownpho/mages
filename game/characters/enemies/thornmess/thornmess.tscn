@@ -3,7 +3,7 @@
 [ext_resource type="Resource" uid="uid://thrnmssdata1" path="res://characters/enemies/thornmess/thornmess_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
-[ext_resource type="Texture2D" path="res://characters/enemies/thornmess/thornmess.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://d3u2um3f3quox" path="res://characters/enemies/thornmess/thornmess.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://thrnmssmsl01" path="res://characters/enemies/thornmess/thornmess_missiles.tres" id="6_missiles"]
@@ -14,22 +14,15 @@
 [ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/enemies/behaviours/pattern_picker.gd" id="11_pattern"]
 [ext_resource type="Script" uid="uid://drngdvly7t8w2" path="res://characters/enemies/behaviours/ranged_volley.gd" id="12_rvolley"]
 [ext_resource type="Script" uid="uid://b7qgec187544q" path="res://characters/enemies/behaviours/chase_into_range.gd" id="13_uproot"]
-[ext_resource type="Script" uid="uid://b2fghnxxvt8sb" path="res://characters/enemies/behaviours/guard.gd" id="14_guard"]
+[ext_resource type="Script" uid="uid://u03ssycofgl1" path="res://characters/enemies/behaviours/rest.gd" id="14_rest"]
 [ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="16_volley"]
 [ext_resource type="Script" uid="uid://b6ic7k8dhqajd" path="res://characters/enemies/behaviours/summon_allies.gd" id="18_summon"]
 [ext_resource type="PackedScene" uid="uid://de2ihs354x1ge" path="res://characters/enemies/seedling/seedling.tscn" id="19_seedling"]
 [ext_resource type="PackedScene" uid="uid://cr0s3budsc3n3" path="res://characters/enemies/rosebud/rosebud.tscn" id="20_rosebud"]
+[ext_resource type="PackedScene" uid="uid://c8thrnthrw0sc" path="res://characters/enemies/thornthrower/thornthrower.tscn" id="20_s5ace"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_thornmess"]
 radius = 7.0
-
-[sub_resource type="AtlasTexture" id="AT_idle0"]
-atlas = ExtResource("3_tex")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AT_idle1"]
-atlas = ExtResource("3_tex")
-region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AT_atk0"]
 atlas = ExtResource("3_tex")
@@ -47,13 +40,13 @@ region = Rect2(0, 32, 16, 16)
 atlas = ExtResource("3_tex")
 region = Rect2(16, 32, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AT_summon0"]
+[sub_resource type="AtlasTexture" id="AT_idle0"]
 atlas = ExtResource("3_tex")
-region = Rect2(0, 48, 16, 16)
+region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AT_summon1"]
+[sub_resource type="AtlasTexture" id="AT_idle1"]
 atlas = ExtResource("3_tex")
-region = Rect2(16, 48, 16, 16)
+region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AT_run0"]
 atlas = ExtResource("3_tex")
@@ -62,6 +55,14 @@ region = Rect2(0, 64, 16, 16)
 [sub_resource type="AtlasTexture" id="AT_run1"]
 atlas = ExtResource("3_tex")
 region = Rect2(16, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_summon0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AT_summon1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 48, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_thornmess"]
 animations = [{
@@ -142,20 +143,18 @@ collision_mask = 256
 radius = 7.0
 
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=1900000005]
-target_position = Vector2(96, 0)
+target_position = Vector2(176, 0)
 collision_mask = 17
 
 [node name="MissileProbe" type="RayCast2D" parent="." unique_id=1900000006]
-target_position = Vector2(64, 0)
+target_position = Vector2(160, 0)
 collision_mask = 17
 
-[node name="MissileCaster" parent="." unique_id=1900000007 instance=ExtResource("5_weap")]
+[node name="CloseProbe" type="RayCast2D" parent="." unique_id=1900000021]
+target_position = Vector2(32, 0)
+collision_mask = 17
 
-[node name="ShotgunCaster" parent="." unique_id=1900000008 instance=ExtResource("5_weap")]
-
-[node name="BloomCaster" parent="." unique_id=1900000009 instance=ExtResource("5_weap")]
-
-[node name="SporeCaster" parent="." unique_id=1900000010 instance=ExtResource("5_weap")]
+[node name="Caster" parent="." unique_id=1900000007 instance=ExtResource("5_weap")]
 
 [node name="FSM" parent="." unique_id=1900000011 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
@@ -168,64 +167,61 @@ next_state = "Idle"
 
 [node name="Pick" type="Node" parent="FSM" unique_id=1900000013]
 script = ExtResource("11_pattern")
-states = Array[String](["Missiles", "Bloom", "Shotgun"])
-weights = Array[float]([3.0, 2.0, 2.0])
+states = Array[String](["Missiles", "Bloom", "Uproot"])
+weights = Array[float]([4.0, 1.0, 2.0])
 detect_probe_path = NodePath("../../DetectProbe")
-phase_health_fraction = 0.35
+phase_health_fraction = 0.25
 phase_state = "Spores"
-phase_states = Array[String](["Missiles", "Shotgun", "Spores"])
-phase_weights = Array[float]([3.0, 2.0, 2.0])
+phase_states = Array[String](["Missiles", "Spores"])
+phase_weights = Array[float]([3.0, 1.0])
 
 [node name="Missiles" type="Node" parent="FSM" unique_id=1900000014]
 script = ExtResource("12_rvolley")
 attack_probe_path = NodePath("../../MissileProbe")
 out_of_range_state = "Uproot"
-caster_path = NodePath("../../MissileCaster")
+caster_path = NodePath("../../Caster")
 spell = ExtResource("6_missiles")
-attack_anim = "attack"
-done_state = "Pick"
+done_state = "Rest"
 
 [node name="Uproot" type="Node" parent="FSM" unique_id=1900000015]
 script = ExtResource("13_uproot")
-attack_probe_path = NodePath("../../MissileProbe")
-duration = 4.0
-speed = 60.0
-done_state = "Pick"
-run_anim = "run"
+attack_probe_path = NodePath("../../CloseProbe")
+reached_state = "Shotgun"
+speed = 32.0
+done_state = "Missiles"
 
 [node name="Bloom" type="Node" parent="FSM" unique_id=1900000016]
-script = ExtResource("14_guard")
-done_state = "BloomBurst"
-duration = 1.4
-damage_scale = 0.2
-guard_anim = "guard"
-
-[node name="BloomBurst" type="Node" parent="FSM" unique_id=1900000017]
 script = ExtResource("16_volley")
-caster_path = NodePath("../../BloomCaster")
+caster_path = NodePath("../../Caster")
 spell = ExtResource("8_bloom")
-attack_anim = "attack"
-done_state = "Pick"
+done_state = "Rest"
+windup_anim = "guard"
+windup_damage_scale = 0.2
+
+[node name="Rest" type="Node" parent="FSM" unique_id=1900000017]
+script = ExtResource("14_rest")
+duration = 4.0
+done_state = "Uproot"
+rest_anim = "idle"
 
 [node name="Shotgun" type="Node" parent="FSM" unique_id=1900000018]
-script = ExtResource("16_volley")
-caster_path = NodePath("../../ShotgunCaster")
+script = ExtResource("12_rvolley")
+attack_probe_path = NodePath("../../CloseProbe")
+out_of_range_state = "Uproot"
+caster_path = NodePath("../../Caster")
 spell = ExtResource("7_shotgun")
-attack_anim = "attack"
-done_state = "Pick"
+done_state = "Rest"
 
 [node name="Spores" type="Node" parent="FSM" unique_id=1900000019]
 script = ExtResource("16_volley")
-caster_path = NodePath("../../SporeCaster")
+caster_path = NodePath("../../Caster")
 spell = ExtResource("9_spores")
 done_state = "Summon"
-attack_anim = "attack"
 
 [node name="Summon" type="Node" parent="FSM" unique_id=1900000020]
 script = ExtResource("18_summon")
-summon_scenes = Array[PackedScene]([ExtResource("19_seedling"), ExtResource("20_rosebud")])
-summon_count = 3
+summon_scenes = Array[PackedScene]([ExtResource("19_seedling"), ExtResource("20_rosebud"), ExtResource("20_s5ace")])
+summon_count = 6
 spawn_radius = 40.0
 timeout = 15.0
-done_state = "Pick"
-summon_anim = "summon"
+done_state = "Rest"
