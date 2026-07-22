@@ -154,6 +154,12 @@ func track_player(player: Node2D) -> void:
 	_save_timer.start()
 
 
+## True while a live run is in progress (a player is placed in the world). Loadout
+## edits at the title — the Continue restore, new_game's reset — happen outside it.
+func in_run() -> bool:
+	return is_instance_valid(_tracked_player)
+
+
 ## Wipe the save so there is nothing to Continue. Called on death.
 func clear_save() -> void:
 	active_seed = 0

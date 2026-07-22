@@ -27,6 +27,10 @@ signal loot_dropped(item: ItemResource, position: Vector2)
 # directly on entry. The bestiary reveals a biome's section on first visit.
 signal biome_entered(biome_id: StringName)
 
+# Emitted by the player on real death (not debug_never_die), before the run is torn
+# down. source is the damage source that landed the killing hit.
+signal player_died(source: Node)
+
 # Bestiary signals
 # Emitted by Creature.die() for any creature with an authored stat sheet (summons
 # carry no `data`, so they never register).

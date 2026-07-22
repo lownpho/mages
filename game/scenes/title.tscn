@@ -162,7 +162,6 @@ text = "REGISTER"
 [node name="LeaderboardPanel" parent="." unique_id=1610394827 instance=ExtResource("6_board")]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(150, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

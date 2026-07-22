@@ -190,11 +190,12 @@ func _on_cast_exit() -> void:
 func _on_health_or_max_health_changed(_value: int) -> void:
 	low_health_aura.visible = health > 0 and health <= max_health * low_resource_warning_fraction
 
-func _die() -> void:
+func _die(source: Node) -> void:
 	if debug_never_die:
 		health = max_health
 		GlobalEvent.player_health_changed.emit(health)
 		return
+	GlobalEvent.player_died.emit(source)
 	# Permadeath: clear the save so there is nothing to Continue, then bounce to
 	# the title screen (which frees this scene, so no queue_free needed here).
 	GameState.game_over()
@@ -204,6 +205,10 @@ func grant_spawn_grace(seconds: float = 2.0) -> void:
 	_grace_until_ms = Time.get_ticks_msec() + int(seconds * 1000.0)
 
 func _on_hurt(damage: int, source: Node) -> void:
+	# Already dead: a burst that lands several lethal hits in one frame must not
+	# re-run death (duplicate death events/feed entries, repeated game_over).
+	if health <= 0:
+		return
 	if Time.get_ticks_msec() < _grace_until_ms:
 		return
 	if damage_absorber and is_instance_valid(damage_absorber):
@@ -221,7 +226,7 @@ func _on_hurt(damage: int, source: Node) -> void:
 	GlobalEvent.entity_damaged.emit(self, damage, source)
 
 	if health <= 0:
-		_die()
+		_die(source)
 
 # Computes derived stats from base values and equipped spell modifiers.
 # Call this whenever equipment changes or on init.

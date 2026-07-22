@@ -1,38 +1,71 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://gui/leaderboard/leaderboard_panel.gd" id="1_board"]
-[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="2_ui"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_trophy"]
-atlas = ExtResource("2_ui")
-region = Rect2(32, 16, 8, 8)
 
 [node name="LeaderboardPanel" type="PanelContainer"]
 script = ExtResource("1_board")
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 3
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_right = 3
-theme_override_constants/margin_bottom = 3
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
-[node name="VBox" type="VBoxContainer" parent="Margin"]
+[node name="Main" type="VBoxContainer" parent="Margin"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 4
 
-[node name="Header" type="HBoxContainer" parent="Margin/VBox"]
+[node name="Tabs" type="HBoxContainer" parent="Margin/Main"]
 layout_mode = 2
 alignment = 1
+theme_override_constants/separation = 8
 
-[node name="Trophy" type="TextureRect" parent="Margin/VBox/Header"]
-layout_mode = 2
-size_flags_horizontal = 4
-texture = SubResource("AtlasTexture_trophy")
-stretch_mode = 2
-
-[node name="Rows" type="VBoxContainer" parent="Margin/VBox"]
+[node name="KillsTab" type="Button" parent="Margin/Main/Tabs"]
 unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "KILLS"
+
+[node name="DeathsTab" type="Button" parent="Margin/Main/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "DEATHS"
+
+[node name="RatioTab" type="Button" parent="Margin/Main/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "RATIO"
+
+[node name="FeedTab" type="Button" parent="Margin/Main/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "RECENT DEATHS"
+
+[node name="Rows" type="VBoxContainer" parent="Margin/Main"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 120)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 1
+
+[node name="Card" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="CardMargin" type="MarginContainer" parent="Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="CardText" type="Label" parent="Card/CardMargin"]
+unique_name_in_owner = true
+layout_mode = 2
