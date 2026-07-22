@@ -71,8 +71,9 @@ func _ready() -> void:
 	var page: Dictionary = GlobalBestiary.visible_pages()[0]
 	if page["biome"] != &"glade":
 		fails.append("merged page label %s != glade" % page["biome"])
-	if page["boss"] != &"fae":
-		fails.append("page boss %s != fae (first boss in display order)" % page["boss"])
+	var want_bosses := [&"fae", &"thornmess"]  # a family page closes with every sub-biome's boss
+	if page["bosses"] != want_bosses:
+		fails.append("page bosses %s != %s" % [str(page["bosses"]), str(want_bosses)])
 
 	# --- kill -> unlock flow ---
 	var unlocked: Array = []

@@ -21,7 +21,7 @@ var _visited: Dictionary = {}
 var _roster: Array[StringName] = []
 var _groups: Array = []  # Array of Array[StringName], one per page, display-ordered
 var _group_biomes: Array[StringName] = []  # page label of each group, same order
-var _group_bosses: Array[StringName] = []  # the boss enemy id of each group (&"" if none), same order
+var _group_bosses: Array = []  # Array of Array[StringName]: the boss ids of each group (family pages can close with several), same order
 var _group_members: Array = []  # Array of Array[StringName]: the biome ids merged into each page
 
 func _ready() -> void:
@@ -54,14 +54,15 @@ func visible_grouped_roster() -> Array:
 	return out
 
 ## Discovered biomes as display pages — one page per biome, richest form for the book UI:
-## each entry is `{biome, boss, ids}` (ids commons→rares→boss; `boss` is the biome's boss
-## enemy id or &"" if it has none), same order/visibility as visible_grouped_roster. The
-## bestiary panel renders one page per element and badges it with the boss emblem.
+## each entry is `{biome, bosses, ids}` (ids commons→rares→bosses; `bosses` is the page's boss
+## enemy ids, several when a family page merges sub-biomes, empty if it has none), same
+## order/visibility as visible_grouped_roster. The bestiary panel renders one page per element
+## and badges it with the boss emblems.
 func visible_pages() -> Array:
 	var out: Array = []
 	for i in _groups.size():
 		if _is_group_visible(i):
-			out.append({"biome": _group_biomes[i], "boss": _group_bosses[i], "ids": _groups[i]})
+			out.append({"biome": _group_biomes[i], "bosses": _group_bosses[i], "ids": _groups[i]})
 	return out
 
 func _is_group_visible(i: int) -> bool:
@@ -168,7 +169,7 @@ func _on_biome_entered(biome_id: StringName) -> void:
 # met, a shared enemy files onto every page it appears in, and an enemy in no spawn table
 # (unreachable) simply isn't in the book. Biomes sharing a BiomeDef.family merge into one
 # page labelled with the family (sub-biome variants read as one chapter); a boss per
-# sub-biome means a page can close with several bosses — _group_bosses keeps the first.
+# sub-biome means a page can close with several bosses — _group_bosses keeps them all.
 # Ordering (commons alpha → rares → bosses) comes from CreatureResource.rarity.
 func _build_groups() -> void:
 	_groups.clear()
@@ -214,14 +215,14 @@ func _build_groups() -> void:
 				return a["rarity"] < b["rarity"]
 			return String(a["id"]) < String(b["id"]))
 		var group: Array[StringName] = []
-		var boss: StringName = &""
+		var bosses: Array[StringName] = []
 		for e in entries:
 			group.append(e["id"])
-			if boss == &"" and e["rarity"] == CreatureResource.Rarity.BOSS:
-				boss = e["id"]
+			if e["rarity"] == CreatureResource.Rarity.BOSS:
+				bosses.append(e["id"])
 		_groups.append(group)
 		_group_biomes.append(label)
-		_group_bosses.append(boss)
+		_group_bosses.append(bosses)
 		var member_ids: Array[StringName] = []
 		member_ids.assign(members.get(label, {label: true}).keys())
 		_group_members.append(member_ids)

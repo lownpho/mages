@@ -32,24 +32,21 @@ theme_override_constants/margin_bottom = 3
 [node name="Content" type="Control" parent="Margin" unique_id=843201975]
 layout_mode = 2
 
-[node name="BossIcon" type="TextureRect" parent="Margin/Content" unique_id=110284551]
-unique_name_in_owner = true
+[node name="Header" type="HBoxContainer" parent="Margin/Content" unique_id=110284554]
 layout_mode = 1
 anchors_preset = 0
 offset_top = 1.0
-offset_right = 24.0
-offset_bottom = 25.0
-expand_mode = 1
-stretch_mode = 3
-script = ExtResource("6_icon")
+theme_override_constants/separation = 4
 
-[node name="BiomeCount" type="Label" parent="Margin/Content" unique_id=110284552]
+[node name="BossIcons" type="HBoxContainer" parent="Margin/Content/Header" unique_id=110284551]
 unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 0
-offset_left = 28.0
-offset_top = 9.0
-offset_bottom = 17.0
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="BiomeCount" type="Label" parent="Margin/Content/Header" unique_id=110284552]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
 
 [node name="CloseButton" type="TextureButton" parent="Margin/Content" unique_id=61560357]
 unique_name_in_owner = true

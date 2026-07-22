@@ -38,13 +38,14 @@ func _set_page(page: int) -> void:
 	var count := maxi(1, _pages.size())
 	_page = clampi(page, 0, count - 1)
 	var ids: Array = []
-	var boss: StringName = &""
+	var bosses: Array = []
 	if _page < _pages.size():
 		ids = _pages[_page]["ids"]
-		boss = _pages[_page]["boss"]
+		bosses = _pages[_page]["bosses"]
 	_fill_grid(ids)
-	# Badge the page with its boss (a living idle loop once slain, a silhouette until then).
-	%BossIcon.show_creature(boss, GlobalBestiary.is_unlocked(boss))
+	# Badge the page with its boss emblems — a family page merging sub-biomes shows one per
+	# boss (each a living idle loop once slain, a silhouette until then).
+	_fill_bosses(bosses)
 	%BiomeCount.text = _fraction(GlobalBestiary.completion(ids))
 	%TotalCount.text = _fraction(GlobalBestiary.completion(GlobalBestiary.filed_ids()))
 	# Arrows dim at the ends instead of hiding, so the nav row never shifts.
@@ -64,6 +65,21 @@ func _fill_grid(ids: Array) -> void:
 		var card := ENTRY_SCENE.instantiate()
 		grid.add_child(card)
 		card.show_entry(id)
+
+# One 24×24 emblem per boss id, rebuilt like the grid (removed synchronously so a page swap
+# never lays out old + new emblems together for a frame).
+func _fill_bosses(bosses: Array) -> void:
+	var row: HBoxContainer = %BossIcons
+	for c in row.get_children():
+		row.remove_child(c)
+		c.queue_free()
+	for id in bosses:
+		var icon := CreatureIcon.new()
+		icon.custom_minimum_size = Vector2(24, 24)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		row.add_child(icon)
+		icon.show_creature(id, GlobalBestiary.is_unlocked(id))
 
 func _fraction(v: Vector2i) -> String:
 	return "%d/%d" % [v.x, v.y]
