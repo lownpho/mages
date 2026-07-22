@@ -41,8 +41,11 @@ func on_hurtbox(bullet: BaseBullet) -> bool:
 func _retarget(bullet: BaseBullet, from: Vector2) -> bool:
 	var st: Dictionary = bullet.runtime[self]
 	# Exclude only the enemy just zapped, so the chain can't instantly re-trigger
-	# its own hurtbox — but it's free to loop back later.
-	var next := _nearest(bullet, st["last"], from, bounce_range_tiles * GameConstants.PX_PER_TILE)
+	# its own hurtbox — but it's free to loop back later. Drop a freed reference
+	# first: a zapped enemy can die before the next hop, and a freed instance
+	# fails _nearest's typed Node2D parameter.
+	var last = st["last"] if is_instance_valid(st["last"]) else null
+	var next := _nearest(bullet, last, from, bounce_range_tiles * GameConstants.PX_PER_TILE)
 	if next == null:
 		st["target"] = null
 		return false
