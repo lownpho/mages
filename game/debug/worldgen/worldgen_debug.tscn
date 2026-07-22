@@ -9,7 +9,6 @@
 [ext_resource type="Script" uid="uid://1171x6b5dj8p" path="res://debug/flycam/flycam.gd" id="7"]
 [ext_resource type="Script" uid="uid://bkrdnakhdrujm" path="res://worldgen/streaming/entity_spawner.gd" id="8"]
 [ext_resource type="Script" uid="uid://bqbad1oij6ljp" path="res://debug/worldgen/fly_overlay.gd" id="9"]
-[ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://debug/overlay/debug_overlay.tscn" id="10"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="11"]
 
 [node name="WorldgenDebug" type="Node2D" unique_id=375936698]
@@ -26,8 +25,6 @@ script = ExtResource("4")
 [node name="RoomView" type="Node2D" parent="." unique_id=929772973]
 visible = false
 script = ExtResource("5")
-
-[node name="DebugOverlay" parent="." unique_id=960066282 instance=ExtResource("10")]
 
 [node name="DamageNumbers" parent="." unique_id=302631935 instance=ExtResource("11")]
 

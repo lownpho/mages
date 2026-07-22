@@ -24,6 +24,10 @@ func _ready() -> void:
 		return
 	layer = 100
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# The F3 damage overlay rides along here rather than being instanced in shipped
+	# scenes: debug/* is excluded from exports, and a scene referencing an excluded
+	# resource fails to load entirely.
+	add_child(preload("res://debug/overlay/debug_overlay.tscn").instantiate())
 	_build_ui()
 	visible = false
 

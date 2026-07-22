@@ -11,11 +11,17 @@ class_name PlayerCastInput
 
 const SPELL_ACTIONS = ["cast1", "cast2", "cast3"]
 
+# Web builds deliver several wheel events per physical notch (browsers report
+# pixel deltas), so wheel-driven page flips debounce; SPACE/pad don't need it.
+const WHEEL_DEBOUNCE_MS := 150
+
 @onready var player: CharacterBody2D = get_parent()
 @onready var caster: SpellCaster = get_parent().get_node("SpellCaster")
 
 # The action holding an active channel, polled for release; "" when not channeling.
 var _channel_action: String = ""
+
+var _last_wheel_flip_ms: int = 0
 
 func _ready() -> void:
 	caster.cast_started.connect(func(_spell: SpellResource) -> void:
@@ -32,6 +38,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if GlobalInput.ui_captured:
 		return
 	if event.is_action_pressed("cycle_page"):
+		if event is InputEventMouseButton:
+			var now := Time.get_ticks_msec()
+			if now - _last_wheel_flip_ms < WHEEL_DEBOUNCE_MS:
+				return
+			_last_wheel_flip_ms = now
 		GlobalInventory.cycle_spell_page()
 		return
 	for i in SPELL_ACTIONS.size():

@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="2_ui"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="3_dn"]
-[ext_resource type="PackedScene" uid="uid://bgm51iqgos7b5" path="res://debug/overlay/debug_overlay.tscn" id="4_dbg"]
 [ext_resource type="TileSet" uid="uid://5naib54qurrk" path="res://scenes/glade_autotile_tileset.tres" id="5_floor"]
 [ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="6_trees"]
 [ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="7_door"]
@@ -14,8 +13,6 @@
 script = ExtResource("0_tut")
 
 [node name="UI" parent="." unique_id=964745218 instance=ExtResource("2_ui")]
-
-[node name="DebugOverlay" parent="." unique_id=2040447426 instance=ExtResource("4_dbg")]
 
 [node name="DamageNumbers" parent="." unique_id=446028959 instance=ExtResource("3_dn")]
 
