@@ -11,7 +11,7 @@ const SAVE_PATH := "user://save.cfg"
 ## Bumped when the save shape changes incompatibly (v2: the spell-only loadout —
 ## no weapon/hat/robe slots, no mana). An older save simply reads as "nothing to
 ## continue" rather than being migrated.
-const SAVE_VERSION := 2
+const SAVE_VERSION := 0
 
 ## The world is a pure function of (seed, gen_version, CONFIG_HASH); the same seed lays out
 ## a different map once the generation code or config changes. We stamp the save with the

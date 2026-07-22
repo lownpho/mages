@@ -8,7 +8,7 @@ class_name GenConfig
 ## hashed: they cannot change the generated world, so tuning them must not re-roll it.
 extends Resource
 
-@export var gen_version: int = 8   ## GEN_VERSION — bump on any algorithm change
+@export var gen_version: int = 0   ## GEN_VERSION — bump on any algorithm change
 
 @export_group("World shape")
 @export var room_slot_tiles: int = 64        ## tiles per room-slot side

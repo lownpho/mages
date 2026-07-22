@@ -45,6 +45,10 @@ signal spell_cooldown_started(spell: SpellResource, duration: float)
 # streamer so listeners (minimap) can read the deterministic room caches.
 signal world_ready(streamer: WorldStreamer)
 
+# Leaderboard signals
+# Emitted when the Talo session opens or closes (login, logout, restore at boot).
+signal leaderboard_session_changed(logged_in: bool)
+
 # Debug signals
 # Emitted by every Hurtbox on a successful hit. victim is the character struck,
 # source is the bullet/damage area. The debug overlay tallies these.

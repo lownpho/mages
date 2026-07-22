@@ -29,9 +29,8 @@ func _ready() -> void:
 	# Show the value overlay only while hovering the bar.
 	_setup_bar_hover(%HealthBar, %HealthValue)
 
-	# The bestiary and map are the HUD-strip overlays; opening one closes the
-	# others so only ever one is up (Esc / an outside click closes whichever is open — see
-	# _unhandled_input).
+	# The bestiary and the map are the two HUD-strip overlays; opening one closes the other so
+	# only ever one is up (Esc / an outside click closes whichever is open — see _unhandled_input).
 	%BestiaryButton.pressed.connect(_toggle_panel.bind(%BestiaryPanel))
 	%MapButton.pressed.connect(_toggle_panel.bind(%MapPanel))
 

@@ -36,6 +36,21 @@ expand_margin_top = 1.0
 expand_margin_right = 1.0
 expand_margin_bottom = 1.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_editwell"]
+content_margin_left = 3.0
+content_margin_top = 1.0
+content_margin_right = 3.0
+content_margin_bottom = 1.0
+bg_color = Color(0.129412, 0.113725, 0.121569, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_editfocus"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8745098, 0.9647059, 0.9607843, 1)
+
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_a8th1"]
 texture = SubResource("AtlasTexture_jlndv")
 texture_margin_left = 1.0
@@ -81,6 +96,14 @@ Label/constants/shadow_outline_size = 1
 Label/font_sizes/font_size = 8
 Label/fonts/font = ExtResource("1_qgmjj")
 Label/styles/normal = SubResource("StyleBoxEmpty_jlndv")
+LineEdit/colors/caret_color = Color(0.8745098, 0.9647059, 0.9607843, 1)
+LineEdit/colors/font_color = Color(0.8745098, 0.9647059, 0.9607843, 1)
+LineEdit/colors/font_placeholder_color = Color(0.48098, 0.530588, 0.528431, 1)
+LineEdit/colors/selection_color = Color(0.223529, 0.470588, 0.65882355, 1)
+LineEdit/font_sizes/font_size = 8
+LineEdit/fonts/font = ExtResource("1_qgmjj")
+LineEdit/styles/focus = SubResource("StyleBoxFlat_editfocus")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_editwell")
 MarginContainer/constants/margin_bottom = 0
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_a8th1")
 ProgressBar/font_sizes/font_size = 8

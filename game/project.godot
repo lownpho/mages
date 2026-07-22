@@ -22,6 +22,7 @@ config/windows_native_icon="res://icon.ico"
 
 [autoload]
 
+Talo="*uid://bpmdn8oc34pg7"
 GlobalEvent="*res://autoload/global_event.gd"
 GlobalDefs="*res://autoload/global_defs.gd"
 GlobalInventory="*res://autoload/global_inventory.gd"
@@ -31,6 +32,7 @@ GlobalBestiary="*res://autoload/global_bestiary.gd"
 GlobalMap="*res://autoload/global_map.gd"
 GameState="*res://autoload/game_state.gd"
 GlobalInput="*res://autoload/global_input.gd"
+GlobalLeaderboard="*res://autoload/global_leaderboard.gd"
 DebugConsole="*res://debug/console/debug_console.gd"
 
 [debug]
@@ -58,7 +60,7 @@ project/assembly_name="yarpg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/yard/plugin.cfg")
+enabled=PackedStringArray("res://addons/yard/plugin.cfg", "res://addons/talo/plugin.cfg")
 
 [global_group]
 

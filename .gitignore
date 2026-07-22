@@ -14,3 +14,6 @@ design/docs/mages.css
 
 # Python bytecode from the design tooling
 design/tools/__pycache__/
+
+# Symlink to the website repo (lownpho.github.io) for editing the game's page here
+/webpage

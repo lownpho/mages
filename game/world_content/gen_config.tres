@@ -38,7 +38,7 @@
 
 [resource]
 script = ExtResource("cfg")
-gen_version = 6
+gen_version = 0
 room_slot_tiles = 16
 wall_noise_period = 2
 pocket_seal_max_tiles = 6
