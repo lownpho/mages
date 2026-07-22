@@ -12,6 +12,7 @@
 [ext_resource type="Resource" uid="uid://jdsabbajawrx" path="res://world_content/biomes/glade_start/rooms/glade_start_rare_viper.tres" id="r3"]
 [ext_resource type="Resource" uid="uid://svbos4ln77cp" path="res://world_content/biomes/glade_start/rooms/glade_start_open_fallback.tres" id="r4"]
 [ext_resource type="Resource" uid="uid://gsvr0brth" path="res://world_content/biomes/glade_start/rooms/glade_start_breather.tres" id="r5"]
+[ext_resource type="Resource" uid="uid://cgsp4wnr0m01" path="res://world_content/biomes/glade_start/rooms/glade_start_spawn.tres" id="r_spawn"]
 [ext_resource type="Resource" uid="uid://gsvr0t1sc" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_scatter_var.tres" id="r6"]
 [ext_resource type="Resource" uid="uid://gsvr0t1bl" path="res://world_content/biomes/glade_start/rooms/glade_start_t1_blob_var.tres" id="r7"]
 [ext_resource type="Resource" uid="uid://gsvr0t2sc" path="res://world_content/biomes/glade_start/rooms/glade_start_t2_scatter_var.tres" id="r8"]
@@ -37,7 +38,7 @@
 
 [resource]
 script = ExtResource("cfg")
-gen_version = 5
+gen_version = 6
 room_slot_tiles = 16
 wall_noise_period = 2
 pocket_seal_max_tiles = 6
@@ -52,4 +53,4 @@ starting_biome = &"glade_start"
 prefetch_radius_chunks = 1
 biomes = Array[ExtResource("bdef")]([ExtResource("b_gs"), ExtResource("b_gv"), ExtResource("b_dw")])
 adjacency = ExtResource("adj")
-room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r20"), ExtResource("r21"), ExtResource("r22"), ExtResource("r23"), ExtResource("r24"), ExtResource("r25"), ExtResource("r26")])
+room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r_spawn"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r20"), ExtResource("r21"), ExtResource("r22"), ExtResource("r23"), ExtResource("r24"), ExtResource("r25"), ExtResource("r26")])

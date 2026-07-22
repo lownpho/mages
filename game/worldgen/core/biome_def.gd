@@ -16,6 +16,10 @@ extends Resource
 @export_range(-1.0, 1.0, 0.01) var room_extra_connection_chance: float = -1.0   ## P(slot has extra loops) in L2; -1 = inherit GenConfig.extra_connection_chance
 @export_range(0.0, 1.0, 0.005) var decor_density: float = 0.0  ## per-tile P(FLOOR -> DECOR_FLOOR)
 @export var fallback_room_type: StringName                     ## this biome's empty room, assigned when a tier fill finds nothing (must be one of the biome's own room types, with a universal size window)
+## The starting biome places the player in a room of this type (find_spawn_position). PRESENTATION
+## tier: it steers only where the player lands, never generation, so it is NOT folded into
+## hash_fold below. &"" = fall back to the lowest-difficulty room heuristic.
+@export var spawn_room_type: StringName = &""
 
 ## Organic-shell overrides, -1 = inherit the GenConfig dial. These are what make one biome's
 ## walls read differently from another's (thin/fat bands, ragged vs clean edges, corner bulk).

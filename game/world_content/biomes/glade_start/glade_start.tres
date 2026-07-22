@@ -14,4 +14,5 @@ bsp_stop_chance = 0.5
 room_extra_connection_chance = 0.75
 decor_density = 0.05
 fallback_room_type = &"glade_start_open_fallback"
+spawn_room_type = &"glade_start_spawn"
 presentation = ExtResource("1_pres")

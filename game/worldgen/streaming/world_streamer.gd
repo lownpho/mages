@@ -569,20 +569,29 @@ func _terrain_table(tileset: TileSet) -> Dictionary:
 	return by_mask
 
 
-## Deterministic player spawn: the lowest-difficulty room, ties broken by entrance depth then by
-## distance to the starting biome's center — so the spawn sits at the easy end of the difficulty
-## ramp. Validated against the room's reachability map (never a BLOCKER, never
-## a sealed pocket — falls back to the nearest reachable tile). Returns a world pixel position.
+## Deterministic player spawn: the biome's `spawn_room_type` room when one is authored (a pinned,
+## empty room, so the run opens somewhere safe), else the lowest-difficulty room — ties broken by
+## entrance depth then by distance to the starting biome's center, so the spawn sits at the easy
+## end of the difficulty ramp. Validated against the room's reachability map (never a BLOCKER,
+## never a sealed pocket — falls back to the nearest reachable tile). Returns a world pixel position.
 func find_spawn_position() -> Vector2:
 	var place := world_spec.placement_for(config.starting_biome)
 	if place == null and not world_spec.placements.is_empty():
 		place = world_spec.placements[0]
 	var graph := _room_graphs.get_biome_graph(world_spec, place.id, config)
 	var center_slot := Vector2(graph.origin_slot) + Vector2(graph.size_slots) * 0.5
+	var start_biome := config.biome_by_id(config.starting_biome)
 	var best: RoomSpec = null
+	if start_biome != null and start_biome.spawn_room_type != &"":
+		for u in graph.rooms:
+			if u.type_id == start_biome.spawn_room_type:
+				best = u
+				break
 	var best_diff := 99
 	var best_d := INF
 	for u in graph.rooms:
+		if best != null:
+			break   # spawn_room_type already chose the room
 		var rt := config.room_type_by_id(u.type_id)
 		var diff: int = rt.difficulty if rt != null else 0
 		var d := (Vector2(u.origin_slot) + Vector2(u.size_slots) * 0.5).distance_squared_to(center_slot)
