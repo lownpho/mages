@@ -33,5 +33,5 @@ script = ExtResource("1")
 display_name = "Thornmess"
 icon = SubResource("AtlasTexture_icon")
 rarity = 2
-max_health = 1300
+max_health = 2000
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Drop_1"), SubResource("Drop_2"), SubResource("Drop_3")])

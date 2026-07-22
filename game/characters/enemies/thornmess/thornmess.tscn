@@ -238,7 +238,7 @@ done_state = "Pick"
 attack_probe_path = NodePath("../../CloseProbe")
 attack_state = "Shotgun"
 pattern_weight = 2.0
-health_min = 0.25
+health_min = 0.7
 
 [node name="Bloom" type="Node" parent="FSM" unique_id=530870614]
 script = ExtResource("b_cast")

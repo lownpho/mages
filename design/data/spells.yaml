@@ -68,22 +68,22 @@ spells:
       - tier: 1
         kind: bullet
         source: game/characters/player/spells/pew/pew1.tres
-        cooldown: 1.2
+        cooldown: 6
         cast_time: 0
         channeled: false
         grants: {speed: 4}
         shots: {pattern: SinglePattern, per_shot: 1, count: 6, interval: 0.25}
-        amount: {base: 6, skill: 0, speed: 1, defence: 0}
+        amount: {base: 5, skill: 0, speed: 0.8, defence: 0}
         projectile: {range_tiles: 8, speed_tiles: 16}
       - tier: 2
         kind: bullet
         source: game/characters/player/spells/pew/pew2.tres
-        cooldown: 1.2
+        cooldown: 6
         cast_time: 0
         channeled: false
         grants: {speed: 6}
         shots: {pattern: SinglePattern, per_shot: 1, count: 8, interval: 0.2}
-        amount: {base: 8, skill: 0, speed: 1, defence: 0}
+        amount: {base: 7, skill: 0, speed: 0.8, defence: 0}
         projectile: {range_tiles: 8, speed_tiles: 14}
     # END GENERATED BALANCE
 
@@ -106,24 +106,24 @@ spells:
       - tier: 1
         kind: bullet
         source: game/characters/player/spells/snipe/snipe1.tres
-        cooldown: 6
+        cooldown: 16
         cast_time: 0
         channeled: false
         grants: {skill: 4}
         shots: {pattern: SinglePattern, per_shot: 1, count: 3, interval: 0.1}
-        amount: {base: 10, skill: 0.5, speed: 0, defence: 0}
+        amount: {base: 8, skill: 0.4, speed: 0, defence: 0}
         projectile: {range_tiles: 18, speed_tiles: 12}
         behaviours:
         - {type: homing, turn_deg: 540, cone_deg: 90, range_tiles: 0}
       - tier: 2
         kind: bullet
         source: game/characters/player/spells/snipe/snipe2.tres
-        cooldown: 6
+        cooldown: 16
         cast_time: 0
         channeled: false
         grants: {skill: 6}
         shots: {pattern: SinglePattern, per_shot: 1, count: 5, interval: 0.1}
-        amount: {base: 12, skill: 0.6, speed: 0, defence: 0}
+        amount: {base: 10, skill: 0.48, speed: 0, defence: 0}
         projectile: {range_tiles: 18, speed_tiles: 18}
         behaviours:
         - {type: homing, turn_deg: 540, cone_deg: 90, range_tiles: 0}
@@ -148,22 +148,22 @@ spells:
       - tier: 1
         kind: bullet
         source: game/characters/player/spells/blam/blam1.tres
-        cooldown: 2
+        cooldown: 7
         cast_time: 0
         channeled: false
         grants: {skill: 4, defence: 3}
         shots: {pattern: ShotgunPattern, per_shot: 3, spread_deg: 0, count: 2, interval: 0.4}
-        amount: {base: 10, skill: 0.5, speed: 0, defence: 0}
+        amount: {base: 8, skill: 0.4, speed: 0, defence: 0}
         projectile: {range_tiles: 4, speed_tiles: 16}
       - tier: 2
         kind: bullet
         source: game/characters/player/spells/blam/blam2.tres
-        cooldown: 2
+        cooldown: 7
         cast_time: 0
         channeled: false
         grants: {skill: 7, defence: 5}
         shots: {pattern: ShotgunPattern, per_shot: 3, spread_deg: 0, count: 2, interval: 0.4}
-        amount: {base: 15, skill: 0.6, speed: 0, defence: 0}
+        amount: {base: 12, skill: 0.48, speed: 0, defence: 0}
         projectile: {range_tiles: 4, speed_tiles: 16}
     # END GENERATED BALANCE
 
@@ -187,22 +187,22 @@ spells:
       - tier: 1
         kind: bullet
         source: game/characters/player/spells/ring/ring1.tres
-        cooldown: 3
+        cooldown: 11
         cast_time: 0
         channeled: false
         grants: {skill: 3, max_health: 15}
         shots: {pattern: RingPattern, per_shot: 8, count: 3, interval: 0.6}
-        amount: {base: 12, skill: 0.5, speed: 0, defence: 0}
+        amount: {base: 10, skill: 0.4, speed: 0, defence: 0}
         projectile: {range_tiles: 5, speed_tiles: 12}
       - tier: 2
         kind: bullet
         source: game/characters/player/spells/ring/ring2.tres
-        cooldown: 3
+        cooldown: 11
         cast_time: 0
         channeled: false
         grants: {skill: 5, max_health: 25}
         shots: {pattern: RingPattern, per_shot: 10, count: 4, interval: 0.6}
-        amount: {base: 12, skill: 0.6, speed: 0, defence: 0}
+        amount: {base: 10, skill: 0.48, speed: 0, defence: 0}
         projectile: {range_tiles: 5, speed_tiles: 8}
     # END GENERATED BALANCE
 
@@ -253,12 +253,12 @@ spells:
       - tier: 1
         kind: bullet
         source: game/characters/player/spells/fireball/fireball1.tres
-        cooldown: 6
+        cooldown: 16
         cast_time: 0.5
         channeled: false
         grants: {skill: 6}
         shots: {pattern: SinglePattern, per_shot: 1, count: 1, interval: 0.25}
-        amount: {base: 16, skill: 2, speed: 0, defence: 0}
+        amount: {base: 20, skill: 2.4, speed: 0, defence: 0}
         projectile: {range_tiles: 12, speed_tiles: 16}
         behaviours:
         - {type: homing, turn_deg: 720, cone_deg: 90, range_tiles: 16}
@@ -266,12 +266,12 @@ spells:
       - tier: 2
         kind: bullet
         source: game/characters/player/spells/fireball/fireball2.tres
-        cooldown: 6
+        cooldown: 16
         cast_time: 0.5
         channeled: false
         grants: {skill: 8}
         shots: {pattern: SinglePattern, per_shot: 1, count: 1, interval: 0.25}
-        amount: {base: 24, skill: 3, speed: 0, defence: 0}
+        amount: {base: 29, skill: 3.6, speed: 0, defence: 0}
         projectile: {range_tiles: 12, speed_tiles: 16}
         behaviours:
         - {type: homing, turn_deg: 720, cone_deg: 90, range_tiles: 20}
@@ -294,24 +294,24 @@ spells:
       - tier: 1
         kind: bullet
         source: game/characters/player/spells/zaap/zaap1.tres
-        cooldown: 2
+        cooldown: 8
         cast_time: 0
         channeled: false
         grants: {speed: 6}
         shots: {pattern: SinglePattern, per_shot: 1, count: 1, interval: 0.25}
-        amount: {base: 12, skill: 1, speed: 0, defence: 0}
+        amount: {base: 10, skill: 0, speed: 1.6, defence: 0}
         projectile: {range_tiles: 12, speed_tiles: 32}
         behaviours:
         - {type: chain, bounces: 8, bounce_range_tiles: 6}
       - tier: 2
         kind: bullet
         source: game/characters/player/spells/zaap/zaap2.tres
-        cooldown: 2
+        cooldown: 8
         cast_time: 0
         channeled: false
         grants: {speed: 9}
         shots: {pattern: SinglePattern, per_shot: 1, count: 1, interval: 0.25}
-        amount: {base: 20, skill: 1.5, speed: 0, defence: 0}
+        amount: {base: 16, skill: 0, speed: 2.4, defence: 0}
         projectile: {range_tiles: 12, speed_tiles: 32}
         behaviours:
         - {type: chain, bounces: 16, bounce_range_tiles: 6}
@@ -426,15 +426,15 @@ spells:
       - tier: 1
         kind: summon
         source: game/characters/player/spells/bzzz/bzzz1.tres
-        cooldown: 8
+        cooldown: 16
         cast_time: 0.3
         channeled: false
         grants: {speed: 3, max_health: 15}
-        minion: {count: 4, health: 15, lifetime: 8}
+        minion: {count: 4, health: 15, lifetime: 11}
         minion_cast:
           cooldown: 0.5
           shots: {pattern: SinglePattern, per_shot: 1, count: 1, interval: 0.25}
-          amount: {base: 12, skill: 0, speed: 0, defence: 0}
+          amount: {base: 10, skill: 0, speed: 0, defence: 0}
           projectile: {range_tiles: 3, speed_tiles: 14}
     # END GENERATED BALANCE
 
@@ -454,15 +454,15 @@ spells:
       - tier: 1
         kind: summon
         source: game/characters/player/spells/jimmy/jimmy1.tres
-        cooldown: 20
+        cooldown: 27
         cast_time: 1
         channeled: false
         grants: {max_health: 30, defence: 1}
-        minion: {count: 1, health: 200, lifetime: 20}
+        minion: {count: 1, health: 200, lifetime: 27}
         minion_cast:
           cooldown: 3
           shots: {pattern: RingPattern, per_shot: 8, count: 3, interval: 0.25}
-          amount: {base: 20, skill: 0, speed: 0, defence: 1}
+          amount: {base: 16, skill: 0, speed: 0, defence: 0.8}
           projectile: {range_tiles: 5, speed_tiles: 6}
     # END GENERATED BALANCE
 
@@ -623,7 +623,7 @@ spells:
       - tier: 1
         kind: nope
         source: game/characters/player/spells/nope/nope.tres
-        cooldown: 6
+        cooldown: 8
         cast_time: 3
         channeled: true
         grants: {max_health: 15, defence: 4}
@@ -658,7 +658,7 @@ spells:
       - tier: 1
         kind: heal
         source: game/characters/player/spells/heal/heal1.tres
-        cooldown: 30
+        cooldown: 40
         cast_time: 0.8
         channeled: false
         grants: {max_health: 20}

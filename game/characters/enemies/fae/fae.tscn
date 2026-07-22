@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://qgurfegj21am"]
+[gd_scene format=3 uid="uid://qgurfegj21am"]
 
 [ext_resource type="Resource" uid="uid://cuqnush86i5lt" path="res://characters/enemies/fae/fae_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -8,10 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://mdho72nxe2dp" path="res://characters/enemies/fae/fae_rings_spell.tres" id="6_rings"]
 [ext_resource type="Resource" uid="uid://bnpe0duyjmtcb" path="res://characters/enemies/fae/fae_shotgun_spell.tres" id="7_shotgun"]
-[ext_resource type="Script" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
-[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
-[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
-[ext_resource type="Script" path="res://characters/creature/behaviours/pattern_picker.gd" id="b_pattern"]
+[ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/creature/behaviours/pattern_picker.gd" id="b_pattern"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fae"]
 radius = 7.0
@@ -152,33 +152,31 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=1709816967 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM"]
+[node name="Idle" type="Node" parent="FSM" unique_id=585433654]
 script = ExtResource("b_hold")
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Pattern"
-next_state = "Idle"
 
-[node name="Pattern" type="Node" parent="FSM"]
+[node name="Pattern" type="Node" parent="FSM" unique_id=1593246542]
 script = ExtResource("b_pattern")
 probe_path = NodePath("../../DetectProbe")
-lost_state = "Idle"
 
-[node name="Rings" type="Node" parent="FSM"]
+[node name="Rings" type="Node" parent="FSM" unique_id=767149686]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../RingCaster")
 spell = ExtResource("6_rings")
 done_state = "Pattern"
 pattern_weight = 4.0
 
-[node name="Rest" type="Node" parent="FSM"]
+[node name="Rest" type="Node" parent="FSM" unique_id=1595940432]
 script = ExtResource("b_hold")
-next_state = "Pattern"
+anim = "rest"
 min_time = 5.0
 max_time = 5.0
-anim = "rest"
+next_state = "Pattern"
 pattern_weight = 1.0
 
-[node name="Shotgun" type="Node" parent="FSM"]
+[node name="Shotgun" type="Node" parent="FSM" unique_id=1466950279]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../ShotgunCaster")
 spell = ExtResource("7_shotgun")
@@ -186,10 +184,10 @@ done_state = "Pattern"
 attack_anim = "shotgun"
 pattern_weight = 3.0
 
-[node name="Chase" type="Node" parent="FSM"]
+[node name="Chase" type="Node" parent="FSM" unique_id=1143798387]
 script = ExtResource("b_approach")
-duration = 3.0
 speed = 28.0
 anim = "idle"
+duration = 3.0
 done_state = "Pattern"
 pattern_weight = 2.0

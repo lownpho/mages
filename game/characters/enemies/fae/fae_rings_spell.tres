@@ -28,7 +28,6 @@ num_bullets = 8
 
 [resource]
 script = ExtResource("1_script")
-cast_time = 0.6
 fire_pattern = SubResource("RingPattern_1")
 bullet = SubResource("Resource_dliwc")
 damage = SubResource("ScalingProfile_bullet")
@@ -37,3 +36,4 @@ max_shots = 10
 rotation_per_shot = 20.0
 aim_independent = true
 effect_scene = ExtResource("99_effect")
+cast_time = 0.6
