@@ -27,7 +27,7 @@ behaviours = Array[ExtResource("1_mfdnx")]([SubResource("Resource_gmtb4")])
 
 [sub_resource type="Resource" id="ScalingProfile_zaap"]
 script = ExtResource("6_scaling")
-base_damage = 9.6
+base_damage = 10.0
 speed_scaling = 1.6
 
 [sub_resource type="Resource" id="SinglePattern_zaap"]
@@ -44,6 +44,6 @@ bullet = SubResource("Resource_i5w6n")
 damage = SubResource("ScalingProfile_zaap")
 max_shots = 1
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
+cooldown = 8.0
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 6

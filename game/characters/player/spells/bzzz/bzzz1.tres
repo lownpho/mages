@@ -28,7 +28,7 @@ speed_tiles = 14
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 9.6
+base_damage = 10.0
 
 [sub_resource type="Resource" id="SinglePattern"]
 script = ExtResource("6_pattern")
@@ -47,10 +47,10 @@ script = ExtResource("1_script")
 minion_scenes = Array[PackedScene]([ExtResource("4_minion")])
 count = 4
 minion_health = 15
-minion_lifetime = 8.0
+minion_lifetime = 11.0
 minion_spell = SubResource("StingWeapon")
 effect_scene = ExtResource("3_effect")
-cooldown = 8.0
+cooldown = 16.0
 cast_time = 0.3
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 3

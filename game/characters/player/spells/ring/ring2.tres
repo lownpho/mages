@@ -21,7 +21,7 @@ speed_tiles = 8
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 9.6
+base_damage = 10.0
 skill_scaling = 0.48
 
 [sub_resource type="Resource" id="Pattern_1"]
@@ -40,7 +40,7 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.6
 max_shots = 4
 effect_scene = ExtResource("3_scene")
-cooldown = 3.0
+cooldown = 11.0
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 5
 max_health_modifier = 25
