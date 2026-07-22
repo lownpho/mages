@@ -233,7 +233,7 @@ size_flags_horizontal = 6
 size_flags_vertical = 4
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
-columns = 2
+columns = 3
 
 [node name="SpellSlot" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1145388472 instance=ExtResource("3_cemxd")]
 layout_mode = 2
@@ -243,11 +243,19 @@ slot_texture = ExtResource("5_cl6af")
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
+[node name="SpellSlot3" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1145388473 instance=ExtResource("3_cemxd")]
+layout_mode = 2
+slot_texture = ExtResource("5_cl6af")
+
 [node name="SpellSlot4" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079581 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("7_jw18c")
 
 [node name="SpellSlot5" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079582 instance=ExtResource("3_cemxd")]
+layout_mode = 2
+slot_texture = ExtResource("7_jw18c")
+
+[node name="SpellSlot6" parent="Strip/VBox/EquipSpellsPanel/SpellVBox/EquipSpells" unique_id=1224079583 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("7_jw18c")
 

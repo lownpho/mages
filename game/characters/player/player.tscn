@@ -177,5 +177,5 @@ state_names = Array[String](["Idle", "Move", "Cast"])
 [node name="SpellCaster" type="Node" parent="." unique_id=1093247518]
 script = ExtResource("7_caster")
 
-[node name="PlayerCastInput" type="Node" parent="."]
+[node name="PlayerCastInput" type="Node" parent="." unique_id=1215397462]
 script = ExtResource("8_castin")

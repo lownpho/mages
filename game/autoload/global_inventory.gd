@@ -2,8 +2,8 @@ extends Node
 
 const BAG_SIZE = 9
 # The spell loadout: SPELL_PAGES pages of SPELL_PAGE_SIZE slots each. The cast
-# buttons (LMB/RMB) drive the active page's slots; SPACE cycles pages.
-const SPELL_PAGE_SIZE = 2
+# buttons (LMB/RMB/MMB) drive the active page's slots; SPACE cycles pages.
+const SPELL_PAGE_SIZE = 3
 const SPELL_PAGES = 2
 const SPELL_SLOT_SIZE = SPELL_PAGE_SIZE * SPELL_PAGES
 
