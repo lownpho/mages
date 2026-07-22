@@ -24,7 +24,7 @@ base_damage = 16.0
 
 [sub_resource type="Resource" id="RingPattern_1"]
 script = ExtResource("3_pattern")
-num_bullets = 12
+num_bullets = 8
 
 [resource]
 script = ExtResource("1_script")

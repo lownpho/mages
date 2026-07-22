@@ -28,6 +28,7 @@ num_pellets = 5
 
 [resource]
 script = ExtResource("1_script")
+cast_time = 0.45
 fire_pattern = SubResource("ShotgunPattern_1")
 bullet = SubResource("Resource_bgtv5")
 damage = SubResource("ScalingProfile_bullet")

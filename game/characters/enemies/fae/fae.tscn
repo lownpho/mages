@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://qgurfegj21am"]
+[gd_scene load_steps=26 format=3 uid="uid://qgurfegj21am"]
 
 [ext_resource type="Resource" uid="uid://cuqnush86i5lt" path="res://characters/enemies/fae/fae_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -8,11 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://mdho72nxe2dp" path="res://characters/enemies/fae/fae_rings_spell.tres" id="6_rings"]
 [ext_resource type="Resource" uid="uid://bnpe0duyjmtcb" path="res://characters/enemies/fae/fae_shotgun_spell.tres" id="7_shotgun"]
-[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="8_idle"]
-[ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/enemies/behaviours/pattern_picker.gd" id="9_pattern"]
-[ext_resource type="Script" uid="uid://u03ssycofgl1" path="res://characters/enemies/behaviours/rest.gd" id="11_rest"]
-[ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="12_volley"]
-[ext_resource type="Script" uid="uid://ct1medch4sfba" path="res://characters/enemies/behaviours/timed_chase.gd" id="16_chase"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/pattern_picker.gd" id="b_pattern"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fae"]
 radius = 7.0
@@ -153,37 +152,44 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=1709816967 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM" unique_id=96985684]
-script = ExtResource("8_idle")
-detect_probe_path = NodePath("../../DetectProbe")
-alert_state = "Pattern"
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Pattern"
 next_state = "Idle"
 
-[node name="Pattern" type="Node" parent="FSM" unique_id=40597610]
-script = ExtResource("9_pattern")
-states = Array[String](["Rings", "Rest", "Shotgun", "Chase"])
-weights = Array[float]([4.0, 1.0, 3.0, 2.0])
-detect_probe_path = NodePath("../../DetectProbe")
+[node name="Pattern" type="Node" parent="FSM"]
+script = ExtResource("b_pattern")
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Idle"
 
-[node name="Rings" type="Node" parent="FSM" unique_id=856810349]
-script = ExtResource("12_volley")
+[node name="Rings" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../RingCaster")
 spell = ExtResource("6_rings")
 done_state = "Pattern"
+pattern_weight = 4.0
 
-[node name="Rest" type="Node" parent="FSM" unique_id=1941855823]
-script = ExtResource("11_rest")
-duration = 5.0
+[node name="Rest" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+next_state = "Pattern"
+min_time = 5.0
+max_time = 5.0
+anim = "rest"
+pattern_weight = 1.0
 
-[node name="Shotgun" type="Node" parent="FSM" unique_id=556189170]
-script = ExtResource("12_volley")
+[node name="Shotgun" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../ShotgunCaster")
 spell = ExtResource("7_shotgun")
-attack_anim = "shotgun"
 done_state = "Pattern"
+attack_anim = "shotgun"
+pattern_weight = 3.0
 
-[node name="Chase" type="Node" parent="FSM" unique_id=1381285073]
-script = ExtResource("16_chase")
+[node name="Chase" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
 duration = 3.0
 speed = 28.0
-run_anim = "idle"
+anim = "idle"
+done_state = "Pattern"
+pattern_weight = 2.0

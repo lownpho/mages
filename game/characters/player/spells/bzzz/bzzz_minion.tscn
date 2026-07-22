@@ -1,13 +1,14 @@
-[gd_scene format=3 uid="uid://fs7pg6h57wed"]
+[gd_scene load_steps=18 format=3 uid="uid://fs7pg6h57wed"]
 
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_minion"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hurt"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="3_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="4_weapon"]
-[ext_resource type="Script" uid="uid://o5ss1aqyk2tu" path="res://characters/enemies/behaviours/tether.gd" id="5_tether"]
-[ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="6_chase"]
-[ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="7_fire"]
 [ext_resource type="Texture2D" uid="uid://djfsuil3brels" path="res://characters/player/spells/bzzz/bzzz.png" id="8_sheet"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/tether.gd" id="b_tether"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_bee"]
 radius = 3.0
@@ -103,20 +104,36 @@ collision_mask = 33
 [node name="FSM" parent="." unique_id=2053004668 instance=ExtResource("3_fsm")]
 initial_state = "Hover"
 
-[node name="Hover" type="Node" parent="FSM" unique_id=1448509019]
-script = ExtResource("5_tether")
+[node name="Hover" type="Node" parent="FSM"]
+script = ExtResource("b_tether")
 detect_probe_path = NodePath("../../DetectProbe")
+alert_state = "Chase"
+anchor_group = "player"
+follow_speed = 55.0
+fly_anim = "fly"
 
-[node name="Chase" type="Node" parent="FSM" unique_id=1785207294]
-script = ExtResource("6_chase")
+[node name="Chase" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
 chase_probe_path = NodePath("../../ChaseProbe")
 attack_probe_path = NodePath("../../AttackProbe")
+attack_state = "Attack"
 lost_state = "Hover"
 speed = 64.0
-run_anim = "fly"
+anim = "fly"
 
-[node name="Attack" type="Node" parent="FSM" unique_id=656935180]
-script = ExtResource("7_fire")
+[node name="Attack" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
+done_state = "Recover"
 attack_probe_path = NodePath("../../AttackProbe")
+out_of_range_state = "Chase"
 attack_anim = "attack"
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../AttackProbe")
+lost_state = "Chase"
+next_state = "Attack"
+min_time = 0.0
+max_time = 0.0
+anim = "fly"

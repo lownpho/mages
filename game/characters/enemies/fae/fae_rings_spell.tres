@@ -28,6 +28,7 @@ num_bullets = 8
 
 [resource]
 script = ExtResource("1_script")
+cast_time = 0.6
 fire_pattern = SubResource("RingPattern_1")
 bullet = SubResource("Resource_dliwc")
 damage = SubResource("ScalingProfile_bullet")

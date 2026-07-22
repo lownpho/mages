@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c5koyseqvhln4"]
+[gd_scene load_steps=22 format=3 uid="uid://c5koyseqvhln4"]
 
 [ext_resource type="Resource" uid="uid://bomg127lnuwmk" path="res://characters/enemies/dirt_golem/dirt_golem_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -7,9 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://bt3l3651bwm3n" path="res://characters/enemies/dirt_golem/dirt_golem_ring.tres" id="6_ring"]
-[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
-[ext_resource type="Script" uid="uid://cch4se8pl4y3r" path="res://characters/enemies/behaviours/chase.gd" id="8_chase"]
-[ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="9_ring"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_dirtgolem"]
 radius = 6.0
@@ -130,21 +130,33 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=1847452665 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM" unique_id=1688284801]
-script = ExtResource("7_idle")
-detect_probe_path = NodePath("../../DetectProbe")
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Chase"
 next_state = "Idle"
 
-[node name="Chase" type="Node" parent="FSM" unique_id=1737021235]
-script = ExtResource("8_chase")
+[node name="Chase" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
 chase_probe_path = NodePath("../../DetectProbe")
 attack_probe_path = NodePath("../../RingProbe")
 attack_state = "Ring"
+lost_state = "Idle"
 speed = 12.0
 
-[node name="Ring" type="Node" parent="FSM" unique_id=1572575833]
-script = ExtResource("9_ring")
+[node name="Ring" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../RingCaster")
 spell = ExtResource("6_ring")
+done_state = "Recover"
 attack_probe_path = NodePath("../../RingProbe")
+out_of_range_state = "Chase"
 attack_anim = "attack"
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../RingProbe")
+lost_state = "Chase"
+next_state = "Ring"
+min_time = 0.0
+max_time = 0.0

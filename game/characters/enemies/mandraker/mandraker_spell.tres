@@ -27,6 +27,7 @@ script = ExtResource("3_pattern")
 
 [resource]
 script = ExtResource("1_script")
+cast_time = 0.4
 fire_pattern = SubResource("SinglePattern_1")
 bullet = SubResource("Resource_3nchx")
 damage = SubResource("ScalingProfile_bullet")

@@ -42,3 +42,4 @@ shot_interval = 1.0
 max_shots = 4
 effect_scene = ExtResource("99_effect")
 cooldown = 3.0
+cast_time = 0.5

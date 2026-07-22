@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://de2ihs354x1ge"]
+[gd_scene load_steps=16 format=3 uid="uid://de2ihs354x1ge"]
 
 [ext_resource type="Resource" uid="uid://cthbdvqh3esdr" path="res://characters/enemies/seedling/seedling_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -7,8 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://dnc85h76ruqb4" path="res://characters/enemies/seedling/seedling_ring.tres" id="6_weapon"]
-[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
-[ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="8_fire"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_seedling"]
 radius = 3.5
@@ -82,16 +82,25 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=1382815753 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM" unique_id=985589509]
-script = ExtResource("7_idle")
-detect_probe_path = NodePath("../../DetectProbe")
-alert_state = "Ring"
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Ring"
 next_state = "Idle"
 
-[node name="Ring" type="Node" parent="FSM" unique_id=484994634]
-script = ExtResource("8_fire")
+[node name="Ring" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../RingCaster")
 spell = ExtResource("6_weapon")
+done_state = "Recover"
 attack_probe_path = NodePath("../../DetectProbe")
 out_of_range_state = "Idle"
 attack_anim = "attack"
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Idle"
+next_state = "Ring"
+min_time = 0.0
+max_time = 0.0

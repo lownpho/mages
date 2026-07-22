@@ -37,3 +37,4 @@ rotation_per_shot = 15.0
 aim_independent = true
 effect_scene = ExtResource("99_effect")
 cooldown = 6.0
+cast_time = 0.7

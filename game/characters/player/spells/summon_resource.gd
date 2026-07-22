@@ -13,8 +13,16 @@ class_name SummonResource
 ## minion, so the minion fires exactly as if the player cast minion_spell — the minion
 ## bullet's own skill/speed/defence_scaling pick which stat grows it (Bzzz=speed,
 ## Jimmy=defence). No summon-specific damage math, no scaling selector.
-@export var minion_scene: PackedScene
+## Sampled per minion, so one summon can call in a mixed knot (a boss's adds) as easily as
+## a uniform fan. A single entry is the ordinary case.
+@export var minion_scenes: Array[PackedScene] = []
 @export var count: int = 3
+## FAN lines them up abreast in front of the caster (the player's summons, which should
+## arrive between them and what they're aiming at); RING places them evenly around it (a
+## boss calling adds in on top of itself).
+@export_enum("Fan", "Ring") var spawn_pattern: int = 0
+## Ring radius, and the distance in front the fan centres on.
+@export var spawn_distance: float = 16.0
 @export var minion_health: int = 8
 ## Seconds each minion survives before it expires.
 @export var minion_lifetime: float = 15.0

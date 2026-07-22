@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://cr0s3budsc3n3"]
+[gd_scene load_steps=18 format=3 uid="uid://cr0s3budsc3n3"]
 
 [ext_resource type="Resource" uid="uid://371d6i7w0y33" path="res://characters/enemies/rosebud/rosebud_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -7,9 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="4_weap"]
 [ext_resource type="Resource" uid="uid://br0s3budthrn" path="res://characters/enemies/rosebud/rosebud_ring.tres" id="5_thorn"]
-[ext_resource type="Script" uid="uid://c4qrfe6uxlccn" path="res://characters/enemies/behaviours/hit_alert_idle.gd" id="6_idle"]
-[ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="7_volley"]
-[ext_resource type="Script" uid="uid://b2fghnxxvt8sb" path="res://characters/enemies/behaviours/guard.gd" id="8_guard"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 4.0
@@ -102,19 +101,24 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=1939025263 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM" unique_id=591212806]
-script = ExtResource("6_idle")
-detect_probe_path = NodePath("../../DetectProbe")
-alert_state = "Guard"
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Guard"
 next_state = "Idle"
+alert_on_hit = true
 
-[node name="Attack" type="Node" parent="FSM" unique_id=1496746162]
-script = ExtResource("7_volley")
+[node name="Guard" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+next_state = "Attack"
+min_time = 3.0
+max_time = 3.0
+damage_scale = 0.2
+anim = "guard"
+
+[node name="Attack" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("5_thorn")
-
-[node name="Guard" type="Node" parent="FSM" unique_id=1909355522]
-script = ExtResource("8_guard")
-done_state = "Attack"
-duration = 3.0
-damage_scale = 0.2
+done_state = "Idle"
+attack_anim = "attack"

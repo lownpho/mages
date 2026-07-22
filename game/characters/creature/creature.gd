@@ -134,13 +134,38 @@ func look_for_target(probe: RayCast2D) -> bool:
 	probe.force_raycast_update()
 	return probe_sees(probe)
 
-func play(anim: String) -> void:
+func play(anim: String, speed_scale: float = 1.0) -> void:
 	# A summon may lack an animation a behaviour asks for (e.g. a static turret with no
 	# idle tag). Rather than error on the missing anim, lock in place on the current frame.
+	sprite.speed_scale = speed_scale
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
 		sprite.play(anim)
 	else:
 		sprite.pause()
+
+## Play `anim` so its strike (final) frame lands exactly `duration` seconds in. A wind-up
+## is the spell's own cast_time, so the tell is stretched or squeezed to fit rather than
+## hoping the authored frame rate happens to agree — retuning cast_time restyles the
+## telegraph instead of desyncing it, and the same spell cast by a creature with different
+## frames still reads correctly. A looping pose has no strike frame to land, so it just
+## runs at its authored speed for however long the wind-up lasts.
+func play_fitted(anim: String, duration: float) -> void:
+	var frames := sprite.sprite_frames
+	if duration <= 0.0 or frames == null or not frames.has_animation(anim) \
+			or frames.get_animation_loop(anim):
+		play(anim)
+		return
+	var count := frames.get_frame_count(anim)
+	var fps := frames.get_animation_speed(anim)
+	if count <= 1 or fps <= 0.0:
+		play(anim)
+		return
+	# Frames carry per-frame duration multipliers, so the strike frame appears once every
+	# earlier frame has had its turn — not simply at (count-1)/fps.
+	var until_strike := 0.0
+	for i in count - 1:
+		until_strike += frames.get_frame_duration(anim, i)
+	play(anim, (until_strike / fps) / duration)
 
 func face(dir_x: float) -> void:
 	# Deadzone ignores near-vertical headings so the sprite doesn't flip-flicker.

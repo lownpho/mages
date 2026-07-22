@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c4kusco5b3wec"]
+[gd_scene load_steps=19 format=3 uid="uid://c4kusco5b3wec"]
 
 [ext_resource type="Resource" uid="uid://crjcsdiinr8r5" path="res://characters/enemies/hopper/hopper_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -7,10 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://c5c4rslkph0h8" path="res://characters/enemies/hopper/hopper_spell.tres" id="6_weapon"]
-[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
-[ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="8_wander"]
-[ext_resource type="Script" uid="uid://cw34ve8ch4s3" path="res://characters/enemies/behaviours/weave_chase.gd" id="9_weave"]
-[ext_resource type="Script" uid="uid://dfir3wh3nr4ng" path="res://characters/enemies/behaviours/fire_when_in_range.gd" id="10_fire"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/wander.gd" id="b_wander"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hop"]
 radius = 4.0
@@ -100,25 +100,45 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=217670379 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM" unique_id=2061980817]
-script = ExtResource("7_idle")
-detect_probe_path = NodePath("../../DetectProbe")
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Chase"
+next_state = "Wander"
 
-[node name="Wander" type="Node" parent="FSM" unique_id=76094837]
-script = ExtResource("8_wander")
-detect_probe_path = NodePath("../../DetectProbe")
+[node name="Wander" type="Node" parent="FSM"]
+script = ExtResource("b_wander")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Chase"
+next_state = "Idle"
 speed = 14.0
+anim = "run"
+min_time = 0.4
+max_time = 1.2
 
-[node name="Chase" type="Node" parent="FSM" unique_id=817633799]
-script = ExtResource("9_weave")
-weave_amplitude = 2.2
+[node name="Chase" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
 chase_probe_path = NodePath("../../ChaseProbe")
 attack_probe_path = NodePath("../../AttackProbe")
+attack_state = "Attack"
+lost_state = "Idle"
 speed = 18.0
+weave_amplitude = 2.2
+anim = "run"
 
-[node name="Attack" type="Node" parent="FSM" unique_id=1641682235]
-script = ExtResource("10_fire")
+[node name="Attack" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_weapon")
+done_state = "Recover"
 attack_probe_path = NodePath("../../AttackProbe")
+out_of_range_state = "Chase"
 attack_anim = "run"
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../AttackProbe")
+lost_state = "Chase"
+next_state = "Attack"
+min_time = 0.0
+max_time = 0.0

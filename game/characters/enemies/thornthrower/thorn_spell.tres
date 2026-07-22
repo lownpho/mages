@@ -40,3 +40,4 @@ bullet = SubResource("Resource_ssihe")
 damage = SubResource("ScalingProfile_bullet")
 max_shots = 1
 effect_scene = ExtResource("99_effect")
+cast_time = 0.4

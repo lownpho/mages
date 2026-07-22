@@ -44,7 +44,7 @@ cooldown = 0.5
 
 [resource]
 script = ExtResource("1_script")
-minion_scene = ExtResource("4_minion")
+minion_scenes = Array[PackedScene]([ExtResource("4_minion")])
 count = 4
 minion_health = 15
 minion_lifetime = 8.0

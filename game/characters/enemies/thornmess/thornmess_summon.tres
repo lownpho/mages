@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SummonResource" load_steps=5 format=3 uid="uid://thrnmess5umon"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="2_effect"]
+[ext_resource type="PackedScene" uid="uid://de2ihs354x1ge" path="res://characters/enemies/seedling/seedling.tscn" id="3_seedling"]
+[ext_resource type="PackedScene" uid="uid://cr0s3budsc3n3" path="res://characters/enemies/rosebud/rosebud.tscn" id="4_rosebud"]
+[ext_resource type="PackedScene" uid="uid://c8thrnthrw0sc" path="res://characters/enemies/thornthrower/thornthrower.tscn" id="5_thornthrower"]
+
+[resource]
+script = ExtResource("1_script")
+cast_time = 0.8
+minion_scenes = Array[PackedScene]([ExtResource("3_seedling"), ExtResource("4_rosebud"), ExtResource("5_thornthrower")])
+count = 6
+spawn_pattern = 1
+spawn_distance = 40.0
+minion_lifetime = 0.0
+effect_scene = ExtResource("2_effect")
+cooldown = 0.0

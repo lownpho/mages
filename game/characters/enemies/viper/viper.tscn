@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c4oru71kqyus"]
+[gd_scene load_steps=22 format=3 uid="uid://c4oru71kqyus"]
 
 [ext_resource type="Resource" uid="uid://pbgstoikp5ux" path="res://characters/enemies/viper/viper_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
@@ -7,10 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://cvsk6ojwyfxjb" path="res://characters/enemies/viper/viper_barrage.tres" id="6_weapon"]
-[ext_resource type="Script" uid="uid://di0le8h4v10ur" path="res://characters/enemies/behaviours/idle.gd" id="7_idle"]
-[ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/enemies/behaviours/wander.gd" id="8_wander"]
-[ext_resource type="Script" uid="uid://cruthwjtelx2y" path="res://characters/enemies/behaviours/flee.gd" id="9_flee"]
-[ext_resource type="Script" uid="uid://bv0ll3yb3h4v0" path="res://characters/enemies/behaviours/volley.gd" id="10_volley"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/flee.gd" id="b_flee"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/wander.gd" id="b_wander"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_viper"]
 radius = 3.5
@@ -121,25 +121,33 @@ collision_mask = 17
 [node name="FSM" parent="." unique_id=549676314 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM" unique_id=1932343703]
-script = ExtResource("7_idle")
-detect_probe_path = NodePath("../../DetectProbe")
-alert_state = "Flee"
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Flee"
+next_state = "Wander"
 
-[node name="Wander" type="Node" parent="FSM" unique_id=904489032]
-script = ExtResource("8_wander")
-detect_probe_path = NodePath("../../DetectProbe")
-alert_state = "Flee"
+[node name="Wander" type="Node" parent="FSM"]
+script = ExtResource("b_wander")
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Flee"
+next_state = "Idle"
 speed = 16.0
+anim = "run"
+min_time = 0.4
+max_time = 1.2
 
-[node name="Flee" type="Node" parent="FSM" unique_id=63509835]
-script = ExtResource("9_flee")
+[node name="Flee" type="Node" parent="FSM"]
+script = ExtResource("b_flee")
 chase_probe_path = NodePath("../../DetectProbe")
 retreat_probe_path = NodePath("../../RetreatProbe")
+lost_state = "Idle"
+cornered_state = "Barrage"
 speed = 32.0
 
-[node name="Barrage" type="Node" parent="FSM" unique_id=676626049]
-script = ExtResource("10_volley")
+[node name="Barrage" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_weapon")
 done_state = "Flee"
+attack_anim = "attack"

@@ -29,6 +29,7 @@ spread_angle = 45.0
 
 [resource]
 script = ExtResource("1_script")
+cast_time = 0.35
 fire_pattern = SubResource("ShotgunPattern_1")
 bullet = SubResource("Resource_y7q6s")
 damage = SubResource("ScalingProfile_bullet")
