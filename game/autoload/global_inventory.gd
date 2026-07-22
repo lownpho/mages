@@ -106,6 +106,20 @@ func reset() -> void:
 		active_spell_page = 0
 		GlobalEvent.spell_page_changed.emit(0)
 
+# True if the player already carries this item — anywhere in the bag or the spell
+# loadout. Identity is the underlying resource (same .tres path), so a second copy of
+# a spell the player already owns counts as a duplicate.
+func has_item(item: ItemResource) -> bool:
+	if item == null:
+		return false
+	for slot in bag_slots.slots + spell_slots.slots:
+		var owned := slot.item
+		if owned == null:
+			continue
+		if owned == item or (owned.resource_path != "" and owned.resource_path == item.resource_path):
+			return true
+	return false
+
 func get_equipment_slot_for_item(item: ItemResource) -> Slot:
 	if item.get_item_type() == ItemType.SPELL:
 		var idx = spell_slots.first_empty()

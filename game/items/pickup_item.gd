@@ -37,6 +37,8 @@ func _resolve() -> void:
 	$Sprite2D.texture = _carried.icon if _carried else null
 
 func _on_body_entered(_body: Node2D) -> void:
+	if GlobalInventory.has_item(_carried):
+		return
 	var slot = GlobalInventory.bag_slots.add_at_first_empty(_carried)
 	if slot:
 		GlobalEvent.item_picked_up.emit(slot)
