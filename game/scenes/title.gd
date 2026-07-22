@@ -7,18 +7,11 @@ extends Control
 @export var new_game_scene: PackedScene
 @export var continue_scene: PackedScene
 
-const _THEME = preload("res://gui/theme.tres")
-
 @onready var _new_btn: Button = %NewButton
 @onready var _continue_btn: Button = %ContinueButton
 @onready var _bg: ColorRect = $Bg
 @onready var _title_label: Label = $TitleLabel
 
-# Idle/selected are brightness steps of the theme mint; disabled gets its own hue
-# (Zughy 32 grey) so "unavailable" reads at a glance instead of just dimmer text.
-const COLOR_SELECTED := Palette.WHITE
-static var COLOR_IDLE: Color = Palette.WHITE.darkened(0.45)
-const COLOR_DISABLED := Palette.GREY
 const COLOR_BG := Palette.BLACK
 const COLOR_TITLE := Palette.APRICOT
 
@@ -30,15 +23,9 @@ func _ready() -> void:
 	_bg.color = COLOR_BG
 	_title_label.add_theme_color_override("font_color", COLOR_TITLE)
 
+	# Button idle/selected/disabled looks come from the project theme; hover just
+	# moves the keyboard/pad focus so the two selection cues can never disagree.
 	for btn in [_new_btn, _continue_btn]:
-		var empty := StyleBoxEmpty.new()
-		for state in ["normal", "hover", "pressed", "focus", "disabled"]:
-			btn.add_theme_stylebox_override(state, empty)
-		btn.add_theme_color_override("font_color", COLOR_IDLE)
-		btn.add_theme_color_override("font_hover_color", COLOR_SELECTED)
-		btn.add_theme_color_override("font_focus_color", COLOR_SELECTED)
-		btn.add_theme_color_override("font_pressed_color", COLOR_SELECTED)
-		btn.add_theme_color_override("font_disabled_color", COLOR_DISABLED)
 		btn.mouse_entered.connect(func() -> void:
 			if not btn.disabled:
 				btn.grab_focus())
@@ -85,10 +72,6 @@ func _show_icon_popup() -> void:
 	if _owned_icons.is_empty() or _icon_popup:
 		return
 	_icon_popup = PanelContainer.new()
-	_icon_popup.theme = _THEME
-	var frame: StyleBox = _THEME.get_stylebox("panel", "PanelContainer").duplicate()
-	frame.set_content_margin_all(1)
-	_icon_popup.add_theme_stylebox_override("panel", frame)
 	var grid := GridContainer.new()
 	grid.columns = 6
 	grid.add_theme_constant_override("h_separation", 2)

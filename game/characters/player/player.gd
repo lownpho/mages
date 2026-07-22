@@ -77,10 +77,17 @@ func _ready() -> void:
 	health = max_health
 	_broadcast_stats()
 
+# On gamepad the right stick owns aim; it persists while the stick is neutral so
+# a flick keeps firing that way, and falls back to the movement direction when
+# the player never touches it (twin-stick convention).
+var _pad_aim := Vector2.RIGHT
+
 # Aim for spells and bullet bursts: the direction from the player toward the
-# mouse. The single cursor read in the spell path — effects take a direction,
-# never a position, so a controller stick can replace this later.
+# mouse, or the pad aim when the last input device was a gamepad. The single
+# aim read in the spell path — effects take a direction, never a position.
 func get_aim_direction() -> Vector2:
+	if GlobalInput.using_gamepad:
+		return _pad_aim
 	return (get_global_mouse_position() - global_position).normalized()
 
 func register_burst(burst: Node) -> void:
@@ -102,6 +109,10 @@ func can_burst_fire(burst: Node) -> bool:
 	return can_act and _live_burst == burst
 
 func get_input_direction() -> Vector2:
+	# While the HUD captures input (controller slot navigation) the stick moves
+	# the focus, not the mage.
+	if GlobalInput.ui_captured:
+		return Vector2.ZERO
 	var direction_x := Input.get_axis("left", "right")
 	var direction_y := Input.get_axis("up", "down")
 	return Vector2(direction_x, direction_y).normalized()
@@ -118,6 +129,7 @@ func _is_dashing() -> bool:
 	return Time.get_ticks_msec() < _dash_until_ms
 
 func _physics_process(_delta: float) -> void:
+	_sample_pad_aim()
 	if _is_dashing():
 		velocity = _dash_velocity
 		move_and_slide()
@@ -127,6 +139,16 @@ func _physics_process(_delta: float) -> void:
 		_dash_velocity = Vector2.ZERO
 		velocity = Vector2.ZERO
 		can_act = true
+
+func _sample_pad_aim() -> void:
+	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
+	if stick != Vector2.ZERO:
+		_pad_aim = stick.normalized()
+		return
+	# Right stick idle: while moving, aim follows the run so casts go forward.
+	var moving := get_input_direction()
+	if moving != Vector2.ZERO:
+		_pad_aim = moving
 
 func _on_idle_physics_update(_delta: float) -> void:
 	if _is_dashing():

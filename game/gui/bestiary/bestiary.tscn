@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://c8w66s0eu7mav"]
 
 [ext_resource type="Script" uid="uid://o8hevbpuurwc" path="res://gui/bestiary/bestiary.gd" id="1_book"]
-[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="3_ui"]
 [ext_resource type="Script" uid="uid://t5ikpl2vcl08" path="res://gui/bestiary/page_dots.gd" id="5_dots"]
 [ext_resource type="Script" path="res://gui/bestiary/creature_icon.gd" id="6_icon"]
@@ -19,7 +18,6 @@ atlas = ExtResource("3_ui")
 region = Rect2(24, 16, 8, 8)
 
 [node name="Bestiary" type="PanelContainer" unique_id=749306195]
-theme = ExtResource("2_theme")
 script = ExtResource("1_book")
 
 [node name="Margin" type="MarginContainer" parent="." unique_id=199742731]

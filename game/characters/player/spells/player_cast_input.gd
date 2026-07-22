@@ -27,6 +27,10 @@ func _ready() -> void:
 		player.fsm.transition_to("Idle"))
 
 func _unhandled_input(event: InputEvent) -> void:
+	# HUD slot navigation owns the pad while captured — triggers/bumpers must not
+	# fire casts or flip pages under the player's feet.
+	if GlobalInput.ui_captured:
+		return
 	if event.is_action_pressed("cycle_page"):
 		GlobalInventory.cycle_spell_page()
 		return

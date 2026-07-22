@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://c8n0rtj1t2wq7"]
 
 [ext_resource type="Script" uid="uid://d3k62qcc8eu13" path="res://scenes/title.gd" id="1_title"]
-[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="2_theme"]
 [ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="4_cont"]
 
 [node name="Title" type="Control" unique_id=1270687267]
@@ -11,7 +10,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("2_theme")
 script = ExtResource("1_title")
 new_game_scene = ExtResource("4_cont")
 continue_scene = ExtResource("4_cont")

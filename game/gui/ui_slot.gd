@@ -6,10 +6,11 @@ const _SLOT_PX = 8
 # show these colors raw: no alpha blending, no modulate, no color tweens.
 const _CURTAIN_COLOR = Palette.BLACK
 const _FLASH_COLOR = Palette.WHITE
+const _GHOST_COLOR = Palette.GREY_DARK
+const _DENY_COLOR = Palette.RED
 
 # Tooltip stat icons: x offset of each 8x8 glyph in the y=8 row of ui.png.
 const _UI = preload("res://gui/ui.png")
-const _THEME = preload("res://gui/theme.tres")
 const _ICON_X = {
 	"damage": 0, "cooldown": 8, "cast": 16,
 	"health": 24, "defence": 40, "skill": 48, "speed": 56,
@@ -38,9 +39,26 @@ var slot: GlobalInventory.Slot = null:
 static var _drag_source: MarginContainer = null
 static var _drag_accepted: bool = false
 
+# --- Carry mode (click-click / controller swap) ---
+# The device-agnostic sibling of drag & drop: activating a filled slot (LMB click
+# or ui_accept on the focused slot) lifts its item — the source icon ghosts grey —
+# and activating a second slot places/swaps it. Same slot or cancel returns it.
+static var _carry_source: MarginContainer = null
+
 static var _dither_texture: ImageTexture
 
 var _curtain: TextureRect
+
+static func carry_active() -> bool:
+	return _carry_source != null
+
+static func cancel_carry() -> void:
+	if _carry_source:
+		# Null first: _refresh_item_material re-applies the ghost for whoever is
+		# still the carry source.
+		var source := _carry_source
+		_carry_source = null
+		source._refresh_item_material()
 
 func update_texture() -> void:
 	if slot and slot.item:
@@ -54,21 +72,13 @@ func update_texture() -> void:
 		$ItemTexture.texture = null
 		tooltip_text = ""
 
-# Same look as the StatsPanel (see ui.tscn): shared panel frame, an icon column and
-# a right-aligned value column. For now the tooltip shows only the item's equip stat
-# bonuses — active stats were dropped as they read ambiguously against the modifiers.
+# Returns only the stat grid — the wrapping popup wears the theme's TooltipPanel
+# frame, so no panel needs building here.
 func _make_custom_tooltip(_for_text: String) -> Object:
 	var modifiers: Array = slot.item.get_modifiers()
 	if modifiers.is_empty():
 		return null
-	var panel := PanelContainer.new()
-	panel.theme = _THEME
-	# Reuse the UI's panel frame, just inset the contents 1px off the border.
-	var frame: StyleBox = _THEME.get_stylebox("panel", "PanelContainer").duplicate()
-	frame.set_content_margin_all(1)
-	panel.add_theme_stylebox_override("panel", frame)
-	panel.add_child(_stat_grid(modifiers))
-	return panel
+	return _stat_grid(modifiers)
 
 func _stat_grid(rows: Array) -> GridContainer:
 	var grid := GridContainer.new()
@@ -100,9 +110,27 @@ func _ready() -> void:
 		$SlotTexture.texture = slot_texture
 	GlobalEvent.slot_updated.connect(_on_slot_updated)
 	GlobalEvent.spell_cooldown_started.connect(_on_spell_cooldown_started)
+	focus_entered.connect(queue_redraw)
+	focus_exited.connect(queue_redraw)
+	GlobalInput.device_changed.connect(func(_pad: bool) -> void: queue_redraw())
 	set_process(false)
 
+# Focus ring for controller navigation only — mouse clicks also grab focus, but
+# the cursor already shows where you are, so the ring would just linger there.
+# Four edge lines hugging the frame with the corner pixels skipped, matching the
+# slot art's rounded corners. MarginContainer never draws focus itself, so this
+# is the slot's whole focus visual.
+func _draw() -> void:
+	if not has_focus() or not GlobalInput.using_gamepad:
+		return
+	draw_rect(Rect2(0, -1, size.x, 1), _FLASH_COLOR)
+	draw_rect(Rect2(0, size.y, size.x, 1), _FLASH_COLOR)
+	draw_rect(Rect2(-1, 0, 1, size.y), _FLASH_COLOR)
+	draw_rect(Rect2(size.x, 0, 1, size.y), _FLASH_COLOR)
+
 func _get_drag_data(_position):
+	# A press already armed carry mode; a real drag supersedes it.
+	cancel_carry()
 	if slot.item:
 		var preview = TextureRect.new()
 		preview.texture = slot.item.icon
@@ -139,11 +167,65 @@ func _notification(what: int) -> void:
 		_drag_source = null
 
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.double_click and event.button_index == MOUSE_BUTTON_LEFT:
-		if slot.item and slot.type == GlobalInventory.ItemType.BAG:
-			var target = GlobalInventory.get_equipment_slot_for_item(slot.item)
-			if target:
-				GlobalInventory.swap_items(slot, target)
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.double_click:
+				# The first click of the pair armed carry — disarm before equipping.
+				cancel_carry()
+				_auto_equip()
+			else:
+				_activate()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			cancel_carry()
+	elif event.is_action_pressed("ui_accept"):
+		_activate()
+		accept_event()
+	elif event.is_action_pressed("ui_cancel"):
+		# Only consume while carrying: an idle B/Esc must bubble up so the HUD
+		# can exit slot navigation.
+		if carry_active():
+			cancel_carry()
+			accept_event()
+	elif event.is_action_pressed("discard"):
+		_discard()
+		accept_event()
+
+func _auto_equip() -> void:
+	if slot.item and slot.type == GlobalInventory.ItemType.BAG:
+		var target = GlobalInventory.get_equipment_slot_for_item(slot.item)
+		if target:
+			GlobalInventory.swap_items(slot, target)
+
+# One press = one step of the carry flow: lift, cancel (same slot), or place/swap.
+func _activate() -> void:
+	if _carry_source == null:
+		if slot.item:
+			_carry_source = self
+			_refresh_item_material()
+		return
+	if _carry_source == self:
+		cancel_carry()
+		return
+	var source: MarginContainer = _carry_source
+	if source.slot.item == null:
+		# The carried item vanished under us (e.g. console edit) — nothing to place.
+		cancel_carry()
+		return
+	if slot.can_place_item(source.slot.item) and (not slot.item or source.slot.can_place_item(slot.item)):
+		cancel_carry()
+		GlobalInventory.swap_items(slot, source.slot)
+	else:
+		_flash_deny()
+
+# Drops the carried item — or, when idle, this slot's item — onto the ground.
+func _discard() -> void:
+	var source: MarginContainer = _carry_source if _carry_source else self
+	cancel_carry()
+	if source.slot.item == null:
+		return
+	var dropped = source.slot.item
+	source.slot.clear_item()
+	GlobalEvent.item_dropped.emit(dropped)
 
 func _on_slot_updated(p_slot: GlobalInventory.Slot) -> void:
 	if slot == p_slot:
@@ -222,11 +304,27 @@ func _make_curtain() -> void:
 	# draws above the icon.
 	$ItemTexture.add_child(_curtain)
 
-func _flash_ready() -> void:
+func _flat_material(color: Color) -> ShaderMaterial:
 	var mat := ShaderMaterial.new()
 	mat.shader = _FLATTEN_SHADER
-	mat.set_shader_parameter("flat_color", _FLASH_COLOR)
-	$ItemTexture.material = mat
+	mat.set_shader_parameter("flat_color", color)
+	return mat
+
+# The icon's steady-state material: grey ghost while this slot is the carry
+# source, none otherwise. Flashes end by restoring through here so they can't
+# wipe an active ghost.
+func _refresh_item_material() -> void:
+	$ItemTexture.material = _flat_material(_GHOST_COLOR) if _carry_source == self else null
+
+func _flash_ready() -> void:
+	$ItemTexture.material = _flat_material(_FLASH_COLOR)
 	var tween := create_tween()
 	tween.tween_interval(0.1)
-	tween.tween_callback(func(): $ItemTexture.material = null)
+	tween.tween_callback(_refresh_item_material)
+
+# Invalid placement target: flash the frame red for a beat.
+func _flash_deny() -> void:
+	$SlotTexture.material = _flat_material(_DENY_COLOR)
+	var tween := create_tween()
+	tween.tween_interval(0.1)
+	tween.tween_callback(func(): $SlotTexture.material = null)

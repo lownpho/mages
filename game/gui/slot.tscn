@@ -12,6 +12,7 @@ offset_right = 8.0
 offset_bottom = 8.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
+focus_mode = 2
 script = ExtResource("2_ob47t")
 
 [node name="ItemTexture" type="TextureRect" parent="." unique_id=1267026170]

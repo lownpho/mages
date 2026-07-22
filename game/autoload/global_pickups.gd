@@ -12,11 +12,15 @@ func _ready() -> void:
 	GlobalEvent.item_dropped.connect(_on_item_dropped)
 	GlobalEvent.loot_dropped.connect(_on_loot_dropped)
 
-# Player discard: drop at the cursor.
+# Player discard: drop at the cursor — except on gamepad, where there is no
+# cursor, so the item lands at the mage's feet instead.
 func _on_item_dropped(item: ItemResource) -> void:
 	var scene := get_tree().current_scene
 	if scene is Node2D:
-		_spawn(item, scene.get_global_mouse_position() + _scatter())
+		var player := get_tree().get_first_node_in_group("player")
+		var at: Vector2 = player.global_position if GlobalInput.using_gamepad and player \
+				else scene.get_global_mouse_position()
+		_spawn(item, at + _scatter())
 
 func _on_loot_dropped(item: ItemResource, pos: Vector2) -> void:
 	_spawn(item, pos + _scatter())

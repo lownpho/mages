@@ -5,6 +5,8 @@ extends CanvasLayer
 const _ACTIVE_FRAME := preload("res://gui/spellslot_atlas.tres")
 const _INACTIVE_FRAME := preload("res://gui/spellslot_inactive_atlas.tres")
 
+const UiSlot = preload("res://gui/ui_slot.gd")
+
 func _ready() -> void:
 	GlobalEvent.player_max_health_changed.connect(_on_player_max_health_changed)
 	GlobalEvent.player_health_changed.connect(_on_player_health_changed)
@@ -27,16 +29,11 @@ func _ready() -> void:
 	# Show the value overlay only while hovering the bar.
 	_setup_bar_hover(%HealthBar, %HealthValue)
 
-	# The bestiary and the map are the two HUD-strip overlays; opening one closes the other so
-	# only ever one is up (Esc / an outside click closes whichever is open — see _unhandled_input).
-	%BestiaryButton.pressed.connect(func() -> void:
-		%BestiaryPanel.visible = not %BestiaryPanel.visible
-		if %BestiaryPanel.visible:
-			%MapPanel.hide())
-	%MapButton.pressed.connect(func() -> void:
-		%MapPanel.visible = not %MapPanel.visible
-		if %MapPanel.visible:
-			%BestiaryPanel.hide())
+	# The bestiary and map are the HUD-strip overlays; opening one closes the
+	# others so only ever one is up (Esc / an outside click closes whichever is open — see
+	# _unhandled_input).
+	%BestiaryButton.pressed.connect(_toggle_panel.bind(%BestiaryPanel))
+	%MapButton.pressed.connect(_toggle_panel.bind(%MapPanel))
 
 	# There's no pause menu by design and no process to "quit" on the web build, so this
 	# leaves the run to the title screen. The run autosaves continuously; persist() first
@@ -46,6 +43,19 @@ func _ready() -> void:
 		GameState.persist()
 		SceneManager.go_to(load("res://scenes/title.tscn")))
 
+	# Clicking a strip button grabs focus, leaving its ring stuck under the
+	# cursor — only pad navigation should keep focus visible.
+	for btn in [%BestiaryButton, %MapButton, %QuitButton]:
+		btn.pressed.connect(func() -> void:
+			if not GlobalInput.using_gamepad:
+				btn.release_focus())
+
+func _toggle_panel(panel: Control) -> void:
+	var opening: bool = not panel.visible
+	for p in [%BestiaryPanel, %MapPanel]:
+		p.visible = p == panel and opening
+
+
 func _on_spell_page_changed(page: int) -> void:
 	var ui_slots = %EquipSpells.get_children()
 	for i in range(GlobalInventory.SPELL_SLOT_SIZE):
@@ -54,24 +64,55 @@ func _on_spell_page_changed(page: int) -> void:
 		ui_slots[i].slot_texture = _ACTIVE_FRAME if row == page else _INACTIVE_FRAME
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not (%BestiaryPanel.visible or %MapPanel.visible):
-		return
-	# Reaching _unhandled_input at all means the click missed every Control (the open
+	# Reaching _unhandled_input at all means the click missed every Control (an open
 	# panel included, since its mouse_filter stops input) — so any mouse press here is,
-	# by construction, a click outside the pane. (The map consumes its own clicks for
+	# by construction, a click outside the UI. (The map consumes its own clicks for
 	# pins/pan, so only clicks that miss it land here.) Wheel notches don't count as clicks,
 	# so scrolling — over the map or the strip — never closes an open panel.
 	var outside_click: bool = event is InputEventMouseButton and event.pressed \
 			and event.button_index != MOUSE_BUTTON_WHEEL_UP \
 			and event.button_index != MOUSE_BUTTON_WHEEL_DOWN
+	if outside_click:
+		# A ground click while click-carrying an item would otherwise cast with the
+		# carry still silently armed — the click cancels it instead.
+		UiSlot.cancel_carry()
 	# Web's Fullscreen API reserves Esc to exit fullscreen and can't be
 	# preventDefault()'d, so sharing it with a UI action there is a losing fight —
-	# skip the shortcut on web and rely on the button/outside-click instead.
-	var menu_close := OS.get_name() != "Web" and event.is_action_pressed("menu")
-	if outside_click or menu_close:
-		%BestiaryPanel.hide()
-		%MapPanel.hide()
+	# on web only the keyboard Esc is skipped; the pad's Start button still works.
+	var menu_pressed: bool = event.is_action_pressed("menu") \
+			and not (OS.get_name() == "Web" and event is InputEventKey)
+	# Pad B backs out of an open panel; only the joypad binding, so web Esc
+	# (which shares ui_cancel) keeps its hands off.
+	var pad_back: bool = event.is_action_pressed("ui_cancel") and event is InputEventJoypadButton
+	if %BestiaryPanel.visible or %MapPanel.visible:
+		if outside_click or menu_pressed or pad_back:
+			%BestiaryPanel.hide()
+			%MapPanel.hide()
+			get_viewport().set_input_as_handled()
+	elif menu_pressed:
+		_toggle_slot_nav()
 		get_viewport().set_input_as_handled()
+	elif GlobalInput.ui_captured and event.is_action_pressed("ui_cancel"):
+		# B/Esc with no panel open and nothing carried (a slot consumes it while
+		# carrying): leave slot navigation.
+		_exit_slot_nav()
+		get_viewport().set_input_as_handled()
+
+# Controller inventory access: Start enters "slot navigation" — focus lands on the
+# first spell slot and GlobalInput.ui_captured stands gameplay input down so the
+# stick moves the focus, not the mage. Mouse/keyboard never needs the mode (slots
+# are clickable directly), so only a pad enters it; exiting is always allowed.
+func _toggle_slot_nav() -> void:
+	if GlobalInput.ui_captured:
+		_exit_slot_nav()
+	elif GlobalInput.using_gamepad:
+		%EquipSpells.get_child(0).grab_focus()
+		GlobalInput.set_ui_captured(true)
+
+func _exit_slot_nav() -> void:
+	UiSlot.cancel_carry()
+	get_viewport().gui_release_focus()
+	GlobalInput.set_ui_captured(false)
 
 func _setup_bar_hover(bar: ProgressBar, label: Label) -> void:
 	# self_modulate hides the bar's own fill/bg drawing without affecting the child label.
