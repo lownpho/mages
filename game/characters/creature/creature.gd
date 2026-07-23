@@ -39,6 +39,9 @@ var aim_direction: Vector2 = Vector2.RIGHT
 # enter() and restores it to 1.0 in exit(); left at 1.0 it's a no-op for everyone else.
 var incoming_damage_scale: float = 1.0
 
+# Set once by die(); guards against the death re-running while queue_free is pending.
+var _dead: bool = false
+
 # Decaying knockback impulse (px/s), applied on top of whatever the FSM state
 # does each physics frame. A spell pushes the creature by calling apply_knockback;
 # it bleeds off at KNOCKBACK_DECAY so the shove is a brief slide, not teleportation.
@@ -173,6 +176,11 @@ func face(dir_x: float) -> void:
 		sprite.flip_h = dir_x < 0.0
 
 func die() -> void:
+	# queue_free() only lands at end of frame, so hits queued in the same physics step
+	# (pellets, a bullet plus its blast) would re-enter here and double-count the death.
+	if _dead:
+		return
+	_dead = true
 	if data:
 		GlobalEvent.creature_died.emit(data, global_position)
 	for drop in drops:
@@ -181,6 +189,8 @@ func die() -> void:
 	queue_free()
 
 func _on_hurt(damage: int, source: Node) -> void:
+	if _dead:
+		return
 	if incoming_damage_scale != 1.0:
 		damage = maxi(1, int(ceil(damage * incoming_damage_scale)))
 	health -= damage
