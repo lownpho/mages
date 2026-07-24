@@ -446,14 +446,14 @@ An instant radial knockback pulse; more damage the closer the enemy, chip at the
 
 An ice patch that grows in a line towards the direction of the cursor; on release the whole area bursts and throws shards.
 
-| | |
-|---|---|
-| Scaling | skill |
-| Grants | skill (med), health (med) |
-| Range | high |
-| Cooldown | med |
-| Cast time | instant |
-| Hold | charged |
+|           |                           |
+| --------- | ------------------------- |
+| Scaling   | skill                     |
+| Grants    | skill (med), health (med) |
+| Range     | high                      |
+| Cooldown  | med                       |
+| Cast time | instant                   |
+| Hold      | charged                   |
 
 ### Fwoosh
 

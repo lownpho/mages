@@ -361,18 +361,213 @@ stateDiagram-v2
 
 ## Deepwood
 
-The forest biome. It comes in three flavours: the **animal deepwood** (beasts, boss
-**gnarlking**), the **mimic deepwood** (trees that come alive, boss **mother tree**), and the
-**insect deepwood** (swarms and spiders, boss **hive queen**).
+The forest biome, T3: everything has more health and hits harder, tuned to pressure
+long-range squishy builds and push the player into close quarters. It comes in four
+flavours, in encounter order: the **animal deepwood** (beasts, boss **gnarlking**), the
+**mimic deepwood** (props that come alive, boss **mother tree**), the **insect deepwood**
+(swarms and crawlers, boss **hive queen**), and the **fungal deepwood** (rot and spores,
+boss **rotmaw**).
+
+A shared pool of five deepwood natives appears in all four sub-biomes; each sub-biome adds
+three commons, three rares (almost all cheap variants of another enemy — the mandraker
+recipe; only the drone is bespoke), and its boss: 12 per sub-biome. Every enemy carries a
+generic cast plus a signature and drops both. Commons drop T2, rares guarantee T3, bosses
+drop their T3 signatures — the glade's structure one tier up.
+
+The mechanics are budgeted: each sub-biome introduces at most three, and later sub-biomes
+reuse and combine earlier ones instead of adding more.
+
+| #   | Mechanic                 | Introduced by       | Reused / combined                           |
+| --- | ------------------------ | ------------------- | ------------------------------------------- |
+| 1   | prop disguise            | stalker *(shared)*  | mimic doubles down; bloatcap                |
+| 2   | charge-dash + flank fire | thornback           | gnarlking; mother tree's thorn rush         |
+| 3   | burrow                   | mole                | rotmaw dives between patterns               |
+| 4   | blink teleport           | shade               | elder stalker; umbra                        |
+| 5   | self-detonation          | deadwood *(static)* | ticktick *(mobile)*; mycelings *(+ clouds)* |
+| 6   | wall crawl               | longleg             | weaver; creeper mold *(+ clouds)*           |
+| 7   | bullet escort            | drone               | hive queen's swarm phase                    |
+| 8   | lingering spore clouds   | sporespitter        | creeper mold; rot golem; rotmaw             |
+| 9   | split on death           | bloatcap            | rotmaw splits at low HP                     |
+| 10  | drain leech              | leech               | elder leech's aura; rotmaw's drain phase    |
+
+Spells introduced here: Bwoom, ChargeDash, Thwomp, Halp, Blink, Oop, Ploop, Zoing, Halo,
+Slurp, Fwoosh. Reserved for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing
+Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
+
+**Shared pool** — these five appear in every sub-biome and define "deepwood" as a place;
+the exclusives define the flavour.
+
+### moth *(shared)*
+
+THIS ONE CHASES, ATTACKS AND THEN FLEES.
+NOT PEW, RING
+
+The deepwood's basic flier and its returning face. It flits in on quick wings and pesters
+you with dust-pokes at short range, always in twos and threes. Fragile chip pressure whose
+job is to keep you moving while heavier things line up.
+
+**Art:** a dusty grey-brown moth with big rounded wings and two eye pixels; a two-frame
+flutter.
+
+| Stat | |
+|---|---|
+| HP | very low |
+| Speed | fast (flitting) |
+| Detection | long |
+| Attack | `SinglePattern` dust-poke, low dmg, fast cadence |
+| Casts | Pew |
+| Drops | **Pew** (t2), **Heal** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Wander : timer
+    Wander --> Chase : sees player
+    Idle --> Chase : sees player
+    Chase --> Attack : in range
+    Attack --> Chase : out of range
+    Chase --> Idle : lost
+```
+
+### stalker *(shared)*
+
+REDO THE ART
+NO PLOOP
+
+The basic pouncer, and the biome's signature jump-scare. It sits in `Idle` disguised as a
+scenery prop — a tree in the animal wood, a log in the mimic wood, a husk in the insect
+wood, a mushroom in the fungal wood — watching through a tiny detect probe. Step on it and
+it reveals, then `WeaveChase`→`FireWhenInRange` at melee. Lose it and it becomes a prop
+again. Introduces **prop disguise**.
+
+**Art:** a narrow tree form with a pointed canopy, medium/dark green, plus one disguise
+recolour per sub-biome; eyes appear on reveal.
+
+| Stat | |
+|---|---|
+| HP | low |
+| Speed | med (after reveal) |
+| Detection | short probe |
+| Attack | `SinglePattern`, low dmg, med cadence |
+| Casts | Pew |
+| Drops | **Pew** (t2), **Ploop** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> WeaveChase : player very close
+    WeaveChase --> Attack : in range
+    Attack --> WeaveChase : out of range
+    WeaveChase --> Disguise : lost
+```
+
+### grimling *(shared)*
+
+CAST BLAM
+
+Pack hunter. `Idle`→`Wander`→`WeaveChase`→`FireWhenInRange` at short range, with fast
+low-damage bolts. Grimlings hunt in threes or more, and hitting one triggers the whole
+knot. The weave makes it hard to line up a shot, and the pack punishes you for focusing
+one down without a plan for the rest.
+
+**Art:** a small hunched shadow-sprite, gloom-black body with two glowing eyes and needle
+limbs; quick flickering run frames.
+
+| Stat      |                                             |
+| --------- | ------------------------------------------- |
+| HP        | low                                         |
+| Speed     | fast (weaving chase)                        |
+| Detection | med                                         |
+| Attack    | `SinglePattern` bolt, low dmg, fast cadence |
+| Casts     | Pew                                         |
+| Drops     | **Pew** (t2), **Halp** (t2)                 |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Wander : timer
+    Wander --> WeaveChase : sees player / ally hit
+    WeaveChase --> Fire : in range
+    Fire --> WeaveChase : out of range
+    WeaveChase --> Idle : lost
+```
+
+### moss golem *(shared)*
+
+NO NOPE T2. OR MAYBE CASTS NOPE
+
+The golem recipe at deepwood weight. As slow as its glade cousin and far tougher, but its
+rings now actually hurt. On the attack windup it hardens into a Defensive Shell (brief
+high defence, the rosebud's trick) that punishes spam-hitting; then the ring pulses out
+dense enough that its own tile is a place you never stand.
+
+**Art:** the golem sprite overgrown: deep-green moss over grey stone, dim eye-lights; a
+clenched, hardened frame for the shell.
+
+| Stat      |                                     |
+| --------- | ----------------------------------- |
+| HP        | very high                           |
+| Speed     | slow                                |
+| Detection | long                                |
+| Attack    | `RingPattern`, med dmg, med cadence |
+| Casts     | Ring                                |
+| Drops     | **Ring** (t2), **Nope** (t2)        |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Shell : in range
+    Shell --> Ring : shell drops
+    Ring --> Chase : out of range
+    Chase --> Idle : lost sight
+```
+
+### snake *(shared)*
+
+NEW SPELL WITH PARALLEL PATTERN?
+
+A skittish corridor-denier. `Idle`→`Flee` (fast, weaving) when spotted; when its back
+hits a wall it stands and fires a `Volley` of twin shots that ricochet off the walls,
+then bolts again. Trivial in open rooms; in narrow passages the bouncing spread covers
+the corridor both ways.
+
+**Art:** a low serpentine coil, deepwood two-tone green, a forked head with eye pixels;
+weave frames.
+
+| Stat      |                                                            |
+| --------- | ---------------------------------------------------------- |
+| HP        | low                                                        |
+| Speed     | fast (weaving flee)                                        |
+| Detection | med                                                        |
+| Attack    | `ParallelPattern` twin ricochet shot, low dmg, med cadence |
+| Casts     | Pew, Zoing                                                 |
+| Drops     | **Zoing** (t2)                                             |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Flee : sees player
+    Flee --> Volley : cornered
+    Volley --> Flee : burst fired
+    Flee --> Idle : lost
+```
+
+**Animal deepwood** — beasts that punish standing still. Introduces the charge-dash and
+the burrow.
 
 ### thornback *(animal)*
 
-A charger. It runs a long telegraphed windup (`ChargeWindup`), then a straight high-speed dash
-(`ChargeDash`) that sheds bullets off both flanks, then a rooted recovery (`ChargeRecover`) that
-is your punish window. It locks heading at launch and can't corner, so sidestep the dash and
-burn it during recovery. Trees are your friend.
+REDO ART (GRAVEYARD?)
 
-**Art:** a wide squat body, dark-brown armour over a tan body, a spike array along the back.
+A charger, introducing the **charge-dash with flank fire**. It runs a long telegraphed
+windup (`ChargeWindup`), then a straight high-speed dash (`ChargeDash`) that sheds
+bullets off both flanks, then a rooted recovery (`ChargeRecover`) that is your punish
+window. It locks heading at launch and can't corner, so sidestep the dash and burn it
+during recovery. Trees are your friend.
+
+**Art:** a wide squat body, dark-brown armour over a tan body, a spike array along the
+back.
 
 | Stat | |
 |---|---|
@@ -380,8 +575,8 @@ burn it during recovery. Trees are your friend.
 | Speed | slow wandering, very fast dashing |
 | Detection | med |
 | Attack | `FlankPattern` bullets shed during the dash, low dmg |
-| Casts | Blam |
-| Drops | **Blam** (t2) |
+| Casts | Blam, ChargeDash |
+| Drops | **ChargeDash** (t2), **Blam** (t2) |
 
 ```mermaid
 stateDiagram-v2
@@ -395,13 +590,15 @@ stateDiagram-v2
 
 ### owl *(animal)*
 
-The perch sniper. It uses `SniperCharge` through the one clean lane between trunks, with a
-brief windup as the telegraph. Get too close or too far, or break its line, and it
-`Reposition`s a few tiles to a perch that sees you again. If it can't re-perch, it idles. It
-outranges rangers, so your move is to close the gap through its fire.
+WHAT DOES REPOSITION DO? LOOK FOR A FREE SPOT OPPOSITE FROM THE PLAYER AND GO THERE?
+The perch sniper. It uses `SniperCharge` through the one clean lane between trunks, with
+a brief windup as the telegraph, and pokes quick low bolts between charged shots. Get too
+close or too far, or break its line, and it `Reposition`s a few tiles to a perch that
+sees you again. If it can't re-perch, it idles. It outranges rangers, so your move is to
+close the gap through its fire.
 
-**Art:** a brown oval with an oversized head and two big amber eyes. The eye rule taken to a
-whole creature.
+**Art:** a brown oval with an oversized head and two big amber eyes. The eye rule taken
+to a whole creature.
 
 | Stat | |
 |---|---|
@@ -409,8 +606,8 @@ whole creature.
 | Speed | perched; med reposition |
 | Detection | long (firing band close to med) |
 | Attack | `SinglePattern` charged shot, high dmg, slow cadence |
-| Casts | Bwoom |
-| Drops | **Bwoom** (t2) |
+| Casts | Pew, Bwoom |
+| Drops | **Bwoom** (t2), **Pew** (t2) |
 
 ```mermaid
 stateDiagram-v2
@@ -421,77 +618,42 @@ stateDiagram-v2
     Reposition --> Idle : can't re-perch
 ```
 
-### grimling *(animal)*
+### mole *(animal)*
 
-Pack hunter. `Idle`→`Wander`→`WeaveChase`→`FireWhenInRange` at short range, with fast
-low-damage bolts. Grimlings hunt in threes or more, and hitting one triggers the whole knot. The
-weave makes it hard to line up a shot, and the pack punishes you for focusing one down without
-a plan for the rest.
 
-**Art:** a small hunched shadow-sprite, gloom-black body with two glowing eyes and needle limbs;
-quick flickering run frames.
+Introduces the **burrow**. It dives underground where it can't be hit, and the only tell
+is a dirt plume tracking toward you; it erupts beneath your feet with a ring burst,
+scratches around on the surface for a beat — your punish window — then dives again.
+Fighting it is rhythm reading: move off the plume, hit it while it blinks in the light.
+
+**Art:** a plump velvet-black mole with oversized digging claws and pinprick eyes; a
+travelling dirt-mound sprite while submerged, a burst-of-soil frame on eruption.
 
 | Stat | |
 |---|---|
-| HP | low |
-| Speed | fast (weaving chase) |
+| HP | med |
+| Speed | slow surfaced, med submerged |
 | Detection | med |
-| Attack | `SinglePattern` bolt, low dmg, fast cadence |
-| Casts | Pew |
-| Drops | **Pew** (t2), **Halp** (t2) |
-
-**Notes:** Berserk on Ally Death: a survivor briefly gains speed and fire rate when a packmate
-dies, so kill order matters.
+| Attack | `RingPattern` on eruption, med dmg |
+| Casts | Ring |
+| Drops | **Ring** (t2) |
 
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
-    Idle --> Wander : timer
-    Wander --> WeaveChase : sees player / ally hit
-    WeaveChase --> Fire : in range
-    Fire --> WeaveChase : out of range
-    WeaveChase --> Idle : lost
-```
-
-### mosshulk *(animal)*
-
-Heavy tank. `Idle`→`Wander`→`Chase` (slow)→`FireWhenInRange` with a wide spore burst on a slow
-cadence. On the attack windup it hardens into a Defensive Shell (brief high defence) that
-punishes spam-hitting. Disengage and it lumbers back to its leash, but it lashes one fast
-reaching root at your last position first.
-
-**Art:** a hulking golem of moss, root, and stone, deep-green over a grey mass, dim eye-lights
-(larger 16×15 sheet); a clenched, hardened frame for the shell.
-
-| Stat | |
-|---|---|
-| HP | high |
-| Speed | slow |
-| Detection | med |
-| Attack | `ShotgunPattern` spore burst, med dmg/pellet, slow cadence |
-| Casts | Blam |
-| Drops | **Blam** (t2), **Nope** (t2) |
-
-**Notes:** Defensive Shell (harden) on windup; Leash-Break Rush (root lash) on disengage.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Wander : timer
-    Wander --> Chase : sees player
-    Chase --> Shell : windup
-    Shell --> Fire : shell drops
-    Fire --> Chase : out of range
-    Chase --> Rush : player fled
-    Rush --> Idle : de-aggro
+    Idle --> Burrow : sees player
+    Burrow --> Erupt : under player
+    Erupt --> Surface : ring fired
+    Surface --> Burrow : timer
+    Surface --> Idle : lost
 ```
 
 ### grimlord *(animal, rare)*
 
-A larger, darker grimling, the knot's alpha. `WeaveChase`→`FireWhenInRange` at medium range with
-a wide bolt spray. At critical HP it enrages: fire rate doubles and its exit check drops. On
-death it bursts one parting ring. The weave plus the enrage turns the last sliver of its health
-into a gauntlet.
+A larger, darker grimling, the knot's alpha. `WeaveChase`→`FireWhenInRange` at medium
+range with a wide bolt spray. At critical HP it enrages: fire rate doubles and its exit
+check drops. On death it bursts one parting ring. The weave plus the enrage turns the
+last sliver of its health into a gauntlet.
 
 **Art:** the grimling silhouette enlarged and near-black, red eye-glow; the enrage frame
 brightens the eyes.
@@ -502,8 +664,8 @@ brightens the eyes.
 | Speed | fast (weaving chase) |
 | Detection | med |
 | Attack | `ShotgunPattern` bolt spray, med dmg, med cadence |
-| Casts | Blam |
-| Drops | **Blam** (t2), **Ring** (t2) |
+| Casts | Blam, Ring |
+| Drops | **Blam** (t3), **Ring** (t3) |
 
 **Notes:** Enrage at low HP; `RingPattern` death burst.
 
@@ -517,84 +679,114 @@ stateDiagram-v2
     Enrage --> DeathBurst : dies
 ```
 
+### razorback *(animal, rare)*
+
+Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh
+launch, chaining charge after charge; only a head-on wall hit stuns it into a real punish
+window. Fight it near trees and make the forest do the work.
+
+**Art:** the thornback silhouette in near-black armour with red spike tips.
+
+| Stat | |
+|---|---|
+| HP | high |
+| Speed | very fast dashing |
+| Detection | med |
+| Attack | `FlankPattern` bullets shed during every dash, med dmg |
+| Casts | Blam, ChargeDash |
+| Drops | **ChargeDash** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Windup : sees player
+    Windup --> Dash : windup done
+    Dash --> Windup : dash ended
+    Dash --> Stun : head-on wall
+    Stun --> Windup : recovered
+    Stun --> Idle : lost
+```
+
+### great owl *(animal, rare)*
+
+Owl variant: bigger, and the charged shot pierces, crossing the whole room and everything
+in it. The windup is longer and the telegraph brighter, so the duel stays honest — but it
+re-perches further away, and its firing lane is most of the map.
+
+**Art:** the owl sprite enlarged, pale barn-owl white with amber eyes.
+
+| Stat | |
+|---|---|
+| HP | med |
+| Speed | perched; med reposition |
+| Detection | very long |
+| Attack | `SinglePattern` piercing charged shot, very high dmg, slow cadence |
+| Casts | Pew, Bwoom |
+| Drops | **Bwoom** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Snipe : sees player
+    Snipe --> Reposition : lane lost
+    Reposition --> Snipe : lane regained
+    Reposition --> Idle : can't re-perch
+```
+
 ### gnarlking *(boss, animal)*
 
 The apex of the animal deepwood: a towering antlered forest-lord on a `PatternPicker`.
 
-- **Ground Slam**: rears and slams the earth for a radial shockwave (damage falls off with
-  distance, and it knocks you back), then calls a ring of grimlings and hangs back until they
-  clear or time out. Demonstrates the **Thwomp** spell.
-- **Chase** (`TimedChase`): lunges at high speed and drops `FlankPattern` bullets. It can't
-  corner, so sidestep it.
-- **Shotgun Volley**: plants and fires a burst of spore blasts, tracking your position
-  between them.
+- **Ground Slam**: rears and slams the earth for a radial shockwave (damage falls off
+  with distance, and it knocks you back), then calls a ring of grimlings and hangs back
+  until they clear or time out. Demonstrates the **Thwomp** spell.
+- **Charge**: the thornback's charge-dash writ large — a locked-heading lunge shedding
+  `FlankPattern` bullets. It can't corner, so sidestep it.
+- **Shotgun Volley**: plants and fires a burst of blasts, tracking your position between
+  them.
 - **Rest**: heaves briefly. Your burn window.
 
-**Art:** a towering forest-lord of bark, antler, and gloom, glowing pale eyes, oversized frame;
-a rear-and-slam pose for the slam (boss sheet).
+**Art:** a towering forest-lord of bark, antler, and gloom, glowing pale eyes, oversized
+frame; a rear-and-slam pose for the slam (boss sheet).
 
 | Stat | |
 |---|---|
 | HP | very high (boss) |
-| Speed | stationary mid-pattern; very fast during Chase |
+| Speed | stationary mid-pattern; very fast during Charge |
 | Detection | long |
-| Attack | shockwave + summon / lunge / shotgun volley |
+| Attack | shockwave + summon / charge-dash / shotgun volley |
 | Casts | Thwomp, Blam, Halp (brood) |
-| Drops | **Thwomp**, **Halp** |
+| Drops | **Thwomp** (t3), **Halp** (t3) |
 
-**Notes:** at critical HP the shockwave radius doubles, it calls grimlords instead of grimlings,
-and Rest shrinks to half duration.
+**Notes:** at critical HP the shockwave radius doubles, it calls grimlords instead of
+grimlings, and Rest shrinks to half duration.
 
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
     Idle --> Pattern : sees player
     Pattern --> Slam : roll
-    Pattern --> Chase : roll
+    Pattern --> Charge : roll
     Pattern --> Volley : roll
     Pattern --> Rest : roll
     Slam --> Pattern : brood cleared / timeout
-    Chase --> Pattern
+    Charge --> Pattern
     Volley --> Pattern
     Rest --> Pattern
     Pattern --> Idle : lost
 ```
 
-### stalker *(mimic)*
-
-The basic pouncer. It sits in `Idle` disguised as a tree prop, using the deepwood tree
-decoration as its idle animation, and watches through a tiny detect probe. Step on it and it
-reveals, then `WeaveChase`→`FireWhenInRange` at melee. Lose it and it becomes a tree again.
-This is the deepwood's signature jump-scare.
-
-**Art:** a narrow tree form with a pointed canopy, medium/dark green; eyes appear on reveal.
-
-| Stat | |
-|---|---|
-| HP | low |
-| Speed | med (after reveal) |
-| Detection | short probe |
-| Attack | `SinglePattern`, low dmg, med cadence |
-| Casts | Pew |
-| Drops | **Ploop** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> WeaveChase : player very close
-    WeaveChase --> Attack : in range
-    Attack --> WeaveChase : out of range
-    WeaveChase --> Disguise : lost
-```
+**Mimic deepwood** — nothing is what it looks like: most of a room might be props with
+eyes. Introduces the blink and self-detonation.
 
 ### bramble stalker *(mimic)*
 
 A running thorn-spitter. `Idle` disguised as a bush, then `WeaveChase`→`FireWhenInRange`,
-firing full rings of thorns from its body on a slow cadence. It is hard to track on approach,
-and the ring punishes you for standing anywhere near it.
+firing full rings of thorns from its body on a slow cadence. It is hard to track on
+approach, and the ring punishes you for standing anywhere near it.
 
-**Art:** a rounded thorny bush-mound disguise, deepwood green with bramble-red thorns; eyes on
-reveal.
+**Art:** a rounded thorny bush-mound disguise, deepwood green with bramble-red thorns;
+eyes on reveal.
 
 | Stat | |
 |---|---|
@@ -614,11 +806,64 @@ stateDiagram-v2
     WeaveChase --> Disguise : lost
 ```
 
+### shade *(mimic)*
+
+A vanishing harasser, introducing the **blink teleport**. It fires a `Volley` burst, then
+blinks to a random nearby offset and bursts again. It punishes turret play, since each
+burst forces you to re-aim.
+
+**Art:** a wispy near-black silhouette with a faint violet edge and two pale eyes; a
+barely-there body that blinks out.
+
+| Stat | |
+|---|---|
+| HP | very low |
+| Speed | blinks (short range) |
+| Detection | med |
+| Attack | `Volley` `SinglePattern`, med dmg, fast within burst |
+| Casts | Pew, Blink |
+| Drops | **Blink** (t2), **Pew** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Volley : sees player
+    Volley --> Blink : burst done
+    Blink --> Volley : reappeared
+    Volley --> Idle : lost
+```
+
+### deadwood *(mimic)*
+
+A trap with a health bar, introducing **self-detonation**. It lies among the real log
+props until you step close or clip it with a shot, then shivers, glows, and blows: one
+big blast and it is gone. Spot the log that is slightly too neat and spend it from range,
+or route around it and leave it armed for the enemies that chase you.
+
+**Art:** a mossy fallen log with one knothole; the knothole opens into an eye on trigger,
+and the whole log glows through the fuse.
+
+| Stat | |
+|---|---|
+| HP | low |
+| Speed | stationary |
+| Detection | short probe |
+| Attack | `Oop`-style proximity blast, high dmg |
+| Casts | Oop |
+| Drops | **Oop** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Fuse : player close / hit
+    Fuse --> Detonate : fuse done
+```
+
 ### elder stalker *(mimic, rare)*
 
-An ancient twisted tree on a `PatternPicker`: `SniperCharge` a slow wide-cone homing seed at
-long range, then Teleport Blink and, on arrival, a `ShotgunPattern`. The homing seed forces you
-to move; the blink resets the engagement.
+Stalker variant: an ancient twisted tree on a `PatternPicker`. `SniperCharge` a slow
+wide-cone homing seed at long range, then a blink and, on arrival, a `ShotgunPattern`.
+The homing seed forces you to move; the blink resets the engagement.
 
 **Art:** a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on
 reveal; taller than the stalker.
@@ -630,7 +875,7 @@ reveal; taller than the stalker.
 | Detection | long |
 | Attack | `Homing` seed (med dmg) / `ShotgunPattern` on blink |
 | Casts | Fireball, Blam |
-| Drops | **Fireball** (t2) |
+| Drops | **Fireball** (t3), **Blam** (t3) |
 
 **Notes:** at critical HP the windup drops to near-instant.
 
@@ -644,77 +889,47 @@ stateDiagram-v2
     Snipe --> Idle : lost
 ```
 
-### shade *(mimic)*
+### umbra *(mimic, rare)*
 
-A vanishing harasser. It fires a `Volley` burst, then Teleport Blinks to a random nearby offset
-and bursts again. It punishes turret play, since each burst forces you to re-aim.
+Shade variant: every blink lands behind you, and the volley comes twinned. It punishes
+tunnel vision — clear it first, or fight with your back to a wall.
 
-**Art:** a wispy near-black silhouette with a faint violet edge and two pale eyes; a
-barely-there body that blinks out.
+**Art:** the shade silhouette in deeper black with a thin red edge.
 
 | Stat | |
 |---|---|
-| HP | very low |
+| HP | low |
 | Speed | blinks (short range) |
 | Detection | med |
-| Attack | `Volley` `SinglePattern`, med dmg, fast within burst |
-| Casts | Pew |
-| Drops | **Blink** (t2) |
+| Attack | twinned `Volley`, med dmg |
+| Casts | Pew, Blink |
+| Drops | **Blink** (t3) |
 
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
     Idle --> Volley : sees player
     Volley --> Blink : burst done
-    Blink --> Volley : reappeared
+    Blink --> Volley : behind player
     Volley --> Idle : lost
 ```
 
-### mirror sprite *(mimic)*
+### adder *(mimic, rare)*
 
-Breaks your movement habits with Mirror/Invert Movement. It mirrors your lateral strafe while
-holding a fixed standoff, so strafing left sends it right and standing still makes it hover.
-Fires a `SinglePattern` at medium range. Low HP, but you can't circle-strafe it: change
-direction or walk straight in.
+Snake variant: the cornered burst becomes a wide ricochet spray that fills the corridor
+behind you as well as ahead. Catching it in a passage is the natural move — and exactly
+the mistake.
 
-**Art:** a small floating mirror-shard mote, pale reflective blue-white, a single eye; a
-symmetric silhouette selling the mirror theme.
+**Art:** the snake coil in rare charcoal with amber banding.
 
 | Stat | |
 |---|---|
-| HP | very low |
-| Speed | med (mirrored strafe) |
-| Detection | med |
-| Attack | `SinglePattern`, low dmg, med cadence |
-| Casts | Pew |
-| Drops | **Shing** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Mirror : sees player
-    Mirror --> Fire : in range
-    Fire --> Mirror : cadence
-    Mirror --> Idle : lost
-```
-
-### snake *(mimic)*
-
-A skittish corridor-denier. `Idle`→`Flee` (fast, weaving) when spotted; when its back hits a
-wall it stands and fires a `Volley` of twin parallel shots, then bolts again. Trivial in open
-rooms; in narrow passages the parallel spread covers the corridor.
-
-**Art:** a low serpentine coil, deepwood two-tone green, a forked head with eye pixels; weave
-frames.
-
-| Stat | |
-|---|---|
-| HP | low |
+| HP | high |
 | Speed | fast (weaving flee) |
 | Detection | med |
-| Attack | `ParallelPattern` twin shot, low dmg, med cadence |
-| Casts | Pew |
-| Drops | **Zoing** (t2) |
+| Attack | bouncing `ShotgunPattern` spray, med dmg, on corner |
+| Casts | Pew, Zoing |
+| Drops | **Zoing** (t3) |
 
 ```mermaid
 stateDiagram-v2
@@ -727,16 +942,17 @@ stateDiagram-v2
 
 ### mother tree *(boss, mimic)*
 
-The oldest stalker: a massive gnarled tree that uproots and thunders across the room, on a
-two-phase cycle.
+The oldest stalker: a massive gnarled tree that uproots and thunders across the room, on
+a two-phase cycle.
 
-- **Thorn Rush**: a `TimedChase` lunge at high speed that fires wide high-damage
-  `ShotgunPattern` bursts the whole time and scatters **Ploop** seed-mines behind it. The mines
-  arm after a delay and erupt into darts if you step near. The room becomes a minefield.
+- **Thorn Rush**: the charge-dash reused at boss scale — a lunge at high speed that fires
+  wide high-damage `ShotgunPattern` bursts the whole time and scatters **Ploop**
+  seed-mines behind it. The mines arm after a delay and erupt into darts if you step
+  near. The room becomes a minefield.
 - **Root**: slams down and stops dead. Your burn window. Earlier mines stay live.
 
-**Art:** a massive gnarled bark-brown trunk with a mossy canopy and root legs, amber eyes;
-uproots into a charging pose (boss sheet).
+**Art:** a massive gnarled bark-brown trunk with a mossy canopy and root legs, amber
+eyes; uproots into a charging pose (boss sheet).
 
 | Stat | |
 |---|---|
@@ -745,10 +961,10 @@ uproots into a charging pose (boss sheet).
 | Detection | long |
 | Attack | shotgun bursts + Ploop mines / none in Root |
 | Casts | Blam, Ploop |
-| Drops | **Ploop** |
+| Drops | **Ploop** (t3), **Blam** (t3) |
 
-**Notes:** at critical HP Thorn Rush lasts twice as long, the spread tightens, mines double,
-and Root drops out.
+**Notes:** at critical HP Thorn Rush lasts twice as long, the spread tightens, mines
+double, and Root drops out.
 
 ```mermaid
 stateDiagram-v2
@@ -759,20 +975,19 @@ stateDiagram-v2
     ThornRush --> ThornRush : low HP (no Root)
 ```
 
-### wasp *(insect)*
-
-The glade wasp carried into the trees: fragile, fast, and arrives in groups. See the [glade
-entry](#wasp); only placement changes. It casts Pew and drops **Bzzz** (t2) at this depth.
+**Insect deepwood** — swarms, crawlers, and geometry: the walls stop being safe.
+Introduces the wall crawl and the bullet escort; the deadwood's detonation goes mobile
+here.
 
 ### longleg *(insect)*
 
-A wall-crawling spider with two weapons. `Wander`→`SniperCharge` a slow wide-cone homing web at
-medium range; when you close, a `RingPattern` then a scuttle away. Wall Crawl keeps it on
-wall/blocker tiles. The web is slow enough to sidestep but forces you to keep moving while it
-repositions.
+A wall-crawling spider with two weapons, introducing the **wall crawl**.
+`Wander`→`SniperCharge` a slow wide-cone homing web at medium range; when you close, a
+`RingPattern` then a scuttle away. Wall Crawl keeps it on wall/blocker tiles. The web is
+slow enough to sidestep but forces you to keep moving while it repositions.
 
-**Art:** a small round body on long spidery legs, deepwood browns, clustered eye pixels; a
-wall-crawl pose.
+**Art:** a small round body on long spidery legs, deepwood browns, clustered eye pixels;
+a wall-crawl pose.
 
 | Stat | |
 |---|---|
@@ -780,8 +995,8 @@ wall-crawl pose.
 | Speed | slow (wall-crawling) |
 | Detection | med |
 | Attack | `Homing` web (med dmg) / close `RingPattern`, low dmg |
-| Casts | Fireball, Ring |
-| Drops | **Snipe** (t2)  |
+| Casts | Ring, Snipe |
+| Drops | **Snipe** (t2), **Ring** (t2) |
 
 ```mermaid
 stateDiagram-v2
@@ -794,10 +1009,10 @@ stateDiagram-v2
 
 ### beetle *(insect)*
 
-A bouncing brawler. `Chase` (medium speed)→`Volley` burst at short range, then an Impulse Hop
-in a random cardinal direction that fires a `RingPattern` mid-hop. It is hard to pin: the hop
-resets your aim, and the mid-hop ring makes it dangerous to stand near. Charge in after the hop
-lands.
+A bouncing brawler. `Chase` (medium speed)→`Volley` burst at short range, then an Impulse
+Hop in a random cardinal direction that fires a `RingPattern` mid-hop. It is hard to pin:
+the hop resets your aim, and the mid-hop ring makes it dangerous to stand near. Charge in
+after the hop lands.
 
 **Art:** a rounded armoured shell, dark carapace over a lighter belly, small eyes; a
 squash/stretch hop frame.
@@ -809,7 +1024,7 @@ squash/stretch hop frame.
 | Detection | med |
 | Attack | `Volley` (low dmg, fast) + hop `RingPattern` |
 | Casts | Pew, Ring |
-| Drops | **Ring** (t2) |
+| Drops | **Ring** (t2), **Pew** (t2) |
 
 ```mermaid
 stateDiagram-v2
@@ -821,14 +1036,42 @@ stateDiagram-v2
     Chase --> Idle : lost
 ```
 
+### ticktick *(insect)*
+
+The deadwood gone mobile. A tiny sprinter that locks on from far off and closes in a dead
+straight line, clicking faster the nearer it gets; on contact it detonates, and that
+blast is its whole life. Kill it at range or sidestep the final lunge — there is no third
+option.
+
+**Art:** a round dark tick on scrabbling legs, with a red pulse-glow that quickens as it
+closes.
+
+| Stat | |
+|---|---|
+| HP | very low |
+| Speed | very fast (straight chase) |
+| Detection | long |
+| Attack | contact blast, high dmg |
+| Casts | Oop (on itself) |
+| Drops | **Oop** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Detonate : contact
+    Chase --> Idle : lost
+```
+
 ### weaver *(insect, rare)*
 
-A large wall-crawling spider. `SniperCharge` a medium-turn high-damage homing web that bounces
-off walls several times, so it is dangerous in corridors and can hit you around a corner. If
-you close, a `ShotgunPattern` then a scuttle to the nearest wall. Open rooms are your safe zone.
+Longleg variant: a large wall-crawling spider. `SniperCharge` a medium-turn high-damage
+homing web that bounces off walls several times, so it is dangerous in corridors and can
+hit you around a corner. If you close, a `ShotgunPattern` then a scuttle to the nearest
+wall. Open rooms are your safe zone.
 
-**Art:** a large spider, bulbous abdomen and long legs, deep purple-brown two-tone, an eye
-cluster; a wall-cling pose.
+**Art:** a large spider, bulbous abdomen and long legs, deep purple-brown two-tone, an
+eye cluster; a wall-cling pose.
 
 | Stat | |
 |---|---|
@@ -837,7 +1080,7 @@ cluster; a wall-cling pose.
 | Detection | long |
 | Attack | bouncing `Homing` web (high dmg) / close `ShotgunPattern` |
 | Casts | Zoing, Blam |
-| Drops | **Zoing** (t2) |
+| Drops | **Zoing** (t3), **Blam** (t3) |
 
 **Notes:** at critical HP the windup drops to near-instant.
 
@@ -850,12 +1093,41 @@ stateDiagram-v2
     Snipe --> Crawl : lost
 ```
 
+### goliath *(insect, rare)*
+
+Beetle variant: bigger, armoured, and patient. It opens with a Guard windup — an
+armoured shell that eats your burst, the rosebud lesson at scale — then answers with a
+hop whose mid-air ring covers most of the room. Wait out the shell, burn it on the
+landing.
+
+**Art:** the beetle scaled up in gunmetal carapace with a nose horn.
+
+| Stat | |
+|---|---|
+| HP | high |
+| Speed | slow (chase), hops |
+| Detection | med |
+| Attack | guard → room-wide hop `RingPattern`, med dmg |
+| Casts | Ring |
+| Drops | **Ring** (t3), **Nope** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Guard : in range
+    Guard --> Hop : shell drops
+    Hop --> Chase : landed
+    Chase --> Idle : lost
+```
+
 ### drone *(insect, rare)*
 
-A flying orbiter with a bullet escort. It tethers at a fixed radius (`Tether`) with bullets
-circling it as a deterrent. Every so often the bullets launch outward in a shotgun spread and
-the drone flees to recharge, then re-enters the tether at a wider orbit. The fight is a cycle:
-dodge the burst, chase it while it is vulnerable, then repeat.
+A flying orbiter introducing the **bullet escort**. It tethers at a fixed radius
+(`Tether`) with bullets circling it as a deterrent. Every so often the bullets launch
+outward in a shotgun spread and the drone flees to recharge, then re-enters the tether at
+a wider orbit. The fight is a cycle: dodge the burst, chase it while it is vulnerable,
+then repeat. The one bespoke rare in the biome.
 
 **Art:** a small flying orb ringed by orbiting bullet pixels, metallic two-tone, a single
 glowing eye.
@@ -867,7 +1139,7 @@ glowing eye.
 | Detection | med |
 | Attack | Circling Bullets → launched `ShotgunPattern`, med dmg |
 | Casts | Halo, Blam |
-| Drops | **Halo** (t2) |
+| Drops | **Halo** (t3) |
 
 ```mermaid
 stateDiagram-v2
@@ -881,16 +1153,17 @@ stateDiagram-v2
 
 A massive flying hornet queen on a `PatternPicker`.
 
-- **Acid Spray**: `ShotgunPattern` bursts while she `TimedChase`s toward you. The sweeping
-  coverage forces you to rotate around her.
-- **Spawn Swarm**: summons fragile fast-shooting wasps and drones and turns invulnerable until
-  they clear, and the drones' orbiting bullets fill the room. Demonstrates the **Bzzz** spell.
-- **Web Trap**: fires slow bouncing homing webs that explode into AoE on expiry, so you can't
-  stand still anywhere.
+- **Acid Spray**: `ShotgunPattern` bursts while she `TimedChase`s toward you. The
+  sweeping coverage forces you to rotate around her.
+- **Spawn Swarm**: summons her own larvae — fragile fast-shooting brood — plus drones,
+  and turns invulnerable until they clear; the drones' orbiting escorts fill the room.
+  Demonstrates the **Bzzz** spell.
+- **Web Trap**: fires slow bouncing homing webs that explode into AoE on expiry, so you
+  can't stand still anywhere.
 - **Rest**: hovers chittering. Your burn window.
 
-**Art:** a massive hornet queen, striped ochre/black thorax, big flat translucent wings, a
-compound-eye band (boss sheet).
+**Art:** a massive hornet queen, striped ochre/black thorax, big flat translucent wings,
+a compound-eye band (boss sheet).
 
 | Stat | |
 |---|---|
@@ -898,8 +1171,8 @@ compound-eye band (boss sheet).
 | Speed | fast during Acid Spray; hovers otherwise |
 | Detection | long |
 | Attack | acid shotgun / swarm / bouncing web traps |
-| Casts | Blam, Bzzz (summon), Snipe (web traps)  |
-| Drops | **Bzzz** |
+| Casts | Blam, Bzzz (brood), Snipe (web traps) |
+| Drops | **Bzzz** (t3) |
 
 **Notes:** at critical HP Rest drops out and she adds a room-wide exploding `RingPattern`
 (Desperation Swarm) behind a long wing-vibration telegraph.
@@ -919,32 +1192,258 @@ stateDiagram-v2
     Pattern --> Idle : lost
 ```
 
+**Fungal deepwood** — the wood, rotting: a turf war where they paint the floor and you
+contest it. The finale sub-biome: three new mechanics (spore clouds, split on death, the
+drain leech), everything else recombined from the other three.
+
+### sporespitter *(fungal)*
+
+Rooted lobber, introducing **lingering spore clouds**. It arcs spore blobs at you on a
+slow cadence, and every burst leaves a cloud that hangs there ticking damage — a miss
+still costs you floor. One sporespitter is a zoning puzzle; two facing each other own the
+room between them.
+
+**Art:** a bent mushroom with a spout-shaped cap, pale stalk and sickly green gills; a
+cheek-puff frame on the spit.
+
+| Stat | |
+|---|---|
+| HP | med |
+| Speed | stationary |
+| Detection | med |
+| Attack | lobbed blob → lingering DoT cloud, low tick dmg, slow cadence |
+| Casts | Pew, Fwoosh (the cloud) |
+| Drops | **Fwoosh** (t2), **Pew** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Spit : sees player
+    Spit --> Idle : lost sight
+```
+
+### leech *(fungal)*
+
+Introduces the **drain leech**. A slow slug that creeps in and latches a drain beam:
+while it holds, you bleed and it heals the same amount. The beam breaks on range or line
+of sight, so the fight is about geometry — put a trunk between you, or kill it faster
+than it drinks. In a mixed room it quietly undoes all your damage if ignored.
+
+**Art:** a glossy umber slug that pulses brighter while latched; the beam is a dotted
+line of drips flowing the wrong way.
+
+| Stat | |
+|---|---|
+| HP | med |
+| Speed | slow |
+| Detection | med |
+| Attack | latch drain beam, low dps, self-heals for the same |
+| Casts | Slurp |
+| Drops | **Slurp** (t2) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Latch : in range
+    Latch --> Chase : beam broken
+    Chase --> Idle : lost
+```
+
+### bloatcap *(fungal)*
+
+Introduces **split on death**, and reuses half the biome doing it. It hides among the
+real mushroom scenery (the stalker's trick), waddles at you when you get close, and pops
+when it dies (the deadwood's trick): one spore cloud plus two or three mycelings —
+fist-sized copies that sprint and pop in turn into smaller clouds. Killing it point-blank
+is a mistake; killing it at range is three more kills.
+
+**Art:** a fat button mushroom, off-white cap with rot spots and stubby feet; mycelings
+are the same sprite at half size.
+
+| Stat | |
+|---|---|
+| HP | med |
+| Speed | slow (waddling chase) |
+| Detection | short probe |
+| Attack | death-pop cloud + myceling brood |
+| Casts | Oop (the pop) |
+| Drops | **Oop** (t2), **Heal** (t2) |
+
+**Notes:** mycelings are its spawn, not a roster entry; they carry no drops.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Chase : player close
+    Chase --> Disguise : lost
+    Chase --> Pop : dies
+```
+
+### elder leech *(fungal, rare)*
+
+Leech variant: the beam is gone, replaced by a drain aura with nothing to break.
+Everything near it — you, your minions — feeds it. It creeps forward tanking through its
+own healing, and the only answers are range or overwhelming burst.
+
+**Art:** the leech sprite grown long and pale, ringed by a faint spore shimmer.
+
+| Stat | |
+|---|---|
+| HP | high |
+| Speed | slow |
+| Detection | med |
+| Attack | drain aura, low dps in a radius, self-heals per target |
+| Casts | Slurp |
+| Drops | **Slurp** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Creep : sees player
+    Creep --> Idle : lost
+```
+
+### rot golem *(fungal, rare)*
+
+Moss golem variant, mold-eaten: everywhere it lumbers it leaves a trail of spore cloud,
+so its slow chase quietly redraws the room. Kite it in circles and you fence yourself in;
+fight it where you can afford to give up ground.
+
+**Art:** the moss golem recoloured to rot: pale fungal white over sagging green, gills
+sprouting from the shoulders.
+
+| Stat | |
+|---|---|
+| HP | very high |
+| Speed | slow |
+| Detection | long |
+| Attack | `RingPattern`, med dmg + a lingering cloud trail |
+| Casts | Ring, Fwoosh (the trail) |
+| Drops | **Nope** (t3), **Fwoosh** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Shell : in range
+    Shell --> Ring : shell drops
+    Ring --> Chase : out of range
+    Chase --> Idle : lost sight
+```
+
+### creeper mold *(fungal, rare)*
+
+Longleg variant gone moldy: the wall crawl and the spore trail combined. It circles the
+room's edges painting them with rot, squeezing the fight toward the middle, and puffs
+short-range spores at you if you press it. The safe zone shrinks the longer it lives.
+
+**Art:** the longleg sprite half-swallowed by pale mold, trailing spore flecks.
+
+| Stat | |
+|---|---|
+| HP | med |
+| Speed | slow (wall-crawling) |
+| Detection | med |
+| Attack | short `ShotgunPattern` spore puff, low dmg + the wall cloud trail |
+| Casts | Blam, Fwoosh (the trail) |
+| Drops | **Fwoosh** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Crawl
+    Crawl --> Circle : sees player
+    Circle --> Puff : player close
+    Puff --> Circle : repelled
+    Circle --> Crawl : lost
+```
+
+### rotmaw *(boss, fungal)*
+
+The fungal capstone: a vast split-capped maw on a `PatternPicker`, and the biome's
+recombination exam.
+
+- **Spore Carpet**: sweeps lanes of lingering cloud across the arena, shrinking the clean
+  floor each pass.
+- **Brood**: burps up a wave of mycelings that sprint and pop.
+- **Drain**: latches the leech beam wide and heals off everything it holds — break line
+  of sight or lose the damage race. Demonstrates **Slurp**.
+- **Burrow**: dives underground (the mole's trick) and resurfaces across the room,
+  cutting your positioning out from under you between patterns.
+
+At low HP it **splits into two half-HP maws**, each running a reduced pool (carpet +
+brood only) — the desperation swaps the drain out rather than layering more on top.
+
+**Art:** a huge split-capped fungus with a toothy maw between the halves, pale flesh and
+rot-green gills (boss sheet).
+
+| Stat | |
+|---|---|
+| HP | very high (boss) |
+| Speed | stationary mid-pattern; submerged dashes between |
+| Detection | long |
+| Attack | spore lanes / myceling waves / drain beam |
+| Casts | Slurp, Fwoosh, brood |
+| Drops | **Slurp** (t3), **Fwoosh** (t3) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Pattern : sees player
+    Pattern --> Carpet : roll
+    Pattern --> Brood : roll
+    Pattern --> Drain : roll
+    Pattern --> Burrow : roll
+    Carpet --> Pattern
+    Brood --> Pattern : cleared
+    Drain --> Pattern : beam broken
+    Burrow --> Pattern : resurfaced
+    Pattern --> Split : low HP
+    Split --> Pattern : as two maws
+    Pattern --> Idle : lost
+```
+
 ### Deepwood drops
 
-Each enemy drops one spell, at tier 2; the bosses drop their signature. Between the roster the
-deepwood covers a full tier-2 kit.
+Commons drop T2 — generic and signature both — rares guarantee T3, bosses drop their T3
+signatures. Between the roster the deepwood covers a full tier-2 kit and seeds the
+tier-3 one.
 
 | Enemy | Drops |
 |---|---|
-| thornback | **Blam** (t2) |
-| owl | **Bwoom** (t2) |
-| grimling | **Pew** (t2), **Halp** (t2) |
-| mosshulk | **Blam** (t2), **Nope** (t2) |
-| stalker | **Ploop** (t2) |
+| moth *(shared)* | **Pew** (t2), **Heal** (t2) |
+| stalker *(shared)* | **Pew** (t2), **Ploop** (t2) |
+| grimling *(shared)* | **Pew** (t2), **Halp** (t2) |
+| moss golem *(shared)* | **Ring** (t2), **Nope** (t2) |
+| snake *(shared)* | **Zoing** (t2) |
+| thornback | **ChargeDash** (t2), **Blam** (t2) |
+| owl | **Bwoom** (t2), **Pew** (t2) |
+| mole | **Ring** (t2) |
+| grimlord *(rare)* | **Blam** (t3), **Ring** (t3) |
+| razorback *(rare)* | **ChargeDash** (t3) |
+| great owl *(rare)* | **Bwoom** (t3) |
+| gnarlking *(boss)* | **Thwomp** (t3), **Halp** (t3) |
 | bramble stalker | **Ring** (t2) |
-| shade | **Blink** (t2) |
-| mirror sprite | **Shing** (t2) |
-| snake | **Zoing** (t2) |
-| wasp | **Bzzz** (t2) |
-| longleg | **Snipe** (t2)  |
-| beetle | **Ring** (t2) |
-| grimlord *(rare)* | **Blam** (t2), **Ring** (t2) |
-| elder stalker *(rare)* | **Fireball** (t2) |
-| weaver *(rare)* | **Zoing** (t2) |
-| drone *(rare)* | **Halo** (t2) |
-| gnarlking *(boss)* | **Thwomp**, **Halp** |
-| mother tree *(boss)* | **Ploop** |
-| hive queen *(boss)* | **Bzzz** |
+| shade | **Blink** (t2), **Pew** (t2) |
+| deadwood | **Oop** (t2) |
+| elder stalker *(rare)* | **Fireball** (t3), **Blam** (t3) |
+| umbra *(rare)* | **Blink** (t3) |
+| adder *(rare)* | **Zoing** (t3) |
+| mother tree *(boss)* | **Ploop** (t3), **Blam** (t3) |
+| longleg | **Snipe** (t2), **Ring** (t2) |
+| beetle | **Ring** (t2), **Pew** (t2) |
+| ticktick | **Oop** (t2) |
+| weaver *(rare)* | **Zoing** (t3), **Blam** (t3) |
+| goliath *(rare)* | **Ring** (t3), **Nope** (t3) |
+| drone *(rare)* | **Halo** (t3) |
+| hive queen *(boss)* | **Bzzz** (t3) |
+| sporespitter | **Fwoosh** (t2), **Pew** (t2) |
+| leech | **Slurp** (t2) |
+| bloatcap | **Oop** (t2), **Heal** (t2) |
+| elder leech *(rare)* | **Slurp** (t3) |
+| rot golem *(rare)* | **Nope** (t3), **Fwoosh** (t3) |
+| creeper mold *(rare)* | **Fwoosh** (t3) |
+| rotmaw *(boss)* | **Slurp** (t3), **Fwoosh** (t3) |
 
 
 ## other ideas

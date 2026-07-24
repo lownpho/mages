@@ -91,31 +91,67 @@ Drops: snipe T1, Ring T2, Jimmy T2.
 
 # ideas
 
-## Deepwood (T2)
+## Deepwood (T3)
 
 The second biome, tuned to pressure long-range, squishy builds and push the player into close
-quarters. The payoff is a full T2 set, covered between the rare enemies
-and the three bosses. Its rooms are placed by tier like the Glade, split across three
-sub-biomes: animal, mimic, and insect.
+quarters. Enemies have much more health and hit harder. Four sub-biomes in encounter order —
+animal, mimic, insect, fungal — built over a shared pool of five deepwood natives that appears
+in all four. Each sub-biome adds three commons, three rares (almost all variants of another
+enemy) and its boss: 12 per sub-biome. Commons drop T2, rares guarantee T3, bosses drop their
+T3 signatures.
+
+Shared pool: moth, stalker, grimling, moss golem, snake.
+
+Each sub-biome introduces at most three new mechanics; later ones reuse and combine earlier
+ones (ledger in enemies.md). Spells introduced: Bwoom, ChargeDash, Thwomp, Halp, Blink, Oop,
+Ploop, Zoing, Halo, Slurp, Fwoosh. Reserved for future T3 biomes: Kaboom, Krak, Brrr, Clang,
+Chomp, Piercing Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
 
 ### Animal deepwood
 
-Roster: thornback, owl, grimling, mosshulk, grimlord *(rare)*, gnarlking *(boss)*.
+Beasts that punish standing still: introduces the charge-dash and the burrow.
 
-Drops:
--
+Roster: thornback, owl, mole, grimlord *(rare)*, razorback *(rare)*, great owl *(rare)*,
+gnarlking *(boss)*.
+
+Drops: ChargeDash T2, Bwoom T2, Thwomp T3, Halp T3.
 
 ### Mimic deepwood
 
-Roster: stalker, bramble stalker, shade, mirror sprite, snake, elder stalker *(rare)*, mother
-tree *(boss)*.
+Props with eyes: the disguise escalates, bursts relocate, and a log is a bomb. Introduces the
+blink and self-detonation.
+
+Roster: bramble stalker, shade, deadwood, elder stalker *(rare)*, umbra *(rare)*, adder
+*(rare)*, mother tree *(boss)*.
+
+Drops: Blink T2, Oop T2, Ploop T3, Fireball T3.
 
 ### Insect deepwood
 
-Roster: wasp, longleg, beetle, weaver *(rare)*, drone *(rare)*, hive queen *(boss)*.
+Swarms and crawlers; the walls stop being safe. Introduces the wall crawl and the bullet
+escort; detonation goes mobile.
+
+Roster: longleg, beetle, ticktick, weaver *(rare)*, goliath *(rare)*, drone *(rare)*, hive
+queen *(boss)*.
+
+Drops: Snipe T2, Oop T2, Zoing T3, Halo T3, Bzzz T3.
+
+### Fungal deepwood
+
+The wood, rotting: they paint the floor, you contest it. Introduces spore clouds, split on
+death, and the drain leech; recombines everything else.
+
+Roster: sporespitter, leech, bloatcap, elder leech *(rare)*, rot golem *(rare)*, creeper mold
+*(rare)*, rotmaw *(boss)*.
+
+Drops: Fwoosh T2, Slurp T2, Slurp T3, Nope T3.
 
 ### Rooms
 
+*(TBD — follow the glade recipe per sub-biome: single-mechanic showcases early, testing later,
+mixed groups by depth, three rare rooms, a boss room, and a gate room to the next biome.)*
 
 ### Deepwood drops
+
+The full per-enemy table lives in the enemies.md ideas section.
 
