@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://bh3vd8yqx2ns5"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://c4sfcwn5016cw" path="res://characters/player/spells/snipe/snipe2.tres" id="3_snipe"]
+[ext_resource type="Resource" uid="uid://beq6ob6afbo20" path="res://characters/player/spells/pew/pew2.tres" id="4_pew"]
+[ext_resource type="Texture2D" path="res://characters/enemies/needle_moth/needle_moth.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_snipe"]
+script = ExtResource("2_drop")
+item = ExtResource("3_snipe")
+chance = 0.05
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_pew"]
+script = ExtResource("2_drop")
+item = ExtResource("4_pew")
+chance = 0.05
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Needle Moth"
+icon = SubResource("AtlasTexture_icon")
+max_health = 55
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_snipe"), SubResource("Drop_pew")])

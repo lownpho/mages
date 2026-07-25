@@ -15,6 +15,11 @@ class_name Approach
 @export var chase_probe_path: NodePath
 ## Where losing the target lands. Falls back to done_state when empty.
 @export var lost_state: String = ""
+## Seconds of unbroken no-LOS before the gate gives up. 0 drops the chase the frame sight
+## breaks, which is right for a creature that only hunts what it can see; a pursuit that
+## follows a commitment (the stalker dropping its disguise — re-hiding because a trunk slid
+## between them for a frame reads as a bug) buys itself a moment to keep looking.
+@export var lost_grace: float = 0.0
 ## Seconds before the pursuit gives up. 0 = no clock.
 @export var duration: float = 0.0
 ## Where the clock lands. Falls back to lost_state when empty.
@@ -33,6 +38,7 @@ class_name Approach
 var _chase: RayCast2D
 var _attack: RayCast2D
 var _timer: Timer
+var _lost_time: float = 0.0
 var _weave_time: float = 0.0
 var _weave_phase: float = 0.0
 var _weave_retarget: float = 0.0
@@ -49,6 +55,7 @@ func _ready() -> void:
 func enter() -> void:
 	_weave_time = 0.0
 	_weave_retarget = 0.0
+	_lost_time = 0.0
 	if _chase:
 		_chase.enabled = true
 	if _attack:
@@ -74,16 +81,23 @@ func physics_update(delta: float) -> void:
 	var to_player := player.global_position - creature.global_position
 	creature.face(to_player.x)
 
-	if _attack:
-		_attack.look_at(player.global_position)
-		if creature.probe_sees(_attack):
-			go_to(attack_state)
-			return
+	# look_for_target, not a bare look_at + probe_sees: a raycast reports the aim it had at
+	# the START of the physics step, so reading it directly answers for last frame's aim —
+	# and on the entry frame, for a probe that was only just enabled, it answers "nothing
+	# there" no matter where the target is. That false negative bounced every LOS-gated
+	# chase straight back out to lost_state for one frame; harmless when that's an idle,
+	# a reveal/re-hide strobe when it isn't.
+	if _attack and creature.look_for_target(_attack):
+		go_to(attack_state)
+		return
 	if _chase:
-		_chase.look_at(player.global_position)
-		if not creature.probe_sees(_chase):
-			go_to(_lost())
-			return
+		if creature.look_for_target(_chase):
+			_lost_time = 0.0
+		else:
+			_lost_time += delta
+			if _lost_time >= lost_grace:
+				go_to(_lost())
+				return
 
 	creature.velocity = _heading(to_player, delta) * speed
 	creature.move_and_slide()
