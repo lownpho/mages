@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://ck2wq7mvxb8dp"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="4_blam"]
+[ext_resource type="Texture2D" uid="uid://cx1em0gs5yc5n" path="res://characters/enemies/stalker/stalker.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_blam"]
+script = ExtResource("2_drop")
+item = ExtResource("4_blam")
+chance = 0.05
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 16, 8, 16)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Stalker"
+icon = SubResource("AtlasTexture_icon")
+max_health = 150
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_blam")])

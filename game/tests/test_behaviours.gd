@@ -12,6 +12,19 @@ const CASES := {
 	"mandraker": {"scene": "res://characters/enemies/mandraker/mandraker.tscn", "min_bullets": 1, "min_changes": 4},
 	"fae": {"scene": "res://characters/enemies/fae/fae.tscn", "min_bullets": 1, "min_changes": 6},
 	"thornmess": {"scene": "res://characters/enemies/thornmess/thornmess.tscn", "min_bullets": 1, "min_changes": 6},
+	# The shared deepwood pool. Each one leans on a loop the glade roster never exercises:
+	# the moth's clocked retreat (poke -> flee -> re-close), the stalker's disguise->reveal
+	# edge, the snake's cornered volley, and the moss golem's two-spell Nope->Ring chain
+	# through a single caster — the last of which deadlocks outright if a creature's channel
+	# never releases, so a low state-change count here is the regression that matters.
+	"moth": {"scene": "res://characters/enemies/moth/moth.tscn", "min_bullets": 2, "min_changes": 5},
+	"stalker": {"scene": "res://characters/enemies/stalker/stalker.tscn", "min_bullets": 1, "min_changes": 4},
+	"grimling": {"scene": "res://characters/enemies/grimling/grimling.tscn", "min_bullets": 2, "min_changes": 4},
+	"moss_golem": {"scene": "res://characters/enemies/moss_golem/moss_golem.tscn", "min_bullets": 8, "min_changes": 5},
+	# No bullets expected: like the viper, the snake only fires once cornered, and this
+	# harness is open space with nothing to back into. Its volley is covered against real
+	# walls in test_deepwood; here we only assert the flee loop keeps handing off.
+	"snake": {"scene": "res://characters/enemies/snake/snake.tscn", "min_bullets": 0, "min_changes": 3},
 }
 
 var _bullets := 0
