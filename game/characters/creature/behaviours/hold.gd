@@ -25,6 +25,11 @@ class_name Hold
 ## Taking a hit counts as spotting the attacker — for rooted defenders that should snap
 ## into their guard even when the blow lands from outside the probe's cone.
 @export var alert_on_hit: bool = false
+## Hysteresis (px) the `lost_state` check reaches past the probe, so a target loitering on the
+## probe's edge can't strobe the beat between holding and giving up. Cast.exit_margin for the
+## recovery side: with both at 0 the arrive and leave tests share one threshold, and a creature
+## whose spell is still cooling ping-pongs recover→chase→attack on a two-frame cycle.
+@export var lost_margin: float = 0.0
 
 @export_group("Armour")
 ## Incoming damage while held; <1 armours. Restored on exit so it can't leak past the beat.
@@ -33,12 +38,24 @@ class_name Hold
 var _timer: Timer
 var _elapsed: bool = false
 var _probe: RayCast2D
+var _lost_probe: RayCast2D
 
 func _ready() -> void:
 	super()
 	_timer = creature.make_timer(func() -> void: _elapsed = true)
-	if probe_path != NodePath():
-		_probe = get_node(probe_path)
+	if probe_path == NodePath():
+		return
+	_probe = get_node(probe_path)
+	if lost_margin <= 0.0 or lost_state == "":
+		return
+	# Child of the probe so it shares its origin; only the length differs. look_for_target
+	# aims it itself, so it needs nothing from the parent.
+	_lost_probe = RayCast2D.new()
+	_lost_probe.collision_mask = _probe.collision_mask
+	_lost_probe.target_position = Vector2(_probe.target_position.length() + lost_margin, 0)
+	_lost_probe.hit_from_inside = true
+	_lost_probe.enabled = false
+	_probe.add_child(_lost_probe)
 
 func enter() -> void:
 	creature.velocity = Vector2.ZERO
@@ -47,6 +64,8 @@ func enter() -> void:
 		creature.incoming_damage_scale = damage_scale
 	if _probe:
 		_probe.enabled = true
+	if _lost_probe:
+		_lost_probe.enabled = true
 	if alert_on_hit and not creature.hurtbox.hurt.is_connected(_on_hit):
 		creature.hurtbox.hurt.connect(_on_hit)
 	# Timer.start(0) keeps the previous wait_time instead of expiring at once, so a
@@ -62,16 +81,19 @@ func exit() -> void:
 		creature.incoming_damage_scale = 1.0
 	if _probe:
 		_probe.enabled = false
+	if _lost_probe:
+		_lost_probe.enabled = false
 	if creature.hurtbox.hurt.is_connected(_on_hit):
 		creature.hurtbox.hurt.disconnect(_on_hit)
 
 func physics_update(delta: float) -> void:
 	if _probe and (seen_state != "" or lost_state != ""):
-		var seen := creature.look_for_target(_probe)
-		if seen and seen_state != "":
+		if seen_state != "" and creature.look_for_target(_probe):
 			go_to(seen_state)
 			return
-		if not seen and lost_state != "":
+		# Arriving is tested against the probe, giving up against the probe plus lost_margin, so
+		# a target parked between the two rings does neither and the beat simply runs on.
+		if lost_state != "" and not creature.look_for_target(_lost_probe if _lost_probe else _probe):
 			go_to(lost_state)
 			return
 	_tick(delta)

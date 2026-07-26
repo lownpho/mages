@@ -29,6 +29,11 @@ class_name Approach
 ## Range for the attack this pursuit is feeding. Unset = this beat never arrives.
 @export var attack_probe_path: NodePath
 @export var attack_state: String = ""
+## Where arriving lands while `attack_state` is still cooling — the recovery Hold, so the
+## creature plants at its range and waits the cooldown out. Empty keeps closing, which is
+## what a melee pursuit wants; for anything that fights from a distance, leaving it empty
+## means every re-approach walks a full cooldown's worth of pixels into the target's face.
+@export var wait_state: String = ""
 
 @export_group("Weave")
 ## Sideways sway relative to forward speed. 0 = a straight line.
@@ -87,9 +92,18 @@ func physics_update(delta: float) -> void:
 	# there" no matter where the target is. That false negative bounced every LOS-gated
 	# chase straight back out to lost_state for one frame; harmless when that's an idle,
 	# a reveal/re-hide strobe when it isn't.
+	#
+	# Arriving is a question about distance, firing a question about the cooldown; answering
+	# both with one gate is what walked a ranged creature into the target's face — it reached
+	# its range mid-cooldown, the gate said "not yet", and the pursuit simply kept going. So
+	# arrival ends the pursuit either way, parking at wait_state when the attack can't fire.
 	if _attack and creature.look_for_target(_attack):
-		go_to(attack_state)
-		return
+		if _attack_ready():
+			go_to(attack_state)
+			return
+		if wait_state != "":
+			go_to(wait_state)
+			return
 	if _chase:
 		if creature.look_for_target(_chase):
 			_lost_time = 0.0
@@ -115,6 +129,14 @@ func _heading(to_player: Vector2, delta: float) -> Vector2:
 		_weave_phase = randf_range(-PI, PI)
 	var sway := sin(_weave_time * weave_frequency + _weave_phase) * weave_amplitude
 	return forward + Vector2(-forward.y, forward.x) * sway
+
+# Arriving asks the same eligibility question a Hold asks before handing off. Without it a
+# chase that reaches range while its spell is still cooling drops into a Cast that can't cast:
+# the beat plays a full attack animation with no shot in it and bounces straight back out, so
+# a long cooldown reads as a creature strobing between running and swinging at nothing.
+func _attack_ready() -> bool:
+	var state: State = creature.fsm.states.get(attack_state)
+	return not (state is Behaviour) or state.can_run()
 
 # Losing the target and running out of clock are both "the pursuit failed"; a beat only
 # needs to name the second destination when it differs.
