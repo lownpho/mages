@@ -31,10 +31,6 @@ class_name Hold
 ## whose spell is still cooling ping-pongs recover→chase→attack on a two-frame cycle.
 @export var lost_margin: float = 0.0
 
-@export_group("Armour")
-## Incoming damage while held; <1 armours. Restored on exit so it can't leak past the beat.
-@export var damage_scale: float = 1.0
-
 var _timer: Timer
 var _elapsed: bool = false
 var _probe: RayCast2D
@@ -60,8 +56,6 @@ func _ready() -> void:
 func enter() -> void:
 	creature.velocity = Vector2.ZERO
 	creature.play(anim)
-	if damage_scale != 1.0:
-		creature.incoming_damage_scale = damage_scale
 	if _probe:
 		_probe.enabled = true
 	if _lost_probe:
@@ -77,8 +71,6 @@ func enter() -> void:
 
 func exit() -> void:
 	_timer.stop()
-	if damage_scale != 1.0:
-		creature.incoming_damage_scale = 1.0
 	if _probe:
 		_probe.enabled = false
 	if _lost_probe:
@@ -112,5 +104,8 @@ func _next_ready() -> bool:
 	return not (state is Behaviour) or state.can_run()
 
 func _on_hit(_damage: int, _source: Node) -> void:
-	if seen_state != "":
+	# A dead creature doesn't spot its attacker. The killing blow lands on this same signal,
+	# and Creature._on_hurt runs first — so without this the hit that started a death throe
+	# would immediately drag the FSM back out of it and the parting shot would never fire.
+	if seen_state != "" and not creature.is_dying():
 		go_to(seen_state)

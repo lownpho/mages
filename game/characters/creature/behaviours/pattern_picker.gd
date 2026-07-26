@@ -18,6 +18,21 @@ func enter() -> void:
 	creature.velocity = Vector2.ZERO
 	call_deferred("_dispatch")
 
+# A dispatcher is ready exactly when it has something to dispatch — so a Hold pointed here
+# (a boss's rest, a chaser's recovery beat) waits the pool's cooldowns out, the same way one
+# pointed straight at a Cast waits out that spell's. Without it, a recovery whose timer has
+# lapsed bounces recovery -> pick -> a beat that can't fire -> recovery every frame.
+# Nothing weighted at all means there is nothing to wait for.
+func _ready_to_run() -> bool:
+	var weighted := false
+	for sibling in get_parent().get_children():
+		if sibling == self or not (sibling is Behaviour) or sibling.pattern_weight <= 0.0:
+			continue
+		weighted = true
+		if sibling.can_run():
+			return true
+	return not weighted
+
 func _dispatch() -> void:
 	if probe_path != NodePath():
 		var probe: RayCast2D = get_node(probe_path)

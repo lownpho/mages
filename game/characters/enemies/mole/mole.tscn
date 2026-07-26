@@ -1,0 +1,202 @@
+[gd_scene format=3 uid="uid://bigvi0181gly3"]
+
+[ext_resource type="Resource" uid="uid://bfehlx3d3feqq" path="res://characters/enemies/mole/mole_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://bg20c6ep2h0qe" path="res://characters/enemies/mole/mole.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" uid="uid://bfeicl3x5feqq" path="res://characters/enemies/mole/mole_erupt.tres" id="6_spell"]
+[ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_mole"]
+radius = 3.5
+
+[sub_resource type="AtlasTexture" id="AT_burrow0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_burrow1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_burrow2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_dive0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_dive1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_dive2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_erupt0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_erupt1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_erupt2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mole"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_burrow0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow2")
+}],
+"loop": 1,
+"name": &"burrow",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_dive0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_dive1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_dive2")
+}],
+"loop": 0,
+"name": &"dive",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_erupt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_erupt1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_erupt2")
+}],
+"loop": 0,
+"name": &"erupt",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 4.0
+}]
+
+[node name="Mole" type="CharacterBody2D" unique_id=261051171 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1780957339]
+shape = SubResource("CircleShape2D_mole")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1886733146]
+sprite_frames = SubResource("SpriteFrames_mole")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." unique_id=923470869 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 3.5
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1651143959]
+target_position = Vector2(88, 0)
+collision_mask = 17
+
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=285717851]
+target_position = Vector2(120, 0)
+collision_mask = 17
+
+[node name="EruptProbe" type="RayCast2D" parent="." unique_id=886802043]
+target_position = Vector2(26, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." unique_id=135953117 instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." unique_id=638746125 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=679158705]
+script = ExtResource("b_hold")
+min_time = 1.0
+max_time = 2.4
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Dive"
+alert_on_hit = true
+
+[node name="Dive" type="Node" parent="FSM" unique_id=1876991211]
+script = ExtResource("b_hold")
+anim = "dive"
+min_time = 0.5
+max_time = 0.5
+next_state = "Burrow"
+
+[node name="Burrow" type="Node" parent="FSM" unique_id=872724865]
+script = ExtResource("b_approach")
+speed = 30.0
+anim = "burrow"
+chase_probe_path = NodePath("../../ChaseProbe")
+lost_state = "Surface"
+lost_grace = 1.5
+attack_probe_path = NodePath("../../EruptProbe")
+attack_state = "Erupt"
+damage_scale = 0.0
+
+[node name="Erupt" type="Node" parent="FSM" unique_id=1192835252]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_spell")
+done_state = "Surface"
+windup_anim = "erupt"
+attack_anim = "idle"
+
+[node name="Surface" type="Node" parent="FSM" unique_id=2021593046]
+script = ExtResource("b_hold")
+min_time = 1.1
+max_time = 1.5
+next_state = "Dive"
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Idle"
+lost_margin = 24.0
