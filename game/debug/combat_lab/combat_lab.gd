@@ -6,15 +6,21 @@ extends Node2D
 ##   Tab          toggle the lab panel (the game pauses while it is open)
 ##   panel open   LMB on the arena places the selected enemy brush, RMB removes the
 ##                nearest enemy; item icons: LMB equips, RMB drops as a real pickup
+##   walls tab    with "wall brush" on, LMB/RMB instead paint/erase real collidable wall
+##                tiles (drag to stroke), plus one-click arena presets
 ##   F3           damage overlay (dealt/taken tallies), ` console (give/spawn/tp/...)
 ##
 ## Cheats: god mode, stat overrides (applied as a player buff), heal.
 ## "Kill all" runs real deaths (drops + bestiary count!); "Clear" silently despawns.
 ## "Reload .tres" re-reads every slotted item from disk — tune stats in a text editor
-## and click it, no restart. Panel/cheat state persists across runs (user://debug_state.cfg).
+## and click it, no restart. Panel/cheat state and the equipped loadout persist across runs
+## (user://debug_state.cfg).
 
 const PANEL_W := 118.0
 const FLOOR_HALF_TILES := 40          ## generated floor half-extent, in tiles
+## Wall-preset half-extent: fits the 320×180 viewport (40×22 tiles) so a whole preset arena is
+## on screen at once. Painting by hand is unbounded.
+const ARENA_HALF_TILES := Vector2i(18, 10)
 const DUMMY_ID := &"dummy"
 const LabDummy := preload("res://debug/combat_lab/lab_dummy.gd")
 const PLACEHOLDER_SCENE := preload("res://debug/placeholder/placeholder.tscn")
@@ -23,6 +29,7 @@ const PLACEHOLDER_SCENE := preload("res://debug/placeholder/placeholder.tscn")
 @onready var _enemies: Node2D = $Entities/Enemies
 @onready var _pickups: Node2D = $Pickups
 @onready var _floor: TileMapLayer = $Floor
+@onready var _walls: TileMapLayer = $Entities/Walls
 @onready var _lab_ui: CanvasLayer = $LabUI
 
 var _panel: PanelContainer
@@ -32,6 +39,10 @@ var _brush: StringName = DUMMY_ID
 var _brush_buttons: Dictionary = {}    ## enemy id -> Button, for highlight
 var _freeze := false
 var _god := false
+var _wall_brush := false
+var _wall_brush_size := 1
+var _wall_source_id := -1
+var _wall_coords: Array[Vector2i] = []   ## paintable atlas tiles of the wall tileset
 var _dummy_hp := 0
 var _dummy_def := 0
 var _cheat_buff := ItemResource.new()  ## stat overrides ride the player's buff pipeline
@@ -40,7 +51,13 @@ var _cheat_buff := ItemResource.new()  ## stat overrides ride the player's buff 
 func _ready() -> void:
 	_player.debug_never_die = true
 	_build_floor()
+	_build_wall_palette()
 	_restore_state()
+	_restore_walls()
+	_restore_loadout()
+	# Connected after the restore so re-slotting the stored kit doesn't rewrite the file.
+	GlobalEvent.slot_updated.connect(func(_slot): _save_loadout())
+	GlobalEvent.spell_page_changed.connect(func(_page): _save_loadout())
 	_build_ui()
 	_apply_god()
 	_set_panel_open(false)
@@ -62,6 +79,9 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _panel.visible:
+		return
+	if _wall_brush:
+		_wall_input(event)
 		return
 	var mb := event as InputEventMouseButton
 	if mb == null or not mb.pressed:
@@ -113,6 +133,105 @@ static func _sum(arr: Array[float]) -> float:
 	for v in arr:
 		s += v
 	return s
+
+
+# --- Walls ------------------------------------------------------------------------------------
+#
+# The Walls layer carries the shipped glade tree tileset, so its per-tile physics polygons put
+# real Terrain collision in the arena: bullets ricochet/expire on it exactly as they do in a
+# generated room, and chasers path into its dead ends. The layer is PROCESS_MODE_ALWAYS in the
+# scene because painting happens while the panel has the tree paused.
+
+func _build_wall_palette() -> void:
+	var ts := _walls.tile_set
+	if ts == null or ts.get_source_count() == 0:
+		return
+	_wall_source_id = ts.get_source_id(0)
+	var src := ts.get_source(_wall_source_id) as TileSetAtlasSource
+	if src == null:
+		return
+	for i in src.get_tiles_count():
+		_wall_coords.append(src.get_tile_id(i))
+
+
+## LMB paints, RMB erases, and a held drag keeps stroking so an arena can be drawn in one pass.
+## Persisting is deferred to the button release — a save per motion event would hammer the file.
+func _wall_input(event: InputEvent) -> void:
+	var buttons := 0
+	var mb := event as InputEventMouseButton
+	var mm := event as InputEventMouseMotion
+	if mb != null:
+		if not mb.pressed:
+			_save_walls()
+			return
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			buttons = MOUSE_BUTTON_MASK_LEFT
+		elif mb.button_index == MOUSE_BUTTON_RIGHT:
+			buttons = MOUSE_BUTTON_MASK_RIGHT
+	elif mm != null:
+		buttons = mm.button_mask
+	else:
+		return
+	if buttons & MOUSE_BUTTON_MASK_LEFT:
+		_paint_walls(get_global_mouse_position(), true)
+	elif buttons & MOUSE_BUTTON_MASK_RIGHT:
+		_paint_walls(get_global_mouse_position(), false)
+
+
+func _paint_walls(at: Vector2, on: bool) -> void:
+	var centre := _walls.local_to_map(_walls.to_local(at))
+	var lo := -(_wall_brush_size - 1) / 2
+	for dy in range(lo, lo + _wall_brush_size):
+		for dx in range(lo, lo + _wall_brush_size):
+			_set_wall(centre + Vector2i(dx, dy), on)
+
+
+## Tile art is picked by a hash of the cell, so a repainted arena always looks the same.
+## Cells under the player are refused — a stray stroke must not brick the dev inside a tree.
+func _set_wall(cell: Vector2i, on: bool) -> void:
+	if not on:
+		_walls.erase_cell(cell)
+		return
+	if _wall_coords.is_empty():
+		return
+	var here := _walls.local_to_map(_walls.to_local(_player.global_position))
+	if absi(cell.x - here.x) <= 1 and absi(cell.y - here.y) <= 1:
+		return
+	_walls.set_cell(cell, _wall_source_id, _wall_coords[absi(hash(cell)) % _wall_coords.size()])
+
+
+## Presets are additive (box + pillars = a pillared arena); "clear walls" is the only reset.
+## Hollow rectangle filling the view — the enclosure ricochet counts need.
+func _preset_box() -> void:
+	for x in range(-ARENA_HALF_TILES.x, ARENA_HALF_TILES.x + 1):
+		_set_wall(Vector2i(x, -ARENA_HALF_TILES.y), true)
+		_set_wall(Vector2i(x, ARENA_HALF_TILES.y), true)
+	for y in range(-ARENA_HALF_TILES.y + 1, ARENA_HALF_TILES.y):
+		_set_wall(Vector2i(-ARENA_HALF_TILES.x, y), true)
+		_set_wall(Vector2i(ARENA_HALF_TILES.x, y), true)
+
+
+## Single-tile blockers on a 4-tile lattice: broken line of sight, homing snags, splash cover.
+func _preset_pillars() -> void:
+	for y in range(-8, 9, 4):
+		for x in range(-16, 17, 4):
+			_set_wall(Vector2i(x, y), true)
+
+
+## A 5-tile-tall lane across the arena — fire down it and watch a bouncer walk the walls.
+func _preset_corridor() -> void:
+	for x in range(-ARENA_HALF_TILES.x, ARENA_HALF_TILES.x + 1):
+		_set_wall(Vector2i(x, -3), true)
+		_set_wall(Vector2i(x, 3), true)
+
+
+## Three-sided alcove open to the west: back into it and a chaser has nowhere to circle.
+func _preset_pocket() -> void:
+	for y in range(-4, 5):
+		_set_wall(Vector2i(12, y), true)
+	for x in range(6, 12):
+		_set_wall(Vector2i(x, -4), true)
+		_set_wall(Vector2i(x, 4), true)
 
 
 # --- Enemy brush ---------------------------------------------------------------------------
@@ -211,10 +330,12 @@ func _build_ui() -> void:
 
 	_build_cheats_tab(_tab_page("cheats"))
 	_build_enemies_tab(_tab_page("enemies"))
+	_build_walls_tab(_tab_page("walls"))
 	_build_item_palette(_tab_page("items"))
 	_highlight_brush()
 
-	_tabs.current_tab = clampi(DebugState.get_value("combat_lab", "tab", 0), 0, 2)
+	_tabs.current_tab = clampi(DebugState.get_value("combat_lab", "tab", 0), 0,
+			_tabs.get_tab_count() - 1)
 
 
 ## Add one scrolling tab page to the TabContainer; its node name is the tab label.
@@ -277,6 +398,36 @@ func _build_enemies_tab(box: VBoxContainer) -> void:
 		_save_state())
 
 	_build_brush_list(box)
+
+
+func _build_walls_tab(box: VBoxContainer) -> void:
+	_header(box, "LMB paint, RMB erase")
+	_check(box, "wall brush", _wall_brush, func(on):
+		_wall_brush = on
+		_save_state())
+	var grid := GridContainer.new()
+	grid.columns = 2
+	box.add_child(grid)
+	_grid_spin(grid, "brush", _wall_brush_size, 1, 6, func(v):
+		_wall_brush_size = v
+		_save_state())
+
+	_header(box, "presets (additive)")
+	_button(box, "arena box", func():
+		_preset_box()
+		_save_walls())
+	_button(box, "pillars", func():
+		_preset_pillars()
+		_save_walls())
+	_button(box, "corridor", func():
+		_preset_corridor()
+		_save_walls())
+	_button(box, "corner pocket", func():
+		_preset_pocket()
+		_save_walls())
+	_button(box, "clear walls", func():
+		_walls.clear()
+		_save_walls())
 
 
 func _build_brush_list(box: VBoxContainer) -> void:
@@ -442,11 +593,64 @@ func _restore_state() -> void:
 	_dummy_hp = DebugState.get_value("combat_lab", "dummy_hp", 0)
 	_dummy_def = DebugState.get_value("combat_lab", "dummy_def", 0)
 	_brush = StringName(DebugState.get_value("combat_lab", "brush", String(DUMMY_ID)))
+	_wall_brush = DebugState.get_value("combat_lab", "wall_brush", false)
+	_wall_brush_size = DebugState.get_value("combat_lab", "wall_brush_size", 1)
 	var sk: int = DebugState.get_value("combat_lab", "cheat_skill", 0)
 	var sp: int = DebugState.get_value("combat_lab", "cheat_speed", 0)
 	var df: int = DebugState.get_value("combat_lab", "cheat_def", 0)
 	if sk != 0 or sp != 0 or df != 0:
 		_apply_cheat_stats(sk, sp, df)
+
+
+## The painted arena survives an F5 too, as a flat x,y cell list — the layout you built to chase
+## one ricochet bug is still there next run.
+func _restore_walls() -> void:
+	var flat: PackedInt32Array = DebugState.get_value("combat_lab", "walls", PackedInt32Array())
+	for i in range(0, flat.size() - 1, 2):
+		_set_wall(Vector2i(flat[i], flat[i + 1]), true)
+
+
+func _save_walls() -> void:
+	var flat := PackedInt32Array()
+	for cell in _walls.get_used_cells():
+		flat.append(cell.x)
+		flat.append(cell.y)
+	DebugState.set_value("combat_lab", "walls", flat)
+
+
+## The lab keeps its own loadout (spell slots + bag + active page), stored as .tres paths in
+## debug_state.cfg and re-slotted on entry — the kit you assembled to test something survives
+## an F5. Separate from the run save, so the player's save.cfg is never touched.
+func _restore_loadout() -> void:
+	for i in GlobalInventory.spell_slots.slots.size():
+		_restore_slot(GlobalInventory.spell_slots.at(i), "spell_%d" % i)
+	for i in GlobalInventory.bag_slots.slots.size():
+		_restore_slot(GlobalInventory.bag_slots.at(i), "bag_%d" % i)
+	GlobalInventory.active_spell_page = clampi(
+			DebugState.get_value("combat_lab", "spell_page", 0), 0, GlobalInventory.SPELL_PAGES - 1)
+	# The HUD read the page in its own _ready (before this node's) — re-announce it.
+	GlobalEvent.spell_page_changed.emit(GlobalInventory.active_spell_page)
+
+
+func _restore_slot(slot: GlobalInventory.Slot, key: String) -> void:
+	var path: String = DebugState.get_value("combat_lab", key, "")
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return
+	var item := load(path) as ItemResource
+	if item != null:
+		slot.set_item(item)
+
+
+func _save_loadout() -> void:
+	for i in GlobalInventory.spell_slots.slots.size():
+		_save_slot(GlobalInventory.spell_slots.at(i), "spell_%d" % i)
+	for i in GlobalInventory.bag_slots.slots.size():
+		_save_slot(GlobalInventory.bag_slots.at(i), "bag_%d" % i)
+	DebugState.set_value("combat_lab", "spell_page", GlobalInventory.active_spell_page)
+
+
+func _save_slot(slot: GlobalInventory.Slot, key: String) -> void:
+	DebugState.set_value("combat_lab", key, slot.item.resource_path if slot.item != null else "")
 
 
 func _save_state() -> void:
@@ -455,6 +659,8 @@ func _save_state() -> void:
 	DebugState.set_value("combat_lab", "dummy_hp", _dummy_hp)
 	DebugState.set_value("combat_lab", "dummy_def", _dummy_def)
 	DebugState.set_value("combat_lab", "brush", String(_brush))
+	DebugState.set_value("combat_lab", "wall_brush", _wall_brush)
+	DebugState.set_value("combat_lab", "wall_brush_size", _wall_brush_size)
 	DebugState.set_value("combat_lab", "cheat_skill", _cheat_buff.skill_modifier)
 	DebugState.set_value("combat_lab", "cheat_speed", _cheat_buff.speed_modifier)
 	DebugState.set_value("combat_lab", "cheat_def", _cheat_buff.defence_modifier)

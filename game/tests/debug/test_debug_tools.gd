@@ -76,16 +76,19 @@ func _test_console() -> void:
 
 
 func _test_combat_lab() -> void:
+	# The lab persists its loadout into the same user://debug_state.cfg the developer's own
+	# lab session uses — snapshot it so the test doesn't wipe their kit.
+	var stored := _snapshot_lab_loadout()
 	var lab: Node2D = load("res://debug/combat_lab/combat_lab.tscn").instantiate()
 	add_child(lab)
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_check(lab._panel != null, "lab panel built")
 	_check(lab._floor.get_used_cells().size() > 0, "lab floor generated")
-	lab._brush = &"wolf"
+	lab._brush = &"sproutling"
 	lab._spawn_brush(Vector2(100, 0))
 	await get_tree().process_frame
-	_check(lab._enemies.get_child_count() == 1, "brush spawned a wolf")
+	_check(lab._enemies.get_child_count() == 1, "brush spawned a sproutling")
 	lab._set_frozen(lab._enemies.get_child(0), true)
 	lab._kill_all(false)
 	await get_tree().process_frame
@@ -96,6 +99,25 @@ func _test_combat_lab() -> void:
 	await get_tree().process_frame
 	_check(lab._enemies.get_child_count() == 1 and "max_health" in lab._enemies.get_child(0),
 			"dummy spawned with health dial")
+	_check(lab._walls.tile_set.get_physics_layers_count() > 0,
+			"wall tileset carries collision (bullets/chasers see it)")
+	lab._walls.clear()
+	lab._wall_brush_size = 1
+	lab._preset_box()
+	_check(lab._walls.get_cell_source_id(Vector2i(0, -lab.ARENA_HALF_TILES.y)) != -1
+			and lab._walls.get_cell_source_id(Vector2i.ZERO) == -1,
+			"box preset walls the perimeter and leaves the interior open")
+	var walled := lab._walls.get_used_cells().size()
+	lab._paint_walls(Vector2(5, 5) * GameConstants.PX_PER_TILE, true)
+	_check(lab._walls.get_used_cells().size() == walled + 1, "wall brush painted one cell")
+	lab._paint_walls(Vector2(5, 5) * GameConstants.PX_PER_TILE, false)
+	_check(lab._walls.get_used_cells().size() == walled, "wall brush erased the cell")
+	lab._set_wall(Vector2i.ZERO, true)
+	_check(lab._walls.get_cell_source_id(Vector2i.ZERO) == -1,
+			"wall brush refuses to brick in the player")
+	lab._walls.clear()
+	lab._save_walls()
+
 	var pew := DebugContent.find_item("pew1")
 	lab._equip_item(pew)
 	var slotted := false
@@ -103,9 +125,37 @@ func _test_combat_lab() -> void:
 		if slot.item == pew:
 			slotted = true
 	_check(slotted, "palette click equipped the spell")
+	var persisted := false
+	for i in GlobalInventory.spell_slots.slots.size():
+		if DebugState.get_value("combat_lab", "spell_%d" % i, "") == pew.resource_path:
+			persisted = true
+	_check(persisted, "equipping wrote the loadout to DebugState")
 	GlobalInventory.reset()
 	lab.queue_free()
 	await get_tree().process_frame
+	_restore_lab_loadout(stored)
+
+
+## The lab state this test perturbs — the loadout slots ("spell_N"/"bag_N") and the painted
+## arena ("walls") — as key -> value.
+func _snapshot_lab_loadout() -> Dictionary:
+	var out: Dictionary = {}
+	for key in DebugState.keys("combat_lab"):
+		if _is_lab_session_key(key):
+			out[key] = DebugState.get_value("combat_lab", key)
+	return out
+
+
+func _restore_lab_loadout(stored: Dictionary) -> void:
+	for key in DebugState.keys("combat_lab"):
+		if _is_lab_session_key(key) and not stored.has(key):
+			DebugState.erase("combat_lab", key)
+	for key in stored:
+		DebugState.set_value("combat_lab", key, stored[key])
+
+
+static func _is_lab_session_key(key: String) -> bool:
+	return key.begins_with("spell_") or key.begins_with("bag_") or key == "walls"
 
 
 func _test_worldgen_debug() -> void:

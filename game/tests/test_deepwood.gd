@@ -1,0 +1,363 @@
+extends Node
+## The engine seams the shared deepwood pool added, which no glade content exercises:
+##   - BounceBehaviour: a wall hit reflects the bullet instead of expiring it, restarts its
+##     flight leg, and grows its damage — so Zoing is a ricochet, not a shot that dies on
+##     the first wall. Needs real terrain, so it's here rather than in test_bullet_spell.
+##   - Creature.damage_absorber: a creature casting Nope on itself soaks damage into the
+##     bubble's pool instead of its health, and the channel still releases — the moss golem
+##     would otherwise sit shielded forever with a caster that refuses every later cast.
+##   - The snake's cornered volley, which only fires with a wall at its back.
+##   - Halp's minion, whose FSM was ported from the retired behaviour library to
+##     Tether/Approach/Cast — nothing else loads that scene, so a mis-wired hand-off would
+##     ship as a squad that stands still.
+##   - Pack aggro (the grimlings): both triggers (a hit, and a plain sighting), the relay, the
+##     lost_grace window a called member needs to reach a fight it can't see yet, and the one
+##     group the three grimling variants share. None of it exists with fewer than several
+##     creatures at once.
+## Run: godot --headless --path game res://tests/test_deepwood.tscn
+
+const SNAKE := preload("res://characters/enemies/snake/snake.tscn")
+const GOLEM := preload("res://characters/enemies/moss_golem/moss_golem.tscn")
+const GRIMLING := preload("res://characters/enemies/grimling/grimling.tscn")
+const SHARD := preload("res://characters/enemies/shard_grimling/shard_grimling.tscn")
+const WISP := preload("res://characters/enemies/wisp_grimling/wisp_grimling.tscn")
+const ZOING := preload("res://characters/player/spells/zoing/zoing2.tres")
+const HALP := preload("res://characters/player/spells/halp/halp2.tres")
+const BULLET := preload("res://items/bullets/base_bullet.tscn")
+# Terrain is physics layer 1 and has no GameConstants entry — the enemy scenes spell it
+# out the same way (collision_mask = 33 is terrain + enemies).
+const LAYER_TERRAIN := 1
+
+# A lambda captures locals by value, so the bullet tally has to live on the node.
+var _shots := 0
+
+func _ready() -> void:
+	var fails := 0
+	fails += await _bounce_reflects()
+	fails += await _bounce_is_finite()
+	fails += await _creature_shield()
+	fails += await _snake_corners()
+	fails += await _halp_minion_fights()
+	fails += await _pack_relays()
+	fails += await _pack_hears_detection()
+	fails += await _mixed_knot()
+	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
+	get_tree().quit(0 if fails == 0 else 1)
+
+# Fire a Zoing bullet straight at a wall: it must survive the hit, come away travelling
+# in a different direction, and hit harder on the new leg.
+func _bounce_reflects() -> int:
+	var wall := _wall(Vector2(40, 0), Vector2(8, 80))
+	var b := _fire_zoing(Vector2.ZERO, Vector2.RIGHT)
+	var before := b.computed_damage()
+	var deadline := Time.get_ticks_msec() + 4000
+	while is_instance_valid(b) and b.velocity.x > 0.0 and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := 0
+	if not is_instance_valid(b):
+		print("  FAIL: bounce bullet expired on the wall instead of reflecting")
+		fails += 1
+	else:
+		fails += _expect("reflected bullet travels back off the wall", b.velocity.x < 0.0)
+		fails += _expect("reflected bullet keeps its speed",
+			absf(b.velocity.length() - b.speed_px()) < 1.0)
+		fails += _expect("bounce grew the shot's damage (%d -> %d)"
+			% [before, b.computed_damage()], b.computed_damage() > before)
+		b.queue_free()
+	wall.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The bounce budget must run out: a bullet trapped in a box eventually expires rather than
+# ricocheting forever. Zoing authors 3 bounces, so leg 4 ends it.
+func _bounce_is_finite() -> int:
+	var walls := [
+		_wall(Vector2(30, 0), Vector2(8, 60)), _wall(Vector2(-30, 0), Vector2(8, 60)),
+		_wall(Vector2(0, 30), Vector2(60, 8)), _wall(Vector2(0, -30), Vector2(60, 8)),
+	]
+	var b := _fire_zoing(Vector2.ZERO, Vector2.RIGHT)
+	var deadline := Time.get_ticks_msec() + 8000
+	while is_instance_valid(b) and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("a boxed-in ricochet eventually expires", not is_instance_valid(b))
+	if is_instance_valid(b):
+		b.queue_free()
+	for w in walls:
+		w.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Damage while the golem holds its own Nope: the pool eats it, health is untouched, and the
+# channel still ends so the golem goes on to its ring.
+func _creature_shield() -> int:
+	var target := _target(Vector2(30, 0))
+	var golem: Creature = GOLEM.instantiate()
+	add_child(golem)
+	await get_tree().physics_frame
+	_wake(golem)
+
+	# Wait for the Shell beat to actually put the bubble up.
+	var deadline := Time.get_ticks_msec() + 8000
+	while golem.damage_absorber == null and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("golem's Nope registered itself as its damage absorber",
+		golem.damage_absorber != null)
+	if golem.damage_absorber != null:
+		var hp := golem.health
+		golem.hurtbox.hurt.emit(20, self)
+		fails += _expect("shielded damage did not reach health", golem.health == hp)
+		# Overwhelm the pool (90) — past it the bubble breaks and damage lands again.
+		golem.hurtbox.hurt.emit(200, self)
+		fails += _expect("damage past the absorb pool reaches health", golem.health < hp)
+	# The channel must release on its own (the cast_time cap), or the caster stays busy
+	# forever and the golem never fires again.
+	deadline = Time.get_ticks_msec() + 8000
+	while golem.damage_absorber != null and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("golem's channel released the bubble", golem.damage_absorber == null)
+
+	golem.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Back the snake against a wall so its flee corners and the twin ricochet actually goes off.
+func _snake_corners() -> int:
+	var walls := [
+		_wall(Vector2(22, 0), Vector2(8, 80)), _wall(Vector2(-22, 0), Vector2(8, 80)),
+		_wall(Vector2(0, 22), Vector2(80, 8)), _wall(Vector2(0, -22), Vector2(80, 8)),
+	]
+	_shots = 0
+	var counter := func(n: Node) -> void:
+		if n is BaseBullet and n.collision_layer == GameConstants.LAYER_ENEMY_BULLETS:
+			_shots += 1
+	get_tree().root.child_entered_tree.connect(counter)
+
+	var target := _target(Vector2(14, 0))
+	var snake: Creature = SNAKE.instantiate()
+	add_child(snake)
+	await get_tree().physics_frame
+	_wake(snake)
+
+	var deadline := Time.get_ticks_msec() + 12000
+	while _shots < 2 and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	# A ParallelPattern of 2 means one cast is already two bullets.
+	var fails := _expect("cornered snake fired its twin ricochet (%d shots)" % _shots, _shots >= 2)
+
+	get_tree().root.child_entered_tree.disconnect(counter)
+	snake.queue_free()
+	target.queue_free()
+	for w in walls:
+		w.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Stand a Halp minion up the way the spawner does — inject the tier's spell, give it a
+# hostile — and assert the ported FSM walks it into range and fires on the player's layer.
+func _halp_minion_fights() -> int:
+	_shots = 0
+	var counter := func(n: Node) -> void:
+		if n is BaseBullet and n.collision_layer == GameConstants.LAYER_PLAYER_BULLETS:
+			_shots += 1
+	get_tree().root.child_entered_tree.connect(counter)
+
+	var minion: Creature = HALP.minion_scenes[0].instantiate()
+	minion.max_health = HALP.minion_health
+	for state in minion.get_node("FSM").get_children():
+		if state is Cast:
+			state.spell = HALP.minion_spell
+	add_child(minion)
+	await get_tree().physics_frame
+	_wake(minion)
+
+	# A hostile on the enemy physics layer and in the enemies group, so the minion's probes
+	# both collide with it and recognise it as a target.
+	var foe := CharacterBody2D.new()
+	foe.collision_layer = 32
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	foe.add_child(shape)
+	foe.add_to_group("enemies")
+	foe.position = Vector2(30, 0)
+	add_child(foe)
+
+	var deadline := Time.get_ticks_msec() + 10000
+	while _shots == 0 and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("Halp minion closed and fired a player-layer bullet", _shots > 0)
+
+	get_tree().root.child_entered_tree.disconnect(counter)
+	minion.queue_free()
+	foe.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Detection is the other half of the trigger: a grimling that merely SEES the target has to
+# call the pack, with nobody hurt. Only the near one is inside its own detect probe, so the
+# far one can hear about the target exclusively through the call.
+func _pack_hears_detection() -> int:
+	var target := _target(Vector2.ZERO)
+	var deaf := _grimling(Vector2(116, 0))  # target sits outside its own 10-tile detect probe
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_wake(deaf)
+
+	# Control: alone, it must NOT engage — otherwise the wake below proves nothing.
+	var until := Time.get_ticks_msec() + 1000
+	while Time.get_ticks_msec() < until:
+		await get_tree().physics_frame
+	var fails := _expect("a lone grimling can't see a target 14 tiles off", _calm(deaf))
+
+	# Now a packmate close enough to see it, and close enough to be heard.
+	var spotter := _grimling(Vector2(60, 0))
+	await get_tree().physics_frame
+	_wake(spotter)
+	var deadline := Time.get_ticks_msec() + 1000
+	while _calm(deaf) and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("a sighting alone (nobody hurt) calls the pack", not _calm(deaf))
+
+	if fails == 0:
+		print("  ok: grimling pack — a sighting rallies a packmate that saw nothing")
+	spotter.queue_free()
+	deaf.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Hurting one grimling has to pull in the others, and the pull has to relay: the far one
+# sits outside the radius of the grimling actually hit, so it can only wake if the middle one
+# passed the call on. The target is parked way out of everyone's detect probe, so a pack call
+# is the ONLY thing that can wake them — which also means the woken pair have no line of
+# sight to it, making this the check that Chase's lost_grace holds them long enough to close
+# instead of bouncing them back to Idle on the first frame.
+func _pack_relays() -> int:
+	var hit := _grimling(Vector2.ZERO)
+	var middle := _grimling(Vector2(56, 0))   # inside hit's 8-tile radius
+	var far := _grimling(Vector2(112, 0))     # outside it, inside middle's
+	var target := _target(Vector2(400, 0))
+	# Two frames: fsm.start() and Pack's hookup are both deferred, and current_state stays
+	# null until that queue flushes.
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	for g in [hit, middle, far]:
+		_wake(g)
+
+	var fails := 0
+	fails += _expect("pack starts calm (nothing engaged on its own)",
+		_calm(hit) and _calm(middle) and _calm(far))
+
+	# call_group is immediate, so the whole cascade resolves inside this emit.
+	hit.hurtbox.hurt.emit(1, self)
+	fails += _expect("the grimling that was hit engages", _state(hit) == "Chase")
+	fails += _expect("a packmate in radius answers the call", _state(middle) == "Chase")
+	fails += _expect("the relay reaches a packmate out of the hit one's radius",
+		_state(far) == "Chase")
+
+	# Still closing a second later with the target far out of probe range: without
+	# lost_grace the LOS gate drops the pursuit the frame it starts.
+	var until := Time.get_ticks_msec() + 1000
+	while Time.get_ticks_msec() < until:
+		await get_tree().physics_frame
+	fails += _expect("lost_grace keeps a called member closing without line of sight",
+		_state(far) == "Chase")
+
+	if fails == 0:
+		print("  ok: grimling pack — hit relays through the pack, called members keep closing")
+	for g in [hit, middle, far]:
+		g.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The knot is mixed: the three grimlings are one pack group, so a wisp — the variant built
+# to find you first, seeing 18 tiles out and calling from 14 — wakes a shard grimling that
+# has neither the sight nor the radius to have joined on its own. A typo in either scene's
+# group would leave the variants hunting alone and nothing else would notice.
+func _mixed_knot() -> int:
+	var target := _target(Vector2.ZERO)
+	var shard := _grimling(Vector2(160, 0), SHARD)  # target is past its 12-tile detect probe
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_wake(shard)
+
+	var until := Time.get_ticks_msec() + 1000
+	while Time.get_ticks_msec() < until:
+		await get_tree().physics_frame
+	var fails := _expect("a lone shard grimling can't see a target 20 tiles off", _calm(shard))
+
+	var wisp := _grimling(Vector2(100, 0), WISP)
+	await get_tree().physics_frame
+	_wake(wisp)
+	var deadline := Time.get_ticks_msec() + 1000
+	while _calm(shard) and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("a wisp's sighting calls the shard grimling into the fight",
+		not _calm(shard))
+
+	if fails == 0:
+		print("  ok: grimling pack — the variants share one knot")
+	wisp.queue_free()
+	shard.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+func _grimling(at: Vector2, scene: PackedScene = GRIMLING) -> Creature:
+	var c: Creature = scene.instantiate()
+	c.position = at
+	add_child(c)
+	return c
+
+func _state(c: Creature) -> String:
+	return String(c.fsm.current_state.name) if c.fsm.current_state else ""
+
+func _calm(c: Creature) -> bool:
+	return _state(c) in ["Idle", "Wander"]
+
+func _fire_zoing(from: Vector2, dir: Vector2) -> BaseBullet:
+	var b: BaseBullet = BULLET.instantiate()
+	b.data = ZOING.bullet
+	b.damage = ZOING.damage
+	b.base_direction = dir
+	b.global_position = from
+	b.collision_layer = GameConstants.LAYER_PLAYER_BULLETS
+	add_child(b)
+	return b
+
+func _wall(at: Vector2, size: Vector2) -> StaticBody2D:
+	var body := StaticBody2D.new()
+	body.collision_layer = LAYER_TERRAIN
+	var shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = size
+	shape.shape = rect
+	body.add_child(shape)
+	body.position = at
+	add_child(body)
+	return body
+
+func _target(at: Vector2) -> CharacterBody2D:
+	var target := CharacterBody2D.new()
+	target.collision_layer = 16
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	target.add_child(shape)
+	target.add_to_group("player")
+	target.position = at
+	add_child(target)
+	return target
+
+# Headless never renders, so the creature's off-screen sleeper would freeze its AI.
+func _wake(creature: Creature) -> void:
+	for child in creature.get_children():
+		if child is VisibleOnScreenEnabler2D:
+			child.queue_free()
+	creature.process_mode = Node.PROCESS_MODE_INHERIT
+
+func _expect(what: String, cond: bool) -> int:
+	if cond:
+		return 0
+	print("  FAIL: %s" % what)
+	return 1

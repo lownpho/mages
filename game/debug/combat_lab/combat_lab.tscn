@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="4_dmgnum"]
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://world_content/biomes/glade_start/glade_floor_tileset.tres" id="5_floor_ts"]
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="6_player"]
+[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="7_wall_ts"]
 
 [node name="CombatLab" type="Node2D" unique_id=1583139370]
 process_mode = 3
@@ -36,6 +37,11 @@ y_sort_enabled = true
 [node name="Player" parent="Entities" unique_id=1802092115 instance=ExtResource("6_player")]
 base_speed = 30
 debug_never_die = true
+
+[node name="Walls" type="TileMapLayer" parent="Entities" unique_id=1120445318]
+process_mode = 3
+y_sort_enabled = true
+tile_set = ExtResource("7_wall_ts")
 
 [node name="LabUI" type="CanvasLayer" parent="." unique_id=385333478]
 process_mode = 3
