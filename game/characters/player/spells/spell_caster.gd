@@ -69,10 +69,16 @@ func interrupt(spell: SpellResource) -> void:
 	if live != null and is_instance_valid(live) and live.has_method("interrupt"):
 		live.interrupt()
 
-## Abandon `spell`'s wind-up before it resolves — the beat that started it bailed (target
-## gone) — putting it on cooldown as if it had fired. Without this the caster would sit
-## with a pending spell forever and refuse every later cast.
+## Abandon `spell`'s in-flight cast before it finishes on its own — the beat that started it
+## bailed (target gone, state left) — putting it on cooldown as if it had run out. Without
+## this the caster would sit mid wind-up or mid channel forever and refuse every later cast.
 func cancel(spell: SpellResource) -> void:
+	# A channel is the same story as a pending wind-up: the beat that opened it is gone, so
+	# tear the effect down rather than leave a creature's shield bubble up with nothing
+	# holding it — and _channel_spell set would block _host_ready() for good.
+	if _channel_spell == spell:
+		end_channel()
+		return
 	if _pending_spell != spell:
 		return
 	_pending_spell = null

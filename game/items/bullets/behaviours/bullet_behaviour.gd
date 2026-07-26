@@ -21,6 +21,12 @@ func on_step(_bullet: BaseBullet, _delta: float) -> void:
 func on_hurtbox(_bullet: BaseBullet) -> bool:
 	return false
 
+## The bullet hit a wall. Return true to consume the collision (the bullet keeps
+## flying — e.g. a ricochet reflects it); false lets it expire as usual. The
+## collision carries the surface normal a reflection needs.
+func on_wall(_bullet: BaseBullet, _collision: KinematicCollision2D) -> bool:
+	return false
+
 ## The bullet is despawning (wall, range, or an unconsumed hurtbox): fire any
 ## payload (an AoE blast, a spray) here.
 func on_expire(_bullet: BaseBullet) -> void:

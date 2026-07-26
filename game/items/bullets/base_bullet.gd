@@ -21,6 +21,9 @@ var pierce: bool = false
 
 ## How far the bullet has flown — behaviours (homing range) read this.
 var distance_travelled: float = 0.0
+## Multiplier on this shot's computed damage, for behaviours that grow (or damp) a
+## bullet as it flies — a ricochet hitting harder each leg. 1.0 = as authored.
+var damage_scale: float = 1.0
 ## Per-bullet scratch for behaviours, keyed by the behaviour instance (which is
 ## shared across bullets, so it can't hold state itself).
 var runtime: Dictionary = {}
@@ -84,15 +87,25 @@ func _physics_process(delta: float) -> void:
 		b.on_step(self, delta)
 
 	# Terrain is the only thing in a bullet's collision mask, so a collision is
-	# always a wall — the bullet expires (firing any on-expire payload).
+	# always a wall. Behaviours get first refusal (a ricochet reflects and keeps
+	# flying); otherwise the bullet expires, firing any on-expire payload.
 	var motion := velocity * delta
 	var collision := move_and_collide(motion)
 	distance_travelled += motion.length()
 	if collision:
-		_expire()
+		_reached_wall(collision)
+
+func _reached_wall(collision: KinematicCollision2D) -> void:
+	for b in data.behaviours:
+		if b.on_wall(self, collision):
+			return
+	_expire()
 
 func computed_damage() -> int:
-	return damage.compute(skill, speed, defence) if damage else 0
+	if not damage:
+		return 0
+	var amount := damage.compute(skill, speed, defence)
+	return amount if damage_scale == 1.0 else maxi(1, roundi(amount * damage_scale))
 
 func get_damage() -> int:
 	# A blast_only bomb deals nothing on contact — the expire blast carries it all.

@@ -14,6 +14,9 @@ class_name BulletResource
 @export var icon: Texture2D
 @export var range_tiles: int = 16
 @export var speed_tiles: int = 128
+## Fly through hurtboxes instead of dying on the first one hit (Zoing). The caster's
+## own pierce buff (Clang) ORs into this, so a shot pierces if either says so.
+@export var pierce: bool = false
 ## Composable traits (see BulletBehaviour): homing steer, chain, on-expire blast.
 ## Empty = a plain bullet that flies straight and dies on wall/range/hit.
 @export var behaviours: Array[BulletBehaviour] = []

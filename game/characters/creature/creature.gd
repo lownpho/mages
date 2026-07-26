@@ -39,6 +39,12 @@ var aim_direction: Vector2 = Vector2.RIGHT
 # enter() and restores it to 1.0 in exit(); left at 1.0 it's a no-op for everyone else.
 var incoming_damage_scale: float = 1.0
 
+## Live absorb effect soaking incoming damage before it reaches health — the same hook
+## the player carries, so a shield spell is faction-agnostic like every other: a moss
+## golem casting Nope on itself runs the player's own bubble effect unmodified. The
+## effect registers itself here in setup() and clears it when its channel ends.
+var damage_absorber: Node2D = null
+
 # Set once by die(); guards against the death re-running while queue_free is pending.
 var _dead: bool = false
 
@@ -191,6 +197,11 @@ func die() -> void:
 func _on_hurt(damage: int, source: Node) -> void:
 	if _dead:
 		return
+	# A shield eats the hit before armour or health see it, matching the player's order.
+	if damage_absorber and is_instance_valid(damage_absorber):
+		damage = damage_absorber.absorb(damage)
+		if damage <= 0:
+			return
 	if incoming_damage_scale != 1.0:
 		damage = maxi(1, int(ceil(damage * incoming_damage_scale)))
 	health -= damage

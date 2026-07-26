@@ -1,0 +1,53 @@
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://dbjkb4jpiwgjl"]
+
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_bh_base"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_bullets"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="3_bullet"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://balmbe4twiprb" path="res://items/bullets/behaviours/bounce_behaviour.gd" id="5_bounce"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="7_1jbqi"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="Bounce_1"]
+script = ExtResource("5_bounce")
+bounces = 4
+damage_per_bounce = 0.5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shot"]
+atlas = ExtResource("2_bullets")
+region = Rect2(24, 40, 8, 8)
+
+[sub_resource type="Resource" id="Resource_zoing"]
+script = ExtResource("3_bullet")
+icon = SubResource("AtlasTexture_shot")
+range_tiles = 10
+speed_tiles = 20
+pierce = true
+behaviours = Array[ExtResource("1_bh_base")]([SubResource("Bounce_1")])
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 16.0
+skill_scaling = 0.7
+
+[sub_resource type="Resource" id="Resource_u5747"]
+script = ExtResource("7_1jbqi")
+metadata/_custom_type_script = "uid://dfn61d454fxbp"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(40, 16, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("Resource_u5747")
+bullet = SubResource("Resource_zoing")
+damage = SubResource("ScalingProfile_bullet")
+shot_interval = 0.35
+effect_scene = ExtResource("3_scene")
+cooldown = 14.0
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 7
+speed_modifier = 2

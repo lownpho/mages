@@ -71,7 +71,7 @@ func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2,
 	b.skill = skill
 	b.speed = speed
 	b.defence = defence
-	b.pierce = pierce
+	b.pierce = pierce or bullet.pierce
 	b.target = target
 	b.target_groups = target_groups
 	if deferred:
