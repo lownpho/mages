@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://gr34t0wld4t4r"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://bw00mch4rg3t" path="res://characters/player/spells/bwoom/bwoom3.tres" id="3_bwoom"]
+[ext_resource type="Texture2D" uid="uid://m6ie7bkokl3l" path="res://characters/enemies/great_owl/great_owl.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_bwoom"]
+script = ExtResource("2_drop")
+item = ExtResource("3_bwoom")
+chance = 1.0
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Great Owl"
+icon = SubResource("AtlasTexture_icon")
+rarity = 1
+max_health = 300
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_bwoom")])

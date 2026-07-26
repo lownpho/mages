@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BwoomResource" format=3 uid="uid://bsu8eo7ghitwg"]
+
+[ext_resource type="Script" uid="uid://cfg5xm1cwy0n8" path="res://characters/player/spells/bwoom/bwoom_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dio2ayg65020w" path="res://characters/player/spells/bwoom/bwoom.tscn" id="2_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="3_scaling"]
+
+[sub_resource type="Resource" id="ScalingProfile_tick"]
+script = ExtResource("3_scaling")
+base_damage = 18.0
+
+[resource]
+script = ExtResource("1_script")
+max_ticks = 5
+speed_tiles = 16.0
+damage = SubResource("ScalingProfile_tick")
+range_tiles = 30.0
+effect_scene = ExtResource("2_scene")
+cooldown = 4.0
+cast_time = 2.0
+channeled = true

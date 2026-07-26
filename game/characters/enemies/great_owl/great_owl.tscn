@@ -1,0 +1,203 @@
+[gd_scene format=3 uid="uid://cgr34t0wlsc3n1"]
+
+[ext_resource type="Resource" uid="uid://gr34t0wld4t4r" path="res://characters/enemies/great_owl/great_owl_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://m6ie7bkokl3l" path="res://characters/enemies/great_owl/great_owl.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" uid="uid://bsu8eo7ghitwg" path="res://characters/enemies/great_owl/great_owl_bwoom.tres" id="6_bwoom"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://od3f83bk27lc9" path="res://characters/creature/behaviours/flee.gd" id="b_flee"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_great_owl"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AT_attack0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_attack1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_attack2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_charge0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_charge1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_charge2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fly0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fly1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fly2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_great_owl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_attack0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_attack1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_attack2")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_charge0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_charge1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_charge2")
+}],
+"loop": 0,
+"name": &"charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fly0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fly1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fly2")
+}],
+"loop": 1,
+"name": &"fly",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.5
+}]
+
+[node name="GreatOwl" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_great_owl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_great_owl")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 4.0
+
+[node name="DetectProbe" type="RayCast2D" parent="."]
+target_position = Vector2(224, 0)
+collision_mask = 17
+
+[node name="SnipeProbe" type="RayCast2D" parent="."]
+target_position = Vector2(192, 0)
+collision_mask = 17
+
+[node name="CloseProbe" type="RayCast2D" parent="."]
+target_position = Vector2(56, 0)
+collision_mask = 17
+
+[node name="RetreatProbe" type="RayCast2D" parent="."]
+target_position = Vector2(20, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 0.8
+max_time = 2.0
+next_state = "Idle"
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Bwoom"
+alert_on_hit = true
+
+[node name="Bwoom" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_bwoom")
+done_state = "Recover"
+attack_probe_path = NodePath("../../SnipeProbe")
+out_of_range_state = "Reposition"
+exit_margin = 32.0
+windup_anim = "charge"
+attack_anim = "attack"
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 0.8
+max_time = 1.4
+next_state = "Reposition"
+probe_path = NodePath("../../CloseProbe")
+seen_state = "Reposition"
+
+[node name="Reposition" type="Node" parent="FSM"]
+script = ExtResource("b_flee")
+chase_probe_path = NodePath("../../DetectProbe")
+retreat_probe_path = NodePath("../../RetreatProbe")
+lost_state = "Idle"
+cornered_state = "Bwoom"
+speed = 42.0
+retreat_range = 20.0
+run_anim = "fly"
+duration = 1.3
+done_state = "Bwoom"
