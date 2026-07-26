@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="NopeResource" format=3 uid="uid://ddw4q8vmr2ykn"]
+
+[ext_resource type="Script" uid="uid://b33c1ioi23q5l" path="res://characters/player/spells/nope/nope_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cvfkcv6kg0y48" path="res://characters/player/spells/nope/nope.tscn" id="2_scene"]
+
+[resource]
+script = ExtResource("1_script")
+absorb_amount = 90
+effect_scene = ExtResource("2_scene")
+cooldown = 5.0
+cast_time = 1.3
+channeled = true
