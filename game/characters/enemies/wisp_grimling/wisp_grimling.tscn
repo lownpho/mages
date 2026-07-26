@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://cvn5jt8qwm4rx"]
 
-[ext_resource type="Resource" uid="uid://b6hzq3ntkw8pd" path="res://characters/enemies/wisp_grimling/wisp_grimling_data.tres" id="1_data"]
+[ext_resource type="Resource" uid="uid://b6h0q3ntkw8pd" path="res://characters/enemies/wisp_grimling/wisp_grimling_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
-[ext_resource type="Texture2D" path="res://characters/enemies/wisp_grimling/wisp_grimling.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://bqsey3grmc5wk" path="res://characters/enemies/wisp_grimling/wisp_grimling.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
-[ext_resource type="Resource" uid="uid://dk9pwr4mxq2vt" path="res://characters/enemies/wisp_grimling/wisp_grimling_flicker.tres" id="6_spell"]
+[ext_resource type="Resource" uid="uid://dlapwr4mxq2vt" path="res://characters/enemies/wisp_grimling/wisp_grimling_flicker.tres" id="6_spell"]
 [ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
@@ -97,49 +97,49 @@ animations = [{
 "speed": 8.0
 }]
 
-[node name="WispGrimling" type="CharacterBody2D" groups=["enemies"]]
+[node name="WispGrimling" type="CharacterBody2D" unique_id=1487736605 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_enemy")
 data = ExtResource("1_data")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1178069892]
 shape = SubResource("CircleShape2D_grimling")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=815429673]
 sprite_frames = SubResource("SpriteFrames_grimling")
 animation = &"idle"
 autoplay = "idle"
 offset = Vector2(0, -1)
 
-[node name="Hurtbox" parent="." instance=ExtResource("2_hbox")]
+[node name="Hurtbox" parent="." unique_id=828244586 instance=ExtResource("2_hbox")]
 collision_mask = 256
 radius = 3.0
 
-[node name="DetectProbe" type="RayCast2D" parent="."]
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1353360228]
 target_position = Vector2(144, 0)
 collision_mask = 17
 
-[node name="ChaseProbe" type="RayCast2D" parent="."]
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=1649077427]
 target_position = Vector2(160, 0)
 collision_mask = 17
 
-[node name="AttackProbe" type="RayCast2D" parent="."]
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=300405506]
 target_position = Vector2(32, 0)
 collision_mask = 17
 
-[node name="Caster" parent="." instance=ExtResource("5_caster")]
+[node name="Caster" parent="." unique_id=1728071400 instance=ExtResource("5_caster")]
 
-[node name="Pack" type="Node" parent="." groups=["pack_grimling"]]
+[node name="Pack" type="Node" parent="." unique_id=817464779 groups=["pack_grimling"]]
 script = ExtResource("c_pack")
 group = &"pack_grimling"
 radius_tiles = 14.0
 
-[node name="FSM" parent="." instance=ExtResource("4_fsm")]
+[node name="FSM" parent="." unique_id=574453713 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
-[node name="Idle" type="Node" parent="FSM"]
+[node name="Idle" type="Node" parent="FSM" unique_id=1754933976]
 script = ExtResource("b_hold")
 min_time = 0.4
 max_time = 1.2
@@ -148,7 +148,7 @@ probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
 alert_on_hit = true
 
-[node name="Wander" type="Node" parent="FSM"]
+[node name="Wander" type="Node" parent="FSM" unique_id=1304112247]
 script = ExtResource("b_wander")
 speed = 24.0
 anim = "run"
@@ -158,7 +158,7 @@ probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
 alert_on_hit = true
 
-[node name="Chase" type="Node" parent="FSM"]
+[node name="Chase" type="Node" parent="FSM" unique_id=1609496746]
 script = ExtResource("b_approach")
 speed = 54.0
 chase_probe_path = NodePath("../../ChaseProbe")
@@ -170,7 +170,7 @@ wait_state = "Recover"
 weave_amplitude = 1.0
 weave_frequency = 3.6
 
-[node name="Fire" type="Node" parent="FSM"]
+[node name="Fire" type="Node" parent="FSM" unique_id=344100553]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_spell")
@@ -179,7 +179,7 @@ attack_probe_path = NodePath("../../AttackProbe")
 out_of_range_state = "Chase"
 exit_margin = 12.0
 
-[node name="Recover" type="Node" parent="FSM"]
+[node name="Recover" type="Node" parent="FSM" unique_id=235914029]
 script = ExtResource("b_hold")
 min_time = 0.0
 max_time = 0.0

@@ -4,12 +4,12 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="3_blam"]
 [ext_resource type="Resource" uid="uid://cos4jwa2pohls" path="res://characters/player/spells/halp/halp2.tres" id="4_halp"]
-[ext_resource type="Texture2D" path="res://characters/enemies/shard_grimling/shard_grimling.png" id="icon_png"]
+[ext_resource type="Texture2D" uid="uid://bi5x2kg0hcpm8" path="res://characters/enemies/shard_grimling/shard_grimling.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_blam"]
 script = ExtResource("2_drop")
 item = ExtResource("3_blam")
-chance = 0.1
+chance = 0.05
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_halp"]

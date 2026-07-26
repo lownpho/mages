@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://ck9zj6ptr4mwn"]
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://cla0j6ptr4mwn"]
 
 [ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_behaviour"]
 [ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
-[ext_resource type="Script" uid="uid://cabl55c7774jr" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_homing"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_bullets"]
+[ext_resource type="Script" uid="uid://cabl55c7774jr" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_homing"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="3_bullet"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="4_pattern"]
 [ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="99_effect"]
