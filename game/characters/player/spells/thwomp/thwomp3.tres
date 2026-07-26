@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="ThwompResource" format=3 uid="uid://thw0mppuls3t"]
+
+[ext_resource type="Script" uid="uid://bpmqnbte0wkwm" path="res://characters/player/spells/thwomp/thwomp_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://b7hb80p7f8dn" path="res://characters/player/spells/thwomp/thwomp.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="ScalingProfile_pulse"]
+script = ExtResource("bh_scaling")
+base_damage = 30.0
+defence_scaling = 1.8
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(56, 56, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+radius_tiles = 4.5
+knockback_force = 1100.0
+damage = SubResource("ScalingProfile_pulse")
+effect_scene = ExtResource("3_scene")
+cooldown = 5.0
+cast_time = 0.2
+icon = SubResource("AtlasTexture_icon")
+max_health_modifier = 30
+defence_modifier = 9

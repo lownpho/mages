@@ -1,23 +1,29 @@
-[gd_resource type="Resource" script_class="BwoomResource" format=3 uid="uid://cd0nj2geqlkmk"]
+[gd_resource type="Resource" script_class="BwoomResource" format=3 uid="uid://bw00mch4rg2t"]
 
 [ext_resource type="Script" uid="uid://cfg5xm1cwy0n8" path="res://characters/player/spells/bwoom/bwoom_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
 [ext_resource type="PackedScene" uid="uid://dio2ayg65020w" path="res://characters/player/spells/bwoom/bwoom.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="ScalingProfile_tick"]
+script = ExtResource("bh_scaling")
+base_damage = 11.0
+defence_scaling = 0.55
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(16, 16, 8, 8)
+region = Rect2(48, 32, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-max_ticks = 5
+max_ticks = 4
+speed_tiles = 18.0
+damage = SubResource("ScalingProfile_tick")
+range_tiles = 26.0
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
-cast_time = 2.5
+cooldown = 6.0
+cast_time = 1.6
 channeled = true
-channel_while_moving = true
-base_damage = 40.0
-skill_scaling = 1.0
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 10
-max_health_modifier = 25
+skill_modifier = 6
+max_health_modifier = 20

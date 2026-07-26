@@ -1,4 +1,5 @@
 extends Node2D
+class_name BulletSpell
 
 ## Generic bullet-spell effect: every shot_interval it fires the spell's
 ## FirePattern from the caster's position along the caster's current aim

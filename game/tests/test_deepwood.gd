@@ -14,11 +14,25 @@ extends Node
 ##     lost_grace window a called member needs to reach a fight it can't see yet, and the one
 ##     group the three grimling variants share. None of it exists with fewer than several
 ##     creatures at once.
+## The animal sub-biome adds three more, all of which are silent no-ops rather than crashes
+## when they break — the worst kind to ship:
+##   - ChargeDash driving a Creature. The dash lives in the spell, not the behaviour, so a
+##     thornback whose start_dash never fires still telegraphs, still sheds its flank bullets
+##     and still cycles states; it just never goes anywhere.
+##   - The razorback's wall slam, which needs real terrain to hit head-on.
+##   - Creature.death_state: a parting shot fired by a creature that is already dead, and the
+##     freeing that has to happen anyway once that beat hands off.
+##   - Behaviour.damage_scale at zero — the mole underground is untouchable, not merely
+##     armoured, and takes damage again the moment it surfaces.
 ## Run: godot --headless --path game res://tests/test_deepwood.tscn
 
 const SNAKE := preload("res://characters/enemies/snake/snake.tscn")
 const GOLEM := preload("res://characters/enemies/moss_golem/moss_golem.tscn")
 const GRIMLING := preload("res://characters/enemies/grimling/grimling.tscn")
+const THORNBACK := preload("res://characters/enemies/thornback/thornback.tscn")
+const RAZORBACK := preload("res://characters/enemies/razorback/razorback.tscn")
+const GRIMLORD := preload("res://characters/enemies/grimlord/grimlord.tscn")
+const MOLE := preload("res://characters/enemies/mole/mole.tscn")
 const SHARD := preload("res://characters/enemies/shard_grimling/shard_grimling.tscn")
 const WISP := preload("res://characters/enemies/wisp_grimling/wisp_grimling.tscn")
 const ZOING := preload("res://characters/player/spells/zoing/zoing2.tres")
@@ -41,6 +55,10 @@ func _ready() -> void:
 	fails += await _pack_relays()
 	fails += await _pack_hears_detection()
 	fails += await _mixed_knot()
+	fails += await _charge_dash_drives_its_caster()
+	fails += await _razorback_slams_a_wall()
+	fails += await _grimlord_fires_a_parting_ring()
+	fails += await _burrowed_mole_is_untouchable()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -303,6 +321,137 @@ func _mixed_knot() -> int:
 	target.queue_free()
 	await get_tree().physics_frame
 	return fails
+
+# The dash lives in ChargeDash's effect, which calls start_dash on whoever cast it — so the
+# only proof it reached the creature is the creature moving. A thornback that never dashes
+# looks identical from the outside: same wind-up, same flank bullets, same state cycle.
+func _charge_dash_drives_its_caster() -> int:
+	var target := _target(Vector2(40, 0))
+	var boar: Creature = await _spawn(THORNBACK, Vector2.ZERO)
+
+	var dashed := false
+	var deadline := Time.get_ticks_msec() + 12000
+	while Time.get_ticks_msec() < deadline and not dashed:
+		await get_tree().physics_frame
+		dashed = boar.is_dashing()
+	# It must move under the dash, not merely be flagged as dashing.
+	var launched := boar.global_position
+	deadline = Time.get_ticks_msec() + 4000
+	while boar.is_dashing() and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	# The clock lapsing and the drive standing down are one physics frame apart.
+	await get_tree().physics_frame
+
+	var fails := _expect("thornback's ChargeDash actually started a dash", dashed)
+	fails += _expect("the dash moved the thornback (%.0f px)"
+		% launched.distance_to(boar.global_position),
+		launched.distance_to(boar.global_position) > 24.0)
+	fails += _expect("the caster can act again once the dash ends", boar.can_act)
+
+	if fails == 0:
+		print("  ok: charge dash — the spell drives its caster, then hands control back")
+	boar.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Boxed in tight so every charge ends against a wall head-on: the razorback has no recovery
+# beat, so the wall stun is its ONLY punish window and the whole point of the variant.
+func _razorback_slams_a_wall() -> int:
+	var walls := [
+		_wall(Vector2(40, 0), Vector2(8, 120)), _wall(Vector2(-40, 0), Vector2(8, 120)),
+		_wall(Vector2(0, 40), Vector2(120, 8)), _wall(Vector2(0, -40), Vector2(120, 8)),
+	]
+	var target := _target(Vector2(20, 0))
+	var boar: Creature = await _spawn(RAZORBACK, Vector2(-20, 0))
+
+	var deadline := Time.get_ticks_msec() + 15000
+	while _state(boar) != "Stun" and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("a head-on wall hit stunned the razorback (state %s)"
+		% _state(boar), _state(boar) == "Stun")
+
+	if fails == 0:
+		print("  ok: razorback — the dash slams into a wall and opens the punish window")
+	boar.queue_free()
+	target.queue_free()
+	for w in walls:
+		w.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Killing the grimlord must not free it outright: death_state hands the FSM one last beat,
+# the ring goes off from a creature already at zero health, and only then is it gone.
+func _grimlord_fires_a_parting_ring() -> int:
+	_shots = 0
+	var counter := func(n: Node) -> void:
+		if n is BaseBullet and n.collision_layer == GameConstants.LAYER_ENEMY_BULLETS:
+			_shots += 1
+	get_tree().root.child_entered_tree.connect(counter)
+
+	var target := _target(Vector2(400, 0))  # far out of its probes: no ordinary shot can fire
+	var alpha: Creature = await _spawn(GRIMLORD, Vector2.ZERO)
+	await get_tree().physics_frame
+	var fails := _expect("nothing fired before the grimlord died", _shots == 0)
+
+	alpha.hurtbox.hurt.emit(alpha.max_health * 2, self)
+	fails += _expect("the grimlord entered its death beat instead of vanishing",
+		is_instance_valid(alpha) and _state(alpha) == "DeathBurst")
+
+	var deadline := Time.get_ticks_msec() + 5000
+	while is_instance_valid(alpha) and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("the parting ring fired (%d bullets)" % _shots, _shots >= 8)
+	fails += _expect("the grimlord is freed once the death beat hands off",
+		not is_instance_valid(alpha))
+
+	if fails == 0:
+		print("  ok: grimlord — death_state buys one last ring, then the creature goes")
+	get_tree().root.child_entered_tree.disconnect(counter)
+	if is_instance_valid(alpha):
+		alpha.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# damage_scale = 0 has to mean immune, not "1 damage a hit": the mole spends most of the
+# fight underground, and a 1-per-hit floor would let a fast spell kill it down there.
+func _burrowed_mole_is_untouchable() -> int:
+	var target := _target(Vector2(80, 0))
+	var mole: Creature = await _spawn(MOLE, Vector2.ZERO)
+
+	var deadline := Time.get_ticks_msec() + 10000
+	while _state(mole) != "Burrow" and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("the mole went under", _state(mole) == "Burrow")
+
+	var hp := mole.health
+	for _i in 20:
+		mole.hurtbox.hurt.emit(5, self)
+	fails += _expect("nothing lands on a submerged mole", mole.health == hp)
+
+	# Surfacing has to give the armour back — the punish window is the whole fight.
+	deadline = Time.get_ticks_msec() + 10000
+	while _state(mole) != "Surface" and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("the mole surfaced", _state(mole) == "Surface")
+	mole.hurtbox.hurt.emit(5, self)
+	fails += _expect("a surfaced mole takes damage again", mole.health < hp)
+
+	if fails == 0:
+		print("  ok: mole — the burrow is untouchable, the surface beat is not")
+	mole.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+func _spawn(scene: PackedScene, at: Vector2) -> Creature:
+	var c: Creature = scene.instantiate()
+	c.position = at
+	add_child(c)
+	await get_tree().physics_frame
+	_wake(c)
+	return c
 
 func _grimling(at: Vector2, scene: PackedScene = GRIMLING) -> Creature:
 	var c: Creature = scene.instantiate()

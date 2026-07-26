@@ -9,6 +9,9 @@ extends Node
 const SPROUTLING := preload("res://characters/enemies/sproutling/sproutling.tscn")
 const HEAL := "res://characters/player/spells/heal/heal1.tres"
 const FIREBALL := "res://characters/player/spells/fireball/fireball1.tres"
+const THWOMP := "res://characters/player/spells/thwomp/thwomp3.tres"
+const BWOOM := "res://characters/player/spells/bwoom/bwoom2.tres"
+const BWOOM_SCRIPT := "res://characters/player/spells/bwoom/bwoom.gd"
 
 var fails: Array[String] = []
 var _enemy_bullets := 0
@@ -44,6 +47,49 @@ func _ready() -> void:
 	if _enemy_bullets == 0:
 		fails.append("creature cast fireball but produced no enemy-layer bullet")
 
+	# 3) Thwomp — the gnarlking's ground slam. It resolves its own AoE rather than firing
+	# bullets, so nothing else in the suite would notice it landing on nobody: it sweeps
+	# CastContext.target_groups, which for a creature is the player side. Damage falls off
+	# with distance and the shove rides the same curve.
+	var near := _victim(Vector2(12, 0))
+	var far := _victim(Vector2(200, 0))
+	caster.cast(load(THWOMP), Vector2.RIGHT)
+	await _wait(0.5)
+	if near.health >= 100:
+		fails.append("creature cast thwomp but the target beside it took nothing")
+	if far.health < 100:
+		fails.append("thwomp reached a target well outside its radius")
+	if near.knocked == Vector2.ZERO:
+		fails.append("thwomp damaged the target but never shoved it")
+	near.queue_free()
+	far.queue_free()
+
+	# 4) Bwoom — a channel, and the only spell whose damage is decided at RELEASE (one
+	# ScalingProfile per tick held). SpellCaster caps the channel at cast_time and calls
+	# channel_released itself, so a creature charges and looses it with no button involved.
+	var balls: Array[Node] = []
+	var watch := func(n: Node) -> void:
+		if n.get_script() == load(BWOOM_SCRIPT):
+			balls.append(n)
+	get_tree().root.child_entered_tree.connect(watch)
+	caster.cast(load(BWOOM), Vector2.RIGHT)
+	var bwoom: BwoomResource = load(BWOOM)
+	await _wait(bwoom.cast_time + 0.4)
+	get_tree().root.child_entered_tree.disconnect(watch)
+	if balls.is_empty():
+		fails.append("creature cast bwoom but no charged ball appeared")
+	elif not is_instance_valid(balls[0]):
+		fails.append("the bwoom ball vanished instead of launching")
+	else:
+		if balls[0].get_damage() <= 0:
+			fails.append("the launched bwoom ball carries no damage")
+		if balls[0].velocity == Vector2.ZERO:
+			fails.append("the bwoom channel capped but the ball never launched")
+		if balls[0].collision_layer != GameConstants.LAYER_ENEMY_BULLETS:
+			fails.append("an enemy's bwoom launched on layer %d, not the enemy bullet layer"
+				% balls[0].collision_layer)
+		balls[0].queue_free()
+
 	if fails.is_empty():
 		print("ALL PASS")
 	else:
@@ -54,3 +100,12 @@ func _ready() -> void:
 
 func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
+
+# A stand-in for whatever an enemy hunts: in the player group with the `hurtbox` and
+# `apply_knockback` capabilities Thwomp reaches for, and nothing else.
+func _victim(at: Vector2) -> Node2D:
+	var node := preload("res://tests/support/thwomp_victim.gd").new()
+	node.position = at
+	node.add_to_group("player")
+	add_child(node)
+	return node

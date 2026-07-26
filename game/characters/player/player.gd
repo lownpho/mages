@@ -106,7 +106,9 @@ func cancel_bursts() -> void:
 		_live_burst.interrupt()
 
 func can_burst_fire(burst: Node) -> bool:
-	return can_act and _live_burst == burst
+	# A dash is can_act = false so no NEW cast starts mid-flight, but ChargeDash's own burst
+	# is the thing doing the driving — suspending it would leave the dash with no bullets.
+	return (can_act or _is_dashing()) and _live_burst == burst
 
 func get_input_direction() -> Vector2:
 	# While the HUD captures input (controller slot navigation) the stick moves

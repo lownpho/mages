@@ -8,9 +8,11 @@ class_name Cast
 # The wind-up is the spell's `cast_time`, the same number the player's cast engine already
 # honours, and the sprite is driven FROM it (see Creature.play_fitted) rather than the shot
 # being triggered by a sprite frame — so an enemy's tell lives in its spell data and can't
-# drift from its art. Recovery is not this state's business either: the beat hands off to
-# `done_state` the moment the burst ends, and a Hold pointed back here parks the creature
-# until `cooldown` lapses.
+# drift from its art. A channel is the same story: nobody holds a button here, so SpellCaster
+# caps it at `cast_time` and the creature charges for exactly that long — the owl's growing
+# Bwoom ball IS its telegraph. Recovery is not this state's business either: the beat hands
+# off to `done_state` the moment the burst ends, and a Hold pointed back here parks the
+# creature until `cooldown` lapses.
 
 @export var caster_path: NodePath
 @export var spell: SpellResource
@@ -29,8 +31,9 @@ class_name Cast
 @export var exit_margin: float = 0.0
 
 @export_group("Animation")
-## Pose held during `cast_time`. Empty reuses attack_anim. A non-looping tag has its strike
-## frame fitted to the wind-up; a looping one (a held guard) simply runs.
+## Pose held during `cast_time` — the wind-up, or the whole channel. Empty reuses attack_anim.
+## A non-looping tag has its strike frame fitted to the wind-up; a looping one (a held guard)
+## simply runs.
 @export var windup_anim: String = ""
 @export var attack_anim: String = "attack"
 ## Incoming damage during the wind-up; <1 makes the telegraph a bad moment to trade.
@@ -45,6 +48,8 @@ var _winding_up: bool = false
 func _ready() -> void:
 	super()
 	_caster.cast_resolved.connect(_on_cast_resolved)
+	# A channel's release is its resolve — same hand-off out of the telegraph.
+	_caster.channel_ended.connect(_on_cast_resolved)
 	if attack_probe_path == NodePath():
 		return
 	_probe = get_node(attack_probe_path)
@@ -75,7 +80,7 @@ func enter() -> void:
 	# telegraph that never resolves, or the beat's wind-up early-out freezes the creature.
 	var player := creature.get_target()
 	var started := _caster.cast(spell, aim_at(player) if player else Vector2.ZERO)
-	_winding_up = started and spell.cast_time > 0.0 and not spell.channeled
+	_winding_up = started and spell.cast_time > 0.0
 	if _winding_up:
 		creature.incoming_damage_scale = windup_damage_scale
 		creature.play_fitted(windup_anim if windup_anim != "" else attack_anim, spell.cast_time)

@@ -25,7 +25,23 @@ const CASES := {
 	# harness is open space with nothing to back into. Its volley is covered against real
 	# walls in test_deepwood; here we only assert the flee loop keeps handing off.
 	"snake": {"scene": "res://characters/enemies/snake/snake.tscn", "min_bullets": 0, "min_changes": 3},
+	# The animal deepwood. Each of these rides a seam the shared pool never touches: the
+	# chargers' spell-driven dash (a beat whose movement lives in the cast, so a stalled
+	# start_dash reads here as a creature that never leaves its wind-up), the owl's channel
+	# (its whole loop hangs off a charge that SpellCaster has to release on its own — a
+	# channel that never caps parks the owl mid-telegraph forever), the great owl's picker
+	# choosing between a charged shot and a poke by priority, the mole's submerged approach,
+	# and the grimlord's parting ring — which only goes off if the death beat runs at all.
+	"thornback": {"scene": "res://characters/enemies/thornback/thornback.tscn", "min_bullets": 4, "min_changes": 4},
+	"owl": {"scene": "res://characters/enemies/owl/owl.tscn", "min_bullets": 2, "min_changes": 5},
+	"mole": {"scene": "res://characters/enemies/mole/mole.tscn", "min_bullets": 8, "min_changes": 5},
+	"grimlord": {"scene": "res://characters/enemies/grimlord/grimlord.tscn", "min_bullets": 3, "min_changes": 4},
+	"razorback": {"scene": "res://characters/enemies/razorback/razorback.tscn", "min_bullets": 4, "min_changes": 4},
+	"great_owl": {"scene": "res://characters/enemies/great_owl/great_owl.tscn", "min_bullets": 2, "min_changes": 5},
+	"gnarlking": {"scene": "res://characters/enemies/gnarlking/gnarlking.tscn", "min_bullets": 1, "min_changes": 6},
 }
+
+const BWOOM_SCRIPT := preload("res://characters/player/spells/bwoom/bwoom.gd")
 
 var _bullets := 0
 var _states: Array[String] = []
@@ -51,7 +67,13 @@ func _run(id: String, spec: Dictionary) -> int:
 	add_child(target)
 
 	var counter := func(n: Node) -> void:
-		if n is BaseBullet and n.collision_layer == GameConstants.LAYER_ENEMY_BULLETS:
+		# Bwoom is a shot without being a BaseBullet — a charged ball that pierces rather
+		# than despawning on a hurtbox — so an owl's whole output would read as zero here.
+		# Counted when the ball appears (channel start); that it then launches with damage
+		# on the right layer is test_any_caster's job.
+		if n.get_script() == BWOOM_SCRIPT:
+			_bullets += 1
+		elif n is BaseBullet and n.collision_layer == GameConstants.LAYER_ENEMY_BULLETS:
 			_bullets += 1
 	get_tree().root.child_entered_tree.connect(counter)
 

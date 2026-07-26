@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="ChargeDashResource" format=3 uid="uid://ch4rg3d4sh3t"]
+
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_rwc3g"]
+[ext_resource type="Script" uid="uid://cbl8ahc2xacm8" path="res://characters/player/spells/charge_dash/charge_dash_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_bullets"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="3_bullet"]
+[ext_resource type="PackedScene" uid="uid://77lwlu8qw4gv" path="res://characters/player/spells/charge_dash/charge_dash.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://bfl4nkp4tt3rn" path="res://items/bullets/flank_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shed"]
+atlas = ExtResource("2_bullets")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="Resource" id="Resource_shed"]
+script = ExtResource("3_bullet")
+icon = SubResource("AtlasTexture_shed")
+range_tiles = 8
+speed_tiles = 14
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 14.0
+skill_scaling = 0.46
+
+[sub_resource type="Resource" id="Pattern_1"]
+script = ExtResource("4_pattern")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(56, 40, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+dash_speed = 580.0
+dash_duration = 0.6
+fire_pattern = SubResource("Pattern_1")
+bullet = SubResource("Resource_shed")
+damage = SubResource("ScalingProfile_bullet")
+shot_interval = 0.08
+max_shots = 8
+effect_scene = ExtResource("3_scene")
+cooldown = 7.0
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 8
+defence_modifier = 6
