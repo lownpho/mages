@@ -1,0 +1,211 @@
+[gd_scene format=3 uid="uid://cthrnb4cksc3n"]
+
+[ext_resource type="Resource" uid="uid://d045xvnj4cc3p" path="res://characters/enemies/thornback/thornback_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://dcf6x648dckrg" path="res://characters/enemies/thornback/thornback.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" uid="uid://d045xvnj2omqe" path="res://characters/enemies/thornback/thornback_charge.tres" id="6_spell"]
+[ext_resource type="Script" uid="uid://bch4rg3b3h4v0" path="res://characters/creature/behaviours/charge.gd" id="b_charge"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/creature/behaviours/wander.gd" id="b_wander"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_thornback"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AT_dash0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_dash1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_dash2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_recover0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 32, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_recover1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 32, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_recover2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 32, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_run2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_windup0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_windup1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_windup2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_thornback"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_dash0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_dash1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_dash2")
+}],
+"loop": 1,
+"name": &"dash",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_recover0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_recover1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_recover2")
+}],
+"loop": 0,
+"name": &"recover",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_run0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_run2")
+}],
+"loop": 1,
+"name": &"run",
+"speed": 7.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_windup0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_windup1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_windup2")
+}],
+"loop": 0,
+"name": &"windup",
+"speed": 6.0
+}]
+
+[node name="Thornback" type="CharacterBody2D" unique_id=1495000514 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=5993013]
+shape = SubResource("CircleShape2D_thornback")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=373635437]
+sprite_frames = SubResource("SpriteFrames_thornback")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." unique_id=889028279 instance=ExtResource("2_hbox")]
+collision_mask = 256
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=1581901401]
+target_position = Vector2(112, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." unique_id=1643939085 instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." unique_id=1071469991 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=2011709362]
+script = ExtResource("b_hold")
+min_time = 0.8
+max_time = 2.2
+next_state = "Wander"
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Charge"
+
+[node name="Wander" type="Node" parent="FSM" unique_id=1620796088]
+script = ExtResource("b_wander")
+speed = 14.0
+anim = "run"
+min_time = 0.6
+max_time = 1.4
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Charge"
+
+[node name="Charge" type="Node" parent="FSM" unique_id=2127259932]
+script = ExtResource("b_charge")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_spell")
+done_state = "Recover"
+windup_anim = "windup"
+attack_anim = "dash"
+
+[node name="Recover" type="Node" parent="FSM" unique_id=233440042]
+script = ExtResource("b_hold")
+anim = "recover"
+min_time = 1.0
+max_time = 1.4
+next_state = "Charge"
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Idle"
+lost_margin = 24.0
