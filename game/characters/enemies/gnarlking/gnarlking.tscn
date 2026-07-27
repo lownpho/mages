@@ -7,16 +7,15 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
 [ext_resource type="Resource" uid="uid://bowujhyoysmk7" path="res://characters/enemies/gnarlking/gnarlking_slam.tres" id="6_slam"]
-[ext_resource type="Resource" uid="uid://bowujhyoyslu7" path="res://characters/enemies/gnarlking/gnarlking_slam_big.tres" id="7_slam_big"]
 [ext_resource type="Resource" uid="uid://bowujhx65oyw7" path="res://characters/enemies/gnarlking/gnarlking_brood.tres" id="8_brood"]
 [ext_resource type="Resource" uid="uid://bowujhx65oywh" path="res://characters/enemies/gnarlking/gnarlking_brood_big.tres" id="9_brood_big"]
 [ext_resource type="Resource" uid="uid://cspv0ip7cspua" path="res://characters/enemies/gnarlking/gnarlking_volley.tres" id="10_volley"]
 [ext_resource type="Resource" uid="uid://cspv0ip6ra80o" path="res://characters/enemies/gnarlking/gnarlking_charge.tres" id="11_charge"]
 [ext_resource type="Resource" uid="uid://cspv0ip6ra81x" path="res://characters/enemies/gnarlking/gnarlking_charge_chain.tres" id="12_charge2"]
 [ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
-[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://bch4rg3b3h4v0" path="res://characters/creature/behaviours/charge.gd" id="b_charge"]
+[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gnarlking"]
@@ -209,6 +208,14 @@ collision_mask = 17
 target_position = Vector2(44, 0)
 collision_mask = 17
 
+[node name="SlamProbe" type="RayCast2D" parent="." unique_id=155360498]
+target_position = Vector2(48, 0)
+collision_mask = 17
+
+[node name="VolleyProbe" type="RayCast2D" parent="." unique_id=155360499]
+target_position = Vector2(64, 0)
+collision_mask = 17
+
 [node name="Caster" parent="." unique_id=1062731833 instance=ExtResource("5_caster")]
 
 [node name="FSM" parent="." unique_id=548868485 instance=ExtResource("4_fsm")]
@@ -231,7 +238,7 @@ probe_path = NodePath("../../DetectProbe")
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("8_brood")
-done_state = "Anvil"
+done_state = "Hunt"
 windup_anim = "summon"
 attack_anim = "idle"
 health_min = 0.25
@@ -240,50 +247,50 @@ health_min = 0.25
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("9_brood_big")
-done_state = "Anvil"
+done_state = "Hunt"
 windup_anim = "summon"
 attack_anim = "idle"
 health_max = 0.25
 
-[node name="Anvil" type="Node" parent="FSM" unique_id=1286401136]
+[node name="Hunt" type="Node" parent="FSM" unique_id=1286401136]
 script = ExtResource("b_gate")
-beats = Array[String](["Charge", "SlamBig", "Slam", "Volley", "Brace"])
+beats = Array[String](["Charge", "Slam", "Volley", "Close", "Brace"])
 probe_path = NodePath("../../DetectProbe")
 
 [node name="Slam" type="Node" parent="FSM" unique_id=1532291633]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_slam")
-done_state = "Anvil"
+done_state = "Hunt"
 windup_anim = "slam"
 attack_anim = "idle"
-health_min = 0.25
-damage_scale = 0.2
-
-[node name="SlamBig" type="Node" parent="FSM" unique_id=1366894409]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("7_slam_big")
-done_state = "Anvil"
-windup_anim = "slam"
-attack_anim = "idle"
-health_max = 0.25
-damage_scale = 0.2
+damage_scale = 0.35
+range_probe_path = NodePath("../../SlamProbe")
 
 [node name="Volley" type="Node" parent="FSM" unique_id=1396486471]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("10_volley")
-done_state = "Anvil"
-damage_scale = 0.2
+done_state = "Hunt"
+damage_scale = 0.35
+range_probe_path = NodePath("../../VolleyProbe")
+
+[node name="Close" type="Node" parent="FSM" unique_id=149517132]
+script = ExtResource("b_approach")
+speed = 52.0
+anim = "run"
+duration = 3.0
+done_state = "Hunt"
+attack_probe_path = NodePath("../../VolleyProbe")
+attack_state = "Volley"
+wait_state = "Brace"
+damage_scale = 0.35
 
 [node name="Brace" type="Node" parent="FSM" unique_id=1444770956]
 script = ExtResource("b_hold")
-anim = "idle"
-min_time = 1.2
-max_time = 1.6
-next_state = "Anvil"
-damage_scale = 0.2
+max_time = 2.0
+next_state = "Hunt"
+damage_scale = 0.35
 
 [node name="Charge" type="Node" parent="FSM" unique_id=149517126]
 script = ExtResource("b_charge")
@@ -297,9 +304,8 @@ clear_group = &"pack_grimling"
 
 [node name="Stalk" type="Node" parent="FSM" unique_id=40807750]
 script = ExtResource("b_approach")
-speed = 46.0
-anim = "run"
-duration = 2.4
+speed = 82.0
+duration = 3.0
 done_state = "Breathe"
 attack_probe_path = NodePath("../../CloseProbe")
 attack_state = "Charge2"
@@ -316,8 +322,8 @@ attack_anim = "run"
 [node name="Stagger" type="Node" parent="FSM" unique_id=149517128]
 script = ExtResource("b_hold")
 anim = "rest"
-min_time = 3.0
-max_time = 3.0
+min_time = 3.5
+max_time = 3.5
 next_state = "Summon"
 damage_scale = 1.6
 
@@ -328,15 +334,15 @@ beats = Array[String](["WindedShort", "Winded"])
 [node name="Winded" type="Node" parent="FSM" unique_id=149517130]
 script = ExtResource("b_hold")
 anim = "rest"
-min_time = 4.0
-max_time = 4.0
+min_time = 5.0
+max_time = 5.0
 next_state = "Summon"
 health_min = 0.25
 
 [node name="WindedShort" type="Node" parent="FSM" unique_id=149517131]
 script = ExtResource("b_hold")
 anim = "rest"
-min_time = 2.5
-max_time = 2.5
+min_time = 3.0
+max_time = 3.0
 next_state = "Summon"
 health_max = 0.25

@@ -6,14 +6,14 @@
 
 [sub_resource type="Resource" id="ScalingProfile_slam"]
 script = ExtResource("bh_scaling")
-base_damage = 46.0
+base_damage = 48.0
 
 [resource]
 script = ExtResource("1_script")
 radius_tiles = 6.0
-knockback_force = 1300.0
+knockback_force = 1400.0
 damage = SubResource("ScalingProfile_slam")
 edge_damage = 0.3
 effect_scene = ExtResource("2_scene")
-cooldown = 7.0
-cast_time = 1.3
+cooldown = 6.0
+cast_time = 1.5
