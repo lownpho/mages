@@ -22,14 +22,15 @@ speed_tiles = 30
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
 base_damage = 10.0
-skill_scaling = 1.0
+skill_scaling = 0.6
+speed_scaling = 1.2
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(104, 120, 8, 8)
+region = Rect2(80, 24, 8, 8)
 
 [resource]
 script = ExtResource("1_script")

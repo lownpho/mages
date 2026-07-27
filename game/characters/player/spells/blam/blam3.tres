@@ -11,18 +11,18 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_62jg0"]
 atlas = ExtResource("2_xmppu")
-region = Rect2(8, 16, 8, 8)
+region = Rect2(16, 16, 8, 8)
 
 [sub_resource type="Resource" id="Resource_apjsw"]
 script = ExtResource("3_48a34")
 icon = SubResource("AtlasTexture_62jg0")
-range_tiles = 5
+range_tiles = 4
 speed_tiles = 16
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 19.0
-skill_scaling = 0.62
+base_damage = 16.0
+skill_scaling = 0.6
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
@@ -38,7 +38,7 @@ script = ExtResource("1_script")
 fire_pattern = SubResource("Pattern_1")
 bullet = SubResource("Resource_apjsw")
 damage = SubResource("ScalingProfile_bullet")
-shot_interval = 0.4
+shot_interval = 0.3
 max_shots = 3
 effect_scene = ExtResource("3_scene")
 cooldown = 6.5

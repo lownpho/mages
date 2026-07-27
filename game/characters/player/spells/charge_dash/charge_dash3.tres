@@ -11,35 +11,36 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_shed"]
 atlas = ExtResource("2_bullets")
-region = Rect2(8, 8, 8, 8)
+region = Rect2(40, 8, 8, 8)
 
 [sub_resource type="Resource" id="Resource_shed"]
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_shed")
 range_tiles = 8
-speed_tiles = 14
+speed_tiles = 30
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 14.0
-skill_scaling = 0.46
+base_damage = 20.0
+skill_scaling = 1.5
+speed_scaling = 2.0
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(56, 40, 8, 8)
+region = Rect2(88, 24, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-dash_speed = 580.0
-dash_duration = 0.6
+dash_speed = 100.0
+dash_duration = 0.8
 fire_pattern = SubResource("Pattern_1")
 bullet = SubResource("Resource_shed")
 damage = SubResource("ScalingProfile_bullet")
-shot_interval = 0.08
-max_shots = 8
+shot_interval = 0.8
+max_shots = 9
 effect_scene = ExtResource("3_scene")
 cooldown = 7.0
 icon = SubResource("AtlasTexture_icon")

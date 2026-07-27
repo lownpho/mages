@@ -7,23 +7,22 @@
 
 [sub_resource type="Resource" id="ScalingProfile_tick"]
 script = ExtResource("bh_scaling")
-base_damage = 16.0
-defence_scaling = 0.8
+base_damage = 12.0
+defence_scaling = 2.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(56, 32, 8, 8)
+region = Rect2(48, 64, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-max_ticks = 5
-speed_tiles = 20.0
+max_ticks = 6
+speed_tiles = 18.0
 damage = SubResource("ScalingProfile_tick")
-range_tiles = 32.0
+range_tiles = 26.0
 effect_scene = ExtResource("3_scene")
-cooldown = 5.0
+cooldown = 10.0
 cast_time = 2.0
 channeled = true
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 9
-max_health_modifier = 30
+defence_modifier = 10

@@ -91,7 +91,11 @@ func _run(id: String, spec: Dictionary) -> int:
 	enemy.fsm.state_changed.connect(func(_prev: State, cur: State) -> void:
 		_states.append(cur.name))
 
-	var deadline := Time.get_ticks_msec() + 20000
+	# Generous: a case exits the moment it meets both minimums, so this only bounds the
+	# failure path. A boss with long telegraphs (the gnarlking calls a brood, then rears for
+	# a slam, before anything resembling a bullet appears) sat right on a 20s wire and
+	# failed intermittently.
+	var deadline := Time.get_ticks_msec() + 35000
 	while Time.get_ticks_msec() < deadline \
 			and (_bullets < spec["min_bullets"] or _states.size() < spec["min_changes"]):
 		await get_tree().physics_frame
@@ -154,7 +158,7 @@ func _phase_swap() -> int:
 
 # The gnarlking is the one boss whose next beat is decided by the arena rather than by a
 # roll: its charge sits behind Behaviour.clear_group, so the brood standing between you and
-# it is what keeps the fight in its armoured anvil phase. Assert the clause directly, both
+# it is what keeps the fight in its armoured hunt phase. Assert the clause directly, both
 # that a live packmate closes the gate and that DISTANCE reopens it — streaming keeps other
 # rooms' packs in the tree, and a global count would pin the fight on a grimling three rooms
 # away.
@@ -167,6 +171,16 @@ func _brood_gate() -> int:
 	add_child(enemy)
 	var add: Creature = load("res://characters/enemies/grimling/grimling.tscn").instantiate()
 	add_child(add)
+	# Its melee kit is range-gated, so the ladder only answers meaningfully with a target
+	# somewhere — the distance to it is half of what decides the next beat.
+	var target := CharacterBody2D.new()
+	target.collision_layer = 16
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	target.add_child(shape)
+	target.add_to_group("player")
+	add_child(target)
+	target.global_position = Vector2(30, 0)  # inside the slam's own reach
 	await get_tree().physics_frame
 
 	var beats := enemy.fsm.states
@@ -174,19 +188,31 @@ func _brood_gate() -> int:
 
 	add.global_position = Vector2(40, 0)
 	fails += _expect("charge gated while the brood stands", not beats["Charge"].can_run())
-	fails += _expect("anvil falls to a slam while the brood stands",
-		beats["Anvil"]._first_ready() == "Slam")
+	fails += _expect("in reach, the ladder falls to the slam while the brood stands",
+		beats["Hunt"]._first_ready() == "Slam")
+
+	# Out past both weapons: a close-range fighter's answer to distance is to walk it down,
+	# never to rear into a slam that lands on nothing.
+	target.global_position = Vector2(300, 0)
+	await get_tree().physics_frame
+	fails += _expect("slam drops out of the ladder out of reach", not beats["Slam"].can_run())
+	fails += _expect("volley drops out of the ladder out of reach", not beats["Volley"].can_run())
+	fails += _expect("out of reach, the ladder closes the distance",
+		beats["Hunt"]._first_ready() == "Close")
+	target.global_position = Vector2(30, 0)
+	await get_tree().physics_frame
 
 	add.global_position = Vector2(400, 0)  # past clear_radius_tiles
 	fails += _expect("a distant pack doesn't gate the charge", beats["Charge"].can_run())
 
 	await _clear_pack()
 	fails += _expect("charge opens once the brood is dead", beats["Charge"].can_run())
-	fails += _expect("anvil leads with the charge once clear",
-		beats["Anvil"]._first_ready() == "Charge")
+	fails += _expect("the ladder leads with the charge once clear",
+		beats["Hunt"]._first_ready() == "Charge")
 
+	target.queue_free()
 	if fails == 0:
-		print("  ok: gnarlking brood gate — the pack decides which phase the fight is in")
+		print("  ok: gnarlking brood gate — pack and range decide the next beat")
 	enemy.queue_free()
 	await get_tree().physics_frame
 	return fails
@@ -217,10 +243,14 @@ func _enrage_lap() -> int:
 	enemy.fsm.state_changed.connect(func(_prev: State, cur: State) -> void:
 		_states.append(cur.name))
 
-	# Stand in for a player clearing the adds the instant they land.
+	# Stand in for a player who clears the adds the instant they land and then stays in
+	# melee — the charge overshoots by design, so gluing the target to the boss is what
+	# drives Stalk into the second charge rather than out to Winded. Both branches are
+	# authored; this is the one whose wiring can strand the boss.
 	var seen := {}
-	var deadline := Time.get_ticks_msec() + 30000
+	var deadline := Time.get_ticks_msec() + 40000
 	while Time.get_ticks_msec() < deadline and not seen.has("Summon2"):
+		target.global_position = enemy.global_position + Vector2(20, 0)
 		for node in get_tree().get_nodes_in_group("pack_grimling"):
 			node.get_parent().queue_free()
 		for s in _states:
@@ -233,6 +263,7 @@ func _enrage_lap() -> int:
 	var fails := 0
 	fails += _expect("enrage opens once the adds are cleared", seen.has("Charge"))
 	fails += _expect("the charge hands off into the stalk", seen.has("Stalk"))
+	fails += _expect("a target still in reach chains the second charge", seen.has("Charge2"))
 	fails += _expect("the lap closes back onto the brood call", seen.has("Summon2"))
 	if fails == 0:
 		print("  ok: gnarlking enrage lap — %s" % [seen.keys()])

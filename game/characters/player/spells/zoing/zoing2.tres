@@ -22,7 +22,7 @@ region = Rect2(24, 40, 8, 8)
 [sub_resource type="Resource" id="Resource_zoing"]
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_shot")
-range_tiles = 28
+range_tiles = 30
 speed_tiles = 20
 pierce = true
 behaviours = Array[ExtResource("1_bh_base")]([SubResource("Bounce_1")])
@@ -45,7 +45,7 @@ script = ExtResource("1_script")
 fire_pattern = SubResource("Resource_u5747")
 bullet = SubResource("Resource_zoing")
 damage = SubResource("ScalingProfile_bullet")
-shot_interval = 0.35
+shot_interval = 0.2
 max_shots = 5
 effect_scene = ExtResource("3_scene")
 cooldown = 14.0

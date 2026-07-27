@@ -15,5 +15,5 @@ cooldown = 8.0
 cast_time = 3.0
 channeled = true
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 15
-defence_modifier = 4
+max_health_modifier = 20
+defence_modifier = 5

@@ -11,4 +11,3 @@ class_name ThwompResource
 ## Fraction of the full hit landed at the very edge of the radius; the centre always takes
 ## the whole number. The design's "more damage the closer, chip at the edge".
 @export_range(0.0, 1.0) var edge_damage: float = 0.35
-
