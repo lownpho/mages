@@ -44,6 +44,7 @@ class_name Cast
 var _probe: RayCast2D
 var _exit_probe: RayCast2D
 var _winding_up: bool = false
+var _refused: bool = false
 
 func _ready() -> void:
 	super()
@@ -80,11 +81,12 @@ func enter() -> void:
 	# telegraph that never resolves, or the beat's wind-up early-out freezes the creature.
 	var player := creature.get_target()
 	var started := _caster.cast(spell, aim_at(player) if player else Vector2.ZERO)
+	_refused = not started
 	_winding_up = started and spell.cast_time > 0.0
 	if _winding_up:
 		creature.incoming_damage_scale = windup_damage_scale
 		creature.play_fitted(windup_anim if windup_anim != "" else attack_anim, spell.cast_time)
-	else:
+	elif started:
 		creature.play(attack_anim)
 
 func exit() -> void:
@@ -99,6 +101,14 @@ func exit() -> void:
 		_exit_probe.enabled = false
 
 func physics_update(_delta: float) -> void:
+	# The spell was still cooling when we got here — a hand-off that doesn't gate on
+	# can_run (a Flee running out its clock back onto its attack) can always land on a
+	# cooling beat. Pass the beat on rather than acting out a shot that isn't coming: the
+	# owl's loop leans on this, resting and re-perching again until the charge is back.
+	if _refused:
+		go_to(done_state)
+		return
+
 	var player := creature.get_target()
 
 	# A wind-up is a committed telegraph: once it starts the shot goes off, wherever the

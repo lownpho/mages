@@ -27,10 +27,10 @@ const CASES := {
 	"snake": {"scene": "res://characters/enemies/snake/snake.tscn", "min_bullets": 0, "min_changes": 3},
 	# The animal deepwood. Each of these rides a seam the shared pool never touches: the
 	# chargers' spell-driven dash (a beat whose movement lives in the cast, so a stalled
-	# start_dash reads here as a creature that never leaves its wind-up), the owl's channel
-	# (its whole loop hangs off a charge that SpellCaster has to release on its own — a
-	# channel that never caps parks the owl mid-telegraph forever), the great owl's picker
-	# choosing between a charged shot and a poke by priority, the mole's submerged approach,
+	# start_dash reads here as a creature that never leaves its wind-up), the owls' channel
+	# loop (charge -> rest -> re-perch, hanging off a channel SpellCaster has to cap and
+	# release on its own — one that never caps parks the owl mid-telegraph forever, and a
+	# refused cast that isn't passed on stutters the loop), the mole's submerged approach,
 	# and the grimlord's parting ring — which only goes off if the death beat runs at all.
 	"thornback": {"scene": "res://characters/enemies/thornback/thornback.tscn", "min_bullets": 4, "min_changes": 4},
 	"owl": {"scene": "res://characters/enemies/owl/owl.tscn", "min_bullets": 2, "min_changes": 5},

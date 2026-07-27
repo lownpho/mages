@@ -6,6 +6,9 @@ class_name BulletSpell
 ## direction, until max_shots are spent (1 = a single projectile) — then it
 ## emits finished (SpellCaster starts the cooldown there) and frees itself.
 ##
+## Three aim modes, all data: it tracks the caster shot to shot (default), commits to the
+## lane it started with (lock_aim), or paints from its own random bearing (aim_independent).
+##
 ## Exclusive spells cancel it: a newer burst (Player.register_burst) or a
 ## starting cast/channel (Player.cancel_bursts) calls interrupt(), which ends
 ## the burst onto its full cooldown. Instant spells leave it firing.
@@ -20,9 +23,10 @@ var ctx: CastContext
 var _shots_left: int = 0
 var _cadence: float = 0.0
 var _finished: bool = false
-# Accumulated rotation_per_shot, and (for aim_independent) the burst's random bearing.
+# Accumulated rotation_per_shot, and the bearing every shot fires along while _locked.
 var _drift: float = 0.0
 var _base_angle: float = 0.0
+var _locked: bool = false
 
 func setup(spell: SpellResource, p_caster: Node2D) -> void:
 	data = spell
@@ -32,7 +36,15 @@ func setup(spell: SpellResource, p_caster: Node2D) -> void:
 func _ready() -> void:
 	_shots_left = data.max_shots
 	_cadence = data.shot_interval  # banked, so shot 1 fires as soon as the gate opens
-	_base_angle = randf() * TAU
+	# The lane is decided here, once, for both committed modes — and _ready is the moment the
+	# burst begins, so a spell with a wind-up locks onto where the target was when the
+	# telegraph ended rather than where they were when it started.
+	_locked = data.aim_independent or data.lock_aim
+	if data.aim_independent:
+		_base_angle = randf() * TAU
+	elif data.lock_aim:
+		var aim: Vector2 = caster.get_aim_direction()
+		_base_angle = aim.angle() if aim != Vector2.ZERO else 0.0
 	if caster.has_method("register_burst"):
 		caster.register_burst(self)
 
@@ -55,9 +67,9 @@ func _physics_process(delta: float) -> void:
 		_finish()
 
 func _fire() -> void:
-	# Re-sample aim per shot: the burst tracks the caster as it turns — unless the spell
-	# is aim_independent, where it paints from its own fixed bearing instead.
-	var direction: Vector2 = Vector2.RIGHT.rotated(_base_angle) if data.aim_independent \
+	# Re-sample aim per shot so the burst tracks the caster as it turns — unless the lane was
+	# committed at the start (lock_aim, aim_independent), in which case every shot reuses it.
+	var direction: Vector2 = Vector2.RIGHT.rotated(_base_angle) if _locked \
 		else caster.get_aim_direction()
 	if direction == Vector2.ZERO:
 		direction = Vector2.RIGHT

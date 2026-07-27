@@ -22,13 +22,30 @@ class_name Behaviour
 ## Runs at most once per fight.
 @export var once: bool = false
 
+@export_group("Armour")
+## Incoming damage while this beat runs; <1 armours (a guard windup), 0 makes the creature
+## untouchable outright (the mole underground). Restored on exit so it can't leak past the
+## beat. Lives on the base because armour is a property of the beat, not of one shape of
+## beat — a rooted guard, an armoured pursuit and a submerged approach all want it.
+@export var damage_scale: float = 1.0
+
 var _spent: bool = false
 
 func _ready() -> void:
 	on_enter.connect(enter)
 	on_enter.connect(func() -> void: _spent = true)
+	on_enter.connect(_apply_armour)
 	on_exit.connect(exit)
+	on_exit.connect(_clear_armour)
 	on_physics_update.connect(physics_update)
+
+func _apply_armour() -> void:
+	if damage_scale != 1.0:
+		creature.incoming_damage_scale = damage_scale
+
+func _clear_armour() -> void:
+	if damage_scale != 1.0:
+		creature.incoming_damage_scale = 1.0
 
 # Override points for subclasses.
 func enter() -> void: pass
