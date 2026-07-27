@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://bowujhx65oyw7"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="2_effect"]
+[ext_resource type="PackedScene" uid="uid://ctm5rk8wq7bnh" path="res://characters/enemies/grimling/grimling.tscn" id="4_add"]
+[ext_resource type="PackedScene" uid="uid://bxr7k2mqvsd08" path="res://characters/enemies/shard_grimling/shard_grimling.tscn" id="5_add"]
+[ext_resource type="PackedScene" uid="uid://cvn5jt8qwm4rx" path="res://characters/enemies/wisp_grimling/wisp_grimling.tscn" id="6_add"]
+
+[resource]
+script = ExtResource("1_script")
+minion_scenes = Array[PackedScene]([ExtResource("4_add"), ExtResource("5_add"), ExtResource("6_add")])
+count = 5
+spawn_pattern = 1
+spawn_distance = 40.0
+minion_lifetime = 20.0
+effect_scene = ExtResource("2_effect")
+cooldown = 0.0
+cast_time = 1.5

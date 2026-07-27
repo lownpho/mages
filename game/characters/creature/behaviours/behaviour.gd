@@ -22,6 +22,15 @@ class_name Behaviour
 ## Runs at most once per fight.
 @export var once: bool = false
 
+@export_group("Escort")
+## While any member of this group stands within `clear_radius_tiles`, the beat refuses to
+## run — the seam a boss holds itself back with until its adds are dead. Membership is the
+## Pack component's group, so a pack already answers it; the count is positional rather
+## than global because streaming keeps other rooms' packs loaded and a grimling three rooms
+## away must not pin the fight.
+@export var clear_group: StringName = &""
+@export var clear_radius_tiles: float = 14.0
+
 @export_group("Armour")
 ## Incoming damage while this beat runs; <1 armours (a guard windup), 0 makes the creature
 ## untouchable outright (the mole underground). Restored on exit so it can't leak past the
@@ -64,7 +73,23 @@ func can_run() -> bool:
 		frac = float(creature.health) / float(creature.max_health)
 	if frac < health_min or frac > health_max:
 		return false
+	if not _group_clear():
+		return false
 	return _ready_to_run()
+
+func _group_clear() -> bool:
+	if clear_group == &"":
+		return true
+	var radius := clear_radius_tiles * GameConstants.PX_PER_TILE
+	for node in get_tree().get_nodes_in_group(clear_group):
+		# The group is authored on the Pack component, which hangs off the creature and has
+		# no position of its own.
+		var body := node as Node2D
+		if body == null:
+			body = node.get_parent() as Node2D
+		if body and body.global_position.distance_squared_to(creature.global_position) <= radius * radius:
+			return false
+	return true
 
 # Subclass seam for can_run (Cast: is the spell off cooldown).
 func _ready_to_run() -> bool:

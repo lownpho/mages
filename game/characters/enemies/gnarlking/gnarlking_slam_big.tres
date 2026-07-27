@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ThwompResource" format=3 uid="uid://bowujhyoyslu7"]
+
+[ext_resource type="Script" uid="uid://bpmqnbte0wkwm" path="res://characters/player/spells/thwomp/thwomp_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://b7hb80p7f8dn" path="res://characters/player/spells/thwomp/thwomp.tscn" id="2_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="ScalingProfile_slam"]
+script = ExtResource("bh_scaling")
+base_damage = 52.0
+
+[resource]
+script = ExtResource("1_script")
+radius_tiles = 12.0
+knockback_force = 1700.0
+damage = SubResource("ScalingProfile_slam")
+edge_damage = 0.3
+effect_scene = ExtResource("2_scene")
+cooldown = 6.0
+cast_time = 1.3

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cspv0ip6swyd0"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://thw0mppuls3t" path="res://characters/player/spells/thwomp/thwomp3.tres" id="3_thwomp"]
+[ext_resource type="Resource" uid="uid://erynxaao21lk" path="res://characters/player/spells/halp/halp3.tres" id="4_halp"]
+[ext_resource type="Texture2D" uid="uid://ds3fp5ehssi24" path="res://characters/enemies/gnarlking/gnarlking.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_thwomp"]
+script = ExtResource("2_drop")
+item = ExtResource("3_thwomp")
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_halp"]
+script = ExtResource("2_drop")
+item = ExtResource("4_halp")
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 24)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Gnarlking"
+icon = SubResource("AtlasTexture_icon")
+rarity = 2
+max_health = 3000
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_thwomp"), SubResource("Drop_halp")])

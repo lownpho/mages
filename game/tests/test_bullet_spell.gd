@@ -21,6 +21,11 @@ var pew1: BulletSpellResource
 var pew2: BulletSpellResource
 var spawned: Dictionary = {}  # BulletResource -> bullets spawned carrying it
 var directions: Array[Vector2] = []  # every spawned bullet's launch direction, in order
+# Derived from the page geometry rather than written out: these were hardcoded to a
+# two-wide page, so when the loadout grew a third cast button every "page 1" index
+# silently addressed page 0 instead.
+@onready var swap_slot: int = GlobalInventory.SPELL_PAGE_SIZE      # page 1, cast1
+@onready var nope_slot: int = GlobalInventory.SPELL_PAGE_SIZE + 1  # page 1, cast2
 
 func _ready() -> void:
 	get_tree().root.child_entered_tree.connect(_on_root_child)
@@ -35,7 +40,8 @@ func _ready() -> void:
 	# all at once), and page 1 slot 1 keeps nope.
 	GlobalInventory.spell_slots.at(0).set_item(pew1)
 	GlobalInventory.spell_slots.at(1).set_item(pew2)
-	GlobalInventory.spell_slots.at(3).set_item(load("res://characters/player/spells/nope/nope.tres"))
+	GlobalInventory.spell_slots.at(nope_slot).set_item(
+		load("res://characters/player/spells/nope/nope.tres"))
 	# Let the tree finish assembling before effects get added to the root.
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -78,7 +84,7 @@ func _burst_live(spell: SpellResource) -> bool:
 
 # Page 1, slot 0 — the shared slot each cancel test loads with its own spell.
 func _equip_swap_slot(path: String) -> void:
-	GlobalInventory.spell_slots.at(2).set_item(load(path))
+	GlobalInventory.spell_slots.at(swap_slot).set_item(load(path))
 
 func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout

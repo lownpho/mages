@@ -51,6 +51,8 @@ func _ready() -> void:
 	for id in CASES:
 		fails += await _run(id, CASES[id])
 	fails += await _phase_swap()
+	fails += await _brood_gate()
+	fails += await _enrage_lap()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -110,9 +112,14 @@ func _run(id: String, spec: Dictionary) -> int:
 			% [id, _bullets, _states.size(), distinct.keys()])
 
 	get_tree().root.child_entered_tree.disconnect(counter)
-	enemy.queue_free()
 	target.queue_free()
+	# Minions outlive the boss that called them, and every case spawns on the same spot —
+	# leave none standing or the next creature fights the previous one's adds (which is
+	# exactly what a brood-gated boss reads as "the pack is still up").
+	for node in get_tree().get_nodes_in_group("enemies"):
+		node.queue_free()
 	await get_tree().physics_frame
+	await get_tree().process_frame
 	return fails
 
 # The health-window replacement for the old phase_states: which beats a boss's dispatcher
@@ -144,6 +151,103 @@ func _phase_swap() -> int:
 	enemy.queue_free()
 	await get_tree().physics_frame
 	return fails
+
+# The gnarlking is the one boss whose next beat is decided by the arena rather than by a
+# roll: its charge sits behind Behaviour.clear_group, so the brood standing between you and
+# it is what keeps the fight in its armoured anvil phase. Assert the clause directly, both
+# that a live packmate closes the gate and that DISTANCE reopens it — streaming keeps other
+# rooms' packs in the tree, and a global count would pin the fight on a grimling three rooms
+# away.
+func _brood_gate() -> int:
+	# The smoke case above left its own brood standing at the origin — minions outlive the
+	# boss that called them — and this check is about exactly that group.
+	await _clear_pack()
+
+	var enemy: Creature = load(CASES["gnarlking"]["scene"]).instantiate()
+	add_child(enemy)
+	var add: Creature = load("res://characters/enemies/grimling/grimling.tscn").instantiate()
+	add_child(add)
+	await get_tree().physics_frame
+
+	var beats := enemy.fsm.states
+	var fails := 0
+
+	add.global_position = Vector2(40, 0)
+	fails += _expect("charge gated while the brood stands", not beats["Charge"].can_run())
+	fails += _expect("anvil falls to a slam while the brood stands",
+		beats["Anvil"]._first_ready() == "Slam")
+
+	add.global_position = Vector2(400, 0)  # past clear_radius_tiles
+	fails += _expect("a distant pack doesn't gate the charge", beats["Charge"].can_run())
+
+	await _clear_pack()
+	fails += _expect("charge opens once the brood is dead", beats["Charge"].can_run())
+	fails += _expect("anvil leads with the charge once clear",
+		beats["Anvil"]._first_ready() == "Charge")
+
+	if fails == 0:
+		print("  ok: gnarlking brood gate — the pack decides which phase the fight is in")
+	enemy.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The enrage half of that fight never runs in the smoke case above, because nothing there
+# kills the brood — so drive the lap the player's own clear produces and assert the whole
+# chain hands off. Everything past the charge is a sequence with no dispatcher to fall back
+# on (Charge -> Stalk -> Charge2 -> Breathe -> Winded -> Summon), which is exactly where a
+# mis-wired done_state parks the boss forever.
+func _enrage_lap() -> int:
+	_states = []
+	var target := CharacterBody2D.new()
+	target.collision_layer = 16
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	target.add_child(shape)
+	target.add_to_group("player")
+	target.position = Vector2(24, 0)
+	add_child(target)
+
+	var enemy: Creature = load(CASES["gnarlking"]["scene"]).instantiate()
+	add_child(enemy)
+	await get_tree().physics_frame
+	for child in enemy.get_children():
+		if child is VisibleOnScreenEnabler2D:
+			child.queue_free()
+	enemy.process_mode = Node.PROCESS_MODE_INHERIT
+	enemy.fsm.state_changed.connect(func(_prev: State, cur: State) -> void:
+		_states.append(cur.name))
+
+	# Stand in for a player clearing the adds the instant they land.
+	var seen := {}
+	var deadline := Time.get_ticks_msec() + 30000
+	while Time.get_ticks_msec() < deadline and not seen.has("Summon2"):
+		for node in get_tree().get_nodes_in_group("pack_grimling"):
+			node.get_parent().queue_free()
+		for s in _states:
+			seen[s] = true
+		# A second Summon means the lap closed rather than merely started.
+		if seen.has("Charge") and _states.count("Summon") > 1:
+			seen["Summon2"] = true
+		await get_tree().physics_frame
+
+	var fails := 0
+	fails += _expect("enrage opens once the adds are cleared", seen.has("Charge"))
+	fails += _expect("the charge hands off into the stalk", seen.has("Stalk"))
+	fails += _expect("the lap closes back onto the brood call", seen.has("Summon2"))
+	if fails == 0:
+		print("  ok: gnarlking enrage lap — %s" % [seen.keys()])
+	else:
+		print("  saw: %s" % [_states])
+	enemy.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+func _clear_pack() -> void:
+	for node in get_tree().get_nodes_in_group("pack_grimling"):
+		node.get_parent().queue_free()
+	await get_tree().physics_frame
+	await get_tree().process_frame
 
 func _expect(what: String, cond: bool) -> int:
 	if cond:
