@@ -153,11 +153,16 @@ func _ready() -> void:
 		if rt.enemy_groups_max == 0 and not rt.enemies.is_empty():
 			fails.append("room type '%s' has a pool but a zero budget" % rt.id)
 
-	# Entity ids unique across the whole world (all rooms of every placed biome, one seed).
+	# Entity ids unique across the whole world (all rooms of every placed biome, one seed),
+	# and roster coverage: an enemy whose room type carries a quota (min_per_biome > 0) is
+	# PROMISED to the player, so it has to actually spawn. Weighted-only pools are rolled and
+	# make no such promise, hence the quota filter — it is the generator's one guarantee.
 	var world := WorldLayout.build(31337, config)
 	var seen := {}
+	var spawned := {}   # biome id -> set of enemy ids that actually landed
 	for p in world.placements:
 		var graph := RoomGraph.build(world, p.id, config)
+		spawned[p.id] = {}
 		for u in graph.rooms:
 			var out := RoomBuilder.build(u, config, 31337)
 			for sp in out.spawns:
@@ -165,7 +170,26 @@ func _ready() -> void:
 				if seen.has(eid):
 					fails.append("entity_id collision: %d" % eid)
 				seen[eid] = true
+				if sp.has("enemy_id"):
+					spawned[p.id][sp["enemy_id"]] = true
 	print("entity ids: %d unique across the whole world" % seen.size())
+
+	for rt in config.room_types:
+		if rt.min_per_biome <= 0 or not spawned.has(rt.biome):
+			continue
+		for entry in rt.enemies:
+			var ids: Array[StringName] = []
+			if entry.members.is_empty():
+				ids.append(entry.enemy_id)
+			else:
+				for m in entry.members:
+					ids.append(m.enemy_id)
+			for eid in ids:
+				if eid != &"" and not spawned[rt.biome].has(eid):
+					fails.append("'%s' is promised by quota room '%s' but never spawned in '%s'"
+							% [eid, rt.id, rt.biome])
+	for bid in spawned:
+		print("roster in '%s': %d distinct enemies spawned" % [bid, spawned[bid].size()])
 
 	if fails.is_empty():
 		print("ALL PASS")

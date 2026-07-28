@@ -35,8 +35,8 @@ func _ready() -> void:
 
 	# --- page grouping is DERIVED from the room spawn tables (not a stored biome field): each
 	# enemy files onto the page whose rooms spawn it, and glade_start + glade_veggie share
-	# family "glade" so they merge into one page. Deepwood spawns nothing -> no page. Ordering
-	# is commons alpha, rares, bosses last. ---
+	# family "glade" so they merge into one page. Deepwood has no family, so it is its own.
+	# Ordering is commons alpha, rares, bosses last. ---
 	var groups := GlobalBestiary.grouped_roster()
 	var want_glade: Array[StringName] = [
 		&"dirt_golem", &"hopper", &"mandrake", &"rosebud", &"seedling", &"sproutling",
@@ -44,10 +44,20 @@ func _ready() -> void:
 		&"mandraker", &"viper",   # rares after the commons
 		&"fae", &"thornmess",     # bosses last (one per sub-biome)
 	]
-	if groups.size() != 1:
-		fails.append("expected the single merged glade page, got %d: %s" % [groups.size(), str(groups)])
-	elif groups[0] != want_glade:
-		fails.append("glade page %s != %s" % [str(groups[0]), str(want_glade)])
+	var want_deepwood: Array[StringName] = [
+		&"ash_snake", &"coral_snake", &"grimling", &"mole", &"moon_moth", &"moss_golem",
+		&"moth", &"needle_moth", &"owl", &"shard_grimling", &"snake", &"stalker",
+		&"thornback", &"wisp_grimling",
+		&"great_owl", &"grimlord", &"razorback",
+		&"gnarlking",
+	]
+	if groups.size() != 2:
+		fails.append("expected the glade and deepwood pages, got %d: %s" % [groups.size(), str(groups)])
+	else:
+		if groups[0] != want_glade:
+			fails.append("glade page %s != %s" % [str(groups[0]), str(want_glade)])
+		if groups[1] != want_deepwood:
+			fails.append("deepwood page %s != %s" % [str(groups[1]), str(want_deepwood)])
 	var pages := GlobalBestiary.visible_pages()
 	if not pages.is_empty():
 		fails.append("pages visible before any visit/kill: %s" % str(pages))
@@ -55,8 +65,9 @@ func _ready() -> void:
 	# filed_ids: distinct enemies across all pages (the whole-game completion denominator) —
 	# a subset of the roster (unreachable enemies excluded), each counted once.
 	var filed := GlobalBestiary.filed_ids()
-	if filed.size() != want_glade.size():
-		fails.append("filed_ids size %d != %d: %s" % [filed.size(), want_glade.size(), str(filed)])
+	var want_filed := want_glade.size() + want_deepwood.size()
+	if filed.size() != want_filed:
+		fails.append("filed_ids size %d != %d: %s" % [filed.size(), want_filed, str(filed)])
 	for id in filed:
 		if not roster.has(id):
 			fails.append("filed id not in roster: %s" % id)

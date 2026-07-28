@@ -7,8 +7,9 @@
 script = ExtResource("1_biome")
 id = &"deepwood"
 display_color = Color(0.12, 0.3, 0.18, 1)
-size_cells = Vector2i(2, 1)
+size_cells = Vector2i(2, 2)
+bsp_stop_chance = 0.75
 open_passage_chance = 0.15
 decor_density = 0.07
-fallback_room_type = &"deepwood_traversal"
+fallback_room_type = &"deepwood_teach_open"
 presentation = ExtResource("7_pres")

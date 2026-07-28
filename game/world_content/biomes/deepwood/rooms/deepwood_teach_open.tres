@@ -1,0 +1,64 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://dxuv5igm7vss"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="2_5gfkn"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+[ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="3_jqtwa"]
+
+[sub_resource type="Resource" id="ste_0"]
+script = ExtResource("2_ste")
+enemy_id = &"moth"
+weight = 3
+group_min = 2
+group_max = 3
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_1"]
+script = ExtResource("2_ste")
+enemy_id = &"grimling"
+weight = 3
+group_min = 2
+group_max = 3
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_2"]
+script = ExtResource("2_ste")
+enemy_id = &"snake"
+weight = 2
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_3"]
+script = ExtResource("2_ste")
+enemy_id = &"owl"
+weight = 2
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_4"]
+script = ExtResource("2_ste")
+enemy_id = &"stalker"
+weight = 2
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_5"]
+script = ExtResource("2_ste")
+enemy_id = &"mole"
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_6"]
+script = ExtResource("2_ste")
+enemy_id = &"thornback"
+pack_spread = 2.0
+
+[sub_resource type="Resource" id="ste_7"]
+script = ExtResource("2_ste")
+enemy_id = &"moss_golem"
+pack_spread = 2.0
+
+[resource]
+script = ExtResource("1_def")
+id = &"deepwood_teach_open"
+biome = &"deepwood"
+weight = 2
+enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7")])
+enemy_groups_min = 1
+enemy_groups_max = 1

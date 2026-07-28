@@ -1,0 +1,179 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://d0wfld0cave01"]
+
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
+[ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="3_dx6km"]
+[ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
+[ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="4_gen"]
+
+[sub_resource type="Resource" id="pm_0_0"]
+script = ExtResource("3_pm")
+enemy_id = &"moth"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="pm_0_1"]
+script = ExtResource("3_pm")
+enemy_id = &"snake"
+
+[sub_resource type="Resource" id="ste_0"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_0_0"), SubResource("pm_0_1")])
+
+[sub_resource type="Resource" id="pm_1_0"]
+script = ExtResource("3_pm")
+enemy_id = &"moth"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="pm_1_1"]
+script = ExtResource("3_pm")
+enemy_id = &"grimling"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="ste_1"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_1_0"), SubResource("pm_1_1")])
+
+[sub_resource type="Resource" id="pm_2_0"]
+script = ExtResource("3_pm")
+enemy_id = &"grimling"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="pm_2_1"]
+script = ExtResource("3_pm")
+enemy_id = &"owl"
+
+[sub_resource type="Resource" id="ste_2"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_2_0"), SubResource("pm_2_1")])
+
+[sub_resource type="Resource" id="pm_3_0"]
+script = ExtResource("3_pm")
+enemy_id = &"snake"
+
+[sub_resource type="Resource" id="pm_3_1"]
+script = ExtResource("3_pm")
+enemy_id = &"owl"
+
+[sub_resource type="Resource" id="ste_3"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_3_0"), SubResource("pm_3_1")])
+
+[sub_resource type="Resource" id="pm_4_0"]
+script = ExtResource("3_pm")
+enemy_id = &"stalker"
+
+[sub_resource type="Resource" id="pm_4_1"]
+script = ExtResource("3_pm")
+enemy_id = &"moth"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="ste_4"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_4_0"), SubResource("pm_4_1")])
+
+[sub_resource type="Resource" id="pm_5_0"]
+script = ExtResource("3_pm")
+enemy_id = &"stalker"
+
+[sub_resource type="Resource" id="pm_5_1"]
+script = ExtResource("3_pm")
+enemy_id = &"grimling"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="ste_5"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_5_0"), SubResource("pm_5_1")])
+
+[sub_resource type="Resource" id="pm_6_0"]
+script = ExtResource("3_pm")
+enemy_id = &"mole"
+
+[sub_resource type="Resource" id="pm_6_1"]
+script = ExtResource("3_pm")
+enemy_id = &"moth"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="ste_6"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_6_0"), SubResource("pm_6_1")])
+
+[sub_resource type="Resource" id="pm_7_0"]
+script = ExtResource("3_pm")
+enemy_id = &"owl"
+
+[sub_resource type="Resource" id="pm_7_1"]
+script = ExtResource("3_pm")
+enemy_id = &"mole"
+
+[sub_resource type="Resource" id="ste_7"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_7_0"), SubResource("pm_7_1")])
+
+[sub_resource type="Resource" id="pm_8_0"]
+script = ExtResource("3_pm")
+enemy_id = &"thornback"
+
+[sub_resource type="Resource" id="pm_8_1"]
+script = ExtResource("3_pm")
+enemy_id = &"snake"
+
+[sub_resource type="Resource" id="ste_8"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_8_0"), SubResource("pm_8_1")])
+
+[sub_resource type="Resource" id="pm_9_0"]
+script = ExtResource("3_pm")
+enemy_id = &"moss_golem"
+
+[sub_resource type="Resource" id="pm_9_1"]
+script = ExtResource("3_pm")
+enemy_id = &"grimling"
+count_min = 2
+count_max = 2
+
+[sub_resource type="Resource" id="ste_9"]
+script = ExtResource("2_ste")
+weight = 2
+pack_spread = 2.0
+members = Array[ExtResource("3_pm")]([SubResource("pm_9_0"), SubResource("pm_9_1")])
+
+[sub_resource type="Resource" id="gen"]
+script = ExtResource("4_gen")
+
+[resource]
+script = ExtResource("1_def")
+id = &"deepwood_pair_cave"
+biome = &"deepwood"
+generator = SubResource("gen")
+difficulty = 1
+footprint_blob = true
+weight = 4
+max_per_biome = 24
+enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7"), SubResource("ste_8"), SubResource("ste_9")])
+enemy_groups_min = 1
+enemy_groups_max = 1

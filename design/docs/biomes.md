@@ -78,23 +78,38 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 
 ## Deepwood (T3)
 
-The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. The biome itself is carved and reachable — both glades gate into it — and its animal roster is built, but the room spawn tables are still empty, so nothing in it spawns yet. The three remaining sub-biomes (mimic, insect, fungal) are proposals; they stay in the ideas section below.
+The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The three remaining sub-biomes (mimic, insect, fungal) are proposals; they stay in the ideas section below.
 
 ### Deepwood
 
-One biome in-game, not yet split into the four sub-biomes the design plans. Seven room types are shipped and placed; every one of them carries an empty spawn table, so the roster below is reachable only through the debug console.
+One biome in-game, not yet split into the four sub-biomes the design plans. The rooms run a teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them.
 
 | Tier | Room | Shape | Count | Enemy group variations |
 |---|---|---|---|---|
-| T0 | traversal | empty | w2 | *(empty)* |
-| T1 | cave | cave | w4 | *(empty)* |
-| T1 | field | scatter | w3 | *(empty)* |
-| T2 | traversal_deep | empty | w2 | *(empty)* |
-| T2 | grove | cave | w3 | *(empty)* |
-| T3 | arena | arena | 1 | *(empty)* |
-| T3 | bramble | cave | w3 | *(empty)* |
-
-Nothing spawns here yet — every room above carries an empty table. Planned roster: ash_snake, coral_snake, grimling, mole, moon_moth, moss_golem, moth, needle_moth, owl, shard_grimling, snake, stalker, thornback, wisp_grimling, great_owl, grimlord, razorback, gnarlking.
+| T0 | teach_grimling | empty | 1 | 2-3x grimling |
+| T0 | teach_mole | empty | 1 | 1x mole |
+| T0 | teach_moss_golem | empty | 1 | 1x moss_golem |
+| T0 | teach_moth | empty | 1 | 2-3x moth |
+| T0 | teach_open | empty | w2 | 2-3x moth - 2-3x grimling - 1x snake - 1x owl - 1x stalker - 1x mole - 1x thornback - 1x moss_golem |
+| T0 | teach_owl | empty | 1 | 1x owl |
+| T0 | teach_snake | empty | 1 | 1x snake |
+| T0 | teach_stalker | scatter | 1 | 1x stalker |
+| T0 | teach_thornback | cave | 1 | 1x thornback |
+| T1 | pair_cave | cave | w4 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling |
+| T1 | pair_scatter | scatter | w3 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling |
+| T2 | group_open | empty | w2 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling - 2x moon_moth + 2x grimling - 2x needle_moth + 1x stalker - 1x coral_snake + 2x moth - 1x ash_snake + 1x owl - 2x shard_grimling + 1x snake - 2x wisp_grimling + 1x thornback |
+| T2 | group_trees | cave | w3 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling - 2x moon_moth + 2x grimling - 2x needle_moth + 1x stalker - 1x coral_snake + 2x moth - 1x ash_snake + 1x owl - 2x shard_grimling + 1x snake - 2x wisp_grimling + 1x thornback |
+| T2 | teach_ash_snake | empty | 1 | 1x ash_snake |
+| T2 | teach_coral_snake | empty | 1 | 1x coral_snake |
+| T2 | teach_moon_moth | empty | 1 | 2x moon_moth |
+| T2 | teach_needle_moth | empty | 1 | 2x needle_moth |
+| T2 | teach_shard_grimling | empty | 1 | 2x shard_grimling |
+| T2 | teach_wisp_grimling | empty | 1 | 2x wisp_grimling |
+| T3 | boss_gnarlking | arena | 1 | 1x gnarlking |
+| T3 | rare_great_owl | empty | w1 | 1x great_owl |
+| T3 | rare_grimlord | empty | w1 | 1x grimlord + 2x grimling |
+| T3 | rare_razorback | cave | w1 | 1x razorback |
+| T3 | swarm_trees | cave | w3 | 2x needle_moth + 2x grimling - 2x moon_moth + 2x shard_grimling - 1x ash_snake + 1x stalker + 2x moth - 1x coral_snake + 1x owl + 2x wisp_grimling - 1x thornback + 2x moth + 1x snake - 1x moss_golem + 2x wisp_grimling + 1x moon_moth - 1x mole + 2x shard_grimling + 1x coral_snake - 1x stalker + 1x ash_snake + 2x grimling |
 
 #### Deepwood drops
 

@@ -358,7 +358,7 @@ stateDiagram-v2
 
 ## Deepwood
 
-The forest, T3. A shared pool of eleven natives is meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**. All of these are built and tuned; none of them spawn yet.
+The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.
 
 ### Ash Snake
 

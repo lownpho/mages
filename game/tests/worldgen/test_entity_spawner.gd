@@ -33,9 +33,12 @@ func _ready() -> void:
 	# Defeated tracking on world B: kill one enemy, reseed (despawn + respawn everything),
 	# same seed → same world minus the corpse.
 	var victim = null   # untyped: Creature properties accessed dynamically
+	# The rig wires no features_parent, so doors/signs land in the enemies node too — they
+	# carry no entity_id and are never defeat-tracked. Skip past them to a real enemy.
 	for e in b.enemies.get_children():
-		victim = e
-		break
+		if e.has_meta("entity_id"):
+			victim = e
+			break
 	if victim == null:
 		fails.append("no victim available for defeated-tracking test")
 	else:

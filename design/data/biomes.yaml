@@ -37,14 +37,13 @@ families:
     tier_label: T3
     intro: >
       The second biome, tuned to pressure long-range, squishy builds and push the player into close
-      quarters. Enemies have far more health and hit harder. The biome itself is carved and reachable
-      — both glades gate into it — and its animal roster is built, but the room spawn tables are
-      still empty, so nothing in it spawns yet. The three remaining sub-biomes (mimic, insect, fungal)
-      are proposals; they stay in the ideas section below.
+      quarters. Enemies have far more health and hit harder. It is the largest biome in the world —
+      twice the footprint of either glade — and both glades gate into it. The three remaining
+      sub-biomes (mimic, insect, fungal) are proposals; they stay in the ideas section below.
     enemies_intro: >
-      The forest, T3. A shared pool of eleven natives is meant to appear in every deepwood sub-biome;
-      on top of it the **animal deepwood** adds its own beasts and the **gnarlking**. All of these
-      are built and tuned; none of them spawn yet.
+      The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood
+      sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**.
+      The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.
 biomes:
   - id: glade_start
     name: Starting glade
@@ -60,9 +59,9 @@ biomes:
   - id: deepwood
     name: Deepwood
     intro: >
-      One biome in-game, not yet split into the four sub-biomes the design plans. Seven room types
-      are shipped and placed; every one of them carries an empty spawn table, so the roster below
-      is reachable only through the debug console.
-    planned_roster: [moth, moon_moth, needle_moth, stalker, snake, coral_snake, ash_snake, grimling,
-      shard_grimling, wisp_grimling, moss_golem, thornback, owl, mole, grimlord, razorback, great_owl,
-      gnarlking]
+      One biome in-game, not yet split into the four sub-biomes the design plans. The rooms run a
+      teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs
+      them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes
+      three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its
+      own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all
+      three moths or all three snakes means going looking for them.
