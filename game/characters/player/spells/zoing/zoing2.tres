@@ -17,7 +17,7 @@ damage_per_bounce = 0.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_shot"]
 atlas = ExtResource("2_bullets")
-region = Rect2(24, 40, 8, 8)
+region = Rect2(8, 80, 8, 8)
 
 [sub_resource type="Resource" id="Resource_zoing"]
 script = ExtResource("3_bullet")
