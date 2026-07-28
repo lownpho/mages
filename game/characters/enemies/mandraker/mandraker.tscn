@@ -170,3 +170,5 @@ done_state = "Pattern"
 attack_probe_path = NodePath("../../FireballProbe")
 out_of_range_state = "Chase"
 pattern_weight = 1.0
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+

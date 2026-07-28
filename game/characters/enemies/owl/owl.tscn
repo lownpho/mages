@@ -179,6 +179,7 @@ attack_probe_path = NodePath("../../SnipeProbe")
 out_of_range_state = "Reposition"
 exit_margin = 24.0
 windup_anim = "charge"
+telegraph_color = Color(0.956863, 0.705882, 0.105882, 1)
 
 [node name="Recover" type="Node" parent="FSM" unique_id=1265311285]
 script = ExtResource("b_hold")

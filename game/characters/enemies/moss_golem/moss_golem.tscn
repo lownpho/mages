@@ -208,6 +208,7 @@ caster_path = NodePath("../../Caster")
 spell = ExtResource("6_shell")
 done_state = "Ring"
 attack_anim = "shell"
+telegraph_color = Color(0.541176, 0.921569, 0.945098, 1)
 
 [node name="Ring" type="Node" parent="FSM" unique_id=810859355]
 script = ExtResource("b_cast")
@@ -216,6 +217,7 @@ spell = ExtResource("7_ring")
 done_state = "Recover"
 attack_probe_path = NodePath("../../AttackProbe")
 out_of_range_state = "Chase"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
 
 [node name="Recover" type="Node" parent="FSM" unique_id=1876249738]
 script = ExtResource("b_hold")

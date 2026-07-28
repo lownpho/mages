@@ -191,6 +191,7 @@ spell = ExtResource("6_spell")
 done_state = "Surface"
 windup_anim = "erupt"
 attack_anim = "idle"
+telegraph_color = Color(0.956863, 0.8, 0.631373, 1)
 
 [node name="Surface" type="Node" parent="FSM" unique_id=2021593046]
 script = ExtResource("b_hold")

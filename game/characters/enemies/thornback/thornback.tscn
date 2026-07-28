@@ -199,6 +199,7 @@ spell = ExtResource("6_spell")
 done_state = "Recover"
 windup_anim = "windup"
 attack_anim = "dash"
+telegraph_color = Color(0.933333, 0.631373, 0.376471, 1)
 
 [node name="Recover" type="Node" parent="FSM" unique_id=233440042]
 script = ExtResource("b_hold")

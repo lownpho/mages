@@ -228,6 +228,7 @@ done_state = "Rest"
 attack_probe_path = NodePath("../../MissileProbe")
 out_of_range_state = "Uproot"
 pattern_weight = 4.0
+telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)
 
 [node name="Uproot" type="Node" parent="FSM" unique_id=1587390997]
 script = ExtResource("b_approach")
@@ -249,6 +250,7 @@ windup_anim = "guard"
 windup_damage_scale = 0.2
 pattern_weight = 1.0
 health_min = 0.25
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
 
 [node name="Shotgun" type="Node" parent="FSM" unique_id=1019023350]
 script = ExtResource("b_cast")
@@ -267,6 +269,7 @@ done_state = "Summon"
 attack_anim = "spores"
 pattern_weight = 1.0
 health_max = 0.25
+telegraph_color = Color(0.713725, 0.835294, 0.235294, 1)
 
 [node name="Summon" type="Node" parent="FSM" unique_id=2083584801]
 script = ExtResource("b_cast")
@@ -274,6 +277,7 @@ caster_path = NodePath("../../Caster")
 spell = ExtResource("21_summon")
 done_state = "Rest"
 attack_anim = "summon"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
 
 [node name="Rest" type="Node" parent="FSM" unique_id=15123107]
 script = ExtResource("b_hold")

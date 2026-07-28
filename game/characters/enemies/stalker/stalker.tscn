@@ -163,6 +163,7 @@ spell = ExtResource("6_spell")
 done_state = "Recover"
 attack_probe_path = NodePath("../../AttackProbe")
 out_of_range_state = "Chase"
+telegraph_color = Color(0.956863, 0.705882, 0.105882, 1)
 
 [node name="Recover" type="Node" parent="FSM" unique_id=471612292]
 script = ExtResource("b_hold")

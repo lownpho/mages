@@ -38,6 +38,11 @@ class_name Cast
 @export var attack_anim: String = "attack"
 ## Incoming damage during the wind-up; <1 makes the telegraph a bad moment to trade.
 @export var windup_damage_scale: float = 1.0
+## Colour the creature strobes while the wind-up runs. Author it as the creature's own
+## accent (usually its eye colour) so the flash reads as "this one is about to fire" —
+## a pack of mixed grimlings tells you which member committed. Default transparent: a
+## wind-up is silent until someone decides it's worth shouting about.
+@export var telegraph_color: Color = Color(0, 0, 0, 0)
 
 @onready var _caster: SpellCaster = get_node(caster_path)
 
@@ -86,6 +91,8 @@ func enter() -> void:
 	if _winding_up:
 		creature.incoming_damage_scale = windup_damage_scale
 		creature.play_fitted(windup_anim if windup_anim != "" else attack_anim, spell.cast_time)
+		if telegraph_color.a > 0.0:
+			creature.telegraph(telegraph_color)
 	elif started:
 		creature.play(attack_anim)
 
@@ -174,6 +181,7 @@ func _end_windup() -> void:
 	_winding_up = false
 	creature.incoming_damage_scale = 1.0
 	creature.sprite.speed_scale = 1.0
+	creature.telegraph_off()
 
 # Whether this beat is pointed at someone: an absolute-aim spray fires from its own
 # bearing, so it neither tracks the target nor cares that they left.

@@ -224,6 +224,7 @@ done_state = "Recover"
 attack_anim = "enrage"
 pattern_weight = 1.0
 health_max = 0.3
+telegraph_color = Color(0.87451, 0.964706, 0.960784, 1)
 
 [node name="Recover" type="Node" parent="FSM" unique_id=183423356]
 script = ExtResource("b_hold")
@@ -239,3 +240,4 @@ script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("8_burst")
 attack_anim = "enrage"
+telegraph_color = Color(0.87451, 0.964706, 0.960784, 1)

@@ -181,6 +181,7 @@ out_of_range_state = "Reposition"
 exit_margin = 32.0
 windup_anim = "charge"
 attack_anim = "attack"
+telegraph_color = Color(0.87451, 0.964706, 0.960784, 1)
 
 [node name="Recover" type="Node" parent="FSM"]
 script = ExtResource("b_hold")

@@ -86,6 +86,12 @@ const KNOCKBACK_DECAY := 1200.0
 const SLEEP_MARGIN := 8 * GameConstants.PX_PER_TILE
 const SLEEP_RECT := Rect2(-SLEEP_MARGIN, -SLEEP_MARGIN, 2 * SLEEP_MARGIN, 2 * SLEEP_MARGIN)
 
+# Telegraph flash: how long the single pulse holds, and the palette-safe flattener the UI
+# already uses for its icon flashes.
+const TELEGRAPH_FLASH := 0.12
+const _FLATTEN := preload("res://gui/flatten.gdshader")
+var _telegraph_tween: Tween
+
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
@@ -213,6 +219,35 @@ func look_for_target(probe: RayCast2D) -> bool:
 	# for a one-shot check like Guard's post-windup decision.
 	probe.force_raycast_update()
 	return probe_sees(probe)
+
+## Pulse the whole sprite once in a flat colour at the moment a creature commits to a beat.
+## The wind-up already exists mechanically (Cast holds it for the spell's cast_time); this
+## is what makes the player SEE it — one flash in the creature's own accent, so the tell
+## says both "incoming" and "from what", then the sprite is itself again for the rest of
+## the wind-up. ONE pulse, deliberately: a repeating blink over a two-second channel reads
+## as a strobe, and the animation is already carrying the wind-up.
+## Flat, never a blend: the shader can't put an off-palette colour on screen.
+func telegraph(color: Color) -> void:
+	telegraph_off()
+	var mat := ShaderMaterial.new()
+	mat.shader = _FLATTEN
+	mat.set_shader_parameter("flat_color", Color(color.r, color.g, color.b, 1.0))
+	# The swap is the material itself, not the shader's alpha — flatten MULTIPLIES the
+	# texture's alpha, so dialling flat_color.a to 0 would blink the creature out of
+	# existence rather than back to its own colours.
+	sprite.material = mat
+	_telegraph_tween = create_tween()
+	_telegraph_tween.tween_interval(TELEGRAPH_FLASH)
+	_telegraph_tween.tween_callback(_set_flash.bind(null))
+
+func _set_flash(mat: ShaderMaterial) -> void:
+	sprite.material = mat
+
+func telegraph_off() -> void:
+	if _telegraph_tween:
+		_telegraph_tween.kill()
+		_telegraph_tween = null
+	sprite.material = null
 
 func play(anim: String, speed_scale: float = 1.0) -> void:
 	# A summon may lack an animation a behaviour asks for (e.g. a static turret with no

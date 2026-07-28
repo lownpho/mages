@@ -177,6 +177,7 @@ done_state = "Recover"
 attack_probe_path = NodePath("../../AttackProbe")
 out_of_range_state = "Chase"
 exit_margin = 24.0
+telegraph_color = Color(0.713725, 0.835294, 0.235294, 1)
 
 [node name="Recover" type="Node" parent="FSM"]
 script = ExtResource("b_hold")

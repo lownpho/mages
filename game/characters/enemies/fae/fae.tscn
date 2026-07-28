@@ -167,6 +167,7 @@ caster_path = NodePath("../../RingCaster")
 spell = ExtResource("6_rings")
 done_state = "Pattern"
 pattern_weight = 4.0
+telegraph_color = Color(0.803922, 0.376471, 0.576471, 1)
 
 [node name="Rest" type="Node" parent="FSM" unique_id=1595940432]
 script = ExtResource("b_hold")
@@ -183,6 +184,7 @@ spell = ExtResource("7_shotgun")
 done_state = "Pattern"
 attack_anim = "shotgun"
 pattern_weight = 3.0
+telegraph_color = Color(0.541176, 0.921569, 0.945098, 1)
 
 [node name="Chase" type="Node" parent="FSM" unique_id=1143798387]
 script = ExtResource("b_approach")

@@ -152,6 +152,7 @@ done_state = "Recover"
 attack_probe_path = NodePath("../../RingProbe")
 out_of_range_state = "Chase"
 attack_anim = "attack"
+telegraph_color = Color(0.74902, 0.47451, 0.345098, 1)
 
 [node name="Recover" type="Node" parent="FSM"]
 script = ExtResource("b_hold")

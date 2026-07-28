@@ -231,6 +231,7 @@ out_of_range_state = "Idle"
 exit_margin = 32.0
 windup_anim = "windup"
 attack_anim = "dash"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
 
 [node name="Stun" type="Node" parent="FSM" unique_id=2125100184]
 script = ExtResource("b_hold")
