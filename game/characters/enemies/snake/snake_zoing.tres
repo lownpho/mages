@@ -22,7 +22,7 @@ script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_shot")
 range_tiles = 10
 speed_tiles = 12
-behaviours = Array[ExtResource("1_bh_base")]([SubResource("Bounce_1"), null])
+behaviours = Array[ExtResource("1_bh_base")]([SubResource("Bounce_1")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
