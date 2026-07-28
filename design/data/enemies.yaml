@@ -1,72 +1,64 @@
-# Enemy catalogue — design source of truth.
+# Enemy catalogue — the design's half of the source of truth.
 #
-# A flat list of every (implemented) enemy — one entry per enemy, keyed by `name`.
-# This file holds NO biome information: which biome an enemy belongs to, where it
-# sits in the roster, and which sub-biome a boss caps all live in biomes.yaml. An
-# enemy that appears in several biomes is still defined once, here.
+# WORDS AND JUDGEMENT ONLY. HP, move speed, probe ranges, rarity, per-cast damage,
+# drops and their chances are all read out of the game by design/tools/extract.py.
+# Nothing here restates a number: if you want to know how tough something is,
+# read the number.
 #
-# `design/tools/build.py` renders this into design/docs/enemies.md (the section
-# between the GENERATED markers, grouped under each biome per biomes.yaml) and
-# feeds the per-enemy drops table in design/docs/biomes.md — an enemy's `drops`
-# live HERE and nowhere else.
+# This file holds NO biome information either — which biome an enemy belongs to
+# comes from that biome's room spawn tables. An enemy in several biomes is still
+# defined once, here.
 #
-# Edit enemies HERE, then run:  python3 design/tools/build.py
-# Do NOT hand-edit the generated section of enemies.md.
+# Only BUILT enemies belong in this file: an enemy is here iff
+# game/characters/enemies/<id>/<id>_data.tres exists. Proposals stay in the
+# hand-written "ideas" section of design/docs/enemies.md.
 #
-# Only shipped enemies belong in this file. Proposals stay in the hand-written
-# "ideas" section of enemies.md, out of the generated region.
+# Edit here, then run:  python3 design/tools/build.py
 #
 # Per enemy:
-#   name / rarity (common|rare|boss)
+#   id          : the enemy's FOLDER NAME under characters/enemies/ — the join key
+#                 to the game, the same id spawn tables and the console use.
+#   difficulty  : 1-10 judgement call — how hard it is to fight WHERE YOU MEET IT,
+#                 weighing HP, per-hit damage, mobility and how it punishes a
+#                 misread. Authored, NOT derived: 1 is a speed bump, 5 a real
+#                 threat, 10 the hardest thing in the game.
 #   description : literal markdown block, emitted verbatim (may carry a bullet list)
-#   art         : the "**Art:**" line
-#   hp/speed/detection/attack : the stat table's prose cells
-#   casts       : spell names the enemy casts
-#   drops       : {spell, tier} pairs — canonical drop data, reused by biomes.md
+#   art         : the "**Art:**" line — the sprite's intent. The sprite itself is
+#                 pulled off the CreatureResource icon and drawn on the card.
+#   casts       : spell ids this enemy's bespoke casts are SHAPED LIKE. It carries
+#                 a `<id>_*.tres` of its own with its own numbers, not the player's
+#                 tier file, so this link exists nowhere in the game.
 #   notes       : optional "**Notes:**" line
 #   fsm         : the AI state machine as data — { start: <initial state>,
-#                 transitions: [ {from, to, when?}, ... ] }. build.py renders it to a
-#                 mermaid stateDiagram-v2 block; `when` (the trigger) is optional.
+#                 transitions: [ {from, to, when?}, ... ] }, rendered to a mermaid
+#                 stateDiagram-v2. A teaching diagram, deliberately simpler than the
+#                 scene's real behaviour graph; `when` is optional.
 #                 (Named `when`, not `on`: YAML reads a bare `on` key as boolean.)
 
 enemies:
-  - name: sproutling
-    rarity: common
+  - id: sproutling
+    difficulty: 1
     description: |
       Rooted in place, watching. It sits in `Idle` until the player is in sight, then spits a
       single slow seed at a steady pace. This is the first enemy the player meets. The seed is slow
       enough to sidestep on reflex, so it teaches that enemies shoot without much risk.
-    art: "a stem, a leaf, and two eyes. The simplest sprite in the biome, in glade green."
-    hp: low
-    speed: stationary
-    detection: med
-    attack: "`SinglePattern` seed, low dmg, slow cadence"
-    casts: [Pew]
-    drops:
-      - {spell: Pew, tier: 1}
-      - {spell: Heal, tier: 1}
+    art: a stem, a leaf, and two eyes. The simplest sprite in the biome, in glade green.
+    casts: [pew]
     fsm:
       start: Idle
       transitions:
         - {from: Idle, to: Attack, when: sees player}
         - {from: Attack, to: Idle, when: lost sight}
-
-  - name: hopper
-    rarity: common
+  - id: hopper
+    difficulty: 2
     description: |
       A quick closer, and the first enemy that actually comes at you. It `Wander`s until it spots
       you, then weaves in and pokes at short range with a fast single shot. Fragile and low-damage
       alone; it turns up in pairs with sproutlings, so it teaches you to keep moving while something
       crowds your space.
-    art: "a small round critter with two eyes and stubby legs, glade green (8×8): a two-frame idle and a three-frame hop."
-    hp: low
-    speed: fast (weaving chase)
-    detection: med
-    attack: "`SinglePattern` poke, low dmg, fast cadence"
-    casts: [Pew]
-    drops:
-      - {spell: Pew, tier: 1}
-      - {spell: Heal, tier: 1}
+    art: 'a small round critter with two eyes and stubby legs, glade green (8×8): a two-frame idle
+      and a three-frame hop.'
+    casts: [pew]
     fsm:
       start: Idle
       transitions:
@@ -76,24 +68,15 @@ enemies:
         - {from: Chase, to: Attack, when: in range}
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
-
-  - name: wasp
-    rarity: common
+  - id: wasp
+    difficulty: 1
     description: |
       A hostile version of the player's Bzzz summon. It flits in on the same flying-minion
       behaviour and pesters you with quick stings. Fragile and never a real threat alone. Its job is
       to show the summon's logic from the other side, and to drop the spell that turns wasps to your
       side. It also appears in the insect deepwood.
-    art: "a small bee in a hostile ochre two-tone (the Bzzz summon recoloured), with eye pixels."
-    hp: very low
-    speed: fast (flitting)
-    detection: long
-    attack: "`SinglePattern` sting, low dmg, fast cadence"
-    casts: [Pew]
-    drops:
-      - {spell: Bzzz, tier: 1}
-      - {spell: Pew, tier: 1}
-      - {spell: Zaap, tier: 1}
+    art: a small bee in a hostile ochre two-tone (the Bzzz summon recoloured), with eye pixels.
+    casts: [pew]
     fsm:
       start: Idle
       transitions:
@@ -103,22 +86,15 @@ enemies:
         - {from: Chase, to: Attack, when: in range}
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
-
-  - name: mandrake
-    rarity: common
+  - id: mandrake
+    difficulty: 2
     description: |
       Low HP, high tempo, always in a pack. Mandrakes uproot and sprint straight at you, wailing a
       slow sound wave as they close. One is trivial. The point is the group: three or four converge
       so the waves overlap and force you to move. This is the glade's lesson in what the AoE spells
       are *for*, and they spawn in exactly the clumps that reward one.
-    art: "a root-bodied figure with a screaming face; the wave is two expanding arcs."
-    hp: low
-    speed: fast (straight chase, packs)
-    detection: med
-    attack: "`SinglePattern` sound wave, low dmg, med cadence"
-    casts: [Blam]
-    drops:
-      - {spell: Blam, tier: 1}
+    art: a root-bodied figure with a screaming face; the wave is two expanding arcs.
+    casts: [blam]
     fsm:
       start: Idle
       transitions:
@@ -128,45 +104,29 @@ enemies:
         - {from: Chase, to: Attack, when: in range}
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
-
-  - name: seedling
-    rarity: common
+  - id: seedling
+    difficulty: 2
     description: |
       A sproutling that grew up: the same rooted plant, but instead of one lazy seed it opens into a
       slow ring. Where the sproutling teaches that enemies shoot, the seedling teaches you not to
       stand next to the thing that shoots. The ring makes its own tile expensive even though it never
       chases. It works as area denial, and it stays a speed bump in both glade flavours.
-    art: "the sproutling sprite crowned with a ring of buds."
-    hp: low
-    speed: stationary
-    detection: med
-    attack: "`RingPattern` of seeds, low dmg, slow cadence"
-    casts: [Ring]
-    drops:
-      - {spell: Ring, tier: 1}
-      - {spell: Heal, tier: 1}
+    art: the sproutling sprite crowned with a ring of buds.
+    casts: [ring]
     fsm:
       start: Idle
       transitions:
         - {from: Idle, to: Ring, when: sees player}
         - {from: Ring, to: Idle, when: lost sight}
-
-  - name: dirt golem
-    rarity: common
+  - id: dirt_golem
+    difficulty: 3
     description: |
       The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings
       barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You
       learn to read an area denier that sits still and then lumbers after you, and here a misread is
       cheap. You can always outrun it, so the threat is the space it fills.
-    art: "the golem sprite in packed-earth browns with grass tufts on its shoulders."
-    hp: very high
-    speed: slow
-    detection: long
-    attack: "`RingPattern`, low dmg, med cadence"
-    casts: [Ring]
-    drops:
-      - {spell: Nope, tier: 1}
-      - {spell: Ring, tier: 1}
+    art: the golem sprite in packed-earth browns with grass tufts on its shoulders.
+    casts: [ring]
     fsm:
       start: Idle
       transitions:
@@ -174,20 +134,14 @@ enemies:
         - {from: Chase, to: Ring, when: in range}
         - {from: Ring, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost sight}
-
-  - name: thornthrower
-    rarity: common
+  - id: thornthrower
+    difficulty: 3
     description: |
       `Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing
       thorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.
-    art: "an uprooted thorn-plant on root legs, muted glade green with red thorn tips; the missile is a spinning thorn."
-    hp: med
-    speed: med (chase)
-    detection: med
-    attack: "single `Homing` thorn, low dmg, slow cadence"
-    casts: [Snipe]
-    drops:
-      - {spell: Snipe, tier: 1}
+    art: an uprooted thorn-plant on root legs, muted glade green with red thorn tips; the missile
+      is a spinning thorn.
+    casts: [snipe]
     fsm:
       start: Wander
       transitions:
@@ -195,46 +149,32 @@ enemies:
         - {from: Chase, to: Attack, when: in range}
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Wander, when: lost}
-
-  - name: rosebud
-    rarity: common
+  - id: rosebud
+    difficulty: 3
     description: |
       Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into
       a defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it
       blooms into a `RingPattern` whose aim rotates slightly each pulse, and idles again. It teaches
       you to read the telegraph instead of face-tanking.
-    art: "a closed rose bud on a stem, glade greens with red petals; a petal-spread frame to bloom, a clamped-shut frame for the shell."
-    hp: low
-    speed: stationary
-    detection: short
-    attack: "rotating `RingPattern`, low dmg, med cadence"
-    casts: [Ring]
-    drops:
-      - {spell: Ring, tier: 1}
-      - {spell: Nope, tier: 1}
-    notes: "Defensive Shell on the windup: wait out the telegraph, then burn during the bloom."
+    art: a closed rose bud on a stem, glade greens with red petals; a petal-spread frame to bloom,
+      a clamped-shut frame for the shell.
+    casts: [ring]
+    notes: 'Defensive Shell on the windup: wait out the telegraph, then burn during the bloom.'
     fsm:
       start: Idle
       transitions:
         - {from: Idle, to: Bud, when: player too close / hit}
         - {from: Bud, to: Bloom, when: windup done}
         - {from: Bloom, to: Idle, when: ring fired}
-
-  - name: viper
-    rarity: rare
+  - id: viper
+    difficulty: 4
     description: |
       The one enemy that runs from you. The instant it sees you it picks a random direction and
       slithers off, and it turns to fight only when it can't flee: cornered, it unloads a wide
       shotgun barrage and bolts again in a fresh direction. It carries tier-2 gear, so it is worth
       chasing. Cut the angle, trap it against a tree, and eat the barrage to claim the drop.
-    art: "the snake sprite in a rare venom-green with gold banding."
-    hp: very high
-    speed: med idling, fast fleeing
-    detection: long
-    attack: "`ShotgunPattern` barrage, high dmg, on corner"
-    casts: [Blam]
-    drops:
-      - {spell: Blam, tier: 2}
+    art: the snake sprite in a rare venom-green with gold banding.
+    casts: [blam]
     fsm:
       start: Idle
       transitions:
@@ -242,20 +182,13 @@ enemies:
         - {from: Flee, to: Barrage, when: cornered}
         - {from: Barrage, to: Flee, when: shots fired (new dir)}
         - {from: Flee, to: Idle, when: lost}
-
-  - name: mandraker
-    rarity: rare
+  - id: mandraker
+    difficulty: 5
     description: |
       Rare mandrake that casts fireball
-    art: "a root-bodied figure with a screaming face; the wave is two expanding arcs. Palette towards red"
-    hp: low
-    speed: fast (straight chase, packs)
-    detection: med
-    attack: "`SinglePattern` sound wave, low dmg, med cadence"
-    casts: [Blam, fireball]
-    drops:
-      - {spell: Fireball, tier: 2}
-      - {spell: Blam, tier: 2}
+    art: a root-bodied figure with a screaming face; the wave is two expanding arcs. Palette towards
+      red
+    casts: [blam, fireball]
     fsm:
       start: Idle
       transitions:
@@ -267,9 +200,8 @@ enemies:
         - {from: Attack, to: Chase, when: out of range}
         - {from: Fireball, to: Chase, when: done}
         - {from: Chase, to: Idle, when: lost}
-
-  - name: fae
-    rarity: boss
+  - id: fae
+    difficulty: 6
     description: |
       The glade's floral capstone. It is a flitting sprite that hangs at range and rolls a fresh
       attack each phase on a `PatternPicker`, so the fight never settles into one rhythm. No single
@@ -282,15 +214,8 @@ enemies:
       - **Rest** (`FaeRest`): does nothing briefly. Your burn window.
       - **Chase**: flits straight at you at half your speed without shooting, just to shove you out of
         position. It breaks off and rolls a new phase once it gets close enough.
-    art: "a small winged figure, one bright fill and a trail of light (16×16 boss sheet)."
-    hp: very high (boss)
-    speed: stationary mid-pattern; med during Chase
-    detection: long
-    attack: "rings / aimed shotgun / chase, med dmg"
-    casts: [Ring, Blam]
-    drops:
-      - {spell: Blam, tier: 2}
-      - {spell: Ring, tier: 2}
+    art: a small winged figure, one bright fill and a trail of light (16×16 boss sheet).
+    casts: [ring, blam]
     fsm:
       start: Idle
       transitions:
@@ -304,26 +229,18 @@ enemies:
         - {from: Rest, to: Pattern}
         - {from: Chase, to: Pattern, when: close enough}
         - {from: Pattern, to: Idle, when: lost}
-
-  - name: thornmess
-    rarity: boss
+  - id: thornmess
+    difficulty: 7
     description: |
       The rooted capstone. It stays on the ground and runs a `PatternPicker`
       split into two HP-gated pools. It idles until you are in range, then fires thornthrower
       missiles. If you break range it uproots and sprints to close, where it behaves like a rosebud
       or fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen,
       seeds the room with the biome's rooted plants, then returns to the cycle.
-    art: "a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red thorn tips (boss sheet)."
-    hp: very high (boss)
-    speed: stationary rooted; fast when re-closing
-    detection: med
-    attack: "homing missiles / rosebud bloom / shotgun volleys"
-    casts: [Snipe, Ring, Blam, "Jimmy (summon)"]
-    drops:
-      - {spell: Jimmy, tier: 2}
-      - {spell: Snipe, tier: 2}
-      - {spell: Ring, tier: 2}
-    notes: "the low-HP phase swaps in a spore and summon wave rather than layering a summon on top."
+    art: a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red
+      thorn tips (boss sheet).
+    casts: [snipe, ring, blam, jimmy]
+    notes: the low-HP phase swaps in a spore and summon wave rather than layering a summon on top.
     fsm:
       start: Idle
       transitions:
@@ -336,3 +253,423 @@ enemies:
         - {from: Shotgun, to: Missiles}
         - {from: Missiles, to: Desperation, when: low HP}
         - {from: Desperation, to: Missiles, when: wave placed}
+  - id: moth
+    difficulty: 3
+    description: |
+      The deepwood's basic flier and its returning face. It flits in on quick wings, pokes twice
+      with a dust burst at short range, then bolts for a beat before closing again — it never
+      stands and trades. Always in twos and threes: fragile chip pressure whose job is to keep
+      you moving while heavier things line up.
+    art: a dusty grey-brown moth with big rounded wings and two pale eye pixels; a two-frame flutter.
+    casts: [pew]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Chase, to: Poke, when: in range}
+        - {from: Poke, to: Retreat, when: dust fired}
+        - {from: Retreat, to: Chase, when: retreat over}
+        - {from: Chase, to: Idle, when: lost}
+  - id: moon_moth
+    difficulty: 3
+    description: |
+      Moth variant, and the one you fight at arm's length. Same flit-in, poke, bolt loop, but the
+      poke is a pair of scale rings pulsed off its own body, each rotated off the last, so it has
+      to be right on top of you to land anything. It commits closer than the moth and leaves
+      sooner. Standing still to trade with one puts you inside the pulse; step off it, not
+      through it.
+    art: the moth recoloured moonlit — pale blue-white wings over a dusk body.
+    casts: [ring]
+    notes: the shortest attack probe of the three (2 tiles) and the shortest retreat — its poke
+      only works point-blank, so it re-closes fastest.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Chase, to: Poke, when: in range}
+        - {from: Poke, to: Retreat, when: pulse fired}
+        - {from: Retreat, to: Chase, when: retreat over}
+        - {from: Chase, to: Idle, when: lost}
+  - id: needle_moth
+    difficulty: 4
+    description: |
+      Moth variant, and the one that taxes the dodge. It strikes from five tiles out and leaves
+      two homing dust-needles behind it, so its retreat is what buys the shot its time: you are
+      dealing with the moth that just left while the next one comes in. The needles turn hard but
+      only over a narrow cone — a sidestep won't shake one, breaking the angle will.
+    art: the moth recoloured rust — tan-orange wings over a dark plum body.
+    casts: [snipe]
+    notes: the longest attack probe of the three (5 tiles) and the longest retreat — it never comes
+      into the range the other two fight at.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Wander, to: Chase, when: sees player}
+        - {from: Chase, to: Poke, when: in range}
+        - {from: Poke, to: Retreat, when: needles fired}
+        - {from: Retreat, to: Chase, when: retreat over}
+        - {from: Chase, to: Idle, when: lost}
+  - id: stalker
+    difficulty: 5
+    description: |
+      The basic pouncer, and the biome's signature jump-scare. It sits in `Disguise` as a scenery
+      prop, watching through a probe that only reaches five tiles. Step into that — or hit it —
+      and it reveals, then weaves in and blasts a point-blank shotgun cone with no recovery
+      between shots. Lose it and it becomes a prop again. Introduces **prop disguise**.
+    art: a dark violet-grey cap on a thin stalk with a green leaf flick, indistinguishable from
+      decor until the amber eyes open on reveal.
+    casts: [blam]
+    fsm:
+      start: Disguise
+      transitions:
+        - {from: Disguise, to: Reveal, when: player very close / hit}
+        - {from: Reveal, to: Chase, when: revealed}
+        - {from: Chase, to: Blast, when: in range}
+        - {from: Blast, to: Recover, when: cone fired}
+        - {from: Recover, to: Blast, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Disguise, when: lost}
+  - id: snake
+    difficulty: 4
+    description: |
+      A skittish corridor-denier. It wanders until it spots you, then bolts in a random direction;
+      when its back hits a wall it stands and fires twin parallel shots that ricochet, then bolts
+      again. Trivial in open rooms; in narrow passages the bouncing pair covers the corridor both
+      ways.
+    art: a low serpentine coil in deepwood two-tone green, a forked head with a white eye pixel;
+      weave frames.
+    casts: [zoing]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Flee, when: sees player}
+        - {from: Wander, to: Flee, when: sees player}
+        - {from: Flee, to: Volley, when: cornered}
+        - {from: Volley, to: Flee, when: burst fired}
+        - {from: Flee, to: Idle, when: lost}
+  - id: coral_snake
+    difficulty: 3
+    description: |
+      Snake variant, and the one that corners early. It sees you late and panics at nearly double
+      the retreat range, so it hits a wall almost immediately and answers with a short-range
+      shotgun of twice-bouncing shots instead of a lane-filling pair. The trade is the reverse of
+      the snake's: harmless at distance, a wall of pellets the moment you crowd it.
+    art: the snake recoloured hot coral — banded orange over red, white eye pixel.
+    casts: [zoing]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Flee, when: sees player}
+        - {from: Wander, to: Flee, when: sees player}
+        - {from: Flee, to: Volley, when: cornered}
+        - {from: Volley, to: Flee, when: burst fired}
+        - {from: Flee, to: Idle, when: lost}
+  - id: ash_snake
+    difficulty: 4
+    description: |
+      Snake variant, and the one that turns a room into a hazard. It flees furthest and fires the
+      longest, fastest shots of the three, bouncing five times and losing power on each — a volley
+      that keeps crossing the room long after the snake has gone. Nothing about it is dangerous
+      up close; everything about it is dangerous a second later.
+    art: the snake recoloured ashen — pale grey-lavender scales with cyan eyes.
+    casts: [zoing]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Flee, when: sees player}
+        - {from: Wander, to: Flee, when: sees player}
+        - {from: Flee, to: Volley, when: cornered}
+        - {from: Volley, to: Flee, when: burst fired}
+        - {from: Flee, to: Idle, when: lost}
+  - id: grimling
+    difficulty: 4
+    description: |
+      Pack hunter. It wanders, then weaves in and fires a three-bolt burst at five tiles, with no
+      recovery between bursts while you stay in reach. Grimlings share a pack group: one alert —
+      or one hit — wakes every grimling of any kind in the radius. The weave makes it hard to line
+      up a shot, and the pack punishes you for focusing one down without a plan for the rest.
+    art: a small hunched shadow-sprite, gloom-black body with two amber eyes and needle limbs; quick
+      flickering run frames.
+    casts: [pew]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player / pack alert}
+        - {from: Wander, to: Chase, when: sees player / pack alert}
+        - {from: Chase, to: Fire, when: in range}
+        - {from: Fire, to: Recover, when: burst fired}
+        - {from: Recover, to: Fire, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+  - id: shard_grimling
+    difficulty: 4
+    description: |
+      Grimling variant, and the pack's back line. It shares the pack, but it stops at nine tiles
+      and fans a spread of gloom shards instead of closing. On its own the fan is easy to walk out
+      of; with two of them behind a pack the cones overlap and the gaps you were stepping into
+      close. The long wind-up is the tell, so the shard grimling is the one you push or break line
+      of sight on, never the one you trade with at range.
+    art: the grimling recoloured dark plum, with a duller eye-glow.
+    casts: [blam]
+    notes: the longest attack probe of the three (9 tiles) and the longest wind-up — it never closes
+      to the range the others fight at, and it keeps firing while they do.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player / pack alert}
+        - {from: Wander, to: Chase, when: sees player / pack alert}
+        - {from: Chase, to: Fire, when: in range}
+        - {from: Fire, to: Recover, when: fan fired}
+        - {from: Recover, to: Fire, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+  - id: wisp_grimling
+    difficulty: 3
+    description: |
+      Grimling variant, and the one that finds you. It sees furthest, runs fastest, and calls from
+      nearly twice the radius its packmates do, so the first wisp to spot you is what turns a room
+      into a pack. Its poke is a fast triple flicker at four tiles for almost no damage — the
+      threat is never the bolt, it's who else is now coming. Kill it first or the fight keeps
+      recruiting.
+    art: the grimling recoloured pale — washed lavender body, bright eye-glow; the brightest thing
+      in the gloom.
+    casts: [pew]
+    notes: pack radius 14 tiles against the grimling's default 8, and the shortest attack probe
+      — it comes all the way in.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player / pack alert}
+        - {from: Wander, to: Chase, when: sees player / pack alert}
+        - {from: Chase, to: Fire, when: in range}
+        - {from: Fire, to: Recover, when: burst fired}
+        - {from: Recover, to: Fire, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+  - id: moss_golem
+    difficulty: 6
+    description: |
+      The golem recipe at deepwood weight — the toughest thing in the biome that isn't a boss, and
+      the slowest. It walks you down, and on arrival it hardens into a shell (a channeled absorb,
+      the rosebud's trick) that eats whatever you spent punishing the approach; then three rotating
+      rings pulse out, each turned off the last, dense enough that its own tile is a place you
+      never stand.
+    art: 'the golem sprite overgrown: deep-green moss over grey stone, with dim eye-lights; a clenched,
+      hardened frame for the shell.'
+    casts: [ring, nope]
+    notes: the shell is a Nope absorb channelled through the wind-up, so hitting it mid-telegraph
+      is the worst moment to spend a burst.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Shell, when: in range}
+        - {from: Shell, to: Ring, when: shell drops}
+        - {from: Ring, to: Recover, when: rings fired}
+        - {from: Ring, to: Chase, when: out of range}
+        - {from: Recover, to: Shell, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+  - id: thornback
+    difficulty: 5
+    description: |
+      A charger, introducing the **charge-dash with flank fire**. It runs a long telegraphed
+      windup, then a straight high-speed dash that sheds bullets off both flanks, then a rooted
+      recovery that is your punish window. It locks heading at launch and can't corner, so
+      sidestep the dash and burn it during recovery. Trees are your friend.
+    art: a wide squat body, dark-brown armour over a tan body, a spike array along the back.
+    casts: [charge_dash]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Charge, when: sees player}
+        - {from: Wander, to: Charge, when: sees player}
+        - {from: Charge, to: Recover, when: dash over}
+        - {from: Recover, to: Charge, when: still sees player}
+        - {from: Recover, to: Idle, when: lost}
+  - id: owl
+    difficulty: 4
+    description: |
+      The perch sniper. It sits still and charges a Bwoom shot at anything inside ten tiles, the
+      wind-up itself being the telegraph. Get too close, or out of its band, and it repositions a
+      few tiles before charging again; being cornered mid-reposition just makes it fire. It
+      outranges most of what you carry at this depth, so your move is to close the gap through
+      its fire.
+    art: a brown oval with an oversized head and two big amber eyes. The eye rule taken to a whole
+      creature.
+    casts: [bwoom]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Bwoom, when: sees player}
+        - {from: Bwoom, to: Recover, when: shot fired}
+        - {from: Bwoom, to: Reposition, when: out of band}
+        - {from: Recover, to: Reposition, when: timer / player closed in}
+        - {from: Reposition, to: Bwoom, when: repositioned / cornered}
+  - id: mole
+    difficulty: 5
+    description: |
+      Introduces the **burrow**. It dives underground where it cannot be hit at all, and the only
+      tell is a dirt plume tracking toward you; inside three tiles it erupts with a pair of
+      rotating ring bursts, scratches around on the surface for a beat — your punish window —
+      then dives again. Fighting it is rhythm reading: move off the plume, hit it while it blinks
+      in the light.
+    art: a plump maroon-brown mole with oversized pale claws and a pink snout; a travelling dirt-mound
+      sprite while submerged, a burst-of-soil frame on eruption.
+    casts: [ring]
+    notes: untouchable for the whole burrow (`damage_scale` 0) — the surface beat is the only window.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Dive, when: sees player}
+        - {from: Dive, to: Burrow, when: submerged}
+        - {from: Burrow, to: Erupt, when: in range}
+        - {from: Burrow, to: Surface, when: lost}
+        - {from: Erupt, to: Surface, when: rings fired}
+        - {from: Surface, to: Dive, when: timer}
+        - {from: Surface, to: Idle, when: lost}
+  - id: grimlord
+    difficulty: 6
+    description: |
+      A larger, darker grimling, the pack's alpha, and the one grimling that rolls its beat: a
+      `PatternPicker` swaps its move at low health rather than adding one. Above a quarter health
+      it weaves in and sprays five bolts at four tiles. Below it, the spray is gone and it enrages
+      — seven bolts, faster, from wherever it stands, with no range check at all. On death it
+      bursts one parting ring. The weave plus the enrage turns the last sliver of its health into
+      a gauntlet.
+    art: the grimling silhouette enlarged and near-black, red eye-glow; the enrage frame brightens
+      the eyes.
+    casts: [pew, ring]
+    notes: enrage replaces the spray below 30% HP; `RingPattern` death burst. Shares the grimling
+      pack group, so it wakes with them.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Chase, when: sees player / pack alert}
+        - {from: Wander, to: Chase, when: sees player / pack alert}
+        - {from: Chase, to: Pick, when: in range}
+        - {from: Pick, to: Fire, when: above 25% HP}
+        - {from: Pick, to: Enrage, when: below 30% HP}
+        - {from: Fire, to: Recover}
+        - {from: Enrage, to: Recover}
+        - {from: Recover, to: Pick, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Idle, when: lost}
+  - id: razorback
+    difficulty: 7
+    description: |
+      Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch,
+      chaining charge after charge for as long as you stay inside its very long sight line; only a
+      head-on wall hit stuns it into a real punish window. Fight it near trees and make the forest
+      do the work.
+    art: the thornback silhouette in near-black armour with red spike tips.
+    casts: [charge_dash]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander, when: timer}
+        - {from: Idle, to: Charge, when: sees player}
+        - {from: Wander, to: Charge, when: sees player}
+        - {from: Charge, to: Charge, when: dash over}
+        - {from: Charge, to: Stun, when: head-on wall}
+        - {from: Charge, to: Idle, when: out of range}
+        - {from: Stun, to: Charge, when: recovered}
+        - {from: Stun, to: Idle, when: lost}
+  - id: great_owl
+    difficulty: 6
+    description: |
+      Owl variant: bigger, and its firing band is most of the map — it charges from twenty-four
+      tiles, further than anything else in the biome can answer. The wind-up is longer and the
+      telegraph brighter, so the duel stays honest, but it re-perches further away too and the
+      whole fight is spent closing.
+    art: the owl sprite enlarged, pale barn-owl white with amber eyes.
+    casts: [bwoom]
+    notes: guaranteed Bwoom T3 on death.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Bwoom, when: sees player}
+        - {from: Bwoom, to: Recover, when: shot fired}
+        - {from: Bwoom, to: Reposition, when: out of band}
+        - {from: Recover, to: Reposition, when: timer / player closed in}
+        - {from: Reposition, to: Bwoom, when: repositioned / cornered}
+        - {from: Reposition, to: Idle, when: lost}
+  - id: gnarlking
+    difficulty: 9
+    description: |
+      The apex of the animal deepwood, and the one boss that doesn't roll: it runs ordered `Gate`
+      ladders, so what it does next is decided by the arena rather than by dice. The fight
+      alternates two modes and **the player sets the pace of the swap**.
+
+      Everything it owns is a close-quarters weapon, and the whole kit is **range-gated** — it
+      never swings at air. Out of reach it simply walks you down, and distance is a delay, not an
+      answer.
+
+      - **Call → Hunt** *(armoured)*: it rings in a brood of six grimlings — the plain, shard and
+        wisp kinds mixed — then comes for you. While any of them stand it takes about a third
+        damage, and it works the ladder by distance: **Ground Slam** inside 6 tiles (radial
+        shockwave, damage falling off with distance, big knockback — demonstrates **Thwomp**),
+        **Shotgun Volley** inside 8, and outside both it **closes**, at a steady advance you can
+        outpace but not shake. Chipping the boss here is a poor trade against clearing the pack,
+        but not a wasted one.
+      - **Charge** *(unarmoured)*: the moment the brood is dead — or its 26s life runs out — the
+        charge unlocks and the ranged kit drops entirely. The thornback's charge-dash writ large:
+        a locked-heading lunge shedding `FlankPattern` bullets. It can't corner.
+      - **Stalk → second Charge**: after the lunge it prowls for a beat. Still within reach and it
+        immediately charges again; broken away and it goes straight to **Winded**. Your footwork
+        sets the length of the burst.
+      - **Stagger**: sidestep a charge into a tree and the head-on slam staggers it — three and a
+        half seconds rooted, taking *extra* damage. The fight's best window, and you have to earn it.
+      - **Winded**: heaves briefly, then calls the next brood.
+
+      The decision the loop poses: clear the adds fast and you reach the burn window sooner but
+      meet the charge sooner too, with the pack's chip damage still on you; ignore them and you
+      are ground down while the boss walks into your face anyway.
+    art: a towering forest-lord of bark, antler, and gloom, pale glowing eyes, oversized frame;
+      a rear-and-slam pose for the slam (boss sheet).
+    casts: [thwomp, blam, charge_dash, halp]
+    notes: one Thwomp only — no bigger low-HP variant. Below a quarter health it calls three grimlords
+      instead of six grimlings (on a shorter 20s leash), and Winded shrinks from 5s to 3s. `clear_group`
+      on the charge is what makes the brood, not a timer, the phase gate.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Summon, when: sees player}
+        - {from: Summon, to: CallBig, when: below 25% HP}
+        - {from: Summon, to: Call}
+        - {from: Call, to: Hunt}
+        - {from: CallBig, to: Hunt}
+        - {from: Hunt, to: Charge, when: brood cleared / expired}
+        - {from: Hunt, to: Slam, when: within 6}
+        - {from: Hunt, to: Volley, when: within 8}
+        - {from: Hunt, to: Close, when: out of reach}
+        - {from: Close, to: Volley, when: arrived}
+        - {from: Close, to: Brace, when: volley cooling}
+        - {from: Close, to: Hunt, when: timer}
+        - {from: Slam, to: Hunt}
+        - {from: Volley, to: Hunt}
+        - {from: Brace, to: Hunt}
+        - {from: Charge, to: Stagger, when: slammed a wall}
+        - {from: Charge, to: Stalk, when: dash over}
+        - {from: Stalk, to: Charge2, when: still in reach}
+        - {from: Stalk, to: Breathe, when: broke away}
+        - {from: Charge2, to: Breathe}
+        - {from: Breathe, to: WindedShort, when: below 25% HP}
+        - {from: Breathe, to: Winded}
+        - {from: Stagger, to: Summon}
+        - {from: Winded, to: Summon}
+        - {from: WindedShort, to: Summon}

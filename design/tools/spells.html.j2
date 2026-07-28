@@ -14,7 +14,9 @@
 
 <header>
   <h1 class="doc-title"><span class="m">S</span>pell Catalogue</h1>
-  <p class="doc-sub">Design view generated from <code>design/data/spells.yaml</code>. Filter, search, and sort while balancing.</p>
+  <p class="doc-sub">Every shipped spell, its words from <code>design/data/spells.yaml</code> and its
+    numbers from the game's <code>.tres</code>. See also the
+    <a href="spells_balance.html">numbers sheet</a> and the <a href="enemies.html">bestiary</a>.</p>
 </header>
 
 <div class="toolbar panel">
@@ -26,7 +28,8 @@
           <option value="name">Name</option>
           <option value="cooldown">Cooldown</option>
           <option value="range">Range</option>
-          <option value="cast_time">Cast time</option>
+          <option value="damage">Damage</option>
+          <option value="tiers">Tiers</option>
       </select>
       <span class="count" id="count"></span>
       <button class="btn" id="reset">reset</button>
@@ -41,197 +44,80 @@
 
 </div>
 
-<script id="data" type="application/json">{{ data_json }}</script>
+<script src="data.js"></script>
+<script src="mages.js"></script>
 <script>
 (function () {
   "use strict";
-  var DATA = JSON.parse(document.getElementById("data").textContent);
-  var SPELLS = DATA.spells;
-  var SCALES = DATA.ordered_scales;
+  var D = window.MAGES, el = D.el;
+  var CATS = D.categories.map(function (c) { return c.id; });
+  var CAT_NAME = {};
+  D.categories.forEach(function (c) { CAT_NAME[c.id] = c.name; });
+  var BASE = D.constants.base_stats;
 
-  // Facets: label -> accessor returning an array of values for a spell.
-  var STAT_RE = /^([a-z]+)/;
-  function grantStats(sp) {
-    var seen = {};
-    sp.grants.forEach(function (g) {
-      var m = STAT_RE.exec(g.trim());
-      if (m) seen[m[1]] = true;
-    });
-    return Object.keys(seen);
+  function top(s) { return s.tiers[s.tiers.length - 1]; }
+  function amount(t) {
+    var a = t.amount;
+    if (!a) return 0;
+    return a.base + a.skill * BASE.skill + a.speed * BASE.speed + a.defence * BASE.defence;
   }
-  var FACETS = [
-    { key: "category", label: "Type", vals: function (s) { return [s.category]; } },
-    { key: "hold", label: "Hold", vals: function (s) { return [s.hold]; } },
-    { key: "scaling", label: "Scaling", vals: function (s) { return [s.scaling]; } },
-    { key: "grants", label: "Grants", vals: grantStats },
-    { key: "range", label: "Range", vals: function (s) { return [s.range]; } },
-    { key: "cooldown", label: "Cooldown", vals: function (s) { return [s.cooldown]; } },
-    { key: "cast_time", label: "Cast", vals: function (s) { return [s.cast_time]; } }
-  ];
-
-  // Ordinal rank for sortable/ordered facets; -1 keeps insertion order otherwise.
-  function rankFor(key, value) {
-    var scale = null;
-    if (key === "range") scale = SCALES.range;
-    else if (key === "cooldown") scale = SCALES.cooldown;
-    else if (key === "cast_time") scale = SCALES.cast_time;
-    if (!scale) return -1;
-    var i = scale.indexOf(value);
-    return i < 0 ? 99 : i;
+  function range(s) {
+    var p = top(s).projectile;
+    return p ? p.range_tiles : 0;
   }
 
-  // Collect the distinct values present for each facet, ordered where we can.
-  function optionsFor(f) {
-    var present = {};
-    SPELLS.forEach(function (s) { f.vals(s).forEach(function (v) { present[v] = true; }); });
-    var vals = Object.keys(present);
-    if (rankFor(f.key, vals[0]) >= 0) {
-      vals.sort(function (a, b) { return rankFor(f.key, a) - rankFor(f.key, b); });
-    } else {
-      vals.sort();
-    }
-    return vals;
-  }
+  D.browse({
+    items: D.spells,
+    noun: "spells",
+    facets: [
+      { key: "category", label: "Type", order: CATS, vals: function (s) { return [s.category]; },
+        chipText: function (id) { return CAT_NAME[id] || id; } },
+      { key: "kind", label: "Family", vals: function (s) { return [s.kind]; } },
+      { key: "hold", label: "Hold", order: ["no", "charged", "channeled"],
+        vals: function (s) { return [s.hold]; } },
+      { key: "scaling", label: "Scales with", vals: function (s) { return s.scaling; } },
+      { key: "grants", label: "Grants", vals: function (s) { return s.grants; } }
+    ],
+    search: function (s) { return s.id + " " + s.name + " " + s.description + " " + s.per_tier; },
+    sorts: {
+      cat: function (a, b) {
+        return CATS.indexOf(a.category) - CATS.indexOf(b.category) || a.name.localeCompare(b.name);
+      },
+      name: function (a, b) { return a.name.localeCompare(b.name); },
+      cooldown: function (a, b) { return top(a).cooldown - top(b).cooldown; },
+      range: function (a, b) { return range(b) - range(a); },
+      damage: function (a, b) { return amount(top(b)) - amount(top(a)); },
+      tiers: function (a, b) { return b.tiers.length - a.tiers.length; }
+    },
+    card: function (s) {
+      var head = el("div", "card-head", [
+        el("span", "name", s.name),
+        el("span", "badge cat-" + s.category, CAT_NAME[s.category]),
+        s.hold !== "no" ? el("span", "badge hold", s.hold) : null
+      ]);
 
-  var active = {};            // key -> Set of selected values
-  FACETS.forEach(function (f) { active[f.key] = new Set(); });
-
-  // Build the facet chip UI.
-  var facetsEl = document.getElementById("facets");
-  FACETS.forEach(function (f) {
-    var wrap = document.createElement("div");
-    wrap.className = "facet";
-    var lab = document.createElement("span");
-    lab.className = "flabel";
-    lab.textContent = f.label;
-    wrap.appendChild(lab);
-    optionsFor(f).forEach(function (v) {
-      var b = document.createElement("button");
-      b.className = "chip";
-      b.type = "button";
-      b.textContent = v;
-      b.setAttribute("aria-pressed", "false");
-      b.addEventListener("click", function () {
-        var on = b.getAttribute("aria-pressed") === "true";
-        b.setAttribute("aria-pressed", on ? "false" : "true");
-        if (on) active[f.key].delete(v); else active[f.key].add(v);
-        render();
-      });
-      wrap.appendChild(b);
-    });
-    facetsEl.appendChild(wrap);
-  });
-
-  var qEl = document.getElementById("q");
-  var sortEl = document.getElementById("sort");
-  var gridEl = document.getElementById("grid");
-  var emptyEl = document.getElementById("empty");
-  var countEl = document.getElementById("count");
-
-  function matches(s) {
-    for (var i = 0; i < FACETS.length; i++) {
-      var f = FACETS[i];
-      var sel = active[f.key];
-      if (sel.size === 0) continue;
-      var vals = f.vals(s);
-      var hit = vals.some(function (v) { return sel.has(v); });
-      if (!hit) return false;
-    }
-    var q = qEl.value.trim().toLowerCase();
-    if (q) {
-      var hay = (s.name + " " + s.description + " " + s.grants.join(" ") + " " + s.per_tier).toLowerCase();
-      if (hay.indexOf(q) < 0) return false;
-    }
-    return true;
-  }
-
-  function sortKey(mode) {
-    return function (a, b) {
-      if (mode === "name") return a.name.localeCompare(b.name);
-      if (mode === "cat") {
-        if (a.category_id !== b.category_id) {
-          return catOrder(a.category_id) - catOrder(b.category_id);
-        }
-        return a.name.localeCompare(b.name);
+      var dl = el("dl", "stats");
+      function stat(k, v) {
+        dl.appendChild(el("dt", null, k));
+        dl.appendChild(el("dd", null, v));
       }
-      var r = rankFor(mode, a[mode]) - rankFor(mode, b[mode]);
-      return r !== 0 ? r : a.name.localeCompare(b.name);
-    };
-  }
-  var CAT_ORDER = DATA.categories.map(function (c) { return c.id; });
-  function catOrder(id) { var i = CAT_ORDER.indexOf(id); return i < 0 ? 99 : i; }
+      stat("Scales with", s.scaling.join(", "));
+      stat("Grants", el("div", "pills", s.grants.map(function (g) {
+        var best = Math.max.apply(null, s.tiers.map(function (t) { return (t.grants || {})[g] || 0; }));
+        return el("span", "pill", g + " +" + best);
+      })));
+      stat("Cooldown", top(s).cooldown + "s");
+      stat("Cast", top(s).cast_time ? top(s).cast_time + "s" : "instant");
+      if (top(s).projectile) stat("Range", range(s) + " tiles");
+      if (s.per_tier) stat("Per tier", s.per_tier);
 
-  function card(s) {
-    var el = document.createElement("article");
-    el.className = "card";
+      var tiers = el("div", "tierline", s.tiers.map(function (t) {
+        return el("span", "pill tier", "T" + t.tier + " · " + Math.round(amount(t)));
+      }));
 
-    var head = document.createElement("div");
-    head.className = "card-head";
-    var nm = document.createElement("span");
-    nm.className = "name";
-    nm.textContent = s.name;
-    head.appendChild(nm);
-    var cb = document.createElement("span");
-    cb.className = "badge cat-" + s.category_id;
-    cb.textContent = s.category;
-    head.appendChild(cb);
-    if (s.hold !== "no") {
-      var hb = document.createElement("span");
-      hb.className = "badge hold";
-      hb.textContent = s.hold;
-      head.appendChild(hb);
+      return el("article", "card", [head, el("p", "desc", s.description), dl, tiers]);
     }
-    el.appendChild(head);
-
-    var d = document.createElement("p");
-    d.className = "desc";
-    d.textContent = s.description;
-    el.appendChild(d);
-
-    var dl = document.createElement("dl");
-    dl.className = "stats";
-    function stat(k, node) {
-      var dt = document.createElement("dt"); dt.textContent = k;
-      var dd = document.createElement("dd");
-      if (typeof node === "string") dd.textContent = node; else dd.appendChild(node);
-      dl.appendChild(dt); dl.appendChild(dd);
-    }
-    stat("Scaling", s.scaling);
-    var pills = document.createElement("div");
-    pills.className = "pills";
-    s.grants.forEach(function (g) {
-      var p = document.createElement("span"); p.className = "pill"; p.textContent = g;
-      pills.appendChild(p);
-    });
-    stat("Grants", pills);
-    stat("Range", s.range);
-    stat("Cooldown", s.cooldown);
-    stat("Cast time", s.cast_time);
-    if (s.per_tier) stat("Per tier", s.per_tier);
-    el.appendChild(dl);
-    return el;
-  }
-
-  function render() {
-    var list = SPELLS.filter(matches).sort(sortKey(sortEl.value));
-    gridEl.innerHTML = "";
-    list.forEach(function (s) { gridEl.appendChild(card(s)); });
-    emptyEl.hidden = list.length !== 0;
-    countEl.textContent = list.length + " / " + SPELLS.length + " spells";
-  }
-
-  qEl.addEventListener("input", render);
-  sortEl.addEventListener("change", render);
-  document.getElementById("reset").addEventListener("click", function () {
-    qEl.value = "";
-    FACETS.forEach(function (f) { active[f.key].clear(); });
-    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
-      c.setAttribute("aria-pressed", "false");
-    });
-    render();
   });
-
-  render();
 })();
 </script>
 </body>

@@ -13,8 +13,12 @@
   .badge.room { background: var(--cyan); }
   .sub-b { color: var(--grey); margin-left: auto; }
   .vars { display: flex; flex-direction: column; gap: 4px; }
-  .var { background: var(--bg-deep); color: var(--dim); padding: 0.15rem 0.45rem; }
+  .var { display: flex; align-items: center; gap: 0.5rem;
+         background: var(--bg-deep); color: var(--dim); padding: 0.15rem 0.45rem; }
   .var.empty { color: var(--grey); background: transparent; padding-left: 0; }
+  .var .w { font-family: 'Silkscreen', monospace; font-size: 0.5rem; color: var(--grey); }
+  .var .pack { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+  .var .plus { color: var(--grey); }
 </style>
 </head>
 <body class="mages">
@@ -22,17 +26,21 @@
 
 <header>
   <h1 class="doc-title"><span class="m">B</span>iome Rooms</h1>
-  <p class="doc-sub">Design view generated from <code>design/data/biomes.yaml</code>. Each card is one room slot; a room rolls one of its variations. Filter by biome, tier, and room type.</p>
+  <p class="doc-sub">Every room type the generator can place, read straight out of
+    <code>game/world_content/</code>. Each card is one room type; when it is placed it rolls
+    <em>one</em> of its variations per enemy group. See also the
+    <a href="enemies.html">bestiary</a>.</p>
 </header>
 
 <div class="toolbar panel">
   <div class="row">
-      <input type="search" id="q" placeholder="Search enemy groups…" autocomplete="off">
+      <input type="search" id="q" placeholder="Search room or enemy…" autocomplete="off">
       <label class="lbl" for="sort">Sort</label>
       <select id="sort">
           <option value="loc">Biome › tier</option>
           <option value="tier">Tier</option>
-          <option value="room">Room type</option>
+          <option value="shape">Shape</option>
+          <option value="variations">Variations</option>
       </select>
       <span class="count" id="count"></span>
       <button class="btn" id="reset">reset</button>
@@ -47,149 +55,82 @@
 
 </div>
 
-<script id="data" type="application/json">{{ data_json }}</script>
+<script src="data.js"></script>
+<script src="mages.js"></script>
 <script>
 (function () {
   "use strict";
-  var DATA = JSON.parse(document.getElementById("data").textContent);
-  var ROOMS = DATA.rooms;
-  var ORDER = DATA.ordered;
+  var D = window.MAGES, el = D.el;
+  var BIOMES = D.biomes.map(function (b) { return b.id; });
+  var ICON = {};
+  D.enemies.forEach(function (e) { ICON[e.id] = e; });
 
-  var FACETS = [
-    { key: "biome", label: "Biome", vals: function (r) { return [r.biome]; } },
-    { key: "sub_biome", label: "Sub-biome", vals: function (r) { return [r.sub_biome]; } },
-    { key: "tier", label: "Tier", vals: function (r) { return [r.tier]; } },
-    { key: "room", label: "Room", vals: function (r) { return [r.room]; } }
-  ];
-
-  function rankFor(key, value) {
-    var scale = ORDER[key];
-    if (!scale) return -1;
-    var i = scale.indexOf(value);
-    return i < 0 ? 99 : i;
-  }
-  function biomeRank(name) { var i = DATA.biome_order.indexOf(name); return i < 0 ? 99 : i; }
-
-  function optionsFor(f) {
-    var present = {};
-    ROOMS.forEach(function (r) { f.vals(r).forEach(function (v) { present[v] = true; }); });
-    var vals = Object.keys(present);
-    if (f.key === "biome") vals.sort(function (a, b) { return biomeRank(a) - biomeRank(b); });
-    else if (rankFor(f.key, vals[0]) >= 0) vals.sort(function (a, b) { return rankFor(f.key, a) - rankFor(f.key, b); });
-    else vals.sort();
-    return vals;
-  }
-
-  var active = {};
-  FACETS.forEach(function (f) { active[f.key] = new Set(); });
-
-  var facetsEl = document.getElementById("facets");
-  FACETS.forEach(function (f) {
-    var wrap = document.createElement("div");
-    wrap.className = "facet";
-    var lab = document.createElement("span");
-    lab.className = "flabel";
-    lab.textContent = f.label;
-    wrap.appendChild(lab);
-    optionsFor(f).forEach(function (v) {
-      var b = document.createElement("button");
-      b.className = "chip";
-      b.type = "button";
-      b.textContent = v;
-      b.setAttribute("aria-pressed", "false");
-      b.addEventListener("click", function () {
-        var on = b.getAttribute("aria-pressed") === "true";
-        b.setAttribute("aria-pressed", on ? "false" : "true");
-        if (on) active[f.key].delete(v); else active[f.key].add(v);
-        render();
-      });
-      wrap.appendChild(b);
-    });
-    facetsEl.appendChild(wrap);
-  });
-
-  var qEl = document.getElementById("q");
-  var sortEl = document.getElementById("sort");
-  var gridEl = document.getElementById("grid");
-  var emptyEl = document.getElementById("empty");
-  var countEl = document.getElementById("count");
-
-  function matches(r) {
-    for (var i = 0; i < FACETS.length; i++) {
-      var f = FACETS[i];
-      var sel = active[f.key];
-      if (sel.size === 0) continue;
-      var hit = f.vals(r).some(function (v) { return sel.has(v); });
-      if (!hit) return false;
-    }
-    var q = qEl.value.trim().toLowerCase();
-    if (q && r.groups.toLowerCase().indexOf(q) < 0) return false;
-    return true;
-  }
-
-  function sortKey(mode) {
-    return function (a, b) {
-      if (mode === "tier") return rankFor("tier", a.tier) - rankFor("tier", b.tier) || a.biome.localeCompare(b.biome);
-      if (mode === "room") return a.room.localeCompare(b.room) || rankFor("tier", a.tier) - rankFor("tier", b.tier);
-      // loc: biome, then sub-biome, then tier (stable within — keeps table order)
-      return (biomeRank(a.biome) - biomeRank(b.biome)) ||
-             a.sub_biome.localeCompare(b.sub_biome) ||
-             (rankFor("tier", a.tier) - rankFor("tier", b.tier));
-    };
-  }
-
-  // Strip markdown emphasis so "1× viper *(rare)*" reads as plain text.
-  function plain(s) { return s.replace(/\*+/g, ""); }
-
-  function card(r) {
-    var el = document.createElement("article");
-    el.className = "card";
-
-    var head = document.createElement("div");
-    head.className = "card-head";
-    var tb = document.createElement("span"); tb.className = "badge tier"; tb.textContent = r.tier;
-    head.appendChild(tb);
-    var rb = document.createElement("span"); rb.className = "badge room"; rb.textContent = r.room;
-    head.appendChild(rb);
-    var bb = document.createElement("span"); bb.className = "badge biome"; bb.textContent = r.biome;
-    head.appendChild(bb);
-    var sb = document.createElement("span"); sb.className = "sub-b"; sb.textContent = r.sub_biome;
-    head.appendChild(sb);
-    el.appendChild(head);
-
-    var vars = document.createElement("div");
-    vars.className = "vars";
+  function enemiesIn(r) {
+    var seen = {};
     r.variations.forEach(function (v) {
-      var row = document.createElement("div");
-      var text = plain(v);
-      if (text === "(empty)" || text === "") { row.className = "var empty"; row.textContent = "— empty —"; }
-      else { row.className = "var"; row.textContent = text; }
-      vars.appendChild(row);
+      v.members.forEach(function (m) { if (m.enemy) seen[m.enemy] = true; });
     });
-    el.appendChild(vars);
-    return el;
+    return Object.keys(seen);
   }
 
-  function render() {
-    var list = ROOMS.filter(matches).sort(sortKey(sortEl.value));
-    gridEl.innerHTML = "";
-    list.forEach(function (r) { gridEl.appendChild(card(r)); });
-    emptyEl.hidden = list.length !== 0;
-    countEl.textContent = list.length + " / " + ROOMS.length + " rooms";
-  }
+  D.browse({
+    items: D.rooms,
+    noun: "rooms",
+    facets: [
+      { key: "biome", label: "Biome", order: BIOMES, vals: function (r) { return [r.biome]; },
+        chipText: function (id) {
+          var b = D.biomes.filter(function (x) { return x.id === id; })[0];
+          return b ? b.name : id;
+        } },
+      { key: "difficulty", label: "Tier", vals: function (r) { return ["T" + r.difficulty]; } },
+      { key: "generator", label: "Shape", vals: function (r) { return [r.generator]; } },
+      { key: "enemies", label: "Spawns", vals: enemiesIn }
+    ],
+    search: function (r) { return r.id + " " + enemiesIn(r).join(" "); },
+    sorts: {
+      loc: function (a, b) {
+        return BIOMES.indexOf(a.biome) - BIOMES.indexOf(b.biome)
+               || a.difficulty - b.difficulty || a.id.localeCompare(b.id);
+      },
+      tier: function (a, b) { return a.difficulty - b.difficulty || a.id.localeCompare(b.id); },
+      shape: function (a, b) {
+        return a.generator.localeCompare(b.generator) || a.id.localeCompare(b.id);
+      },
+      variations: function (a, b) { return b.variations.length - a.variations.length; }
+    },
+    card: function (r) {
+      var pinned = r.min_per_biome === r.max_per_biome;
+      var head = el("div", "card-head", [
+        el("span", "name", r.id.replace(r.biome + "_", "")),
+        el("span", "badge room", "T" + r.difficulty),
+        el("span", "badge", r.generator),
+        el("span", "badge", pinned ? "exactly " + r.min_per_biome : "weight " + r.weight),
+        el("span", "sub-b", r.biome_name)
+      ]);
 
-  qEl.addEventListener("input", render);
-  sortEl.addEventListener("change", render);
-  document.getElementById("reset").addEventListener("click", function () {
-    qEl.value = "";
-    FACETS.forEach(function (f) { active[f.key].clear(); });
-    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
-      c.setAttribute("aria-pressed", "false");
-    });
-    render();
+      var vars = el("div", "vars");
+      if (!r.variations.length) {
+        vars.appendChild(el("div", "var empty", "(empty — this room spawns nothing)"));
+      }
+      r.variations.forEach(function (v) {
+        var pack = el("div", "pack");
+        v.members.forEach(function (m, i) {
+          if (!m.enemy) return;
+          if (i) pack.appendChild(el("span", "plus", "+"));
+          var count = m.min === m.max ? m.min : m.min + "-" + m.max;
+          pack.appendChild(D.sprite((ICON[m.enemy] || {}).icon, 2));
+          pack.appendChild(el("span", null, count + "x " + m.enemy));
+        });
+        vars.appendChild(el("div", "var", [el("span", "w", "w" + v.weight), pack]));
+      });
+
+      var budget = r.groups_max
+        ? r.groups_min + "-" + r.groups_max + " groups"
+            + (r.scale_with_size ? " × size" : ", fixed")
+        : "no enemy budget";
+      return el("article", "card", [head, vars, el("p", "note", budget)]);
+    }
   });
-
-  render();
 })();
 </script>
 </body>

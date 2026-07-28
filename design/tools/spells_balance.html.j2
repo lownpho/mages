@@ -217,24 +217,26 @@
   <div class="empty" id="empty" hidden>No spells match these filters.</div>
 </div>
 
-<script id="data" type="application/json">{{ data_json }}</script>
+<script src="data.js"></script>
 <script>
 (function () {
   "use strict";
-  var DATA = JSON.parse(document.getElementById("data").textContent);
-  var BASE = DATA.base_stats;
+  var DATA = window.MAGES;
+  var BASE = DATA.constants.base_stats;
+  var CAT_NAME = {};
+  DATA.categories.forEach(function (c) { CAT_NAME[c.id] = c.name; });
   var SERIES = ["--s1", "--s2", "--s3", "--s4"];   // fixed order, never cycled
   var MAX_SERIES = SERIES.length;
 
   // --- one row per shipped tier -------------------------------------------
   var ROWS = [];
   DATA.spells.forEach(function (sp) {
-    sp.balance.forEach(function (b) {
+    sp.tiers.forEach(function (b) {
       ROWS.push({
         id: sp.name + "-" + b.tier,
-        label: sp.name + (sp.balance.length > 1 ? " t" + b.tier : ""),
+        label: sp.name + (sp.tiers.length > 1 ? " t" + b.tier : ""),
         spell: sp, tier: b, name: sp.name,
-        category: sp.category, category_id: sp.category_id,
+        category: CAT_NAME[sp.category], category_id: sp.category,
         // A summon's damage lives on the minion's cast, not the spell itself.
         cast: b.kind === "summon" ? "minion_cast." : "",
         tweaks: {}, open: false, picked: false,
@@ -490,7 +492,7 @@
     box.onchange = function () { r.picked = box.checked; render(); };
 
     var head = '<span class="name">' + r.name + "</span>"
-      + (r.spell.balance.length > 1 ? ' <span class="tier">t' + t.tier + "</span>" : "")
+      + (r.spell.tiers.length > 1 ? ' <span class="tier">t' + t.tier + "</span>" : "")
       + '<span class="badge cat-' + r.category_id + '">' + r.category + "</span>"
       + (m.heal ? '<span class="badge k">heal</span>' : "");
 

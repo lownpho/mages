@@ -12,6 +12,10 @@ works in worktrees and while the editor holds the asset-import lock.
     res.script_class        # "BulletSpellResource"
     res["cooldown"]         # 1.2
     res["bullet"]["range_tiles"]   # 8 — sub-resources resolve inline
+
+    nodes = load_scene(Path("game/characters/enemies/hopper/hopper.tscn"))
+    nodes[0].name           # "Hopper"
+    nodes[0].script         # "res://characters/creature/creature.gd"
 """
 
 from __future__ import annotations
@@ -19,7 +23,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-_SECTION = re.compile(r"^\[(\w+)([^\]]*)\]\s*$")
+_SECTION = re.compile(r"^\[(\w+)(.*)\]\s*$")   # greedy: a header may hold `groups=["x"]`
 _ATTR = re.compile(r'(\w+)="([^"]*)"')
 _IDENT = re.compile(r"[A-Za-z_]\w*")
 _NUMBER = re.compile(r"-?\d+\.?\d*(?:e-?\d+)?")
@@ -198,25 +202,8 @@ def _class_of(props: dict, ext: dict[str, dict]) -> str:
     return "".join(part.title() for part in stem.split("_"))
 
 
-def load(path: Path) -> Block:
-    """Parse a `.tres` into its `[resource]` block, sub-resources resolved inline."""
-    sections = _split_sections(path.read_text())
-
-    ext: dict[str, dict] = {}
-    raw_subs: dict[str, tuple[str, dict]] = {}
-    root_class, root_props = "", {}
-
-    for kind, attrs, body in sections:
-        if kind == "gd_resource":
-            root_class = attrs.get("script_class", "")
-        elif kind == "ext_resource":
-            ext[attrs["id"]] = attrs
-        elif kind == "sub_resource":
-            props = _parse_body(body)
-            raw_subs[attrs["id"]] = (attrs.get("type", ""), props)
-        elif kind == "resource":
-            root_props = _parse_body(body)
-
+def _resolver(ext: dict[str, dict], raw_subs: dict[str, tuple[str, dict]]):
+    """-> a resolve(value) that inlines sub-resources and flattens ext refs to paths."""
     resolved: dict[str, Block] = {}
     resolving: set[str] = set()
 
@@ -243,8 +230,69 @@ def load(path: Path) -> Block:
         resolved[value.id] = block
         return block
 
+    return resolve
+
+
+def _read(path: Path):
+    """-> (ext resources, raw sub-resources, sections) for a `.tres` or `.tscn`."""
+    sections = _split_sections(path.read_text())
+    ext: dict[str, dict] = {}
+    raw_subs: dict[str, tuple[str, dict]] = {}
+    for kind, attrs, body in sections:
+        if kind == "ext_resource":
+            ext[attrs["id"]] = attrs
+        elif kind == "sub_resource":
+            raw_subs[attrs["id"]] = (attrs.get("type", ""), _parse_body(body))
+    return ext, raw_subs, sections
+
+
+def load(path: Path) -> Block:
+    """Parse a `.tres` into its `[resource]` block, sub-resources resolved inline."""
+    ext, raw_subs, sections = _read(path)
+    root_class, root_props = "", {}
+    for kind, attrs, body in sections:
+        if kind == "gd_resource":
+            root_class = attrs.get("script_class", "")
+        elif kind == "resource":
+            root_props = _parse_body(body)
+
+    resolve = _resolver(ext, raw_subs)
     out = Block(root_class or _class_of(root_props, ext))
     for key, val in root_props.items():
         if key != "script":
             out[key] = resolve(val)
     return out
+
+
+class Node(Block):
+    """One `[node]` of a scene: its properties, plus name/type/parent/script path."""
+
+    def __init__(self, name: str, type_: str, parent: str, script: str):
+        super().__init__(type_)
+        self.name = name
+        self.parent = parent
+        self.script = script
+
+
+def load_scene(path: Path) -> list[Node]:
+    """Parse a `.tscn` into its nodes, in file order. Instanced children stay opaque."""
+    ext, raw_subs, sections = _read(path)
+    resolve = _resolver(ext, raw_subs)
+
+    nodes: list[Node] = []
+    for kind, attrs, body in sections:
+        if kind != "node":
+            continue
+        props = _parse_body(body)
+        script = props.get("script")
+        node = Node(
+            attrs.get("name", ""),
+            attrs.get("type", ""),
+            attrs.get("parent", ""),
+            ext.get(script.id, {}).get("path", "") if isinstance(script, Ref) else "",
+        )
+        for key, val in props.items():
+            if key != "script":
+                node[key] = resolve(val)
+        nodes.append(node)
+    return nodes

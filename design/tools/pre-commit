@@ -1,0 +1,8 @@
+#!/bin/sh
+# Refuse a commit whose design docs are stale, or whose yaml names something the
+# game does not have. Catches the drift class that used to sit in the docs unseen.
+#
+# Install once (git does not track .git/hooks):
+#     ln -sf ../../design/tools/pre-commit .git/hooks/pre-commit
+
+exec python3 design/tools/build.py --check

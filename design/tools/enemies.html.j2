@@ -14,7 +14,9 @@
 
 <header>
   <h1 class="doc-title"><span class="m">E</span>nemy Catalogue</h1>
-  <p class="doc-sub">Design view generated from <code>design/data/enemies.yaml</code>. Filter, search, and sort while balancing.</p>
+  <p class="doc-sub">Every built enemy, its words from <code>design/data/enemies.yaml</code> and its
+    numbers from the game's <code>.tres</code>. See also the <a href="spells.html">spells</a> and
+    the <a href="biomes.html">room tables</a>.</p>
 </header>
 
 <div class="toolbar panel">
@@ -25,12 +27,15 @@
           <option value="biome">Biome</option>
           <option value="name">Name</option>
           <option value="rarity">Rarity</option>
-          <option value="hp">HP</option>
+          <option value="difficulty">Difficulty</option>
+          <option value="max_health">HP</option>
+          <option value="damage_max">Damage</option>
       </select>
       <span class="count" id="count"></span>
       <button class="btn" id="reset">reset</button>
   </div>
   <div class="facets" id="facets"></div>
+  <div class="facet fields" id="fields"><span class="flabel">Fields</span></div>
 </div>
 
 <main>
@@ -40,113 +45,62 @@
 
 </div>
 
-<script id="data" type="application/json">{{ data_json }}</script>
+<script src="data.js"></script>
+<script src="mages.js"></script>
 <script>
 (function () {
   "use strict";
-  var DATA = JSON.parse(document.getElementById("data").textContent);
-  var ENEMIES = DATA.enemies;
-  var ORDER = DATA.ordered;
+  var D = window.MAGES, el = D.el;
+  var BIOMES = D.biomes.map(function (b) { return b.id; });
+  var RARITY = ["common", "rare", "boss"];
 
-  var FACETS = [
-    { key: "biome", label: "Biome", vals: function (e) { return e.biomes; } },
-    { key: "rarity", label: "Rarity", vals: function (e) { return [e.rarity]; } },
-    { key: "hp", label: "HP", vals: function (e) { return [e.hp]; } },
-    { key: "detection", label: "Detection", vals: function (e) { return [e.detection]; } },
-    { key: "casts", label: "Casts", vals: function (e) { return e.casts; } },
-    { key: "drops", label: "Drops", vals: function (e) { return e.drops.map(function (d) { return d.spell; }); } }
+  // Which stat rows the cards show. Toggling them all off collapses the grid
+  // into a dense balance table, so the choice is remembered between visits.
+  var FIELDS = [
+    { key: "description", label: "desc" },
+    { key: "hp", label: "hp" },
+    { key: "speed", label: "speed" },
+    { key: "range", label: "range" },
+    { key: "attacks", label: "attacks" },
+    { key: "drops", label: "drops" },
+    { key: "notes", label: "notes" }
   ];
+  // Versioned: renaming a field key must not leave a stale set silently hiding it.
+  var STORE = "mages.enemies.fields.v2";
+  var shown = new Set(FIELDS.map(function (f) { return f.key; }));
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORE));
+    if (Array.isArray(saved)) shown = new Set(saved);
+  } catch (e) { /* file:// without storage — defaults are fine */ }
 
-  // Ordinal rank for ordered facets; -1 keeps insertion/alpha order otherwise.
-  function rankFor(key, value) {
-    var scale = ORDER[key];
-    if (!scale) return -1;
-    var i = scale.indexOf(value);
-    return i < 0 ? 99 : i;
-  }
-  function biomeRank(name) { var i = DATA.biome_order.indexOf(name); return i < 0 ? 99 : i; }
-
-  function optionsFor(f) {
-    var present = {};
-    ENEMIES.forEach(function (e) { f.vals(e).forEach(function (v) { present[v] = true; }); });
-    var vals = Object.keys(present);
-    if (f.key === "biome") vals.sort(function (a, b) { return biomeRank(a) - biomeRank(b); });
-    else if (rankFor(f.key, vals[0]) >= 0) vals.sort(function (a, b) { return rankFor(f.key, a) - rankFor(f.key, b); });
-    else vals.sort();
-    return vals;
-  }
-
-  var active = {};
-  FACETS.forEach(function (f) { active[f.key] = new Set(); });
-
-  var facetsEl = document.getElementById("facets");
-  FACETS.forEach(function (f) {
-    var wrap = document.createElement("div");
-    wrap.className = "facet";
-    var lab = document.createElement("span");
-    lab.className = "flabel";
-    lab.textContent = f.label;
-    wrap.appendChild(lab);
-    optionsFor(f).forEach(function (v) {
-      var b = document.createElement("button");
-      b.className = "chip";
-      b.type = "button";
-      b.textContent = v;
-      b.setAttribute("aria-pressed", "false");
-      b.addEventListener("click", function () {
-        var on = b.getAttribute("aria-pressed") === "true";
-        b.setAttribute("aria-pressed", on ? "false" : "true");
-        if (on) active[f.key].delete(v); else active[f.key].add(v);
-        render();
-      });
-      wrap.appendChild(b);
+  var fieldsEl = document.getElementById("fields");
+  var redraw = null;
+  FIELDS.forEach(function (f) {
+    var b = el("button", "chip", f.label);
+    b.type = "button";
+    b.dataset.field = f.key;
+    b.addEventListener("click", function () {
+      if (shown.has(f.key)) shown.delete(f.key); else shown.add(f.key);
+      syncFields();
+      try { localStorage.setItem(STORE, JSON.stringify([].concat([...shown]))); } catch (e) {}
+      if (redraw) redraw();
     });
-    facetsEl.appendChild(wrap);
+    fieldsEl.appendChild(b);
   });
-
-  var qEl = document.getElementById("q");
-  var sortEl = document.getElementById("sort");
-  var gridEl = document.getElementById("grid");
-  var emptyEl = document.getElementById("empty");
-  var countEl = document.getElementById("count");
-
-  function matches(e) {
-    for (var i = 0; i < FACETS.length; i++) {
-      var f = FACETS[i];
-      var sel = active[f.key];
-      if (sel.size === 0) continue;
-      var hit = f.vals(e).some(function (v) { return sel.has(v); });
-      if (!hit) return false;
-    }
-    var q = qEl.value.trim().toLowerCase();
-    if (q) {
-      var hay = (e.name + " " + e.description + " " + e.attack + " " +
-                 e.casts.join(" ") + " " + e.drops.map(function (d) { return d.spell; }).join(" ") +
-                 " " + e.notes).toLowerCase();
-      if (hay.indexOf(q) < 0) return false;
-    }
-    return true;
+  function syncFields() {
+    Array.prototype.forEach.call(fieldsEl.querySelectorAll(".chip"), function (b) {
+      b.setAttribute("aria-pressed", shown.has(b.dataset.field) ? "true" : "false");
+    });
+    document.getElementById("grid").classList.toggle("dense", !shown.has("description"));
   }
+  syncFields();
 
-  function sortKey(mode) {
-    return function (a, b) {
-      if (mode === "name") return a.name.localeCompare(b.name);
-      if (mode === "biome") {
-        var r = biomeRank(a.biomes[0]) - biomeRank(b.biomes[0]);
-        return r !== 0 ? r : a.name.localeCompare(b.name);
-      }
-      var ra = rankFor(mode, a[mode]), rb = rankFor(mode, b[mode]);
-      return ra !== rb ? ra - rb : a.name.localeCompare(b.name);
-    };
-  }
-
-  // Render a stat cell that may contain `inline code` from the design prose.
+  /** Render prose that may contain `inline code`. */
   function withCode(text) {
     var frag = document.createDocumentFragment();
     text.split(/(`[^`]+`)/).forEach(function (part) {
       if (part.charAt(0) === "`" && part.charAt(part.length - 1) === "`") {
-        var c = document.createElement("code"); c.textContent = part.slice(1, -1);
-        frag.appendChild(c);
+        frag.appendChild(el("code", null, part.slice(1, -1)));
       } else if (part) {
         frag.appendChild(document.createTextNode(part));
       }
@@ -154,86 +108,111 @@
     return frag;
   }
 
-  function card(e) {
-    var el = document.createElement("article");
-    el.className = "card";
-
-    var head = document.createElement("div");
-    head.className = "card-head";
-    var nm = document.createElement("span");
-    nm.className = "name";
-    nm.textContent = e.name;
-    head.appendChild(nm);
-    var rb = document.createElement("span");
-    rb.className = "badge rar-" + e.rarity;
-    rb.textContent = e.rarity === "boss" && e.sub_biome ? "boss · " + e.sub_biome : e.rarity;
-    head.appendChild(rb);
-    e.biomes.forEach(function (bn) {
-      var bb = document.createElement("span");
-      bb.className = "badge biome";
-      bb.textContent = bn;
-      head.appendChild(bb);
-    });
-    el.appendChild(head);
-
-    var d = document.createElement("p");
-    d.className = "desc";
-    d.textContent = e.description;
-    el.appendChild(d);
-
-    var dl = document.createElement("dl");
-    dl.className = "stats";
-    function stat(k, node) {
-      var dt = document.createElement("dt"); dt.textContent = k;
-      var dd = document.createElement("dd");
-      if (typeof node === "string") dd.textContent = node; else dd.appendChild(node);
-      dl.appendChild(dt); dl.appendChild(dd);
+  /** One attack in a phrase: what it hits for, then how it behaves. */
+  function attackText(e, a) {
+    var bits = [];
+    if (a.cooldown) bits.push(a.cooldown + "s cd");
+    if (a.shots) {
+      var s = a.shots.pattern.replace("Pattern", "");
+      if (a.shots.per_shot > 1) s += " x" + a.shots.per_shot;
+      if (a.shots.count > 1) s += ", " + a.shots.count + " @ " + a.shots.interval + "s";
+      bits.push(s);
     }
-    function pillRow(items) {
-      var pills = document.createElement("div"); pills.className = "pills";
-      items.forEach(function (t) {
-        var p = document.createElement("span"); p.className = "pill"; p.textContent = t;
-        pills.appendChild(p);
-      });
-      return pills;
-    }
-    stat("HP", e.hp);
-    stat("Speed", e.speed);
-    stat("Detection", e.detection);
-    stat("Attack", withCode(e.attack));
-    stat("Casts", pillRow(e.casts));
-    stat("Drops", pillRow(e.drops.map(function (dr) { return dr.spell + " t" + dr.tier; })));
-    el.appendChild(dl);
-
-    if (e.notes) {
-      var n = document.createElement("p");
-      n.className = "note";
-      n.textContent = e.notes;
-      el.appendChild(n);
-    }
-    return el;
+    if (a.projectile) bits.push(a.projectile.range_tiles + " tiles");
+    (a.behaviours || []).forEach(function (b) { bits.push(b.type); });
+    if (a.minion) bits.push(a.minion.count + " minions");
+    if (a.absorb) bits.push("absorbs " + a.absorb);
+    var dmg = a.amount && a.amount.base ? " " + a.amount.base : "";
+    return [a.name + dmg, bits.join(", ")];
   }
 
-  function render() {
-    var list = ENEMIES.filter(matches).sort(sortKey(sortEl.value));
-    gridEl.innerHTML = "";
-    list.forEach(function (e) { gridEl.appendChild(card(e)); });
-    emptyEl.hidden = list.length !== 0;
-    countEl.textContent = list.length + " / " + ENEMIES.length + " enemies";
-  }
+  redraw = D.browse({
+    items: D.enemies,
+    noun: "enemies",
+    facets: [
+      { key: "biome", label: "Biome", order: BIOMES,
+        vals: function (e) { return e.biomes.map(function (b) { return b.id; }); },
+        chipText: function (id) {
+          var b = D.biomes.filter(function (x) { return x.id === id; })[0];
+          return b ? b.name : id;
+        } },
+      { key: "rarity", label: "Rarity", order: RARITY, vals: function (e) { return [e.rarity]; } },
+      { key: "difficulty", label: "Difficulty", vals: function (e) { return [e.difficulty]; } },
+      { key: "casts", label: "Casts", vals: function (e) { return e.casts; } },
+      { key: "drops", label: "Drops",
+        vals: function (e) { return e.drops.map(function (d) { return d.spell; }); } }
+    ],
+    search: function (e) {
+      return e.id + " " + e.description + " " + e.casts.join(" ") + " " + e.notes + " " +
+             e.attacks.map(function (a) { return a.cast; }).join(" ") + " " +
+             e.drops.map(function (d) { return d.item; }).join(" ");
+    },
+    sorts: {
+      biome: function (a, b) {
+        var ra = a.biomes.length ? BIOMES.indexOf(a.biomes[0].id) : 99;
+        var rb = b.biomes.length ? BIOMES.indexOf(b.biomes[0].id) : 99;
+        return ra - rb || RARITY.indexOf(a.rarity) - RARITY.indexOf(b.rarity)
+               || a.id.localeCompare(b.id);
+      },
+      name: function (a, b) { return a.name.localeCompare(b.name); },
+      rarity: function (a, b) {
+        return RARITY.indexOf(a.rarity) - RARITY.indexOf(b.rarity) || a.name.localeCompare(b.name);
+      },
+      difficulty: function (a, b) { return b.difficulty - a.difficulty; },
+      max_health: function (a, b) { return b.max_health - a.max_health; },
+      damage_max: function (a, b) { return b.damage_max - a.damage_max; }
+    },
+    card: function (e) {
+      var head = el("div", "card-head", [
+        D.sprite(e.icon, 3),
+        el("span", "name", e.name),
+        el("span", "badge rar-" + e.rarity, e.rarity),
+        el("span", "badge diff d" + Math.min(e.difficulty, 9), "diff " + e.difficulty)
+      ].concat(e.biomes.map(function (b) {
+        return el("span", "badge biome" + (b.planned ? " planned" : ""),
+                  b.name + (b.planned ? " (planned)" : ""));
+      })));
 
-  qEl.addEventListener("input", render);
-  sortEl.addEventListener("change", render);
-  document.getElementById("reset").addEventListener("click", function () {
-    qEl.value = "";
-    FACETS.forEach(function (f) { active[f.key].clear(); });
-    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
-      c.setAttribute("aria-pressed", "false");
-    });
-    render();
+      var dl = el("dl", "stats");
+      function stat(key, label, value) {
+        if (!shown.has(key)) return;
+        dl.appendChild(el("dt", null, label));
+        dl.appendChild(el("dd", null, value));
+      }
+      // A comma-separated value. An item is either text, or [text, tooltip] — the
+      // tooltip is the only thing that distinguishes an entry, never a background.
+      function list(items) {
+        var frag = document.createDocumentFragment();
+        items.forEach(function (t, i) {
+          if (i) frag.appendChild(document.createTextNode(", "));
+          var s = el("span", null, Array.isArray(t) ? t[0] : t);
+          if (Array.isArray(t)) s.title = t[1];
+          frag.appendChild(s);
+        });
+        return frag;
+      }
+      stat("hp", "HP", String(e.max_health));
+      if (e.speed_px) stat("speed", "Speed", e.speed_px + " px/s");
+      if (e.probes) {
+        stat("range", "Range", list(Object.keys(e.probes).map(function (k) {
+          return k + " " + e.probes[k];
+        })));
+      }
+      if (e.attacks.length) {
+        stat("attacks", "Attacks", list(e.attacks.map(function (a) { return attackText(e, a); })));
+      }
+      stat("drops", "Drops", list(e.drops.map(function (d) {
+        return d.spell + (d.tier ? " t" + d.tier : "") + " " + Math.round(d.chance * 100) + "%";
+      })));
+
+      return el("article", "card", [
+        head,
+        shown.has("description") ? el("p", "desc", withCode(e.blurb)) : null,
+        dl.childNodes.length ? dl : null,
+        e.notes && shown.has("notes") ? el("p", "note", e.notes) : null
+      ]);
+    }
   });
-
-  render();
 })();
 </script>
 </body>

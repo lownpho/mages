@@ -6,6 +6,7 @@ addons/
 /docs/
 /tools/
 design/docs/*.html
+design/docs/*.js
 design/docs/mages.css
 
 # WIP deepwood enemies, not ready to commit yet

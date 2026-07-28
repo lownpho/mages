@@ -20,6 +20,7 @@
   --lime:      #b6d53c; /* CTA */
   --red:       #e6482e; /* damage / alert */
   --yellow:    #f4b41b; /* highlight */
+  --orange:    #f47e1b; /* escalation */
   --green:     #71aa34; /* nature */
   --green-dk:  #397b44; /* nature, deep */
   --grey:      #5d6c6d; /* stone */
@@ -126,6 +127,8 @@ input[type=search]::placeholder { color: var(--grey); }
 }
 .chip:hover { color: var(--text); }
 .chip[aria-pressed="true"] { background: var(--yellow); color: var(--bg); }
+/* Display toggles, not filters — a quieter "on" so a full row doesn't shout. */
+.fields .chip[aria-pressed="true"] { background: var(--green-dk); color: var(--text); }
 
 button.btn {
   font-family: 'Silkscreen', monospace;
@@ -155,6 +158,11 @@ button.btn:hover { background: var(--lime); color: var(--bg); }
    CARD GRID (spells / enemies / biomes catalogues)
    ============================================= */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 0.9rem; }
+/* Cards stripped down to their numbers — pack the sheet tighter. */
+.grid.dense { grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 0.5rem; }
+.grid.dense .card { padding: 0.6rem 0.7rem; gap: 0.35rem; }
+/* The reading column caps at 1180px; a balance sheet wants the whole window. */
+.doc:has(.grid.dense) { max-width: 100%; }
 
 .card {
   background: var(--indigo);
@@ -204,6 +212,28 @@ button.btn:hover { background: var(--lime); color: var(--bg); }
 .badge.biome        { background: var(--plum); color: var(--dim); }
 .badge.tier         { background: var(--green-dk); color: var(--text); }
 .badge.hold, .badge.k { background: var(--grey); color: var(--bg-deep); }
+/* Difficulty 1-10, walking the palette from calm to alarming. */
+.badge.diff         { background: var(--green-dk); color: var(--text); }
+.badge.diff.d3, .badge.diff.d4 { background: var(--green); color: var(--bg); }
+.badge.diff.d5, .badge.diff.d6 { background: var(--yellow); }
+.badge.diff.d7, .badge.diff.d8 { background: var(--orange); }
+.badge.diff.d9      { background: var(--red); }
+
+.badge.planned      { background: transparent; color: var(--grey); box-shadow: inset 0 0 0 2px var(--plum); }
+
+/* =============================================
+   SPRITES — one icon cut out of its sheet, zoomed
+   ============================================= */
+.sprite-box { overflow: hidden; flex: none; image-rendering: pixelated; }
+.sprite {
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  transform-origin: top left;
+}
+
+/* Per-tier chips under a spell card. */
+.tierline { display: flex; flex-wrap: wrap; gap: 4px; }
+.pill.tier { background: var(--green-dk); color: var(--text); }
 
 .empty { text-align: center; color: var(--grey); padding: 3rem 0; }
 
