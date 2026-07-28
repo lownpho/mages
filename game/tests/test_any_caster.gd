@@ -53,8 +53,18 @@ func _ready() -> void:
 	# with distance and the shove rides the same curve.
 	var near := _victim(Vector2(12, 0))
 	var far := _victim(Vector2(200, 0))
+	# The stubs prove the pulse dispatches by capability; the REAL player is what has to
+	# answer it. debug_never_die: a lethal slam would call game_over() and wipe the save.
+	var player: CharacterBody2D = preload("res://characters/player/player.tscn").instantiate()
+	player.debug_never_die = true
+	player.position = Vector2(0, 12)
+	add_child(player)
+	var player_at := player.global_position
 	caster.cast(load(THWOMP), Vector2.RIGHT)
 	await _wait(0.5)
+	if player.global_position.is_equal_approx(player_at):
+		fails.append("thwomp shoved the stubs but the real player never moved")
+	player.queue_free()
 	if near.health >= 100:
 		fails.append("creature cast thwomp but the target beside it took nothing")
 	if far.health < 100:

@@ -40,6 +40,11 @@ var can_act: bool = true
 # by _dash_velocity, overriding FSM movement (see start_dash).
 var _dash_velocity: Vector2 = Vector2.ZERO
 var _dash_until_ms: int = 0
+# Decaying knockback impulse (px/s), moved positionally on top of whatever the FSM state
+# does — Move rewrites `velocity` every frame, so a velocity-based shove would only ever
+# land while standing still. Mirrors Creature.apply_knockback.
+var _knockback: Vector2 = Vector2.ZERO
+const KNOCKBACK_DECAY := 1200.0
 ## While true, bullet-spell bullets fired pass through hurtboxes (Clang buff).
 ## A spell effect sets it on cast and clears it when its window ends.
 var bullets_pierce: bool = false
@@ -130,7 +135,12 @@ func start_dash(direction: Vector2, dash_speed: float, duration: float) -> void:
 func _is_dashing() -> bool:
 	return Time.get_ticks_msec() < _dash_until_ms
 
-func _physics_process(_delta: float) -> void:
+# Push the player with a velocity impulse (px/s) that decays to zero — the capability
+# radial-push spells (Thwomp) reach for on anything in their target groups.
+func apply_knockback(impulse: Vector2) -> void:
+	_knockback += impulse
+
+func _physics_process(delta: float) -> void:
 	_sample_pad_aim()
 	if _is_dashing():
 		velocity = _dash_velocity
@@ -141,6 +151,9 @@ func _physics_process(_delta: float) -> void:
 		_dash_velocity = Vector2.ZERO
 		velocity = Vector2.ZERO
 		can_act = true
+	if _knockback != Vector2.ZERO:
+		move_and_collide(_knockback * delta)
+		_knockback = _knockback.move_toward(Vector2.ZERO, KNOCKBACK_DECAY * delta)
 
 func _sample_pad_aim() -> void:
 	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
