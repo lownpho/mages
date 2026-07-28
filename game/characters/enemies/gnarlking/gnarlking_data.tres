@@ -25,5 +25,5 @@ script = ExtResource("1_res")
 display_name = "Gnarlking"
 icon = SubResource("AtlasTexture_icon")
 rarity = 2
-max_health = 3000
+max_health = 5000
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_thwomp"), SubResource("Drop_halp")])

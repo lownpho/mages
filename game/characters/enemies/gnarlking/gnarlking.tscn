@@ -192,7 +192,7 @@ shape = SubResource("CircleShape2D_gnarlking")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=189019875]
 sprite_frames = SubResource("SpriteFrames_gnarlking")
-animation = &"idle"
+animation = &"summon"
 autoplay = "idle"
 offset = Vector2(0, -6)
 
@@ -205,15 +205,15 @@ target_position = Vector2(176, 0)
 collision_mask = 17
 
 [node name="CloseProbe" type="RayCast2D" parent="." unique_id=155360497]
-target_position = Vector2(44, 0)
-collision_mask = 17
-
-[node name="SlamProbe" type="RayCast2D" parent="." unique_id=155360498]
 target_position = Vector2(48, 0)
 collision_mask = 17
 
+[node name="SlamProbe" type="RayCast2D" parent="." unique_id=155360498]
+target_position = Vector2(16, 0)
+collision_mask = 17
+
 [node name="VolleyProbe" type="RayCast2D" parent="." unique_id=155360499]
-target_position = Vector2(64, 0)
+target_position = Vector2(32, 0)
 collision_mask = 17
 
 [node name="Caster" parent="." unique_id=1062731833 instance=ExtResource("5_caster")]
@@ -241,6 +241,7 @@ spell = ExtResource("8_brood")
 done_state = "Hunt"
 windup_anim = "summon"
 attack_anim = "idle"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
 health_min = 0.25
 
 [node name="CallBig" type="Node" parent="FSM" unique_id=908002753]
@@ -250,6 +251,7 @@ spell = ExtResource("9_brood_big")
 done_state = "Hunt"
 windup_anim = "summon"
 attack_anim = "idle"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
 health_max = 0.25
 
 [node name="Hunt" type="Node" parent="FSM" unique_id=1286401136]
@@ -264,21 +266,22 @@ spell = ExtResource("6_slam")
 done_state = "Hunt"
 windup_anim = "slam"
 attack_anim = "idle"
-damage_scale = 0.35
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
 range_probe_path = NodePath("../../SlamProbe")
+damage_scale = 0.35
 
 [node name="Volley" type="Node" parent="FSM" unique_id=1396486471]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("10_volley")
 done_state = "Hunt"
-damage_scale = 0.35
+telegraph_color = Color(0.956863, 0.705882, 0.105882, 1)
 range_probe_path = NodePath("../../VolleyProbe")
+damage_scale = 0.35
 
 [node name="Close" type="Node" parent="FSM" unique_id=149517132]
 script = ExtResource("b_approach")
 speed = 52.0
-anim = "run"
 duration = 3.0
 done_state = "Hunt"
 attack_probe_path = NodePath("../../VolleyProbe")
@@ -300,6 +303,7 @@ spell = ExtResource("11_charge")
 done_state = "Stalk"
 windup_anim = "attack"
 attack_anim = "run"
+telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)
 clear_group = &"pack_grimling"
 
 [node name="Stalk" type="Node" parent="FSM" unique_id=40807750]
@@ -318,6 +322,7 @@ spell = ExtResource("12_charge2")
 done_state = "Breathe"
 windup_anim = "attack"
 attack_anim = "run"
+telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)
 
 [node name="Stagger" type="Node" parent="FSM" unique_id=149517128]
 script = ExtResource("b_hold")

@@ -31,6 +31,13 @@ class_name Behaviour
 @export var clear_group: StringName = &""
 @export var clear_radius_tiles: float = 14.0
 
+@export_group("Range")
+## Probe the target must be inside for this beat to be eligible. Range is a question the
+## DISPATCHER has to answer before it commits: Cast.attack_probe_path only bails once the
+## beat is already running, which reads as a boss rearing into a slam at nothing and then
+## thinking better of it. Empty = fires from anywhere.
+@export var range_probe_path: NodePath
+
 @export_group("Armour")
 ## Incoming damage while this beat runs; <1 armours (a guard windup), 0 makes the creature
 ## untouchable outright (the mole underground). Restored on exit so it can't leak past the
@@ -39,6 +46,7 @@ class_name Behaviour
 @export var damage_scale: float = 1.0
 
 var _spent: bool = false
+var _range_probe: RayCast2D
 
 func _ready() -> void:
 	on_enter.connect(enter)
@@ -75,7 +83,18 @@ func can_run() -> bool:
 		return false
 	if not _group_clear():
 		return false
+	if not _in_range():
+		return false
 	return _ready_to_run()
+
+func _in_range() -> bool:
+	if range_probe_path == NodePath():
+		return true
+	if _range_probe == null:
+		_range_probe = get_node_or_null(range_probe_path) as RayCast2D
+	# force_raycast_update inside look_for_target answers regardless of `enabled`, so the
+	# probe needs no owner state — it's a ruler, not a sensor another beat is holding.
+	return _range_probe != null and creature.look_for_target(_range_probe)
 
 func _group_clear() -> bool:
 	if clear_group == &"":

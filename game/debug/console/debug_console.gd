@@ -8,6 +8,7 @@ extends CanvasLayer
 ## up so the pixel font stays readable at native resolution.
 
 const LOG_LINES := 10
+const STATE_LABEL_GROUP := "debug_state_label"
 
 var _root: PanelContainer
 var _log: Label
@@ -16,6 +17,7 @@ var _lines: PackedStringArray = []
 var _history: PackedStringArray = []
 var _history_pos := -1
 var _god := false
+var _show_states := false
 
 
 func _ready() -> void:
@@ -134,7 +136,7 @@ func _run(line: String) -> void:
 	match cmd:
 		"help":
 			_say("give/equip <item>  spawn <enemy> [n]  killall  clearenemies")
-			_say("tp <x> <y>  pos  god [on|off]  heal  seed [n]  reload  fps")
+			_say("tp <x> <y>  pos  god [on|off]  heal  seed [n]  reload  fps  states")
 		"give":
 			_cmd_give(args, false)
 		"equip":
@@ -159,6 +161,8 @@ func _run(line: String) -> void:
 			_cmd_reload()
 		"fps":
 			_say("%d fps" % Engine.get_frames_per_second())
+		"states":
+			_cmd_states()
 		_:
 			_say("unknown command '%s' — try help" % cmd)
 
@@ -279,6 +283,37 @@ func _cmd_seed(args: PackedStringArray) -> void:
 		return
 	GameState.active_seed = args[0].to_int()
 	_say("active seed set to %d (applies on next world load)" % GameState.active_seed)
+
+
+## Live FSM state name floating over every enemy's head. Labels are parented to the
+## creature so they follow it and die with it; toggling off frees the ones alive now.
+func _cmd_states() -> void:
+	_show_states = not _show_states
+	if not _show_states:
+		for lbl in get_tree().get_nodes_in_group(STATE_LABEL_GROUP):
+			lbl.queue_free()
+	_say("state labels %s" % ("on" if _show_states else "off"))
+
+
+func _process(_delta: float) -> void:
+	if not _show_states:
+		return
+	for e in get_tree().get_nodes_in_group("enemies"):
+		if not "fsm" in e or e.fsm == null:
+			continue
+		var lbl := e.get_node_or_null(STATE_LABEL_GROUP) as Label
+		if lbl == null:
+			lbl = Label.new()
+			lbl.name = STATE_LABEL_GROUP
+			lbl.theme = load("res://gui/theme.tres")
+			lbl.z_index = 100
+			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			# ponytail: fixed offset — big creatures wear it low, size it off the sprite if that bites.
+			lbl.position = Vector2(-32, -24)
+			lbl.custom_minimum_size.x = 64
+			lbl.add_to_group(STATE_LABEL_GROUP)
+			e.add_child(lbl)
+		lbl.text = e.fsm.current_state.name if e.fsm.current_state else "-"
 
 
 func _cmd_reload() -> void:

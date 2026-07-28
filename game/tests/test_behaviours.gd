@@ -53,6 +53,7 @@ func _ready() -> void:
 	fails += await _phase_swap()
 	fails += await _brood_gate()
 	fails += await _enrage_lap()
+	fails += await _telegraph()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -269,6 +270,63 @@ func _enrage_lap() -> int:
 		print("  ok: gnarlking enrage lap — %s" % [seen.keys()])
 	else:
 		print("  saw: %s" % [_states])
+	enemy.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The wind-up telegraph. Asserted against a live enemy rather than by reading the scene,
+# because the strobe rides a looping tween on the creature's own process: bind it to the
+# wrong node, or let the off-screen sleeper hold it, and the flash silently never fires
+# while every static check still passes. The shard grimling carries the longest wind-up in
+# the shared pool (0.45s), so its telegraph is the one with frames to spare.
+func _telegraph() -> int:
+	var target := CharacterBody2D.new()
+	target.collision_layer = 16
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	target.add_child(shape)
+	target.add_to_group("player")
+	target.position = Vector2(24, 0)
+	add_child(target)
+
+	var enemy: Creature = load(
+		"res://characters/enemies/shard_grimling/shard_grimling.tscn").instantiate()
+	enemy.position = Vector2.ZERO
+	add_child(enemy)
+	await get_tree().physics_frame
+	for child in enemy.get_children():
+		if child is VisibleOnScreenEnabler2D:
+			child.queue_free()
+	enemy.process_mode = Node.PROCESS_MODE_INHERIT
+
+	# Both halves of the square wave, and that the beat puts the sprite back to normal.
+	# The flash is authored on the scene, so the colour is asserted too — a telegraph that
+	# fires in the wrong hue tells the player the wrong thing.
+	# A pulse, not a strobe and not a hold: the flash must land, then let go on its own
+	# well inside the wind-up. `lit` is the guard against a repeating blink creeping back
+	# in — a looping tween would keep re-lighting the sprite far past this bound.
+	var pulse_cap := int(ceil(Creature.TELEGRAPH_FLASH * Engine.physics_ticks_per_second)) + 4
+	var flashed := false      # flat material on, in the authored accent
+	var cleared := false      # ...and off again on its own
+	var lit := 0
+	var deadline := Time.get_ticks_msec() + 35000
+	while Time.get_ticks_msec() < deadline and not cleared:
+		var mat := enemy.sprite.material as ShaderMaterial
+		if mat:
+			lit += 1
+			flashed = flashed or mat.get_shader_parameter("flat_color").is_equal_approx(
+				Color(Palette.LIME.r, Palette.LIME.g, Palette.LIME.b, 1.0))
+		elif flashed:
+			cleared = true
+		await get_tree().physics_frame
+
+	var fails := 0
+	fails += _expect("the wind-up flashes the authored accent", flashed)
+	fails += _expect("the sprite goes back to normal on its own", cleared)
+	fails += _expect("the flash is one pulse, not a strobe (%d frames)" % lit, lit <= pulse_cap)
+	if fails == 0:
+		print("  ok: shard grimling telegraph — one lime pulse over %d frames" % lit)
 	enemy.queue_free()
 	target.queue_free()
 	await get_tree().physics_frame
