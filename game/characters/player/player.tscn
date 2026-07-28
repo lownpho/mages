@@ -164,6 +164,7 @@ animation = &"pulse"
 autoplay = "pulse"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=832949489]
+process_callback = 0
 
 [node name="Hurtbox" parent="." unique_id=1632214819 instance=ExtResource("5_c6leb")]
 collision_mask = 512
