@@ -37,8 +37,8 @@ behaviours = Array[ExtResource("1_44aw5")]([SubResource("Resource_hnuss"), SubRe
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 29.0
-skill_scaling = 3.6
+base_damage = 30.0
+skill_scaling = 4.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("6_pattern")
@@ -57,4 +57,4 @@ effect_scene = ExtResource("3_scene")
 cooldown = 16.0
 cast_time = 0.5
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 8
+skill_modifier = 10

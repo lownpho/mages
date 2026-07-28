@@ -16,3 +16,8 @@ class_name SpellResource
 
 func get_item_type() -> GlobalInventory.ItemType:
 	return GlobalInventory.ItemType.SPELL
+
+func get_modifiers() -> Array:
+	if cooldown <= 0.0:
+		return super()
+	return super() + [["cooldown", String.num(cooldown)]]

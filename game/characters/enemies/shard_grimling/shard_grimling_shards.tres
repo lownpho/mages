@@ -24,7 +24,6 @@ base_damage = 13.0
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
-num_pellets = 3
 spread_angle = 26.0
 
 [resource]

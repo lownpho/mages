@@ -17,11 +17,12 @@ region = Rect2(80, 16, 8, 8)
 [resource]
 script = ExtResource("1_script")
 radius_tiles = 6.0
+knockback_force = 600.0
 damage = SubResource("ScalingProfile_pulse")
 edge_damage = 0.5
 effect_scene = ExtResource("3_scene")
 cooldown = 8.0
 cast_time = 0.2
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 30
-defence_modifier = 9
+max_health_modifier = 25
+defence_modifier = 7
