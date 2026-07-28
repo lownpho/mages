@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://bl4mt13rthr33" path="res://characters/player/spells/blam/blam3.tres" id="3_blam"]
 [ext_resource type="Resource" uid="uid://ck0yhtfrkoa21" path="res://characters/player/spells/ring/ring3.tres" id="4_ring"]
+[ext_resource type="Resource" uid="uid://cos4jwa2pohls" path="res://characters/player/spells/halp/halp2.tres" id="4_wx2rb"]
 [ext_resource type="Texture2D" uid="uid://b5itttmaun5ax" path="res://characters/enemies/grimlord/grimlord.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_blam"]
@@ -18,6 +19,12 @@ item = ExtResource("4_ring")
 chance = 0.3
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="Resource" id="Resource_5tnxw"]
+script = ExtResource("2_drop")
+item = ExtResource("4_wx2rb")
+chance = 0.2
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
@@ -28,4 +35,4 @@ display_name = "Grimlord"
 icon = SubResource("AtlasTexture_icon")
 rarity = 1
 max_health = 380
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_blam"), SubResource("Drop_ring")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_blam"), SubResource("Drop_ring"), SubResource("Resource_5tnxw")])

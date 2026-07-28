@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
-[ext_resource type="Resource" uid="uid://cw4l5kuo0b3m8" path="res://characters/player/spells/fireball/fireball1.tres" id="2_4gjae"]
+[ext_resource type="Resource" uid="uid://bgirrijw268x" path="res://characters/player/spells/fireball/fireball2.tres" id="2_4gjae"]
 [ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="drop_2"]
 [ext_resource type="Texture2D" uid="uid://djwet4onrpe1y" path="res://characters/enemies/mandraker/mandraker.png" id="icon_png"]
 
@@ -15,7 +15,7 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 [sub_resource type="Resource" id="Drop_2"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("drop_2")
-chance = 0.5
+chance = 0.3
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]

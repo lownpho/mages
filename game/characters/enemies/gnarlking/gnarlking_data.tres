@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://cos4jwa2pohls" path="res://characters/player/spells/halp/halp2.tres" id="3_5jsq7"]
 [ext_resource type="Resource" uid="uid://thw0mppuls3t" path="res://characters/player/spells/thwomp/thwomp3.tres" id="3_thwomp"]
-[ext_resource type="Resource" uid="uid://erynxaao21lk" path="res://characters/player/spells/halp/halp3.tres" id="4_halp"]
+[ext_resource type="Resource" uid="uid://bl4mt13rthr33" path="res://characters/player/spells/blam/blam3.tres" id="4_fyihr"]
+[ext_resource type="Resource" uid="uid://ch4rg3d4sh2t" path="res://characters/player/spells/charge_dash/charge_dash2.tres" id="5_1te6w"]
 [ext_resource type="Texture2D" uid="uid://ds3fp5ehssi24" path="res://characters/enemies/gnarlking/gnarlking.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_thwomp"]
@@ -13,7 +15,19 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_halp"]
 script = ExtResource("2_drop")
-item = ExtResource("4_halp")
+item = ExtResource("3_5jsq7")
+chance = 0.6
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_fawcc"]
+script = ExtResource("2_drop")
+item = ExtResource("4_fyihr")
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_qcnqc"]
+script = ExtResource("2_drop")
+item = ExtResource("5_1te6w")
+chance = 0.6
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -26,4 +40,4 @@ display_name = "Gnarlking"
 icon = SubResource("AtlasTexture_icon")
 rarity = 2
 max_health = 5000
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_thwomp"), SubResource("Drop_halp")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_thwomp"), SubResource("Drop_halp"), SubResource("Resource_fawcc"), SubResource("Resource_qcnqc")])

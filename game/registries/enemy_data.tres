@@ -1,0 +1,79 @@
+[gd_resource type="Resource" script_class="Registry" format=3 uid="uid://sa8mxyrnbs3n"]
+
+[ext_resource type="Script" uid="uid://dqtv77mng5dyh" path="res://addons/yard/registry.gd" id="1_fawcc"]
+
+[resource]
+script = ExtResource("1_fawcc")
+_version = 2
+_scan_rulesets = Array[Dictionary]([{
+&"allowed_file_extensions": Array[String]([]),
+&"class_restrictions": Array[StringName]([&"\"res://characters/creature/creature_resource.gd\""]),
+&"recursive_scan": true,
+&"scan_directories": Array[String](["res://characters/enemies"]),
+&"scan_regex_exclude": "",
+&"scan_regex_include": ""
+}])
+_uids_to_string_ids = Dictionary[StringName, StringName]({
+&"uid://371d6i7w0y33": &"rosebud_data",
+&"uid://b3lqxwn8vd0tr": &"snake_data",
+&"uid://b4n8sxr2wqjy6": &"moon_moth_data",
+&"uid://b6h0q3ntkw8pd": &"wisp_grimling_data",
+&"uid://bfehlx3d3feqq": &"mole_data",
+&"uid://bh3vd8yqx2ns5": &"needle_moth_data",
+&"uid://bomg127lnuwmk": &"dirt_golem_data",
+&"uid://bqm7yv4x0nwdl": &"moth_data",
+&"uid://bqr4x7m2vpldc": &"coral_snake_data",
+&"uid://c8m4tqwvxr2ph": &"shard_grimling_data",
+&"uid://c8yvmqr2wdkn3": &"moss_golem_data",
+&"uid://cgqp1m8vtdn7y": &"grimling_data",
+&"uid://ck2wq7mvxb8dp": &"stalker_data",
+&"uid://coeje3gcbkms2": &"razorback_data",
+&"uid://crjcsdiinr8r5": &"hopper_data",
+&"uid://cspv0ip6swyd0": &"gnarlking_data",
+&"uid://cthbdvqh3esdr": &"seedling_data",
+&"uid://cuqnush86i5lt": &"fae_data",
+&"uid://cv7p6bgvawwaa": &"grimlord_data",
+&"uid://cvp8d3nrjy6xl": &"ash_snake_data",
+&"uid://cwo88x0cswyd0": &"great_owl_data",
+&"uid://d045xvnj4cc3p": &"thornback_data",
+&"uid://d3heauqgsoev8": &"thornthrower_data",
+&"uid://dcdrdod1cfeqq": &"owl_data",
+&"uid://dvpax5yu11cfw": &"mandrake_data",
+&"uid://mdrkrdata001": &"mandraker_data",
+&"uid://p5m3264e3n3h": &"wasp_data",
+&"uid://pbgstoikp5ux": &"viper_data",
+&"uid://plioyxy4mhka": &"sproutling_data",
+&"uid://thrnmssdata1": &"thornmess_data"
+})
+_string_ids_to_uids = Dictionary[StringName, StringName]({
+&"ash_snake_data": &"uid://cvp8d3nrjy6xl",
+&"coral_snake_data": &"uid://bqr4x7m2vpldc",
+&"dirt_golem_data": &"uid://bomg127lnuwmk",
+&"fae_data": &"uid://cuqnush86i5lt",
+&"gnarlking_data": &"uid://cspv0ip6swyd0",
+&"great_owl_data": &"uid://cwo88x0cswyd0",
+&"grimling_data": &"uid://cgqp1m8vtdn7y",
+&"grimlord_data": &"uid://cv7p6bgvawwaa",
+&"hopper_data": &"uid://crjcsdiinr8r5",
+&"mandrake_data": &"uid://dvpax5yu11cfw",
+&"mandraker_data": &"uid://mdrkrdata001",
+&"mole_data": &"uid://bfehlx3d3feqq",
+&"moon_moth_data": &"uid://b4n8sxr2wqjy6",
+&"moss_golem_data": &"uid://c8yvmqr2wdkn3",
+&"moth_data": &"uid://bqm7yv4x0nwdl",
+&"needle_moth_data": &"uid://bh3vd8yqx2ns5",
+&"owl_data": &"uid://dcdrdod1cfeqq",
+&"razorback_data": &"uid://coeje3gcbkms2",
+&"rosebud_data": &"uid://371d6i7w0y33",
+&"seedling_data": &"uid://cthbdvqh3esdr",
+&"shard_grimling_data": &"uid://c8m4tqwvxr2ph",
+&"snake_data": &"uid://b3lqxwn8vd0tr",
+&"sproutling_data": &"uid://plioyxy4mhka",
+&"stalker_data": &"uid://ck2wq7mvxb8dp",
+&"thornback_data": &"uid://d045xvnj4cc3p",
+&"thornmess_data": &"uid://thrnmssdata1",
+&"thornthrower_data": &"uid://d3heauqgsoev8",
+&"viper_data": &"uid://pbgstoikp5ux",
+&"wasp_data": &"uid://p5m3264e3n3h",
+&"wisp_grimling_data": &"uid://b6h0q3ntkw8pd"
+})

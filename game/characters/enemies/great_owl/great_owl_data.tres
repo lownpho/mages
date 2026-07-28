@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://gr34t0wld4t4r"]
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cwo88x0cswyd0"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
@@ -8,7 +8,7 @@
 [sub_resource type="Resource" id="Drop_bwoom"]
 script = ExtResource("2_drop")
 item = ExtResource("3_bwoom")
-chance = 1.0
+chance = 0.8
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
