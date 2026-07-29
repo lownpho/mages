@@ -54,12 +54,19 @@ func _ready() -> void:
 	GlobalEvent.leaderboard_session_changed.connect(func(_logged_in: bool) -> void: _refresh_account())
 	_refresh_account()
 
-	_continue_btn.disabled = not GameState.has_save()
-	_owned_icons = _gather_owned_icons()
+	# identify() is async, so the account's run can land after the menu is up — and it
+	# may be a run this machine has never seen.
+	GameState.cloud_sync_finished.connect(_refresh_continue)
+	_refresh_continue()
 	_continue_btn.mouse_entered.connect(_show_icon_popup)
 	_continue_btn.mouse_exited.connect(_hide_icon_popup)
 	# Land the cursor on the most likely choice: Continue if there's a save, else New.
 	(_new_btn if _continue_btn.disabled else _continue_btn).grab_focus()
+
+
+func _refresh_continue() -> void:
+	_continue_btn.disabled = not GameState.has_save()
+	_owned_icons = _gather_owned_icons()
 
 
 ## Peeks the save file for the icons of every item the saved run owns (equipped +

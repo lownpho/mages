@@ -20,6 +20,15 @@ const SAVE_VERSION := 0
 ## and the run respawns at the deterministic spawn instead of inside what is now a wall.
 const CONFIG_PATH := "res://world_content/gen_config.tres"
 
+## One cloud save per account, mirroring user://save.cfg byte for byte. The account is
+## the source of truth: a login pulls it down over the local file, every persist() pushes
+## back up. Logged out, none of this runs and the local file is the whole story.
+const CLOUD_SAVE_NAME := "run"
+
+## Emitted once a login sync has settled, so a title screen already on screen can
+## re-offer Continue against the account's run rather than this machine's.
+signal cloud_sync_finished
+
 ## How often to resave the player's position while playing. Inventory changes persist
 ## immediately (they're user-driven and rare); position drifts every frame, so it's
 ## only snapshotted periodically instead of on every movement.
@@ -48,6 +57,7 @@ var notable_kills: Dictionary = {}
 var _tracked_player: Node2D = null
 var _save_timer: Timer
 var _suspend_autosave := false
+var _cloud: RunCloudSave = null
 
 
 func _ready() -> void:
@@ -68,6 +78,7 @@ func _ready() -> void:
 	GlobalMap.pins_changed.connect(func() -> void:
 		if not _suspend_autosave and is_instance_valid(_tracked_player):
 			persist())
+	GlobalEvent.leaderboard_session_changed.connect(_on_session_changed)
 
 
 func has_save() -> bool:
@@ -169,6 +180,7 @@ func clear_save() -> void:
 	_save_timer.stop()
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)
+	_push_cloud()
 
 
 ## The run ended (the player died): wipe the run — save and inventory — and return to
@@ -195,6 +207,59 @@ func persist() -> void:
 		cfg.set_value("player", "position", _tracked_player.global_position)
 	_save_inventory(cfg)
 	cfg.save(SAVE_PATH)
+	_push_cloud()
+
+
+# --- Cloud save ---------------------------------------------------------------
+# The account holds the run; this machine holds a copy of it. Login adopts the
+# account's save over the local file, and every persist() mirrors back up.
+
+
+## Login — boot restore, login and register alike. The loadable can only be registered
+## here and not in _ready(): Talo stamps it with the current scene's path, and an autoload
+## readies before there is a current scene. A brand-new account gets this machine's run
+## uploaded rather than losing it.
+func _on_session_changed(logged_in: bool) -> void:
+	if not logged_in:
+		return
+	if _cloud == null:
+		_cloud = RunCloudSave.new()
+		_cloud.id = CLOUD_SAVE_NAME
+		add_child(_cloud)
+	await Talo.saves.get_saves()
+	if Talo.saves.latest != null:
+		Talo.saves.choose_save(Talo.saves.latest)  # hydrates into adopt_cloud_save()
+	else:
+		await Talo.saves.create_save(CLOUD_SAVE_NAME)
+	cloud_sync_finished.emit()
+
+
+## The save file's raw text — empty when there is nothing to continue, which is itself
+## worth mirroring (a death clears the account's run too).
+func save_text() -> String:
+	return FileAccess.get_file_as_string(SAVE_PATH) if FileAccess.file_exists(SAVE_PATH) else ""
+
+
+## Take the account's copy as the local save. Refused mid-run: a login while playing
+## must not yank the world out from under the player — that run pushes up instead.
+func adopt_cloud_save(text: String) -> void:
+	if in_run():
+		return
+	if text.is_empty():
+		if FileAccess.file_exists(SAVE_PATH):
+			DirAccess.remove_absolute(SAVE_PATH)
+		return
+	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if file != null:
+		file.store_string(text)
+
+
+## Mirror the local file up. Talo debounces the request and, with the network down,
+## queues it into its own offline store for the next login sync — so this is as cheap
+## to call as persist() itself.
+func _push_cloud() -> void:
+	if Talo.saves.current != null:
+		Talo.saves.update_current_save()
 
 
 ## "gen_version:config_hash" for the authored world config — the identity of the current
