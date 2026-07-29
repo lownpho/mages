@@ -60,8 +60,8 @@ z_as_relative = false
 script = ExtResource("7")
 
 [node name="Camera2D" type="Camera2D" parent="FlyView/FlyCam" unique_id=1324655988]
-process_callback = 0
 enabled = false
+process_callback = 0
 
 [node name="HUD" type="CanvasLayer" parent="FlyView/FlyCam" unique_id=587967333]
 

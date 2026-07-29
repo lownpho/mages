@@ -146,7 +146,8 @@ func _get_drag_data(_position):
 	return null
 
 func _can_drop_data(_position, data) -> bool:
-	return slot.can_place_item(data.slot.item) and (not slot.item or data.slot.can_place_item(slot.item))
+	return GlobalInventory.can_equip(data.slot.item, slot) \
+		and (not slot.item or GlobalInventory.can_equip(slot.item, data.slot))
 
 func _drop_data(_position, data) -> void:
 	_drag_accepted = true
@@ -211,7 +212,8 @@ func _activate() -> void:
 		# The carried item vanished under us (e.g. console edit) — nothing to place.
 		cancel_carry()
 		return
-	if slot.can_place_item(source.slot.item) and (not slot.item or source.slot.can_place_item(slot.item)):
+	if GlobalInventory.can_equip(source.slot.item, slot) \
+		and (not slot.item or GlobalInventory.can_equip(slot.item, source.slot)):
 		cancel_carry()
 		GlobalInventory.swap_items(slot, source.slot)
 	else:

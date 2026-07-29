@@ -5133,7 +5133,7 @@
   {
    "id": "deepwood",
    "source": "game/world_content/biomes/deepwood/deepwood.tres",
-   "family": "",
+   "family": "deepwood",
    "size_cells": [
     2,
     2

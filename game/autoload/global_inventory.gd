@@ -120,8 +120,39 @@ func has_item(item: ItemResource) -> bool:
 			return true
 	return false
 
+# A spell's id is its folder, so blam1/blam2/blam3 are all "blam" — only one tier
+# of a spell may sit in the loadout at a time.
+static func spell_family(item: ItemResource) -> String:
+	if item == null or item.resource_path == "":
+		return ""
+	return item.resource_path.get_base_dir().get_file()
+
+# Whether the player may drop this item into that slot: type compatibility plus the
+# one-tier-per-spell rule. Bypassed on purpose by the console, the combat lab and
+# save loading — this is the player-facing restriction only.
+func can_equip(item: ItemResource, target: Slot) -> bool:
+	if not target.can_place_item(item):
+		return false
+	if target.type != ItemType.SPELL:
+		return true
+	var family := spell_family(item)
+	for slot in spell_slots.slots:
+		if slot == target or slot.item == null:
+			continue
+		if slot.item.resource_path == item.resource_path:
+			continue  # the same spell, being moved between slots
+		if spell_family(slot.item) == family:
+			return false
+	return true
+
 func get_equipment_slot_for_item(item: ItemResource) -> Slot:
 	if item.get_item_type() == ItemType.SPELL:
+		# Prefer the slot holding another tier of the same spell, so equipping blam2
+		# swaps blam1 out instead of being refused.
+		var family := spell_family(item)
+		for slot in spell_slots.slots:
+			if slot.item != null and spell_family(slot.item) == family:
+				return slot
 		var idx = spell_slots.first_empty()
 		return spell_slots.at(idx if idx != -1 else 0)
 	return null
@@ -129,6 +160,9 @@ func get_equipment_slot_for_item(item: ItemResource) -> Slot:
 # Swaps items between two slots atomically: both slot_updated (and equipment_changed
 # if applicable) signals fire only after the swap is complete.
 func swap_items(slot_a: Slot, slot_b: Slot) -> void:
+	# Dropping a slot onto itself is a no-op, not two changes of the same slot.
+	if slot_a == slot_b:
+		return
 	var tmp = slot_a.item
 	slot_a.item = slot_b.item
 	slot_b.item = tmp

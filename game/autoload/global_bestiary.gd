@@ -62,8 +62,19 @@ func visible_pages() -> Array:
 	var out: Array = []
 	for i in _groups.size():
 		if _is_group_visible(i):
-			out.append({"biome": _group_biomes[i], "bosses": _group_bosses[i], "ids": _groups[i]})
+			out.append(_page(i))
 	return out
+
+## Every page, discovered or not — same shape as visible_pages(). The debug console reads it
+## to hand out a biome's whole drop pool.
+func pages() -> Array:
+	var out: Array = []
+	for i in _groups.size():
+		out.append(_page(i))
+	return out
+
+func _page(i: int) -> Dictionary:
+	return {"biome": _group_biomes[i], "bosses": _group_bosses[i], "ids": _groups[i]}
 
 func _is_group_visible(i: int) -> bool:
 	return _group_members[i].any(func(b: StringName) -> bool: return _visited.has(b)) \

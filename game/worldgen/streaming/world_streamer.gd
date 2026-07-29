@@ -574,13 +574,16 @@ func _terrain_table(tileset: TileSet) -> Dictionary:
 ## entrance depth then by distance to the starting biome's center, so the spawn sits at the easy
 ## end of the difficulty ramp. Validated against the room's reachability map (never a BLOCKER,
 ## never a sealed pocket — falls back to the nearest reachable tile). Returns a world pixel position.
-func find_spawn_position() -> Vector2:
-	var place := world_spec.placement_for(config.starting_biome)
+## `biome_id` defaults to the starting biome; the debug console passes another to warp there.
+func find_spawn_position(biome_id: StringName = &"") -> Vector2:
+	if biome_id == &"":
+		biome_id = config.starting_biome
+	var place := world_spec.placement_for(biome_id)
 	if place == null and not world_spec.placements.is_empty():
 		place = world_spec.placements[0]
 	var graph := _room_graphs.get_biome_graph(world_spec, place.id, config)
 	var center_slot := Vector2(graph.origin_slot) + Vector2(graph.size_slots) * 0.5
-	var start_biome := config.biome_by_id(config.starting_biome)
+	var start_biome := config.biome_by_id(biome_id)
 	var best: RoomSpec = null
 	if start_biome != null and start_biome.spawn_room_type != &"":
 		for u in graph.rooms:

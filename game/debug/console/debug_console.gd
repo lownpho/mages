@@ -18,6 +18,7 @@ var _history: PackedStringArray = []
 var _history_pos := -1
 var _god := false
 var _show_states := false
+var _streamer: WorldStreamer = null
 
 
 func _ready() -> void:
@@ -30,6 +31,7 @@ func _ready() -> void:
 	# scenes: debug/* is excluded from exports, and a scene referencing an excluded
 	# resource fails to load entirely.
 	add_child(preload("res://debug/overlay/debug_overlay.tscn").instantiate())
+	GlobalEvent.world_ready.connect(func(s: WorldStreamer) -> void: _streamer = s)
 	_build_ui()
 	visible = false
 
@@ -137,6 +139,11 @@ func _run(line: String) -> void:
 		"help":
 			_say("give/equip <item>  spawn <enemy> [n]  killall  clearenemies")
 			_say("tp <x> <y>  pos  god [on|off]  heal  seed [n]  reload  fps  states")
+			_say("warp <biome>  kit <biome>   (e.g. `kit glade` then `warp deepwood`)")
+		"warp":
+			_cmd_warp(args)
+		"kit":
+			_cmd_kit(args)
 		"give":
 			_cmd_give(args, false)
 		"equip":
@@ -246,6 +253,56 @@ func _cmd_tp(args: PackedStringArray) -> void:
 	p.global_position = (Vector2(args[0].to_int(), args[1].to_int()) + Vector2(0.5, 0.5)) \
 			* GameConstants.PX_PER_TILE
 	_say("teleported to tile %s,%s" % [args[0], args[1]])
+
+
+## Drop the player at another biome's spawn room, so content that sits several biomes in
+## can be playtested straight away. Streaming follows the player, so no walking needed.
+func _cmd_warp(args: PackedStringArray) -> void:
+	var p := _player()
+	if args.is_empty() or p == null or _streamer == null:
+		_say("usage: warp <biome id> — in a streamed world")
+		return
+	if _streamer.world_spec.placement_for(StringName(args[0])) == null:
+		_say("biome '%s' is not in this world" % args[0])
+		return
+	p.global_position = _streamer.find_spawn_position(StringName(args[0]))
+	p.grant_spawn_grace()
+	_say("warped to %s" % args[0])
+
+
+## Hand over everything a biome's enemies drop — highest tier per spell — so the biome after
+## it can be playtested without farming it first. Takes a bestiary page label (the biome id,
+## or its family where sub-biomes merge): `kit glade` is the whole glade reward pool.
+func _cmd_kit(args: PackedStringArray) -> void:
+	if args.is_empty():
+		_say("usage: kit <biome or family> — e.g. kit glade")
+		return
+	var best: Dictionary = {}   # spell family -> the highest tier of it that drops here
+	for page in GlobalBestiary.pages():
+		if String(page["biome"]) != args[0]:
+			continue
+		for id in page["ids"]:
+			for drop in GlobalBestiary.load_data(id).drops:
+				if drop.item == null:
+					continue
+				var fam := GlobalInventory.spell_family(drop.item)
+				var have: ItemResource = best.get(fam)
+				if have == null or have.resource_path < drop.item.resource_path:
+					best[fam] = drop.item
+	if best.is_empty():
+		_say("nothing drops in '%s'" % args[0])
+		return
+	# Loadout first, then the bag; one tier per spell already, so can_equip has nothing to say.
+	var slots: Array = GlobalInventory.spell_slots.slots + GlobalInventory.bag_slots.slots
+	var families := best.keys()
+	families.sort()
+	var n := 0
+	for fam in families:
+		for slot in slots:
+			if slot.item == null and slot.set_item(best[fam]):
+				n += 1
+				break
+	_say("granted %d/%d %s spells" % [n, families.size(), args[0]])
 
 
 func _cmd_pos() -> void:
