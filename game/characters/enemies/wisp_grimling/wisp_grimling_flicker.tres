@@ -16,7 +16,7 @@ region = Rect2(48, 72, 8, 8)
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_flicker")
 range_tiles = 7
-speed_tiles = 20
+speed_tiles = 12
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
@@ -35,4 +35,4 @@ max_shots = 3
 lock_aim = true
 effect_scene = ExtResource("99_effect")
 cooldown = 1.8
-cast_time = 0.12
+cast_time = 0.25

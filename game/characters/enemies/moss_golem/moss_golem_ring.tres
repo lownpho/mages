@@ -16,7 +16,7 @@ region = Rect2(24, 24, 8, 8)
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_seed")
 range_tiles = 8
-speed_tiles = 8
+speed_tiles = 6
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")

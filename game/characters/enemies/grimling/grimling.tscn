@@ -126,7 +126,7 @@ target_position = Vector2(104, 0)
 collision_mask = 17
 
 [node name="AttackProbe" type="RayCast2D" parent="." unique_id=1393540112]
-target_position = Vector2(40, 0)
+target_position = Vector2(24, 0)
 collision_mask = 17
 
 [node name="Caster" parent="." unique_id=775684026 instance=ExtResource("5_caster")]

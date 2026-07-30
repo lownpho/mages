@@ -1442,7 +1442,7 @@
    "probes": {
     "detect": 10,
     "chase": 13,
-    "attack": 5
+    "attack": 3
    },
    "drops": [
     {
@@ -1463,7 +1463,7 @@
      "cast": "grimling_bolt",
      "kind": "bullet",
      "cooldown": 3,
-     "cast_time": 0.2,
+     "cast_time": 0.25,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -1479,7 +1479,7 @@
      },
      "projectile": {
       "range_tiles": 10,
-      "speed_tiles": 16,
+      "speed_tiles": 10,
       "pierce": false
      },
      "name": "bolt"
@@ -1796,12 +1796,12 @@
    "source": "game/characters/enemies/mole/mole_data.tres",
    "name": "Mole",
    "rarity": "common",
-   "max_health": 210,
+   "max_health": 150,
    "speed_px": 30,
    "probes": {
     "detect": 11,
     "chase": 15,
-    "erupt": 3.25
+    "erupt": 3
    },
    "drops": [
     {
@@ -1816,7 +1816,7 @@
      "cast": "mole_erupt",
      "kind": "bullet",
      "cooldown": 1.6,
-     "cast_time": 0.4,
+     "cast_time": 0.45,
      "channeled": false,
      "shots": {
       "pattern": "RingPattern",
@@ -1832,7 +1832,7 @@
      },
      "projectile": {
       "range_tiles": 5,
-      "speed_tiles": 9,
+      "speed_tiles": 8,
       "pierce": false
      },
      "name": "erupt"
@@ -1931,7 +1931,7 @@
      "cast": "moon_moth_scales",
      "kind": "bullet",
      "cooldown": 1.1,
-     "cast_time": 0.2,
+     "cast_time": 0.45,
      "channeled": false,
      "shots": {
       "pattern": "RingPattern",
@@ -1947,7 +1947,7 @@
      },
      "projectile": {
       "range_tiles": 3,
-      "speed_tiles": 10,
+      "speed_tiles": 9,
       "pierce": false
      },
      "name": "scales"
@@ -2030,7 +2030,7 @@
    "probes": {
     "detect": 14,
     "chase": 17,
-    "attack": 7
+    "attack": 3
    },
    "drops": [
     {
@@ -2067,7 +2067,7 @@
      },
      "projectile": {
       "range_tiles": 8,
-      "speed_tiles": 8,
+      "speed_tiles": 6,
       "pierce": false
      },
      "name": "ring"
@@ -2181,7 +2181,7 @@
      "cast": "moth_dust",
      "kind": "bullet",
      "cooldown": 0.9,
-     "cast_time": 0.15,
+     "cast_time": 0.35,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -2197,7 +2197,7 @@
      },
      "projectile": {
       "range_tiles": 5,
-      "speed_tiles": 13,
+      "speed_tiles": 7,
       "pierce": false
      },
      "name": "dust"
@@ -2280,7 +2280,7 @@
    "probes": {
     "detect": 14,
     "chase": 17,
-    "attack": 5,
+    "attack": 3,
     "retreat": 1.75
    },
    "drops": [
@@ -2296,7 +2296,7 @@
      "cast": "needle_moth_dart",
      "kind": "bullet",
      "cooldown": 1.2,
-     "cast_time": 0.2,
+     "cast_time": 0.35,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -2312,7 +2312,7 @@
      },
      "projectile": {
       "range_tiles": 9,
-      "speed_tiles": 11,
+      "speed_tiles": 9,
       "pierce": false
      },
      "behaviours": [
@@ -2697,7 +2697,7 @@
    "probes": {
     "detect": 12,
     "chase": 16,
-    "attack": 9
+    "attack": 8
    },
    "drops": [
     {
@@ -3065,7 +3065,7 @@
      },
      "projectile": {
       "range_tiles": 4,
-      "speed_tiles": 15,
+      "speed_tiles": 9,
       "pierce": false
      },
      "name": "blast"
@@ -3492,7 +3492,7 @@
    "probes": {
     "detect": 18,
     "chase": 20,
-    "attack": 4
+    "attack": 3
    },
    "drops": [
     {
@@ -3513,7 +3513,7 @@
      "cast": "wisp_grimling_flicker",
      "kind": "bullet",
      "cooldown": 1.8,
-     "cast_time": 0.12,
+     "cast_time": 0.25,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -3529,7 +3529,7 @@
      },
      "projectile": {
       "range_tiles": 7,
-      "speed_tiles": 20,
+      "speed_tiles": 12,
       "pierce": false
      },
      "name": "flicker"
@@ -3716,7 +3716,7 @@
    "probes": {
     "detect": 11,
     "chase": 14,
-    "attack": 4
+    "attack": 3
    },
    "drops": [
     {
@@ -3743,7 +3743,7 @@
      "cast": "grimlord_burst",
      "kind": "bullet",
      "cooldown": 0,
-     "cast_time": 0,
+     "cast_time": 0.35,
      "channeled": false,
      "shots": {
       "pattern": "RingPattern",
@@ -3759,7 +3759,7 @@
      },
      "projectile": {
       "range_tiles": 7,
-      "speed_tiles": 14,
+      "speed_tiles": 12,
       "pierce": false
      },
      "name": "burst"
@@ -3768,7 +3768,7 @@
      "cast": "grimlord_enrage",
      "kind": "bullet",
      "cooldown": 1.4,
-     "cast_time": 0.15,
+     "cast_time": 0.35,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -3784,7 +3784,7 @@
      },
      "projectile": {
       "range_tiles": 10,
-      "speed_tiles": 19,
+      "speed_tiles": 12,
       "pierce": false
      },
      "name": "enrage"
@@ -3793,7 +3793,7 @@
      "cast": "grimlord_spray",
      "kind": "bullet",
      "cooldown": 2.4,
-     "cast_time": 0.3,
+     "cast_time": 0.35,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -3809,7 +3809,7 @@
      },
      "projectile": {
       "range_tiles": 10,
-      "speed_tiles": 17,
+      "speed_tiles": 12,
       "pierce": false
      },
      "name": "spray"

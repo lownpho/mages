@@ -19,5 +19,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1_res")
 display_name = "Mole"
 icon = SubResource("AtlasTexture_icon")
-max_health = 210
+max_health = 150
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_ring")])

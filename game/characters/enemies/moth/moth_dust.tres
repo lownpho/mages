@@ -16,7 +16,7 @@ region = Rect2(0, 8, 8, 8)
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_dust")
 range_tiles = 5
-speed_tiles = 13
+speed_tiles = 7
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
@@ -34,4 +34,4 @@ shot_interval = 0.15
 max_shots = 2
 effect_scene = ExtResource("99_effect")
 cooldown = 0.9
-cast_time = 0.15
+cast_time = 0.35

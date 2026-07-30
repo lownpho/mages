@@ -432,7 +432,7 @@ up a shot, and the pack punishes you for focusing one down without a plan for th
 | Difficulty | 4 / 10 |
 | HP | 90 |
 | Speed | 40 px/s |
-| Range | detect 10, chase 13, attack 5 |
+| Range | detect 10, chase 13, attack 3 |
 | bolt | **12** dmg — 3s cd, Single, 3 @ 0.3s, 10 tiles range |
 | Drops | **pew t2** (50%), **halp t2** (2%) |
 
@@ -462,9 +462,9 @@ in the light.
 | Stat |  |
 |---|---|
 | Difficulty | 5 / 10 |
-| HP | 210 |
+| HP | 150 |
 | Speed | 30 px/s |
-| Range | detect 11, chase 15, erupt 3.25 |
+| Range | detect 11, chase 15, erupt 3 |
 | erupt | **26** dmg — 1.6s cd, Ring x9, 2 @ 0.35s, 5 tiles range |
 | Drops | **ring t2** (10%) |
 
@@ -530,7 +530,7 @@ never stand.
 | Difficulty | 6 / 10 |
 | HP | 500 |
 | Speed | 14 px/s |
-| Range | detect 14, chase 17, attack 7 |
+| Range | detect 14, chase 17, attack 3 |
 | ring | **36** dmg — 2.6s cd, Ring x8, 3 @ 0.6s, 8 tiles range |
 | shell | 5s cd, absorbs 90 |
 | Drops | **ring t2** (8%), **nope** (30%) |
@@ -594,7 +594,7 @@ only over a narrow cone — a sidestep won't shake one, breaking the angle will.
 | Difficulty | 4 / 10 |
 | HP | 55 |
 | Speed | 46 px/s |
-| Range | detect 14, chase 17, attack 5, retreat 1.75 |
+| Range | detect 14, chase 17, attack 3, retreat 1.75 |
 | dart | **19** dmg — 1.2s cd, Single, 2 @ 0.2s, 9 tiles range, homing 70° cone |
 | Drops | **snipe t2** (5%) |
 
@@ -656,7 +656,7 @@ of sight on, never the one you trade with at range.
 | Difficulty | 4 / 10 |
 | HP | 110 |
 | Speed | 30 px/s |
-| Range | detect 12, chase 16, attack 9 |
+| Range | detect 12, chase 16, attack 8 |
 | shards | **13** dmg — 2.8s cd, Shotgun x3, 12 tiles range |
 | Drops | **blam t2** (5%), **halp t2** (2%) |
 
@@ -778,7 +778,7 @@ recruiting.
 | Difficulty | 3 / 10 |
 | HP | 60 |
 | Speed | 54 px/s |
-| Range | detect 18, chase 20, attack 4 |
+| Range | detect 18, chase 20, attack 3 |
 | flicker | **8** dmg — 1.8s cd, Single, 3 @ 0.18s, 7 tiles range |
 | Drops | **pew t2** (5%), **halp t2** (2%) |
 
@@ -844,7 +844,7 @@ a gauntlet.
 | Difficulty | 6 / 10 |
 | HP | 380 |
 | Speed | 38 px/s |
-| Range | detect 11, chase 14, attack 4 |
+| Range | detect 11, chase 14, attack 3 |
 | burst | **13** dmg — Ring x18, 7 tiles range |
 | enrage | **13** dmg — 1.4s cd, Single, 7 @ 0.13s, 10 tiles range |
 | spray | **13** dmg — 2.4s cd, Single, 5 @ 0.26s, 10 tiles range |
