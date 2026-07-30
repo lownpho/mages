@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/title_backdrop.gd" id="1_backdrop"]
+[ext_resource type="Script" uid="uid://vyytyrgsxtwl" path="res://worldgen/streaming/world_streamer.gd" id="2_stream"]
+[ext_resource type="Resource" uid="uid://cqn8sbnhwkmop" path="res://world_content/gen_config.tres" id="3_cfg"]
+
+[node name="TitleBackdrop" type="CanvasLayer"]
+layer = -1
+script = ExtResource("1_backdrop")
+
+[node name="World" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Streamer" type="Node2D" parent="World"]
+unique_name_in_owner = true
+y_sort_enabled = true
+script = ExtResource("2_stream")
+config = ExtResource("3_cfg")
+debug_spawn_markers = false
+
+[node name="Eye" type="Node2D" parent="World"]
+unique_name_in_owner = true

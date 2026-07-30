@@ -1,71 +1,168 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://gui/leaderboard/leaderboard_panel.gd" id="1_board"]
+[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="2_ui"]
+[ext_resource type="Texture2D" path="res://gui/leaderboard/board_icons.png" id="3_icons"]
+[ext_resource type="PackedScene" uid="uid://c8w66s0eu7mav" path="res://gui/bestiary/bestiary.tscn" id="5_besty"]
 
-[node name="LeaderboardPanel" type="PanelContainer"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_trophy"]
+atlas = ExtResource("2_ui")
+region = Rect2(32, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_back"]
+atlas = ExtResource("2_ui")
+region = Rect2(0, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_skull"]
+atlas = ExtResource("2_ui")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hourglass"]
+atlas = ExtResource("2_ui")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grave"]
+atlas = ExtResource("3_icons")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bars"]
+atlas = ExtResource("3_icons")
+region = Rect2(8, 0, 8, 8)
+
+[node name="LeaderboardPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_board")
 
-[node name="Margin" type="MarginContainer" parent="."]
+[node name="Table" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -129.0
+offset_top = -80.0
+offset_right = 129.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Table"]
 layout_mode = 2
-theme_override_constants/margin_left = 4
+theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 4
+theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 4
 
-[node name="Main" type="VBoxContainer" parent="Margin"]
-unique_name_in_owner = true
+[node name="Main" type="VBoxContainer" parent="Table/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 5
 
-[node name="Tabs" type="HBoxContainer" parent="Margin/Main"]
+[node name="Strip" type="HBoxContainer" parent="Table/Margin/Main"]
 layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Emblem" type="TextureRect" parent="Table/Margin/Main/Strip"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+size_flags_vertical = 4
+texture = SubResource("AtlasTexture_trophy")
+
+[node name="Spacer" type="Control" parent="Table/Margin/Main/Strip"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="Table/Margin/Main/Strip"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"IconButton"
+icon = SubResource("AtlasTexture_back")
 alignment = 1
-theme_override_constants/separation = 8
 
-[node name="KillsTab" type="Button" parent="Margin/Main/Tabs"]
+[node name="Head" type="HBoxContainer" parent="Table/Margin/Main"]
 unique_name_in_owner = true
 layout_mode = 2
-toggle_mode = true
-button_pressed = true
-text = "KILLS"
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
 
-[node name="DeathsTab" type="Button" parent="Margin/Main/Tabs"]
-unique_name_in_owner = true
+[node name="HeadRank" type="Control" parent="Table/Margin/Main/Head"]
+custom_minimum_size = Vector2(10, 8)
 layout_mode = 2
-toggle_mode = true
-text = "DEATHS"
 
-[node name="RatioTab" type="Button" parent="Margin/Main/Tabs"]
-unique_name_in_owner = true
+[node name="HeadAlias" type="Control" parent="Table/Margin/Main/Head"]
+custom_minimum_size = Vector2(72, 8)
 layout_mode = 2
-toggle_mode = true
-text = "RATIO"
 
-[node name="FeedTab" type="Button" parent="Margin/Main/Tabs"]
+[node name="SortKills" type="Button" parent="Table/Margin/Main/Head"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 8)
 layout_mode = 2
-toggle_mode = true
-text = "RECENT DEATHS"
+theme_type_variation = &"IconButton"
+icon = SubResource("AtlasTexture_skull")
+alignment = 1
+icon_alignment = 1
 
-[node name="Rows" type="VBoxContainer" parent="Margin/Main"]
+[node name="SortDeaths" type="Button" parent="Table/Margin/Main/Head"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 120)
+custom_minimum_size = Vector2(24, 8)
 layout_mode = 2
+theme_type_variation = &"IconButton"
+icon = SubResource("AtlasTexture_grave")
+alignment = 1
+icon_alignment = 1
+
+[node name="SortRatio" type="Button" parent="Table/Margin/Main/Head"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 8)
+layout_mode = 2
+theme_type_variation = &"IconButton"
+icon = SubResource("AtlasTexture_bars")
+alignment = 1
+icon_alignment = 1
+
+[node name="SortRecent" type="Button" parent="Table/Margin/Main/Head"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+theme_type_variation = &"IconButton"
+icon = SubResource("AtlasTexture_hourglass")
+alignment = 1
+icon_alignment = 1
+
+[node name="Divider" type="ColorRect" parent="Table/Margin/Main"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Table/Margin/Main"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(198, 118)
+layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 3
-theme_override_constants/separation = 1
+theme_override_constants/separation = 2
 
-[node name="Card" type="PanelContainer" parent="."]
+[node name="Bestiary" parent="." instance=ExtResource("5_besty")]
 unique_name_in_owner = true
 visible = false
-layout_mode = 2
-
-[node name="CardMargin" type="MarginContainer" parent="Card"]
-layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 4
-
-[node name="CardText" type="Label" parent="Card/CardMargin"]
-unique_name_in_owner = true
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -129.0
+offset_top = -80.0
+offset_right = 129.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2

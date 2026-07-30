@@ -12,10 +12,17 @@ const ENTRY_SCENE := preload("res://gui/bestiary/bestiary_entry.tscn")
 var _page := 0
 var _pages: Array = []  # Array of {biome, color, ids}, one per discovered biome
 
+# Remote mode: the book is showing someone else's kill map, opened from a leaderboard line. An
+# empty map is meaningful there (an account that has killed nothing), so the mode needs its own
+# flag rather than an is_empty() check on the map.
+var _remote := false
+var _remote_kills: Dictionary = {}
+
 func _ready() -> void:
 	%PrevPage.pressed.connect(func() -> void: _set_page(_page - 1))
 	%NextPage.pressed.connect(func() -> void: _set_page(_page + 1))
 	%CloseButton.pressed.connect(hide)
+	%BackButton.pressed.connect(hide)
 	visibility_changed.connect(_on_visibility_changed)
 	# Crossing a border or a section-revealing kill while the book is open still lands.
 	GlobalEvent.biome_entered.connect(func(_biome: StringName) -> void: _refresh_if_open())
@@ -30,8 +37,33 @@ func _refresh_if_open() -> void:
 	if visible:
 		_rebuild()
 
+## Browse another player's bestiary — the leaderboard's row drill-in. `kills` is their
+## {enemy_id: count} map. EVERY page is offered rather than only discovered ones: which biomes
+## they walked through isn't knowable from a kill map, so the book shows the whole world and
+## lets their silhouettes say where they've been.
+func show_remote(kills: Dictionary) -> void:
+	_remote = true
+	_remote_kills = kills
+	_page = 0
+	_set_nav_mode()
+	_rebuild()
+
+## Back to the local player's own book — the in-game HUD view, and what the leaderboard
+## restores when the drill-in closes.
+func show_local() -> void:
+	_remote = false
+	_remote_kills = {}
+	_set_nav_mode()
+	_rebuild()
+
+# Remote mode is entered from somewhere (a leaderboard line), so it offers a way back rather
+# than a way out; the local book is top-level and only ever closes.
+func _set_nav_mode() -> void:
+	%CloseButton.visible = not _remote
+	%BackButton.visible = _remote
+
 func _rebuild() -> void:
-	_pages = GlobalBestiary.visible_pages()
+	_pages = GlobalBestiary.pages() if _remote else GlobalBestiary.visible_pages()
 	_set_page(_page)
 
 func _set_page(page: int) -> void:
@@ -46,8 +78,8 @@ func _set_page(page: int) -> void:
 	# Badge the page with its boss emblems — a family page merging sub-biomes shows one per
 	# boss (each a living idle loop once slain, a silhouette until then).
 	_fill_bosses(bosses)
-	%BiomeCount.text = _fraction(GlobalBestiary.completion(ids))
-	%TotalCount.text = _fraction(GlobalBestiary.completion(GlobalBestiary.filed_ids()))
+	%BiomeCount.text = _fraction(_completion(ids))
+	%TotalCount.text = _fraction(_completion(GlobalBestiary.filed_ids()))
 	# Arrows dim at the ends instead of hiding, so the nav row never shifts.
 	_set_arrow(%PrevPage, _page > 0)
 	_set_arrow(%NextPage, _page < count - 1)
@@ -64,7 +96,8 @@ func _fill_grid(ids: Array) -> void:
 	for id in ids:
 		var card := ENTRY_SCENE.instantiate()
 		grid.add_child(card)
-		card.show_entry(id)
+		# Remote cards take no live updates: none of the kills landing in this run are theirs.
+		card.show_entry(id, _kills(id), not _remote)
 
 # One 24×24 emblem per boss id, rebuilt like the grid (removed synchronously so a page swap
 # never lays out old + new emblems together for a frame).
@@ -79,7 +112,20 @@ func _fill_bosses(bosses: Array) -> void:
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		row.add_child(icon)
-		icon.show_creature(id, GlobalBestiary.is_unlocked(id))
+		icon.show_creature(id, _kills(id) > 0)
+
+# Kill counts come from the browsed map in remote mode and the live tracker otherwise.
+# "Unlocked" is the same question either way — a count above zero — since a local entry only
+# comes into existence on the kill that opens it.
+func _kills(id: StringName) -> int:
+	return int(_remote_kills.get(String(id), 0)) if _remote else GlobalBestiary.kill_count(id)
+
+func _completion(ids: Array) -> Vector2i:
+	var done := 0
+	for id in ids:
+		if _kills(id) > 0:
+			done += 1
+	return Vector2i(done, ids.size())
 
 func _fraction(v: Vector2i) -> String:
 	return "%d/%d" % [v.x, v.y]

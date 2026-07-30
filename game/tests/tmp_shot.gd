@@ -1,23 +1,23 @@
-extends Node
+extends Control
 
-const OUT := "/tmp/claude-1000/-home-dario-Workspace-mages/b14bedf6-7305-4d8c-94b4-8223b9c6bad1/scratchpad"
+## Throwaway screenshot harness. Boots the real title screen and shoots the generated backdrop,
+## upscaled x4 nearest so 8px art is readable in the output. Must run WINDOWED: --headless renders
+## nothing to grab.
+##
+## Booting title.tscn is save-safe: title.gd only READS the save (has_save, the owned-icon peek),
+## and the backdrop is inert by design — no world_ready, no biome_entered, no persist(). See
+## test_title_backdrop.
+
+const OUT := "/tmp/claude-1000/-home-dario-Workspace-mages/7b83a6c4-8fee-434a-a6b9-a344eaa2fe99/scratchpad"
+const ZOOM := 4
+
 
 func _ready() -> void:
-	var bg := ColorRect.new()
-	bg.color = Color("3e6b47")
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
-	var ui: CanvasLayer = load("res://gui/ui.tscn").instantiate()
-	add_child(ui)
-	await get_tree().process_frame
-	ui.get_node("%BestiaryButton").pressed.emit()
-	GlobalEvent.creature_died.emit(GlobalBestiary.load_data(&"hopper"), Vector2.ZERO)
-	GlobalEvent.creature_died.emit(GlobalBestiary.load_data(&"fae"), Vector2.ZERO)
-	for _i in 4:
+	add_child(load("res://scenes/title.tscn").instantiate())
+	# The streamer loads one chunk per frame on purpose, so give the view time to fill in.
+	for _i in 60:
 		await get_tree().process_frame
-	get_viewport().get_texture().get_image().save_png(OUT + "/shot_glade.png")
-	ui.get_node("%BestiaryPanel").get_node("%NextPage").pressed.emit()
-	for _i in 4:
-		await get_tree().process_frame
-	get_viewport().get_texture().get_image().save_png(OUT + "/shot_deepwood.png")
+	var image := get_viewport().get_texture().get_image()
+	image.resize(image.get_width() * ZOOM, image.get_height() * ZOOM, Image.INTERPOLATE_NEAREST)
+	image.save_png("%s/title.png" % OUT)
 	get_tree().quit()

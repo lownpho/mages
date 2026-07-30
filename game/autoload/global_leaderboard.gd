@@ -166,7 +166,7 @@ func my_entry(board: String = LB_UNIQUE_KILLS) -> TaloLeaderboardEntry:
 ## failure or when they've never scored a kill.
 func bestiary_of(player_id: String) -> Dictionary:
 	var entry := await player_entry(player_id, LB_UNIQUE_KILLS)
-	return _parse_kills(entry.get_prop("bestiary", "{}")) if entry != null else {}
+	return parse_kills(entry.get_prop("bestiary", "{}")) if entry != null else {}
 
 ## Any player's entry on a board (the card reads their deaths this way), null
 ## when logged out, on failure, or when they aren't on that board.
@@ -207,7 +207,7 @@ func _on_session_changed(now_logged_in: bool) -> void:
 	_pending_playtime = 0.0
 	GlobalEvent.leaderboard_session_changed.emit(logged_in)
 	if logged_in:
-		_bestiary = _parse_kills(Talo.current_player.get_prop("bestiary", "{}"))
+		_bestiary = parse_kills(Talo.current_player.get_prop("bestiary", "{}"))
 		submit_snapshot()
 
 # An empty list is ambiguous (a brand-new account and a failed request look the
@@ -308,7 +308,9 @@ func _unique_score() -> float:
 		total += int(_bestiary[id])
 	return _bestiary.size() + minf(total, 999_999.0) / 1_000_000.0
 
-func _parse_kills(raw: String) -> Dictionary:
+## Parse a serialized {enemy_id: kills} map. Public because the leaderboard UI reads the
+## same prop straight off a board entry rather than refetching it.
+func parse_kills(raw: String) -> Dictionary:
 	var parsed: Variant = JSON.parse_string(raw)
 	var out := {}
 	if parsed is Dictionary:

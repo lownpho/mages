@@ -122,7 +122,7 @@ func has_item(item: ItemResource) -> bool:
 
 # A spell's id is its folder, so blam1/blam2/blam3 are all "blam" — only one tier
 # of a spell may sit in the loadout at a time.
-static func spell_family(item: ItemResource) -> String:
+func spell_family(item: ItemResource) -> String:
 	if item == null or item.resource_path == "":
 		return ""
 	return item.resource_path.get_base_dir().get_file()

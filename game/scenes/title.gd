@@ -12,13 +12,15 @@ extends Control
 @onready var _account_btn: Button = %AccountButton
 @onready var _board_btn: Button = %LeaderboardButton
 @onready var _auth_dialog: PanelContainer = %AuthDialog
-@onready var _board: PanelContainer = %LeaderboardPanel
+@onready var _board: Control = %LeaderboardPanel
 @onready var _menu: VBoxContainer = $Menu
 @onready var _meta_row: HBoxContainer = $MetaRow
 @onready var _bg: ColorRect = $Bg
 @onready var _title_label: Label = $TitleLabel
 
-const COLOR_BG := Palette.BLACK
+# Not opaque any more: the generated backdrop lives on a canvas layer behind this, and Bg is the
+# scrim that keeps grey-on-green menu text readable over whatever the generator rolled.
+const COLOR_BG := Color(Palette.BLACK, 0.70)
 const COLOR_TITLE := Palette.APRICOT
 
 var _owned_icons: Array[Texture2D] = []
