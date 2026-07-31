@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://gui/leaderboard/board_row.gd" id="1_row"]
 
 [node name="BoardRow" type="Button"]
-custom_minimum_size = Vector2(198, 13)
+custom_minimum_size = Vector2(206, 13)
 theme_type_variation = &"IconButton"
 script = ExtResource("1_row")
 
@@ -33,7 +33,7 @@ clip_text = true
 
 [node name="Kills" type="Label" parent="Cells"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 0)
+custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 vertical_alignment = 1
 horizontal_alignment = 1

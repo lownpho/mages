@@ -99,12 +99,14 @@ func _fill() -> void:
 		_rows.remove_child(c)
 		c.queue_free()
 	var me := GlobalLeaderboard.username()
+	# Constant for the whole table (and for the build), so it is derived once per fill.
+	var roster_size := GlobalBestiary.filed_ids().size()
 	var ranked := _entries.duplicate()
 	ranked.sort_custom(_before)
 	for i in mini(ranked.size(), MAX_ROWS):
 		var row: BoardRow = ROW_SCENE.instantiate()
 		_rows.add_child(row)  # in the tree first: bind() reads its colours off the theme
-		row.bind(ranked[i], i + 1, ranked[i].alias == me)
+		row.bind(ranked[i], i + 1, ranked[i].alias == me, roster_size)
 		row.pressed.connect(_open_bestiary.bind(ranked[i]))
 
 

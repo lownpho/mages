@@ -113,6 +113,12 @@ func _check_dashes(panel: Control) -> void:
 	var cee: Control = panel.get_node("%Rows").get_child(3)
 	if cee.get_node("%Kills").text != BoardRow.MISSING_TEXT:
 		fails.append("absent kills rendered as '%s'" % cee.get_node("%Kills").text)
+	# Kills read as bestiary completion, so the column carries its denominator: the count of every
+	# enemy filed in the book, the same total that book shows in its own corner.
+	var filed := GlobalBestiary.filed_ids().size()
+	var top_kills: String = panel.get_node("%Rows").get_child(0).get_node("%Kills").text
+	if top_kills != "30/%d" % filed:
+		fails.append("kills should read '30/%d' as completion, got '%s'" % [filed, top_kills])
 	# The ratio column is the only one with a decimal, and it must keep exactly one.
 	if panel.get_node("%Rows").get_child(0).get_node("%Ratio").text != "3.0":
 		fails.append("ratio formatting: " + panel.get_node("%Rows").get_child(0).get_node("%Ratio").text)
@@ -142,12 +148,17 @@ func _check_columns(panel: Control) -> void:
 			fails.append("%s glyph is not centred in its cell" % head[i].name)
 	# clip_text hides overflow silently, so assert the longest allowed alias actually fits
 	# (auth_dialog caps names at 20 characters).
-	var alias: Label = cells[1]
-	var longest := "MMMMMMMMMMMMMMMMMMMM"
-	var width := alias.get_theme_font(&"font").get_string_size(
-			longest, HORIZONTAL_ALIGNMENT_LEFT, -1, alias.get_theme_font_size(&"font_size")).x
-	if width > alias.size.x:
-		fails.append("a 20-char alias needs %spx but the column is %spx" % [width, alias.size.x])
+	_check_fits(cells[1], "MMMMMMMMMMMMMMMMMMMM", "a 20-char alias")
+	# The completion fraction grows with the roster; make sure the column still holds it, with
+	# room for the roster reaching three digits.
+	_check_fits(cells[2], "100/100", "a full completion fraction")
+
+
+func _check_fits(cell: Label, sample: String, what: String) -> void:
+	var width := cell.get_theme_font(&"font").get_string_size(
+			sample, HORIZONTAL_ALIGNMENT_LEFT, -1, cell.get_theme_font_size(&"font_size")).x
+	if width > cell.size.x:
+		fails.append("%s needs %spx but the %s column is %spx" % [what, width, cell.name, cell.size.x])
 
 
 func _check_fit(panel: Control) -> void:

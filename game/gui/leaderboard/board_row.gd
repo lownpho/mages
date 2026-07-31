@@ -29,12 +29,15 @@ func _ready() -> void:
 	focus_exited.connect(_apply_tint)
 
 
-func bind(p_entry: BoardEntry, rank: int, is_me: bool) -> void:
+## `roster_size` is how many enemies are filed in the bestiary at all, so the kills column reads
+## as completion ("19/35") rather than a bare count. It is handed in because it is the same for
+## every line and derived once per fill, not per row.
+func bind(p_entry: BoardEntry, rank: int, is_me: bool, roster_size: int) -> void:
 	entry = p_entry
 	_is_me = is_me
 	%Rank.text = str(rank)
 	%Alias.text = p_entry.alias
-	%Kills.text = _number(p_entry.kills, false)
+	%Kills.text = _fraction(p_entry.kills, roster_size)
 	%Deaths.text = _number(p_entry.deaths, false)
 	%Ratio.text = _number(p_entry.ratio, true)
 	_bind_killer(StringName(p_entry.killer))
@@ -63,6 +66,14 @@ func _apply_tint() -> void:
 	for i in metrics.size():
 		metrics[i].add_theme_color_override(&"font_color", BoardEntry.COLORS[i])
 	%Killer.modulate.a = 1.0 if lit else DIM_ICON_ALPHA
+
+
+# Distinct types killed out of the whole filed roster — the same fraction the bestiary shows in
+# its own corner, so a line here and that player's book agree on the number.
+func _fraction(value: float, total: int) -> String:
+	if value == BoardEntry.MISSING:
+		return MISSING_TEXT
+	return "%d/%d" % [int(value), total]
 
 
 func _number(value: float, decimal: bool) -> String:
