@@ -813,7 +813,7 @@ whole fight is spent closing.
 | Speed | 42 px/s |
 | Range | detect 28, snipe 24, close 7, retreat 2.5 |
 | bwoom | **18** dmg — 4s cd |
-| Drops | **bwoom t3** (80%) |
+| Drops | **bwoom t2** (80%) |
 
 **Notes:** guaranteed Bwoom T3 on death.
 
@@ -884,7 +884,7 @@ do the work.
 | Speed | 18 px/s |
 | Range | detect 20 |
 | charge | **30** dmg — 0.3s cd, Flank x2, 6 @ 0.1s, 5 tiles range, dash 150 px/s for 0.7s |
-| Drops | **charge_dash t3** (50%) |
+| Drops | **charge_dash t2** (50%) |
 
 ```mermaid
 stateDiagram-v2

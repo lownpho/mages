@@ -655,27 +655,10 @@
      "source": "game/characters/player/spells/bwoom/bwoom2.tres",
      "kind": "effect",
      "cooldown": 10,
-     "cast_time": 3,
+     "cast_time": 2,
      "channeled": true,
      "grants": {
       "defence": 6
-     },
-     "amount": {
-      "base": 12,
-      "skill": 0,
-      "speed": 0,
-      "defence": 1
-     }
-    },
-    {
-     "tier": 3,
-     "source": "game/characters/player/spells/bwoom/bwoom3.tres",
-     "kind": "effect",
-     "cooldown": 10,
-     "cast_time": 3,
-     "channeled": true,
-     "grants": {
-      "defence": 10
      },
      "amount": {
       "base": 12,
@@ -901,7 +884,6 @@
     "speed"
    ],
    "grants": [
-    "defence",
     "skill",
     "speed"
    ],
@@ -937,39 +919,6 @@
      "dash": {
       "speed_px": 80,
       "duration": 1
-     }
-    },
-    {
-     "tier": 3,
-     "source": "game/characters/player/spells/charge_dash/charge_dash3.tres",
-     "kind": "bullet",
-     "cooldown": 7,
-     "cast_time": 0,
-     "channeled": false,
-     "grants": {
-      "skill": 8,
-      "defence": 6
-     },
-     "shots": {
-      "pattern": "FlankPattern",
-      "per_shot": 2,
-      "count": 9,
-      "interval": 0.8
-     },
-     "amount": {
-      "base": 20,
-      "skill": 1.5,
-      "speed": 2,
-      "defence": 0
-     },
-     "projectile": {
-      "range_tiles": 8,
-      "speed_tiles": 30,
-      "pierce": false
-     },
-     "dash": {
-      "speed_px": 100,
-      "duration": 0.8
      }
     }
    ]
@@ -3622,9 +3571,9 @@
    },
    "drops": [
     {
-     "item": "bwoom3",
+     "item": "bwoom2",
      "spell": "bwoom",
-     "tier": 3,
+     "tier": 2,
      "chance": 0.8
     }
    ],
@@ -4077,9 +4026,9 @@
    },
    "drops": [
     {
-     "item": "charge_dash3",
+     "item": "charge_dash2",
      "spell": "charge_dash",
-     "tier": 3,
+     "tier": 2,
      "chance": 0.5
     }
    ],

@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://bw00mch4rg3t" path="res://characters/player/spells/bwoom/bwoom3.tres" id="3_bwoom"]
+[ext_resource type="Resource" uid="uid://bw00mch4rg2t" path="res://characters/player/spells/bwoom/bwoom2.tres" id="2_juhee"]
 [ext_resource type="Texture2D" uid="uid://m6ie7bkokl3l" path="res://characters/enemies/great_owl/great_owl.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_bwoom"]
 script = ExtResource("2_drop")
-item = ExtResource("3_bwoom")
+item = ExtResource("2_juhee")
 chance = 0.8
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 

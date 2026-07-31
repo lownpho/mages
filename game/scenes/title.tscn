@@ -139,6 +139,7 @@ layout_mode = 2
 placeholder_text = "PASSWORD"
 caret_blink = true
 secret = true
+secret_character = "*"
 
 [node name="ErrorLabel" type="Label" parent="AuthDialog/Form" unique_id=1364160492]
 unique_name_in_owner = true

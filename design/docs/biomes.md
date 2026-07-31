@@ -129,9 +129,9 @@ One biome in-game, not yet split into the four sub-biomes the design plans. The 
 | Stalker | **blam t2** (5%) |
 | Thornback | **charge_dash t2** (10%) |
 | Wisp Grimling | **pew t2** (5%), **halp t2** (2%) |
-| Great Owl *(rare)* | **bwoom t3** (80%) |
+| Great Owl *(rare)* | **bwoom t2** (80%) |
 | Grimlord *(rare)* | **blam t3** (50%), **ring t3** (30%), **halp t2** (20%) |
-| Razorback *(rare)* | **charge_dash t3** (50%) |
+| Razorback *(rare)* | **charge_dash t2** (50%) |
 | Gnarlking *(boss)* | **thwomp t3** (100%), **halp t2** (60%), **blam t3** (100%), **charge_dash t2** (60%) |
 
 <!-- END GENERATED CATALOGUE -->

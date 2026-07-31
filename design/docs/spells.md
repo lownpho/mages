@@ -205,8 +205,7 @@ Charges in front of the caster while held, growing per tick; on release it fires
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 10s | 3s | — | 12 + 1×defence = **12** | — | defence +6 |
-| T3 | 10s | 3s | — | 12 + 1×defence = **12** | — | defence +10 |
+| T2 | 10s | 2s | — | 12 + 1×defence = **12** | — | defence +6 |
 
 ## Summon
 
@@ -262,9 +261,8 @@ Charges in a direction for a short duration at high speed. Sends bullets at 90 d
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
 | T2 | 12s | 0.3s | Flank x2, 9 @ 0.1s | 10 + 0.6×skill + 1.2×speed = **121** | 8 | skill +6, speed +2 |
-| T3 | 7s | instant | Flank x2, 9 @ 0.8s | 20 + 1.5×skill + 2×speed = **218** | 8 | skill +8, defence +6 |
 
-**Also:** dash 100 px/s for 0.8s, dash 80 px/s for 1s.
+**Also:** dash 80 px/s for 1s.
 
 ### Thwomp
 

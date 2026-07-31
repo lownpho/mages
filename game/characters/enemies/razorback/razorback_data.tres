@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://ch4rg3d4sh3t" path="res://characters/player/spells/charge_dash/charge_dash3.tres" id="3_dash"]
+[ext_resource type="Resource" uid="uid://ch4rg3d4sh2t" path="res://characters/player/spells/charge_dash/charge_dash2.tres" id="2_woxg8"]
 [ext_resource type="Texture2D" uid="uid://bhh4qg0gqjrv5" path="res://characters/enemies/razorback/razorback.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_dash"]
 script = ExtResource("2_drop")
-item = ExtResource("3_dash")
+item = ExtResource("2_woxg8")
 chance = 0.5
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
