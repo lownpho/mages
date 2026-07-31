@@ -73,8 +73,9 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed \
 			and (event.button_index == MOUSE_BUTTON_WHEEL_UP
 				or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
-		_step_zoom(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
-		accept_event()
+		if GlobalInput.wheel_fresh:
+			_step_zoom(-1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1)
+		accept_event()   # swallowed ones too, so they can't reach the page flip
 	elif event is InputEventMouseButton and event.pressed \
 			and event.button_index == MOUSE_BUTTON_LEFT:
 		var tpp := MapState.ZOOM_TILES_PER_PX[_zoom_idx]

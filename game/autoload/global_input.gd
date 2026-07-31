@@ -17,7 +17,25 @@ var using_gamepad := false
 ## casts, page cycling) must stand down. Set only via set_ui_captured.
 var ui_captured := false
 
+## False for the trailing events of a wheel burst — every wheel handler gates on this so
+## one physical notch does one thing. Web reports pixel deltas, so a single notch arrives
+## as several events spread over a few frames; desktop already sends exactly one.
+var wheel_fresh := true
+
+# The window restarts on every wheel event, so even a long browser burst counts once.
+const _WHEEL_BURST_MS := 150
+var _web := OS.get_name() == "Web"
+var _last_wheel_ms := -_WHEEL_BURST_MS
+
 func _input(event: InputEvent) -> void:
+	# Runs before any _gui_input or _unhandled_input, so wheel_fresh is already
+	# settled for this event by the time a handler reads it.
+	if event is InputEventMouseButton and event.pressed \
+			and (event.button_index == MOUSE_BUTTON_WHEEL_UP
+				or event.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+		var now := Time.get_ticks_msec()
+		wheel_fresh = not _web or now - _last_wheel_ms >= _WHEEL_BURST_MS
+		_last_wheel_ms = now
 	if event is InputEventJoypadButton:
 		_set_gamepad(true)
 	elif event is InputEventJoypadMotion:

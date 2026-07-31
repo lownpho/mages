@@ -129,9 +129,11 @@ func _gui_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
-			_zoom(event.position, 1)    # wheel up → zoom in
+			if GlobalInput.wheel_fresh:
+				_zoom(event.position, 1)    # wheel up → zoom in
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
-			_zoom(event.position, -1)   # wheel down → zoom out
+			if GlobalInput.wheel_fresh:
+				_zoom(event.position, -1)   # wheel down → zoom out
 		elif event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				_dragging = true
