@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://tyvn4krhkk0a" path="res://characters/player/spells/spell_caster.gd" id="7_caster"]
 [ext_resource type="Script" uid="uid://cvnv21hhr6o6f" path="res://characters/player/spells/player_cast_input.gd" id="8_castin"]
 [ext_resource type="Texture2D" uid="uid://dhg4w5reodlbn" path="res://characters/player/low_health_aura.png" id="9_lowhp"]
+[ext_resource type="Texture2D" path="res://characters/player/aim_arrow.png" id="10_aim"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_e5uuo"]
 radius = 3.5
@@ -155,6 +156,12 @@ sprite_frames = SubResource("SpriteFrames_58jvb")
 animation = &"idle"
 autoplay = "idle"
 metadata/_edit_lock_ = true
+
+[node name="AimArrow" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.6)
+z_index = -1
+texture = ExtResource("10_aim")
+offset = Vector2(10, 0)
 
 [node name="LowHealthAura" type="AnimatedSprite2D" parent="." unique_id=555001001]
 visible = false

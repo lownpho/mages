@@ -17,6 +17,7 @@ extends CharacterBody2D
 @onready var fsm: FSM = $FSM
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var low_health_aura: AnimatedSprite2D = $LowHealthAura
+@onready var aim_arrow: Sprite2D = $AimArrow
 
 var health: int
 
@@ -142,6 +143,7 @@ func apply_knockback(impulse: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	_sample_pad_aim()
+	aim_arrow.rotation = get_aim_direction().angle()
 	if _is_dashing():
 		velocity = _dash_velocity
 		move_and_slide()
