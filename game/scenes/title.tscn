@@ -48,9 +48,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -50.0
-offset_top = -17.0
+offset_top = -26.0
 offset_right = 50.0
-offset_bottom = 17.0
+offset_bottom = 26.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 4
@@ -67,8 +67,15 @@ text = "NEW"
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../NewButton")
-focus_neighbor_bottom = NodePath("../../MetaRow/LeaderboardButton")
+focus_neighbor_bottom = NodePath("../QuitButton")
 text = "CONTINUE"
+
+[node name="QuitButton" type="Button" parent="Menu" unique_id=1129478125]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_top = NodePath("../ContinueButton")
+focus_neighbor_bottom = NodePath("../../MetaRow/LeaderboardButton")
+text = "QUIT"
 
 [node name="MetaRow" type="HBoxContainer" parent="." unique_id=1731284095]
 layout_mode = 1
@@ -91,7 +98,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 focus_neighbor_left = NodePath("../AccountButton")
-focus_neighbor_top = NodePath("../../Menu/ContinueButton")
+focus_neighbor_top = NodePath("../../Menu/QuitButton")
 focus_neighbor_right = NodePath("../AccountButton")
 focus_neighbor_bottom = NodePath("../../Menu/NewButton")
 text = "LEADERBOARD"
@@ -100,7 +107,7 @@ text = "LEADERBOARD"
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_left = NodePath("../LeaderboardButton")
-focus_neighbor_top = NodePath("../../Menu/ContinueButton")
+focus_neighbor_top = NodePath("../../Menu/QuitButton")
 focus_neighbor_right = NodePath("../LeaderboardButton")
 focus_neighbor_bottom = NodePath("../../Menu/NewButton")
 text = "LOGIN"
