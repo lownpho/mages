@@ -2,6 +2,7 @@
 .godot/
 addons/
 /android/
+/build/
 
 /docs/
 /tools/
