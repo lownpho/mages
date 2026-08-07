@@ -7,8 +7,15 @@ spells that they drop.
 
 ## Loadout
 
-You equip spells across two pages. Each page binds one spell to **LMB**, **RMB**, and
-**Space**, six slots in total. **SHIFT** cycles the active page.
+You equip spells across two pages. Each page binds one spell to **LMB**, **RMB** and **MMB** —
+or, on a controller, to **L1**, **L2** and **R1**, left to right — six slots in total. **Space**,
+the mouse wheel or the pad's **R2** cycles the active page.
+
+The game plays fully on either device and swaps between them the moment you touch one. On a
+controller the left stick moves, the right stick aims (it holds your last direction when you let
+go, and follows your run if you never touch it), and **Start** opens slot navigation: the dpad
+moves a highlight across your spells, bag and the strip buttons, **A** picks an item up and
+places it, **B** puts it back or backs out, **X** drops it on the floor.
 
 ### Casting
 

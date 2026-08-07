@@ -35,6 +35,7 @@ var _fitted := false
 var _dragging := false
 var _drag_moved := false
 var _press_pos := Vector2.ZERO
+var _pan_residue := Vector2.ZERO   ## sub-pixel-step pad pan carried between frames (see _pad_pan)
 
 
 func _ready() -> void:
@@ -72,8 +73,35 @@ func _notification(what: int) -> void:
 		queue_redraw()
 
 
-func _process(_dt: float) -> void:
+## Screen pixels per second the pad pans at. Scaled by _tpp when applied, so the map slides
+## under the eye at the same rate however far it's zoomed out.
+const PAN_PX_PER_SEC := 90.0
+
+
+func _process(dt: float) -> void:
+	_pad_pan(dt)
 	queue_redraw()   # player and enemies move while the map is open
+
+
+## The pad's answer to drag-pan: the right stick slides the view. Gated on ui_captured — the
+## HUD only raises that for a pad-opened panel, so the stick can never pan the map and steer
+## the mage at the same time. Zoom is in _unhandled_input; pins stay mouse-only.
+func _pad_pan(dt: float) -> void:
+	if not GlobalInput.ui_captured:
+		return
+	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
+	if stick == Vector2.ZERO:
+		return
+	# The view only ever sits on whole pixels (_snap_cam), so a frame's worth of a gentle push
+	# is smaller than one step and would round away to nothing every frame. Bank the remainder
+	# and spend it once it's grown into a step — that's what makes slow panning possible at all.
+	_pan_residue += stick * PAN_PX_PER_SEC * _tpp * dt
+	var step := (_pan_residue / _tpp).round() * _tpp
+	if step == Vector2.ZERO:
+		return
+	_pan_residue -= step
+	_cam += step
+	_snap_cam()
 
 
 const FIT_PAD_TILES := 8   ## breathing room (world tiles) around the discovered area when framing
@@ -110,14 +138,16 @@ func _snap_cam() -> void:
 	_cam = (_cam / _tpp).round() * _tpp
 
 
-## +/- zoom the open map around its centre. Marked handled so the strip minimap — which binds the
-## same actions — doesn't zoom underneath the panel as well.
+## +/- zoom the open map around its centre — or dpad up/down on a pad, which is free here
+## because the HUD releases slot focus while a panel is open. Marked handled so the strip
+## minimap — which binds the same actions — doesn't zoom underneath the panel as well.
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == null or not is_visible_in_tree():
 		return
-	if event.is_action_pressed("minimap_zoom_in"):
+	var pad := GlobalInput.ui_captured
+	if event.is_action_pressed("minimap_zoom_in") or (pad and event.is_action_pressed("ui_up")):
 		_zoom(size * 0.5, 1)
-	elif event.is_action_pressed("minimap_zoom_out"):
+	elif event.is_action_pressed("minimap_zoom_out") or (pad and event.is_action_pressed("ui_down")):
 		_zoom(size * 0.5, -1)
 	else:
 		return

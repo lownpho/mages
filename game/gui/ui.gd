@@ -49,10 +49,50 @@ func _ready() -> void:
 			if not GlobalInput.using_gamepad:
 				btn.release_focus())
 
+	for p in [%BestiaryPanel, %MapPanel]:
+		p.visibility_changed.connect(_on_panel_visibility_changed.bind(p))
+	_wire_focus_ladder()
+
 func _toggle_panel(panel: Control) -> void:
 	var opening: bool = not panel.visible
 	for p in [%BestiaryPanel, %MapPanel]:
 		p.visible = p == panel and opening
+
+# An open panel owns the dpad and the sticks (map pan/zoom, bestiary paging), so slot
+# focus steps aside while it's up — otherwise dpad-left would walk the strip buttons
+# underneath it — and returns to the button that opened it on close.
+var _focus_before_panel: Control = null
+
+func _on_panel_visibility_changed(panel: Control) -> void:
+	if panel.visible:
+		_focus_before_panel = get_viewport().gui_get_focus_owner()
+		get_viewport().gui_release_focus()
+	elif GlobalInput.ui_captured and is_instance_valid(_focus_before_panel):
+		_focus_before_panel.grab_focus()
+
+# Pad focus runs as ONE 3-wide ladder down the strip — the 6 spell slots, the 9 bag
+# slots, then the 3 strip buttons — wired explicitly because Godot's geometric neighbour
+# search wanders across the panel gaps between the three containers. Both grids are
+# authored at 3 columns, matching this; the button row is the last rung. Edges point at
+# themselves so focus parks there instead of falling back to the geometric guess.
+const _NAV_COLUMNS := 3
+
+func _wire_focus_ladder() -> void:
+	var nav := []
+	for group in [%EquipSpells, %Bag]:
+		nav.append_array(group.get_children())
+	nav.append_array([%BestiaryButton, %MapButton, %QuitButton])
+	for i in nav.size():
+		var c: Control = nav[i]
+		var col := i % _NAV_COLUMNS
+		c.focus_neighbor_left = _nav_path(nav, i, i - 1 if col > 0 else -1)
+		c.focus_neighbor_right = _nav_path(nav, i, i + 1 if col < _NAV_COLUMNS - 1 else -1)
+		c.focus_neighbor_top = _nav_path(nav, i, i - _NAV_COLUMNS)
+		c.focus_neighbor_bottom = _nav_path(nav, i, i + _NAV_COLUMNS)
+
+func _nav_path(nav: Array, from: int, to: int) -> NodePath:
+	var src: Control = nav[from]
+	return src.get_path_to(nav[to] if to >= 0 and to < nav.size() else src)
 
 
 func _on_spell_page_changed(page: int) -> void:

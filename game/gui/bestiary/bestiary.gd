@@ -29,6 +29,21 @@ func _ready() -> void:
 	GlobalEvent.bestiary_entry_unlocked.connect(func(_id: StringName) -> void: _refresh_if_open())
 	_rebuild()
 
+## Pad paging: dpad left/right turn the page, the only interaction the book has (its cards are
+## display-only, and close is the HUD's B/Start). Gated on ui_captured — the HUD only raises it
+## for a pad-opened panel, and it's what stops a left stick push paging the book while it walks
+## the mage. Focus is released while a panel is open, so nothing consumes these first.
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or not GlobalInput.ui_captured:
+		return
+	if event.is_action_pressed("ui_left"):
+		_set_page(_page - 1)
+	elif event.is_action_pressed("ui_right"):
+		_set_page(_page + 1)
+	else:
+		return
+	get_viewport().set_input_as_handled()
+
 func _on_visibility_changed() -> void:
 	if visible:
 		_rebuild()

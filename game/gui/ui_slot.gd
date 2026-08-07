@@ -110,9 +110,9 @@ func _ready() -> void:
 		$SlotTexture.texture = slot_texture
 	GlobalEvent.slot_updated.connect(_on_slot_updated)
 	GlobalEvent.spell_cooldown_started.connect(_on_spell_cooldown_started)
-	focus_entered.connect(queue_redraw)
-	focus_exited.connect(queue_redraw)
-	GlobalInput.device_changed.connect(func(_pad: bool) -> void: queue_redraw())
+	focus_entered.connect(_refresh_focus_visuals)
+	focus_exited.connect(_refresh_focus_visuals)
+	GlobalInput.device_changed.connect(func(_pad: bool) -> void: _refresh_focus_visuals())
 	set_process(false)
 
 # Focus ring for controller navigation only — mouse clicks also grab focus, but
@@ -127,6 +127,62 @@ func _draw() -> void:
 	draw_rect(Rect2(0, size.y, size.x, 1), _FLASH_COLOR)
 	draw_rect(Rect2(-1, 0, 1, size.y), _FLASH_COLOR)
 	draw_rect(Rect2(size.x, 0, 1, size.y), _FLASH_COLOR)
+
+# --- Focus tooltip (controller) ---
+# The mouse gets the stat grid from Godot's own tooltip on hover, but that machinery is driven
+# purely by the cursor — there is no API to raise a tooltip for a focused Control. So dpad
+# navigation builds the same grid itself, in the same TooltipPanel frame, beside the focused
+# slot. One tip exists at a time, hence the statics.
+
+static var _focus_tip: PanelContainer = null
+static var _tip_owner: MarginContainer = null
+
+## Focus ring and focus tooltip both follow "focused AND on a pad", so they move together.
+func _refresh_focus_visuals() -> void:
+	queue_redraw()
+	if has_focus() and GlobalInput.using_gamepad:
+		_show_focus_tip()
+	elif _tip_owner == self:
+		_hide_focus_tip()
+
+static func _hide_focus_tip() -> void:
+	# Statics outlive the scene the tip was parented into, so never trust the reference.
+	if is_instance_valid(_focus_tip):
+		_focus_tip.queue_free()
+	_focus_tip = null
+	_tip_owner = null
+
+func _show_focus_tip() -> void:
+	_hide_focus_tip()
+	if slot == null or slot.item == null:
+		return
+	var modifiers: Array = slot.item.get_modifiers()
+	if modifiers.is_empty():
+		return   # nothing to say — matches the mouse tooltip staying shut on a bare item
+	var panel := PanelContainer.new()
+	panel.theme_type_variation = &"TooltipPanel"
+	panel.add_child(_stat_grid(modifiers))
+	# Parented to the CanvasLayer, not the strip: inside the layout it would be clipped and would
+	# reflow the slot grid around it.
+	var layer := _ui_layer()
+	if layer == null:
+		panel.queue_free()
+		return   # a slot mounted outside a CanvasLayer (debug scenes) has nowhere to put it
+	layer.add_child(panel)
+	# Right of the slot — the strip hugs the left screen edge, so there is always room that way.
+	# Only the vertical needs clamping, for a bottom-row bag slot with a tall grid.
+	var tip_size := panel.get_combined_minimum_size()
+	var pos := global_position + Vector2(size.x + 2, 0)
+	pos.y = clampf(pos.y, 0.0, maxf(0.0, get_viewport_rect().size.y - tip_size.y))
+	panel.global_position = pos
+	_focus_tip = panel
+	_tip_owner = self
+
+func _ui_layer() -> CanvasLayer:
+	var n: Node = get_parent()
+	while n != null and not (n is CanvasLayer):
+		n = n.get_parent()
+	return n as CanvasLayer
 
 func _get_drag_data(_position):
 	# A press already armed carry mode; a real drag supersedes it.
@@ -233,6 +289,8 @@ func _on_slot_updated(p_slot: GlobalInventory.Slot) -> void:
 	if slot == p_slot:
 		update_texture()
 		_refresh_cooldown_overlay()
+		# An item swapped into or out of the focused slot changes what the tip should say.
+		_refresh_focus_visuals()
 
 # --- Cooldown indicator ---
 # A dithered dark curtain covers the icon and recedes top-to-bottom in whole

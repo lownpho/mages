@@ -31,7 +31,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	# fire casts or flip pages under the player's feet.
 	if GlobalInput.ui_captured:
 		return
-	if event.is_action_pressed("cycle_page"):
+	# fresh_press, not is_action_pressed: cycle_page sits on an analog trigger, which reports
+	# the action pressed on every step of the pull. Page flips have no cooldown to hide that.
+	if GlobalInput.fresh_press(event, &"cycle_page"):
 		# One flip per physical notch — a web burst would otherwise land on the wrong
 		# page, and the next middle-click casts that page's spell. SPACE/pad are exempt.
 		if event is InputEventMouseButton and not GlobalInput.wheel_fresh:
@@ -39,7 +41,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		GlobalInventory.cycle_spell_page()
 		return
 	for i in SPELL_ACTIONS.size():
-		if event.is_action_pressed(SPELL_ACTIONS[i]):
+		if GlobalInput.fresh_press(event, SPELL_ACTIONS[i]):
 			_try_cast(i)
 			return
 

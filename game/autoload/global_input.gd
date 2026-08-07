@@ -27,6 +27,33 @@ const _WHEEL_BURST_MS := 150
 var _web := OS.get_name() == "Web"
 var _last_wheel_ms := -_WHEEL_BURST_MS
 
+# Actions currently held, for fresh_press. Cleared here rather than by the caller so a release
+# still lands while some other node owns input (slot navigation), which would otherwise strand
+# an action "held" until the next release.
+var _held := {}
+
+## True only for the FIRST press event of `action`, until it is released again.
+##
+## An analog trigger streams one motion event per value step as it's pulled, and
+## InputEvent.is_action_pressed reports true for every one of them past the deadzone — it tests
+## the event's own value, it does not track the transition (that's Input.is_action_just_pressed,
+## a different path). So a discrete action bound to a trigger fires several times per pull. Any
+## action that must happen once per physical press goes through here; ones with their own
+## cooldown don't need it. Orthogonal to wheel_fresh, which counts notches within one burst —
+## a wheel binding wants both.
+func fresh_press(event: InputEvent, action: StringName) -> bool:
+	if not event.is_action_pressed(action):
+		return false
+	# Only an axis streams. Buttons, keys and wheel notches each send exactly one press event,
+	# so holding those to a release we might never see would strand the action for good — they
+	# pass straight through, and the guard stays scoped to the thing that actually misbehaves.
+	if not event is InputEventJoypadMotion:
+		return true
+	if _held.has(action):
+		return false
+	_held[action] = true
+	return true
+
 func _input(event: InputEvent) -> void:
 	# Runs before any _gui_input or _unhandled_input, so wheel_fresh is already
 	# settled for this event by the time a handler reads it.
@@ -36,6 +63,9 @@ func _input(event: InputEvent) -> void:
 		var now := Time.get_ticks_msec()
 		wheel_fresh = not _web or now - _last_wheel_ms >= _WHEEL_BURST_MS
 		_last_wheel_ms = now
+	for action: StringName in _held.keys():
+		if event.is_action_released(action):
+			_held.erase(action)
 	if event is InputEventJoypadButton:
 		_set_gamepad(true)
 	elif event is InputEventJoypadMotion:
