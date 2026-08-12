@@ -4,6 +4,13 @@
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="1_evaik"]
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="2_1gl85"]
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="4_gen"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/glade_fountain.tscn" id="5_fountain"]
+
+[sub_resource type="Resource" id="feat_fountain"]
+script = ExtResource("2_1gl85")
+scene = ExtResource("5_fountain")
+placement = 2
+count_min = 0
 
 [sub_resource type="Resource" id="gen"]
 script = ExtResource("4_gen")
@@ -18,3 +25,4 @@ biome = &"glade_start"
 generator = SubResource("gen")
 weight = 3
 max_per_biome = 3
+features = Array[ExtResource("2_1gl85")]([SubResource("feat_fountain")])

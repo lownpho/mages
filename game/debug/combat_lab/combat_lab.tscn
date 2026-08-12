@@ -6,6 +6,7 @@
 [ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://world_content/biomes/glade_start/glade_floor_tileset.tres" id="5_floor_ts"]
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="6_player"]
 [ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="7_wall_ts"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/fountain.tscn" id="8_fountain"]
 
 [node name="CombatLab" type="Node2D" unique_id=1583139370]
 process_mode = 3
@@ -37,6 +38,15 @@ y_sort_enabled = true
 [node name="Player" parent="Entities" unique_id=1802092115 instance=ExtResource("6_player")]
 base_speed = 30
 debug_never_die = true
+
+[node name="GladeFountain" parent="Entities" instance=ExtResource("8_fountain")]
+position = Vector2(-48, -24)
+cooldown = 10.0
+
+[node name="DeepwoodFountain" parent="Entities" instance=ExtResource("8_fountain")]
+position = Vector2(48, -24)
+style = 1
+cooldown = 10.0
 
 [node name="Walls" type="TileMapLayer" parent="Entities" unique_id=1120445318]
 process_mode = 3

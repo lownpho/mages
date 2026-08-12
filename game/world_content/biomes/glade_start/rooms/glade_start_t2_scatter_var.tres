@@ -5,6 +5,13 @@
 [ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="3_sos1c"]
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="4_gen"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/glade_fountain.tscn" id="9_fountain"]
+
+[sub_resource type="Resource" id="feat_fountain"]
+script = ExtResource("3_sos1c")
+scene = ExtResource("9_fountain")
+placement = 2
+count_min = 0
 
 [sub_resource type="Resource" id="ste_0"]
 script = ExtResource("2_ste")
@@ -170,3 +177,4 @@ weight = 4
 enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7"), SubResource("ste_8"), SubResource("ste_9"), SubResource("ste_10"), SubResource("ste_11")])
 enemy_groups_min = 1
 enemy_groups_max = 1
+features = Array[ExtResource("3_sos1c")]([SubResource("feat_fountain")])

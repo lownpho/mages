@@ -5141,7 +5141,9 @@
    "groups_min": 0,
    "groups_max": 0,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "glade_fountain"
+   ],
    "variations": [],
    "biome_name": "Starting glade",
    "family": "glade"
@@ -5395,7 +5397,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "glade_fountain"
+   ],
    "variations": [
     {
      "weight": 2,
@@ -5504,7 +5508,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "glade_fountain"
+   ],
    "variations": [
     {
      "weight": 2,
@@ -5889,7 +5895,9 @@
    "groups_min": 0,
    "groups_max": 0,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "glade_fountain"
+   ],
    "variations": [],
    "biome_name": "Veggie glade",
    "family": "glade"
@@ -6190,7 +6198,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "glade_fountain"
+   ],
    "variations": [
     {
      "weight": 2,
@@ -6329,7 +6339,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "glade_fountain"
+   ],
    "variations": [
     {
      "weight": 2,
@@ -6825,7 +6837,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "deepwood_fountain"
+   ],
    "variations": [
     {
      "weight": 3,
@@ -7040,7 +7054,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "deepwood_fountain"
+   ],
    "variations": [
     {
      "weight": 2,
@@ -7209,7 +7225,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "deepwood_fountain"
+   ],
    "variations": [
     {
      "weight": 2,
@@ -7378,7 +7396,9 @@
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
-   "features": [],
+   "features": [
+    "deepwood_fountain"
+   ],
    "variations": [
     {
      "weight": 1,

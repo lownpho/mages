@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="2_ste"]
 [ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="3_qklp4"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/deepwood_fountain.tscn" id="4_fountain"]
 
 [sub_resource type="Resource" id="pm_0_0"]
 script = ExtResource("3_pm")
@@ -247,6 +248,12 @@ weight = 2
 pack_spread = 2.0
 members = Array[ExtResource("3_pm")]([SubResource("pm_15_0"), SubResource("pm_15_1")])
 
+[sub_resource type="Resource" id="feat_fountain"]
+script = ExtResource("3_qklp4")
+scene = ExtResource("4_fountain")
+placement = 2
+count_min = 0
+
 [resource]
 script = ExtResource("1_def")
 id = &"deepwood_group_open"
@@ -256,3 +263,4 @@ weight = 2
 enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7"), SubResource("ste_8"), SubResource("ste_9"), SubResource("ste_10"), SubResource("ste_11"), SubResource("ste_12"), SubResource("ste_13"), SubResource("ste_14"), SubResource("ste_15")])
 enemy_groups_min = 1
 enemy_groups_max = 1
+features = Array[ExtResource("3_qklp4")]([SubResource("feat_fountain")])
