@@ -177,7 +177,7 @@ The starting spell: the first thing a new player has in a slot, and the baseline
 | T1 | 8s | 0.5s | Single | 10 + 1.25×skill = **41** | 12 | skill +6 |
 | T2 | 8s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +10 |
 
-**Also:** blast 5 tiles (splash only), homing 90° cone.
+**Also:** blast 5 tiles (splash only).
 
 ### Zaap
 

@@ -441,12 +441,6 @@
      },
      "behaviours": [
       {
-       "type": "homing",
-       "turn_deg": 720,
-       "cone_deg": 90,
-       "range_tiles": 16
-      },
-      {
        "type": "blast",
        "radius_tiles": 5,
        "blast_only": true
@@ -481,12 +475,6 @@
       "pierce": false
      },
      "behaviours": [
-      {
-       "type": "homing",
-       "turn_deg": 720,
-       "cone_deg": 90,
-       "range_tiles": 20
-      },
       {
        "type": "blast",
        "radius_tiles": 5,

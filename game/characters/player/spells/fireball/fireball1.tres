@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_g54eu"]
 [ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
-[ext_resource type="Script" uid="uid://cabl55c7774jr" path="res://items/bullets/behaviours/homing_behaviour.gd" id="2_j2fce"]
 [ext_resource type="SpriteFrames" uid="uid://btxbbmw7y4ufw" path="res://characters/player/spells/fireball/fireball_3_explosion.tres" id="3_j2fce"]
 [ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
 [ext_resource type="Script" uid="uid://d2i01xlww65p1" path="res://items/bullets/behaviours/blast_payload.gd" id="4_4b1ea"]
@@ -11,12 +10,6 @@
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="6_g47s4"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
 [ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
-
-[sub_resource type="Resource" id="Resource_4nnsq"]
-script = ExtResource("2_j2fce")
-turn_deg = 720.0
-cone_deg = 90.0
-range_tiles = 16.0
 
 [sub_resource type="Resource" id="Resource_on0ob"]
 script = ExtResource("4_4b1ea")
@@ -33,7 +26,7 @@ script = ExtResource("6_g47s4")
 icon = SubResource("AtlasTexture_6x0i4")
 range_tiles = 12
 speed_tiles = 16
-behaviours = Array[ExtResource("1_g54eu")]([SubResource("Resource_4nnsq"), SubResource("Resource_on0ob")])
+behaviours = Array[ExtResource("1_g54eu")]([SubResource("Resource_on0ob")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
