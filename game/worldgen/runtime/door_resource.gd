@@ -7,3 +7,6 @@ extends Resource
 
 @export var style: Door.Style = Door.Style.WOOD
 @export var target_scene: PackedScene = null
+## Two-way warp doors instead name the world slot of the room holding their twin (DoorLinks
+## fills this in at runtime). Vector2i.MAX = not a warp door.
+@export var target_slot := Vector2i.MAX

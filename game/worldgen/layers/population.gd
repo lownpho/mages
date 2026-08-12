@@ -130,7 +130,7 @@ static func _populate_features(out: RoomOutput, spec: RoomSpec, config: GenConfi
 		for n in count:
 			var tile := Vector2i(-1, -1)
 			if f.placement == RoomFeature.Placement.CENTER and n == 0:
-				tile = _feature_tile(out)
+				tile = feature_tile(out)
 			else:
 				var pool := reachable
 				if f.placement == RoomFeature.Placement.NEAR_WALL:
@@ -138,7 +138,7 @@ static func _populate_features(out: RoomOutput, spec: RoomSpec, config: GenConfi
 					if not walled.is_empty():
 						pool = walled
 				if pool.is_empty():
-					tile = _feature_tile(out)
+					tile = feature_tile(out)
 				else:
 					var i := rng.randi_range(0, pool.size() - 1)
 					var idx := pool[i]
@@ -150,7 +150,7 @@ static func _populate_features(out: RoomOutput, spec: RoomSpec, config: GenConfi
 
 ## Room-centre tile, or the nearest reachable tile when the centre is blocked ((-1,-1) if the
 ## room has no reachable tile at all). Deterministic — no RNG — so features never move.
-static func _feature_tile(out: RoomOutput) -> Vector2i:
+static func feature_tile(out: RoomOutput) -> Vector2i:
 	var cx := out.width >> 1
 	var cy := out.height >> 1
 	if out.reachability_map[cy * out.width + cx] == 1:

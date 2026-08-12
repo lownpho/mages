@@ -251,7 +251,6 @@ members = Array[ExtResource("3_pm")]([SubResource("pm_15_0"), SubResource("pm_15
 [sub_resource type="Resource" id="feat_fountain"]
 script = ExtResource("3_qklp4")
 scene = ExtResource("4_fountain")
-placement = 2
 count_min = 0
 
 [resource]

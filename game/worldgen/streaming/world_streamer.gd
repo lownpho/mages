@@ -76,6 +76,7 @@ var cache_misses: int = 0
 var last_assembly_usec: int = 0
 
 var _room_graphs: RoomGraph = null            # never-evicted BiomeGraph cache
+var _door_links: DoorLinks = null             # this seed's warp-door map, built on first use
 var _room_cache: Dictionary = {}              # Vector2i origin_slot -> RoomOutput, LRU by insertion order
 var _chunks: Dictionary = {}                  # Vector2i chunk_coord -> WgChunk
 var _fallback_pres: BiomePresentation = null  # starting biome's mapping; fallback for biomes without one
@@ -95,6 +96,7 @@ func build_world(seed_value: int) -> void:
 	cache_misses = 0
 	world_spec = WorldLayout.build(seed_value, config)
 	_room_graphs = RoomGraph.new()
+	_door_links = null
 	if world_spec != null:
 		var s := config.biome_slots * config.room_slot_tiles
 		_world_chunks = Vector2i(
@@ -334,10 +336,39 @@ func get_room_output(spec: RoomSpec) -> RoomOutput:
 		return hit
 	cache_misses += 1
 	var out := RoomBuilder.build(spec, config, world_seed)
+	var links := door_links()
+	if links != null:
+		links.add_spawn(out, spec, config)
 	_room_cache[key] = out
 	if _room_cache.size() > config.room_cache_capacity:
 		_room_cache.erase(_room_cache.keys()[0])   # evict least-recently-used
 	return out
+
+
+# --- Warp doors ---------------------------------------------------------------------------------
+
+## This seed's warp-door map, built on first use — it needs every biome's room graph (graph
+## level only, no tiles), so it is not worth paying for until a room is actually generated.
+func door_links() -> DoorLinks:
+	if _door_links == null and world_spec != null:
+		_door_links = DoorLinks.build(world_spec, config, world_seed, _room_graphs)
+	return _door_links
+
+
+## World position a player warping to `target_slot` lands on: beside that room's door, never on
+## it, and on the far side of it relative to `heading` (the cardinal they walked in on) so they
+## come out still moving away from it. Vector2.INF when the slot holds no door (content edited
+## under a live run) — the caller leaves the player where they are.
+func door_exit_position(target_slot: Vector2i, heading := Vector2i.ZERO) -> Vector2:
+	var links := door_links()
+	var spec: RoomSpec = links.room_at(target_slot) if links != null else null
+	if spec == null:
+		return Vector2.INF
+	var tile := DoorLinks.exit_tile(get_room_output(spec), heading)
+	if tile.x < 0:
+		return Vector2.INF
+	var wt := spec.origin_slot * config.room_slot_tiles + tile
+	return (Vector2(wt) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 
 
 # --- Presentation helpers -----------------------------------------------------------------------

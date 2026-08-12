@@ -7,12 +7,6 @@
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="4_gen"]
 [ext_resource type="PackedScene" path="res://worldgen/runtime/deepwood_fountain.tscn" id="9_fountain"]
 
-[sub_resource type="Resource" id="feat_fountain"]
-script = ExtResource("3_v0253")
-scene = ExtResource("9_fountain")
-placement = 2
-count_min = 0
-
 [sub_resource type="Resource" id="pm_0_0"]
 script = ExtResource("3_pm")
 enemy_id = &"moth"
@@ -168,6 +162,11 @@ script = ExtResource("2_ste")
 weight = 2
 pack_spread = 2.0
 members = Array[ExtResource("3_pm")]([SubResource("pm_9_0"), SubResource("pm_9_1")])
+
+[sub_resource type="Resource" id="feat_fountain"]
+script = ExtResource("3_v0253")
+scene = ExtResource("9_fountain")
+count_min = 0
 
 [sub_resource type="Resource" id="gen"]
 script = ExtResource("4_gen")

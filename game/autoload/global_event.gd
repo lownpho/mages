@@ -48,6 +48,10 @@ signal spell_cooldown_started(spell: SpellResource, duration: float)
 # Emitted by world.gd once the overworld is built and the player is placed; carries the
 # streamer so listeners (minimap) can read the deterministic room caches.
 signal world_ready(streamer: WorldStreamer)
+# A two-way warp door was walked into. world.gd owns the streamer and the player, so it does the
+# moving: `body` lands beside the door in `target_slot`'s room, on the far side of it relative to
+# `heading` (the cardinal it walked in on), so it comes out the other end still walking away.
+signal warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i)
 
 # Leaderboard signals
 # Emitted when the Talo session opens or closes (login, logout, restore at boot).

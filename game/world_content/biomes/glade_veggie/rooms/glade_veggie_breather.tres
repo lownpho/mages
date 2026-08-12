@@ -9,7 +9,6 @@
 [sub_resource type="Resource" id="feat_fountain"]
 script = ExtResource("2_4ltyc")
 scene = ExtResource("5_fountain")
-placement = 2
 count_min = 0
 
 [sub_resource type="Resource" id="gen"]

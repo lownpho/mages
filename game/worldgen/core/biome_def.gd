@@ -21,6 +21,17 @@ extends Resource
 ## hash_fold below. &"" = fall back to the lowest-difficulty room heuristic.
 @export var spawn_room_type: StringName = &""
 
+## How many of this biome's ordinary rooms hold a two-way warp door (DoorLinks rolls the count,
+## the rooms, and who each one links to). PRESENTATION tier: doors are a feature overlay drawn
+## from their own RNG stream, so retuning these re-rolls the doors and nothing else — they are
+## NOT folded into hash_fold below. 0 = this biome has no doors.
+@export_group("Doors")
+@export var doors_min: int = 0
+@export var doors_max: int = 0
+## Art a door LEADING HERE wears (frame order matches Door.Style; int to keep worldgen/core free
+## of a runtime dependency).
+@export_enum("Wood", "Hedge", "Cave", "Portal", "Stairs") var door_style: int = 3
+
 ## Organic-shell overrides, -1 = inherit the GenConfig dial. These are what make one biome's
 ## walls read differently from another's (thin/fat bands, ragged vs clean edges, corner bulk).
 @export_group("Shell overrides (-1 = inherit)")

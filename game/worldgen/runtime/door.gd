@@ -23,13 +23,27 @@ const _FRAME_W := 16
 ## a door before its destination exists; it just warns and stays put when used.
 @export var target_scene: PackedScene
 
+## Two-way warp doors ignore `target_scene` and name the world slot of their twin's room
+## instead — the world moves the player beside that door and back again. Vector2i.MAX = not one.
+@export var target_slot := Vector2i.MAX
+
 # Guards against firing twice while the deferred scene change is pending.
 var _used := false
+# A door only fires while nothing was standing in it as of the last physics step: a warp lands
+# the player beside their destination door (and a streamed-in door can materialise right under
+# them), which must not read as walking through it. `_physics_process` runs BEFORE the step
+# whose body_entered signals arrive, so `_armed` always describes the frame the body came from.
+# Overlap data is empty until the node has been through a step, hence the settle frames.
+const _SETTLE_FRAMES := 2
+
+var _armed := false
+var _settle := _SETTLE_FRAMES
 
 
 func _ready() -> void:
 	_apply_style()
 	if Engine.is_editor_hint():
+		set_physics_process(false)
 		return
 	body_entered.connect(_on_body_entered)
 
@@ -41,6 +55,19 @@ func setup(res) -> void:
 		return
 	style = res.style            # setter re-applies the art once in-tree
 	target_scene = res.target_scene
+	target_slot = res.target_slot
+
+
+## Which way `body` was walking into this door, as one of the four cardinals — how it was moving
+## if it was, else the line it took to reach us. The far door puts it down on its far side facing
+## the same way, so holding one direction carries you through instead of bouncing you back.
+func _heading_of(body: Node2D) -> Vector2i:
+	var v: Vector2 = body.velocity if "velocity" in body else Vector2.ZERO
+	if v.length_squared() < 1.0:
+		v = global_position - body.global_position
+	if absf(v.x) >= absf(v.y):
+		return Vector2i(1 if v.x >= 0.0 else -1, 0)
+	return Vector2i(0, 1 if v.y >= 0.0 else -1)
 
 
 func _apply_style() -> void:
@@ -49,7 +76,20 @@ func _apply_style() -> void:
 	$Sprite2D.region_rect.position.x = style * _FRAME_W
 
 
-func _on_body_entered(_body: Node2D) -> void:
+func _physics_process(_dt: float) -> void:
+	if _settle > 0:
+		_settle -= 1
+		return
+	_armed = get_overlapping_bodies().is_empty()
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if not _armed:
+		return
+	if target_slot != Vector2i.MAX:
+		_armed = false   # re-arms once the player is clear of it, so the door works both ways
+		GlobalEvent.warp_requested.emit(target_slot, body, _heading_of(body))
+		return
 	if _used:
 		return
 	if not target_scene:

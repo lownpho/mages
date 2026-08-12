@@ -58,7 +58,6 @@ pack_spread = 2.0
 [sub_resource type="Resource" id="feat_fountain"]
 script = ExtResource("3_jqtwa")
 scene = ExtResource("4_fountain")
-placement = 2
 count_min = 0
 
 [resource]

@@ -43,6 +43,7 @@ func _ready() -> void:
 	# Relay onto the game-wide bus: worldgen stays self-contained, game systems
 	# (bestiary) listen on GlobalEvent.
 	_streamer.biome_entered.connect(GlobalEvent.biome_entered.emit)
+	GlobalEvent.warp_requested.connect(_on_warp_requested)
 	_streamer.target = _player
 	GlobalEvent.world_ready.emit(_streamer)
 
@@ -54,6 +55,16 @@ func _ready() -> void:
 	if GameState.fresh_start:
 		GameState.fresh_start = false
 		_drop_starter_gear()
+
+# Walking into a warp door: put the player beside its twin. The streamer follows the player
+# every frame, so the destination's chunks stream in from there with no scene change.
+func _on_warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i) -> void:
+	var dest := _streamer.door_exit_position(target_slot, heading)
+	if dest == Vector2.INF:
+		push_warning("warp door points at slot %s, which holds no door" % target_slot)
+		return
+	body.global_position = dest
+
 
 # Drop the starter spells beside the player, using the same loot_dropped path enemies
 # use (GlobalPickups makes the pickups).

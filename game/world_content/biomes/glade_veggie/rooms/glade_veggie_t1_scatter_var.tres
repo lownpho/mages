@@ -7,12 +7,6 @@
 [ext_resource type="Script" uid="uid://bjj6ovmq7drd2" path="res://worldgen/generators/generator_scatter.gd" id="4_gen"]
 [ext_resource type="PackedScene" path="res://worldgen/runtime/glade_fountain.tscn" id="9_fountain"]
 
-[sub_resource type="Resource" id="feat_fountain"]
-script = ExtResource("3_jj37x")
-scene = ExtResource("9_fountain")
-placement = 2
-count_min = 0
-
 [sub_resource type="Resource" id="ste_0"]
 script = ExtResource("2_ste")
 enemy_id = &"sproutling"
@@ -117,6 +111,11 @@ enemy_id = &"thornthrower"
 script = ExtResource("2_ste")
 pack_spread = 2.0
 members = Array[ExtResource("3_pm")]([SubResource("pm_8_0"), SubResource("pm_8_1")])
+
+[sub_resource type="Resource" id="feat_fountain"]
+script = ExtResource("3_jj37x")
+scene = ExtResource("9_fountain")
+count_min = 0
 
 [sub_resource type="Resource" id="gen"]
 script = ExtResource("4_gen")
