@@ -41,7 +41,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/pew/pew1.tres",
      "kind": "bullet",
-     "cooldown": 6,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -54,9 +54,9 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 6,
+      "base": 3,
       "skill": 0,
-      "speed": 1,
+      "speed": 0.5,
       "defence": 0
      },
      "projectile": {
@@ -69,7 +69,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/pew/pew2.tres",
      "kind": "bullet",
-     "cooldown": 6,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -82,9 +82,9 @@
       "interval": 0.2
      },
      "amount": {
-      "base": 10,
+      "base": 5,
       "skill": 0,
-      "speed": 1.2,
+      "speed": 0.6,
       "defence": 0
      },
      "projectile": {
@@ -114,7 +114,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/snipe/snipe1.tres",
      "kind": "bullet",
-     "cooldown": 16,
+     "cooldown": 8,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -127,8 +127,8 @@
       "interval": 0.1
      },
      "amount": {
-      "base": 8,
-      "skill": 0.4,
+      "base": 4,
+      "skill": 0.2,
       "speed": 0,
       "defence": 0
      },
@@ -150,7 +150,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/snipe/snipe2.tres",
      "kind": "bullet",
-     "cooldown": 16,
+     "cooldown": 8,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -163,8 +163,8 @@
       "interval": 0.1
      },
      "amount": {
-      "base": 10,
-      "skill": 0.48,
+      "base": 5,
+      "skill": 0.25,
       "speed": 0,
       "defence": 0
      },
@@ -204,7 +204,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/blam/blam1.tres",
      "kind": "bullet",
-     "cooldown": 7,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -219,8 +219,8 @@
       "interval": 0.4
      },
      "amount": {
-      "base": 8,
-      "skill": 0.4,
+      "base": 4,
+      "skill": 0.2,
       "speed": 0,
       "defence": 0
      },
@@ -234,7 +234,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/blam/blam2.tres",
      "kind": "bullet",
-     "cooldown": 7,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -249,8 +249,8 @@
       "interval": 0.4
      },
      "amount": {
-      "base": 12,
-      "skill": 0.5,
+      "base": 6,
+      "skill": 0.25,
       "speed": 0,
       "defence": 0
      },
@@ -264,7 +264,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/blam/blam3.tres",
      "kind": "bullet",
-     "cooldown": 7,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -279,8 +279,8 @@
       "interval": 0.3
      },
      "amount": {
-      "base": 16,
-      "skill": 0.6,
+      "base": 8,
+      "skill": 0.3,
       "speed": 0,
       "defence": 0
      },
@@ -312,7 +312,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/ring/ring1.tres",
      "kind": "bullet",
-     "cooldown": 11,
+     "cooldown": 5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -326,8 +326,8 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 10,
-      "skill": 0.4,
+      "base": 5,
+      "skill": 0.2,
       "speed": 0,
       "defence": 0
      },
@@ -341,7 +341,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/ring/ring2.tres",
      "kind": "bullet",
-     "cooldown": 11,
+     "cooldown": 5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -355,8 +355,8 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 10,
-      "skill": 0.5,
+      "base": 5,
+      "skill": 0.25,
       "speed": 0,
       "defence": 0
      },
@@ -370,7 +370,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/ring/ring3.tres",
      "kind": "bullet",
-     "cooldown": 11,
+     "cooldown": 4,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -384,8 +384,8 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 16,
-      "skill": 0.6,
+      "base": 8,
+      "skill": 0.3,
       "speed": 0,
       "defence": 0
      },
@@ -416,7 +416,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/fireball/fireball1.tres",
      "kind": "bullet",
-     "cooldown": 16,
+     "cooldown": 8,
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
@@ -429,8 +429,8 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 20,
-      "skill": 2.5,
+      "base": 10,
+      "skill": 1.25,
       "speed": 0,
       "defence": 0
      },
@@ -457,7 +457,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/fireball/fireball2.tres",
      "kind": "bullet",
-     "cooldown": 16,
+     "cooldown": 8,
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
@@ -470,8 +470,8 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 30,
-      "skill": 4,
+      "base": 15,
+      "skill": 2,
       "speed": 0,
       "defence": 0
      },
@@ -515,7 +515,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/zaap/zaap1.tres",
      "kind": "bullet",
-     "cooldown": 8,
+     "cooldown": 4,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -528,9 +528,9 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 10,
+      "base": 5,
       "skill": 0,
-      "speed": 1.6,
+      "speed": 0.8,
       "defence": 0
      },
      "projectile": {
@@ -550,7 +550,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/zaap/zaap2.tres",
      "kind": "bullet",
-     "cooldown": 8,
+     "cooldown": 4,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -563,9 +563,9 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 16,
+      "base": 8,
       "skill": 0,
-      "speed": 2.2,
+      "speed": 1.1,
       "defence": 0
      },
      "projectile": {
@@ -603,7 +603,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/zoing/zoing2.tres",
      "kind": "bullet",
-     "cooldown": 14,
+     "cooldown": 7,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -617,8 +617,8 @@
       "interval": 0.2
      },
      "amount": {
-      "base": 10,
-      "skill": 0.5,
+      "base": 5,
+      "skill": 0.25,
       "speed": 0,
       "defence": 0
      },
@@ -654,17 +654,17 @@
      "tier": 2,
      "source": "game/characters/player/spells/bwoom/bwoom2.tres",
      "kind": "effect",
-     "cooldown": 10,
+     "cooldown": 4,
      "cast_time": 2,
      "channeled": true,
      "grants": {
       "defence": 6
      },
      "amount": {
-      "base": 12,
+      "base": 6,
       "skill": 0,
       "speed": 0,
-      "defence": 1
+      "defence": 0.5
      }
     }
    ]
@@ -689,7 +689,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/halp/halp2.tres",
      "kind": "summon",
-     "cooldown": 20,
+     "cooldown": 10,
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
@@ -699,7 +699,7 @@
      "minion": {
       "count": 4,
       "health": 34,
-      "lifetime": 16
+      "lifetime": 8
      },
      "minion_cast": {
       "cooldown": 0.9,
@@ -726,7 +726,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/halp/halp3.tres",
      "kind": "summon",
-     "cooldown": 18,
+     "cooldown": 9,
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
@@ -736,7 +736,7 @@
      "minion": {
       "count": 6,
       "health": 55,
-      "lifetime": 20
+      "lifetime": 10
      },
      "minion_cast": {
       "cooldown": 0.7,
@@ -781,7 +781,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/bzzz/bzzz1.tres",
      "kind": "summon",
-     "cooldown": 16,
+     "cooldown": 8,
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
@@ -791,7 +791,7 @@
      "minion": {
       "count": 4,
       "health": 15,
-      "lifetime": 11
+      "lifetime": 6
      },
      "minion_cast": {
       "cooldown": 0.5,
@@ -836,7 +836,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/jimmy/jimmy1.tres",
      "kind": "summon",
-     "cooldown": 30,
+     "cooldown": 14,
      "cast_time": 1,
      "channeled": false,
      "grants": {
@@ -846,7 +846,7 @@
      "minion": {
       "count": 1,
       "health": 200,
-      "lifetime": 30
+      "lifetime": 15
      },
      "minion_cast": {
       "cooldown": 3,
@@ -892,7 +892,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/charge_dash/charge_dash2.tres",
      "kind": "bullet",
-     "cooldown": 12,
+     "cooldown": 6,
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
@@ -906,9 +906,9 @@
       "interval": 0.1
      },
      "amount": {
-      "base": 10,
-      "skill": 0.6,
-      "speed": 1.2,
+      "base": 5,
+      "skill": 0.3,
+      "speed": 0.6,
       "defence": 0
      },
      "projectile": {
@@ -943,7 +943,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/thwomp/thwomp3.tres",
      "kind": "effect",
-     "cooldown": 8,
+     "cooldown": 4,
      "cast_time": 0.2,
      "channeled": false,
      "grants": {
@@ -951,10 +951,10 @@
       "defence": 7
      },
      "amount": {
-      "base": 30,
+      "base": 15,
       "skill": 0,
       "speed": 0,
-      "defence": 3
+      "defence": 1.5
      }
     }
    ]
@@ -979,8 +979,8 @@
      "tier": 1,
      "source": "game/characters/player/spells/nope/nope.tres",
      "kind": "nope",
-     "cooldown": 8,
-     "cast_time": 3,
+     "cooldown": 2,
+     "cast_time": 1.5,
      "channeled": true,
      "grants": {
       "max_health": 20,
@@ -1011,24 +1011,24 @@
      "tier": 1,
      "source": "game/characters/player/spells/heal/heal1.tres",
      "kind": "heal",
-     "cooldown": 40,
+     "cooldown": 20,
      "cast_time": 0.8,
      "channeled": false,
      "grants": {
       "max_health": 20
      },
      "amount": {
-      "base": 100,
-      "skill": 1,
+      "base": 50,
+      "skill": 0.5,
       "speed": 0,
-      "defence": 4
+      "defence": 2
      }
     },
     {
      "tier": 2,
      "source": "game/characters/player/spells/heal/heal2.tres",
      "kind": "heal",
-     "cooldown": 34,
+     "cooldown": 17,
      "cast_time": 0.8,
      "channeled": false,
      "grants": {
@@ -1036,10 +1036,10 @@
       "defence": 2
      },
      "amount": {
-      "base": 175,
-      "skill": 1,
+      "base": 88,
+      "skill": 0.5,
       "speed": 0,
-      "defence": 6
+      "defence": 3
      }
     }
    ]
@@ -8362,16 +8362,16 @@
  ],
  "starter_kit": [
   {
-   "item": "fireball1",
-   "spell": "Fireball"
-  },
-  {
-   "item": "heal1",
-   "spell": "Heal"
+   "item": "pew1",
+   "spell": "Pew"
   },
   {
    "item": "blam1",
    "spell": "Blam"
+  },
+  {
+   "item": "fireball1",
+   "spell": "Fireball"
   }
  ],
  "constants": {

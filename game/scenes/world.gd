@@ -7,9 +7,9 @@ extends Node2D
 ## The design's spawn_with kit, dropped next to the player on a brand-new run — the whole
 ## starter loadout, no tutorial.
 const STARTER_SPELLS: Array[Resource] = [
-	preload("res://characters/player/spells/fireball/fireball1.tres"),
-	preload("res://characters/player/spells/heal/heal1.tres"),
+	preload("res://characters/player/spells/pew/pew1.tres"),
 	preload("res://characters/player/spells/blam/blam1.tres"),
+	preload("res://characters/player/spells/fireball/fireball1.tres"),
 ]
 
 @onready var _streamer: WorldStreamer = $WorldRoot/WorldStreamer
