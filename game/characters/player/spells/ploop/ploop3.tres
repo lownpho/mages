@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="MineResource" format=3 uid="uid://cploop3t1er3r"]
+
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_80r1q"]
+[ext_resource type="Script" uid="uid://dqhyyafnkps8q" path="res://characters/player/spells/oop/mine_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/bullets/ring_pattern.gd" id="6_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
+[ext_resource type="PackedScene" uid="uid://cploopm1nescn" path="res://characters/player/spells/ploop/ploop_mine.tscn" id="99_effect"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dart"]
+atlas = ExtResource("8_bullets")
+region = Rect2(8, 24, 8, 8)
+
+[sub_resource type="Resource" id="BulletData"]
+script = ExtResource("7_bullet")
+icon = SubResource("AtlasTexture_dart")
+range_tiles = 6
+speed_tiles = 11
+pierce = true
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 6.0
+speed_scaling = 0.5
+
+[sub_resource type="Resource" id="RingPattern"]
+script = ExtResource("6_pattern")
+num_bullets = 8
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(64, 16, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+lifetime = 14.0
+fire_pattern = SubResource("RingPattern")
+bullet = SubResource("BulletData")
+damage = SubResource("ScalingProfile_bullet")
+max_shots = 1
+effect_scene = ExtResource("99_effect")
+cooldown = 2.6
+icon = SubResource("AtlasTexture_icon")
+speed_modifier = 6
+defence_modifier = 6
