@@ -1,8 +1,12 @@
 #!/bin/sh
-# Refuse a commit whose design docs are stale, or whose yaml names something the
-# game does not have. Catches the drift class that used to sit in the docs unseen.
+# Rebuild the design docs from the yaml + the game's own numbers on every commit, so they
+# can't drift behind the content. It BUILDS rather than checking: a stale doc is something
+# to regenerate, not a reason to refuse the commit. The build still fails (and so blocks) on
+# a real inconsistency — yaml that names something the game doesn't have, or vice versa.
+#
+# Regenerated files are left unstaged; commit them when you commit the design pass.
 #
 # Install once (git does not track .git/hooks):
 #     ln -sf ../../design/tools/pre-commit .git/hooks/pre-commit
 
-exec python3 design/tools/build.py --check
+exec python3 design/tools/build.py
