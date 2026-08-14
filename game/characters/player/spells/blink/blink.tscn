@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://rmmwwzjoirage"]
+[gd_scene format=3 uid="uid://b50gkrun8xrfc"]
 
-[ext_resource type="Script" uid="uid://jf2x84eth21dr" path="res://characters/player/spells/blink/blink.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bo8720kcdoat8" path="res://characters/player/spells/blink/blink.gd" id="1_script"]
 
-[node name="Blink" type="Node2D"]
+[node name="Blink" type="Node2D" unique_id=493297631]
 script = ExtResource("1_script")
