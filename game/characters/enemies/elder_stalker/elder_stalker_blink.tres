@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="BlinkResource" format=3 uid="uid://wd2vdy77jjrd"]
+
+[ext_resource type="Script" uid="uid://bv7riafuf2t3m" path="res://characters/player/spells/blink/blink_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://b50gkrun8xrfc" path="res://characters/player/spells/blink/blink.tscn" id="99_effect"]
+
+[resource]
+script = ExtResource("1_script")
+distance_tiles = 7.0
+landing = 1
+effect_scene = ExtResource("99_effect")
+cooldown = 0.4
+cast_time = 0.35
