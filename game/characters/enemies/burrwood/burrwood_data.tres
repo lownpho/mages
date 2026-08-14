@@ -8,7 +8,7 @@
 [sub_resource type="Resource" id="Drop_ploop"]
 script = ExtResource("2_drop")
 item = ExtResource("3_ploop")
-chance = 0.08
+chance = 0.04
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
