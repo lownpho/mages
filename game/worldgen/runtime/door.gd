@@ -9,8 +9,9 @@ extends Area2D
 ## Every door in the game (dungeon entrance, dungeon floor stairs, tutorial exit)
 ## is this one scene: only the exported data differs.
 
-## Art variants packed in doors.png, one 16×16 frame each (left → right).
-enum Style { WOOD, HEDGE, CAVE, PORTAL, STAIRS }
+## Art variants packed in doors.png, one 16×16 frame each (left → right). PORTAL and STAIRS
+## have no frame drawn yet and render blank.
+enum Style { WOOD, HEDGE, CAVE, PORTAL, STAIRS, MUSHROOM }
 
 const _FRAME_W := 16
 
