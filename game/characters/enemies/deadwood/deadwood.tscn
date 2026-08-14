@@ -1,0 +1,162 @@
+[gd_scene format=3 uid="uid://cuymv4rp3y21p"]
+
+[ext_resource type="Resource" uid="uid://hc24pay2yl40" path="res://characters/enemies/deadwood/deadwood_data.tres" id="1_data"]
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://dsif3cob0lk38" path="res://characters/enemies/deadwood/deadwood.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" uid="uid://kfmayeni72h2" path="res://characters/enemies/deadwood/deadwood_oop.tres" id="6_spell"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_deadwood"]
+radius = 3.0
+
+[sub_resource type="AtlasTexture" id="AT_det0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_det1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_det2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_det3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fuse0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fuse1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fuse2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fuse3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_deadwood"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_det0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_det1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_det2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_det3")
+}],
+"loop": 0,
+"name": &"detonate",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fuse0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fuse1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fuse2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fuse3")
+}],
+"loop": 0,
+"name": &"fuse",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 2.0
+}]
+
+[node name="Deadwood" type="CharacterBody2D" unique_id=1066195559 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_enemy")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1584900119]
+shape = SubResource("CircleShape2D_deadwood")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=644039232]
+sprite_frames = SubResource("SpriteFrames_deadwood")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -1)
+
+[node name="Hurtbox" parent="." unique_id=1236361283 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 3.0
+
+[node name="TriggerProbe" type="RayCast2D" parent="." unique_id=758152225]
+target_position = Vector2(16, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." unique_id=1673149508 instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." unique_id=1142446856 instance=ExtResource("4_fsm")]
+initial_state = "Disguise"
+
+[node name="Disguise" type="Node" parent="FSM" unique_id=368013446]
+script = ExtResource("b_hold")
+min_time = 4.0
+next_state = "Disguise"
+probe_path = NodePath("../../TriggerProbe")
+seen_state = "Fuse"
+alert_on_hit = true
+
+[node name="Fuse" type="Node" parent="FSM" unique_id=1237964530]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_spell")
+done_state = "Disguise"
+windup_anim = "fuse"
+attack_anim = "detonate"
+telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)

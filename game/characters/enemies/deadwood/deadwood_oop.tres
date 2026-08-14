@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://kfmayeni72h2"]
+
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_bh_base"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_bullets"]
+[ext_resource type="SpriteFrames" uid="uid://btxbbmw7y4ufw" path="res://characters/player/spells/fireball/fireball_3_explosion.tres" id="3_boom"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="4_pattern"]
+[ext_resource type="Script" uid="uid://d2i01xlww65p1" path="res://items/bullets/behaviours/blast_payload.gd" id="5_blast"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="6_bullet"]
+[ext_resource type="PackedScene" uid="uid://u6r3fb6uiexh" path="res://characters/player/spells/oop/oop.tscn" id="99_effect"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="Blast_1"]
+script = ExtResource("5_blast")
+radius_tiles = 5.0
+frames = ExtResource("3_boom")
+blast_only = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fuse"]
+atlas = ExtResource("2_bullets")
+region = Rect2(0, 80, 8, 8)
+
+[sub_resource type="Resource" id="Resource_fuse"]
+script = ExtResource("6_bullet")
+icon = SubResource("AtlasTexture_fuse")
+range_tiles = 2
+speed_tiles = 12
+behaviours = Array[ExtResource("1_bh_base")]([SubResource("Blast_1")])
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 60.0
+
+[sub_resource type="Resource" id="Pattern_1"]
+script = ExtResource("4_pattern")
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("Pattern_1")
+bullet = SubResource("Resource_fuse")
+damage = SubResource("ScalingProfile_bullet")
+max_shots = 1
+effect_scene = ExtResource("99_effect")
+cooldown = 0.0
+cast_time = 0.9
