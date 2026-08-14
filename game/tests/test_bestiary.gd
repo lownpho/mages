@@ -35,7 +35,7 @@ func _ready() -> void:
 
 	# --- page grouping is DERIVED from the room spawn tables (not a stored biome field): each
 	# enemy files onto the page whose rooms spawn it, and glade_start + glade_veggie share
-	# family "glade" so they merge into one page. Deepwood has no family, so it is its own.
+	# family "glade" so they merge into one page — as do deepwood + deepwood_mimic.
 	# Ordering is commons alpha, rares, bosses last. ---
 	var groups := GlobalBestiary.grouped_roster()
 	var want_glade: Array[StringName] = [
@@ -45,10 +45,11 @@ func _ready() -> void:
 		&"fae", &"thornmess",     # bosses last (one per sub-biome)
 	]
 	var want_deepwood: Array[StringName] = [
-		&"ash_snake", &"coral_snake", &"grimling", &"mole", &"moon_moth", &"moss_golem",
-		&"moth", &"needle_moth", &"owl", &"shard_grimling", &"snake", &"stalker",
-		&"thornback", &"wisp_grimling",
-		&"great_owl", &"grimlord", &"razorback",
+		&"ash_snake", &"bramble_stalker", &"burrwood", &"coral_snake", &"deadwood",
+		&"grimling", &"mole", &"moon_moth", &"moss_golem", &"moth", &"needle_moth",
+		&"owl", &"shade", &"shard_grimling", &"snake", &"stalker", &"thornback",
+		&"wisp_grimling",
+		&"adder", &"elder_stalker", &"great_owl", &"grimlord", &"razorback", &"umbra",
 		&"gnarlking",
 	]
 	if groups.size() != 2:

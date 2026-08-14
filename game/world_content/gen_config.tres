@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://1pvamwt6y2az" path="res://world_content/biomes/glade_start/glade_start.tres" id="b_gs"]
 [ext_resource type="Resource" uid="uid://wttkg0m288iw" path="res://world_content/biomes/glade_veggie/glade_veggie.tres" id="b_gv"]
 [ext_resource type="Resource" uid="uid://yd0ixxnn8n1s" path="res://world_content/biomes/deepwood/deepwood.tres" id="b_dw"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/deepwood_mimic.tres" id="b_dwm"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="rtdef"]
 [ext_resource type="Resource" uid="uid://73nahocq1lfg" path="res://world_content/biomes/glade_start/rooms/glade_start_boss.tres" id="r0"]
 [ext_resource type="Resource" uid="uid://o8he3p705ska" path="res://world_content/biomes/glade_start/rooms/glade_start_gate_deepwood.tres" id="r1"]
@@ -51,6 +52,16 @@
 [ext_resource type="Resource" uid="uid://dwtstal0" path="res://world_content/biomes/deepwood/rooms/deepwood_teach_stalker.tres" id="r_dw21"]
 [ext_resource type="Resource" uid="uid://dwtthor0" path="res://world_content/biomes/deepwood/rooms/deepwood_teach_thornback.tres" id="r_dw22"]
 [ext_resource type="Resource" uid="uid://dwtwisp0" path="res://world_content/biomes/deepwood/rooms/deepwood_teach_wisp_grimling.tres" id="r_dw23"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_open.tres" id="r_dm00"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_pair_cave.tres" id="r_dm01"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_bramble_stalker.tres" id="r_dm02"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_shade.tres" id="r_dm03"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_deadwood.tres" id="r_dm04"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_burrwood.tres" id="r_dm05"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_elder_stalker.tres" id="r_dm06"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_umbra.tres" id="r_dm07"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_adder.tres" id="r_dm08"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_gate_mushroom.tres" id="r_dm09"]
 [ext_resource type="Script" uid="uid://ebitj0qutpum" path="res://worldgen/core/gen_config.gd" id="cfg"]
 
 [resource]
@@ -68,6 +79,6 @@ corner_radius = 3
 wall_inset_max = 2
 starting_biome = &"glade_start"
 prefetch_radius_chunks = 1
-biomes = Array[ExtResource("bdef")]([ExtResource("b_gs"), ExtResource("b_gv"), ExtResource("b_dw")])
+biomes = Array[ExtResource("bdef")]([ExtResource("b_gs"), ExtResource("b_gv"), ExtResource("b_dw"), ExtResource("b_dwm")])
 adjacency = ExtResource("adj")
-room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r_spawn"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r_dw00"), ExtResource("r_dw01"), ExtResource("r_dw02"), ExtResource("r_dw03"), ExtResource("r_dw04"), ExtResource("r_dw05"), ExtResource("r_dw06"), ExtResource("r_dw07"), ExtResource("r_dw08"), ExtResource("r_dw09"), ExtResource("r_dw10"), ExtResource("r_dw11"), ExtResource("r_dw12"), ExtResource("r_dw13"), ExtResource("r_dw14"), ExtResource("r_dw15"), ExtResource("r_dw16"), ExtResource("r_dw17"), ExtResource("r_dw18"), ExtResource("r_dw19"), ExtResource("r_dw20"), ExtResource("r_dw21"), ExtResource("r_dw22"), ExtResource("r_dw23")])
+room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r_spawn"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r_dw00"), ExtResource("r_dw01"), ExtResource("r_dw02"), ExtResource("r_dw03"), ExtResource("r_dw04"), ExtResource("r_dw05"), ExtResource("r_dw06"), ExtResource("r_dw07"), ExtResource("r_dw08"), ExtResource("r_dw09"), ExtResource("r_dw10"), ExtResource("r_dw11"), ExtResource("r_dw12"), ExtResource("r_dw13"), ExtResource("r_dw14"), ExtResource("r_dw15"), ExtResource("r_dw16"), ExtResource("r_dw17"), ExtResource("r_dw18"), ExtResource("r_dw19"), ExtResource("r_dw20"), ExtResource("r_dw21"), ExtResource("r_dw22"), ExtResource("r_dw23"), ExtResource("r_dm00"), ExtResource("r_dm01"), ExtResource("r_dm02"), ExtResource("r_dm03"), ExtResource("r_dm04"), ExtResource("r_dm05"), ExtResource("r_dm06"), ExtResource("r_dm07"), ExtResource("r_dm08"), ExtResource("r_dm09")])

@@ -1420,7 +1420,13 @@
    },
    "damage_max": 16,
    "damage": "16",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/burrwood/burrwood_data.tres",
@@ -1500,7 +1506,13 @@
    },
    "damage_max": 32,
    "damage": "32",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/coral_snake/coral_snake_data.tres",
@@ -1701,7 +1713,13 @@
    },
    "damage_max": 60,
    "damage": "60",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/dirt_golem/dirt_golem_data.tres",
@@ -1933,6 +1951,11 @@
     {
      "id": "deepwood",
      "name": "Deepwood",
+     "planned": false
+    },
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
      "planned": false
     }
    ]
@@ -2532,6 +2555,11 @@
      "id": "deepwood",
      "name": "Deepwood",
      "planned": false
+    },
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
     }
    ]
   },
@@ -2646,6 +2674,11 @@
     {
      "id": "deepwood",
      "name": "Deepwood",
+     "planned": false
+    },
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
      "planned": false
     }
    ]
@@ -3174,7 +3207,13 @@
    },
    "damage_max": 20,
    "damage": "20",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/shard_grimling/shard_grimling_data.tres",
@@ -3412,6 +3451,11 @@
      "id": "deepwood",
      "name": "Deepwood",
      "planned": false
+    },
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
     }
    ]
   },
@@ -3623,6 +3667,11 @@
     {
      "id": "deepwood",
      "name": "Deepwood",
+     "planned": false
+    },
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
      "planned": false
     }
    ]
@@ -4196,7 +4245,13 @@
    },
    "damage_max": 26,
    "damage": "26",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/elder_stalker/elder_stalker_data.tres",
@@ -4392,7 +4447,13 @@
    },
    "damage_max": 32,
    "damage": "24-32",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/great_owl/great_owl_data.tres",
@@ -5080,7 +5141,13 @@
    },
    "damage_max": 22,
    "damage": "22",
-   "biomes": []
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
   },
   {
    "source": "game/characters/enemies/viper/viper_data.tres",
@@ -5922,10 +5989,11 @@
    "id": "deepwood",
    "name": "Deepwood",
    "tier_label": "T3",
-   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The two remaining sub-biomes (insect, fungal) are proposals; they stay in the ideas section below.",
-   "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.",
+   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The two remaining ones (insect, fungal) are proposals; they stay in the ideas section below.",
+   "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.",
    "biomes": [
-    "deepwood"
+    "deepwood",
+    "deepwood_mimic"
    ],
    "roster": [
     "ash_snake",
@@ -5945,7 +6013,14 @@
     "great_owl",
     "grimlord",
     "razorback",
-    "gnarlking"
+    "gnarlking",
+    "bramble_stalker",
+    "burrwood",
+    "deadwood",
+    "shade",
+    "adder",
+    "elder_stalker",
+    "umbra"
    ]
   }
  ],
@@ -6035,7 +6110,7 @@
    ],
    "fallback_room_type": "deepwood_teach_open",
    "name": "Deepwood",
-   "intro": "One biome in-game, not yet split into the four sub-biomes the design plans. The rooms run a teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them.",
+   "intro": "The animal sub-biome, and the bulk of the forest. The rooms run a teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them.",
    "roster": [
     "ash_snake",
     "coral_snake",
@@ -6082,6 +6157,45 @@
     "deepwood_rare_grimlord",
     "deepwood_rare_razorback",
     "deepwood_swarm_trees"
+   ]
+  },
+  {
+   "id": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/deepwood_mimic.tres",
+   "family": "deepwood",
+   "size_cells": [
+    2,
+    1
+   ],
+   "fallback_room_type": "deepwood_mimic_open",
+   "name": "Mimic deepwood",
+   "intro": "A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.",
+   "roster": [
+    "bramble_stalker",
+    "burrwood",
+    "deadwood",
+    "grimling",
+    "moss_golem",
+    "moth",
+    "shade",
+    "snake",
+    "stalker",
+    "adder",
+    "elder_stalker",
+    "umbra"
+   ],
+   "planned": false,
+   "room_ids": [
+    "deepwood_mimic_open",
+    "deepwood_mimic_teach_bramble_stalker",
+    "deepwood_mimic_teach_shade",
+    "deepwood_mimic_pair_cave",
+    "deepwood_mimic_teach_burrwood",
+    "deepwood_mimic_teach_deadwood",
+    "deepwood_mimic_gate_mushroom",
+    "deepwood_mimic_rare_adder",
+    "deepwood_mimic_rare_elder_stalker",
+    "deepwood_mimic_rare_umbra"
    ]
   }
  ],
@@ -9323,6 +9437,487 @@
     }
    ],
    "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_open",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_open.tres",
+   "difficulty": 0,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 2,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": true,
+   "features": [],
+   "variations": [
+    {
+     "weight": 3,
+     "members": [
+      {
+       "enemy": "bramble_stalker",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    },
+    {
+     "weight": 3,
+     "members": [
+      {
+       "enemy": "shade",
+       "min": 1,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 2,
+     "members": [
+      {
+       "enemy": "deadwood",
+       "min": 1,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 2,
+     "members": [
+      {
+       "enemy": "burrwood",
+       "min": 1,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 2,
+     "members": [
+      {
+       "enemy": "moth",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    },
+    {
+     "weight": 2,
+     "members": [
+      {
+       "enemy": "grimling",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "snake",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "stalker",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_teach_bramble_stalker",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_bramble_stalker.tres",
+   "difficulty": 0,
+   "generator": "scatter",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bramble_stalker",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_teach_shade",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_shade.tres",
+   "difficulty": 0,
+   "generator": "scatter",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shade",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_pair_cave",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_pair_cave.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": true,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 12,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": true,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bramble_stalker",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "moth",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shade",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "grimling",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "deadwood",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "snake",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "burrwood",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "stalker",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shade",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bramble_stalker",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "deadwood",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "burrwood",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "moth",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bramble_stalker",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "grimling",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shade",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "moss_golem",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_teach_burrwood",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_burrwood.tres",
+   "difficulty": 1,
+   "generator": "scatter",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "burrwood",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_teach_deadwood",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_deadwood.tres",
+   "difficulty": 1,
+   "generator": "scatter",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "deadwood",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_gate_mushroom",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_gate_mushroom.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": true,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 0,
+   "groups_max": 0,
+   "scale_with_size": true,
+   "features": [
+    "door"
+   ],
+   "variations": [],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_rare_adder",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_adder.tres",
+   "difficulty": 3,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "adder",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "deadwood",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_rare_elder_stalker",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_elder_stalker.tres",
+   "difficulty": 3,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "elder_stalker",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bramble_stalker",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_mimic_rare_umbra",
+   "biome": "deepwood_mimic",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_umbra.tres",
+   "difficulty": 3,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "umbra",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "shade",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mimic deepwood",
    "family": "deepwood"
   }
  ],

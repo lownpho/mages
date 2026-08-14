@@ -13,6 +13,11 @@ script = ExtResource("1_pair")
 biome_a = &"glade_veggie"
 biome_b = &"deepwood"
 
+[sub_resource type="Resource" id="req_deepwood_mimic"]
+script = ExtResource("1_pair")
+biome_a = &"deepwood"
+biome_b = &"deepwood_mimic"
+
 [resource]
 script = ExtResource("2_rules")
-required = Array[ExtResource("1_pair")]([SubResource("req_start_veggie"), SubResource("req_veggie_deepwood")])
+required = Array[ExtResource("1_pair")]([SubResource("req_start_veggie"), SubResource("req_veggie_deepwood"), SubResource("req_deepwood_mimic")])

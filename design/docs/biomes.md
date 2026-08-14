@@ -78,11 +78,11 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 
 ## Deepwood (T3)
 
-The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The two remaining sub-biomes (insect, fungal) are proposals; they stay in the ideas section below.
+The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The two remaining ones (insect, fungal) are proposals; they stay in the ideas section below.
 
 ### Deepwood
 
-One biome in-game, not yet split into the four sub-biomes the design plans. The rooms run a teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them.
+The animal sub-biome, and the bulk of the forest. The rooms run a teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them.
 
 | Tier | Room | Shape | Count | Enemy group variations |
 |---|---|---|---|---|
@@ -134,6 +134,40 @@ One biome in-game, not yet split into the four sub-biomes the design plans. The 
 | Razorback *(rare)* | **charge_dash t2** (50%) |
 | Gnarlking *(boss)* | **thwomp t3** (100%), **halp t2** (60%), **blam t3** (100%), **charge_dash t2** (60%) |
 
+### Mimic deepwood
+
+A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.
+
+| Tier | Room | Shape | Count | Enemy group variations |
+|---|---|---|---|---|
+| T0 | open | empty | w2 | 1x bramble_stalker - 1-2x shade - 1-2x deadwood - 1-2x burrwood - 2-3x moth - 2-3x grimling - 1x snake - 1x stalker |
+| T0 | teach_bramble_stalker | scatter | 1 | 1x bramble_stalker |
+| T0 | teach_shade | scatter | 1 | 1x shade |
+| T1 | pair_cave | cave | w3 | 1x bramble_stalker + 2x moth - 2x shade + 2x grimling - 2x deadwood + 1x snake - 2x burrwood + 1x stalker - 1x shade + 1x bramble_stalker - 1x deadwood + 1x burrwood + 2x moth - 1x bramble_stalker + 2x grimling - 1x shade + 1x moss_golem |
+| T1 | teach_burrwood | scatter | 1 | 2x burrwood |
+| T1 | teach_deadwood | scatter | 1 | 2x deadwood |
+| T3 | gate_mushroom | cave | 1 | *(empty)* |
+| T3 | rare_adder | empty | 1 | 1x adder + 2x deadwood |
+| T3 | rare_elder_stalker | empty | 1 | 1x elder_stalker + 2x bramble_stalker |
+| T3 | rare_umbra | empty | 1 | 1x umbra + 2x shade |
+
+#### Mimic deepwood drops
+
+| Enemy | Items dropped |
+|---|---|
+| Bramble Stalker | **ring t2** (6%) |
+| Burrwood | **ploop t3** (4%) |
+| Deadwood | **oop t2** (4%) |
+| Grimling | **pew t2** (50%), **halp t2** (2%) |
+| Moss Golem | **ring t2** (8%), **nope** (30%) |
+| Moth | **pew t2** (5%) |
+| Shade | **blink t2** (8%), **pew t3** (5%) |
+| Snake | **zoing t2** (5%) |
+| Stalker | **blam t2** (5%) |
+| Adder *(rare)* | **zoing t2** (50%) |
+| Elder Stalker *(rare)* | **blam t3** (30%), **blink t2** (60%) |
+| Umbra *(rare)* | **blink t2** (50%), **pew t3** (30%) |
+
 <!-- END GENERATED CATALOGUE -->
 
 ---
@@ -144,26 +178,15 @@ One biome in-game, not yet split into the four sub-biomes the design plans. The 
 
 The deepwood ships as one biome (see the catalogue above) with an empty spawn table. The design
 splits it into four sub-biomes in encounter order — animal, mimic, insect, fungal — over a
-shared pool of natives that appears in all four. The **shared pool and the animal sub-biome are
-built**; what follows are the three that aren't. Each adds three commons, three rares (almost
-all variants of another enemy) and its boss: 16 per sub-biome. Commons drop T2, rares guarantee
-T3, bosses drop their T3 signatures.
+shared pool of natives that appears in all four. The **shared pool and the animal and mimic
+sub-biomes are built**; what follows are the two that aren't. Each adds three commons, three
+rares (almost all variants of another enemy) and its boss: 16 per sub-biome. Commons drop T2,
+rares guarantee T3, bosses drop their T3 signatures.
 
 Each sub-biome introduces at most three new mechanics; later ones reuse and combine earlier
-ones (ledger in enemies.md). Spells still waiting on these three: Blink, Oop, Ploop, Halo,
-Slurp, Fwoosh. Reserved for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing
-Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
-
-### Mimic deepwood
-
-Props with eyes: the disguise escalates, bursts relocate, and a log is a bomb. Introduces the
-blink and self-detonation.
-
-Roster: bramble stalker, shade, deadwood, burrwood, elder stalker *(rare)*, umbra
-*(rare)*, adder *(rare)*.
-The boss (mother tree) is a proposal again — see the enemies.md ideas section.
-
-Drops: Blink T2, Pew T3, Oop T2, Ploop T3.
+ones (ledger in enemies.md). Spells still waiting on these two: Halo, Slurp, Fwoosh. Reserved
+for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing Lights, Vroop, Beep Boop,
+Nyoom, Shing, Splay.
 
 ### Insect deepwood
 
@@ -187,9 +210,9 @@ Drops: Fwoosh T2, Slurp T2, Slurp T3, Nope T3.
 
 ### Rooms
 
-The seven shipped deepwood rooms are in the catalogue above, all with empty spawn tables. Filling
-them means the glade recipe per sub-biome: single-mechanic showcases early, testing later, mixed
-groups by depth, three rare rooms, a boss room, and a gate room to the next biome.
+The animal and mimic rooms are in the catalogue above, tables filled. The two sub-biomes still to
+come each want the same recipe: single-mechanic showcases early, testing later, mixed groups by
+depth, three rare rooms, a boss room, and a gate room to the next biome.
 
 ### Deepwood drops
 

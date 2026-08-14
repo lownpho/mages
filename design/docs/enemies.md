@@ -358,7 +358,7 @@ stateDiagram-v2
 
 ## Deepwood
 
-The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.
+The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.
 
 ### Ash Snake
 
@@ -976,6 +976,224 @@ stateDiagram-v2
     Stagger --> Summon
     Winded --> Summon
     WindedShort --> Summon
+```
+
+### Bramble Stalker
+
+The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing
+to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings
+of thorns off its own body. The ring means there is no safe side of it — the answer is
+distance, not footwork — and the rings drift a little each wave, so a gap you found in the
+first one is somewhere else in the second. Hard to lead on the approach, trivial once you
+stop letting it arrive.
+
+**Art:** a leafy deepwood bush, built from the biome's own decor bush — same three greens, same sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the bramble-red thorns push out after them, one per flank as it winds up.
+
+| Stat |  |
+|---|---|
+| Difficulty | 5 / 10 |
+| HP | 110 |
+| Speed | 40 px/s |
+| Range | detect 3, chase 12, attack 5 |
+| ring | **16** dmg — 2.2s cd, Ring x8, 2 @ 0.4s, 5 tiles range |
+| Drops | **ring t2** (6%) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Reveal : player close / hit
+    Reveal --> Chase : revealed
+    Chase --> Ring : in range
+    Ring --> Recover : rings fired
+    Recover --> Ring : still in range
+    Recover --> Chase : out of range
+    Chase --> Disguise : lost
+```
+
+### Burrwood
+
+The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the
+same log lying in the same litter, and it triggers the same way — step close, or clip it
+with a shot, and the fuse runs. What comes out is the difference: instead of one big blast
+it bursts into a full ring of piercing darts that carry clean across the room and straight
+through anything in the way.
+
+Between the two of them a room of logs stops being scenery you ignore. The blast one
+punishes standing next to it, the dart one punishes standing anywhere in line with it,
+and until one goes off you don't know which you're walking past. The tell, if you look
+for it, is a dry burr husk in the moss.
+
+**Art:** the deadwood's log, moss and all, with one pale burr husk among the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.
+
+| Stat |  |
+|---|---|
+| Difficulty | 4 / 10 |
+| HP | 1 |
+| Range | trigger 2 |
+| ploop | **32** dmg — Ring x6, 3 @ 0.1s, 4 tiles range |
+| Drops | **ploop t3** (4%) |
+
+**Notes:** it drops the Ploop it fires, the way the deadwood drops its Oop. Killing it before the fuse lands does NOT set it off.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Fuse : player close / hit
+    Fuse --> [*] : burst away
+```
+
+### Deadwood
+
+A trap with a health bar. It lies among the real log props until you step close — or clip it
+with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot
+the log that is slightly too neat and spend it from range, or route around it and leave it
+armed for whatever chases you. It never moves and never fires twice; the only question is
+where you are standing when the fuse ends.
+
+**Art:** a mossy fallen log with one knothole; the knothole opens into an eye on trigger, and the whole log glows through the fuse.
+
+| Stat |  |
+|---|---|
+| Difficulty | 4 / 10 |
+| HP | 1 |
+| Range | trigger 2 |
+| oop | **60** dmg — Single, 2 tiles range, blast 5 tiles (splash only) |
+| Drops | **oop t2** (4%) |
+
+**Notes:** its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the deadwood before the fuse lands does NOT set it off. The mother tree seeds these as mines.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Fuse : player close / hit
+    Fuse --> [*] : detonated
+```
+
+### Shade
+
+A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a
+short burst, then blinks somewhere else nearby and bursts again. Nothing about a single
+burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes
+standing still and rewards fighting it while moving to something else. It never walks —
+the blink is its whole movement.
+
+**Art:** a wispy near-black silhouette with a faint violet edge and two pale eyes; a barely-there body that blinks out.
+
+| Stat |  |
+|---|---|
+| Difficulty | 5 / 10 |
+| HP | 70 |
+| Range | detect 12 |
+| blink | 0.6s cd |
+| pew | **20** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
+| Drops | **blink t2** (8%), **pew t3** (5%) |
+
+**Notes:** the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a landing spot with a wall in the way. The player's own Blink is the same effect with its landing dial on AIM instead of a random bearing.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Volley : sees player
+    Volley --> Blink : burst done
+    Blink --> Recover : reappeared
+    Recover --> Volley : burst ready
+    Recover --> Idle : lost
+```
+
+### Adder *(rare)*
+
+Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits
+a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as
+well as ahead. Cornering it in a hallway is the natural move and precisely the mistake;
+take it in the open, where the bounces have nothing to come back off.
+
+**Art:** the snake coil in rare charcoal with amber banding.
+
+| Stat |  |
+|---|---|
+| Difficulty | 7 / 10 |
+| HP | 320 |
+| Speed | 46 px/s |
+| Range | detect 12, retreat 2 |
+| zoing | **26** dmg — 1.6s cd, Shotgun x5, 12 tiles range, BounceBehaviour |
+| Drops | **zoing t2** (50%) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Wander
+    Idle --> Flee : sees player
+    Wander --> Flee : sees player
+    Flee --> Volley : cornered
+    Volley --> Flee : spray fired
+```
+
+### Elder Stalker *(rare)*
+
+Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone
+homing seed from across the room, blinks the moment it has fired, and greets you with a
+shotgun cone wherever it lands. The seed forces you to move; the blink means the ground you
+moved to is the wrong ground. It never chases — every reposition is a teleport — so the
+fight is about closing the gap between its cycle rather than out-running it.
+
+**Art:** a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on reveal; taller than the stalker.
+
+| Stat |  |
+|---|---|
+| Difficulty | 7 / 10 |
+| HP | 260 |
+| Range | detect 22, blast 5 |
+| blast | **24** dmg — 1.6s cd, Shotgun x5, 5 tiles range |
+| blink | 0.4s cd |
+| seed | **32** dmg — 3.2s cd, Single, 20 tiles range, homing 150° cone |
+| seed_fast | **32** dmg — 2.4s cd, Single, 20 tiles range, homing 150° cone |
+| Drops | **blam t3** (30%), **blink t2** (60%) |
+
+**Notes:** below a quarter health the seed's wind-up drops to near-instant — the same beat with a shorter telegraph, swapped in by health window.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Aim : sees player
+    Aim --> SnipeFast : below 25% HP
+    Aim --> Snipe
+    Snipe --> Blink : seed away
+    SnipeFast --> Blink : seed away
+    Blink --> Blast : arrived
+    Blast --> Recover
+    Recover --> Aim : snipe ready
+    Recover --> Disguise : lost
+```
+
+### Umbra *(rare)*
+
+Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on
+the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so
+what changed is entirely where it fires it from. Turning to face it puts your back to
+whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking
+you to make. Clear it first, or fight it with a wall behind you.
+
+**Art:** the shade silhouette in deeper black with a thin red edge.
+
+| Stat |  |
+|---|---|
+| Difficulty | 7 / 10 |
+| HP | 200 |
+| Range | detect 12 |
+| blink | 0.6s cd |
+| pew | **22** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
+| Drops | **blink t2** (50%), **pew t3** (30%) |
+
+**Notes:** the same Blink cast as the shade, with the landing spot taken past the target instead of on a random bearing — the dial the player's tiers leave on AIM.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Volley : sees player
+    Volley --> Blink : burst done
+    Blink --> Recover : behind player
+    Recover --> Volley : burst ready
+    Recover --> Idle : lost
 ```
 
 <!-- END GENERATED CATALOGUE -->

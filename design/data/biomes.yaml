@@ -38,12 +38,14 @@ families:
     intro: >
       The second biome, tuned to pressure long-range, squishy builds and push the player into close
       quarters. Enemies have far more health and hit harder. It is the largest biome in the world —
-      twice the footprint of either glade — and both glades gate into it. The two remaining
-      sub-biomes (insect, fungal) are proposals; they stay in the ideas section below.
+      twice the footprint of either glade — and both glades gate into it. It has two sub-biomes:
+      the animal deepwood, and the small mimic pocket hanging off its side. The two remaining ones
+      (insect, fungal) are proposals; they stay in the ideas section below.
     enemies_intro: >
       The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood
-      sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**.
-      The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.
+      sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**,
+      and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are
+      built to introduce it one mechanic at a time.
 biomes:
   - id: glade_start
     name: Starting glade
@@ -59,9 +61,18 @@ biomes:
   - id: deepwood
     name: Deepwood
     intro: >
-      One biome in-game, not yet split into the four sub-biomes the design plans. The rooms run a
+      The animal sub-biome, and the bulk of the forest. The rooms run a
       teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs
       them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes
       three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its
       own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all
       three moths or all three snakes means going looking for them.
+  - id: deepwood_mimic
+    name: Mimic deepwood
+    intro: >
+      A small pocket off the side of the animal deepwood, always bordering it. Props with eyes:
+      each of the four commons gets its own room first — the bush that reveals, the harasser that
+      blinks, then the two logs that are bombs — and the cave rooms after that pair one of them
+      with something from the shared pool, so the mine is never the only thing asking for your
+      attention. Its three rares each escort the common they are a variant of. There is no boss;
+      the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.
