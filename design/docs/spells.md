@@ -124,6 +124,7 @@ One burst of single bullets at the cursor, then cooldown, rather than a sustaine
 |---|---|---|---|---|---|---|
 | T1 | 2s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +4 |
 | T2 | 2s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +6 |
+| T3 | 2s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
 
 ### Snipe
 
@@ -281,6 +282,40 @@ An instant radial knockback pulse; more damage the closer the enemy, chip at the
 |---|---|---|---|---|---|---|
 | T3 | 4s | 0.2s | — | 15 + 1.5×defence = **15** | — | max_health +25, defence +7 |
 
+### Blink
+
+An instant hop along your aim: you vanish and reappear a fixed distance away, leaving a ghost behind. Aim is a direction rather than a click, so the hop is a length you learn instead of a spot you pick, and it refuses a landing with a wall in the way rather than posting you through one. Pure mobility — no damage, no wind-up, just the gap between where a boss's charge is going and where you are.
+
+**Scaling:** flat · **Per tier:** a longer hop on a shorter cooldown.
+
+| Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
+|---|---|---|---|---|---|---|
+| T2 | 2s | instant | — | — | — | skill +2, speed +8 |
+
+### Oop
+
+Drops a mine a tile ahead of your aim — in the doorway, not under your feet. It arms on a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has no health, nothing can shoot it, and it never moves or chases; it is a hazard the room has to walk around. Several can be out at once, so it plays as prep: seed the doorway you are about to retreat through, or the lane the pack has to cross. The deadwood is the same detonation pointed the other way.
+
+**Scaling:** speed · **Hold:** charged
+
+| Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
+|---|---|---|---|---|---|---|
+| T2 | 3s | 0.15s | Single | 12 + 1×speed = **92** | 1 | skill +5, speed +5 |
+
+**Also:** blast 4 tiles (splash only).
+
+### Ploop
+
+The mine that answers a crowd instead of a target: same drop, same arming, but on contact it erupts into a full ring of piercing darts that run through everything in line. Lower per-hit than Oop's blast, far better across a corridor or into a pack, and the darts keep going after the first body.
+
+**Scaling:** speed
+
+| Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
+|---|---|---|---|---|---|---|
+| T3 | 2.6s | instant | Ring x8 | 6 + 0.5×speed = **46** | 6 | speed +6, defence +6 |
+
+**Also:** pierces.
+
 ### Nope
 
 On a long cooldown, raises a bubble that absorbs incoming damage; a white ring flashes on each absorbed hit.
@@ -411,19 +446,6 @@ One steady single-shot minion, long-lived. The dependable second firing line.
 
 ### Utility
 
-#### Blink
-
-Instant teleport to the cursor, range-clamped. Pure mobility.
-
-| | |
-|---|---|
-| Scaling | - |
-| Grants | speed (high), skill (low) |
-| Range | med |
-| Cooldown | med |
-| Cast time | instant |
-| Hold | no |
-
 #### Nyoom
 
 Converts skill into speed for a duration; casting another spell breaks it. For fast travel.
@@ -500,32 +522,6 @@ A short-lived wall of fire along a line toward the cursor. Enemies pay HP to cro
 | Range | med |
 | Cooldown | med |
 | Cast time | low |
-| Hold | no |
-
-#### Ploop
-
-Drops a floating mine that arms after a delay, then erupts into piercing darts on proximity. Several can be out at once. Prep a room or cover a retreat.
-
-| | |
-|---|---|
-| Scaling | speed |
-| Grants | defence (med), speed (med) |
-| Range | low |
-| Cooldown | low |
-| Cast time | instant |
-| Hold | no |
-
-#### Oop
-
-Drops a floating mine that arms after a delay, then erupts into a fireball-like explosion on proximity.
-
-| | |
-|---|---|
-| Scaling | speed |
-| Grants | skill (med), speed (med) |
-| Range | low |
-| Cooldown | low |
-| Cast time | very low |
 | Hold | no |
 
 #### Slurp

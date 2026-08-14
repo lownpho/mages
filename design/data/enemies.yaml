@@ -673,3 +673,155 @@ enemies:
         - {from: Stagger, to: Summon}
         - {from: Winded, to: Summon}
         - {from: WindedShort, to: Summon}
+  - id: bramble_stalker
+    difficulty: 5
+    description: |
+      The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing
+      to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings
+      of thorns off its own body. The ring means there is no safe side of it — the answer is
+      distance, not footwork — and the rings drift a little each wave, so a gap you found in the
+      first one is somewhere else in the second. Hard to lead on the approach, trivial once you
+      stop letting it arrive.
+    art: a leafy deepwood bush, built from the biome's own decor bush — same three greens, same
+      sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries
+      no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the
+      bramble-red thorns push out after them, one per flank as it winds up.
+    casts: [ring]
+    fsm:
+      start: Disguise
+      transitions:
+        - {from: Disguise, to: Reveal, when: player close / hit}
+        - {from: Reveal, to: Chase, when: revealed}
+        - {from: Chase, to: Ring, when: in range}
+        - {from: Ring, to: Recover, when: rings fired}
+        - {from: Recover, to: Ring, when: still in range}
+        - {from: Recover, to: Chase, when: out of range}
+        - {from: Chase, to: Disguise, when: lost}
+  - id: shade
+    difficulty: 5
+    description: |
+      A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a
+      short burst, then blinks somewhere else nearby and bursts again. Nothing about a single
+      burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes
+      standing still and rewards fighting it while moving to something else. It never walks —
+      the blink is its whole movement.
+    art: a wispy near-black silhouette with a faint violet edge and two pale eyes; a
+      barely-there body that blinks out.
+    casts: [pew]
+    notes: the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a
+      landing spot with a wall in the way. The player's own Blink is the same effect with its
+      landing dial on AIM instead of a random bearing.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Volley, when: sees player}
+        - {from: Volley, to: Blink, when: burst done}
+        - {from: Blink, to: Recover, when: reappeared}
+        - {from: Recover, to: Volley, when: burst ready}
+        - {from: Recover, to: Idle, when: lost}
+  - id: deadwood
+    difficulty: 4
+    description: |
+      A trap with a health bar. It lies among the real log props until you step close — or clip it
+      with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot
+      the log that is slightly too neat and spend it from range, or route around it and leave it
+      armed for whatever chases you. It never moves and never fires twice; the only question is
+      where you are standing when the fuse ends.
+    art: a mossy fallen log with one knothole; the knothole opens into an eye on trigger, and the
+      whole log glows through the fuse.
+    casts: [oop]
+    notes: its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the
+      caster when it ends, which is exactly what the player's Oop mine does from the other side.
+      Killing the deadwood before the fuse lands does NOT set it off. The mother tree seeds these
+      as mines.
+    fsm:
+      start: Disguise
+      transitions:
+        - {from: Disguise, to: Fuse, when: player close / hit}
+        - {from: Fuse, to: "[*]", when: detonated}
+  - id: adder
+    difficulty: 7
+    description: |
+      Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits
+      a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as
+      well as ahead. Cornering it in a hallway is the natural move and precisely the mistake;
+      take it in the open, where the bounces have nothing to come back off.
+    art: the snake coil in rare charcoal with amber banding.
+    casts: [zoing]
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Wander}
+        - {from: Idle, to: Flee, when: sees player}
+        - {from: Wander, to: Flee, when: sees player}
+        - {from: Flee, to: Volley, when: cornered}
+        - {from: Volley, to: Flee, when: spray fired}
+  - id: burrwood
+    difficulty: 4
+    description: |
+      The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the
+      same log lying in the same litter, and it triggers the same way — step close, or clip it
+      with a shot, and the fuse runs. What comes out is the difference: instead of one big blast
+      it bursts into a full ring of piercing darts that carry clean across the room and straight
+      through anything in the way.
+
+      Between the two of them a room of logs stops being scenery you ignore. The blast one
+      punishes standing next to it, the dart one punishes standing anywhere in line with it,
+      and until one goes off you don't know which you're walking past. The tell, if you look
+      for it, is a dry burr husk in the moss.
+    art: the deadwood's log, moss and all, with one pale burr husk among the green. The fuse
+      lights white instead of amber, and it goes off in a pale green seed-burst rather than a
+      fireball.
+    casts: [ploop]
+    notes: it drops the Ploop it fires, the way the deadwood drops its Oop. Killing it before
+      the fuse lands does NOT set it off.
+    fsm:
+      start: Disguise
+      transitions:
+        - {from: Disguise, to: Fuse, when: player close / hit}
+        - {from: Fuse, to: "[*]", when: burst away}
+  - id: elder_stalker
+    difficulty: 7
+    description: |
+      Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone
+      homing seed from across the room, blinks the moment it has fired, and greets you with a
+      shotgun cone wherever it lands. The seed forces you to move; the blink means the ground you
+      moved to is the wrong ground. It never chases — every reposition is a teleport — so the
+      fight is about closing the gap between its cycle rather than out-running it.
+    art: a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on reveal;
+      taller than the stalker.
+    casts: [fireball, blam]
+    notes: below a quarter health the seed's wind-up drops to near-instant — the same beat with a
+      shorter telegraph, swapped in by health window.
+    fsm:
+      start: Disguise
+      transitions:
+        - {from: Disguise, to: Aim, when: sees player}
+        - {from: Aim, to: SnipeFast, when: below 25% HP}
+        - {from: Aim, to: Snipe}
+        - {from: Snipe, to: Blink, when: seed away}
+        - {from: SnipeFast, to: Blink, when: seed away}
+        - {from: Blink, to: Blast, when: arrived}
+        - {from: Blast, to: Recover}
+        - {from: Recover, to: Aim, when: snipe ready}
+        - {from: Recover, to: Disguise, when: lost}
+  - id: umbra
+    difficulty: 7
+    description: |
+      Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on
+      the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so
+      what changed is entirely where it fires it from. Turning to face it puts your back to
+      whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking
+      you to make. Clear it first, or fight it with a wall behind you.
+    art: the shade silhouette in deeper black with a thin red edge.
+    casts: [pew]
+    notes: the same Blink cast as the shade, with the landing spot taken past the target instead
+      of on a random bearing — the dial the player's tiers leave on AIM.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Volley, when: sees player}
+        - {from: Volley, to: Blink, when: burst done}
+        - {from: Blink, to: Recover, when: behind player}
+        - {from: Recover, to: Volley, when: burst ready}
+        - {from: Recover, to: Idle, when: lost}

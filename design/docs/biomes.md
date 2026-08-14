@@ -78,7 +78,7 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 
 ## Deepwood (T3)
 
-The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The three remaining sub-biomes (mimic, insect, fungal) are proposals; they stay in the ideas section below.
+The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The two remaining sub-biomes (insect, fungal) are proposals; they stay in the ideas section below.
 
 ### Deepwood
 
@@ -159,10 +159,11 @@ Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
 Props with eyes: the disguise escalates, bursts relocate, and a log is a bomb. Introduces the
 blink and self-detonation.
 
-Roster: bramble stalker, shade, deadwood, elder stalker *(rare)*, umbra *(rare)*, adder
-*(rare)*, mother tree *(boss)*.
+Roster: bramble stalker, shade, deadwood, burrwood, elder stalker *(rare)*, umbra
+*(rare)*, adder *(rare)*.
+The boss (mother tree) is a proposal again — see the enemies.md ideas section.
 
-Drops: Blink T2, Oop T2, Ploop T3, Fireball T3.
+Drops: Blink T2, Pew T3, Oop T2, Ploop T3.
 
 ### Insect deepwood
 

@@ -993,9 +993,9 @@ flavours, in encounter order: the **animal deepwood** (beasts, boss **gnarlking*
 (swarms and crawlers, boss **hive queen**), and the **fungal deepwood** (rot and spores,
 boss **rotmaw**).
 
-**The shared pool and the whole animal sub-biome are built** — they moved up into the
-catalogue above. What remains below are the three unbuilt sub-biomes: mimic, insect,
-fungal. Their sprites exist; nothing else does.
+**The shared pool and the animal and mimic sub-biomes are built** — they moved up into the
+catalogue above. What remains below are the two unbuilt sub-biomes: insect and fungal.
+Their sprites exist; nothing else does.
 
 Each sub-biome adds three commons, three rares (almost all cheap variants of another enemy —
 the mandraker recipe; only the drone is bespoke), and its boss: 16 per sub-biome. Every enemy
@@ -1010,8 +1010,8 @@ reuse and combine earlier ones instead of adding more.
 | 1   | prop disguise *(built)*  | stalker *(shared)*  | mimic doubles down; bloatcap                |
 | 2   | charge-dash *(built)*    | thornback           | gnarlking; mother tree's thorn rush         |
 | 3   | burrow *(built)*         | mole                | rotmaw dives between patterns               |
-| 4   | blink teleport           | shade               | elder stalker; umbra                        |
-| 5   | self-detonation          | deadwood *(static)* | ticktick *(mobile)*; mycelings *(+ clouds)* |
+| 4   | blink teleport *(built)* | shade               | elder stalker; umbra                        |
+| 5   | self-detonation *(built)*| deadwood *(static)* | ticktick *(mobile)*; mycelings *(+ clouds)* |
 | 6   | wall crawl               | longleg             | weaver; creeper mold *(+ clouds)*           |
 | 7   | bullet escort            | drone               | hive queen's swarm phase                    |
 | 8   | lingering spore clouds   | sporespitter        | creeper mold; rot golem; rotmaw             |
@@ -1019,173 +1019,13 @@ reuse and combine earlier ones instead of adding more.
 | 10  | drain leech              | leech               | elder leech's aura; rotmaw's drain phase    |
 
 Spells introduced here: Bwoom, ChargeDash, Thwomp, Halp and Zoing all ship (the animal roster
-drops them); Blink, Oop, Ploop, Halo, Slurp and Fwoosh wait on the sub-biomes below. Reserved
-for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing Lights, Vroop, Beep Boop,
-Nyoom, Shing, Splay.
+drops them), and so do Blink and Oop (the shade and umbra carry the two Blink tiers, the
+deadwood its own Oop). Ploop ships as a spell but nothing drops it since the mother tree was
+cut. Halo, Slurp and Fwoosh wait on the sub-biomes below. Reserved for future T3 biomes: Kaboom, Krak,
+Brrr, Clang, Chomp, Piercing Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
 
-**Mimic deepwood** — nothing is what it looks like: most of a room might be props with
-eyes. Introduces the blink and self-detonation.
-
-### bramble stalker *(mimic)*
-
-A running thorn-spitter. `Idle` disguised as a bush, then `WeaveChase`→`FireWhenInRange`,
-firing full rings of thorns from its body on a slow cadence. It is hard to track on
-approach, and the ring punishes you for standing anywhere near it.
-
-**Art:** a rounded thorny bush-mound disguise, deepwood green with bramble-red thorns;
-eyes on reveal.
-
-| Stat | |
-|---|---|
-| HP | low |
-| Speed | med (weaving chase) |
-| Detection | short probe |
-| Attack | `RingPattern` thorns, low dmg/thorn, slow cadence |
-| Casts | Ring |
-| Drops | **Ring** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> WeaveChase : player close
-    WeaveChase --> Ring : in range
-    Ring --> WeaveChase : out of range
-    WeaveChase --> Disguise : lost
-```
-
-### shade *(mimic)*
-
-A vanishing harasser, introducing the **blink teleport**. It fires a `Volley` burst, then
-blinks to a random nearby offset and bursts again. It punishes turret play, since each
-burst forces you to re-aim.
-
-**Art:** a wispy near-black silhouette with a faint violet edge and two pale eyes; a
-barely-there body that blinks out.
-
-| Stat | |
-|---|---|
-| HP | very low |
-| Speed | blinks (short range) |
-| Detection | med |
-| Attack | `Volley` `SinglePattern`, med dmg, fast within burst |
-| Casts | Pew, Blink |
-| Drops | **Blink** (t2), **Pew** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Volley : sees player
-    Volley --> Blink : burst done
-    Blink --> Volley : reappeared
-    Volley --> Idle : lost
-```
-
-### deadwood *(mimic)*
-
-A trap with a health bar, introducing **self-detonation**. It lies among the real log
-props until you step close or clip it with a shot, then shivers, glows, and blows: one
-big blast and it is gone. Spot the log that is slightly too neat and spend it from range,
-or route around it and leave it armed for the enemies that chase you.
-
-**Art:** a mossy fallen log with one knothole; the knothole opens into an eye on trigger,
-and the whole log glows through the fuse.
-
-| Stat | |
-|---|---|
-| HP | low |
-| Speed | stationary |
-| Detection | short probe |
-| Attack | `Oop`-style proximity blast, high dmg |
-| Casts | Oop |
-| Drops | **Oop** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> Fuse : player close / hit
-    Fuse --> Detonate : fuse done
-```
-
-### elder stalker *(mimic, rare)*
-
-Stalker variant: an ancient twisted tree on a `PatternPicker`. `SniperCharge` a slow
-wide-cone homing seed at long range, then a blink and, on arrival, a `ShotgunPattern`.
-The homing seed forces you to move; the blink resets the engagement.
-
-**Art:** a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on
-reveal; taller than the stalker.
-
-| Stat | |
-|---|---|
-| HP | med |
-| Speed | stationary (blinks) |
-| Detection | long |
-| Attack | `Homing` seed (med dmg) / `ShotgunPattern` on blink |
-| Casts | Fireball, Blam |
-| Drops | **Fireball** (t3), **Blam** (t3) |
-
-**Notes:** at critical HP the windup drops to near-instant.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Snipe : sees player
-    Snipe --> Blink : shot fired
-    Blink --> Shotgun : arrived
-    Shotgun --> Snipe : cycle
-    Snipe --> Idle : lost
-```
-
-### umbra *(mimic, rare)*
-
-Shade variant: every blink lands behind you, and the volley comes twinned. It punishes
-tunnel vision — clear it first, or fight with your back to a wall.
-
-**Art:** the shade silhouette in deeper black with a thin red edge.
-
-| Stat | |
-|---|---|
-| HP | low |
-| Speed | blinks (short range) |
-| Detection | med |
-| Attack | twinned `Volley`, med dmg |
-| Casts | Pew, Blink |
-| Drops | **Blink** (t3) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Volley : sees player
-    Volley --> Blink : burst done
-    Blink --> Volley : behind player
-    Volley --> Idle : lost
-```
-
-### adder *(mimic, rare)*
-
-Snake variant: the cornered burst becomes a wide ricochet spray that fills the corridor
-behind you as well as ahead. Catching it in a passage is the natural move — and exactly
-the mistake.
-
-**Art:** the snake coil in rare charcoal with amber banding.
-
-| Stat | |
-|---|---|
-| HP | high |
-| Speed | fast (weaving flee) |
-| Detection | med |
-| Attack | bouncing `ShotgunPattern` spray, med dmg, on corner |
-| Casts | Pew, Zoing |
-| Drops | **Zoing** (t3) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Flee : sees player
-    Flee --> Volley : cornered
-    Volley --> Flee : burst fired
-    Flee --> Idle : lost
-```
+**Mimic deepwood** — the sub-biome is built except for its boss, which was cut from the
+game and is a proposal again.
 
 ### mother tree *(boss, mimic)*
 
@@ -1654,17 +1494,10 @@ stateDiagram-v2
 
 Commons drop T2 — generic and signature both — rares guarantee T3, bosses drop their T3
 signatures. Between them the four sub-biomes **cover** a full tier-2 kit and seed the tier-3
-one; the built rosters' drops are in the catalogue above, these three are what's left.
+one; the built rosters' drops are in the catalogue above, these two are what's left.
 
 | Enemy | Drops |
 |---|---|
-| bramble stalker | **Ring** (t2) |
-| shade | **Blink** (t2), **Pew** (t2) |
-| deadwood | **Oop** (t2) |
-| elder stalker *(rare)* | **Fireball** (t3), **Blam** (t3) |
-| umbra *(rare)* | **Blink** (t3) |
-| adder *(rare)* | **Zoing** (t3) |
-| mother tree *(boss)* | **Ploop** (t3), **Blam** (t3) |
 | longleg | **Snipe** (t2), **Ring** (t2) |
 | beetle | **Ring** (t2), **Pew** (t2) |
 | ticktick | **Oop** (t2) |

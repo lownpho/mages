@@ -92,6 +92,34 @@
       "speed_tiles": 14,
       "pierce": false
      }
+    },
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/pew/pew3.tres",
+     "kind": "bullet",
+     "cooldown": 2,
+     "cast_time": 0,
+     "channeled": false,
+     "grants": {
+      "speed": 8
+     },
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 10,
+      "interval": 0.18
+     },
+     "amount": {
+      "base": 7,
+      "skill": 0,
+      "speed": 0.75,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 9,
+      "speed_tiles": 14,
+      "pierce": false
+     }
     }
    ]
   },
@@ -948,6 +976,145 @@
    ]
   },
   {
+   "id": "blink",
+   "name": "Blink",
+   "category": "utility",
+   "description": "An instant hop along your aim: you vanish and reappear a fixed distance away, leaving a ghost behind. Aim is a direction rather than a click, so the hop is a length you learn instead of a spot you pick, and it refuses a landing with a wall in the way rather than posting you through one. Pure mobility — no damage, no wind-up, just the gap between where a boss's charge is going and where you are.",
+   "per_tier": "a longer hop on a shorter cooldown.",
+   "kind": "effect",
+   "hold": "no",
+   "scaling": [
+    "flat"
+   ],
+   "grants": [
+    "skill",
+    "speed"
+   ],
+   "tiers": [
+    {
+     "tier": 2,
+     "source": "game/characters/player/spells/blink/blink2.tres",
+     "kind": "effect",
+     "cooldown": 2,
+     "cast_time": 0,
+     "channeled": false,
+     "grants": {
+      "skill": 2,
+      "speed": 8
+     }
+    }
+   ]
+  },
+  {
+   "id": "oop",
+   "name": "Oop",
+   "category": "utility",
+   "description": "Drops a mine a tile ahead of your aim — in the doorway, not under your feet. It arms on a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has no health, nothing can shoot it, and it never moves or chases; it is a hazard the room has to walk around. Several can be out at once, so it plays as prep: seed the doorway you are about to retreat through, or the lane the pack has to cross. The deadwood is the same detonation pointed the other way.",
+   "per_tier": "",
+   "kind": "bullet",
+   "hold": "charged",
+   "scaling": [
+    "speed"
+   ],
+   "grants": [
+    "skill",
+    "speed"
+   ],
+   "tiers": [
+    {
+     "tier": 2,
+     "source": "game/characters/player/spells/oop/oop2.tres",
+     "kind": "bullet",
+     "cooldown": 3,
+     "cast_time": 0.15,
+     "channeled": false,
+     "grants": {
+      "skill": 5,
+      "speed": 5
+     },
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 12,
+      "skill": 0,
+      "speed": 1,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 1,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "blast",
+       "radius_tiles": 4,
+       "blast_only": true
+      }
+     ],
+     "mine": {
+      "arm_time": 0.6,
+      "lifetime": 12
+     }
+    }
+   ]
+  },
+  {
+   "id": "ploop",
+   "name": "Ploop",
+   "category": "utility",
+   "description": "The mine that answers a crowd instead of a target: same drop, same arming, but on contact it erupts into a full ring of piercing darts that run through everything in line. Lower per-hit than Oop's blast, far better across a corridor or into a pack, and the darts keep going after the first body.",
+   "per_tier": "",
+   "kind": "bullet",
+   "hold": "no",
+   "scaling": [
+    "speed"
+   ],
+   "grants": [
+    "defence",
+    "speed"
+   ],
+   "tiers": [
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/ploop/ploop3.tres",
+     "kind": "bullet",
+     "cooldown": 2.6,
+     "cast_time": 0,
+     "channeled": false,
+     "grants": {
+      "speed": 6,
+      "defence": 6
+     },
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 6,
+      "skill": 0,
+      "speed": 0.5,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 11,
+      "pierce": true
+     },
+     "mine": {
+      "arm_time": 0.6,
+      "lifetime": 14
+     }
+    }
+   ]
+  },
+  {
    "id": "nope",
    "name": "Nope",
    "category": "utility",
@@ -1148,6 +1315,194 @@
    ]
   },
   {
+   "source": "game/characters/enemies/bramble_stalker/bramble_stalker_data.tres",
+   "name": "Bramble Stalker",
+   "rarity": "common",
+   "max_health": 110,
+   "speed_px": 40,
+   "probes": {
+    "detect": 3,
+    "chase": 12,
+    "attack": 5
+   },
+   "drops": [
+    {
+     "item": "ring2",
+     "spell": "ring",
+     "tier": 2,
+     "chance": 0.06
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "bramble_stalker_ring",
+     "kind": "bullet",
+     "cooldown": 2.2,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 2,
+      "interval": 0.4
+     },
+     "amount": {
+      "base": 16,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 9,
+      "pierce": false
+     },
+     "name": "ring"
+    }
+   ],
+   "id": "bramble_stalker",
+   "difficulty": 5,
+   "description": "The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing\nto point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings\nof thorns off its own body. The ring means there is no safe side of it — the answer is\ndistance, not footwork — and the rings drift a little each wave, so a gap you found in the\nfirst one is somewhere else in the second. Hard to lead on the approach, trivial once you\nstop letting it arrive.\n",
+   "blurb": "The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings of thorns off its own body. The ring means there is no safe side of it — the answer is distance, not footwork — and the rings drift a little each wave, so a gap you found in the first one is somewhere else in the second. Hard to lead on the approach, trivial once you stop letting it arrive.",
+   "art": "a leafy deepwood bush, built from the biome's own decor bush — same three greens, same sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the bramble-red thorns push out after them, one per flank as it winds up.",
+   "casts": [
+    "ring"
+   ],
+   "notes": "",
+   "fsm": {
+    "start": "Disguise",
+    "transitions": [
+     {
+      "from": "Disguise",
+      "to": "Reveal",
+      "when": "player close / hit"
+     },
+     {
+      "from": "Reveal",
+      "to": "Chase",
+      "when": "revealed"
+     },
+     {
+      "from": "Chase",
+      "to": "Ring",
+      "when": "in range"
+     },
+     {
+      "from": "Ring",
+      "to": "Recover",
+      "when": "rings fired"
+     },
+     {
+      "from": "Recover",
+      "to": "Ring",
+      "when": "still in range"
+     },
+     {
+      "from": "Recover",
+      "to": "Chase",
+      "when": "out of range"
+     },
+     {
+      "from": "Chase",
+      "to": "Disguise",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/bramble_stalker/bramble_stalker.png",
+    "region": [
+     0,
+     8,
+     8,
+     8
+    ]
+   },
+   "damage_max": 16,
+   "damage": "16",
+   "biomes": []
+  },
+  {
+   "source": "game/characters/enemies/burrwood/burrwood_data.tres",
+   "name": "Burrwood",
+   "rarity": "common",
+   "max_health": 1,
+   "probes": {
+    "trigger": 2
+   },
+   "drops": [
+    {
+     "item": "ploop3",
+     "spell": "ploop",
+     "tier": 3,
+     "chance": 0.04
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "burrwood_ploop",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 6,
+      "count": 3,
+      "interval": 0.1
+     },
+     "amount": {
+      "base": 32,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 12,
+      "pierce": false
+     },
+     "name": "ploop"
+    }
+   ],
+   "id": "burrwood",
+   "difficulty": 4,
+   "description": "The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the\nsame log lying in the same litter, and it triggers the same way — step close, or clip it\nwith a shot, and the fuse runs. What comes out is the difference: instead of one big blast\nit bursts into a full ring of piercing darts that carry clean across the room and straight\nthrough anything in the way.\n\nBetween the two of them a room of logs stops being scenery you ignore. The blast one\npunishes standing next to it, the dart one punishes standing anywhere in line with it,\nand until one goes off you don't know which you're walking past. The tell, if you look\nfor it, is a dry burr husk in the moss.\n",
+   "blurb": "The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the same log lying in the same litter, and it triggers the same way — step close, or clip it with a shot, and the fuse runs. What comes out is the difference: instead of one big blast it bursts into a full ring of piercing darts that carry clean across the room and straight through anything in the way.",
+   "art": "the deadwood's log, moss and all, with one pale burr husk among the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.",
+   "casts": [
+    "ploop"
+   ],
+   "notes": "it drops the Ploop it fires, the way the deadwood drops its Oop. Killing it before the fuse lands does NOT set it off.",
+   "fsm": {
+    "start": "Disguise",
+    "transitions": [
+     {
+      "from": "Disguise",
+      "to": "Fuse",
+      "when": "player close / hit"
+     },
+     {
+      "from": "Fuse",
+      "to": "[*]",
+      "when": "burst away"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/burrwood/burrwood.png",
+    "region": [
+     0,
+     8,
+     8,
+     8
+    ]
+   },
+   "damage_max": 32,
+   "damage": "32",
+   "biomes": []
+  },
+  {
    "source": "game/characters/enemies/coral_snake/coral_snake_data.tres",
    "name": "Coral Snake",
    "rarity": "common",
@@ -1260,6 +1615,93 @@
      "planned": false
     }
    ]
+  },
+  {
+   "source": "game/characters/enemies/deadwood/deadwood_data.tres",
+   "name": "Deadwood",
+   "rarity": "common",
+   "max_health": 1,
+   "probes": {
+    "trigger": 2
+   },
+   "drops": [
+    {
+     "item": "oop2",
+     "spell": "oop",
+     "tier": 2,
+     "chance": 0.04
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "deadwood_oop",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.9,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 60,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 2,
+      "speed_tiles": 12,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "blast",
+       "radius_tiles": 5,
+       "blast_only": true
+      }
+     ],
+     "name": "oop"
+    }
+   ],
+   "id": "deadwood",
+   "difficulty": 4,
+   "description": "A trap with a health bar. It lies among the real log props until you step close — or clip it\nwith a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot\nthe log that is slightly too neat and spend it from range, or route around it and leave it\narmed for whatever chases you. It never moves and never fires twice; the only question is\nwhere you are standing when the fuse ends.\n",
+   "blurb": "A trap with a health bar. It lies among the real log props until you step close — or clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot the log that is slightly too neat and spend it from range, or route around it and leave it armed for whatever chases you. It never moves and never fires twice; the only question is where you are standing when the fuse ends.",
+   "art": "a mossy fallen log with one knothole; the knothole opens into an eye on trigger, and the whole log glows through the fuse.",
+   "casts": [
+    "oop"
+   ],
+   "notes": "its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the deadwood before the fuse lands does NOT set it off. The mother tree seeds these as mines.",
+   "fsm": {
+    "start": "Disguise",
+    "transitions": [
+     {
+      "from": "Disguise",
+      "to": "Fuse",
+      "when": "player close / hit"
+     },
+     {
+      "from": "Fuse",
+      "to": "[*]",
+      "when": "detonated"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/deadwood/deadwood.png",
+    "region": [
+     0,
+     8,
+     8,
+     8
+    ]
+   },
+   "damage_max": 60,
+   "damage": "60",
+   "biomes": []
   },
   {
    "source": "game/characters/enemies/dirt_golem/dirt_golem_data.tres",
@@ -2626,6 +3068,115 @@
    ]
   },
   {
+   "source": "game/characters/enemies/shade/shade_data.tres",
+   "name": "Shade",
+   "rarity": "common",
+   "max_health": 70,
+   "probes": {
+    "detect": 12
+   },
+   "drops": [
+    {
+     "item": "blink2",
+     "spell": "blink",
+     "tier": 2,
+     "chance": 0.08
+    },
+    {
+     "item": "pew3",
+     "spell": "pew",
+     "tier": 3,
+     "chance": 0.05
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "shade_blink",
+     "kind": "effect",
+     "cooldown": 0.6,
+     "cast_time": 0.25,
+     "channeled": false,
+     "name": "blink"
+    },
+    {
+     "cast": "shade_pew",
+     "kind": "bullet",
+     "cooldown": 1.1,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 3,
+      "interval": 0.16
+     },
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 16,
+      "pierce": false
+     },
+     "name": "pew"
+    }
+   ],
+   "id": "shade",
+   "difficulty": 5,
+   "description": "A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a\nshort burst, then blinks somewhere else nearby and bursts again. Nothing about a single\nburst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes\nstanding still and rewards fighting it while moving to something else. It never walks —\nthe blink is its whole movement.\n",
+   "blurb": "A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a short burst, then blinks somewhere else nearby and bursts again. Nothing about a single burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes standing still and rewards fighting it while moving to something else. It never walks — the blink is its whole movement.",
+   "art": "a wispy near-black silhouette with a faint violet edge and two pale eyes; a barely-there body that blinks out.",
+   "casts": [
+    "pew"
+   ],
+   "notes": "the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a landing spot with a wall in the way. The player's own Blink is the same effect with its landing dial on AIM instead of a random bearing.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Volley",
+      "when": "sees player"
+     },
+     {
+      "from": "Volley",
+      "to": "Blink",
+      "when": "burst done"
+     },
+     {
+      "from": "Blink",
+      "to": "Recover",
+      "when": "reappeared"
+     },
+     {
+      "from": "Recover",
+      "to": "Volley",
+      "when": "burst ready"
+     },
+     {
+      "from": "Recover",
+      "to": "Idle",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/shade/shade.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 20,
+   "damage": "20",
+   "biomes": []
+  },
+  {
    "source": "game/characters/enemies/shard_grimling/shard_grimling_data.tres",
    "name": "Shard Grimling",
    "rarity": "common",
@@ -3546,6 +4097,304 @@
    ]
   },
   {
+   "source": "game/characters/enemies/adder/adder_data.tres",
+   "name": "Adder",
+   "rarity": "rare",
+   "max_health": 320,
+   "speed_px": 46,
+   "probes": {
+    "detect": 12,
+    "retreat": 2
+   },
+   "drops": [
+    {
+     "item": "zoing2",
+     "spell": "zoing",
+     "tier": 2,
+     "chance": 0.5
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "adder_zoing",
+     "kind": "bullet",
+     "cooldown": 1.6,
+     "cast_time": 0.4,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 72,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 26,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 11,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "BounceBehaviour"
+      }
+     ],
+     "name": "zoing"
+    }
+   ],
+   "id": "adder",
+   "difficulty": 7,
+   "description": "Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits\na wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as\nwell as ahead. Cornering it in a hallway is the natural move and precisely the mistake;\ntake it in the open, where the bounces have nothing to come back off.\n",
+   "blurb": "Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as well as ahead. Cornering it in a hallway is the natural move and precisely the mistake; take it in the open, where the bounces have nothing to come back off.",
+   "art": "the snake coil in rare charcoal with amber banding.",
+   "casts": [
+    "zoing"
+   ],
+   "notes": "",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Wander"
+     },
+     {
+      "from": "Idle",
+      "to": "Flee",
+      "when": "sees player"
+     },
+     {
+      "from": "Wander",
+      "to": "Flee",
+      "when": "sees player"
+     },
+     {
+      "from": "Flee",
+      "to": "Volley",
+      "when": "cornered"
+     },
+     {
+      "from": "Volley",
+      "to": "Flee",
+      "when": "spray fired"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/adder/adder.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 26,
+   "damage": "26",
+   "biomes": []
+  },
+  {
+   "source": "game/characters/enemies/elder_stalker/elder_stalker_data.tres",
+   "name": "Elder Stalker",
+   "rarity": "rare",
+   "max_health": 260,
+   "probes": {
+    "detect": 22,
+    "blast": 5
+   },
+   "drops": [
+    {
+     "item": "blam3",
+     "spell": "blam",
+     "tier": 3,
+     "chance": 0.3
+    },
+    {
+     "item": "blink2",
+     "spell": "blink",
+     "tier": 2,
+     "chance": 0.6
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "elder_stalker_blast",
+     "kind": "bullet",
+     "cooldown": 1.6,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 44,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "blast"
+    },
+    {
+     "cast": "elder_stalker_blink",
+     "kind": "effect",
+     "cooldown": 0.4,
+     "cast_time": 0.35,
+     "channeled": false,
+     "name": "blink"
+    },
+    {
+     "cast": "elder_stalker_seed",
+     "kind": "bullet",
+     "cooldown": 3.2,
+     "cast_time": 1.1,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 32,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 20,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "homing",
+       "turn_deg": 150,
+       "cone_deg": 150,
+       "range_tiles": 0
+      }
+     ],
+     "name": "seed"
+    },
+    {
+     "cast": "elder_stalker_seed_fast",
+     "kind": "bullet",
+     "cooldown": 2.4,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 32,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 20,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "homing",
+       "turn_deg": 150,
+       "cone_deg": 150,
+       "range_tiles": 0
+      }
+     ],
+     "name": "seed_fast"
+    }
+   ],
+   "id": "elder_stalker",
+   "difficulty": 7,
+   "description": "Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone\nhoming seed from across the room, blinks the moment it has fired, and greets you with a\nshotgun cone wherever it lands. The seed forces you to move; the blink means the ground you\nmoved to is the wrong ground. It never chases — every reposition is a teleport — so the\nfight is about closing the gap between its cycle rather than out-running it.\n",
+   "blurb": "Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone homing seed from across the room, blinks the moment it has fired, and greets you with a shotgun cone wherever it lands. The seed forces you to move; the blink means the ground you moved to is the wrong ground. It never chases — every reposition is a teleport — so the fight is about closing the gap between its cycle rather than out-running it.",
+   "art": "a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on reveal; taller than the stalker.",
+   "casts": [
+    "fireball",
+    "blam"
+   ],
+   "notes": "below a quarter health the seed's wind-up drops to near-instant — the same beat with a shorter telegraph, swapped in by health window.",
+   "fsm": {
+    "start": "Disguise",
+    "transitions": [
+     {
+      "from": "Disguise",
+      "to": "Aim",
+      "when": "sees player"
+     },
+     {
+      "from": "Aim",
+      "to": "SnipeFast",
+      "when": "below 25% HP"
+     },
+     {
+      "from": "Aim",
+      "to": "Snipe"
+     },
+     {
+      "from": "Snipe",
+      "to": "Blink",
+      "when": "seed away"
+     },
+     {
+      "from": "SnipeFast",
+      "to": "Blink",
+      "when": "seed away"
+     },
+     {
+      "from": "Blink",
+      "to": "Blast",
+      "when": "arrived"
+     },
+     {
+      "from": "Blast",
+      "to": "Recover"
+     },
+     {
+      "from": "Recover",
+      "to": "Aim",
+      "when": "snipe ready"
+     },
+     {
+      "from": "Recover",
+      "to": "Disguise",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/elder_stalker/elder_stalker.png",
+    "region": [
+     0,
+     16,
+     8,
+     16
+    ]
+   },
+   "damage_max": 32,
+   "damage": "24-32",
+   "biomes": []
+  },
+  {
    "source": "game/characters/enemies/great_owl/great_owl_data.tres",
    "name": "Great Owl",
    "rarity": "rare",
@@ -4123,6 +4972,115 @@
      "planned": false
     }
    ]
+  },
+  {
+   "source": "game/characters/enemies/umbra/umbra_data.tres",
+   "name": "Umbra",
+   "rarity": "rare",
+   "max_health": 200,
+   "probes": {
+    "detect": 12
+   },
+   "drops": [
+    {
+     "item": "blink2",
+     "spell": "blink",
+     "tier": 2,
+     "chance": 0.5
+    },
+    {
+     "item": "pew3",
+     "spell": "pew",
+     "tier": 3,
+     "chance": 0.3
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "umbra_blink",
+     "kind": "effect",
+     "cooldown": 0.6,
+     "cast_time": 0.25,
+     "channeled": false,
+     "name": "blink"
+    },
+    {
+     "cast": "umbra_pew",
+     "kind": "bullet",
+     "cooldown": 1.1,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 3,
+      "interval": 0.16
+     },
+     "amount": {
+      "base": 22,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 16,
+      "pierce": false
+     },
+     "name": "pew"
+    }
+   ],
+   "id": "umbra",
+   "difficulty": 7,
+   "description": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on\nthe far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so\nwhat changed is entirely where it fires it from. Turning to face it puts your back to\nwhatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking\nyou to make. Clear it first, or fight it with a wall behind you.\n",
+   "blurb": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so what changed is entirely where it fires it from. Turning to face it puts your back to whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking you to make. Clear it first, or fight it with a wall behind you.",
+   "art": "the shade silhouette in deeper black with a thin red edge.",
+   "casts": [
+    "pew"
+   ],
+   "notes": "the same Blink cast as the shade, with the landing spot taken past the target instead of on a random bearing — the dial the player's tiers leave on AIM.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Volley",
+      "when": "sees player"
+     },
+     {
+      "from": "Volley",
+      "to": "Blink",
+      "when": "burst done"
+     },
+     {
+      "from": "Blink",
+      "to": "Recover",
+      "when": "behind player"
+     },
+     {
+      "from": "Recover",
+      "to": "Volley",
+      "when": "burst ready"
+     },
+     {
+      "from": "Recover",
+      "to": "Idle",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/umbra/umbra.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 22,
+   "damage": "22",
+   "biomes": []
   },
   {
    "source": "game/characters/enemies/viper/viper_data.tres",
@@ -4964,7 +5922,7 @@
    "id": "deepwood",
    "name": "Deepwood",
    "tier_label": "T3",
-   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The three remaining sub-biomes (mimic, insect, fungal) are proposals; they stay in the ideas section below.",
+   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. The two remaining sub-biomes (insect, fungal) are proposals; they stay in the ideas section below.",
    "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.",
    "biomes": [
     "deepwood"
