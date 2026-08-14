@@ -212,6 +212,7 @@ def _cast_block(spell, d: Defaults) -> dict:
 KIND_BY_CLASS = {
     "BulletSpellResource": "bullet",
     "ChargeDashResource": "bullet",     # extends BulletSpellResource — same fields
+    "MineResource": "bullet",           # ditto: the burst it goes off with
     "SummonResource": "summon",
     "HealResource": "heal",
     "NopeResource": "nope",
@@ -243,6 +244,11 @@ def _spell_record(spell, d: Defaults) -> dict:
             entry["dash"] = {
                 "speed_px": _num(d.get(spell, "dash_speed", 0)),
                 "duration": _num(d.get(spell, "dash_duration", 0)),
+            }
+        elif spell.script_class == "MineResource":
+            entry["mine"] = {
+                "arm_time": _num(d.get(spell, "arm_time", 0)),
+                "lifetime": _num(d.get(spell, "lifetime", 0)),
             }
     elif kind == "heal":
         entry["amount"] = _amount(spell.get("amount"), d)

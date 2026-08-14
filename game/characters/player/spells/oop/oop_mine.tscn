@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://coopm1nescene"]
+
+[ext_resource type="Script" uid="uid://cm1neffect01x" path="res://characters/player/spells/oop/mine.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cop2m1ne5heet" path="res://characters/player/spells/oop/oop_mine.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="AT_fuse0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fuse1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mine"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fuse0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fuse1")
+}],
+"loop": 1,
+"name": &"fuse",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 5.0
+
+[node name="OopMine" type="Node2D" unique_id=1769211665]
+script = ExtResource("1_script")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1532465250]
+sprite_frames = SubResource("SpriteFrames_mine")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -1)
+
+[node name="Trigger" type="Area2D" parent="." unique_id=2004671773]
+collision_layer = 0
+collision_mask = 48
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Trigger" unique_id=1084395225]
+shape = SubResource("CircleShape2D_trigger")

@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="MineResource" format=3 uid="uid://coop2t1er2res"]
+
+[ext_resource type="Script" uid="uid://dqhyyafnkps8q" path="res://characters/player/spells/oop/mine_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="3_bh_base"]
+[ext_resource type="Script" uid="uid://d2i01xlww65p1" path="res://items/bullets/behaviours/blast_payload.gd" id="4_blast"]
+[ext_resource type="SpriteFrames" uid="uid://cfv6irgn0kxve" path="res://characters/player/spells/fireball/fireball_2_explosion.tres" id="5_boom"]
+[ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
+[ext_resource type="PackedScene" uid="uid://coopm1nescene" path="res://characters/player/spells/oop/oop_mine.tscn" id="99_effect"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
+
+[sub_resource type="Resource" id="Blast_1"]
+script = ExtResource("4_blast")
+radius_tiles = 4.0
+frames = ExtResource("5_boom")
+blast_only = true
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bullet"]
+atlas = ExtResource("8_bullets")
+region = Rect2(0, 80, 8, 8)
+
+[sub_resource type="Resource" id="BulletData"]
+script = ExtResource("7_bullet")
+icon = SubResource("AtlasTexture_bullet")
+range_tiles = 1
+speed_tiles = 6
+behaviours = Array[ExtResource("3_bh_base")]([SubResource("Blast_1")])
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("bh_scaling")
+base_damage = 12.0
+speed_scaling = 1.0
+
+[sub_resource type="Resource" id="SinglePattern"]
+script = ExtResource("6_pattern")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(64, 8, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("SinglePattern")
+bullet = SubResource("BulletData")
+damage = SubResource("ScalingProfile_bullet")
+max_shots = 1
+effect_scene = ExtResource("99_effect")
+cooldown = 3.0
+cast_time = 0.15
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 5
+speed_modifier = 5
