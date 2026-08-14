@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cgi5h6ag4qr5p"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://cbl1nk2t1er2r" path="res://characters/player/spells/blink/blink2.tres" id="2_o1jj5"]
+[ext_resource type="Resource" uid="uid://cpew3t1er3res" path="res://characters/player/spells/pew/pew3.tres" id="3_pew"]
+[ext_resource type="Texture2D" uid="uid://be4hnkjoy5unc" path="res://characters/enemies/umbra/umbra.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_blink"]
+script = ExtResource("2_drop")
+item = ExtResource("2_o1jj5")
+chance = 0.5
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_pew"]
+script = ExtResource("2_drop")
+item = ExtResource("3_pew")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Umbra"
+icon = SubResource("AtlasTexture_icon")
+rarity = 1
+max_health = 200
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_blink"), SubResource("Drop_pew")])
