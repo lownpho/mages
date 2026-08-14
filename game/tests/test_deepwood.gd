@@ -24,9 +24,21 @@ extends Node
 ##     freeing that has to happen anyway once that beat hands off.
 ##   - Behaviour.damage_scale at zero — the mole underground is untouchable, not merely
 ##     armoured, and takes damage again the moment it surfaces.
+## The mimic sub-biome adds two more of the same kind:
+##   - Blink, the one effect that MOVES its caster. A shade carries no movement behaviour at
+##     all, so any position change is the hop — and a blink hemmed in by walls has to refuse
+##     rather than post the shade through one.
+##   - Oop, the burst that takes its caster with it. A deadwood that fires and survives is a
+##     mine that re-arms forever — and the player's side of the same spell, a summoned mine
+##     that has to arm, trigger on an enemy, and go up with the blast it was handed.
 ## Run: godot --headless --path game res://tests/test_deepwood.tscn
 
 const SNAKE := preload("res://characters/enemies/snake/snake.tscn")
+const SHADE := preload("res://characters/enemies/shade/shade.tscn")
+const DEADWOOD := preload("res://characters/enemies/deadwood/deadwood.tscn")
+const SPROUTLING := preload("res://characters/enemies/sproutling/sproutling.tscn")
+const OOP := preload("res://characters/player/spells/oop/oop2.tres")
+const BLINK := preload("res://characters/player/spells/blink/blink2.tres")
 const GOLEM := preload("res://characters/enemies/moss_golem/moss_golem.tscn")
 const GRIMLING := preload("res://characters/enemies/grimling/grimling.tscn")
 const THORNBACK := preload("res://characters/enemies/thornback/thornback.tscn")
@@ -44,6 +56,7 @@ const LAYER_TERRAIN := 1
 
 # A lambda captures locals by value, so the bullet tally has to live on the node.
 var _shots := 0
+var _mine_damage := 0
 
 func _ready() -> void:
 	var fails := 0
@@ -59,6 +72,10 @@ func _ready() -> void:
 	fails += await _razorback_slams_a_wall()
 	fails += await _grimlord_fires_a_parting_ring()
 	fails += await _burrowed_mole_is_untouchable()
+	fails += await _shade_blinks()
+	fails += await _deadwood_takes_itself_with_it()
+	fails += await _oop_mine_arms_and_blows()
+	fails += await _player_blink_hops_along_aim()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -474,6 +491,191 @@ func _fire_zoing(from: Vector2, dir: Vector2) -> BaseBullet:
 	b.collision_layer = GameConstants.LAYER_PLAYER_BULLETS
 	add_child(b)
 	return b
+
+# The shade never walks — Idle, Volley and Blink all plant it — so the only thing that can
+# move it is the blink effect. Boxed in, the same blink has to leave it exactly where it is:
+# every candidate landing spot is through a wall, and refusing beats teleporting into rock.
+func _shade_blinks() -> int:
+	var target := _target(Vector2(40, 0))
+	var shade: Creature = SHADE.instantiate()
+	add_child(shade)
+	await get_tree().physics_frame
+	_wake(shade)
+	var origin := shade.global_position
+	var deadline := Time.get_ticks_msec() + 8000
+	while shade.global_position == origin and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("the shade blinked off its spot", shade.global_position != origin)
+	shade.queue_free()
+
+	var walls := [
+		_wall(Vector2(16, 0), Vector2(8, 80)), _wall(Vector2(-16, 0), Vector2(8, 80)),
+		_wall(Vector2(0, 16), Vector2(80, 8)), _wall(Vector2(0, -16), Vector2(80, 8)),
+	]
+	target.position = Vector2(8, 0)
+	var boxed: Creature = SHADE.instantiate()
+	add_child(boxed)
+	await get_tree().physics_frame
+	_wake(boxed)
+	var penned := boxed.global_position
+	deadline = Time.get_ticks_msec() + 3000
+	while Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("a walled-in blink refused rather than teleporting through",
+		boxed.global_position == penned)
+
+	if fails == 0:
+		print("  ok: shade — the blink moves its caster, and refuses through walls")
+	boxed.queue_free()
+	target.queue_free()
+	for w in walls:
+		w.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# Oop is the only spell that kills the caster that cast it: step into a deadwood's trigger
+# and it fuses, blows, and is gone. Surviving its own blast would leave the trap re-arming.
+func _deadwood_takes_itself_with_it() -> int:
+	var target := _target(Vector2(12, 0))
+	var wood: Creature = DEADWOOD.instantiate()
+	add_child(wood)
+	await get_tree().physics_frame
+	_wake(wood)
+	var deadline := Time.get_ticks_msec() + 8000
+	while is_instance_valid(wood) and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	var fails := _expect("the deadwood went up with its own blast", not is_instance_valid(wood))
+	if fails == 0:
+		print("  ok: deadwood — the Oop burst takes its caster with it")
+	if is_instance_valid(wood):
+		wood.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The player's half of Oop: the cast drops a mine a tile ahead of the aim, it arms on its own
+# clock, and then it is a contact trap — the first thing it hunts to TOUCH it sets it off.
+# It has no AI, no health and no hurtbox, so it can't chase, be drawn away, or be shot down;
+# every one of those is a line away from turning a hazard back into a target.
+func _oop_mine_arms_and_blows() -> int:
+	_mine_damage = 0
+	# Well clear of the origin: the deadwood beat above leaves a live blast there.
+	const AWAY := Vector2(300, 300)
+	var caster := Node2D.new()
+	caster.set_script(preload("res://tests/support/stub_caster.gd"))
+	caster.position = AWAY
+	add_child(caster)
+	var spell_caster := SpellCaster.new()
+	caster.add_child(spell_caster)
+	var foe := _foe(AWAY + Vector2(60, 0))   # well outside the trigger to start with
+	await get_tree().physics_frame
+
+	var fails := _expect("the cast went off", spell_caster.cast(OOP))
+	var mine: Node2D = null
+	var spawned := Time.get_ticks_msec() + 3000
+	while mine == null and Time.get_ticks_msec() < spawned:
+		await get_tree().physics_frame
+		mine = get_tree().root.find_child("OopMine", false, false) as Node2D
+	fails += _expect("the cast dropped a mine", mine != null)
+	if mine == null:
+		caster.queue_free()
+		foe.queue_free()
+		await get_tree().physics_frame
+		return fails
+	# stub_caster aims RIGHT, so the drop lands one tile east of the caster.
+	var drop := AWAY + Vector2(GameConstants.PX_PER_TILE, 0)
+	fails += _expect("the mine landed a tile along the aim", mine.global_position == drop)
+
+	# Armed, with the enemy across the room: a mine waits, it does not hunt.
+	var settle := Time.get_ticks_msec() + 1500
+	while Time.get_ticks_msec() < settle:
+		await get_tree().physics_frame
+	fails += _expect("an armed mine leaves a distant enemy alone",
+		is_instance_valid(mine) and _mine_damage == 0)
+	fails += _expect("the mine stayed put", is_instance_valid(mine)
+		and mine.global_position == drop)
+	# Nothing to disarm: an enemy blast right on top of it changes nothing.
+	_blast_at(drop, GameConstants.LAYER_ENEMY_BULLETS)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	fails += _expect("an enemy blast over the mine leaves it armed", is_instance_valid(mine))
+
+	# Contact: walk the enemy onto it.
+	foe.global_position = drop
+	var deadline := Time.get_ticks_msec() + 3000
+	while _mine_damage == 0 and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	fails += _expect("touching the mine set it off on the enemy", _mine_damage > 0)
+	# Its own blast is the one thing that takes it.
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	fails += _expect("the mine went up with its blast", not is_instance_valid(mine))
+
+	if fails == 0:
+		print("  ok: oop — the mine drops a tile ahead, waits, and goes off on contact")
+	foe.queue_free()
+	caster.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The player's Blink is the same effect the shade casts with one dial moved: it lands along
+# the caster's AIM instead of on a random bearing. A flipped default reads as a mobility
+# spell that throws you somewhere you didn't choose.
+func _player_blink_hops_along_aim() -> int:
+	var caster := Node2D.new()
+	caster.set_script(preload("res://tests/support/stub_caster.gd"))
+	caster.position = Vector2(-300, -300)   # open ground, clear of the beats above
+	add_child(caster)
+	var spell_caster := SpellCaster.new()
+	caster.add_child(spell_caster)
+	await get_tree().physics_frame
+
+	var from := caster.global_position
+	spell_caster.cast(BLINK)   # stub_caster aims RIGHT
+	await get_tree().physics_frame
+	var moved := caster.global_position - from
+	var fails := _expect("blink hopped the spell's distance along the aim (%s)" % moved,
+		is_equal_approx(moved.x, BLINK.distance_tiles * GameConstants.PX_PER_TILE)
+			and is_zero_approx(moved.y))
+
+	if fails == 0:
+		print("  ok: blink — the player's tier lands along the aim, at its authored distance")
+	caster.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# A one-shot damage area of the given faction, the shape a bullet's on-expire blast takes.
+func _blast_at(at: Vector2, layer: int) -> void:
+	var zone := DamageZone.new()
+	zone.damage = 999
+	zone.collision_layer = layer
+	zone.collision_mask = 0
+	zone.monitoring = false
+	zone.position = at
+	var shape := CollisionShape2D.new()
+	var circle := CircleShape2D.new()
+	circle.radius = 16.0
+	shape.shape = circle
+	zone.add_child(shape)
+	add_child(zone)
+	get_tree().create_timer(0.2).timeout.connect(zone.queue_free)
+
+# An inert hostile: on the enemy layer and in the enemies group so probes and targeting
+# find it, with a hurtbox so what hits it can be counted, and no AI of its own.
+func _foe(at: Vector2) -> CharacterBody2D:
+	var foe := CharacterBody2D.new()
+	foe.collision_layer = 32
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	foe.add_child(shape)
+	var hurtbox: Area2D = preload("res://components/hurtbox.tscn").instantiate()
+	hurtbox.collision_mask = 256
+	hurtbox.hurt.connect(func(damage: int, _source: Node) -> void: _mine_damage += damage)
+	foe.add_child(hurtbox)
+	foe.add_to_group("enemies")
+	foe.position = at
+	add_child(foe)
+	return foe
 
 func _wall(at: Vector2, size: Vector2) -> StaticBody2D:
 	var body := StaticBody2D.new()
