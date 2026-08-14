@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BlinkResource" format=3 uid="uid://cbl1nk2t1er2r"]
+
+[ext_resource type="Script" uid="uid://bv7riafuf2t3m" path="res://characters/player/spells/blink/blink_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" uid="uid://b50gkrun8xrfc" path="res://characters/player/spells/blink/blink.tscn" id="99_effect"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(64, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+distance_tiles = 6.0
+effect_scene = ExtResource("99_effect")
+cooldown = 3.0
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 2
+speed_modifier = 8
