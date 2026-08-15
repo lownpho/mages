@@ -39,6 +39,6 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.2
 max_shots = 8
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
+cooldown = 1.0
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 6

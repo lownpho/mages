@@ -39,11 +39,11 @@ y_sort_enabled = true
 base_speed = 30
 debug_never_die = true
 
-[node name="GladeFountain" parent="Entities" instance=ExtResource("8_fountain")]
+[node name="GladeFountain" parent="Entities" unique_id=2054867138 instance=ExtResource("8_fountain")]
 position = Vector2(-48, -24)
 cooldown = 10.0
 
-[node name="DeepwoodFountain" parent="Entities" instance=ExtResource("8_fountain")]
+[node name="DeepwoodFountain" parent="Entities" unique_id=87701847 instance=ExtResource("8_fountain")]
 position = Vector2(48, -24)
 style = 1
 cooldown = 10.0

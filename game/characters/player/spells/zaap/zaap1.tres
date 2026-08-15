@@ -44,6 +44,6 @@ bullet = SubResource("Resource_i5w6n")
 damage = SubResource("ScalingProfile_zaap")
 max_shots = 1
 effect_scene = ExtResource("3_scene")
-cooldown = 4.0
+cooldown = 2.0
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 6
