@@ -74,4 +74,3 @@ func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2,
 	else:
 		caster.get_tree().root.add_child(b)
 	return b
-

@@ -55,6 +55,7 @@ minion_lifetime = 8.0
 minion_spell = SubResource("MinionSpell")
 minion_sheet = ExtResource("9_sheet")
 effect_scene = ExtResource("3_effect")
+repeat_exempt = true
 cooldown = 10.0
 cast_time = 0.5
 blurb = "Do they think I'm their mom?"

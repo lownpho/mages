@@ -55,6 +55,7 @@ func _ready() -> void:
 	await _test_burst_rotation()
 	await _test_homing_lock()
 	await _test_nope_leech()
+	await _test_repeat_penalty()
 
 	# Leave no equipment behind for a later scene run in the same session.
 	for i in GlobalInventory.SPELL_SLOT_SIZE:
@@ -93,9 +94,12 @@ func _equip_swap_slot(path: String) -> void:
 func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
 
-# Cooldowns persist across subtests; wait one out so the next cast is clean.
+# Cooldowns persist across subtests; wait one out so the next cast is clean. Polls the
+# caster rather than sleeping spell.cooldown — the repeat penalty makes the authored
+# number a floor, not the wait.
 func _wait_off_cooldown(spell: SpellResource) -> void:
-	await _wait(spell.cooldown + 0.2)
+	while not caster.ready_for(spell):
+		await get_tree().physics_frame
 
 func _test_full_burst() -> void:
 	spawned.clear()
@@ -208,6 +212,42 @@ func _test_nope_leech() -> void:
 		fails.append("nope dropped the carried-over leech fraction")
 	shield.channel_released()
 	player.health = player.max_health
+
+# Leaning on one slot costs more each time: consecutive casts of the same spell stretch
+# its cooldown, casting anything else resets the chain, and an exempt spell (heal) is
+# transparent — it neither pays the tax nor hands out a free reset by being cast between
+# two pews.
+func _test_repeat_penalty() -> void:
+	if GlobalInventory.active_spell_page != 0:
+		GlobalInventory.cycle_spell_page()
+	caster._last_spell = null
+	caster._repeats = 0
+	var first := await _cooldown_after_burst(pew1, 0)
+	var second := await _cooldown_after_burst(pew1, 0)
+	if not is_equal_approx(first, pew1.cooldown):
+		fails.append("first cast paid a repeat penalty: %.2f, want %.2f" % [first, pew1.cooldown])
+	if second <= first:
+		fails.append("a repeat cast did not stretch the cooldown: %.2f" % second)
+	await _cooldown_after_burst(pew2, 1)
+	var after_other := await _cooldown_after_burst(pew1, 0)
+	if not is_equal_approx(after_other, pew1.cooldown):
+		fails.append("casting another spell did not reset the chain: %.2f" % after_other)
+	var heal: SpellResource = load("res://characters/player/spells/heal/heal1.tres")
+	caster.cast(heal)
+	await _wait(heal.cast_time + 0.2)
+	var after_heal := await _cooldown_after_burst(pew1, 0)
+	if after_heal <= pew1.cooldown:
+		fails.append("an exempt cast reset the repeat chain: %.2f" % after_heal)
+	player.health = player.max_health
+
+# Cast `spell` from its slot, let the burst run out, and report the cooldown it started.
+func _cooldown_after_burst(spell: BulletSpellResource, slot: int) -> float:
+	await _wait_off_cooldown(spell)
+	input._try_cast(slot)
+	while _burst_live(spell):
+		await get_tree().physics_frame
+	var t: Timer = caster._cooldowns.get(spell)
+	return t.wait_time if t else 0.0
 
 # The burst-shaping dials that used to live on the RotatingVolley behaviour: a spell
 # with rotation_per_shot spirals its own aim shot to shot, and aim_mode Independent ignores

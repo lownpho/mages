@@ -19,6 +19,7 @@ region = Rect2(80, 0, 8, 8)
 script = ExtResource("1_script")
 amount = SubResource("ScalingProfile_heal")
 effect_scene = ExtResource("3_scene")
+repeat_exempt = true
 cooldown = 20.0
 cast_time = 0.8
 blurb = "Sláinte!"
