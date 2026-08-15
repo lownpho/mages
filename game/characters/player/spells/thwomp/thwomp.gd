@@ -1,14 +1,10 @@
 extends Node2D
 
 ## Thwomp: an instant radial pulse centred on the caster — the "get off me" button, and the
-## gnarlking's ground slam. One sweep over the caster's target groups does both halves of it,
-## because both fall off with the same distance: the hit is full at the centre and chip at
-## the rim, and the shove is an impulse through Creature.apply_knockback on the same curve.
-##
-## Faction-agnostic by construction: who it hits is CastContext.target_groups, so the player's
-## panic button and a boss's slam are one file. Damage goes through each victim's own Hurtbox
-## signal rather than a DamageZone — a zone carries ONE number for everyone inside it, which
-## is exactly the thing a falloff pulse can't do.
+## gnarlking's ground slam. One sweep does damage and knockback together, both falling off
+## on the same distance curve. Damage goes through each victim's own Hurtbox signal rather
+## than a DamageZone, because a zone carries ONE number for everyone inside it — exactly
+## what a falloff pulse can't do.
 
 ## The shockwave: MARK_COUNT copies of the Mark sprite flung out to the rim. Radius is per-tier
 ## data (6 tiles here, 12 for the gnarlking's big slam) so a single ring sprite could only match

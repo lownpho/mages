@@ -1,11 +1,9 @@
 extends BulletBehaviour
 class_name BounceBehaviour
 
-## Ricochet: instead of dying on a wall the bullet reflects off it and flies on, up
-## to `bounces` times. Each reflection is a fresh leg of travel (the range timer
-## restarts, so the shot gets its full range again per leg) and optionally hits
-## harder than the last. This is Zoing, as data — and the trait that makes a
-## corridor dangerous in both directions.
+## Ricochet: instead of dying on a wall the bullet reflects and flies on, up to `bounces`
+## times. Each reflection is a fresh leg of travel (the range timer restarts, so the shot
+## gets its full range again per leg) and optionally hits harder than the last. Zoing.
 
 ## Wall hits the bullet survives; the one after this expires it as usual.
 @export var bounces: int = 2

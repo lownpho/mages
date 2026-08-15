@@ -1,11 +1,9 @@
 extends BulletBehaviour
 class_name ChainBehaviour
 
-## Lightning-chain: the bullet flies straight until it first zaps an enemy, then
-## after each hit it leaps to the nearest hostile (excluding the one it's just
-## leaving, so it can double back) until it runs out of hits or targets. Damage
-## lands through each Hurtbox like any bullet; the chain only decides where to go
-## next. Dies on walls (no on_expire payload). This is zaap, as data.
+## Lightning-chain: the bullet flies straight until it first zaps an enemy, then leaps to
+## the nearest hostile after each hit (excluding the one it's just leaving, so it can
+## double back) until it runs out of hits or targets. This is zaap, as data.
 
 ## Hits after the first: the chain reaches up to 1 + bounces enemies.
 @export var bounces: int = 3

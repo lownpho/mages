@@ -1,43 +1,29 @@
 extends Node2D
 
 ## Generic summon spawner (Halp, Bzzz, a boss calling adds): lays the minions out in the
-## spell's spawn_pattern, injecting each tier's stats, then frees itself — every minion then
-## lives on its own. A player's minion is a plain Creature flipped to the player's faction
-## (target_groups / bullet layer authored on the minion scene), and the spawner injects the
-## per-tier values the spell resource carries: health, spell, sheet, lifetime. A minion that
-## brings its own CreatureResource is left entirely alone — that's how the same spell summons
-## a boss's adds, which are ordinary roster enemies and already know how to fight.
+## spell's spawn_pattern, injects the per-tier values (health, spell, sheet, lifetime),
+## then frees itself. A minion that brings its own CreatureResource is left entirely
+## alone — that's how the same spell summons a boss's adds, which are ordinary roster
+## enemies and already know how to fight.
 
 @export var spread: float = 12.0  ## Lateral spacing between adjacent minions in a fan.
 
 var data: SummonResource
-var _origin: Vector2
-var _facing: Vector2 = Vector2.RIGHT
-var _skill: int = 0
-var _speed: int = 0
-var _defence: int = 0
+var ctx: CastContext
 
+# Snapshot of the caster through the usual CastContext, so each minion is stamped with
+# its stats and fires exactly as if the caster had cast minion_spell itself — the minion
+# bullet's own skill/speed/defence_scaling pick which stat grows it (Bzzz=speed,
+# Jimmy=defence).
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
-	_origin = caster.global_position
-	_facing = caster.get_aim_direction()
-	# Snapshot the caster's stats; each minion is stamped with them so its bullet
-	# scales exactly as if the player cast it — the minion bullet's own
-	# skill/speed/defence_scaling pick which stat grows it (Bzzz=speed, Jimmy=defence).
-	_skill = _stat(caster, "skill")
-	# Bonus speed only — base_speed is the walk floor, not a power stat (see CastContext).
-	_speed = _stat(caster, "speed") - _stat(caster, "base_speed")
-	_defence = _stat(caster, "defence")
-
-func _stat(caster: Node2D, key: String) -> int:
-	var value = caster.get(key)
-	return int(value) if value != null else 0
+	ctx = CastContext.new(spell, caster)
 
 func _ready() -> void:
 	if data.minion_scenes.is_empty():
 		queue_free()
 		return
-	var perp := _facing.orthogonal()
+	var perp := ctx.aim.orthogonal()
 	for i in data.count:
 		var minion: Creature = data.minion_scenes[randi() % data.minion_scenes.size()].instantiate()
 		# A minion carrying its own CreatureResource is a full creature in its own right (a
@@ -45,12 +31,12 @@ func _ready() -> void:
 		# spells, and stamping the caster's over them would rewrite the enemy.
 		if minion.data == null:
 			minion.max_health = data.minion_health  # Creature uses this directly when `data` is null
-			minion.skill = _skill                   # the player's stats ride the minion so its
-			minion.speed = _speed                   # bullet scales through the usual compute()
-			minion.defence = _defence
+			minion.skill = ctx.skill                # the caster's stats ride the minion so its
+			minion.speed = ctx.speed                # bullet scales through the usual compute()
+			minion.defence = ctx.defence
 			_inject_spell(minion, data.minion_spell)
 			_apply_sheet(minion, data.minion_sheet)
-		minion.global_position = _origin + _slot(i, perp)
+		minion.global_position = ctx.origin + _slot(i, perp)
 		# Deferred: a direct add_child to root fails while our own _ready is still
 		# busy adding us to the tree.
 		get_tree().root.add_child.call_deferred(minion)
@@ -62,8 +48,8 @@ func _slot(i: int, perp: Vector2) -> Vector2:
 	if data.spawn_pattern == 1:  # Ring
 		return Vector2(data.spawn_distance, 0).rotated(TAU * i / float(maxi(1, data.count)))
 	if data.spawn_pattern == 2:  # Queue
-		return -_facing * data.spawn_distance * (i + 1)
-	return _facing * data.spawn_distance + perp * ((i - (data.count - 1) / 2.0) * spread)
+		return -ctx.aim * data.spawn_distance * (i + 1)
+	return ctx.aim * data.spawn_distance + perp * ((i - (data.count - 1) / 2.0) * spread)
 
 # The minion's attack is whichever Cast beat its FSM carries — found by type rather than by
 # a hardcoded node name, so a minion scene is free to call its attack state whatever suits.

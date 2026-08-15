@@ -8,8 +8,8 @@ class_name ParallelPattern
 
 func get_directions(direction: Vector2) -> Array[Vector2]:
 	var dirs: Array[Vector2] = []
-	for i in range(num_bullets):
-		dirs.append(direction)
+	dirs.resize(num_bullets)
+	dirs.fill(direction)
 	return dirs
 
 func get_offsets(direction: Vector2) -> Array[Vector2]:

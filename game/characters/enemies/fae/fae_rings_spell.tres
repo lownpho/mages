@@ -34,6 +34,6 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.8
 max_shots = 10
 rotation_per_shot = 20.0
-aim_independent = true
+aim_mode = 2
 effect_scene = ExtResource("99_effect")
 cast_time = 0.6

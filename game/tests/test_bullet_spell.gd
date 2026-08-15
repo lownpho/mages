@@ -7,7 +7,7 @@ extends Node
 ## onto its full cooldown (a single-shot instant bullet spell like zaap is a burst
 ## too, so it's exclusive as well). Slots live on two pages of two
 ## (cycle_spell_page flips which two the cast actions drive). Last subtest covers the
-## burst's own shape — rotation_per_shot spiralling, aim_independent ignoring the
+## burst's own shape — rotation_per_shot spiralling, aim_mode Independent ignoring the
 ## caster — off a bare SpellCaster. Run:
 ##   godot --headless --path game res://tests/test_bullet_spell.tscn
 
@@ -21,6 +21,7 @@ var pew1: BulletSpellResource
 var pew2: BulletSpellResource
 var spawned: Dictionary = {}  # BulletResource -> bullets spawned carrying it
 var directions: Array[Vector2] = []  # every spawned bullet's launch direction, in order
+var last_bullet: BaseBullet  # most recently spawned, for the homing-lock check
 # Derived from the page geometry rather than written out: these were hardcoded to a
 # two-wide page, so when the loadout grew a third cast button every "page 1" index
 # silently addressed page 0 instead.
@@ -52,6 +53,7 @@ func _ready() -> void:
 	await _test_instant_bullet_cancels_burst()
 	await _test_channel_cancels_burst()
 	await _test_burst_rotation()
+	await _test_homing_lock()
 
 	# Leave no equipment behind for a later scene run in the same session.
 	for i in GlobalInventory.SPELL_SLOT_SIZE:
@@ -70,6 +72,7 @@ func _on_root_child(node: Node) -> void:
 	if node is BaseBullet:
 		spawned[node.data] = spawned.get(node.data, 0) + 1
 		directions.append(node.base_direction)
+		last_bullet = node
 
 func _count(spell: BulletSpellResource) -> int:
 	return spawned.get(spell.bullet, 0)
@@ -183,7 +186,7 @@ func _test_channel_cancels_burst() -> void:
 	await _wait_off_cooldown(pew1)
 
 # The burst-shaping dials that used to live on the RotatingVolley behaviour: a spell
-# with rotation_per_shot spirals its own aim shot to shot, and aim_independent ignores
+# with rotation_per_shot spirals its own aim shot to shot, and aim_mode Independent ignores
 # the caster entirely so the spray paints the arena from its own bearing. Cast off a
 # bare SpellCaster — the point is that the spell carries the shape, not the caster.
 func _test_burst_rotation() -> void:
@@ -213,9 +216,48 @@ func _test_burst_rotation() -> void:
 			fails.append("pulse %d drifted %.1f deg, want %.1f" % [
 				shot, drift, spell.rotation_per_shot])
 			break
-	# aim_independent: the burst must NOT sit on the aim we handed cast().
+	# aim_mode Independent: the burst must NOT sit on the aim we handed cast().
 	if absf(_deg_between(Vector2.RIGHT, directions[0])) < 0.5:
-		fails.append("aim_independent burst fired along the caster's aim")
+		fails.append("aim-independent burst fired along the caster's aim")
+	rig.queue_free()
+
+# A homing bullet locks its own target at spawn (HomingBehaviour.on_ready), rather than
+# being handed one by the cast: a hostile inside the bullet's cone and range gets picked up,
+# empty space leaves the shot flying straight.
+func _test_homing_lock() -> void:
+	var rig := Node2D.new()
+	rig.set_script(load("res://tests/support/stub_caster.gd"))
+	rig.global_position = Vector2(2000, 2000)  # clear of the player and its bullets
+	add_child(rig)
+	var rig_caster := SpellCaster.new()
+	rig.add_child(rig_caster)
+	var snipe: BulletSpellResource = load(
+		"res://characters/player/spells/snipe/snipe1.tres")
+	await get_tree().physics_frame
+
+	# Nothing to lock: aiming at empty space must leave target null.
+	last_bullet = null
+	rig_caster.cast(snipe, Vector2.RIGHT)
+	await _wait(0.1)
+	if last_bullet == null:
+		fails.append("homing spell spawned no bullet")
+	elif last_bullet.target != null:
+		fails.append("homing bullet locked something with no hostile in range")
+	await _wait_off_cooldown(snipe)
+
+	# A hostile down-range and inside the cone is the lock.
+	var dummy := Node2D.new()
+	dummy.add_to_group("enemies")
+	dummy.global_position = rig.global_position + Vector2(60, 20)
+	add_child(dummy)
+	last_bullet = null
+	rig_caster.cast(snipe, Vector2.RIGHT)
+	await _wait(0.1)
+	if last_bullet == null:
+		fails.append("homing spell spawned no bullet with a target present")
+	elif last_bullet.target != dummy:
+		fails.append("homing bullet did not lock the hostile in its cone")
+	dummy.queue_free()
 	rig.queue_free()
 
 func _deg_between(from: Vector2, to: Vector2) -> float:

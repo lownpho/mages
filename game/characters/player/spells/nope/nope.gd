@@ -1,11 +1,8 @@
 extends Node2D
 
-## Nope channel effect: while the button is held, the caster's incoming damage
-## is soaked by an absorb pool instead of health. It registers itself as the
-## player's damage_absorber (the hook in Player._on_hurt); channel_released() —
-## button release or the channel cap ending the channel — unregisters it. The
-## shield ring spins overlaid on the caster and flashes on each absorbed hit;
-## when the pool runs dry the bubble breaks early.
+## Nope channel effect: while the button is held, the caster's incoming damage is soaked by
+## an absorb pool instead of health. It registers itself as the caster's damage_absorber;
+## channel_released() unregisters it. When the pool runs dry the bubble breaks early.
 
 const _FLATTEN_SHADER = preload("res://gui/flatten.gdshader")
 const _FLASH_COLOR = Palette.WHITE  # Zughy 32 light — same as the UI ready-flash

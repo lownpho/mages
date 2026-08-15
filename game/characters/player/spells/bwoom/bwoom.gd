@@ -1,17 +1,12 @@
 extends CharacterBody2D
 
 ## Bwoom channel effect: a ball charges in front of the caster, growing one sprite frame per
-## tick while the button is held, then flies off along the caster's aim when the channel ends
-## — SpellCaster calls channel_released() on button release or at the cast_time cap. The hit
-## is the spell's ScalingProfile once per tick held, so a full charge is worth max_ticks
-## taps and the release is a real decision.
+## tick while held, then flies off along the aim when the channel ends. The hit is the
+## spell's ScalingProfile once per tick held, so the release is a real decision.
 ##
 ## It sits on the caster's bullet layer but stays OUT of the "bullets" group, so hurtboxes
 ## take damage from it without despawning it — that's the piercing line the design asks for.
 ## Only walls stop it; it dies on a wall, off-screen, at range, or on a fallback lifetime.
-##
-## Faction-agnostic like every other effect: aim, layer and stats come from CastContext, so
-## an owl charging a shot at the player runs this exact file.
 
 const LIFETIME = 3.0
 ## Hold distance from the caster along the aim while charging.
@@ -70,12 +65,7 @@ func channel_released() -> void:
 	shape.radius = STAGE_RADII_PX[mini(ticks, STAGE_RADII_PX.size()) - 1]
 	$CollisionShape2D.shape = shape
 	$CollisionShape2D.set_deferred("disabled", false)
-	var lifetime_timer := Timer.new()
-	lifetime_timer.one_shot = true
-	lifetime_timer.autostart = true
-	lifetime_timer.wait_time = LIFETIME
-	lifetime_timer.timeout.connect(queue_free)
-	add_child(lifetime_timer)
+	get_tree().create_timer(LIFETIME).timeout.connect(queue_free)
 
 func get_damage() -> int:
 	return _damage

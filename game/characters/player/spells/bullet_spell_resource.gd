@@ -1,12 +1,10 @@
 extends SpellResource
 class_name BulletSpellResource
 
-## A spell that fires bullets: casting looses a burst — the fire_pattern fired
-## every shot_interval along the caster's aim — until max_shots are spent, then
-## the spell goes on cooldown. max_shots = 1 with a Single pattern is a plain
-## single projectile (what "fireball" is). The behaviour lives in the generic
-## bullet_spell.tscn effect; a new bullet spell is one .tres composing a
-## FirePattern and a BulletResource, no code — and any caster can cast it.
+## A spell that fires bullets: casting looses a burst — the fire_pattern fired every
+## shot_interval along the caster's aim — until max_shots are spent, then the spell goes
+## on cooldown. max_shots = 1 with a Single pattern is a plain projectile (what "fireball"
+## is). A new bullet spell is one .tres composing a FirePattern and a BulletResource.
 
 @export_group("Bullet Spell")
 @export var fire_pattern: FirePattern
@@ -24,12 +22,14 @@ class_name BulletSpellResource
 ## instead of firing the same lanes every time — a ring wave reads as a slow spiral to weave
 ## through rather than a static wall. 0 = every shot on the same bearing.
 @export var rotation_per_shot: float = 0.0
-## Aim once, then commit: the burst samples the caster's aim as it starts and fires every
-## later shot down that same lane instead of re-leading a moving target shot by shot. A
-## tracking stream can only be dodged by out-running its cadence; a committed one is a line
-## you step out of, which is what makes a long burst readable. Ignored when max_shots is 1.
-@export var lock_aim: bool = false
-## Ignore the caster's aim: the burst starts from a random absolute angle and never tracks.
-## The arena-painting spray (fae's rings, thornmess's spores) rather than an aimed burst.
-## Already a committed lane, so it implies lock_aim.
-@export var aim_independent: bool = false
+## Which lane the burst's shots fire down. TRACK re-samples the caster's aim every shot,
+## so the stream follows them as they turn — dodged only by out-running its cadence.
+## LOCK samples once as the burst starts and commits, which is what makes a long burst a
+## readable line you step out of. INDEPENDENT commits to a random absolute angle instead,
+## ignoring the caster entirely — the arena-painting spray (fae's rings, thornmess's
+## spores). Ignored when max_shots is 1.
+@export_enum("Track", "Lock", "Independent") var aim_mode: int = AIM_TRACK
+
+const AIM_TRACK := 0
+const AIM_LOCK := 1
+const AIM_INDEPENDENT := 2

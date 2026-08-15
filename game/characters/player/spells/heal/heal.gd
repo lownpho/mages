@@ -1,10 +1,7 @@
 extends Node2D
 
-## Heal effect: restores health to the caster, capped at max. A red plus-sign
-## aura rises over the caster (mirroring the focus aura) as feedback, then the
-## node frees.
-## Healing is the spell's ScalingProfile (HealResource.amount), defence-scaled
-## per the design (the survivability stat feeds the survivability button).
+## Heal effect: restores HealResource.amount to the caster, capped at max, with a plus-sign
+## aura over the caster as feedback.
 
 var data: HealResource
 var caster: CharacterBody2D

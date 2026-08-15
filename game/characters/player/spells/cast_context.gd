@@ -1,14 +1,10 @@
 extends RefCounted
 class_name CastContext
 
-## The cast environment a spell effect needs, sampled once from the caster at
-## setup() so every effect reads it the same way instead of re-deriving it.
-##
-## Faction-agnostic by construction: `skill`, `target_groups`,
-## `bullet_collision_layer` and `get_aim_direction()` are on the caster contract
-## (player and Creature both), while stats a creature may lack (speed, defence,
-## bullets_pierce) come through get() with safe defaults. Aim is always a
-## direction — never a cursor position — so a controller stick can drive it.
+## The cast environment a spell effect needs, sampled once from the caster at setup() —
+## the ONE place a caster's stats and faction are read, so nothing re-derives them.
+## Stats a creature may lack (speed, defence, bullets_pierce) come through get() with
+## safe defaults. Aim is always a direction, never a cursor, so a stick can drive it.
 
 var spell: SpellResource
 var caster: Node2D
@@ -61,7 +57,7 @@ func _scaling_speed() -> int:
 ## cast's faction, stats and pierce. Pass deferred=true when spawning from an
 ## effect's own _ready (the tree is still busy adding the effect); a burst tick
 ## in _physics_process adds synchronously.
-func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2, target: Node2D = null, deferred: bool = false) -> BaseBullet:
+func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2, deferred: bool = false) -> BaseBullet:
 	var b: BaseBullet = _BulletScene.instantiate()
 	b.data = bullet
 	b.damage = damage
@@ -72,7 +68,6 @@ func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2,
 	b.speed = speed
 	b.defence = defence
 	b.pierce = pierce or bullet.pierce
-	b.target = target
 	b.target_groups = target_groups
 	if deferred:
 		caster.get_tree().root.add_child.call_deferred(b)
@@ -80,14 +75,3 @@ func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2,
 		caster.get_tree().root.add_child(b)
 	return b
 
-## Nearest hostile within `range_px` and `cone_deg` of the aim direction, across
-## every target group — the shared homing lock (no cursor position).
-func find_target(direction: Vector2, range_px: float, cone_deg: float) -> Node2D:
-	var from: Vector2 = caster.global_position  # live: a burst tracks the moving caster
-	var best: Node2D = null
-	for group in target_groups:
-		var hit := AimAssist.nearest_in_cone(caster.get_tree(), group, from, direction, range_px, cone_deg)
-		if hit and (best == null or from.distance_squared_to(hit.global_position) \
-				< from.distance_squared_to(best.global_position)):
-			best = hit
-	return best

@@ -1,12 +1,10 @@
 extends Resource
 class_name BulletBehaviour
 
-## One composable trait of a bullet, mirroring FirePattern: a BulletResource
-## carries an Array[BulletBehaviour] and BaseBullet dispatches these hooks to
-## each. Behaviours are shared (one instance per resource, flown by many
-## bullets), so they hold config only — per-bullet state lives in BaseBullet's
-## `runtime` scratch dict, keyed by the behaviour. Override just the hooks a
-## trait needs.
+## One composable trait of a bullet: BaseBullet dispatches these hooks to every entry in
+## its BulletResource's `behaviours`. Behaviours are SHARED (one instance per resource,
+## flown by many bullets), so they hold config only — per-bullet state goes in
+## BaseBullet's `runtime` scratch dict, keyed by the behaviour.
 
 ## Per-bullet setup: stash any runtime counters in `bullet.runtime`.
 func on_ready(_bullet: BaseBullet) -> void:

@@ -1,11 +1,9 @@
 extends Node2D
 
-## Blink effect: pick a landing spot and put the caster on it. Faction-agnostic like every
-## other spell — it asks the caster for its aim and its target, nothing more.
-##
-## A hop is refused rather than forced when terrain is in the way: the ray from here to
-## there has to be clear, or the caster stays put. Retries jitter the bearing, so a blink
-## with a wall on one side finds the open side instead of failing outright.
+## Blink effect: pick a landing spot and put the caster on it. A hop is refused rather than
+## forced when terrain is in the way — the ray from here to there has to be clear, or the
+## caster stays put. Retries jitter the bearing, so a blink with a wall on one side finds
+## the open side instead of failing outright.
 
 const ATTEMPTS := 5
 

@@ -1,10 +1,9 @@
 extends BulletBehaviour
 class_name BlastPayload
 
-## On-expire AoE: when the bullet dies (wall, range, or reaching a hurtbox) it
-## spawns a one-shot damage zone of `radius_tiles` dealing the bullet's own
-## damage, plus an optional animation. This is what makes an exploding bullet
-## read as a fireball — no bespoke code.
+## On-expire AoE: when the bullet dies (wall, range, or reaching a hurtbox) it spawns a
+## one-shot damage zone of `radius_tiles` dealing the bullet's own damage, plus an optional
+## animation. This is what makes an exploding bullet read as a fireball.
 
 @export var radius_tiles: float = 3.0
 ## One-shot animation played at the blast, sized to match (native resolution —
@@ -32,12 +31,7 @@ func on_expire(bullet: BaseBullet) -> void:
 	shape.shape = circle
 	zone.add_child(shape)
 	# Brief life so hurtboxes register the overlap, then it cleans itself up.
-	var life := Timer.new()
-	life.one_shot = true
-	life.autostart = true
-	life.wait_time = 0.1
-	life.timeout.connect(zone.queue_free)
-	zone.add_child(life)
+	bullet.get_tree().create_timer(0.1).timeout.connect(zone.queue_free)
 	# Deferred: on_expire can run mid-collision while the tree is busy.
 	bullet.get_tree().root.add_child.call_deferred(zone)
 

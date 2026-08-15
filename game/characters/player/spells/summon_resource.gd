@@ -2,17 +2,10 @@ extends SpellResource
 class_name SummonResource
 
 ## Summon: spawns `count` minions in front of the caster that hunt enemies until their
-## lifetime runs out, splitting enemy aggro off the player. Each minion is a plain
-## Creature flipped to the player's faction (target_groups / bullet layer authored on the
-## minion scene), and its whole attack rides minion_spell, reusing the bullet-spell + bullet
-## systems. The minion's damage lives on minion_spell's bullet. What makes it Halp vs Bzzz
-## is the minion scene (art + FSM) and these numbers, not code. The spawner injects these
-## per-tier values (see summon_spawner); the minion scene carries no per-tier data of its own.
-##
-## Caster scaling: the spawner stamps the caster's own stats (skill/speed/defence) onto each
-## minion, so the minion fires exactly as if the player cast minion_spell — the minion
-## bullet's own skill/speed/defence_scaling pick which stat grows it (Bzzz=speed,
-## Jimmy=defence). No summon-specific damage math, no scaling selector.
+## lifetime runs out. Each minion is a plain Creature flipped to the player's faction, and
+## its whole attack rides minion_spell — what makes it Halp vs Bzzz is the minion scene
+## (art + FSM) and these per-tier numbers, which summon_spawner injects.
+
 ## Sampled per minion, so one summon can call in a mixed knot (a boss's adds) as easily as
 ## a uniform fan. A single entry is the ordinary case.
 @export var minion_scenes: Array[PackedScene] = []

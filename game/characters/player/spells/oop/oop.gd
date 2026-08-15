@@ -1,9 +1,7 @@
 extends BulletSpell
 
-## Oop: the caster IS the payload. Everything about the blast is the ordinary bullet-spell
-## engine — a BlastPayload bullet like any other explosion — plus the one thing that makes
-## it a self-detonation: once the burst is out, it takes the caster with it. Faction-agnostic
-## like every other spell, so anything that can die can carry it.
+## Oop: the caster IS the payload. The blast is an ordinary BlastPayload bullet; the one
+## thing this adds is that once the burst is out, it takes the caster with it.
 
 func _ready() -> void:
 	super()

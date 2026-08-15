@@ -186,4 +186,5 @@ func _end_windup() -> void:
 # Whether this beat is pointed at someone: an absolute-aim spray fires from its own
 # bearing, so it neither tracks the target nor cares that they left.
 func _is_aimed() -> bool:
-	return not (spell is BulletSpellResource and spell.aim_independent)
+	return not (spell is BulletSpellResource \
+		and spell.aim_mode == BulletSpellResource.AIM_INDEPENDENT)

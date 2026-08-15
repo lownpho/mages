@@ -1,10 +1,9 @@
 extends BulletSpellResource
 class_name MineResource
 
-## A mine is a bullet spell that waits in the ground: everything about what it does when it
-## goes off — pattern, bullet, damage — is the bullet-spell data underneath, and these two
-## dials are the wait around it. Oop's single blast bullet and Ploop's ring of piercing
-## darts are the same effect with different burst data.
+## A mine is a bullet spell that waits in the ground: what it does when it goes off is the
+## bullet-spell data underneath, and these dials are the wait around it. Oop's single blast
+## bullet and Ploop's ring of darts are the same effect with different burst data.
 
 @export_group("Mine")
 ## What it looks like sitting there — "idle" while it waits, "fuse" once it goes. The one

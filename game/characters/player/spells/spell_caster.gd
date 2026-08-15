@@ -1,14 +1,11 @@
 extends Node
 class_name SpellCaster
 
-## The cast engine, mounted on ANY caster (player, enemy, minion) as a child. It
-## owns the generic flow — per-spell cooldowns, the cast_time wind-up, channels,
-## and over-time effects that cool down when they finish — and spawns each effect
-## through the setup(spell, host) contract, so the host (get_parent()) supplies
-## stats, aim and faction. WHAT to cast and WHEN is a trigger's job:
-## PlayerCastInput maps input + loadout to cast(); creature behaviours call cast()
-## on their own timing. There is no "weapon" — everything is a spell, and any
-## caster can cast any spell.
+## The cast engine, mounted on ANY caster (player, enemy, minion) as a child: per-spell
+## cooldowns, the cast_time wind-up, channels, and over-time effects that cool down when
+## they finish. Spawns each effect through setup(spell, host), so the host (get_parent())
+## supplies stats, aim and faction. WHAT and WHEN is a trigger's job — PlayerCastInput
+## maps input + loadout to cast(), creature behaviours call cast() on their own timing.
 
 ## A wind-up or channel began — the host may root itself / play a telegraph.
 signal cast_started(spell)
@@ -49,9 +46,13 @@ func cast(spell: SpellResource, aim: Vector2 = Vector2.ZERO) -> bool:
 	elif spell.cast_time > 0.0:
 		_begin_windup(spell)
 	else:
-		# Instant: exclusivity (a second bullet spell cancelling the first) is handled by
-		# the burst effect via host.register_burst, so instants stack cleanly here.
-		_resolve_cooldown(spell, _spawn_effect(spell))
+		var effect := _spawn_effect(spell)
+		# One burst at a time: a new over-time effect cancels any live one (it isn't in
+		# _await_finish itself until _resolve_cooldown below). A plain instant (heal,
+		# thwomp) has no "finished" signal and stacks on a firing burst.
+		if effect.has_signal("finished"):
+			_cancel_bursts()
+		_resolve_cooldown(spell, effect)
 	return true
 
 ## True while `spell` is mid wind-up/channel or its over-time effect is still running.
@@ -138,10 +139,12 @@ func _on_cast_time_finished() -> void:
 		_resolve_cooldown(spell, _spawn_effect(spell))
 		cast_resolved.emit(spell)
 
-# Interrupt any live burst on the host (player only) — exclusive spells cancel it.
+# Exclusive spells cancel any live burst, which ends it onto its full cooldown.
+# values() is a copy, so the finished handler erasing from _await_finish is safe.
 func _cancel_bursts() -> void:
-	if host.has_method("cancel_bursts"):
-		host.cancel_bursts()
+	for effect in _await_finish.values():
+		if is_instance_valid(effect) and effect.has_method("interrupt"):
+			effect.interrupt()
 
 # An over-time effect (one exposing "finished") holds its spell live and cools
 # down when it ends; anything else cools down immediately.

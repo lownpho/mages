@@ -1,13 +1,9 @@
 extends BulletSpell
 
-## ChargeDash: the caster is the projectile. Everything about the shots — the FlankPattern,
-## the cadence, the length of the trail — is the bullet-spell engine underneath, unchanged.
-## The one thing this adds is the run itself: the caster is driven along the cast's aim for
-## dash_duration through start_dash, a capability both the player and Creature expose, so the
-## same spell is a mobility burst in the player's hands and a boar's charge in a thornback's.
-##
-## The heading is locked at launch by construction — start_dash takes a direction, not a
-## target — which is what makes a charge something you sidestep rather than outrun.
+## ChargeDash: the caster is the projectile. The shots are the bullet-spell engine
+## underneath, unchanged; the one thing this adds is the run, driven through start_dash
+## (both the player and Creature expose it). start_dash takes a direction, not a target,
+## so the heading locks at launch — a charge is something you sidestep, not outrun.
 
 func _ready() -> void:
 	super()

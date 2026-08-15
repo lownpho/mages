@@ -1,10 +1,9 @@
 extends BulletSpellResource
 class_name ChargeDashResource
 
-## ChargeDash is an ordinary bullet spell that happens to move its caster: the burst — a
-## FlankPattern over max_shots/shot_interval — IS the shed bullets, and these two dials are
-## the run they're shed along. Author the burst to last about as long as the dash, or the
-## trail stops short of where the caster ends up.
+## An ordinary bullet spell that happens to move its caster: the burst IS the shed bullets,
+## and these two dials are the run they're shed along. Author the burst to last about as
+## long as the dash, or the trail stops short of where the caster ends up.
 
 @export_group("Charge Dash")
 ## Dash speed in px/s.

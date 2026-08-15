@@ -1,9 +1,9 @@
 extends CharacterBody2D
 class_name BaseBullet
 
-## A projectile driven entirely by its BulletResource: kinematics here, every
-## trait beyond flying straight delegated to the resource's BulletBehaviours.
-## Set up by CastContext.spawn_bullet before the bullet enters the tree.
+## A projectile driven entirely by its BulletResource: kinematics here, every trait beyond
+## flying straight delegated to its BulletBehaviours. Set up by CastContext.spawn_bullet
+## before the bullet enters the tree.
 var data: BulletResource
 ## What this shot hits for. Comes from the CAST, not the shape — stamped by
 ## CastContext.spawn_bullet — so the same def fires for 20 from the player and 8
@@ -32,7 +32,7 @@ var lifetime_timer: Timer
 var _deals_contact_damage: bool = true
 # queue_free() only takes effect at the end of the frame, so a bullet that
 # reaches two hurtboxes (or a hurtbox and a wall) in the same frame would run
-# _expire twice and fire its payload twice — a double explosion.
+# expire twice and fire its payload twice — a double explosion.
 var _expired: bool = false
 
 func speed_px() -> float:
@@ -55,7 +55,7 @@ func _ready() -> void:
 	var lifetime := float(data.range_tiles) / data.speed_tiles if data.speed_tiles > 0 else 0.0
 	if lifetime <= 0.0:
 		hide()
-		_expire()
+		expire()
 		return
 
 	if pierce:
@@ -74,7 +74,7 @@ func _ready() -> void:
 	lifetime_timer.one_shot = true
 	lifetime_timer.wait_time = lifetime
 	lifetime_timer.autostart = true
-	lifetime_timer.timeout.connect(_expire)
+	lifetime_timer.timeout.connect(expire)
 	add_child(lifetime_timer)
 
 	velocity = base_direction * speed_px()
@@ -100,7 +100,7 @@ func _reached_wall(collision: KinematicCollision2D) -> void:
 	for b in data.behaviours:
 		if b.on_wall(self, collision):
 			return
-	_expire()
+	expire()
 
 func computed_damage() -> int:
 	if not damage:
@@ -118,16 +118,11 @@ func reached_hurtbox() -> void:
 	for b in data.behaviours:
 		if b.on_hurtbox(self):
 			return
-	_expire()
+	expire()
 
-## Force the bullet to despawn now, firing its on-expire payloads — a behaviour
-## calls this when it dead-ends (e.g. a chain with no next target).
+## Single despawn path: fire every on-expire payload, then free. A behaviour calls
+## it directly when it dead-ends (e.g. a chain with no next target).
 func expire() -> void:
-	_expire()
-
-# Single despawn path: fire every on-expire payload, then free. A plain bullet
-# has no behaviours and just frees.
-func _expire() -> void:
 	if _expired:
 		return
 	_expired = true

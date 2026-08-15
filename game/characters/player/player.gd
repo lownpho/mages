@@ -49,11 +49,6 @@ const KNOCKBACK_DECAY := 1200.0
 ## While true, bullet-spell bullets fired pass through hurtboxes (Clang buff).
 ## A spell effect sets it on cast and clears it when its window ends.
 var bullets_pierce: bool = false
-## The bullet-spell burst currently firing, if any — only one is ever live.
-## Starting another burst (register_burst) or an exclusive spell, a cast or
-## channel (cancel_bursts, called by SpellCaster), ends it onto its cooldown;
-## instant spells leave it firing.
-var _live_burst: Node = null
 ## While Time.get_ticks_msec() < this, incoming damage is ignored — a spawn buffer so
 ## enemies placed near the spawn point can't chip you before you've taken control.
 var _grace_until_ms: int = 0
@@ -96,25 +91,10 @@ func get_aim_direction() -> Vector2:
 		return _pad_aim
 	return (get_global_mouse_position() - global_position).normalized()
 
-func register_burst(burst: Node) -> void:
-	cancel_bursts()  # one burst at a time: the new burst cancels any live one
-	_live_burst = burst
-
-func unregister_burst(burst: Node) -> void:
-	if _live_burst == burst:
-		_live_burst = null
-
-## Interrupt the live burst — it ends onto its full cooldown. Called when an
-## exclusive spell starts: a new bullet-spell burst, a cast, or a channel.
-## interrupt() unwinds through unregister_burst, which clears _live_burst.
-func cancel_bursts() -> void:
-	if is_instance_valid(_live_burst):
-		_live_burst.interrupt()
-
-func can_burst_fire(burst: Node) -> bool:
+func can_burst_fire() -> bool:
 	# A dash is can_act = false so no NEW cast starts mid-flight, but ChargeDash's own burst
 	# is the thing doing the driving — suspending it would leave the dash with no bullets.
-	return (can_act or _is_dashing()) and _live_burst == burst
+	return can_act or _is_dashing()
 
 func get_input_direction() -> Vector2:
 	# While the HUD captures input (controller slot navigation) the stick moves
