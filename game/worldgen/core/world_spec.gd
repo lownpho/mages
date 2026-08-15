@@ -58,6 +58,7 @@ func placement_for(bid: StringName) -> BiomePlacement:
 
 ## Macro-cell coordinate containing a world-space room slot (component-wise integer division).
 func cell_of_slot(slot: Vector2i) -> Vector2i:
+	@warning_ignore("integer_division")
 	return slot / config.biome_slots
 
 

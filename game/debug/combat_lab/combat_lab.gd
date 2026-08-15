@@ -180,6 +180,7 @@ func _wall_input(event: InputEvent) -> void:
 
 func _paint_walls(at: Vector2, on: bool) -> void:
 	var centre := _walls.local_to_map(_walls.to_local(at))
+	@warning_ignore("integer_division")   # even sizes lean one tile; truncation is the anchor
 	var lo := -(_wall_brush_size - 1) / 2
 	for dy in range(lo, lo + _wall_brush_size):
 		for dx in range(lo, lo + _wall_brush_size):
