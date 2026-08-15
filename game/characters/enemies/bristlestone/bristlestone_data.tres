@@ -1,13 +1,13 @@
-[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://hc24pay2yl40"]
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cburrw00ddata"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://coop2t1er2res" path="res://characters/player/spells/oop/oop2.tres" id="3_oop"]
-[ext_resource type="Texture2D" uid="uid://dsif3cob0lk38" path="res://characters/enemies/deadwood/deadwood.png" id="icon_png"]
+[ext_resource type="Resource" uid="uid://cploop3t1er3r" path="res://characters/player/spells/ploop/ploop2.tres" id="3_ploop"]
+[ext_resource type="Texture2D" uid="uid://bf4b0gtmtmq2" path="res://characters/enemies/bristlestone/bristlestone.png" id="icon_png"]
 
-[sub_resource type="Resource" id="Drop_oop"]
+[sub_resource type="Resource" id="Drop_ploop"]
 script = ExtResource("2_drop")
-item = ExtResource("3_oop")
+item = ExtResource("3_ploop")
 chance = 0.04
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
@@ -17,7 +17,7 @@ region = Rect2(0, 8, 8, 8)
 
 [resource]
 script = ExtResource("1_res")
-display_name = "Deadwood"
+display_name = "Bristlestone"
 icon = SubResource("AtlasTexture_icon")
 max_health = 1
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_oop")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_ploop")])

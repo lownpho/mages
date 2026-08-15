@@ -40,7 +40,7 @@ members = Array[ExtResource("3_pm")]([SubResource("pm_1_0"), SubResource("pm_1_1
 
 [sub_resource type="Resource" id="pm_2_0"]
 script = ExtResource("3_pm")
-enemy_id = &"deadwood"
+enemy_id = &"cinderstone"
 count_min = 2
 count_max = 2
 
@@ -55,7 +55,7 @@ members = Array[ExtResource("3_pm")]([SubResource("pm_2_0"), SubResource("pm_2_1
 
 [sub_resource type="Resource" id="pm_3_0"]
 script = ExtResource("3_pm")
-enemy_id = &"burrwood"
+enemy_id = &"bristlestone"
 count_min = 2
 count_max = 2
 
@@ -83,11 +83,11 @@ members = Array[ExtResource("3_pm")]([SubResource("pm_4_0"), SubResource("pm_4_1
 
 [sub_resource type="Resource" id="pm_5_0"]
 script = ExtResource("3_pm")
-enemy_id = &"deadwood"
+enemy_id = &"cinderstone"
 
 [sub_resource type="Resource" id="pm_5_1"]
 script = ExtResource("3_pm")
-enemy_id = &"burrwood"
+enemy_id = &"bristlestone"
 
 [sub_resource type="Resource" id="pm_5_2"]
 script = ExtResource("3_pm")

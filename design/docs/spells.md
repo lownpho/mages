@@ -294,13 +294,13 @@ An instant hop along your aim: you vanish and reappear a fixed distance away, le
 
 ### Oop
 
-Drops a mine a tile ahead of your aim — in the doorway, not under your feet. It arms on a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has no health, nothing can shoot it, and it never moves or chases; it is a hazard the room has to walk around. Several can be out at once, so it plays as prep: seed the doorway you are about to retreat through, or the lane the pack has to cross. The deadwood is the same detonation pointed the other way.
+Drops a mine a tile ahead of your aim — in the doorway, not under your feet. It arms on a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has no health, nothing can shoot it, and it never moves or chases; it is a hazard the room has to walk around. Several can be out at once, so it plays as prep: seed the doorway you are about to retreat through, or the lane the pack has to cross. The cinderstone is the same detonation pointed the other way.
 
-**Scaling:** speed · **Hold:** charged
+**Scaling:** skill · **Hold:** charged
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 3s | 0.15s | Single | 12 + 1×speed = **92** | 1 | skill +5, speed +5 |
+| T2 | 2s | 0.2s | Single | 12 + 1×skill = **37** | 0 | skill +5 |
 
 **Also:** blast 4 tiles (splash only).
 
@@ -308,11 +308,11 @@ Drops a mine a tile ahead of your aim — in the doorway, not under your feet. I
 
 The mine that answers a crowd instead of a target: same drop, same arming, but on contact it erupts into a full ring of piercing darts that run through everything in line. Lower per-hit than Oop's blast, far better across a corridor or into a pack, and the darts keep going after the first body.
 
-**Scaling:** speed
+**Scaling:** speed · **Hold:** charged
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T3 | 2.6s | instant | Ring x8 | 6 + 0.5×speed = **46** | 6 | speed +6, defence +6 |
+| T2 | 2s | 0.2s | Ring x8, 3 @ 0.15s | 7 + 0.75×speed = **67** | 6 | speed +6 |
 
 **Also:** pierces.
 

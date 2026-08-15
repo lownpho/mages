@@ -1009,28 +1009,26 @@
    "id": "oop",
    "name": "Oop",
    "category": "utility",
-   "description": "Drops a mine a tile ahead of your aim — in the doorway, not under your feet. It arms on a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has no health, nothing can shoot it, and it never moves or chases; it is a hazard the room has to walk around. Several can be out at once, so it plays as prep: seed the doorway you are about to retreat through, or the lane the pack has to cross. The deadwood is the same detonation pointed the other way.",
+   "description": "Drops a mine a tile ahead of your aim — in the doorway, not under your feet. It arms on a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has no health, nothing can shoot it, and it never moves or chases; it is a hazard the room has to walk around. Several can be out at once, so it plays as prep: seed the doorway you are about to retreat through, or the lane the pack has to cross. The cinderstone is the same detonation pointed the other way.",
    "per_tier": "",
    "kind": "bullet",
    "hold": "charged",
    "scaling": [
-    "speed"
+    "skill"
    ],
    "grants": [
-    "skill",
-    "speed"
+    "skill"
    ],
    "tiers": [
     {
      "tier": 2,
      "source": "game/characters/player/spells/oop/oop2.tres",
      "kind": "bullet",
-     "cooldown": 3,
-     "cast_time": 0.15,
+     "cooldown": 2,
+     "cast_time": 0.2,
      "channeled": false,
      "grants": {
-      "skill": 5,
-      "speed": 5
+      "skill": 5
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -1040,13 +1038,13 @@
      },
      "amount": {
       "base": 12,
-      "skill": 0,
-      "speed": 1,
+      "skill": 1,
+      "speed": 0,
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 1,
-      "speed_tiles": 6,
+      "range_tiles": 0,
+      "speed_tiles": 0,
       "pierce": false
      },
      "behaviours": [
@@ -1070,46 +1068,44 @@
    "description": "The mine that answers a crowd instead of a target: same drop, same arming, but on contact it erupts into a full ring of piercing darts that run through everything in line. Lower per-hit than Oop's blast, far better across a corridor or into a pack, and the darts keep going after the first body.",
    "per_tier": "",
    "kind": "bullet",
-   "hold": "no",
+   "hold": "charged",
    "scaling": [
     "speed"
    ],
    "grants": [
-    "defence",
     "speed"
    ],
    "tiers": [
     {
-     "tier": 3,
-     "source": "game/characters/player/spells/ploop/ploop3.tres",
+     "tier": 2,
+     "source": "game/characters/player/spells/ploop/ploop2.tres",
      "kind": "bullet",
-     "cooldown": 2.6,
-     "cast_time": 0,
+     "cooldown": 2,
+     "cast_time": 0.2,
      "channeled": false,
      "grants": {
-      "speed": 6,
-      "defence": 6
+      "speed": 6
      },
      "shots": {
       "pattern": "RingPattern",
       "per_shot": 8,
-      "count": 1,
-      "interval": 0.25
+      "count": 3,
+      "interval": 0.15
      },
      "amount": {
-      "base": 6,
+      "base": 7,
       "skill": 0,
-      "speed": 0.5,
+      "speed": 0.75,
       "defence": 0
      },
      "projectile": {
       "range_tiles": 6,
-      "speed_tiles": 11,
+      "speed_tiles": 12,
       "pierce": true
      },
      "mine": {
       "arm_time": 0.6,
-      "lifetime": 14
+      "lifetime": 12
      }
     }
    ]
@@ -1429,8 +1425,8 @@
    ]
   },
   {
-   "source": "game/characters/enemies/burrwood/burrwood_data.tres",
-   "name": "Burrwood",
+   "source": "game/characters/enemies/bristlestone/bristlestone_data.tres",
+   "name": "Bristlestone",
    "rarity": "common",
    "max_health": 1,
    "probes": {
@@ -1438,15 +1434,15 @@
    },
    "drops": [
     {
-     "item": "ploop3",
+     "item": "ploop2",
      "spell": "ploop",
-     "tier": 3,
+     "tier": 2,
      "chance": 0.04
     }
    ],
    "attacks": [
     {
-     "cast": "burrwood_ploop",
+     "cast": "bristlestone_ploop",
      "kind": "bullet",
      "cooldown": 0,
      "cast_time": 0.3,
@@ -1471,15 +1467,15 @@
      "name": "ploop"
     }
    ],
-   "id": "burrwood",
+   "id": "bristlestone",
    "difficulty": 4,
-   "description": "The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the\nsame log lying in the same litter, and it triggers the same way — step close, or clip it\nwith a shot, and the fuse runs. What comes out is the difference: instead of one big blast\nit bursts into a full ring of piercing darts that carry clean across the room and straight\nthrough anything in the way.\n\nBetween the two of them a room of logs stops being scenery you ignore. The blast one\npunishes standing next to it, the dart one punishes standing anywhere in line with it,\nand until one goes off you don't know which you're walking past. The tell, if you look\nfor it, is a dry burr husk in the moss.\n",
-   "blurb": "The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the same log lying in the same litter, and it triggers the same way — step close, or clip it with a shot, and the fuse runs. What comes out is the difference: instead of one big blast it bursts into a full ring of piercing darts that carry clean across the room and straight through anything in the way.",
-   "art": "the deadwood's log, moss and all, with one pale burr husk among the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.",
+   "description": "The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the\nsame rock sitting in the same litter, and it triggers the same way — step close, or clip it\nwith a shot, and the fuse runs. What comes out is the difference: instead of one big blast\nit bursts into a full ring of piercing darts that carry clean across the room and straight\nthrough anything in the way.\n\nBetween the two of them a room of rocks stops being scenery you ignore. The blast one\npunishes standing next to it, the dart one punishes standing anywhere in line with it,\nand until one goes off you don't know which you're walking past. The tell, if you look\nfor it, is a pair of dry burr spines in the moss on top.\n",
+   "blurb": "The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the same rock sitting in the same litter, and it triggers the same way — step close, or clip it with a shot, and the fuse runs. What comes out is the difference: instead of one big blast it bursts into a full ring of piercing darts that carry clean across the room and straight through anything in the way.",
+   "art": "the cinderstone's boulder, moss and all, with two pale burr spines standing out of the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.",
    "casts": [
     "ploop"
    ],
-   "notes": "it drops the Ploop it fires, the way the deadwood drops its Oop. Killing it before the fuse lands does NOT set it off.",
+   "notes": "it drops the Ploop it fires, the way the cinderstone drops its Oop. Killing it before the fuse lands does NOT set it off.",
    "fsm": {
     "start": "Disguise",
     "transitions": [
@@ -1496,7 +1492,7 @@
     ]
    },
    "icon": {
-    "url": "../../game/characters/enemies/burrwood/burrwood.png",
+    "url": "../../game/characters/enemies/bristlestone/bristlestone.png",
     "region": [
      0,
      8,
@@ -1506,6 +1502,99 @@
    },
    "damage_max": 32,
    "damage": "32",
+   "biomes": [
+    {
+     "id": "deepwood_mimic",
+     "name": "Mimic deepwood",
+     "planned": false
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/cinderstone/cinderstone_data.tres",
+   "name": "Cinderstone",
+   "rarity": "common",
+   "max_health": 1,
+   "probes": {
+    "trigger": 2
+   },
+   "drops": [
+    {
+     "item": "oop2",
+     "spell": "oop",
+     "tier": 2,
+     "chance": 0.04
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "cinderstone_oop",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.9,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 60,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 0,
+      "speed_tiles": 0,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "blast",
+       "radius_tiles": 5,
+       "blast_only": true
+      }
+     ],
+     "name": "oop"
+    }
+   ],
+   "id": "cinderstone",
+   "difficulty": 4,
+   "description": "A trap with a health bar. It sits among the real rocks and litter until you step close — or\nclip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with\nit. Spot the boulder that is slightly too round and spend it from range, or route around it\nand leave it armed for whatever chases you. It never moves and never fires twice; the only\nquestion is where you are standing when the fuse ends.\n",
+   "blurb": "A trap with a health bar. It sits among the real rocks and litter until you step close — or clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot the boulder that is slightly too round and spend it from range, or route around it and leave it armed for whatever chases you. It never moves and never fires twice; the only question is where you are standing when the fuse ends.",
+   "art": "a mossy grey boulder, the same stone the deepwood scatters everywhere, with one hairline seam down its face; the seam lights amber through the fuse until the whole rock glows.",
+   "casts": [
+    "oop"
+   ],
+   "notes": "its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the cinderstone before the fuse lands does NOT set it off. The mother tree seeds these as mines.",
+   "fsm": {
+    "start": "Disguise",
+    "transitions": [
+     {
+      "from": "Disguise",
+      "to": "Fuse",
+      "when": "player close / hit"
+     },
+     {
+      "from": "Fuse",
+      "to": "[*]",
+      "when": "detonated"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/cinderstone/cinderstone.png",
+    "region": [
+     0,
+     8,
+     8,
+     8
+    ]
+   },
+   "damage_max": 60,
+   "damage": "60",
    "biomes": [
     {
      "id": "deepwood_mimic",
@@ -1624,99 +1713,6 @@
     {
      "id": "deepwood",
      "name": "Deepwood",
-     "planned": false
-    }
-   ]
-  },
-  {
-   "source": "game/characters/enemies/deadwood/deadwood_data.tres",
-   "name": "Deadwood",
-   "rarity": "common",
-   "max_health": 1,
-   "probes": {
-    "trigger": 2
-   },
-   "drops": [
-    {
-     "item": "oop2",
-     "spell": "oop",
-     "tier": 2,
-     "chance": 0.04
-    }
-   ],
-   "attacks": [
-    {
-     "cast": "deadwood_oop",
-     "kind": "bullet",
-     "cooldown": 0,
-     "cast_time": 0.9,
-     "channeled": false,
-     "shots": {
-      "pattern": "SinglePattern",
-      "per_shot": 1,
-      "count": 1,
-      "interval": 0.25
-     },
-     "amount": {
-      "base": 60,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
-     "projectile": {
-      "range_tiles": 2,
-      "speed_tiles": 12,
-      "pierce": false
-     },
-     "behaviours": [
-      {
-       "type": "blast",
-       "radius_tiles": 5,
-       "blast_only": true
-      }
-     ],
-     "name": "oop"
-    }
-   ],
-   "id": "deadwood",
-   "difficulty": 4,
-   "description": "A trap with a health bar. It lies among the real log props until you step close — or clip it\nwith a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot\nthe log that is slightly too neat and spend it from range, or route around it and leave it\narmed for whatever chases you. It never moves and never fires twice; the only question is\nwhere you are standing when the fuse ends.\n",
-   "blurb": "A trap with a health bar. It lies among the real log props until you step close — or clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot the log that is slightly too neat and spend it from range, or route around it and leave it armed for whatever chases you. It never moves and never fires twice; the only question is where you are standing when the fuse ends.",
-   "art": "a mossy fallen log with one knothole; the knothole opens into an eye on trigger, and the whole log glows through the fuse.",
-   "casts": [
-    "oop"
-   ],
-   "notes": "its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the deadwood before the fuse lands does NOT set it off. The mother tree seeds these as mines.",
-   "fsm": {
-    "start": "Disguise",
-    "transitions": [
-     {
-      "from": "Disguise",
-      "to": "Fuse",
-      "when": "player close / hit"
-     },
-     {
-      "from": "Fuse",
-      "to": "[*]",
-      "when": "detonated"
-     }
-    ]
-   },
-   "icon": {
-    "url": "../../game/characters/enemies/deadwood/deadwood.png",
-    "region": [
-     0,
-     8,
-     8,
-     8
-    ]
-   },
-   "damage_max": 60,
-   "damage": "60",
-   "biomes": [
-    {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
      "planned": false
     }
    ]
@@ -6015,8 +6011,8 @@
     "razorback",
     "gnarlking",
     "bramble_stalker",
-    "burrwood",
-    "deadwood",
+    "bristlestone",
+    "cinderstone",
     "shade",
     "adder",
     "elder_stalker",
@@ -6172,8 +6168,8 @@
    "intro": "A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.",
    "roster": [
     "bramble_stalker",
-    "burrwood",
-    "deadwood",
+    "bristlestone",
+    "cinderstone",
     "grimling",
     "moss_golem",
     "moth",
@@ -6190,8 +6186,8 @@
     "deepwood_mimic_teach_bramble_stalker",
     "deepwood_mimic_teach_shade",
     "deepwood_mimic_pair_cave",
-    "deepwood_mimic_teach_burrwood",
-    "deepwood_mimic_teach_deadwood",
+    "deepwood_mimic_teach_bristlestone",
+    "deepwood_mimic_teach_cinderstone",
     "deepwood_mimic_gate_mushroom",
     "deepwood_mimic_rare_adder",
     "deepwood_mimic_rare_elder_stalker",
@@ -9478,7 +9474,7 @@
      "weight": 2,
      "members": [
       {
-       "enemy": "deadwood",
+       "enemy": "cinderstone",
        "min": 1,
        "max": 2
       }
@@ -9488,7 +9484,7 @@
      "weight": 2,
      "members": [
       {
-       "enemy": "burrwood",
+       "enemy": "bristlestone",
        "min": 1,
        "max": 2
       }
@@ -9645,7 +9641,7 @@
      "weight": 1,
      "members": [
       {
-       "enemy": "deadwood",
+       "enemy": "cinderstone",
        "min": 2,
        "max": 2
       },
@@ -9660,7 +9656,7 @@
      "weight": 1,
      "members": [
       {
-       "enemy": "burrwood",
+       "enemy": "bristlestone",
        "min": 2,
        "max": 2
       },
@@ -9690,12 +9686,12 @@
      "weight": 1,
      "members": [
       {
-       "enemy": "deadwood",
+       "enemy": "cinderstone",
        "min": 1,
        "max": 1
       },
       {
-       "enemy": "burrwood",
+       "enemy": "bristlestone",
        "min": 1,
        "max": 1
       },
@@ -9741,9 +9737,9 @@
    "family": "deepwood"
   },
   {
-   "id": "deepwood_mimic_teach_burrwood",
+   "id": "deepwood_mimic_teach_bristlestone",
    "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_burrwood.tres",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_bristlestone.tres",
    "difficulty": 1,
    "generator": "scatter",
    "footprint_blob": false,
@@ -9759,7 +9755,7 @@
      "weight": 1,
      "members": [
       {
-       "enemy": "burrwood",
+       "enemy": "bristlestone",
        "min": 2,
        "max": 2
       }
@@ -9770,9 +9766,9 @@
    "family": "deepwood"
   },
   {
-   "id": "deepwood_mimic_teach_deadwood",
+   "id": "deepwood_mimic_teach_cinderstone",
    "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_deadwood.tres",
+   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_cinderstone.tres",
    "difficulty": 1,
    "generator": "scatter",
    "footprint_blob": false,
@@ -9788,7 +9784,7 @@
      "weight": 1,
      "members": [
       {
-       "enemy": "deadwood",
+       "enemy": "cinderstone",
        "min": 2,
        "max": 2
       }
@@ -9842,7 +9838,7 @@
        "max": 1
       },
       {
-       "enemy": "deadwood",
+       "enemy": "cinderstone",
        "min": 2,
        "max": 2
       }

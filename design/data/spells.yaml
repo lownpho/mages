@@ -145,7 +145,7 @@ spells:
       a short delay and then goes up in a fireball-sized blast the moment an enemy touches it. The mine is a dumb object — it has
       no health, nothing can shoot it, and it never moves or chases; it is a hazard the room
       has to walk around. Several can be out at once, so it plays as prep: seed the doorway
-      you are about to retreat through, or the lane the pack has to cross. The deadwood is the
+      you are about to retreat through, or the lane the pack has to cross. The cinderstone is the
       same detonation pointed the other way.
   - id: ploop
     name: Ploop

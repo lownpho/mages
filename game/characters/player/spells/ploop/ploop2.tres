@@ -1,0 +1,50 @@
+[gd_resource type="Resource" script_class="MineResource" format=3 uid="uid://cploop3t1er3r"]
+
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_mv5gc"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_wsxvp"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="3_wl4gk"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="4_fp0pv"]
+[ext_resource type="PackedScene" uid="uid://coopm1nescene" path="res://characters/player/spells/oop/mine.tscn" id="5_0x2dy"]
+[ext_resource type="Script" uid="uid://bb4fs3iyg1bli" path="res://items/bullets/ring_pattern.gd" id="6_4rogn"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="7_sbd63"]
+[ext_resource type="Script" uid="uid://dqhyyafnkps8q" path="res://characters/player/spells/oop/mine_resource.gd" id="8_jyk6r"]
+[ext_resource type="SpriteFrames" uid="uid://cl164uxq1xbka" path="res://characters/player/spells/ploop/ploop_mine_frames.tres" id="9_frames"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dart"]
+atlas = ExtResource("2_wsxvp")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="Resource" id="BulletData"]
+script = ExtResource("3_wl4gk")
+icon = SubResource("AtlasTexture_dart")
+range_tiles = 6
+speed_tiles = 12
+pierce = true
+
+[sub_resource type="Resource" id="ScalingProfile_bullet"]
+script = ExtResource("4_fp0pv")
+base_damage = 7.0
+speed_scaling = 0.75
+
+[sub_resource type="Resource" id="RingPattern"]
+script = ExtResource("6_4rogn")
+num_bullets = 8
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("7_sbd63")
+region = Rect2(104, 40, 8, 8)
+
+[resource]
+script = ExtResource("8_jyk6r")
+frames = ExtResource("9_frames")
+fire_pattern = SubResource("RingPattern")
+bullet = SubResource("BulletData")
+damage = SubResource("ScalingProfile_bullet")
+shot_interval = 0.15
+max_shots = 3
+rotation_per_shot = 22.5
+effect_scene = ExtResource("5_0x2dy")
+cooldown = 2.0
+cast_time = 0.2
+icon = SubResource("AtlasTexture_icon")
+speed_modifier = 6

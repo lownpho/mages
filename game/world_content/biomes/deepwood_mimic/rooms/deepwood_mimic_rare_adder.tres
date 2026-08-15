@@ -11,7 +11,7 @@ enemy_id = &"adder"
 
 [sub_resource type="Resource" id="pm_0_1"]
 script = ExtResource("3_pm")
-enemy_id = &"deadwood"
+enemy_id = &"cinderstone"
 count_min = 2
 count_max = 2
 

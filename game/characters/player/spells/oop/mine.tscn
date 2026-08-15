@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://coopm1nescene"]
+
+[ext_resource type="Script" uid="uid://cm1neffect01x" path="res://characters/player/spells/oop/mine.gd" id="1_script"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 8.0
+
+[node name="Mine" type="Node2D" unique_id=1769211665]
+script = ExtResource("1_script")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1532465250]
+offset = Vector2(0, -1)
+
+[node name="Trigger" type="Area2D" parent="." unique_id=2004671773]
+collision_layer = 0
+collision_mask = 48
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Trigger" unique_id=1084395225]
+shape = SubResource("CircleShape2D_trigger")

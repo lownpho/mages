@@ -20,14 +20,14 @@ pack_spread = 2.0
 
 [sub_resource type="Resource" id="ste_2"]
 script = ExtResource("2_ste")
-enemy_id = &"deadwood"
+enemy_id = &"cinderstone"
 weight = 2
 group_max = 2
 pack_spread = 2.0
 
 [sub_resource type="Resource" id="ste_3"]
 script = ExtResource("2_ste")
-enemy_id = &"burrwood"
+enemy_id = &"bristlestone"
 weight = 2
 group_max = 2
 pack_spread = 2.0

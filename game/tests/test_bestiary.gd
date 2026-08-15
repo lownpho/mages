@@ -45,7 +45,7 @@ func _ready() -> void:
 		&"fae", &"thornmess",     # bosses last (one per sub-biome)
 	]
 	var want_deepwood: Array[StringName] = [
-		&"ash_snake", &"bramble_stalker", &"burrwood", &"coral_snake", &"deadwood",
+		&"ash_snake", &"bramble_stalker", &"bristlestone", &"cinderstone", &"coral_snake",
 		&"grimling", &"mole", &"moon_moth", &"moss_golem", &"moth", &"needle_moth",
 		&"owl", &"shade", &"shard_grimling", &"snake", &"stalker", &"thornback",
 		&"wisp_grimling",

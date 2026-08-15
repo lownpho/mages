@@ -140,14 +140,14 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 
 | Tier | Room | Shape | Count | Enemy group variations |
 |---|---|---|---|---|
-| T0 | open | empty | w2 | 1x bramble_stalker - 1-2x shade - 1-2x deadwood - 1-2x burrwood - 2-3x moth - 2-3x grimling - 1x snake - 1x stalker |
+| T0 | open | empty | w2 | 1x bramble_stalker - 1-2x shade - 1-2x cinderstone - 1-2x bristlestone - 2-3x moth - 2-3x grimling - 1x snake - 1x stalker |
 | T0 | teach_bramble_stalker | scatter | 1 | 1x bramble_stalker |
 | T0 | teach_shade | scatter | 1 | 1x shade |
-| T1 | pair_cave | cave | w3 | 1x bramble_stalker + 2x moth - 2x shade + 2x grimling - 2x deadwood + 1x snake - 2x burrwood + 1x stalker - 1x shade + 1x bramble_stalker - 1x deadwood + 1x burrwood + 2x moth - 1x bramble_stalker + 2x grimling - 1x shade + 1x moss_golem |
-| T1 | teach_burrwood | scatter | 1 | 2x burrwood |
-| T1 | teach_deadwood | scatter | 1 | 2x deadwood |
+| T1 | pair_cave | cave | w3 | 1x bramble_stalker + 2x moth - 2x shade + 2x grimling - 2x cinderstone + 1x snake - 2x bristlestone + 1x stalker - 1x shade + 1x bramble_stalker - 1x cinderstone + 1x bristlestone + 2x moth - 1x bramble_stalker + 2x grimling - 1x shade + 1x moss_golem |
+| T1 | teach_bristlestone | scatter | 1 | 2x bristlestone |
+| T1 | teach_cinderstone | scatter | 1 | 2x cinderstone |
 | T3 | gate_mushroom | cave | 1 | *(empty)* |
-| T3 | rare_adder | empty | 1 | 1x adder + 2x deadwood |
+| T3 | rare_adder | empty | 1 | 1x adder + 2x cinderstone |
 | T3 | rare_elder_stalker | empty | 1 | 1x elder_stalker + 2x bramble_stalker |
 | T3 | rare_umbra | empty | 1 | 1x umbra + 2x shade |
 
@@ -156,8 +156,8 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 | Enemy | Items dropped |
 |---|---|
 | Bramble Stalker | **ring t2** (6%) |
-| Burrwood | **ploop t3** (4%) |
-| Deadwood | **oop t2** (4%) |
+| Bristlestone | **ploop t2** (4%) |
+| Cinderstone | **oop t2** (4%) |
 | Grimling | **pew t2** (50%), **halp t2** (2%) |
 | Moss Golem | **ring t2** (8%), **nope** (30%) |
 | Moth | **pew t2** (5%) |

@@ -1,0 +1,44 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://1djj2q04srt7"]
+
+[ext_resource type="Texture2D" uid="uid://cop2m1ne5heet" path="res://characters/player/spells/oop/oop_mine.png" id="1_sheet"]
+
+[sub_resource type="AtlasTexture" id="AT_fuse0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fuse1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(8, 0, 8, 8)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fuse0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fuse1")
+}],
+"loop": 1,
+"name": &"fuse",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}]

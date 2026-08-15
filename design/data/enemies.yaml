@@ -719,20 +719,20 @@ enemies:
         - {from: Blink, to: Recover, when: reappeared}
         - {from: Recover, to: Volley, when: burst ready}
         - {from: Recover, to: Idle, when: lost}
-  - id: deadwood
+  - id: cinderstone
     difficulty: 4
     description: |
-      A trap with a health bar. It lies among the real log props until you step close — or clip it
-      with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot
-      the log that is slightly too neat and spend it from range, or route around it and leave it
-      armed for whatever chases you. It never moves and never fires twice; the only question is
-      where you are standing when the fuse ends.
-    art: a mossy fallen log with one knothole; the knothole opens into an eye on trigger, and the
-      whole log glows through the fuse.
+      A trap with a health bar. It sits among the real rocks and litter until you step close — or
+      clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with
+      it. Spot the boulder that is slightly too round and spend it from range, or route around it
+      and leave it armed for whatever chases you. It never moves and never fires twice; the only
+      question is where you are standing when the fuse ends.
+    art: a mossy grey boulder, the same stone the deepwood scatters everywhere, with one hairline
+      seam down its face; the seam lights amber through the fuse until the whole rock glows.
     casts: [oop]
     notes: its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the
       caster when it ends, which is exactly what the player's Oop mine does from the other side.
-      Killing the deadwood before the fuse lands does NOT set it off. The mother tree seeds these
+      Killing the cinderstone before the fuse lands does NOT set it off. The mother tree seeds these
       as mines.
     fsm:
       start: Disguise
@@ -756,24 +756,24 @@ enemies:
         - {from: Wander, to: Flee, when: sees player}
         - {from: Flee, to: Volley, when: cornered}
         - {from: Volley, to: Flee, when: spray fired}
-  - id: burrwood
+  - id: bristlestone
     difficulty: 4
     description: |
-      The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the
-      same log lying in the same litter, and it triggers the same way — step close, or clip it
+      The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the
+      same rock sitting in the same litter, and it triggers the same way — step close, or clip it
       with a shot, and the fuse runs. What comes out is the difference: instead of one big blast
       it bursts into a full ring of piercing darts that carry clean across the room and straight
       through anything in the way.
 
-      Between the two of them a room of logs stops being scenery you ignore. The blast one
+      Between the two of them a room of rocks stops being scenery you ignore. The blast one
       punishes standing next to it, the dart one punishes standing anywhere in line with it,
       and until one goes off you don't know which you're walking past. The tell, if you look
-      for it, is a dry burr husk in the moss.
-    art: the deadwood's log, moss and all, with one pale burr husk among the green. The fuse
-      lights white instead of amber, and it goes off in a pale green seed-burst rather than a
-      fireball.
+      for it, is a pair of dry burr spines in the moss on top.
+    art: the cinderstone's boulder, moss and all, with two pale burr spines standing out of the
+      green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst
+      rather than a fireball.
     casts: [ploop]
-    notes: it drops the Ploop it fires, the way the deadwood drops its Oop. Killing it before
+    notes: it drops the Ploop it fires, the way the cinderstone drops its Oop. Killing it before
       the fuse lands does NOT set it off.
     fsm:
       start: Disguise

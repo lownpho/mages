@@ -49,12 +49,13 @@ func restart_leg(wait: float = -1.0) -> void:
 	lifetime_timer.start(wait if wait > 0.0 else lifetime_timer.wait_time)
 
 func _ready() -> void:
-	# A bullet with no forward speed or no range can't travel — it would also make
-	# the lifetime (range / speed) zero or divide by zero, which is an invalid
-	# Timer.wait_time. Discard it rather than spawn a degenerate bullet.
+	# A bullet with no forward speed or no range can't travel: it goes off where it was
+	# spawned, which is exactly what a mine or a self-detonation wants — the blast lands on
+	# the thing standing on it instead of a tile downrange. It never flies, so it never draws.
 	var lifetime := float(data.range_tiles) / data.speed_tiles if data.speed_tiles > 0 else 0.0
 	if lifetime <= 0.0:
-		queue_free()
+		hide()
+		_expire()
 		return
 
 	if pierce:

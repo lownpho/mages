@@ -64,6 +64,18 @@ func _check_blast_lands_once(caster: Node2D) -> void:
 
 func _check(res: Resource, label: String, caster: Node2D) -> int:
 	var checked := 0
+	# `channeled` is one editor checkbox, but it obliges the effect to implement
+	# channel_released() — tick it on a spell whose effect can't (a mine) and every
+	# release throws, pointing at spell_caster rather than at the .tres that's wrong.
+	if res is SpellResource and res.channeled and res.effect_scene != null:
+		var effect: Node = res.effect_scene.instantiate()
+		if not effect.has_method("channel_released"):
+			_fails.append("%s is channeled but %s can't be released" % [label, effect.name])
+		effect.free()
+	# Both mines share one scene and differ only by these frames, so a tier that forgets
+	# them drops an invisible mine — it still arms and still kills, just unseeably.
+	if res is MineResource and (res.frames == null or not res.frames.has_animation(&"idle")):
+		_fails.append("%s is a mine with no idle frames" % label)
 	if res is BulletSpellResource and res.bullet != null:
 		checked += 1
 		# Each spell owns its bullet outright: a standalone resource_path would mean two

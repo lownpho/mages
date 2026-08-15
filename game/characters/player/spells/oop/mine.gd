@@ -27,7 +27,6 @@ var bullet_collision_layer: int = GameConstants.LAYER_PLAYER_BULLETS
 var target_groups: Array = ["enemies"]
 
 var _aim: Vector2 = Vector2.RIGHT
-var _armed: bool = false
 
 @onready var _trigger: Area2D = $Trigger
 @onready var _sprite: AnimatedSprite2D = $Sprite
@@ -66,12 +65,12 @@ func _ready() -> void:
 	if data == null:
 		queue_free()
 		return
+	_sprite.sprite_frames = data.frames
+	_sprite.play("idle")
 	get_tree().create_timer(data.arm_time).timeout.connect(_arm)
-	if data.lifetime > 0.0:
-		get_tree().create_timer(data.lifetime).timeout.connect(queue_free)
+	get_tree().create_timer(data.lifetime).timeout.connect(queue_free)
 
 func _arm() -> void:
-	_armed = true
 	set_physics_process(true)
 
 # Polled rather than driven by body_entered: something already standing on the mine when it
@@ -85,9 +84,7 @@ func _physics_process(_delta: float) -> void:
 				return
 
 func _detonate() -> void:
-	_armed = false
 	set_physics_process(false)
-	_trigger.monitoring = false
 	_sprite.play("fuse")
 	var burst: Node2D = BURST.instantiate()
 	burst.setup(data, self)

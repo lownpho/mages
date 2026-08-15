@@ -8,7 +8,7 @@
 
 [sub_resource type="Resource" id="pm_0_0"]
 script = ExtResource("3_pm")
-enemy_id = &"deadwood"
+enemy_id = &"cinderstone"
 count_min = 2
 count_max = 2
 
@@ -25,7 +25,7 @@ clump_max = 4
 
 [resource]
 script = ExtResource("1_def")
-id = &"deepwood_mimic_teach_deadwood"
+id = &"deepwood_mimic_teach_cinderstone"
 biome = &"deepwood_mimic"
 generator = SubResource("gen")
 min_size_slots = Vector2i(2, 2)

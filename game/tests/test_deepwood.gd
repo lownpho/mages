@@ -28,14 +28,14 @@ extends Node
 ##   - Blink, the one effect that MOVES its caster. A shade carries no movement behaviour at
 ##     all, so any position change is the hop — and a blink hemmed in by walls has to refuse
 ##     rather than post the shade through one.
-##   - Oop, the burst that takes its caster with it. A deadwood that fires and survives is a
+##   - Oop, the burst that takes its caster with it. A cinderstone that fires and survives is a
 ##     mine that re-arms forever — and the player's side of the same spell, a summoned mine
 ##     that has to arm, trigger on an enemy, and go up with the blast it was handed.
 ## Run: godot --headless --path game res://tests/test_deepwood.tscn
 
 const SNAKE := preload("res://characters/enemies/snake/snake.tscn")
 const SHADE := preload("res://characters/enemies/shade/shade.tscn")
-const DEADWOOD := preload("res://characters/enemies/deadwood/deadwood.tscn")
+const CINDERSTONE := preload("res://characters/enemies/cinderstone/cinderstone.tscn")
 const SPROUTLING := preload("res://characters/enemies/sproutling/sproutling.tscn")
 const OOP := preload("res://characters/player/spells/oop/oop2.tres")
 const BLINK := preload("res://characters/player/spells/blink/blink2.tres")
@@ -73,7 +73,7 @@ func _ready() -> void:
 	fails += await _grimlord_fires_a_parting_ring()
 	fails += await _burrowed_mole_is_untouchable()
 	fails += await _shade_blinks()
-	fails += await _deadwood_takes_itself_with_it()
+	fails += await _cinderstone_takes_itself_with_it()
 	fails += await _oop_mine_arms_and_blows()
 	fails += await _player_blink_hops_along_aim()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
@@ -533,20 +533,20 @@ func _shade_blinks() -> int:
 	await get_tree().physics_frame
 	return fails
 
-# Oop is the only spell that kills the caster that cast it: step into a deadwood's trigger
+# Oop is the only spell that kills the caster that cast it: step into a cinderstone's trigger
 # and it fuses, blows, and is gone. Surviving its own blast would leave the trap re-arming.
-func _deadwood_takes_itself_with_it() -> int:
+func _cinderstone_takes_itself_with_it() -> int:
 	var target := _target(Vector2(12, 0))
-	var wood: Creature = DEADWOOD.instantiate()
+	var wood: Creature = CINDERSTONE.instantiate()
 	add_child(wood)
 	await get_tree().physics_frame
 	_wake(wood)
 	var deadline := Time.get_ticks_msec() + 8000
 	while is_instance_valid(wood) and Time.get_ticks_msec() < deadline:
 		await get_tree().physics_frame
-	var fails := _expect("the deadwood went up with its own blast", not is_instance_valid(wood))
+	var fails := _expect("the cinderstone went up with its own blast", not is_instance_valid(wood))
 	if fails == 0:
-		print("  ok: deadwood — the Oop burst takes its caster with it")
+		print("  ok: cinderstone — the Oop burst takes its caster with it")
 	if is_instance_valid(wood):
 		wood.queue_free()
 	target.queue_free()
@@ -559,7 +559,7 @@ func _deadwood_takes_itself_with_it() -> int:
 # every one of those is a line away from turning a hazard back into a target.
 func _oop_mine_arms_and_blows() -> int:
 	_mine_damage = 0
-	# Well clear of the origin: the deadwood beat above leaves a live blast there.
+	# Well clear of the origin: the cinderstone beat above leaves a live blast there.
 	const AWAY := Vector2(300, 300)
 	var caster := Node2D.new()
 	caster.set_script(preload("res://tests/support/stub_caster.gd"))
@@ -575,7 +575,7 @@ func _oop_mine_arms_and_blows() -> int:
 	var spawned := Time.get_ticks_msec() + 3000
 	while mine == null and Time.get_ticks_msec() < spawned:
 		await get_tree().physics_frame
-		mine = get_tree().root.find_child("OopMine", false, false) as Node2D
+		mine = get_tree().root.find_child("Mine", false, false) as Node2D
 	fails += _expect("the cast dropped a mine", mine != null)
 	if mine == null:
 		caster.queue_free()

@@ -1010,20 +1010,20 @@ stateDiagram-v2
     Chase --> Disguise : lost
 ```
 
-### Burrwood
+### Bristlestone
 
-The deadwood's sibling, and the reason you can't read a minefield at a glance. It is the
-same log lying in the same litter, and it triggers the same way — step close, or clip it
+The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the
+same rock sitting in the same litter, and it triggers the same way — step close, or clip it
 with a shot, and the fuse runs. What comes out is the difference: instead of one big blast
 it bursts into a full ring of piercing darts that carry clean across the room and straight
 through anything in the way.
 
-Between the two of them a room of logs stops being scenery you ignore. The blast one
+Between the two of them a room of rocks stops being scenery you ignore. The blast one
 punishes standing next to it, the dart one punishes standing anywhere in line with it,
 and until one goes off you don't know which you're walking past. The tell, if you look
-for it, is a dry burr husk in the moss.
+for it, is a pair of dry burr spines in the moss on top.
 
-**Art:** the deadwood's log, moss and all, with one pale burr husk among the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.
+**Art:** the cinderstone's boulder, moss and all, with two pale burr spines standing out of the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.
 
 | Stat |  |
 |---|---|
@@ -1031,9 +1031,9 @@ for it, is a dry burr husk in the moss.
 | HP | 1 |
 | Range | trigger 2 |
 | ploop | **32** dmg — Ring x6, 3 @ 0.1s, 4 tiles range |
-| Drops | **ploop t3** (4%) |
+| Drops | **ploop t2** (4%) |
 
-**Notes:** it drops the Ploop it fires, the way the deadwood drops its Oop. Killing it before the fuse lands does NOT set it off.
+**Notes:** it drops the Ploop it fires, the way the cinderstone drops its Oop. Killing it before the fuse lands does NOT set it off.
 
 ```mermaid
 stateDiagram-v2
@@ -1042,25 +1042,25 @@ stateDiagram-v2
     Fuse --> [*] : burst away
 ```
 
-### Deadwood
+### Cinderstone
 
-A trap with a health bar. It lies among the real log props until you step close — or clip it
-with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot
-the log that is slightly too neat and spend it from range, or route around it and leave it
-armed for whatever chases you. It never moves and never fires twice; the only question is
-where you are standing when the fuse ends.
+A trap with a health bar. It sits among the real rocks and litter until you step close — or
+clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with
+it. Spot the boulder that is slightly too round and spend it from range, or route around it
+and leave it armed for whatever chases you. It never moves and never fires twice; the only
+question is where you are standing when the fuse ends.
 
-**Art:** a mossy fallen log with one knothole; the knothole opens into an eye on trigger, and the whole log glows through the fuse.
+**Art:** a mossy grey boulder, the same stone the deepwood scatters everywhere, with one hairline seam down its face; the seam lights amber through the fuse until the whole rock glows.
 
 | Stat |  |
 |---|---|
 | Difficulty | 4 / 10 |
 | HP | 1 |
 | Range | trigger 2 |
-| oop | **60** dmg — Single, 2 tiles range, blast 5 tiles (splash only) |
+| oop | **60** dmg — Single, 0 tiles range, blast 5 tiles (splash only) |
 | Drops | **oop t2** (4%) |
 
-**Notes:** its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the deadwood before the fuse lands does NOT set it off. The mother tree seeds these as mines.
+**Notes:** its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the cinderstone before the fuse lands does NOT set it off. The mother tree seeds these as mines.
 
 ```mermaid
 stateDiagram-v2
@@ -1229,7 +1229,7 @@ reuse and combine earlier ones instead of adding more.
 | 2   | charge-dash *(built)*    | thornback           | gnarlking; mother tree's thorn rush         |
 | 3   | burrow *(built)*         | mole                | rotmaw dives between patterns               |
 | 4   | blink teleport *(built)* | shade               | elder stalker; umbra                        |
-| 5   | self-detonation *(built)*| deadwood *(static)* | ticktick *(mobile)*; mycelings *(+ clouds)* |
+| 5   | self-detonation *(built)*| cinderstone *(static)* | ticktick *(mobile)*; mycelings *(+ clouds)* |
 | 6   | wall crawl               | longleg             | weaver; creeper mold *(+ clouds)*           |
 | 7   | bullet escort            | drone               | hive queen's swarm phase                    |
 | 8   | lingering spore clouds   | sporespitter        | creeper mold; rot golem; rotmaw             |
@@ -1238,7 +1238,7 @@ reuse and combine earlier ones instead of adding more.
 
 Spells introduced here: Bwoom, ChargeDash, Thwomp, Halp and Zoing all ship (the animal roster
 drops them), and so do Blink and Oop (the shade and umbra carry the two Blink tiers, the
-deadwood its own Oop). Ploop ships as a spell but nothing drops it since the mother tree was
+cinderstone its own Oop). Ploop ships as a spell but nothing drops it since the mother tree was
 cut. Halo, Slurp and Fwoosh wait on the sub-biomes below. Reserved for future T3 biomes: Kaboom, Krak,
 Brrr, Clang, Chomp, Piercing Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
 
@@ -1281,7 +1281,7 @@ stateDiagram-v2
 ```
 
 **Insect deepwood** — swarms, crawlers, and geometry: the walls stop being safe.
-Introduces the wall crawl and the bullet escort; the deadwood's detonation goes mobile
+Introduces the wall crawl and the bullet escort; the cinderstone's detonation goes mobile
 here.
 
 ### longleg *(insect)*
@@ -1343,7 +1343,7 @@ stateDiagram-v2
 
 ### ticktick *(insect)*
 
-The deadwood gone mobile. A tiny sprinter that locks on from far off and closes in a dead
+The cinderstone gone mobile. A tiny sprinter that locks on from far off and closes in a dead
 straight line, clicking faster the nearer it gets; on contact it detonates, and that
 blast is its whole life. Kill it at range or sidestep the final lunge — there is no third
 option.
@@ -1559,7 +1559,7 @@ stateDiagram-v2
 
 Introduces **split on death**, and reuses half the biome doing it. It hides among the
 real mushroom scenery (the stalker's trick), waddles at you when you get close, and pops
-when it dies (the deadwood's trick): one spore cloud plus two or three mycelings —
+when it dies (the cinderstone's trick): one spore cloud plus two or three mycelings —
 fist-sized copies that sprint and pop in turn into smaller clouds. Killing it point-blank
 is a mistake; killing it at range is three more kills.
 

@@ -8,7 +8,8 @@
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="6_pattern"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="7_bullet"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="8_bullets"]
-[ext_resource type="PackedScene" uid="uid://coopm1nescene" path="res://characters/player/spells/oop/oop_mine.tscn" id="99_effect"]
+[ext_resource type="SpriteFrames" uid="uid://1djj2q04srt7" path="res://characters/player/spells/oop/oop_mine_frames.tres" id="98_frames"]
+[ext_resource type="PackedScene" uid="uid://coopm1nescene" path="res://characters/player/spells/oop/mine.tscn" id="99_effect"]
 [ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="bh_scaling"]
 
 [sub_resource type="Resource" id="Blast_1"]
@@ -24,31 +25,31 @@ region = Rect2(0, 80, 8, 8)
 [sub_resource type="Resource" id="BulletData"]
 script = ExtResource("7_bullet")
 icon = SubResource("AtlasTexture_bullet")
-range_tiles = 1
-speed_tiles = 6
+range_tiles = 0
+speed_tiles = 0
 behaviours = Array[ExtResource("3_bh_base")]([SubResource("Blast_1")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
 base_damage = 12.0
-speed_scaling = 1.0
+skill_scaling = 1.0
 
 [sub_resource type="Resource" id="SinglePattern"]
 script = ExtResource("6_pattern")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
-region = Rect2(64, 8, 8, 8)
+region = Rect2(104, 32, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
+frames = ExtResource("98_frames")
 fire_pattern = SubResource("SinglePattern")
 bullet = SubResource("BulletData")
 damage = SubResource("ScalingProfile_bullet")
 max_shots = 1
 effect_scene = ExtResource("99_effect")
-cooldown = 3.0
-cast_time = 0.15
+cooldown = 2.0
+cast_time = 0.2
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 5
-speed_modifier = 5

@@ -23,8 +23,8 @@ region = Rect2(0, 80, 8, 8)
 [sub_resource type="Resource" id="Resource_fuse"]
 script = ExtResource("6_bullet")
 icon = SubResource("AtlasTexture_fuse")
-range_tiles = 2
-speed_tiles = 12
+range_tiles = 0
+speed_tiles = 0
 behaviours = Array[ExtResource("1_bh_base")]([SubResource("Blast_1")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]

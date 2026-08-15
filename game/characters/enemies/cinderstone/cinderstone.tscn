@@ -1,16 +1,16 @@
 [gd_scene format=3 uid="uid://cuymv4rp3y21p"]
 
-[ext_resource type="Resource" uid="uid://hc24pay2yl40" path="res://characters/enemies/deadwood/deadwood_data.tres" id="1_data"]
+[ext_resource type="Resource" uid="uid://hc24pay2yl40" path="res://characters/enemies/cinderstone/cinderstone_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
-[ext_resource type="Texture2D" uid="uid://dsif3cob0lk38" path="res://characters/enemies/deadwood/deadwood.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://dsif3cob0lk38" path="res://characters/enemies/cinderstone/cinderstone.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
-[ext_resource type="Resource" uid="uid://kfmayeni72h2" path="res://characters/enemies/deadwood/deadwood_oop.tres" id="6_spell"]
+[ext_resource type="Resource" uid="uid://kfmayeni72h2" path="res://characters/enemies/cinderstone/cinderstone_oop.tres" id="6_spell"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_deadwood"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_cinderstone"]
 radius = 3.0
 
 [sub_resource type="AtlasTexture" id="AT_det0"]
@@ -61,7 +61,7 @@ region = Rect2(16, 0, 8, 8)
 atlas = ExtResource("3_tex")
 region = Rect2(24, 0, 8, 8)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_deadwood"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_cinderstone"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -115,7 +115,7 @@ animations = [{
 "speed": 2.0
 }]
 
-[node name="Deadwood" type="CharacterBody2D" unique_id=1066195559 groups=["enemies"]]
+[node name="Cinderstone" type="CharacterBody2D" unique_id=1066195559 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1
@@ -123,10 +123,10 @@ script = ExtResource("1_enemy")
 data = ExtResource("1_data")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1584900119]
-shape = SubResource("CircleShape2D_deadwood")
+shape = SubResource("CircleShape2D_cinderstone")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=644039232]
-sprite_frames = SubResource("SpriteFrames_deadwood")
+sprite_frames = SubResource("SpriteFrames_cinderstone")
 animation = &"idle"
 autoplay = "idle"
 offset = Vector2(0, -1)
