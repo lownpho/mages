@@ -150,22 +150,25 @@ func _update_streaming() -> void:
 	var rx := int(ceil(half_chunks.x)) + config.prefetch_radius_chunks
 	var ry := int(ceil(half_chunks.y)) + config.prefetch_radius_chunks
 
-	var loads := 0
+	# Nearest-first: the chunk under the target loads before the rim, so a teleport (door warp,
+	# console tp) fills outward from the player instead of in from the top-left corner.
+	var missing: Array[Vector2i] = []
 	for gy in range(cc.y - ry, cc.y + ry + 1):
 		for gx in range(cc.x - rx, cc.x + rx + 1):
 			if gx < -_BORDER_CHUNKS or gy < -_BORDER_CHUNKS \
 					or gx >= _world_chunks.x + _BORDER_CHUNKS or gy >= _world_chunks.y + _BORDER_CHUNKS:
 				continue
 			var key := Vector2i(gx, gy)
-			if _chunks.has(key):
-				continue
-			if loads >= _MAX_LOADS_PER_FRAME:
-				continue
-			var chunk := assemble_chunk(gx, gy)
-			_chunks[key] = chunk
-			add_child(chunk)
-			chunk_loaded.emit(key, chunk.spawn_data)
-			loads += 1
+			if not _chunks.has(key):
+				missing.append(key)
+	missing.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return Vector2(a - cc).length_squared() < Vector2(b - cc).length_squared())
+	for i in mini(_MAX_LOADS_PER_FRAME, missing.size()):
+		var key: Vector2i = missing[i]
+		var chunk := assemble_chunk(key.x, key.y)
+		_chunks[key] = chunk
+		add_child(chunk)
+		chunk_loaded.emit(key, chunk.spawn_data)
 
 	var ux := rx + _UNLOAD_MARGIN
 	var uy := ry + _UNLOAD_MARGIN
