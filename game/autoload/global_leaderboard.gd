@@ -427,7 +427,7 @@ func _on_creature_died(data: CreatureResource, _position: Vector2) -> void:
 	_boss_fights.erase(data.resource_path)
 	_track("boss_won", {
 		"boss": _enemy_id_in_path(data.resource_path),
-		"fight_seconds": str((Time.get_ticks_msec() - started) / 1000),
+		"fight_seconds": _seconds_since(started),
 		"run_seconds": _run_seconds(),
 	})
 
@@ -442,7 +442,10 @@ func _on_item_dropped(item: ItemResource) -> void:
 		_track("spell_dropped", {"spell": item.resource_path.get_file().get_basename()})
 
 func _run_seconds() -> String:
-	return str((Time.get_ticks_msec() - _run_started_ms) / 1000)
+	return _seconds_since(_run_started_ms)
+
+func _seconds_since(ms: int) -> String:
+	return str(floori((Time.get_ticks_msec() - ms) / 1000.0))
 
 # characters/enemies/<id>/... — the same folder-name id everything else uses.
 func _enemy_id_in_path(path: String) -> String:

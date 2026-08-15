@@ -105,7 +105,7 @@ func add_spawn(out: RoomOutput, spec: RoomSpec, config: GenConfig) -> void:
 	res.target_slot = target
 	var dest: BiomeDef = config.biome_by_id(_rooms[target].biome_id)
 	if dest != null:
-		res.style = dest.door_style   # a door wears its DESTINATION's art, not its own biome's
+		res.style = dest.door_style as Door.Style   # a door wears its DESTINATION's art, not its own biome's
 	out.spawns.append({"feature": _DOOR_SCENE, "feature_data": res, "tile": tile})
 
 

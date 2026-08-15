@@ -259,12 +259,12 @@ func _nearest_wall_level(tpp: float) -> int:
 	return lvl
 
 
-## Draw a marker at a world-tile position. Off-view markers are dropped unless `clamp` is set, in
-## which case they project onto the widget border along their direction (used for pins).
-func _dot(world: Vector2, px: int, color: Color, clamp: bool) -> void:
+## Draw a marker at a world-tile position. Off-view markers are dropped unless `to_border` is set,
+## in which case they project onto the widget border along their direction (used for pins).
+func _dot(world: Vector2, px: int, color: Color, to_border: bool) -> void:
 	var s := _world_to_screen(world)
 	if s.x < 0.0 or s.y < 0.0 or s.x >= size.x or s.y >= size.y:
-		if not clamp:
+		if not to_border:
 			return
 		s = _project_to_border(s)
 	var o := (s - Vector2(px, px) * 0.5).floor()

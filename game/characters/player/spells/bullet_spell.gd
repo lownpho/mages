@@ -83,9 +83,9 @@ func _fire() -> void:
 	var offsets := data.fire_pattern.get_offsets(direction)
 	for i in dirs.size():
 		var lateral: Vector2 = offsets[i] if i < offsets.size() else Vector2.ZERO
-		var position: Vector2 = caster.global_position \
+		var spawn_pos: Vector2 = caster.global_position \
 			+ dirs[i] * (randf() * data.fire_pattern.spawn_offset) + lateral
-		ctx.spawn_bullet(data.bullet, dirs[i], position, target)
+		ctx.spawn_bullet(data.bullet, dirs[i], spawn_pos, target)
 
 ## Cancel the burst: it stops firing and goes on cooldown, exactly as if it
 ## had run out — finished fires as usual.
