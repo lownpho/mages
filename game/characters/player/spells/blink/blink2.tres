@@ -10,7 +10,7 @@ region = Rect2(80, 8, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-distance_tiles = 8.0
+distance_tiles = 10.0
 effect_scene = ExtResource("99_effect")
 cooldown = 2.0
 icon = SubResource("AtlasTexture_icon")

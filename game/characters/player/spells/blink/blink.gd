@@ -22,7 +22,12 @@ func _ready() -> void:
 		var to := _destination(attempt)
 		if _clear(_caster.global_position, to):
 			_caster.global_position = to
-			break
+			# The node stays put at the departure point (setup put it there), so the
+			# afterimage plays where the caster was and outlives the hop it resolved.
+			$Poof.animation_finished.connect(queue_free)
+			$Poof.show()
+			$Poof.play()
+			return
 	queue_free()
 
 func _destination(attempt: int) -> Vector2:

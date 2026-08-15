@@ -638,8 +638,18 @@ func _player_blink_hops_along_aim() -> int:
 		is_equal_approx(moved.x, BLINK.distance_tiles * GameConstants.PX_PER_TILE)
 			and is_zero_approx(moved.y))
 
+	# The effect outlives the hop it resolved: it stays behind as the afterimage, then
+	# clears itself when the poof ends. Freeing on the spot would leak nothing but leave
+	# the departure unmarked; never freeing would leak one node per cast.
+	var poof := get_tree().root.find_child("Blink", false, false) as Node2D
+	fails += _expect("the hop left an afterimage where the caster was",
+		poof != null and poof.global_position == from and poof.get_node("Poof").is_playing())
+	await get_tree().create_timer(0.5).timeout
+	fails += _expect("the afterimage cleared itself once it played out",
+		get_tree().root.find_child("Blink", false, false) == null)
+
 	if fails == 0:
-		print("  ok: blink — the player's tier lands along the aim, at its authored distance")
+		print("  ok: blink — the tier lands along the aim, leaving an afterimage behind")
 	caster.queue_free()
 	await get_tree().physics_frame
 	return fails

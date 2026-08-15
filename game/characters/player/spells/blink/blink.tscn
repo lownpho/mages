@@ -1,6 +1,49 @@
-[gd_scene format=3 uid="uid://b50gkrun8xrfc"]
+[gd_scene load_steps=8 format=3 uid="uid://b50gkrun8xrfc"]
 
 [ext_resource type="Script" uid="uid://bo8720kcdoat8" path="res://characters/player/spells/blink/blink.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://d0yuvwifspvyi" path="res://characters/player/spells/blink/blink.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_poof0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_poof1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_poof2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_poof3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_poof"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_poof0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_poof1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_poof2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_poof3")
+}],
+"loop": false,
+"name": &"poof",
+"speed": 16.0
+}]
 
 [node name="Blink" type="Node2D" unique_id=493297631]
 script = ExtResource("1_script")
+
+[node name="Poof" type="AnimatedSprite2D" parent="."]
+visible = false
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_poof")
+animation = &"poof"
