@@ -188,6 +188,20 @@ func _check_live_door(fails: Array[String]) -> void:
 		fails.append("door emitted target %s, want (3, 4)" % fired[0])
 	if headings.size() == 1 and headings[0] != Vector2i(0, -1):
 		fails.append("door read heading %s, want north (0, -1)" % headings[0])
+
+	# The global cooldown: stepping off and straight back in again inside the second is refused,
+	# whichever door you reach — that is what stops a link chaining you through the pair.
+	var second: Node2D = load("res://worldgen/runtime/door.tscn").instantiate()
+	second.target_slot = Vector2i(5, 6)
+	second.global_position = Vector2(0, 200)
+	add_child(second)
+	body.global_position = Vector2(0, 400)
+	await _physics_frames(3)
+	body.global_position = Vector2(0, 200)   # walk into a DIFFERENT door within the cooldown
+	await _physics_frames(3)
+	if fired.size() != 1:
+		fails.append("a door fired inside the global cooldown")
+	second.queue_free()
 	door.queue_free()
 	body.queue_free()
 

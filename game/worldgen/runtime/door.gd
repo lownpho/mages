@@ -40,6 +40,11 @@ const _SETTLE_FRAMES := 2
 var _armed := false
 var _settle := _SETTLE_FRAMES
 
+# Using any door locks EVERY door for a moment: a warp puts the player down beside their twin, and
+# a fast enough body can trip a second door before that arrival settles and slip through the pair.
+const _COOLDOWN_MS := 1000
+static var _last_use_ms := -_COOLDOWN_MS
+
 
 func _ready() -> void:
 	_apply_style()
@@ -87,8 +92,11 @@ func _physics_process(_dt: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not _armed:
 		return
+	if Time.get_ticks_msec() - _last_use_ms < _COOLDOWN_MS:
+		return
 	if target_slot != Vector2i.MAX:
 		_armed = false   # re-arms once the player is clear of it, so the door works both ways
+		_last_use_ms = Time.get_ticks_msec()
 		GlobalEvent.warp_requested.emit(target_slot, body, _heading_of(body))
 		return
 	if _used:
@@ -97,4 +105,5 @@ func _on_body_entered(body: Node2D) -> void:
 		push_warning("Door at %s has no target_scene" % global_position)
 		return
 	_used = true
+	_last_use_ms = Time.get_ticks_msec()
 	SceneManager.go_to(target_scene)
