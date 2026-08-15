@@ -19,9 +19,10 @@ class_name SummonResource
 @export var count: int = 3
 ## FAN lines them up abreast in front of the caster (the player's summons, which should
 ## arrive between them and what they're aiming at); RING places them evenly around it (a
-## boss calling adds in on top of itself).
-@export_enum("Fan", "Ring") var spawn_pattern: int = 0
-## Ring radius, and the distance in front the fan centres on.
+## boss calling adds in on top of itself); QUEUE strings them out single-file behind it,
+## for a retinue whose idle behaviour is to march in the caster's wake.
+@export_enum("Fan", "Ring", "Queue") var spawn_pattern: int = 0
+## Ring radius, queue spacing, and the distance in front the fan centres on.
 @export var spawn_distance: float = 16.0
 @export var minion_health: int = 8
 ## Seconds each minion survives before it expires.

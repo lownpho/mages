@@ -61,6 +61,8 @@ func _ready() -> void:
 func _slot(i: int, perp: Vector2) -> Vector2:
 	if data.spawn_pattern == 1:  # Ring
 		return Vector2(data.spawn_distance, 0).rotated(TAU * i / float(maxi(1, data.count)))
+	if data.spawn_pattern == 2:  # Queue
+		return -_facing * data.spawn_distance * (i + 1)
 	return _facing * data.spawn_distance + perp * ((i - (data.count - 1) / 2.0) * spread)
 
 # The minion's attack is whichever Cast beat its FSM carries — found by type rather than by

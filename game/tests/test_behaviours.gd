@@ -51,6 +51,7 @@ func _ready() -> void:
 	for id in CASES:
 		fails += await _run(id, CASES[id])
 	fails += await _phase_swap()
+	fails += await _halp_queue()
 	fails += await _brood_gate()
 	fails += await _enrage_lap()
 	fails += await _telegraph()
@@ -125,6 +126,64 @@ func _run(id: String, spec: Dictionary) -> int:
 		node.queue_free()
 	await get_tree().physics_frame
 	await get_tree().process_frame
+	return fails
+
+# Tether's queue mode: halp's retinue must string out single-file BEHIND a walking anchor,
+# one place per unit, rather than stacking on one slot (a stack shares a hurtbox) or
+# orbiting like bzzz. Nothing else drives it — a wrong rank reads in-game as three minions
+# fused into one sprite.
+func _halp_queue() -> int:
+	var anchor := CharacterBody2D.new()
+	anchor.add_to_group("player")
+	add_child(anchor)
+
+	var minions: Array[Creature] = []
+	for i in 3:
+		var m: Creature = load("res://characters/player/spells/halp/halp_minion.tscn").instantiate()
+		m.position = Vector2(0, 8 * i)
+		add_child(m)
+		minions.append(m)
+	await get_tree().physics_frame
+	for m in minions:  # headless never renders: the off-screen sleeper would freeze them
+		for child in m.get_children():
+			if child is VisibleOnScreenEnabler2D:
+				child.queue_free()
+		m.process_mode = Node.PROCESS_MODE_INHERIT
+
+	# Walk the anchor right for a while: the line forms against its heading, and only a
+	# moving anchor tells the behaviour which way "behind" is.
+	for _frame in 180:
+		anchor.velocity = Vector2(60, 0)
+		anchor.move_and_slide()
+		await get_tree().physics_frame
+	# Marching at a fixed speed, the line keeps its places while the anchor walks — a
+	# speed that eases off near the slot shows up here as a trail stretching out behind.
+	var walking: Array[float] = []
+	for m in minions:
+		walking.append(m.global_position.x - anchor.global_position.x)
+	for _frame in 60:
+		anchor.velocity = Vector2.ZERO
+		await get_tree().physics_frame
+
+	var spacing: float = minions[0].fsm.states["Follow"].queue_spacing
+	var settled: Array[float] = []
+	var fails := 0
+	for i in minions.size():
+		settled.append(minions[i].global_position.x - anchor.global_position.x)
+		# Half a spacing of slack: it is a chase toward the slot, not a snap onto it. A
+		# place held to within that is also, necessarily, behind the anchor.
+		fails += _expect("halp #%d holds place %d in line (x offset %.1f)"
+			% [i, i + 1, settled[i]], absf(settled[i] + spacing * (i + 1)) < spacing * 0.5)
+		fails += _expect("halp #%d keeps its place while walking (x offset %.1f)"
+			% [i, walking[i]], absf(walking[i] + spacing * (i + 1)) < spacing * 0.5)
+
+	if fails == 0:
+		print("  ok: halp queue — line at %s behind the anchor, %s while walking"
+			% [settled, walking])
+	anchor.queue_free()
+	for m in minions:
+		m.queue_free()
+	await get_tree().physics_frame
 	return fails
 
 # The health-window replacement for the old phase_states: which beats a boss's dispatcher

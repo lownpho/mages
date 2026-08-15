@@ -133,9 +133,8 @@ script = ExtResource("b_tether")
 detect_probe_path = NodePath("../../DetectProbe")
 alert_state = "Advance"
 anchor_group = "player"
-follow_speed = 42.0
-orbit_radius = 22.0
-orbit_speed = 0.8
+follow_speed = 95.0
+queue_spacing = 12.0
 fly_anim = "walk"
 
 [node name="Advance" type="Node" parent="FSM" unique_id=419376632]
