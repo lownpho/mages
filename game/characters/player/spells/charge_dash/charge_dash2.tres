@@ -21,9 +21,9 @@ speed_tiles = 30
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 5.0
-skill_scaling = 0.3
-speed_scaling = 0.6
+base_damage = 10.0
+skill_scaling = 0.6
+speed_scaling = 1.2
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
@@ -44,6 +44,7 @@ max_shots = 9
 effect_scene = ExtResource("3_scene")
 cooldown = 6.0
 cast_time = 0.3
+blurb = "More effective if I run fast."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 6
 speed_modifier = 2

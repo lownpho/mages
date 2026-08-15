@@ -23,6 +23,7 @@ edge_damage = 0.5
 effect_scene = ExtResource("3_scene")
 cooldown = 4.0
 cast_time = 0.2
+blurb = "Panic button. Works better with armour."
 icon = SubResource("AtlasTexture_icon")
 max_health_modifier = 25
 defence_modifier = 7

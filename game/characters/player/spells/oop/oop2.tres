@@ -51,5 +51,6 @@ max_shots = 1
 effect_scene = ExtResource("99_effect")
 cooldown = 2.0
 cast_time = 0.2
+blurb = "I really hope they fall for it. It needs a lot of magic to cast."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 5

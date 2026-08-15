@@ -61,6 +61,26 @@ func _ready() -> void:
 		slot_ui.release_focus()
 		GlobalInventory.spell_slots.at(0).clear_item()
 
+	# --- blurb: text alone raises the tip, and an item with nothing at all stays silent ---
+	var mute := SpellResource.new()
+	mute.cooldown = 0.0   # the only modifier a bare spell would otherwise carry
+	GlobalInput._set_gamepad(true)
+	GlobalInventory.spell_slots.at(0).set_item(mute)
+
+	slot_ui.grab_focus()
+	if _tip(ui) == null:
+		fails.append("no tooltip on an item carrying only a blurb")
+	slot_ui.release_focus()
+	await get_tree().process_frame
+
+	mute.blurb = ""
+	slot_ui.grab_focus()
+	if _tip(ui) != null:
+		fails.append("tooltip shown for an item with nothing to say")
+	slot_ui.release_focus()
+	GlobalInventory.spell_slots.at(0).clear_item()
+	GlobalInput._set_gamepad(false)
+
 	if fails.is_empty():
 		print("ALL PASS")
 	else:

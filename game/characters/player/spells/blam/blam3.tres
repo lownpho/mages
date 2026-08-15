@@ -42,6 +42,7 @@ shot_interval = 0.3
 max_shots = 3
 effect_scene = ExtResource("3_scene")
 cooldown = 1.5
+blurb = "Boring"
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 10
 defence_modifier = 7

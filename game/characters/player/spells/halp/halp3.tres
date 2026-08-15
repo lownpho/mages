@@ -57,6 +57,7 @@ minion_sheet = ExtResource("9_sheet")
 effect_scene = ExtResource("3_effect")
 cooldown = 9.0
 cast_time = 0.5
+blurb = "Do they think I'm their mom?"
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 4
 max_health_modifier = 50

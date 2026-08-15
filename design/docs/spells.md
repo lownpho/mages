@@ -122,9 +122,9 @@ One burst of single bullets at the cursor, then cooldown, rather than a sustaine
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +4 |
-| T2 | 2s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +6 |
-| T3 | 2s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
+| T1 | 1s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +4 |
+| T2 | 1s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +6 |
+| T3 | 1s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
 
 ### Snipe
 
@@ -134,8 +134,8 @@ A few homing bullets toward the first enemy in the cursor direction. They all la
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 8s | instant | Single, 3 @ 0.1s | 4 + 0.2×skill = **9** | 18 | skill +4 |
-| T2 | 8s | instant | Single, 5 @ 0.1s | 5 + 0.25×skill = **11** | 18 | skill +6 |
+| T1 | 4s | instant | Single, 3 @ 0.1s | 4 + 0.2×skill = **9** | 18 | skill +4 |
+| T2 | 4s | instant | Single, 5 @ 0.1s | 5 + 0.25×skill = **11** | 18 | skill +6 |
 
 **Also:** homing 90° cone.
 
@@ -147,9 +147,9 @@ Two shotgun blasts back-to-back at the cursor, then cooldown: a double barrel, c
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 3s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +4, defence +3 |
-| T2 | 3s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +7, defence +5 |
-| T3 | 3s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +10, defence +7 |
+| T1 | 1.5s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +4, defence +3 |
+| T2 | 1.5s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +7, defence +5 |
+| T3 | 1.5s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +10, defence +7 |
 
 ### Ring
 
@@ -159,9 +159,9 @@ A few fast rings of bullets pulsed out of the caster. Every pulse spawns at the 
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 5s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +3, max_health +15 |
-| T2 | 5s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +5, max_health +25 |
-| T3 | 4s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +8, max_health +30 |
+| T1 | 2.5s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +3, max_health +15 |
+| T2 | 2.5s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +5, max_health +25 |
+| T3 | 2.5s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +8, max_health +30 |
 
 ## Nukes
 
@@ -175,8 +175,8 @@ The starting spell: the first thing a new player has in a slot, and the baseline
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 8s | 0.5s | Single | 10 + 1.25×skill = **41** | 12 | skill +6 |
-| T2 | 8s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +10 |
+| T1 | 4s | 0.5s | Single | 10 + 1.25×skill = **41** | 12 | skill +6 |
+| T2 | 4s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +10 |
 
 **Also:** blast 5 tiles (splash only).
 
@@ -188,8 +188,8 @@ An instant chain-lightning bolt that leaps between packed enemies; one lone targ
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +6 |
-| T2 | 4s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +9 |
+| T1 | 2s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +6 |
+| T2 | 2s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +9 |
 
 **Also:** chains 16x, chains 8x.
 
@@ -201,7 +201,7 @@ A fast piercing bullet that ricochets off walls; each bounce is a fresh leg of t
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 7s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +6, speed +2 |
+| T2 | 3.5s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +6, speed +2 |
 
 **Also:** BounceBehaviour, pierces.
 
@@ -268,7 +268,7 @@ Charges in a direction for a short duration at high speed. Sends bullets at 90 d
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 6s | 0.3s | Flank x2, 9 @ 0.1s | 5 + 0.3×skill + 0.6×speed = **60** | 8 | skill +6, speed +2 |
+| T2 | 6s | 0.3s | Flank x2, 9 @ 0.1s | 10 + 0.6×skill + 1.2×speed = **121** | 8 | skill +6, speed +2 |
 
 **Also:** dash 80 px/s for 1s.
 

@@ -47,5 +47,6 @@ shot_interval = 0.1
 max_shots = 3
 effect_scene = ExtResource("3_scene")
 cooldown = 4.0
+blurb = "No aim required"
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 4

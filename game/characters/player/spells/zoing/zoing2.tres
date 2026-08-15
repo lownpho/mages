@@ -49,6 +49,7 @@ shot_interval = 0.2
 max_shots = 5
 effect_scene = ExtResource("3_scene")
 cooldown = 3.5
+blurb = "Bounce against walls. Goes well with magic skill."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 6
 speed_modifier = 2

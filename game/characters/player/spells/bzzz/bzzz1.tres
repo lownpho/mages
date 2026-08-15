@@ -52,6 +52,7 @@ minion_spell = SubResource("StingWeapon")
 effect_scene = ExtResource("3_effect")
 cooldown = 8.0
 cast_time = 0.3
+blurb = "Bzzz"
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 3
 max_health_modifier = 15

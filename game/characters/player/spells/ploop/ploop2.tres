@@ -46,5 +46,6 @@ rotation_per_shot = 22.5
 effect_scene = ExtResource("5_0x2dy")
 cooldown = 2.0
 cast_time = 0.2
+blurb = "I really hope they fall for it. I put all my speed into it."
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 6

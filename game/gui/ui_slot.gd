@@ -11,6 +11,8 @@ const _DENY_COLOR = Palette.RED
 
 # Tooltip stat icons: x offset of each 8x8 glyph in the y=8 row of ui.png.
 const _UI = preload("res://gui/ui.png")
+# Wrap column for the tooltip blurb, in the 320x180 content scale.
+const _BLURB_WIDTH = 72
 const _ICON_X = {
 	"damage": 0, "cooldown": 8, "cast": 16,
 	"health": 24, "defence": 40, "skill": 48, "speed": 56,
@@ -67,18 +69,45 @@ func update_texture() -> void:
 		# so it must be non-whitespace; the value is unused, _make_custom_tooltip
 		# builds the contents. Only arm it when there are bonuses to show, else the
 		# empty tooltip would fall back to a bare "." popup.
-		tooltip_text = "." if not slot.item.get_modifiers().is_empty() else ""
+		tooltip_text = "." if _has_tooltip() else ""
 	else:
 		$ItemTexture.texture = null
 		tooltip_text = ""
 
-# Returns only the stat grid — the wrapping popup wears the theme's TooltipPanel
+# Returns only the contents — the wrapping popup wears the theme's TooltipPanel
 # frame, so no panel needs building here.
 func _make_custom_tooltip(_for_text: String) -> Object:
-	var modifiers: Array = slot.item.get_modifiers()
-	if modifiers.is_empty():
+	return _tooltip_content()
+
+func _blurb() -> String:
+	return (slot.item as SpellResource).blurb if slot.item is SpellResource else ""
+
+func _has_tooltip() -> bool:
+	return not slot.item.get_modifiers().is_empty() or not _blurb().is_empty()
+
+# The stat grid with the blurb line under it; null when the item has nothing to
+# say, which keeps the popup shut.
+func _tooltip_content() -> Control:
+	if not _has_tooltip():
 		return null
-	return _stat_grid(modifiers)
+	var modifiers: Array = slot.item.get_modifiers()
+	var blurb := _blurb()
+	if blurb.is_empty():
+		return _stat_grid(modifiers)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 1)
+	if not modifiers.is_empty():
+		box.add_child(_stat_grid(modifiers))
+	var label := Label.new()
+	label.text = blurb
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# The theme's 3px gap is sized for prose, not an 8px pixel font in a tooltip.
+	label.add_theme_constant_override("line_spacing", 0)
+	# Autowrap leaves the label's minimum width at one word, so the panel would
+	# shrink to that — this is what fixes the tooltip's wrap column.
+	label.custom_minimum_size = Vector2(_BLURB_WIDTH, 0)
+	box.add_child(label)
+	return box
 
 func _stat_grid(rows: Array) -> GridContainer:
 	var grid := GridContainer.new()
@@ -156,12 +185,12 @@ func _show_focus_tip() -> void:
 	_hide_focus_tip()
 	if slot == null or slot.item == null:
 		return
-	var modifiers: Array = slot.item.get_modifiers()
-	if modifiers.is_empty():
+	var content := _tooltip_content()
+	if content == null:
 		return   # nothing to say — matches the mouse tooltip staying shut on a bare item
 	var panel := PanelContainer.new()
 	panel.theme_type_variation = &"TooltipPanel"
-	panel.add_child(_stat_grid(modifiers))
+	panel.add_child(content)
 	# Parented to the CanvasLayer, not the strip: inside the layout it would be clipped and would
 	# reflow the slot grid around it.
 	var layer := _ui_layer()

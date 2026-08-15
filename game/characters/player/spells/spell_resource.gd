@@ -13,6 +13,9 @@ class_name SpellResource
 ## hits, the caster calls channel_released() on the effect — channeled
 ## effects must implement it. The caster is rooted for the channel.
 @export var channeled: bool = false
+## Line shown above the stat grid in the slot tooltip. Never seen on an enemy's
+## bespoke casts, which are never held in a slot.
+@export_multiline var blurb: String = "I didn't take notes on this"
 
 func get_item_type() -> GlobalInventory.ItemType:
 	return GlobalInventory.ItemType.SPELL

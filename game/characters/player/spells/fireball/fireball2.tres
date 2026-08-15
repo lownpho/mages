@@ -49,5 +49,6 @@ max_shots = 1
 effect_scene = ExtResource("3_scene")
 cooldown = 4.0
 cast_time = 0.5
+blurb = "I like fire."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 10
