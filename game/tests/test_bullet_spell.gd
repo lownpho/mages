@@ -54,6 +54,7 @@ func _ready() -> void:
 	await _test_channel_cancels_burst()
 	await _test_burst_rotation()
 	await _test_homing_lock()
+	await _test_nope_leech()
 
 	# Leave no equipment behind for a later scene run in the same session.
 	for i in GlobalInventory.SPELL_SLOT_SIZE:
@@ -184,6 +185,29 @@ func _test_channel_cancels_burst() -> void:
 		fails.append("channel-cancelled burst kept firing")
 	GlobalInventory.cycle_spell_page()  # back to page 0
 	await _wait_off_cooldown(pew1)
+
+# Nope pays back leech_fraction of everything it soaks, and hits too small to round up to
+# a point of health carry over instead of vanishing.
+func _test_nope_leech() -> void:
+	var nope: NopeResource = load("res://characters/player/spells/nope/nope.tres")
+	var shield := nope.effect_scene.instantiate()
+	add_child(shield)
+	shield.setup(nope, player)
+	player.health = player.max_health - 50
+	var before: int = player.health
+	player.damage_absorber.absorb(20)
+	var want := int(20 * nope.leech_fraction)
+	if player.health - before != want:
+		fails.append("nope leeched %d off a 20 hit, want %d" % [player.health - before, want])
+	before = player.health
+	player.damage_absorber.absorb(5)
+	if player.health != before:
+		fails.append("nope rounded a sub-point leech up")
+	player.damage_absorber.absorb(5)
+	if player.health != before + 1:
+		fails.append("nope dropped the carried-over leech fraction")
+	shield.channel_released()
+	player.health = player.max_health
 
 # The burst-shaping dials that used to live on the RotatingVolley behaviour: a spell
 # with rotation_per_shot spirals its own aim shot to shot, and aim_mode Independent ignores

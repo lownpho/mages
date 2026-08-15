@@ -10,6 +10,7 @@ region = Rect2(96, 8, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
+leech_fraction = 0.1
 effect_scene = ExtResource("3_scene")
 cooldown = 2.0
 cast_time = 1.5

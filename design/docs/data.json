@@ -1114,7 +1114,7 @@
    "id": "nope",
    "name": "Nope",
    "category": "utility",
-   "description": "On a long cooldown, raises a bubble that absorbs incoming damage; a white ring flashes on each absorbed hit.",
+   "description": "On a long cooldown, raises a bubble that absorbs incoming damage and pays a slice of it back as health; a white ring flashes on each absorbed hit.",
    "per_tier": "",
    "kind": "nope",
    "hold": "channeled",

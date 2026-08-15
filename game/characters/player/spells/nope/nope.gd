@@ -11,6 +11,7 @@ var data: NopeResource
 
 var _caster: Node2D
 var _absorb_left: int
+var _leech_pool: float
 
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
@@ -32,12 +33,25 @@ func absorb(damage: int) -> int:
 		return damage
 	_flash()
 	if data.absorb_amount <= 0:
+		_leech(damage)
 		return 0
 	var covered := mini(damage, _absorb_left)
 	_absorb_left -= covered
+	_leech(covered)
 	if _absorb_left <= 0:
 		_break_shield()
 	return damage - covered
+
+# Small hits round to nothing on their own, so the fraction carries between them.
+func _leech(blocked: int) -> void:
+	_leech_pool += blocked * data.leech_fraction
+	var healed := int(_leech_pool)
+	if healed <= 0:
+		return
+	_leech_pool -= healed
+	_caster.health = mini(_caster.health + healed, _caster.max_health)
+	if _caster.is_in_group("player"):
+		GlobalEvent.player_health_changed.emit(_caster.health)
 
 # The pool ran dry: stop absorbing immediately. The channel itself keeps its
 # own lifecycle (SpellCaster still calls channel_released on release/cap).

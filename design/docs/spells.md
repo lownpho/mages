@@ -318,7 +318,7 @@ The mine that answers a crowd instead of a target: same drop, same arming, but o
 
 ### Nope
 
-On a long cooldown, raises a bubble that absorbs incoming damage; a white ring flashes on each absorbed hit.
+On a long cooldown, raises a bubble that absorbs incoming damage and pays a slice of it back as health; a white ring flashes on each absorbed hit.
 
 **Scaling:** flat · **Hold:** channeled
 
