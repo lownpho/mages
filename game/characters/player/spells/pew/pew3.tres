@@ -42,3 +42,4 @@ effect_scene = ExtResource("3_scene")
 blurb = "Boring but works better if I'm fast"
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 8
+cooldown = 1.5
