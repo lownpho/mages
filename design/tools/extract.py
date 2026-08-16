@@ -266,6 +266,10 @@ def _spell_record(spell, d: Defaults) -> dict:
             }
     elif kind == "nope":
         entry["absorb"] = _num(d.get(spell, "absorb_amount", 0))
+    elif spell.script_class == "WhumfResource":
+        # The blast is the number Whumf is balanced on; the per-tick chip is deliberately
+        # too small to read as damage (see the Mycelium set).
+        entry["amount"] = _amount(spell.get("blast_damage"), d)
     elif spell.get("damage") is not None:
         # Bespoke families (Bwoom, Thwomp) hold a plain ScalingProfile.
         entry["amount"] = _amount(spell.get("damage"), d)

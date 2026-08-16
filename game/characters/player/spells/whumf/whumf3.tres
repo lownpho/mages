@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="WhumfResource" format=3 uid="uid://cnf1b2f0qddls"]
+
+[ext_resource type="Script" uid="uid://ckqpeqlc3433q" path="res://characters/player/spells/whumf/whumf_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_atlas"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/whumf/whumf.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="4_scaling"]
+
+[sub_resource type="Resource" id="ScalingProfile_blast"]
+script = ExtResource("4_scaling")
+base_damage = 50.0
+skill_scaling = 1.0
+speed_scaling = 1.0
+defence_scaling = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(80, 32, 8, 8)
+
+[sub_resource type="Resource" id="ScalingProfile_tick"]
+script = ExtResource("4_scaling")
+base_damage = 3.0
+skill_scaling = 0.1
+
+[resource]
+script = ExtResource("1_script")
+tick_damage = SubResource("ScalingProfile_tick")
+blast_damage = SubResource("ScalingProfile_blast")
+cloud_lifetime = 30.0
+effect_scene = ExtResource("3_scene")
+cooldown = 4.0
+blurb = "Spores extracted from dark mycelium. They look sensible to light."
+icon = SubResource("AtlasTexture_icon")
+skill_modifier = 4
+max_health_modifier = 25

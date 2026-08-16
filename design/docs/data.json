@@ -41,7 +41,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/pew/pew1.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 1.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -69,7 +69,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/pew/pew2.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 1.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -97,7 +97,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/pew/pew3.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 1.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -232,7 +232,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/blam/blam1.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -262,7 +262,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/blam/blam2.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -292,7 +292,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/blam/blam3.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -340,7 +340,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/ring/ring1.tres",
      "kind": "bullet",
-     "cooldown": 2.5,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -369,7 +369,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/ring/ring2.tres",
      "kind": "bullet",
-     "cooldown": 2.5,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -398,7 +398,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/ring/ring3.tres",
      "kind": "bullet",
-     "cooldown": 2.5,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -594,6 +594,9 @@
        "type": "chain",
        "bounces": 16,
        "bounce_range_tiles": 6
+      },
+      {
+       "type": "SporeDetonator"
       }
      ]
     }
@@ -619,7 +622,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/zoing/zoing2.tres",
      "kind": "bullet",
-     "cooldown": 3.5,
+     "cooldown": 4,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -705,7 +708,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/halp/halp2.tres",
      "kind": "summon",
-     "cooldown": 10,
+     "cooldown": 15,
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
@@ -714,8 +717,8 @@
      },
      "minion": {
       "count": 4,
-      "health": 34,
-      "lifetime": 8
+      "health": 55,
+      "lifetime": 15
      },
      "minion_cast": {
       "cooldown": 0.9,
@@ -733,43 +736,6 @@
       },
       "projectile": {
        "range_tiles": 7,
-       "speed_tiles": 12,
-       "pierce": false
-      }
-     }
-    },
-    {
-     "tier": 3,
-     "source": "game/characters/player/spells/halp/halp3.tres",
-     "kind": "summon",
-     "cooldown": 9,
-     "cast_time": 0.5,
-     "channeled": false,
-     "grants": {
-      "skill": 4,
-      "max_health": 50
-     },
-     "minion": {
-      "count": 6,
-      "health": 55,
-      "lifetime": 10
-     },
-     "minion_cast": {
-      "cooldown": 0.7,
-      "shots": {
-       "pattern": "SinglePattern",
-       "per_shot": 1,
-       "count": 1,
-       "interval": 0.25
-      },
-      "amount": {
-       "base": 14,
-       "skill": 0,
-       "speed": 0,
-       "defence": 0.75
-      },
-      "projectile": {
-       "range_tiles": 9,
        "speed_tiles": 12,
        "pierce": false
       }
@@ -797,7 +763,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/bzzz/bzzz1.tres",
      "kind": "summon",
-     "cooldown": 8,
+     "cooldown": 12,
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
@@ -807,7 +773,7 @@
      "minion": {
       "count": 4,
       "health": 15,
-      "lifetime": 6
+      "lifetime": 9
      },
      "minion_cast": {
       "cooldown": 0.5,
@@ -852,7 +818,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/jimmy/jimmy1.tres",
      "kind": "summon",
-     "cooldown": 14,
+     "cooldown": 21,
      "cast_time": 1,
      "channeled": false,
      "grants": {
@@ -862,7 +828,7 @@
      "minion": {
       "count": 1,
       "health": 200,
-      "lifetime": 15
+      "lifetime": 22.5
      },
      "minion_cast": {
       "cooldown": 3,
@@ -1111,6 +1077,44 @@
    ]
   },
   {
+   "id": "whumf",
+   "name": "Whumf",
+   "category": "utility",
+   "description": "Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that dungeon's set to ship; Poot and Blops, the turrets that stand in the field, are still proposals.",
+   "per_tier": "",
+   "kind": "effect",
+   "hold": "no",
+   "scaling": [
+    "skill",
+    "speed",
+    "defence"
+   ],
+   "grants": [
+    "max_health",
+    "skill"
+   ],
+   "tiers": [
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/whumf/whumf3.tres",
+     "kind": "effect",
+     "cooldown": 4,
+     "cast_time": 0,
+     "channeled": false,
+     "grants": {
+      "skill": 4,
+      "max_health": 25
+     },
+     "amount": {
+      "base": 50,
+      "skill": 1,
+      "speed": 1,
+      "defence": 1
+     }
+    }
+   ]
+  },
+  {
    "id": "nope",
    "name": "Nope",
    "category": "utility",
@@ -1154,7 +1158,6 @@
     "defence"
    ],
    "grants": [
-    "defence",
     "max_health"
    ],
    "tiers": [
@@ -1173,24 +1176,6 @@
       "skill": 0.5,
       "speed": 0,
       "defence": 2
-     }
-    },
-    {
-     "tier": 2,
-     "source": "game/characters/player/spells/heal/heal2.tres",
-     "kind": "heal",
-     "cooldown": 17,
-     "cast_time": 0.8,
-     "channeled": false,
-     "grants": {
-      "max_health": 35,
-      "defence": 2
-     },
-     "amount": {
-      "base": 88,
-      "skill": 0.5,
-      "speed": 0,
-      "defence": 3
      }
     }
    ]
@@ -5985,7 +5970,7 @@
    "id": "deepwood",
    "name": "Deepwood",
    "tier_label": "T3",
-   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The two remaining ones (insect, fungal) are proposals; they stay in the ideas section below.",
+   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.",
    "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.",
    "biomes": [
     "deepwood",
@@ -6165,7 +6150,7 @@
    ],
    "fallback_room_type": "deepwood_mimic_open",
    "name": "Mimic deepwood",
-   "intro": "A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.",
+   "intro": "A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the mushroom door down into the Mycelium, which leads nowhere yet.",
    "roster": [
     "bramble_stalker",
     "bristlestone",

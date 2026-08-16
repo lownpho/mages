@@ -90,6 +90,42 @@ difference is only in the numbers and how many are stacked.
 | Wall of projectiles | a sweeping line                                   |
 | Trapdoor volley     | danger zones that rise from the floor             |
 
+## Tags
+
+*(proposal — nothing carries a tag yet)*
+
+A creature is made of something, and some bullets are made to kill that something. A bullet
+carries a set of **banes**; a creature carries a set of **kinds**. If they overlap, the hit
+lands for **double**. That is the whole rule.
+
+| Kind    | What carries it                                                       |
+| ------- | --------------------------------------------------------------------- |
+| plant   | sproutling, seedling, mandrake, thornthrower, rosebud, thornmess, …    |
+| beast   | hopper, viper, the snakes, the moths, owl, mole, razorback, …          |
+| insect  | wasp, and the insect deepwood roster                                   |
+| spirit  | fae, the grimlings, wisps                                              |
+| stone   | dirt golem, moss golem, cinderstone                                    |
+| fungal  | the Mycelium roster, and nothing else                                  |
+
+It is deliberately the collision mask one layer up: `kinds` on the creature, `banes` on the
+bullet, one bitwise `and` in the hurtbox, resolved exactly where the physics layers already
+are. No new dispatch, no per-pair table, no lookup of what beats what.
+
+Three rules keep it from becoming a chore:
+
+- **Double or nothing.** A mismatch is not punished, only unrewarded. Halving every off-kind
+  hit would mean six loadouts you must carry and five you are always sorry to be holding; the
+  bonus alone already gets the player swapping.
+- **A creature has one kind**, near enough. Two is allowed where it is obvious (the moss golem
+  is stone *and* plant) and nothing has three. If you have to argue for the second one, it
+  doesn't have it.
+- **Most bullets bane nothing.** Every shipped spell stays untagged. Banes arrive only on
+  **side tiers** (see [ideas](#side-tiers)) and on set pieces, so a bane is always something
+  the player went and got, never a stat that quietly showed up.
+
+Kinds are also the honest read on a room: the bestiary shows them, so "this floor is all
+fungal" is information you can act on before you walk in.
+
 ---
 
 # Catalogue
@@ -122,9 +158,9 @@ One burst of single bullets at the cursor, then cooldown, rather than a sustaine
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 1s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +4 |
-| T2 | 1s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +6 |
-| T3 | 1s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
+| T1 | 1.5s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +4 |
+| T2 | 1.5s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +6 |
+| T3 | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
 
 ### Snipe
 
@@ -147,9 +183,9 @@ Two shotgun blasts back-to-back at the cursor, then cooldown: a double barrel, c
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 1.5s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +4, defence +3 |
-| T2 | 1.5s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +7, defence +5 |
-| T3 | 1.5s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +10, defence +7 |
+| T1 | 2s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +4, defence +3 |
+| T2 | 2s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +7, defence +5 |
+| T3 | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +10, defence +7 |
 
 ### Ring
 
@@ -159,9 +195,9 @@ A few fast rings of bullets pulsed out of the caster. Every pulse spawns at the 
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2.5s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +3, max_health +15 |
-| T2 | 2.5s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +5, max_health +25 |
-| T3 | 2.5s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +8, max_health +30 |
+| T1 | 3s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +3, max_health +15 |
+| T2 | 3s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +5, max_health +25 |
+| T3 | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +8, max_health +30 |
 
 ## Nukes
 
@@ -191,7 +227,7 @@ An instant chain-lightning bolt that leaps between packed enemies; one lone targ
 | T1 | 2s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +6 |
 | T2 | 2s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +9 |
 
-**Also:** chains 16x, chains 8x.
+**Also:** SporeDetonator, chains 16x, chains 8x.
 
 ### Zoing
 
@@ -201,7 +237,7 @@ A fast piercing bullet that ricochets off walls; each bounce is a fresh leg of t
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 3.5s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +6, speed +2 |
+| T2 | 4s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +6, speed +2 |
 
 **Also:** BounceBehaviour, pierces.
 
@@ -227,10 +263,9 @@ A small squad of ranged minions firing single bullets. A walking gunline.
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 10s | 0.5s | — | — | — | skill +2, max_health +35 |
-| T3 | 9s | 0.5s | — | — | — | skill +4, max_health +50 |
+| T2 | 15s | 0.5s | — | — | — | skill +2, max_health +35 |
 
-**Also:** 4 minions, 34 hp, 8s, 6 minions, 55 hp, 10s.
+**Also:** 4 minions, 55 hp, 15s.
 
 ### Bzzz
 
@@ -240,9 +275,9 @@ A fragile swarm of fast, short-range minions; chaff that dumps damage then dies.
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 8s | 0.3s | — | — | — | speed +3, max_health +15 |
+| T1 | 12s | 0.3s | — | — | — | speed +3, max_health +15 |
 
-**Also:** 4 minions, 15 hp, 6s.
+**Also:** 4 minions, 15 hp, 9s.
 
 ### Jimmy
 
@@ -252,9 +287,9 @@ One heavy minion firing a ring around itself; a walking turret that denies an ar
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 14s | 1s | — | — | — | max_health +30, defence +1 |
+| T1 | 21s | 1s | — | — | — | max_health +30, defence +1 |
 
-**Also:** 1 minions, 200 hp, 15s.
+**Also:** 1 minions, 200 hp, 22.5s.
 
 ## Utility
 
@@ -316,6 +351,16 @@ The mine that answers a crowd instead of a target: same drop, same arming, but o
 
 **Also:** pierces.
 
+### Whumf
+
+Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that dungeon's set to ship; Poot and Blops, the turrets that stand in the field, are still proposals.
+
+**Scaling:** skill, speed, defence
+
+| Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
+|---|---|---|---|---|---|---|
+| T3 | 4s | instant | — | 50 + 1×skill + 1×speed + 1×defence = **155** | — | skill +4, max_health +25 |
+
 ### Nope
 
 On a long cooldown, raises a bubble that absorbs incoming damage and pays a slice of it back as health; a white ring flashes on each absorbed hit.
@@ -335,7 +380,6 @@ Instantly restores health. The safety net every survivability loadout considers.
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
 | T1 | 20s | 0.8s | — | 50 + 0.5×skill + 2×defence = **62** | — | max_health +20 |
-| T2 | 17s | 0.8s | — | 88 + 0.5×skill + 3×defence = **100** | — | max_health +35, defence +2 |
 
 <!-- END GENERATED CATALOGUE -->
 
@@ -524,6 +568,10 @@ A short-lived wall of fire along a line toward the cursor. Enemies pay HP to cro
 | Cast time | low |
 | Hold | no |
 
+**Notes:** fire does **not** trigger spore clouds — see the Mycelium set. Fwoosh and the clouds
+are two independent pieces of floor, and keeping them independent is what stops the starting
+fireball from being a universal detonator.
+
 #### Slurp
 
 An aura that drains every enemy in range each tick and heals the caster for a fraction. Steady damage and self-healing on one button.
@@ -536,3 +584,133 @@ An aura that drains every enemy in range each tick and heals the caster for a fr
 | Cooldown | med |
 | Cast time | instant |
 | Hold | channeled |
+
+**Notes:** earmarked for the **hive**, along with Vroop — life-leeching is that dungeon's
+theme, not the Mycelium's. It was briefly a Mycelium set piece and did not belong: a drain
+beam is a chase mechanic, and nothing in a dungeon of rooted turrets chases.
+
+### The Mycelium set
+
+The three spells the [Mycelium](enemies.md#the-mycelium-dungeon) pays out. They are the first
+**set**: each works alone, and together they are a small engine with one decision in it.
+**Whumf ships** — it is in the catalogue above, and Zaap t2 detonates it. Poot and Blops are
+still proposals, and the clouds do not empower anything yet because nothing that cares about
+being empowered exists.
+
+The shared piece is the **spore cloud** — a patch of floor that lingers, ticks for very little,
+and empowers whatever stands in it. The dungeon is full of them because its roster prints
+them; Whumf is how you print your own.
+
+The engine:
+
+1. **Whumf** lays the cloud.
+2. **Poot** and **Blops** sit in it and ramp — faster, tougher, harder-hitting.
+3. **Zaap** detonates the whole thing for a chain blast, and the clouds are gone.
+
+So your spores are either **turret fuel or a bomb, never both**, and Zaap is a real mid-fight
+choice rather than a free button: cashing in the field is also switching your own engine off.
+That tension is the build.
+
+Nothing in the set moves, which is the point — everything in the Mycelium is rooted, including
+you. It asks you to hold ground in a bullet-hell room rather than kite one, and it is the
+first loadout in the game that is about a *position* instead of an aim.
+
+**The detonation cannot hurt you.** Whumf lays spores *around* you, so a self-damaging blast
+would make the set's own combo suicide. Spending the field is cost enough.
+
+**Electricity only.** Fire does not trigger clouds — Fireball is the starting spell, and
+letting it detonate would make every player a detonator by accident and delete the puzzle
+before it is posed. One trigger, one spell family, learned in one room.
+
+#### Poot
+
+*(summon)* A capped mushroom planted where you aim: a single-shot turret that never moves and never chases. Fires faster and gains defence while it stands in a spore cloud. The only summon you can put somewhere *before* the fight arrives, so it plays as prep — seed the doorway, lay a Whumf over it, walk away.
+
+| | |
+|---|---|
+| Scaling | skill |
+| Grants | health (med), defence (med) |
+| Range | low (its own), placed at med |
+| Cooldown | med |
+| Cast time | low |
+| Hold | no |
+
+**Art:** the graveyard's `puffcap` sprite, moved to `spells/poot/` per the summon convention — a squat mushroom that swells on the puff frame.
+
+**Notes:** where Jimmy is a walking turret that goes where the fight is, Poot is a placed one that makes the fight come to it. That is the whole difference and it is enough.
+
+#### Blops
+
+*(summon)* The heavy half of the pair: a planted mushroom that pulses a rotating ring around itself rather than aiming, and hits twice as hard while it stands in a spore cloud. Poot covers a lane; Blops owns a circle. Out of a cloud it is a mediocre area denier — in one it is the reason to hold the room.
+
+| | |
+|---|---|
+| Scaling | skill |
+| Grants | health (med), skill (med) |
+| Range | low (its own ring), placed at med |
+| Cooldown | high |
+| Cast time | low |
+| Hold | no |
+
+**Notes:** the doubling is **in-cloud only**, same shape as Poot's speed-up, so the two turrets share one rule the player learns once. A permanent double would make the cloud a bonus instead of the point.
+
+### Interactions
+
+Beyond the set, the spells that already exist can be made to read each other. The rule for
+adding one: it must be **guessable from the two spells' own descriptions**, and it must never
+be the only way either spell is good. An interaction is a reward for the loadout that noticed,
+not a recipe the game expects you to assemble.
+
+| Combo | What happens | Why it works |
+|---|---|---|
+| **Whumf** → **Zaap** | electricity detonates a spore cloud, chaining through every adjacent one, for far more than the clouds would ever tick | the set's core, and the Mycelium's whole mechanic — the dungeon fills the room with fuses and the player brings the match |
+| **Thwomp** → **Oop** / **Ploop** | the knockback pulse shoves enemies onto your own armed mines | you already place mines behind you and push enemies away from you; the two vectors were always pointing at each other |
+| **Vroop** → **Zaap** | the vortex clumps a pack, so the chain has somewhere to leap | Zaap is feast-or-famine on spacing, and Vroop's entire job is spacing |
+| **Vroop** → **Ring** / **Kaboom** | same clump, eaten by an area burst instead | any AoE pays off, so the vortex never feels like a one-partner spell |
+| **Nope** → next cast | damage the bubble absorbed is added to your next spell instead of only paying back health | it already counts what it ate; spending that count forward turns a panic button into a beat you plan |
+| **Bwoom** ← **Clang** | the piercing window makes the charged line cross a whole pack instead of stopping at the first body | Bwoom is already a line, Clang already makes lines matter |
+| **Blink** → any charged spell | Blink does not break a charge, so you can reposition mid-hold | a charge that roots you is a dead beat; letting one spell be the answer keeps mobility a real slot |
+
+**Shing** (your next spell casts twice) is the general case of this section, and it stays
+worth a slot precisely because it needs no partner to be authored.
+
+**Skipped:** an elemental reaction grid — fire on ice, ice on wet, ten pairs to author and
+memorise. Six named interactions read from the spell cards; a matrix has to be studied.
+
+### Side tiers
+
+*(this is how banes reach the player)*
+
+A **side tier** is a spell's existing tier with a bane on it. Same name, same numbers, same
+burst, same grants — **the only difference is what it is strong against**. Blam strong against
+insects is still Blam; it is not a new spell, it does not get a new word, and nothing about
+it is better except against the thing it banes.
+
+That makes it about the cheapest content in the game: one duplicated `.tres` with one array
+field filled in, no new effect scene, no new balance pass, nothing to re-tune when the base
+spell moves. Which is the whole reason the drop pool can be wide — a dungeon can pay out five
+of these without adding five spells to the game.
+
+It also keeps **no power creep** true by construction. A side tier cannot be an upgrade,
+because it is the same numbers; it can only be *situational*. Carrying one costs you a slot,
+and the slot is the price of the doubling.
+
+| Rule | |
+|---|---|
+| **Same name** | Blam is Blam. The card shows a bane badge, not a new title |
+| **Same numbers** | never a dial, never a "and also slightly wider" — that is a new spell, author one instead |
+| **One bane** | always the kind that drops it |
+| **Sits beside its tier, not above it** | a side tier of Blam II is Blam II; it does not imply a Blam III exists |
+
+The dungeons are where they come from, and they point at each other: the **Mycelium** drops
+insect side tiers, the **hive** drops fungal ones. Clear one to arm yourself for the other.
+Your own deepwood sign already says it — *"for some reason mushrooms and insects hate each
+other."* The tag system gets taught by a sign, not a tutorial.
+
+**Skipped:** renaming variants (Pew/Pow, Zaap/Zeep). A vowel-shifted sibling reads as a
+different spell, which is exactly wrong — the player should see the spell they already know
+wearing a badge, and immediately understand they could have found the plain one instead.
+
+**Skipped:** side tiers that also move a dial. One thing per drop. The moment a bane spell is
+also 10% wider, it is a balance problem forever and the player can no longer tell whether they
+are carrying it for the bane or the dial.

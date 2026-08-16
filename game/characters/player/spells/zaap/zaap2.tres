@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_icon"]
 [ext_resource type="Script" uid="uid://doyi3ve3udhsl" path="res://items/bullets/behaviours/chain_behaviour.gd" id="2_y43cu"]
+[ext_resource type="Script" uid="uid://b8r1pk2325fyt" path="res://items/bullets/behaviours/spore_detonator.gd" id="5_spore"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="3_1ji7k"]
 [ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="4_jdejf"]
@@ -14,6 +15,9 @@
 script = ExtResource("2_y43cu")
 bounces = 16
 
+[sub_resource type="Resource" id="Resource_spore"]
+script = ExtResource("5_spore")
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_ea1c3"]
 atlas = ExtResource("3_1ji7k")
 region = Rect2(40, 56, 8, 8)
@@ -23,7 +27,7 @@ script = ExtResource("4_jdejf")
 icon = SubResource("AtlasTexture_ea1c3")
 range_tiles = 12
 speed_tiles = 32
-behaviours = Array[ExtResource("1_aq1jq")]([SubResource("Resource_eis16")])
+behaviours = Array[ExtResource("1_aq1jq")]([SubResource("Resource_eis16"), SubResource("Resource_spore")])
 
 [sub_resource type="Resource" id="ScalingProfile_zaap"]
 script = ExtResource("6_scaling")

@@ -9,13 +9,17 @@ var max_health := 0     ## 0 = invulnerable tank
 var defence := 0
 var health := 0
 
+## Named as Player and Creature name theirs: spells that reach victims by capability rather
+## than collision (Thwomp, spore clouds) look this up, and a bare $Hurtbox is invisible.
+@onready var hurtbox: Area2D = $Hurtbox
+
 @onready var _label: Label = $NameLabel
 @onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 
 func _ready() -> void:
 	health = max_health
-	$Hurtbox.hurt.connect(_on_hurt)
+	hurtbox.hurt.connect(_on_hurt)
 	_refresh()
 
 
@@ -40,11 +44,11 @@ func _refresh() -> void:
 
 func _respawn() -> void:
 	_sprite.modulate = Color(0.3, 0.3, 0.3)
-	$Hurtbox.monitoring = false
+	hurtbox.monitoring = false
 	get_tree().create_timer(1.0).timeout.connect(func():
 		if not is_instance_valid(self):
 			return
 		health = max_health
 		_sprite.modulate = Color.WHITE
-		$Hurtbox.monitoring = true
+		hurtbox.monitoring = true
 		_refresh())

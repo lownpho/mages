@@ -1,0 +1,123 @@
+extends Node2D
+class_name SporeCloud
+
+## A patch of spores on the floor. It ticks whatever its caster hunts for very little, and
+## it is ammunition: light sets it off (see SporeDetonator) and the blast spreads
+## through every cloud touching it. Like a mine it's a dumb object — no health, no hurtbox,
+## nothing can shoot it off the floor — but unlike a mine it is terrain BOTH sides use, so
+## the Mycelium's roster lays these with the same scene the player does.
+
+const GROUP := "spore_clouds"
+## The patch is 16px of art, so it covers a tile either side of itself. Tied to the sheet
+## rather than exported: a radius that disagrees with the picture is a lie about where it
+## is safe to stand.
+const RADIUS := 1.0 * GameConstants.PX_PER_TILE
+const TICK_INTERVAL := 0.5
+## Seconds of die-back animation, taken out of the end of the lifetime.
+const WITHER_TIME := 1.2
+
+# Stamped by whoever lays the cloud, before it enters the tree.
+var lifetime: float = 12.0
+var tick_damage: int = 1
+var blast_damage: int = 0
+var target_groups: Array = ["enemies"]
+## Whose floor this is. Player clouds are blue, enemy ones purple, both glinting yellow —
+## standing in the wrong one costs health, so it has to read without thinking.
+var foe: bool = false
+
+var _spent := false
+var _tick := 0.0
+
+@onready var _sprite: AnimatedSprite2D = $Sprite
+
+func _ready() -> void:
+	add_to_group(GROUP)
+	# Whole pixels only: a patch on a half pixel smears off the grid the floor sits on.
+	global_position = global_position.round()
+	# Every cloud plays the same four frames, so a field laid in one cast would be seven
+	# copies of one scatter. Flipping gives four patterns out of the one sheet.
+	_sprite.flip_h = randi() % 2 == 0
+	_sprite.flip_v = randi() % 2 == 0
+	_sprite.animation_finished.connect(_on_animation_finished)
+	_sprite.play(_anim("grow"))
+	get_tree().create_timer(maxf(lifetime - WITHER_TIME, 0.1)) \
+		.timeout.connect(_end.bind(_anim("fade")))
+
+func _physics_process(delta: float) -> void:
+	if _spent:
+		return
+	_tick += delta
+	if _tick < TICK_INTERVAL:
+		return
+	_tick = 0.0
+	for victim in _victims(target_groups):
+		_hurt(victim, tick_damage)
+
+## True if `point` is inside the patch and there's still something here to light.
+func covers(point: Vector2) -> bool:
+	return not _spent and point.distance_to(global_position) <= RADIUS
+
+## Set off by light. The blast jumps to every cloud touching this one and hits each
+## victim ONCE — the chain widens the area, it doesn't stack hits — and it hunts the
+## DETONATOR's enemies rather than each cloud's, so lighting the dungeon's own fuses can
+## never be a way to blow yourself up.
+func detonate(groups: Array) -> void:
+	if _spent:
+		return
+	var victims := {}
+	for cloud in _chain():
+		# One yellow row serves both sides: a detonation is the same event whoever laid it.
+		cloud._end("flash")
+		for victim in cloud._victims(groups):
+			victims[victim] = true
+	for victim in victims:
+		_hurt(victim, blast_damage)
+
+# Flood out through overlapping clouds. ponytail: O(n²) over the clouds on the floor,
+# which is fine at a roomful — index them by cell if a boss ever coats the whole arena.
+func _chain() -> Array:
+	var found: Array = [self]
+	var queue: Array = [self]
+	while not queue.is_empty():
+		var cloud: SporeCloud = queue.pop_back()
+		for other in get_tree().get_nodes_in_group(GROUP):
+			if other in found or other._spent:
+				continue
+			if other.global_position.distance_to(cloud.global_position) <= RADIUS * 2:
+				found.append(other)
+				queue.append(other)
+	return found
+
+func _victims(groups: Array) -> Array:
+	var out: Array = []
+	for group in groups:
+		for node in get_tree().get_nodes_in_group(group):
+			if node.global_position.distance_to(global_position) <= RADIUS:
+				out.append(node)
+	return out
+
+# The victim's own Hurtbox signal — the same one a bullet reaches through — so armour,
+# shields and the floating numbers behave exactly as they do for any other hit.
+func _hurt(node: Node, amount: int) -> void:
+	if amount <= 0:
+		return
+	var hurtbox = node.get("hurtbox")
+	if hurtbox:
+		hurtbox.hurt.emit(amount, self)
+
+# Both endings are one beat with a different picture: dying back on its own clock, or the
+# yellow pop. Either way the cloud stops ticking and frees itself when the animation ends.
+func _end(anim: String) -> void:
+	if _spent:
+		return
+	_spent = true
+	_sprite.play(anim)
+
+func _anim(name: String) -> String:
+	return ("foe_" + name) if foe else name
+
+func _on_animation_finished() -> void:
+	if _sprite.animation.ends_with("grow"):
+		_sprite.play(_anim("idle"))
+	else:
+		queue_free()

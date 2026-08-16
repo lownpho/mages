@@ -99,6 +99,13 @@ func _test_combat_lab() -> void:
 	await get_tree().process_frame
 	_check(lab._enemies.get_child_count() == 1 and "max_health" in lab._enemies.get_child(0),
 			"dummy spawned with health dial")
+	# Spells that reach their victims by capability rather than by collision (Thwomp's
+	# pulse, a spore cloud's tick) look up `hurtbox` on what they find in the target group.
+	# A dummy with only a $Hurtbox node answers null and eats nothing — and the lab then
+	# lies about the very spells it exists to tune.
+	var dummy: Node = lab._enemies.get_child(0)
+	_check(dummy.is_in_group("enemies") and dummy.get("hurtbox") != null,
+			"dummy answers the hurtbox capability contract")
 	_check(lab._walls.tile_set.get_physics_layers_count() > 0,
 			"wall tileset carries collision (bullets/chasers see it)")
 	lab._walls.clear()
@@ -107,7 +114,7 @@ func _test_combat_lab() -> void:
 	_check(lab._walls.get_cell_source_id(Vector2i(0, -lab.ARENA_HALF_TILES.y)) != -1
 			and lab._walls.get_cell_source_id(Vector2i.ZERO) == -1,
 			"box preset walls the perimeter and leaves the interior open")
-	var walled := lab._walls.get_used_cells().size()
+	var walled: int = lab._walls.get_used_cells().size()
 	lab._paint_walls(Vector2(5, 5) * GameConstants.PX_PER_TILE, true)
 	_check(lab._walls.get_used_cells().size() == walled + 1, "wall brush painted one cell")
 	lab._paint_walls(Vector2(5, 5) * GameConstants.PX_PER_TILE, false)

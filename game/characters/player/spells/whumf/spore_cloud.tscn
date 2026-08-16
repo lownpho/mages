@@ -1,0 +1,246 @@
+[gd_scene format=3 uid="uid://1hmavi1v10e"]
+
+[ext_resource type="Script" uid="uid://dyhyjb06o0f4t" path="res://characters/player/spells/whumf/spore_cloud.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cg2wtu0mkkm43" path="res://characters/player/spells/whumf/whumf.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fade0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fade1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fade2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fade3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flash0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flash1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flash2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flash3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 96, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_fade0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_fade1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_fade2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_fade3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 80, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_grow0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_grow1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_grow2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_grow3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_idle0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_idle1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_idle2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_foe_idle3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 64, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grow0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grow1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grow2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grow3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cloud"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fade0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fade1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fade2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fade3")
+}],
+"loop": 0,
+"name": &"fade",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flash0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flash1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flash2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flash3")
+}],
+"loop": 0,
+"name": &"flash",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_fade0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_fade1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_fade2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_fade3")
+}],
+"loop": 0,
+"name": &"foe_fade",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_grow0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_grow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_grow2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_grow3")
+}],
+"loop": 0,
+"name": &"foe_grow",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_foe_idle3")
+}],
+"loop": 1,
+"name": &"foe_idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grow0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grow2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_grow3")
+}],
+"loop": 0,
+"name": &"grow",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[node name="SporeCloud" type="Node2D" unique_id=1770172787]
+script = ExtResource("1_script")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=420890074]
+z_index = -10
+sprite_frames = SubResource("SpriteFrames_cloud")
+animation = &"idle"

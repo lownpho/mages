@@ -155,6 +155,18 @@ spells:
       it erupts into a full ring of piercing darts that run through everything in line. Lower
       per-hit than Oop's blast, far better across a corridor or into a pack, and the darts keep
       going after the first body.
+  - id: whumf
+    name: Whumf
+    category: utility
+    description: >
+      Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever
+      walks into it for very little, and is really there as ammunition. A hit of light
+      anywhere in the field sets the whole connected thing off at once, for far more than the
+      clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area
+      rather than a bigger hit: standing in three overlapping patches costs one blast, not
+      three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the
+      Mycelium's own floor can never blow you up. The first piece of that dungeon's set to
+      ship; Poot and Blops, the turrets that stand in the field, are still proposals.
   - id: nope
     name: Nope
     category: utility
