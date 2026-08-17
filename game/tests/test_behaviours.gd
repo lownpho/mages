@@ -39,6 +39,18 @@ const CASES := {
 	"razorback": {"scene": "res://characters/enemies/razorback/razorback.tscn", "min_bullets": 4, "min_changes": 4},
 	"great_owl": {"scene": "res://characters/enemies/great_owl/great_owl.tscn", "min_bullets": 2, "min_changes": 5},
 	"gnarlking": {"scene": "res://characters/enemies/gnarlking/gnarlking.tscn", "min_bullets": 1, "min_changes": 6},
+	# The Mycelium. The sporespitter is the roster's first Gate on something that isn't a boss,
+	# and the first beat gated purely by RANGE: the harness parks its target in close, so a
+	# spitter that never reaches Blam has lost its range gate, and one that never reaches Lob
+	# has lost the ladder's fallthrough.
+	"sporespitter": {"scene": "res://characters/enemies/sporespitter/sporespitter.tscn",
+		"min_bullets": 2, "min_changes": 5, "wants_states": ["Blam", "Lob"]},
+	# The same spitter with the target stood off past its close probe: the range gate has to
+	# shut the cone entirely and leave the lob carrying the fight. Standing in its face and
+	# standing across the room are the two answers it has, so both are worth a case.
+	"sporespitter (far)": {"scene": "res://characters/enemies/sporespitter/sporespitter.tscn",
+		"min_bullets": 1, "min_changes": 3, "target_at": Vector2(60, 0),
+		"wants_states": ["Lob"], "denies_states": ["Blam"]},
 }
 
 const BWOOM_SCRIPT := preload("res://characters/player/spells/bwoom/bwoom.gd")
@@ -68,7 +80,7 @@ func _run(id: String, spec: Dictionary) -> int:
 	shape.shape = CircleShape2D.new()
 	target.add_child(shape)
 	target.add_to_group("player")
-	target.position = Vector2(24, 0)
+	target.position = spec.get("target_at", Vector2(24, 0))
 	add_child(target)
 
 	var counter := func(n: Node) -> void:
@@ -107,6 +119,17 @@ func _run(id: String, spec: Dictionary) -> int:
 	for s in _states:
 		distinct[s] = true
 	var fails := 0
+	# Optional: beats the run must actually have reached. The counts above only prove the
+	# creature isn't stuck; this pins WHICH beats, for a ladder whose rungs are gated on
+	# something the harness sets up (the spitter's target stands in close).
+	for beat: String in spec.get("wants_states", []):
+		if not distinct.has(beat):
+			print("  FAIL: %s never reached %s — saw %s" % [id, beat, distinct.keys()])
+			fails += 1
+	for beat: String in spec.get("denies_states", []):
+		if distinct.has(beat):
+			print("  FAIL: %s ran %s from %s" % [id, beat, spec.get("target_at", "close")])
+			fails += 1
 	if _bullets < spec["min_bullets"]:
 		print("  FAIL: %s fired %d bullets, wanted >= %d" % [id, _bullets, spec["min_bullets"]])
 		fails += 1

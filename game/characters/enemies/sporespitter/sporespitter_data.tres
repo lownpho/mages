@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://bwqsr66kgn4ly"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="2_7eidl"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="3_s5k8i"]
+[ext_resource type="Texture2D" uid="uid://wsdiivvwcqb6" path="res://characters/enemies/sporespitter/sporespitter.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_pew"]
+script = ExtResource("2_drop")
+item = ExtResource("2_7eidl")
+chance = 0.06
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_10nlh"]
+script = ExtResource("2_drop")
+item = ExtResource("3_s5k8i")
+chance = 0.01
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Sporespitter"
+icon = SubResource("AtlasTexture_icon")
+max_health = 55
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew"), SubResource("Resource_10nlh")])

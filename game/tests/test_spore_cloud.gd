@@ -10,6 +10,7 @@ const WHUMF_DIR := "res://characters/player/spells/whumf/"
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
 const VICTIM := preload("res://tests/support/thwomp_victim.gd")
 const PUFFCAP := preload("res://characters/enemies/puffcap/puffcap.tscn")
+const SPITTER := preload("res://characters/enemies/sporespitter/sporespitter.tscn")
 
 const SKILL := 7
 const SPEED := 11
@@ -24,6 +25,7 @@ func _ready() -> void:
 	await _check_an_enemy_field_is_inert()
 	await _check_light_lights_it()
 	await _check_a_puffcap_is_its_own_payload()
+	await _check_a_lob_plants_where_it_lands()
 
 	if _fails.is_empty():
 		print("ALL PASS")
@@ -189,6 +191,42 @@ func _check_a_puffcap_is_its_own_payload() -> void:
 	if is_instance_valid(puffcap) and not puffcap.is_queued_for_deletion():
 		_fails.append("the puffcap outlived its own pop")
 		puffcap.free()
+	_clear()
+
+# The other way spores reach the floor: a lob leaves its patch wherever the shot stopped, not
+# where it was fired. That is how something rooted paints ground it can't stand on, so the
+# patch landing under the caster instead of downrange is the failure that matters.
+func _check_a_lob_plants_where_it_lands() -> void:
+	var spell: BulletSpellResource = load("res://characters/enemies/sporespitter/sporespitter_lob.tres")
+	var spitter: Creature = SPITTER.instantiate()
+	add_child(spitter)
+	await get_tree().physics_frame
+	var ctx := CastContext.new(spell, spitter)
+	var bullet: BaseBullet = ctx.spawn_bullet(spell.bullet, Vector2.RIGHT, spitter.global_position)
+	for _i in 10:
+		await get_tree().physics_frame
+	var landed := bullet.global_position
+	# What a Hurtbox does when the blob arrives; range end and walls run the same expiry.
+	bullet.reached_hurtbox()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	var clouds := _clouds()
+	if clouds.size() != 1:
+		_fails.append("a lob left %d clouds, expected 1" % clouds.size())
+	for cloud in clouds:
+		if not cloud.foe:
+			_fails.append("an enemy's lob planted a player patch")
+		if not "player" in cloud.target_groups:
+			_fails.append("a lobbed patch hunts %s" % [cloud.target_groups])
+		if cloud.global_position.distance_to(landed) > SporeCloud.RADIUS:
+			_fails.append("the patch landed %.0fpx from the blob"
+				% cloud.global_position.distance_to(landed))
+		if cloud.global_position.distance_to(spitter.global_position) <= SporeCloud.RADIUS:
+			_fails.append("the lob planted its patch under the spitter's own feet")
+	if is_instance_valid(bullet):
+		bullet.free()
+	spitter.free()
 	_clear()
 
 # By tier file rather than by name: Whumf has already changed tier once, and a test that
