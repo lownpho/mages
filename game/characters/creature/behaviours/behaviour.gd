@@ -45,6 +45,14 @@ class_name Behaviour
 ## beat — a rooted guard, an armoured pursuit and a submerged approach all want it.
 @export var damage_scale: float = 1.0
 
+@export_group("Spores")
+## Only eligible while the caster stands in a spore cloud. The Mycelium's empowerment is a
+## whole second beat behind this flag — first rung of a Gate whose fallback is the plain one —
+## so no creature carries a "powered" mode, it simply has one more beat than it can always
+## reach. Never set it on the beat that LAYS clouds: nothing gets paid for the floor it made
+## itself, which is what stops a room of printers spiralling.
+@export var needs_cloud: bool = false
+
 var _spent: bool = false
 var _range_probe: RayCast2D
 
@@ -84,6 +92,8 @@ func can_run() -> bool:
 	if not _group_clear():
 		return false
 	if not _in_range():
+		return false
+	if needs_cloud and not SporeCloud.any_covers(creature.global_position):
 		return false
 	return _ready_to_run()
 

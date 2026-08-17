@@ -60,6 +60,18 @@ func _physics_process(delta: float) -> void:
 func covers(point: Vector2) -> bool:
 	return not _spent and point.distance_to(global_position) <= RADIUS
 
+## True if ANY live patch covers `point` — the empowerment query behind Behaviour.needs_cloud.
+## Deliberately blind to `foe`: the floor is one primitive and it feeds whoever stands in it,
+## so a mage in a puffcap's field casts stronger too.
+static func any_covers(point: Vector2) -> bool:
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null:
+		return false
+	for cloud in tree.get_nodes_in_group(GROUP):
+		if cloud.covers(point):
+			return true
+	return false
+
 ## Set off by light. The blast jumps to every cloud touching this one and hits each
 ## victim ONCE — the chain widens the area, it doesn't stack hits — and it hunts the
 ## DETONATOR's enemies rather than each cloud's, so lighting your own field can never be a

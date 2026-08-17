@@ -1,14 +1,21 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://ld82nqsdoslj"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Resource" uid="uid://cpew3t1er3res" path="res://characters/player/spells/pew/pew3.tres" id="2_0kh0g"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://beq6ob6afbo20" path="res://characters/player/spells/pew/pew2.tres" id="3_pew"]
+[ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="3_nya0s"]
 [ext_resource type="Texture2D" uid="uid://bio2xvf1mlawg" path="res://characters/enemies/sporefly/sporefly.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_pew"]
 script = ExtResource("2_drop")
-item = ExtResource("3_pew")
+item = ExtResource("2_0kh0g")
 chance = 0.05
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Resource_aqdvv"]
+script = ExtResource("2_drop")
+item = ExtResource("3_nya0s")
+chance = 0.01
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -20,4 +27,4 @@ script = ExtResource("1_res")
 display_name = "Sporefly"
 icon = SubResource("AtlasTexture_icon")
 max_health = 80
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew"), SubResource("Resource_aqdvv")])

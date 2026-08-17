@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
 [ext_resource type="Resource" uid="uid://cvu7nh2q7pg2o" path="res://characters/enemies/sporespitter/sporespitter_lob.tres" id="6_lob"]
 [ext_resource type="Resource" uid="uid://btepb8e6lma5n" path="res://characters/enemies/sporespitter/sporespitter_blam.tres" id="7_blam"]
+[ext_resource type="Resource" path="res://characters/enemies/sporespitter/sporespitter_wide_blam.tres" id="8_wide_blam"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
@@ -124,7 +125,7 @@ seen_state = "Pick"
 
 [node name="Pick" type="Node" parent="FSM" unique_id=890529961]
 script = ExtResource("b_gate")
-beats = Array[String](["Blam", "Lob", "Wait"])
+beats = Array[String](["WideBlam", "Blam", "Lob", "Wait"])
 probe_path = NodePath("../../DetectProbe")
 
 [node name="Lob" type="Node" parent="FSM" unique_id=755610487]
@@ -137,6 +138,19 @@ out_of_range_state = "Idle"
 windup_anim = "attack"
 attack_anim = "idle"
 telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+
+[node name="WideBlam" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("8_wide_blam")
+done_state = "Pick"
+attack_probe_path = NodePath("../../CloseProbe")
+out_of_range_state = "Pick"
+windup_anim = "attack"
+attack_anim = "idle"
+telegraph_color = Color(0.627451, 0.356863, 0.32549, 1)
+range_probe_path = NodePath("../../CloseProbe")
+needs_cloud = true
 
 [node name="Blam" type="Node" parent="FSM" unique_id=843639386]
 script = ExtResource("b_cast")

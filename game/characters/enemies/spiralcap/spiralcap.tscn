@@ -7,7 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
 [ext_resource type="Resource" uid="uid://bpffuhjhnqj7q" path="res://characters/enemies/spiralcap/spiralcap_sweep.tres" id="6_sweep"]
+[ext_resource type="Resource" path="res://characters/enemies/spiralcap/spiralcap_twin_sweep.tres" id="7_twin"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_spiralcap"]
@@ -105,7 +107,20 @@ radius = 3.0
 [node name="Caster" parent="." instance=ExtResource("5_caster")]
 
 [node name="FSM" parent="." instance=ExtResource("4_fsm")]
-initial_state = "Sweep"
+initial_state = "Pick"
+
+[node name="Pick" type="Node" parent="FSM"]
+script = ExtResource("b_gate")
+beats = Array[String](["TwinSweep", "Sweep"])
+lost_state = "Rest"
+
+[node name="TwinSweep" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("7_twin")
+done_state = "Rest"
+attack_anim = "attack"
+needs_cloud = true
 
 [node name="Sweep" type="Node" parent="FSM"]
 script = ExtResource("b_cast")
@@ -118,4 +133,4 @@ attack_anim = "attack"
 script = ExtResource("b_hold")
 min_time = 1.5
 max_time = 2.5
-next_state = "Sweep"
+next_state = "Pick"

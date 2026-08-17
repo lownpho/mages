@@ -8,8 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
 [ext_resource type="Resource" uid="uid://cs11lafhk4aa5" path="res://characters/enemies/mould_golem/mould_golem_shell.tres" id="6_shell"]
 [ext_resource type="Resource" uid="uid://b0mpgv0r3e4ie" path="res://characters/enemies/mould_golem/mould_golem_ring.tres" id="7_ring"]
+[ext_resource type="Resource" uid="uid://ce56tefweq6op" path="res://characters/enemies/mould_golem/mould_golem_wide_ring.tres" id="8_wide_ring"]
 [ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/creature/behaviours/wander.gd" id="b_wander"]
 
@@ -151,44 +153,44 @@ animations = [{
 "speed": 6.0
 }]
 
-[node name="MouldGolem" type="CharacterBody2D" groups=["enemies"]]
+[node name="MouldGolem" type="CharacterBody2D" unique_id=1559766476 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1
 script = ExtResource("1_enemy")
 data = ExtResource("1_data")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1471040919]
 shape = SubResource("CircleShape2D_golem")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=688020313]
 sprite_frames = SubResource("SpriteFrames_golem")
 animation = &"idle"
 autoplay = "idle"
 offset = Vector2(0, -4)
 
-[node name="Hurtbox" parent="." instance=ExtResource("2_hbox")]
+[node name="Hurtbox" parent="." unique_id=2009861604 instance=ExtResource("2_hbox")]
 collision_mask = 256
 radius = 6.0
 
-[node name="DetectProbe" type="RayCast2D" parent="."]
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=355243359]
 target_position = Vector2(112, 0)
 collision_mask = 17
 
-[node name="ChaseProbe" type="RayCast2D" parent="."]
+[node name="ChaseProbe" type="RayCast2D" parent="." unique_id=894331535]
 target_position = Vector2(136, 0)
 collision_mask = 17
 
-[node name="AttackProbe" type="RayCast2D" parent="."]
+[node name="AttackProbe" type="RayCast2D" parent="." unique_id=785337107]
 target_position = Vector2(24, 0)
 collision_mask = 17
 
-[node name="Caster" parent="." instance=ExtResource("5_caster")]
+[node name="Caster" parent="." unique_id=337779671 instance=ExtResource("5_caster")]
 
-[node name="FSM" parent="." instance=ExtResource("4_fsm")]
+[node name="FSM" parent="." unique_id=916232755 instance=ExtResource("4_fsm")]
 initial_state = "Walk"
 
-[node name="Walk" type="Node" parent="FSM"]
+[node name="Walk" type="Node" parent="FSM" unique_id=263576077]
 script = ExtResource("b_wander")
 speed = 10.0
 anim = "run"
@@ -198,7 +200,7 @@ next_state = "Walk"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
 
-[node name="Chase" type="Node" parent="FSM"]
+[node name="Chase" type="Node" parent="FSM" unique_id=410251775]
 script = ExtResource("b_approach")
 speed = 14.0
 chase_probe_path = NodePath("../../ChaseProbe")
@@ -206,15 +208,31 @@ lost_state = "Walk"
 attack_probe_path = NodePath("../../AttackProbe")
 attack_state = "Shell"
 
-[node name="Shell" type="Node" parent="FSM"]
+[node name="Shell" type="Node" parent="FSM" unique_id=841992939]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_shell")
-done_state = "Ring"
+done_state = "Pick"
 attack_anim = "shell"
 telegraph_color = Color(0.541176, 0.921569, 0.945098, 1)
 
-[node name="Ring" type="Node" parent="FSM"]
+[node name="Pick" type="Node" parent="FSM" unique_id=1065538094]
+script = ExtResource("b_gate")
+beats = Array[String](["WideRing", "Ring"])
+probe_path = NodePath("../../AttackProbe")
+lost_state = "Chase"
+
+[node name="WideRing" type="Node" parent="FSM" unique_id=1578982968]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("8_wide_ring")
+done_state = "Recover"
+attack_probe_path = NodePath("../../AttackProbe")
+out_of_range_state = "Chase"
+telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+needs_cloud = true
+
+[node name="Ring" type="Node" parent="FSM" unique_id=769685055]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("7_ring")
@@ -223,7 +241,7 @@ attack_probe_path = NodePath("../../AttackProbe")
 out_of_range_state = "Chase"
 telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
 
-[node name="Recover" type="Node" parent="FSM"]
+[node name="Recover" type="Node" parent="FSM" unique_id=1642904500]
 script = ExtResource("b_hold")
 min_time = 0.4
 max_time = 0.8

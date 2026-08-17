@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://b0mpgv0r3e4ie"]
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://ce56tefweq6op"]
 
-[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_hfgro"]
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_n1spg"]
 [ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_bullets"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="3_bullet"]
@@ -10,30 +10,30 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_seed"]
 atlas = ExtResource("2_bullets")
-region = Rect2(32, 24, 8, 8)
+region = Rect2(32, 40, 8, 8)
 
 [sub_resource type="Resource" id="Resource_seed"]
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_seed")
-range_tiles = 8
+range_tiles = 10
 speed_tiles = 6
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 36.0
+base_damage = 44.0
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
-num_bullets = 8
+num_bullets = 12
 
 [resource]
 script = ExtResource("1_script")
 fire_pattern = SubResource("Pattern_1")
 bullet = SubResource("Resource_seed")
 damage = SubResource("ScalingProfile_bullet")
-shot_interval = 0.6
-max_shots = 3
-rotation_per_shot = 15.0
+shot_interval = 0.5
+max_shots = 4
+rotation_per_shot = 12.0
 aim_mode = 2
 effect_scene = ExtResource("99_effect")
 cooldown = 2.6
