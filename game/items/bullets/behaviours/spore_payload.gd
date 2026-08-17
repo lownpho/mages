@@ -12,9 +12,9 @@ class_name SporePayload
 
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
 
-@export var cloud_lifetime: float = 12.0
+@export var cloud_lifetime: float = 30.0
 ## Per half second, to whatever the shot's caster hunts.
-@export var tick_damage: int = 1
+@export var tick_damage: int = 3
 ## Only ever paid out if the PLAYER laid it: an enemy's field is inert terrain and nothing
 ## can light it (see SporeCloud.detonate).
 @export var blast_damage: int = 0

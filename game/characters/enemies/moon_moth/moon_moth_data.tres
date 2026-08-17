@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://xhtt31bw1wvp" path="res://characters/player/spells/ring/ring2.tres" id="3_ring"]
-[ext_resource type="Texture2D" path="res://characters/enemies/moon_moth/moon_moth.png" id="icon_png"]
+[ext_resource type="Texture2D" uid="uid://c3783yl7fpsrn" path="res://characters/enemies/moon_moth/moon_moth.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_ring"]
 script = ExtResource("2_drop")

@@ -11,8 +11,6 @@
 
 [sub_resource type="Resource" id="SporePayload_lob"]
 script = ExtResource("5_spores")
-cloud_lifetime = 16.0
-tick_damage = 3
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_blob"]
 atlas = ExtResource("2_bullets")
