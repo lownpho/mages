@@ -8,8 +8,8 @@ extends Node
 
 const WHUMF_DIR := "res://characters/player/spells/whumf/"
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
-const FIELD := preload("res://characters/player/spells/whumf/whumf.gd")
 const VICTIM := preload("res://tests/support/thwomp_victim.gd")
+const PUFFCAP := preload("res://characters/enemies/puffcap/puffcap.tscn")
 
 const SKILL := 7
 const SPEED := 11
@@ -21,8 +21,9 @@ func _ready() -> void:
 	await _check_field_laid()
 	await _check_ticks()
 	await _check_blast_lands_once()
-	await _check_detonator_picks_the_side()
+	await _check_an_enemy_field_is_inert()
 	await _check_light_lights_it()
+	await _check_a_puffcap_is_its_own_payload()
 
 	if _fails.is_empty():
 		print("ALL PASS")
@@ -38,8 +39,9 @@ func _check_field_laid() -> void:
 	var spell := _whumf()
 	await _cast(spell, Vector2.ZERO)
 	var clouds := _clouds()
-	if clouds.size() != FIELD.COUNT + 1:
-		_fails.append("whumf laid %d clouds, expected %d" % [clouds.size(), FIELD.COUNT + 1])
+	if clouds.size() != spell.ring_clouds + 1:
+		_fails.append("whumf laid %d clouds, expected %d"
+			% [clouds.size(), spell.ring_clouds + 1])
 	for cloud in clouds:
 		if cloud.foe:
 			_fails.append("a player's cloud came out foe-coloured")
@@ -85,39 +87,59 @@ func _check_blast_lands_once() -> void:
 	victim.free()
 	_clear()
 
-# One cloud, laid by the enemy side, lit by the player's Zaap: the enemy in it takes the
-# blast and the player standing in the same patch does not.
-func _check_detonator_picks_the_side() -> void:
+# Detonation is the player's own kit spending the player's own spores. The dungeon's field is
+# inert: asked directly it refuses, and a blast in a patch touching it does not spend it
+# either — so an enemy's floor stays a hazard to cross rather than a bomb it handed you.
+func _check_an_enemy_field_is_inert() -> void:
 	var enemy := _victim(Vector2(2, 0), "enemies")
 	var player := _victim(Vector2(-2, 0), "player")
-	var cloud: SporeCloud = CLOUD.instantiate()
-	cloud.foe = true
-	cloud.target_groups = ["player"]
-	cloud.blast_damage = 30
-	add_child(cloud)
+	var theirs := _cloud(Vector2.ZERO, true, ["player"])
 	await get_tree().physics_frame
-	cloud.detonate(["enemies"])
-	if enemy.health != 70:
-		_fails.append("the enemy's own cloud didn't pay out (%d)" % enemy.health)
+	theirs.detonate(["enemies"])
+	if enemy.health != 100:
+		_fails.append("an enemy's cloud paid out a blast (%d)" % enemy.health)
 	if player.health != 100:
 		_fails.append("lighting an enemy cloud hurt the player (%d)" % player.health)
+	if not theirs.covers(theirs.global_position):
+		_fails.append("an enemy's cloud spent itself on a refused detonation")
+
+	# Ours laid right on top of theirs: our blast pays out and their patch is untouched.
+	var ours := _cloud(Vector2(4, 0), false, ["enemies"])
+	await get_tree().physics_frame
+	ours.detonate(["enemies"])
+	if enemy.health != 70:
+		_fails.append("our own cloud didn't pay out (%d)" % enemy.health)
+	if player.health != 100:
+		_fails.append("our own blast hit the player (%d)" % player.health)
+	if not theirs.covers(theirs.global_position):
+		_fails.append("the chain crossed sides and spent the enemy's field")
 	enemy.free()
 	player.free()
 	_clear()
 
-# The wiring the whole mechanic hangs off: a Zaap bullet flown across a cloud lights it,
-# and a bullet that carries no light flies straight over. Detonating through the API is not
-# the same claim — the fuse is only lit if the marker behaviour is on Zaap's bullet.
+func _cloud(at: Vector2, foe: bool, groups: Array) -> SporeCloud:
+	var cloud: SporeCloud = CLOUD.instantiate()
+	cloud.position = at
+	cloud.foe = foe
+	cloud.target_groups = groups
+	cloud.blast_damage = 30
+	add_child(cloud)
+	return cloud
+
+# The wiring the whole mechanic hangs off: a Zaap bullet flown across your own cloud lights
+# it, a bullet that carries no light flies straight over, and light crossing an ENEMY patch
+# leaves it alone — the end-to-end form of the player-only rule. Detonating through the API is
+# not the same claim: the fuse is only lit if the marker behaviour is on Zaap's bullet.
 func _check_light_lights_it() -> void:
-	for spell_path: String in ["res://characters/player/spells/zaap/zaap2.tres",
-							   "res://characters/player/spells/pew/pew2.tres"]:
-		var lights := spell_path.contains("zaap")
+	const ZAAP := "res://characters/player/spells/zaap/zaap2.tres"
+	for case: Array in [[ZAAP, false, true],
+						["res://characters/player/spells/pew/pew2.tres", false, false],
+						[ZAAP, true, false]]:
+		var spell_path: String = case[0]
+		var foe: bool = case[1]
+		var lights: bool = case[2]
 		var victim := _victim(Vector2(40, 0), "enemies")
-		var cloud: SporeCloud = CLOUD.instantiate()
-		cloud.position = Vector2(40, 0)
-		cloud.blast_damage = 30
-		cloud.target_groups = ["enemies"]
-		add_child(cloud)
+		var cloud := _cloud(Vector2(40, 0), foe, ["enemies"])
 		await get_tree().physics_frame
 
 		var spell: BulletSpellResource = load(spell_path)
@@ -130,8 +152,8 @@ func _check_light_lights_it() -> void:
 		# A lit cloud pops and frees itself inside the flash, so "gone" is a lit cloud too.
 		var lit := not is_instance_valid(cloud) or not cloud.covers(cloud.global_position)
 		if lit != lights:
-			_fails.append("%s %s the cloud" % [spell_path.get_file(),
-				"lit" if lit else "flew over"])
+			_fails.append("%s %s %s cloud" % [spell_path.get_file(),
+				"lit" if lit else "flew over", "an enemy's" if foe else "our own"])
 		# The blast is the proof it actually went off, not just that the patch vanished.
 		if lights and victim.health != 70:
 			_fails.append("zaap lit the cloud but nothing took the blast (%d)" % victim.health)
@@ -140,6 +162,34 @@ func _check_light_lights_it() -> void:
 		caster.free()
 		victim.free()
 		_clear()
+
+# The enemy side of the same spell: a foe-coloured field where it stood, hunting the player —
+# and the puffcap gone with it, because a mine IS its payload. Sized off the pop's own
+# ring_clouds rather than a number here, so retuning how much floor a puffcap coats is a
+# balance edit and not a test failure; consumes_caster is the part with teeth.
+func _check_a_puffcap_is_its_own_payload() -> void:
+	var spell: WhumfResource = load("res://characters/enemies/puffcap/puffcap_pop.tres")
+	var puffcap: Creature = PUFFCAP.instantiate()
+	add_child(puffcap)
+	await get_tree().physics_frame
+	var effect: Node = spell.effect_scene.instantiate()
+	effect.setup(spell, puffcap)
+	add_child(effect)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var clouds := _clouds()
+	if clouds.size() != spell.ring_clouds + 1:
+		_fails.append("a puffcap popped into %d clouds, expected %d"
+			% [clouds.size(), spell.ring_clouds + 1])
+	for cloud in clouds:
+		if not cloud.foe:
+			_fails.append("a puffcap's cloud came out player-coloured")
+		if not "player" in cloud.target_groups:
+			_fails.append("a puffcap's cloud hunts %s" % [cloud.target_groups])
+	if is_instance_valid(puffcap) and not puffcap.is_queued_for_deletion():
+		_fails.append("the puffcap outlived its own pop")
+		puffcap.free()
+	_clear()
 
 # By tier file rather than by name: Whumf has already changed tier once, and a test that
 # pins the number goes quiet — it loads null and reports nothing rather than failing.

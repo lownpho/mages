@@ -1,11 +1,14 @@
 extends Node2D
 class_name SporeCloud
 
-## A patch of spores on the floor. It ticks whatever its caster hunts for very little, and
-## it is ammunition: light sets it off (see SporeDetonator) and the blast spreads
-## through every cloud touching it. Like a mine it's a dumb object — no health, no hurtbox,
-## nothing can shoot it off the floor — but unlike a mine it is terrain BOTH sides use, so
+## A patch of spores on the floor. It ticks whatever its caster hunts for very little. Like a
+## mine it's a dumb object — no health, no hurtbox, nothing can shoot it off the floor — and
 ## the Mycelium's roster lays these with the same scene the player does.
+##
+## Only the PLAYER'S spores are ammunition. Light sets those off (see SporeDetonator) and the
+## blast spreads through every cloud touching them; an enemy's field is inert terrain that
+## nothing can light. Detonation is a thing the player's own kit does with its own spores, so
+## a room the dungeon has coated is a room to cross, never a free bomb to cash in.
 
 const GROUP := "spore_clouds"
 ## The patch is 16px of art, so it covers a tile either side of itself. Tied to the sheet
@@ -59,10 +62,14 @@ func covers(point: Vector2) -> bool:
 
 ## Set off by light. The blast jumps to every cloud touching this one and hits each
 ## victim ONCE — the chain widens the area, it doesn't stack hits — and it hunts the
-## DETONATOR's enemies rather than each cloud's, so lighting the dungeon's own fuses can
-## never be a way to blow yourself up.
+## DETONATOR's enemies rather than each cloud's, so lighting your own field can never be a
+## way to blow yourself up.
+##
+## An enemy's spores refuse outright, here rather than in the detonator, so no future match
+## can find a way to light them: the dungeon's floor is a hazard to walk, not ammunition it
+## hands you.
 func detonate(groups: Array) -> void:
-	if _spent:
+	if _spent or foe:
 		return
 	var victims := {}
 	for cloud in _chain():
@@ -81,7 +88,9 @@ func _chain() -> Array:
 	while not queue.is_empty():
 		var cloud: SporeCloud = queue.pop_back()
 		for other in get_tree().get_nodes_in_group(GROUP):
-			if other in found or other._spent:
+			# Never across sides: a blast that jumped into the dungeon's own field would
+			# spend it, which is the same free bomb detonate() just refused.
+			if other in found or other._spent or other.foe != foe:
 				continue
 			if other.global_position.distance_to(cloud.global_position) <= RADIUS * 2:
 				found.append(other)
@@ -113,8 +122,8 @@ func _end(anim: String) -> void:
 	_spent = true
 	_sprite.play(anim)
 
-func _anim(name: String) -> String:
-	return ("foe_" + name) if foe else name
+func _anim(anim_name: String) -> String:
+	return ("foe_" + anim_name) if foe else anim_name
 
 func _on_animation_finished() -> void:
 	if _sprite.animation.ends_with("grow"):

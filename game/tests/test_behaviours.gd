@@ -55,6 +55,7 @@ func _ready() -> void:
 	fails += await _brood_gate()
 	fails += await _enrage_lap()
 	fails += await _telegraph()
+	fails += await _puffcap_chain()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -387,6 +388,56 @@ func _telegraph() -> int:
 	if fails == 0:
 		print("  ok: shard grimling telegraph — one lime pulse over %d frames" % lit)
 	enemy.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
+# The puffcap field: one drawing breath calls its neighbours into theirs, so stepping on the
+# near cap lights caps the player never went near. The far one is deliberately parked outside
+# its own trigger probe and inside the pack radius, so only the relay can wake it — the whole
+# encounter (light the chain, or pick them off from range) hangs off that edge.
+func _puffcap_chain() -> int:
+	var target := CharacterBody2D.new()
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	target.add_child(shape)
+	target.add_to_group("player")
+	add_child(target)
+
+	var caps: Array[Creature] = []
+	for i in 2:
+		var cap: Creature = load("res://characters/enemies/puffcap/puffcap.tscn").instantiate()
+		cap.position = Vector2(i * 22, 0)
+		add_child(cap)
+		caps.append(cap)
+	await get_tree().physics_frame
+	for cap in caps:
+		for child in cap.get_children():
+			if child is VisibleOnScreenEnabler2D:
+				child.queue_free()
+		cap.process_mode = Node.PROCESS_MODE_INHERIT
+	target.global_position = caps[0].global_position - Vector2(8, 0)
+
+	var far_states := {}
+	caps[1].fsm.state_changed.connect(func(_prev: State, cur: State) -> void:
+		far_states[String(cur.name)] = true)
+
+	var deadline := Time.get_ticks_msec() + 8000
+	while Time.get_ticks_msec() < deadline and is_instance_valid(caps[1]):
+		await get_tree().physics_frame
+
+	var clouds := get_tree().get_nodes_in_group(SporeCloud.GROUP).size()
+	var fails := 0
+	fails += _expect("the stepped-on cap pops", not is_instance_valid(caps[0]))
+	fails += _expect("a pop calls the cap beside it into its inhale", far_states.has("Inhale"))
+	fails += _expect("both caps left spores behind (%d)" % clouds, clouds >= 2)
+	if fails == 0:
+		print("  ok: puffcap chain — one pop, two patches of floor")
+	for cloud in get_tree().get_nodes_in_group(SporeCloud.GROUP):
+		cloud.free()
+	for cap in caps:
+		if is_instance_valid(cap):
+			cap.queue_free()
 	target.queue_free()
 	await get_tree().physics_frame
 	return fails
