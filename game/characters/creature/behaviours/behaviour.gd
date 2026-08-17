@@ -46,7 +46,7 @@ class_name Behaviour
 @export var damage_scale: float = 1.0
 
 @export_group("Spores")
-## Only eligible while the caster stands in a spore cloud. The Mycelium's empowerment is a
+## Only eligible while the caster stands in its OWN side's spores. The Mycelium's empowerment is a
 ## whole second beat behind this flag — first rung of a Gate whose fallback is the plain one —
 ## so no creature carries a "powered" mode, it simply has one more beat than it can always
 ## reach. Never set it on the beat that LAYS clouds: nothing gets paid for the floor it made
@@ -93,7 +93,7 @@ func can_run() -> bool:
 		return false
 	if not _in_range():
 		return false
-	if needs_cloud and not SporeCloud.any_covers(creature.global_position):
+	if needs_cloud and not SporeCloud.feeds(creature):
 		return false
 	return _ready_to_run()
 

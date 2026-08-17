@@ -1,0 +1,127 @@
+[gd_scene format=3 uid="uid://dqjquf0ttx2fl"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://c0ikd2xkkk6d6" path="res://characters/enemies/rollcap/rollcap.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="Script" uid="uid://dp0oqf5ge1dgl" path="res://components/damage_zone.gd" id="5_zone"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="6_caster"]
+[ext_resource type="Resource" uid="uid://4imtq0omsd67" path="res://characters/enemies/rollcap/rollcap_pew.tres" id="7_pew"]
+[ext_resource type="Script" uid="uid://0q1bgeashmik" path="res://characters/enemies/rollcap/roll.gd" id="b_roll"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_small"]
+radius = 2.0
+
+[sub_resource type="AtlasTexture" id="AT_bounce0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_bounce1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_bounce2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_bounce3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 16, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_small"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_bounce0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bounce1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bounce2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bounce3")
+}],
+"loop": 0,
+"name": &"bounce",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_roll0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_roll1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_roll2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_roll3")
+}],
+"loop": 1,
+"name": &"roll",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_contact"]
+radius = 2.5
+
+[node name="RollcapSmall" type="CharacterBody2D" unique_id=164362321 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_creature")
+max_health = 22
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=119150559]
+shape = SubResource("CircleShape2D_small")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=794982598]
+sprite_frames = SubResource("SpriteFrames_small")
+animation = &"roll"
+autoplay = "roll"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." unique_id=1866281548 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 2.0
+
+[node name="Contact" type="Area2D" parent="." unique_id=316555318]
+collision_layer = 512
+collision_mask = 0
+monitoring = false
+script = ExtResource("5_zone")
+damage = 36
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Contact" unique_id=92466548]
+shape = SubResource("CircleShape2D_contact")
+
+[node name="Caster" parent="." unique_id=830218602 instance=ExtResource("6_caster")]
+
+[node name="FSM" parent="." unique_id=465842214 instance=ExtResource("4_fsm")]
+initial_state = "Roll"
+
+[node name="Roll" type="Node" parent="FSM" unique_id=779567994]
+script = ExtResource("b_roll")
+speed = 52.0
+cloud_speed_scale = 2.0
+spell = ExtResource("7_pew")
+caster_path = NodePath("../../Caster")

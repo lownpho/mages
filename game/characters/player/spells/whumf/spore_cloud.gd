@@ -60,17 +60,26 @@ func _physics_process(delta: float) -> void:
 func covers(point: Vector2) -> bool:
 	return not _spent and point.distance_to(global_position) <= RADIUS
 
-## True if ANY live patch covers `point` — the empowerment query behind Behaviour.needs_cloud.
-## Deliberately blind to `foe`: the floor is one primitive and it feeds whoever stands in it,
-## so a mage in a puffcap's field casts stronger too.
-static func any_covers(point: Vector2) -> bool:
+## True if any live patch on `foe`'s side of the floor covers `point`.
+static func any_covers(point: Vector2, foe_side: bool) -> bool:
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree == null:
 		return false
 	for cloud in tree.get_nodes_in_group(GROUP):
-		if cloud.covers(point):
+		if cloud.foe == foe_side and cloud.covers(point):
 			return true
 	return false
+
+## True while `body` stands in its OWN side's spores — the empowerment query behind
+## Behaviour.needs_cloud. Sides never mix, for the same reason detonation doesn't: the player's
+## field is ammunition they laid and paid for, and a dungeon that got stronger standing in it
+## would turn the player's own answer into the dungeon's. The side test is the one that stamps
+## `foe` on a cloud in the first place, so a body is fed by exactly the clouds it could have
+## laid itself.
+static func feeds(body: Node2D) -> bool:
+	var layer = body.get("bullet_collision_layer")
+	return any_covers(body.global_position,
+		layer != null and layer != GameConstants.LAYER_PLAYER_BULLETS)
 
 ## Set off by light. The blast jumps to every cloud touching this one and hits each
 ## victim ONCE — the chain widens the area, it doesn't stack hits — and it hunts the

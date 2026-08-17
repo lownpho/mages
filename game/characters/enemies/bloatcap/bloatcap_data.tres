@@ -1,12 +1,18 @@
-[gd_resource type="Resource" script_class="CreatureResource" format=3]
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://da1elgts6jnyh"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://coop2t1er2res" path="res://characters/player/spells/oop/oop2.tres" id="3_oop"]
 [ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="4_whumf"]
-[ext_resource type="Script" path="res://characters/creature/death_spawn.gd" id="5_spawn"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="5_spawn"]
 [ext_resource type="PackedScene" path="res://characters/enemies/bloatcap/myceling.tscn" id="6_myceling"]
-[ext_resource type="Texture2D" path="res://characters/enemies/bloatcap/bloatcap.png" id="icon_png"]
+[ext_resource type="Texture2D" uid="uid://cljg4kdgro64a" path="res://characters/enemies/bloatcap/bloatcap.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Spawn_brood"]
+script = ExtResource("5_spawn")
+scene = ExtResource("6_myceling")
+count = 3
+spread_tiles = 1.5
 
 [sub_resource type="Resource" id="Drop_oop"]
 script = ExtResource("2_drop")
@@ -17,12 +23,6 @@ chance = 0.06
 script = ExtResource("2_drop")
 item = ExtResource("4_whumf")
 chance = 0.08
-
-[sub_resource type="Resource" id="Spawn_brood"]
-script = ExtResource("5_spawn")
-scene = ExtResource("6_myceling")
-count = 3
-spread_tiles = 1.5
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")

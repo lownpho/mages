@@ -21,6 +21,12 @@ extends Node
 ##   - a clustercap leaves clusterlings that are alive and lobbing, not props, and that cannot
 ##     split again.
 ##   - a brood body dies loudly (a ring of pods, wider off coated floor) and then is GONE.
+##   - the rollcap, whose empowerment is the floor and nothing else: it rolls a heading it never
+##     re-aims, fires only while it is standing in spores, reflects off
+##     walls, and comes apart into two smaller balls that CANNOT come apart again. One
+##     generation is the difference between a room and a screensaver, and nothing in the split
+##     seam counts generations — it's the child's missing stat sheet that ends it, so the test
+##     kills a child and watches for a third wave that must never arrive.
 ## Run: godot --headless --path game res://tests/test_mycelium.tscn
 
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
@@ -31,6 +37,8 @@ const BLOATCAP := preload("res://characters/enemies/bloatcap/bloatcap.tscn")
 const CLUSTERCAP := preload("res://characters/enemies/clustercap/clustercap.tscn")
 const MYCELING := preload("res://characters/enemies/bloatcap/myceling.tscn")
 const CLUSTERLING := preload("res://characters/enemies/clustercap/clusterling.tscn")
+const ROLLCAP := preload("res://characters/enemies/rollcap/rollcap.tscn")
+const ROLLCAP_SMALL := preload("res://characters/enemies/rollcap/rollcap_small.tscn")
 # The whole built roster, printers included — the lint's claim is about which beats did NOT
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
@@ -41,6 +49,8 @@ const ROSTER := {
 	"sporefly": preload("res://characters/enemies/sporefly/sporefly.tscn"),
 	"bloatcap": BLOATCAP,
 	"clustercap": CLUSTERCAP,
+	"rollcap": ROLLCAP,
+	"rollcap_small": ROLLCAP_SMALL,
 	# The broods are not roster entries — no stat sheet, no kill count — but they cast, so the
 	# same two rules have to hold for them or the rules aren't rules.
 	"myceling": MYCELING,
@@ -60,36 +70,45 @@ func _ready() -> void:
 	fails += await _swells_under_damage("clustercap", CLUSTERCAP, "Walk", 60)
 	fails += await _brood_pops("myceling", MYCELING)
 	fails += await _brood_pops("clusterling", CLUSTERLING)
+	fails += await _rollcap_rolls_on()
+	fails += await _rollcap_only_shoots_in_spores()
+	fails += await _rollcap_bounces()
+	fails += await _rollcap_rides_the_floor()
+	fails += await _rollcap_splits_once()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
-# One body, twice: clean floor has to give the plain rung and a coated one the strong rung.
-# Both halves matter — a needs_cloud check that never passes and one that always passes are
-# both a creature with one attack.
+# One body, three floors: bare, standing in the PLAYER's Whumf, and standing in the dungeon's
+# own field. Only the last one pays. All three halves matter — a needs_cloud check that never
+# passes and one that always passes are both a creature with one attack, and one that reads the
+# floor without reading whose it is hands the player's own ammunition to the thing it was aimed
+# at. Sides are the same rule detonation already follows: a body is fed by exactly the clouds it
+# could have laid itself.
 func _ladder_swaps(id: String, scene: PackedScene, fed: String, plain: String,
 		wants_target: bool) -> int:
 	var beats := [fed, plain]
 	var target: Node2D = _target(Vector2(12, 0)) if wants_target else null
+	var fails := 0
 
-	var body := await _spawn(scene, Vector2.ZERO)
-	var got := await _await_beat(body, beats)
-	var fails := _expect("%s on clean floor took %s, expected %s" % [id, got, plain],
-		got == plain)
-	body.queue_free()
-	await get_tree().physics_frame
+	for leg in [["clean floor", -1, plain], ["the player's spores", 0, plain],
+			["a field of its own", 1, fed]]:
+		if leg[1] >= 0:
+			_coat(Vector2.ZERO, 3, leg[1] == 1)
+		var body := await _spawn(scene, Vector2.ZERO)
+		var got := await _await_beat(body, beats)
+		fails += _expect("%s on %s took %s, expected %s" % [id, leg[0], got, leg[2]],
+			got == leg[2])
+		body.queue_free()
+		_clear()
+		await get_tree().physics_frame
 
-	_coat(Vector2.ZERO)
-	body = await _spawn(scene, Vector2.ZERO)
-	got = await _await_beat(body, beats)
-	fails += _expect("%s standing in spores took %s, expected %s" % [id, got, fed], got == fed)
-	body.queue_free()
 	if target:
 		target.queue_free()
-	_clear()
 	await get_tree().physics_frame
 
 	if fails == 0:
-		print("  ok: %s — %s in a field, %s on clean floor" % [id, fed, plain])
+		print("  ok: %s — %s in its own field, %s on clean floor and in the player's"
+			% [id, fed, plain])
 	return fails
 
 # Nothing gets paid for the floor it made itself: whatever lays spores is flat wherever it
@@ -263,6 +282,154 @@ func _brood_pops(id: String, scene: PackedScene) -> int:
 		print("  ok: %s — rings on death, a wider one in a field, and the body goes" % id)
 	return fails
 
+# The rollcap is the roster's one hazard: no caster, no probe, no target — a heading and a
+# health bar. "Never steers toward you" is the whole design, and it fails silently the moment
+# anyone gives it a chase beat, so the claim is checked with the target standing right there:
+# the heading it left with is the heading it keeps.
+func _rollcap_rolls_on() -> int:
+	var target := _target(Vector2(3200, 64))
+	var body := await _spawn(ROLLCAP, Vector2(3200, 0))
+	var beat: Node = body.fsm.states["Roll"]
+	beat.heading = Vector2.RIGHT
+	var fails := 0
+	var from := body.global_position
+	for _i in 30:
+		await get_tree().physics_frame
+	var moved := body.global_position - from
+	fails += _expect("a rollcap sat still", moved.length() > 1.0)
+	fails += _expect("a rollcap steered off its heading (drifted %s toward the target)" % moved,
+		moved.normalized().dot(Vector2.RIGHT) > 0.999)
+	body.queue_free()
+	target.queue_free()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: rollcap — rolls its heading straight past a target it only ever aims at")
+	return fails
+
+# Its cast is the empowerment, so the floor is the whole trigger: clean floor has to be
+# silent. The gate lives inside the roll rather than behind a Gate rung, which is exactly the
+# arrangement that would fail quietly — a ball that shoots everywhere looks like a ball that
+# shoots, and only the clean-floor half of this catches it.
+func _rollcap_only_shoots_in_spores() -> int:
+	var fails := 0
+	for leg in [["on clean floor", -1], ["in the player's spores", 0], ["in a field of its own", 1]]:
+		var at := Vector2(5200, 0)
+		_clear_bullets()
+		if leg[1] >= 0:
+			# Wide enough that the ball is still standing in it when its cooldown lapses —
+			# it is rolling away from where it was coated the whole time.
+			_coat(at, 8, leg[1] == 1)
+		var target := _target(at + Vector2(40, 0))
+		var body := await _spawn(ROLLCAP, at)
+		body.fsm.states["Roll"].heading = Vector2.UP
+		var shots := 0
+		for _i in 120:
+			await get_tree().physics_frame
+			shots = maxi(shots, _bullets())
+		var wants: bool = leg[1] == 1
+		fails += _expect("a rollcap %s fired %d shots" % [leg[0], shots],
+			shots > 0 if wants else shots == 0)
+		body.queue_free()
+		target.queue_free()
+		_clear()
+		_clear_bullets()
+		await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: rollcap — silent on clean floor and in the player's, shoots in its own")
+	return fails
+
+# The only thing that ever changes its mind for it. A ball that slid along the wall instead of
+# reflecting would still be moving, still look alive, and quietly stop being a hazard that
+# crosses the room.
+func _rollcap_bounces() -> int:
+	var wall := StaticBody2D.new()
+	wall.collision_layer = 1
+	var shape := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = Vector2(8, 96)
+	shape.shape = box
+	wall.add_child(shape)
+	wall.position = Vector2(4064, 0)
+	add_child(wall)
+	var body := await _spawn(ROLLCAP, Vector2(4000, 0))
+	var beat: Node = body.fsm.states["Roll"]
+	beat.heading = Vector2.RIGHT
+	var squashed := false
+	for _i in 240:
+		await get_tree().physics_frame
+		squashed = squashed or body.sprite.animation == &"bounce"
+		if beat.heading.x < 0.0:
+			break
+	var fails := _expect("a rollcap ran into a wall and kept its heading (%s)" % beat.heading,
+		beat.heading.x < 0.0)
+	fails += _expect("a rollcap bounced without the squash frame", squashed)
+	body.queue_free()
+	wall.queue_free()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: rollcap — reflects off a wall and squashes on the way")
+	return fails
+
+# Its whole empowerment, and the one shape it can take on a body with no spell: coated floor
+# just moves it faster. Measured rather than asserted about, since a speed dial that reads the
+# floor and a speed dial that doesn't look identical standing still.
+func _rollcap_rides_the_floor() -> int:
+	var clean := await _rolled(Vector2(4400, 0), -1)
+	var ours := await _rolled(Vector2(4400, 0), 0)
+	var theirs := await _rolled(Vector2(4400, 0), 1)
+	var fails := _expect("a rollcap covered %.1fpx in its own spores vs %.1fpx on clean floor"
+		% [theirs, clean], theirs > clean * 1.1)
+	fails += _expect("a rollcap sped up in the PLAYER's spores (%.1fpx vs %.1fpx clean)"
+		% [ours, clean], is_equal_approx(ours, clean))
+	if fails == 0:
+		print("  ok: rollcap — rolls %.0f%% further through its own spores, and not the player's"
+			% ((theirs / clean - 1.0) * 100.0))
+	return fails
+
+func _rolled(at: Vector2, side: int) -> float:
+	if side >= 0:
+		_coat(at, 3, side == 1)
+	var body := await _spawn(ROLLCAP, at)
+	body.fsm.states["Roll"].heading = Vector2.RIGHT
+	var from := body.global_position
+	for _i in 30:
+		await get_tree().physics_frame
+	var travelled := body.global_position.distance_to(from)
+	body.queue_free()
+	_clear()
+	await get_tree().physics_frame
+	return travelled
+
+# Two stages, and the second one is the last. Nothing counts generations — the child simply
+# carries no stat sheet, so it has no death_spawns to fire — which means the rule holds only as
+# long as nobody hands the small one a CreatureResource "so it can drop something too". Killing
+# a child and watching for a third wave is what would catch that.
+func _rollcap_splits_once() -> int:
+	var got := await _brood_of("rollcap", ROLLCAP, Vector2(4800, 0))
+	var brood: Array = got.brood
+	var fails: int = got.fails
+	for spawn in brood:
+		_wake(spawn)
+		fails += _expect("a small rollcap came up dead", spawn.health > 0)
+		fails += _expect("a small rollcap carries a stat sheet, so it can split again",
+			spawn.data == null)
+		fails += _expect("a small rollcap settled in %s instead of rolling" % _state(spawn),
+			_state(spawn) == "Roll")
+	if not brood.is_empty():
+		brood.pop_back().die()
+		# Wants one more than could possibly be alive, so it never short-circuits: the loop
+		# runs its full window and reports whatever is standing at the end of it.
+		var left := await _await_spawns(ROLLCAP_SMALL, brood.size() + 2, 1500)
+		fails += _expect("killing a small rollcap left %d bodies, expected the %d untouched"
+			% [left.size(), brood.size()], left.size() == brood.size())
+	for spawn in brood:
+		spawn.queue_free()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: rollcap — splits into %d smaller balls, and they are the end of it"
+			% got.count)
+	return fails
+
 # A throe is three things happening across a handful of frames — the rung it picks, the pods
 # it throws, the corpse going away — and they don't line up in a fixed order, so one loop
 # watches all three at once rather than sampling each at a moment that might be too early.
@@ -315,15 +482,16 @@ func _power(spell: SpellResource) -> int:
 	var amount: ScalingProfile = spell.get("damage")
 	return amount.compute(0) if amount else 0
 
-# A coated room, laid the way a lob leaves it: enemy-side patches on a grid one cloud wide, so
-# wherever the body parks inside it, it is standing in spores.
-func _coat(center: Vector2, reach: int = 3) -> void:
+# A coated room, laid the way a lob leaves it: patches on a grid one cloud wide, so wherever
+# the body parks inside it, it is standing in spores. `foe` picks whose floor it is — the
+# dungeon's own by default, the player's Whumf when false.
+func _coat(center: Vector2, reach: int = 3, foe: bool = true) -> void:
 	for x in range(-reach, reach + 1):
 		for y in range(-reach, reach + 1):
 			var cloud: SporeCloud = CLOUD.instantiate()
 			cloud.position = center + Vector2(x, y) * SporeCloud.RADIUS
-			cloud.foe = true
-			cloud.target_groups = ["player"]
+			cloud.foe = foe
+			cloud.target_groups = ["player"] if foe else ["enemies"]
 			cloud.lifetime = 60.0
 			add_child(cloud)
 

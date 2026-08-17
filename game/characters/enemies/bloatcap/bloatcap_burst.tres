@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WhumfResource" format=3]
+[gd_resource type="Resource" script_class="WhumfResource" format=3 uid="uid://hdhvxx0cpv0f"]
 
 [ext_resource type="Script" uid="uid://ckqpeqlc3433q" path="res://characters/player/spells/whumf/whumf_resource.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://characters/player/spells/whumf/whumf.tscn" id="2_scene"]
@@ -18,7 +18,6 @@ tick_damage = SubResource("ScalingProfile_tick")
 blast_damage = SubResource("ScalingProfile_blast")
 cloud_lifetime = 25.0
 ring_clouds = 4
-spread_tiles = 1.6
 effect_scene = ExtResource("2_scene")
 cooldown = 0.0
 cast_time = 0.5

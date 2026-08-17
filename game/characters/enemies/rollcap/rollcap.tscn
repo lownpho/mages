@@ -1,0 +1,127 @@
+[gd_scene format=3 uid="uid://1yqf1yhjbnb0"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_creature"]
+[ext_resource type="Resource" uid="uid://coi0mv4wf5ml5" path="res://characters/enemies/rollcap/rollcap_data.tres" id="1_data"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://c0ikd2xkkk6d6" path="res://characters/enemies/rollcap/rollcap.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="Script" uid="uid://dp0oqf5ge1dgl" path="res://components/damage_zone.gd" id="5_zone"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="6_caster"]
+[ext_resource type="Resource" uid="uid://4imtq0omsd67" path="res://characters/enemies/rollcap/rollcap_pew.tres" id="7_pew"]
+[ext_resource type="Script" uid="uid://0q1bgeashmik" path="res://characters/enemies/rollcap/roll.gd" id="b_roll"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rollcap"]
+radius = 3.0
+
+[sub_resource type="AtlasTexture" id="AT_bounce0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_bounce1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_bounce2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_bounce3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_roll3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rollcap"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_bounce0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bounce1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bounce2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bounce3")
+}],
+"loop": 0,
+"name": &"bounce",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_roll0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_roll1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_roll2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_roll3")
+}],
+"loop": 1,
+"name": &"roll",
+"speed": 6.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_contact"]
+radius = 3.5
+
+[node name="Rollcap" type="CharacterBody2D" unique_id=1221732467 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_creature")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=370636487]
+shape = SubResource("CircleShape2D_rollcap")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1245224826]
+sprite_frames = SubResource("SpriteFrames_rollcap")
+animation = &"roll"
+autoplay = "roll"
+offset = Vector2(0, -1)
+
+[node name="Hurtbox" parent="." unique_id=1494274275 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 3.0
+
+[node name="Contact" type="Area2D" parent="." unique_id=446870815]
+collision_layer = 512
+collision_mask = 0
+monitoring = false
+script = ExtResource("5_zone")
+damage = 52
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Contact" unique_id=836501033]
+shape = SubResource("CircleShape2D_contact")
+
+[node name="Caster" parent="." unique_id=1845196976 instance=ExtResource("6_caster")]
+
+[node name="FSM" parent="." unique_id=1326175229 instance=ExtResource("4_fsm")]
+initial_state = "Roll"
+
+[node name="Roll" type="Node" parent="FSM" unique_id=2094435209]
+script = ExtResource("b_roll")
+cloud_speed_scale = 2.0
+spell = ExtResource("7_pew")
+caster_path = NodePath("../../Caster")

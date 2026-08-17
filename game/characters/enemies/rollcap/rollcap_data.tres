@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://coi0mv4wf5ml5"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://cpew3t1er3res" path="res://characters/player/spells/pew/pew3.tres" id="3_pew"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="4_spawn"]
+[ext_resource type="PackedScene" path="res://characters/enemies/rollcap/rollcap_small.tscn" id="5_small"]
+[ext_resource type="Texture2D" uid="uid://c0ikd2xkkk6d6" path="res://characters/enemies/rollcap/rollcap.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Spawn_halves"]
+script = ExtResource("4_spawn")
+scene = ExtResource("5_small")
+count = 2
+spread_tiles = 0.75
+
+[sub_resource type="Resource" id="Drop_pew"]
+script = ExtResource("2_drop")
+item = ExtResource("3_pew")
+chance = 0.08
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Rollcap"
+icon = SubResource("AtlasTexture_icon")
+max_health = 60
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew")])
+death_spawns = Array[ExtResource("4_spawn")]([SubResource("Spawn_halves")])
