@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cuepn5psyh0jq"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="3_nope"]
+[ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="4_whumf"]
+[ext_resource type="Texture2D" uid="uid://bvhxqu1essvx3" path="res://characters/enemies/mould_golem/mould_golem.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_nope"]
+script = ExtResource("2_drop")
+item = ExtResource("3_nope")
+chance = 0.3
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="Resource" id="Drop_whumf"]
+script = ExtResource("2_drop")
+item = ExtResource("4_whumf")
+chance = 0.08
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 16, 16)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Mould Golem"
+icon = SubResource("AtlasTexture_icon")
+max_health = 560
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_nope"), SubResource("Drop_whumf")])
