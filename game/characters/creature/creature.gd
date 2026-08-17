@@ -23,7 +23,10 @@ class_name Creature
 # Mirrored from `data` at _ready (when present) so behaviours can read
 # creature.max_health directly and damage can mutate health. Summons inject
 # max_health instead of carrying a `data` resource.
-var max_health: int
+## Only read by a body with NO `data`: a bloatcap's mycelings are its spawn rather than a
+## roster entry, so they carry no stat sheet (no icon, no drops, no kill count) and author
+## their health here instead. `data` wins wherever it's set.
+@export var max_health: int = 1
 var drops: Array[LootDrop] = []
 var health: int
 
@@ -305,9 +308,13 @@ func _begin_death_throe() -> void:
 	_dying = true
 	fsm.transition_to(death_state)
 	# Connected AFTER the transition: transition_to emits synchronously, so hooking up first
-	# would fire on our own entry and kill the creature before the beat ran a frame.
-	fsm.state_changed.connect(func(_previous: State, _current: State) -> void: _finish_death(),
-		CONNECT_ONE_SHOT)
+	# would fire on our own entry and kill the creature before the beat ran a frame. Handing
+	# off is all a dispatcher does, so a Gate's pick is the throe STARTING, not ending — that
+	# is what lets a parting shot be a choice (the Mycelium's broods answer coated floor with
+	# a bigger ring). _finish_death is idempotent, so this needs no one-shot.
+	fsm.state_changed.connect(func(previous: State, _current: State) -> void:
+		if not (previous is Gate):
+			_finish_death())
 
 func _finish_death() -> void:
 	if _dead:
@@ -315,6 +322,8 @@ func _finish_death() -> void:
 	_dead = true
 	if data:
 		GlobalEvent.creature_died.emit(data, global_position)
+		for spawn in data.death_spawns:
+			spawn.spawn(get_parent(), global_position)
 	for drop in drops:
 		if drop.roll():
 			GlobalEvent.loot_dropped.emit(drop.item, global_position)
@@ -334,7 +343,11 @@ func _on_hurt(damage: int, source: Node) -> void:
 		return
 	if incoming_damage_scale != 1.0:
 		damage = maxi(1, int(ceil(damage * incoming_damage_scale)))
-	health -= damage
+	# Floored at zero: health is read as a FRACTION of max by every beat's health window, and
+	# an overkill that leaves it negative puts the creature below `health_min` on windows that
+	# start at 0 — so a death throe pointed at an ordinary state finds nothing eligible to hand
+	# off to and the corpse lies there playing its last frame forever.
+	health = maxi(health - damage, 0)
 	# Emit before die() frees us so the floating number still spawns on a live node.
 	GlobalEvent.entity_damaged.emit(self, damage, source)
 	if health <= 0:

@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WhumfResource" format=3]
+
+[ext_resource type="Script" uid="uid://ckqpeqlc3433q" path="res://characters/player/spells/whumf/whumf_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/whumf/whumf.tscn" id="2_scene"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="3_scaling"]
+
+[sub_resource type="Resource" id="ScalingProfile_blast"]
+script = ExtResource("3_scaling")
+base_damage = 10.0
+
+[sub_resource type="Resource" id="ScalingProfile_tick"]
+script = ExtResource("3_scaling")
+base_damage = 3.0
+
+[resource]
+script = ExtResource("1_script")
+tick_damage = SubResource("ScalingProfile_tick")
+blast_damage = SubResource("ScalingProfile_blast")
+cloud_lifetime = 18.0
+ring_clouds = 0
+consumes_caster = true
+effect_scene = ExtResource("2_scene")
+cooldown = 0.0
+cast_time = 0.35

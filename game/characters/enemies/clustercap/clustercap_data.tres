@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cd03gqx6h3ynq"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="3_whumf"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="4_spawn"]
+[ext_resource type="PackedScene" uid="uid://bs50dxa5k05og" path="res://characters/enemies/clustercap/clusterling.tscn" id="5_clusterling"]
+[ext_resource type="Texture2D" uid="uid://chaa6p3d05s5d" path="res://characters/enemies/clustercap/clustercap.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Spawn_split"]
+script = ExtResource("4_spawn")
+scene = ExtResource("5_clusterling")
+count = 3
+spread_tiles = 3.0
+
+[sub_resource type="Resource" id="Drop_whumf"]
+script = ExtResource("2_drop")
+item = ExtResource("3_whumf")
+chance = 0.1
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Clustercap"
+icon = SubResource("AtlasTexture_icon")
+max_health = 150
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_whumf")])
+death_spawns = Array[ExtResource("4_spawn")]([SubResource("Spawn_split")])

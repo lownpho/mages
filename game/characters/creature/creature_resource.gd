@@ -19,3 +19,7 @@ enum Rarity {COMMON, RARE, BOSS}
 @export var max_health: int = 100
 ## Each entry is rolled independently on death, so a creature can drop several items at once.
 @export var drops: Array[LootDrop] = []
+## Bodies left behind on death, spawned on the same path as the drops — a bloatcap bursting
+## into its brood, a clustercap coming apart into three turrets. Always fires; the roll is
+## the drops' business, a split is the creature's whole point.
+@export var death_spawns: Array[DeathSpawn] = []

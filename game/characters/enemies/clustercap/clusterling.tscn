@@ -1,0 +1,143 @@
+[gd_scene format=3 uid="uid://bs50dxa5k05og"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://bp70gy8v0d0bs" path="res://characters/enemies/clustercap/clusterling.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" uid="uid://cahce7o1cvouy" path="res://characters/enemies/clustercap/clustercap_lob.tres" id="6_lob"]
+[ext_resource type="Resource" uid="uid://rohom6b7hcv0" path="res://characters/enemies/clustercap/clusterling_pop.tres" id="7_pop"]
+[ext_resource type="Resource" uid="uid://b5hmi0bugnui0" path="res://characters/enemies/clustercap/clusterling_wide_pop.tres" id="8_wide"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_clusterling"]
+radius = 2.0
+
+[sub_resource type="AtlasTexture" id="AT_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_pop0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_pop1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_clusterling"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk1")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_pop0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_pop1")
+}],
+"loop": 0,
+"name": &"pop",
+"speed": 6.0
+}]
+
+[node name="Clusterling" type="CharacterBody2D" unique_id=2030224917 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_creature")
+death_state = "Pop"
+max_health = 24
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=494172592]
+shape = SubResource("CircleShape2D_clusterling")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=625997351]
+sprite_frames = SubResource("SpriteFrames_clusterling")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -1)
+
+[node name="Hurtbox" parent="." unique_id=1414982078 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 2.0
+
+[node name="DetectProbe" type="RayCast2D" parent="." unique_id=2077332954]
+target_position = Vector2(104, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." unique_id=1107405393 instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." unique_id=464138936 instance=ExtResource("4_fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM" unique_id=1857035732]
+script = ExtResource("b_hold")
+min_time = 0.5
+max_time = 1.2
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Lob"
+alert_on_hit = true
+
+[node name="Lob" type="Node" parent="FSM" unique_id=1283805056]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_lob")
+attack_probe_path = NodePath("../../DetectProbe")
+out_of_range_state = "Idle"
+windup_anim = "attack"
+attack_anim = "idle"
+telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+
+[node name="Pop" type="Node" parent="FSM" unique_id=1695610563]
+script = ExtResource("b_gate")
+beats = Array[String](["WideRing", "Ring"])
+
+[node name="WideRing" type="Node" parent="FSM" unique_id=1902133812]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("8_wide")
+windup_anim = "pop"
+attack_anim = "pop"
+needs_cloud = true
+
+[node name="Ring" type="Node" parent="FSM" unique_id=214921782]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("7_pop")
+windup_anim = "pop"
+attack_anim = "pop"

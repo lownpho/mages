@@ -14,12 +14,23 @@ extends Node
 ##     wrong way round fails the moment it ships.
 ##   - the empowered rung fronts a DIFFERENT, harder spell, and nothing is stranded: an
 ##     empowered beat no Gate lists is a beat the creature can never reach.
+##
+## Then the splitters, whose whole point is what stands up after they fall — a seam that fails
+## just as quietly, since a body that spawns nothing on death is only a body that died:
+##   - a bloatcap leaves its brood, inside the spread it authored.
+##   - a clustercap leaves clusterlings that are alive and lobbing, not props, and that cannot
+##     split again.
+##   - a brood body dies loudly (a ring of pods, wider off coated floor) and then is GONE.
 ## Run: godot --headless --path game res://tests/test_mycelium.tscn
 
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
 const SPIRALCAP := preload("res://characters/enemies/spiralcap/spiralcap.tscn")
 const GOLEM := preload("res://characters/enemies/mould_golem/mould_golem.tscn")
 const SPITTER := preload("res://characters/enemies/sporespitter/sporespitter.tscn")
+const BLOATCAP := preload("res://characters/enemies/bloatcap/bloatcap.tscn")
+const CLUSTERCAP := preload("res://characters/enemies/clustercap/clustercap.tscn")
+const MYCELING := preload("res://characters/enemies/bloatcap/myceling.tscn")
+const CLUSTERLING := preload("res://characters/enemies/clustercap/clusterling.tscn")
 # The whole built roster, printers included — the lint's claim is about which beats did NOT
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
@@ -28,6 +39,12 @@ const ROSTER := {
 	"sporespitter": SPITTER,
 	"puffcap": preload("res://characters/enemies/puffcap/puffcap.tscn"),
 	"sporefly": preload("res://characters/enemies/sporefly/sporefly.tscn"),
+	"bloatcap": BLOATCAP,
+	"clustercap": CLUSTERCAP,
+	# The broods are not roster entries — no stat sheet, no kill count — but they cast, so the
+	# same two rules have to hold for them or the rules aren't rules.
+	"myceling": MYCELING,
+	"clusterling": CLUSTERLING,
 }
 
 func _ready() -> void:
@@ -37,6 +54,12 @@ func _ready() -> void:
 	fails += await _ladder_swaps("sporespitter", SPITTER, "WideBlam", "Blam", true)
 	fails += _printers_never_empower()
 	fails += _ladders_are_ladders()
+	fails += await _bloatcap_leaves_a_brood()
+	fails += await _clustercap_comes_apart()
+	fails += await _swells_under_damage("bloatcap", BLOATCAP, "Waddle", 40)
+	fails += await _swells_under_damage("clustercap", CLUSTERCAP, "Walk", 60)
+	fails += await _brood_pops("myceling", MYCELING)
+	fails += await _brood_pops("clusterling", CLUSTERLING)
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -125,6 +148,157 @@ func _ladders_are_ladders() -> int:
 	if fails == 0:
 		print("  ok: ladders — every empowered rung leads a Gate with a plain fallback")
 	return fails
+
+# Kill a splitter and collect what stood up, holding it to both promises its stat sheet makes:
+# how many, and inside what radius. A spread that doesn't hold is three bodies stacked on one
+# pixel, which is one body as far as the player can tell. Reads the authored numbers rather
+# than restating them, so retuning a split retunes the test with it. What the brood then DOES
+# is the caller's business.
+func _brood_of(id: String, scene: PackedScene, at: Vector2) -> Dictionary:
+	var body := await _spawn(scene, at)
+	var split: DeathSpawn = body.data.death_spawns[0]
+	body.die()
+	var brood := await _await_spawns(split.scene, split.count)
+	var fails := _expect("a dead %s left %d bodies, expected %d"
+		% [id, brood.size(), split.count], brood.size() == split.count)
+	# Measured off where the corpse stood, not off wherever the last frame of the throe
+	# pushed it.
+	var reach := split.spread_tiles * GameConstants.PX_PER_TILE
+	for spawn in brood:
+		fails += _expect("a %s spawn landed %.0fpx out, past the %.0fpx spread"
+			% [id, spawn.global_position.distance_to(at), reach],
+			spawn.global_position.distance_to(at) <= reach + 0.01)
+	return {"brood": brood, "fails": fails, "count": split.count}
+
+func _bloatcap_leaves_a_brood() -> int:
+	var got := await _brood_of("bloatcap", BLOATCAP, Vector2(400, 0))
+	for spawn in got.brood:
+		spawn.queue_free()
+	_clear()
+	await get_tree().physics_frame
+	if got.fails == 0:
+		print("  ok: bloatcap — bursts into %d mycelings inside its spread" % got.count)
+	return got.fails
+
+# The turrets a clustercap leaves have to be turrets: killing it multiplies the room's fire,
+# so "three clusterlings exist" is not the claim — three of them shooting is. And the split
+# stops here: a brood that could split again is a room that never ends, which is why the
+# clusterling carries no stat sheet at all — no `data` is no `death_spawns`, structurally.
+func _clustercap_comes_apart() -> int:
+	var target := _target(Vector2(830, 0))
+	var got := await _brood_of("clustercap", CLUSTERCAP, Vector2(800, 0))
+	var brood: Array = got.brood
+	var fails: int = got.fails
+	for spawn in brood:
+		_wake(spawn)
+	for spawn in brood:
+		var beat := await _await_beat(spawn, ["Lob"], 8000)
+		fails += _expect("a clusterling settled in %s instead of lobbing" % beat, beat == "Lob")
+		fails += _expect("a clusterling came up dead", spawn.health > 0)
+		fails += _expect("a clusterling can split again", spawn.data == null)
+	for spawn in brood:
+		spawn.queue_free()
+	target.queue_free()
+	_clear()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: clustercap — comes apart into %d lobbing clusterlings that can't split"
+			% got.count)
+	return fails
+
+# The splitters inflate as you shoot them, which is the read the player fights off: a fat one
+# is a nearly-dead one. It's a health window on a second walk behind the same Gate, and it
+# breaks silently in two directions — the window never opening, or the Gate never being asked
+# again mid-chase, which is what a walk with no clock on it does. Both look like a body that
+# simply never swells, so this drives a real body from full health to half and watches.
+func _swells_under_damage(id: String, scene: PackedScene, plain: String, reach: float) -> int:
+	var target := _target(Vector2(1600 + reach, 0))
+	var body := await _spawn(scene, Vector2(1600, 0))
+	var beats := ["Swell", plain]
+	var got := await _await_beat(body, beats)
+	var fails := _expect("%s at full health walks as %s, not %s" % [id, got, plain],
+		got == plain)
+	body.hurtbox.hurt.emit(body.max_health / 2 + 1, null)
+	got = await _await_beat(body, ["Swell"], 8000)
+	fails += _expect("%s under half health settled in %s instead of swelling" % [id, got],
+		got == "Swell")
+	fails += _expect("%s swelled without the swollen art (playing %s)"
+		% [id, body.sprite.animation], body.sprite.animation == &"swell")
+	body.queue_free()
+	target.queue_free()
+	_clear()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: %s — walks flat, swells under half health" % id)
+	return fails
+
+# A brood body dies loudly: it throws a ring of pods, a wider one off coated floor, and then
+# it is GONE. The last clause is the one that bit — a throe hands off through the same
+# eligibility every other hand-off asks, so an overkilled corpse (health below zero, outside
+# every health window) or one waiting on a cooldown simply lies there on its last frame,
+# playing dead in the literal sense. Checked on both floors, since the empowered rung is the
+# one a player standing in the dungeon's own spores actually meets.
+func _brood_pops(id: String, scene: PackedScene) -> int:
+	var fails := 0
+	for coated in [false, true]:
+		var at := Vector2(2400, 0)
+		if coated:
+			_coat(at)
+		_clear_bullets()
+		var body := await _spawn(scene, at)
+		# Overkill on purpose: this is what a real killing blow does, and what used to strand
+		# the corpse. Straight through the hurtbox so it's the same path a bullet takes.
+		body.hurtbox.hurt.emit(body.max_health * 3, null)
+		var watched := await _watch_throe(body)
+		var want := "WideRing" if coated else "Ring"
+		var floor_name := "in a field" if coated else "on clean floor"
+		fails += _expect("%s %s burst as %s, expected %s"
+			% [id, floor_name, watched.beat, want], watched.beat == want)
+		fails += _expect("%s %s left no pods behind" % [id, floor_name], watched.pods > 0)
+		fails += _expect("%s %s never cleared its corpse" % [id, floor_name], watched.freed)
+		_clear()
+		_clear_bullets()
+		await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: %s — rings on death, a wider one in a field, and the body goes" % id)
+	return fails
+
+# A throe is three things happening across a handful of frames — the rung it picks, the pods
+# it throws, the corpse going away — and they don't line up in a fixed order, so one loop
+# watches all three at once rather than sampling each at a moment that might be too early.
+func _watch_throe(body: Creature, ms: int = 8000) -> Dictionary:
+	var out := {"beat": "nothing", "pods": 0, "freed": false}
+	var deadline := Time.get_ticks_msec() + ms
+	while Time.get_ticks_msec() < deadline:
+		if is_instance_valid(body):
+			if out.beat == "nothing" and _state(body) in ["WideRing", "Ring"]:
+				out.beat = _state(body)
+		else:
+			out.freed = true
+		out.pods = maxi(out.pods, _bullets())
+		if out.freed and out.pods > 0:
+			break
+		await get_tree().physics_frame
+	return out
+
+func _bullets() -> int:
+	return get_tree().get_nodes_in_group("bullets").size()
+
+func _clear_bullets() -> void:
+	for bullet in get_tree().get_nodes_in_group("bullets"):
+		bullet.free()
+
+# Everything a death throe leaves lands deferred, a frame or more after the body is gone.
+func _await_spawns(scene: PackedScene, want: int, ms: int = 8000) -> Array[Creature]:
+	var deadline := Time.get_ticks_msec() + ms
+	var found: Array[Creature] = []
+	while Time.get_ticks_msec() < deadline and found.size() < want:
+		await get_tree().physics_frame
+		found.clear()
+		for child in get_children():
+			if child is Creature and child.scene_file_path == scene.resource_path:
+				found.append(child)
+	return found
 
 # A cast lays floor if it IS the field (Whumf) or if its shot leaves one where it stops.
 func _prints(spell: SpellResource) -> bool:
