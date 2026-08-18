@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://dsx2ux7qbbmkd"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_w2fgw"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
+[ext_resource type="Resource" uid="uid://beq6ob6afbo20" path="res://characters/player/spells/pew/pew2.tres" id="3_pew"]
+[ext_resource type="Texture2D" uid="uid://dcqawshnuss7f" path="res://characters/enemies/normiecap/normiecap.png" id="icon_png"]
+
+[sub_resource type="Resource" id="Drop_pew"]
+script = ExtResource("2_drop")
+item = ExtResource("3_pew")
+chance = 0.06
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("icon_png")
+region = Rect2(0, 0, 8, 8)
+
+[resource]
+script = ExtResource("1_res")
+display_name = "Normiecap"
+icon = SubResource("AtlasTexture_icon")
+max_health = 64
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew")])

@@ -45,6 +45,8 @@ const ROLLCAP := preload("res://characters/enemies/rollcap/rollcap.tscn")
 const ROLLCAP_SMALL := preload("res://characters/enemies/rollcap/rollcap_small.tscn")
 const SHELLCAP := preload("res://characters/enemies/shellcap/shellcap.tscn")
 const GAPCAP := preload("res://characters/enemies/gapcap/gapcap.tscn")
+const RINGCAP := preload("res://characters/enemies/ringcap/ringcap.tscn")
+const NORMIECAP := preload("res://characters/enemies/normiecap/normiecap.tscn")
 # The whole built roster, printers included — the lint's claim is about which beats did NOT
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
@@ -59,6 +61,8 @@ const ROSTER := {
 	"rollcap_small": ROLLCAP_SMALL,
 	"shellcap": SHELLCAP,
 	"gapcap": GAPCAP,
+	"ringcap": RINGCAP,
+	"normiecap": NORMIECAP,
 	# The broods are not roster entries — no stat sheet, no kill count — but they cast, so the
 	# same two rules have to hold for them or the rules aren't rules.
 	"myceling": MYCELING,
@@ -74,6 +78,9 @@ func _ready() -> void:
 	fails += await _ladder_swaps("gapcap", GAPCAP, "DoubleCone", "Cone", true)
 	fails += await _shellcap_fans_out()
 	fails += await _gapcap_roots_shorter()
+	fails += await _ladder_swaps("ringcap", RINGCAP, "HardRing", "Ring", false)
+	fails += await _ladder_swaps("normiecap", NORMIECAP, "HardPew", "Pew", true)
+	fails += await _normiecap_closes_and_backs_off()
 	fails += await _fed_at_the_edge()
 	fails += _printers_never_empower()
 	fails += _ladders_are_ladders()
@@ -137,6 +144,52 @@ func _shellcap_fans_out() -> int:
 	if fails == 0:
 		print("  ok: shellcap — %d darts on clean floor open into %d in its own field"
 			% [clean, fed])
+	return fails
+
+# The normiecap is three library beats in a ring and nothing else, which is exactly why it is
+# worth driving once: the loop only closes if every hand-off in it names a state that will have
+# it, and a chase wired to a beat that won't run is a creature jogging on the spot. So walk the
+# whole circuit — spot, close, fire, and then give up when the target leaves — rather than
+# asserting about the wiring, since the wiring is all there is to get wrong here.
+func _normiecap_closes_and_backs_off() -> int:
+	var at := Vector2(8400, 0)
+	# Out past the 2-tile shoot ring but well inside detection, so closing is a real leg.
+	var target := _target(at + Vector2(72, 0))
+	var body := await _spawn(NORMIECAP, at)
+	var fails := 0
+
+	var got := await _await_beat(body, ["Chase"])
+	fails += _expect("a normiecap that spotted a target settled in %s, not Chase" % got,
+		got == "Chase")
+	var from := body.global_position
+	# Clean floor here, so the plain rung is the one the circuit has to arrive at — which also
+	# pins the hand-off through the Gate rather than straight at a Cast.
+	got = await _await_beat(body, ["HardPew", "Pew"])
+	fails += _expect("a normiecap closing settled in %s, never reaching its shot" % got,
+		got == "Pew")
+	fails += _expect("a normiecap fired without closing any distance",
+		body.global_position.distance_to(target.global_position) < from.distance_to(target.global_position))
+	# The probe stops at the target's SURFACE, so the honest comparison adds its radius —
+	# centre-to-centre against a raycast length would fail by exactly the body it hit.
+	var reach: float = (body.get_node("ShootProbe") as RayCast2D).target_position.x
+	var skin: float = (target.get_child(0) as CollisionShape2D).shape.radius
+	var gap := body.global_position.distance_to(target.global_position)
+	fails += _expect("a normiecap opened up %.0fpx out, past its own %.0fpx shooting range"
+		% [gap - skin, reach], gap - skin <= reach + 1.0)
+
+	# Walk the target off and the whole thing has to unwind back to Idle — the half that fails
+	# silently, since a creature stuck in Chase forever looks exactly like one that is hunting.
+	target.global_position = at + Vector2(4000, 0)
+	got = await _await_beat(body, ["Idle"])
+	fails += _expect("a normiecap left alone settled in %s instead of idling back" % got,
+		got == "Idle")
+
+	body.queue_free()
+	target.queue_free()
+	_clear_bullets()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: normiecap — closes, fires inside %.0fpx, and idles back when you leave" % reach)
 	return fails
 
 # Standing in spores has to mean what it LOOKS like, or the whole mechanic is a lie the player
@@ -237,10 +290,12 @@ func _gapcap_roots_shorter() -> int:
 	body.free()
 	var fails := _expect("gapcap's fed lunge crosses %.0fpx, no further than its plain %.0fpx"
 		% [fed_reach, plain_reach], fed_reach > plain_reach)
-	# Against min_time, not max: the windows must not overlap, or a fed lunge can roll a
-	# LONGER recovery than a plain one and hand the player back the window it just took.
-	fails += _expect("gapcap's fed root (up to %.1fs) is no shorter than its plain one (from %.1fs)"
-		% [brief_root, full_root], brief_root < full_root)
+	# Against min_time, not max: the two windows must not OVERLAP, or a fed lunge can roll a
+	# longer recovery than a plain one and hand the player back the window it just took.
+	# Touching at the boundary is fine — that is still every fed root at most as long as every
+	# plain one, which is the claim.
+	fails += _expect("gapcap's fed root (up to %.1fs) can outlast its plain one (from %.1fs)"
+		% [brief_root, full_root], brief_root <= full_root)
 	await get_tree().physics_frame
 
 	for leg in [["clean floor", -1, "Root"], ["a field of its own", 1, "ShortRoot"]]:
@@ -630,9 +685,23 @@ func _prints(spell: SpellResource) -> bool:
 			return true
 	return false
 
+# What a whole beat is worth, not what one pellet is: a burst's output is its damage times how
+# many shots it owes times how wide each shot is, and an empowered rung is free to buy its
+# strength from any of the three. The gapcap's double cone is the case that proved it — same
+# per-pellet number as the plain one, twice the shots — and reading only `base_damage` called
+# that a ladder going nowhere.
 func _power(spell: SpellResource) -> int:
 	var amount: ScalingProfile = spell.get("damage")
-	return amount.compute(0) if amount else 0
+	if amount == null:
+		return 0
+	var per_shot := amount.compute(0)
+	if not (spell is BulletSpellResource):
+		return per_shot
+	# Ask the pattern rather than reading num_pellets/num_bullets off each shape by name.
+	var width := 1
+	if spell.fire_pattern:
+		width = spell.fire_pattern.get_directions(Vector2.RIGHT).size()
+	return per_shot * maxi(spell.max_shots, 1) * width
 
 # A coated room, laid the way a lob leaves it: patches on a grid one cloud wide, so wherever
 # the body parks inside it, it is standing in spores. `foe` picks whose floor it is — the
