@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://cpew3t1er3res" path="res://characters/player/spells/pew/pew3.tres" id="3_pew"]
 [ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="4_spawn"]
-[ext_resource type="PackedScene" path="res://characters/enemies/rollcap/rollcap_small.tscn" id="5_small"]
+[ext_resource type="PackedScene" uid="uid://dqjquf0ttx2fl" path="res://characters/enemies/rollcap/rollcap_small.tscn" id="5_small"]
 [ext_resource type="Texture2D" uid="uid://c0ikd2xkkk6d6" path="res://characters/enemies/rollcap/rollcap.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Spawn_halves"]

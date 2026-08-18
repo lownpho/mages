@@ -14,6 +14,10 @@ extends Node
 ##     wrong way round fails the moment it ships.
 ##   - the empowered rung fronts a DIFFERENT, harder spell, and nothing is stranded: an
 ##     empowered beat no Gate lists is a beat the creature can never reach.
+##   - the two consumers whose empowerment is a SHAPE rather than a number: the shellcap's
+##     volley has to actually open into a fan, and the gapcap's fed lunge has to reach further
+##     and hand back a shorter root. Both are dials no lint above reads, so a fed rung that
+##     merely hit harder would pass everything else and feel identical.
 ##
 ## Then the splitters, whose whole point is what stands up after they fall — a seam that fails
 ## just as quietly, since a body that spawns nothing on death is only a body that died:
@@ -39,6 +43,8 @@ const MYCELING := preload("res://characters/enemies/bloatcap/myceling.tscn")
 const CLUSTERLING := preload("res://characters/enemies/clustercap/clusterling.tscn")
 const ROLLCAP := preload("res://characters/enemies/rollcap/rollcap.tscn")
 const ROLLCAP_SMALL := preload("res://characters/enemies/rollcap/rollcap_small.tscn")
+const SHELLCAP := preload("res://characters/enemies/shellcap/shellcap.tscn")
+const GAPCAP := preload("res://characters/enemies/gapcap/gapcap.tscn")
 # The whole built roster, printers included — the lint's claim is about which beats did NOT
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
@@ -51,6 +57,8 @@ const ROSTER := {
 	"clustercap": CLUSTERCAP,
 	"rollcap": ROLLCAP,
 	"rollcap_small": ROLLCAP_SMALL,
+	"shellcap": SHELLCAP,
+	"gapcap": GAPCAP,
 	# The broods are not roster entries — no stat sheet, no kill count — but they cast, so the
 	# same two rules have to hold for them or the rules aren't rules.
 	"myceling": MYCELING,
@@ -62,6 +70,11 @@ func _ready() -> void:
 	fails += await _ladder_swaps("spiralcap", SPIRALCAP, "TwinSweep", "Sweep", false)
 	fails += await _ladder_swaps("mould_golem", GOLEM, "WideRing", "Ring", true)
 	fails += await _ladder_swaps("sporespitter", SPITTER, "WideBlam", "Blam", true)
+	fails += await _ladder_swaps("shellcap", SHELLCAP, "Fan", "Volley", true)
+	fails += await _ladder_swaps("gapcap", GAPCAP, "DoubleCone", "Cone", true)
+	fails += await _shellcap_fans_out()
+	fails += await _gapcap_roots_shorter()
+	fails += await _fed_at_the_edge()
 	fails += _printers_never_empower()
 	fails += _ladders_are_ladders()
 	fails += await _bloatcap_leaves_a_brood()
@@ -109,6 +122,145 @@ func _ladder_swaps(id: String, scene: PackedScene, fed: String, plain: String,
 	if fails == 0:
 		print("  ok: %s — %s in its own field, %s on clean floor and in the player's"
 			% [id, fed, plain])
+	return fails
+
+# "The volley opens into a three-shot fan" is a claim about the SHAPE of the burst, and the
+# ladder lint only weighs its damage — a fed rung firing the same single dart for more would
+# pass every other check in this file and leave the far end of the room exactly as crossable.
+# So count what is actually in the air, on both floors.
+func _shellcap_fans_out() -> int:
+	var fails := _shellcap_reaches()
+	var clean := await _volley_width(false)
+	var fed := await _volley_width(true)
+	fails += _expect("a shellcap put %d darts up in a field vs %d on clean floor"
+		% [fed, clean], clean > 0 and fed >= clean * 2)
+	if fails == 0:
+		print("  ok: shellcap — %d darts on clean floor open into %d in its own field"
+			% [clean, fed])
+	return fails
+
+# Standing in spores has to mean what it LOOKS like, or the whole mechanic is a lie the player
+# can see through: they read two sprites touching, the code read one pixel against one centre,
+# and the two disagreed for the whole 8..12px band where a body is visibly in the field. Every
+# check above coats a dense grid centred on the body, which is the one arrangement that can
+# never expose it — so this parks a single patch off to the side, exactly the way a lob leaves
+# one beside a turret it was never aimed at, and asks the body what floor it thinks it is on.
+# Rooted bodies lived in that band: nothing drops dust on a turret's own pixel.
+func _fed_at_the_edge() -> int:
+	var at := Vector2(7600, 0)
+	var body := await _spawn(SHELLCAP, at)
+	var fails := 0
+	# Along the axis the sprites stop overlapping at 12px; the diagonal is the corner case,
+	# where the patch's art runs out sooner than its own bounding box suggests.
+	for leg in [[Vector2(10, 0), true], [Vector2(7, 7), true], [Vector2(24, 0), false]]:
+		var offset: Vector2 = leg[0]
+		var cloud: SporeCloud = CLOUD.instantiate()
+		cloud.position = at + offset
+		cloud.foe = true
+		cloud.target_groups = ["player"]
+		cloud.lifetime = 60.0
+		add_child(cloud)
+		await get_tree().physics_frame
+		var want: bool = leg[1]
+		fails += _expect("a body %.0fpx off a patch centre reads as %s floor"
+			% [offset.length(), "clean" if want else "coated"],
+			SporeCloud.feeds(body) == want)
+		_clear()
+		await get_tree().physics_frame
+	body.queue_free()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: spores — a body overlapping a patch is fed; one a field away is not")
+	return fails
+
+# "You cannot out-range it" is two numbers agreeing that live in different files: the probe the
+# dispatcher commits on, and how far the dart it commits to actually flies. Retune either alone
+# and the sniper still fires, still animates, still looks correct — it just drops its volley in
+# the dirt short of a player it can plainly see, or refuses to open up on one well inside its
+# lethal range. Both rungs, since the fan is a separate .tres that can drift on its own.
+func _shellcap_reaches() -> int:
+	var body: Creature = SHELLCAP.instantiate()
+	var lane: float = (body.get_node("RoomProbe") as RayCast2D).target_position.x
+	var fails := 0
+	for beat_name in ["Fan", "Volley"]:
+		var beat: Cast = body.get_node("FSM").get_node(beat_name)
+		var reach: float = beat.spell.bullet.range_tiles * GameConstants.PX_PER_TILE
+		fails += _expect("shellcap/%s commits at %.0fpx but its dart dies at %.0fpx"
+			% [beat_name, lane, reach], reach >= lane)
+	body.free()
+	if fails == 0:
+		print("  ok: shellcap — both rungs carry the %.0fpx lane it commits on" % lane)
+	return fails
+
+# Most darts alive at once, which is the fan: the volley trickles one per shot however long
+# you watch, the fan puts three up per shot. The target stands down the lane at three quarters
+# of the shellcap's OWN probe rather than at a distance written here — a lane length is the
+# first thing anyone retunes on a sniper, and a test holding its own opinion about it stops
+# measuring the fan and starts measuring whether the turret can see that far.
+func _volley_width(coated: bool) -> int:
+	var at := Vector2(6000, 0)
+	_clear_bullets()
+	if coated:
+		_coat(at)
+	var body := await _spawn(SHELLCAP, at)
+	var lane: float = (body.get_node("RoomProbe") as RayCast2D).target_position.x
+	var target := _target(at + Vector2(lane * 0.75, 0))
+	var most := 0
+	for _i in 180:
+		await get_tree().physics_frame
+		most = maxi(most, _bullets())
+	body.queue_free()
+	target.queue_free()
+	_clear()
+	_clear_bullets()
+	await get_tree().physics_frame
+	return most
+
+# The other half of gapcap's empowerment is not a spell at all — a longer lunge into a shorter
+# root, so the free window the whole enemy is built around closes. Both live in behaviour dials
+# no ladder lint reads: a fed rung wired to the same reach and the same recovery would swap
+# correctly, out-damage its fallback, and change nothing the player can feel. Checked twice —
+# the authored dials say the fed pair is bigger and briefer, and a real body driven through the
+# empowered cone actually lands in the shorter one.
+func _gapcap_roots_shorter() -> int:
+	var body: Creature = GAPCAP.instantiate()
+	var fsm: Node = body.get_node("FSM")
+	var fed: Approach = fsm.get_node("FedLunge")
+	var plain: Approach = fsm.get_node("Lunge")
+	var brief: Hold = fsm.get_node("ShortRoot")
+	var full: Hold = fsm.get_node("Root")
+	# Read every dial out before the tree goes; the rest of this runs without a gapcap in hand.
+	var fed_reach := fed.speed * fed.duration
+	var plain_reach := plain.speed * plain.duration
+	var brief_root := brief.max_time
+	var full_root := full.min_time
+	body.free()
+	var fails := _expect("gapcap's fed lunge crosses %.0fpx, no further than its plain %.0fpx"
+		% [fed_reach, plain_reach], fed_reach > plain_reach)
+	# Against min_time, not max: the windows must not overlap, or a fed lunge can roll a
+	# LONGER recovery than a plain one and hand the player back the window it just took.
+	fails += _expect("gapcap's fed root (up to %.1fs) is no shorter than its plain one (from %.1fs)"
+		% [brief_root, full_root], brief_root < full_root)
+	await get_tree().physics_frame
+
+	for leg in [["clean floor", -1, "Root"], ["a field of its own", 1, "ShortRoot"]]:
+		var at := Vector2(6800, 0)
+		if leg[1] >= 0:
+			_coat(at, 4)
+		var target := _target(at + Vector2(16, 0))
+		var live := await _spawn(GAPCAP, at)
+		var got := await _await_beat(live, ["ShortRoot", "Root"])
+		fails += _expect("a gapcap recovering on %s settled in %s, expected %s"
+			% [leg[0], got, leg[2]], got == leg[2])
+		live.queue_free()
+		target.queue_free()
+		_clear()
+		_clear_bullets()
+		await get_tree().physics_frame
+
+	if fails == 0:
+		print("  ok: gapcap — a %.0fpx lunge into a %.1fs root in a field, %.0fpx into %.1fs without"
+			% [fed_reach, brief_root, plain_reach, full_root])
 	return fails
 
 # Nothing gets paid for the floor it made itself: whatever lays spores is flat wherever it

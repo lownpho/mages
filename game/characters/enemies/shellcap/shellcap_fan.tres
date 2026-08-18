@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://bligjnu86xmlq"]
+
+[ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_bh_base"]
+[ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="2_bullets"]
+[ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="4_bullet"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="6_scaling"]
+[ext_resource type="Script" uid="uid://d3hnuqjbp2epb" path="res://items/bullets/shotgun_pattern.gd" id="8_pattern"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dart"]
+atlas = ExtResource("2_bullets")
+region = Rect2(0, 32, 8, 8)
+
+[sub_resource type="Resource" id="Bullet_dart"]
+script = ExtResource("4_bullet")
+icon = SubResource("AtlasTexture_dart")
+speed_tiles = 10
+
+[sub_resource type="Resource" id="ScalingProfile_fan"]
+script = ExtResource("6_scaling")
+base_damage = 32.0
+
+[sub_resource type="Resource" id="ShotgunPattern_fan"]
+script = ExtResource("8_pattern")
+spread_angle = 10.0
+
+[resource]
+script = ExtResource("1_script")
+fire_pattern = SubResource("ShotgunPattern_fan")
+bullet = SubResource("Bullet_dart")
+damage = SubResource("ScalingProfile_fan")
+shot_interval = 0.35
+max_shots = 5
+effect_scene = ExtResource("3_scene")
+cooldown = 3.0
+cast_time = 0.6

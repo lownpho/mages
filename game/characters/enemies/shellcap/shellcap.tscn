@@ -1,0 +1,173 @@
+[gd_scene format=3 uid="uid://ckwxbfgdsvd6j"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_creature"]
+[ext_resource type="Resource" uid="uid://dnao5j2jt1gu4" path="res://characters/enemies/shellcap/shellcap_data.tres" id="1_data"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" uid="uid://d15tbnlvxlvfn" path="res://characters/enemies/shellcap/shellcap.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" uid="uid://bm36mj4dvnoft" path="res://characters/enemies/shellcap/shellcap_volley.tres" id="6_volley"]
+[ext_resource type="Resource" uid="uid://bligjnu86xmlq" path="res://characters/enemies/shellcap/shellcap_fan.tres" id="7_fan"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_shellcap"]
+radius = 3.0
+
+[sub_resource type="AtlasTexture" id="AT_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("3_tex")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_shellcap"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk3")
+}],
+"loop": 1,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk2")
+}],
+"loop": 0,
+"name": &"charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 2.0
+}]
+
+[node name="Shellcap" type="CharacterBody2D" unique_id=233094974 groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("1_creature")
+data = ExtResource("1_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=587603968]
+shape = SubResource("CircleShape2D_shellcap")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1203189109]
+sprite_frames = SubResource("SpriteFrames_shellcap")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -1)
+
+[node name="Hurtbox" parent="." unique_id=350237727 instance=ExtResource("2_hbox")]
+collision_mask = 256
+radius = 3.0
+
+[node name="RoomProbe" type="RayCast2D" parent="." unique_id=2036316750]
+target_position = Vector2(128, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." unique_id=324211240 instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." unique_id=29034728 instance=ExtResource("4_fsm")]
+initial_state = "Watch"
+
+[node name="Watch" type="Node" parent="FSM" unique_id=1472378364]
+script = ExtResource("b_hold")
+min_time = 1.0
+max_time = 2.5
+next_state = "Watch"
+probe_path = NodePath("../../RoomProbe")
+seen_state = "Pick"
+alert_on_hit = true
+
+[node name="Pick" type="Node" parent="FSM" unique_id=1711885673]
+script = ExtResource("b_gate")
+beats = Array[String](["Fan", "Volley"])
+probe_path = NodePath("../../RoomProbe")
+lost_state = "Watch"
+
+[node name="Fan" type="Node" parent="FSM" unique_id=133108622]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("7_fan")
+done_state = "Reload"
+attack_probe_path = NodePath("../../RoomProbe")
+out_of_range_state = "Watch"
+windup_anim = "charge"
+telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+range_probe_path = NodePath("../../RoomProbe")
+needs_cloud = true
+
+[node name="Volley" type="Node" parent="FSM" unique_id=1835249246]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_volley")
+done_state = "Reload"
+attack_probe_path = NodePath("../../RoomProbe")
+out_of_range_state = "Watch"
+windup_anim = "charge"
+range_probe_path = NodePath("../../RoomProbe")
+
+[node name="Reload" type="Node" parent="FSM" unique_id=1324414049]
+script = ExtResource("b_hold")
+min_time = 0.8
+max_time = 1.2
+next_state = "Pick"
+probe_path = NodePath("../../RoomProbe")
+lost_state = "Watch"

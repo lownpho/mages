@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://d045xvnj4cc3p"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_y1cft"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://ch4rg3d4sh2t" path="res://characters/player/spells/charge_dash/charge_dash2.tres" id="3_dash"]
 [ext_resource type="Texture2D" uid="uid://dcf6x648dckrg" path="res://characters/enemies/thornback/thornback.png" id="icon_png"]

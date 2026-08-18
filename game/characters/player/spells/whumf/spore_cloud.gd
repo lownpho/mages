@@ -15,6 +15,8 @@ const GROUP := "spore_clouds"
 ## rather than exported: a radius that disagrees with the picture is a lie about where it
 ## is safe to stand.
 const RADIUS := 1.0 * GameConstants.PX_PER_TILE
+## Half a body, added only to the `feeds` query — see the note there.
+const BODY_REACH := 0.5 * GameConstants.PX_PER_TILE
 const TICK_INTERVAL := 0.5
 ## Seconds of die-back animation, taken out of the end of the lifetime.
 const WITHER_TIME := 1.2
@@ -57,16 +59,16 @@ func _physics_process(delta: float) -> void:
 		_hurt(victim, tick_damage)
 
 ## True if `point` is inside the patch and there's still something here to light.
-func covers(point: Vector2) -> bool:
-	return not _spent and point.distance_to(global_position) <= RADIUS
+func covers(point: Vector2, slack: float = 0.0) -> bool:
+	return not _spent and point.distance_to(global_position) <= RADIUS + slack
 
 ## True if any live patch on `foe`'s side of the floor covers `point`.
-static func any_covers(point: Vector2, foe_side: bool) -> bool:
+static func any_covers(point: Vector2, foe_side: bool, slack: float = 0.0) -> bool:
 	var tree := Engine.get_main_loop() as SceneTree
 	if tree == null:
 		return false
 	for cloud in tree.get_nodes_in_group(GROUP):
-		if cloud.foe == foe_side and cloud.covers(point):
+		if cloud.foe == foe_side and cloud.covers(point, slack):
 			return true
 	return false
 
@@ -76,10 +78,18 @@ static func any_covers(point: Vector2, foe_side: bool) -> bool:
 ## would turn the player's own answer into the dungeon's. The side test is the one that stamps
 ## `foe` on a cloud in the first place, so a body is fed by exactly the clouds it could have
 ## laid itself.
+##
+## Half a body wide of slack, because "standing in spores" is a claim about the two sprites the
+## player can see touching, not about the single pixel a body's origin sits on: the patch is 16px
+## of art and a body is another 8px, so one visibly parked in the field is up to 12px off the
+## nearest centre. Rooted bodies ate this constantly — nothing lobs dust onto a turret's exact
+## pixel, it lands beside it — so a shellcap standing in an obvious field kept firing its plain
+## volley. Only this query is generous; ticking and detonation still answer on the patch itself,
+## since those are about where the art actually hurts.
 static func feeds(body: Node2D) -> bool:
 	var layer = body.get("bullet_collision_layer")
 	return any_covers(body.global_position,
-		layer != null and layer != GameConstants.LAYER_PLAYER_BULLETS)
+		layer != null and layer != GameConstants.LAYER_PLAYER_BULLETS, BODY_REACH)
 
 ## Set off by light. The blast jumps to every cloud touching this one and hits each
 ## victim ONCE — the chain widens the area, it doesn't stack hits — and it hunts the
