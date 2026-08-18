@@ -47,6 +47,9 @@ const SHELLCAP := preload("res://characters/enemies/shellcap/shellcap.tscn")
 const GAPCAP := preload("res://characters/enemies/gapcap/gapcap.tscn")
 const RINGCAP := preload("res://characters/enemies/ringcap/ringcap.tscn")
 const NORMIECAP := preload("res://characters/enemies/normiecap/normiecap.tscn")
+const BURROWER := preload("res://characters/enemies/burrower/burrower.tscn")
+const DEATHCAP := preload("res://characters/enemies/deathcap/deathcap.tscn")
+const MAULCAP := preload("res://characters/enemies/maulcap/maulcap.tscn")
 # The whole built roster, printers included — the lint's claim is about which beats did NOT
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
@@ -63,6 +66,9 @@ const ROSTER := {
 	"gapcap": GAPCAP,
 	"ringcap": RINGCAP,
 	"normiecap": NORMIECAP,
+	"burrower": BURROWER,
+	"deathcap": DEATHCAP,
+	"maulcap": MAULCAP,
 	# The broods are not roster entries — no stat sheet, no kill count — but they cast, so the
 	# same two rules have to hold for them or the rules aren't rules.
 	"myceling": MYCELING,
@@ -81,6 +87,12 @@ func _ready() -> void:
 	fails += await _ladder_swaps("ringcap", RINGCAP, "HardRing", "Ring", false)
 	fails += await _ladder_swaps("normiecap", NORMIECAP, "HardPew", "Pew", true)
 	fails += await _normiecap_closes_and_backs_off()
+	# The three rares. The burrower spends its whole loop moving, so its field has to reach
+	# past the crossing — see _burrower_crosses_unseen.
+	fails += await _ladder_swaps("burrower", BURROWER, "Ring", "Spray", true, 8)
+	fails += await _burrower_crosses_unseen()
+	fails += await _ladder_swaps("deathcap", DEATHCAP, "Fan", "Volley", true)
+	fails += await _ladder_swaps("maulcap", MAULCAP, "DoubleCone", "Cone", true)
 	fails += await _fed_at_the_edge()
 	fails += _printers_never_empower()
 	fails += _ladders_are_ladders()
@@ -105,7 +117,7 @@ func _ready() -> void:
 # at. Sides are the same rule detonation already follows: a body is fed by exactly the clouds it
 # could have laid itself.
 func _ladder_swaps(id: String, scene: PackedScene, fed: String, plain: String,
-		wants_target: bool) -> int:
+		wants_target: bool, reach: int = 3) -> int:
 	var beats := [fed, plain]
 	var target: Node2D = _target(Vector2(12, 0)) if wants_target else null
 	var fails := 0
@@ -113,7 +125,7 @@ func _ladder_swaps(id: String, scene: PackedScene, fed: String, plain: String,
 	for leg in [["clean floor", -1, plain], ["the player's spores", 0, plain],
 			["a field of its own", 1, fed]]:
 		if leg[1] >= 0:
-			_coat(Vector2.ZERO, 3, leg[1] == 1)
+			_coat(Vector2.ZERO, reach, leg[1] == 1)
 		var body := await _spawn(scene, Vector2.ZERO)
 		var got := await _await_beat(body, beats)
 		fails += _expect("%s on %s took %s, expected %s" % [id, leg[0], got, leg[2]],
@@ -316,6 +328,53 @@ func _gapcap_roots_shorter() -> int:
 	if fails == 0:
 		print("  ok: gapcap — a %.0fpx lunge into a %.1fs root in a field, %.0fpx into %.1fs without"
 			% [fed_reach, brief_root, plain_reach, full_root])
+	return fails
+
+# The burrower IS its crossing, and every part of one fails silently: a wander that never moves
+# is a creature standing still, an armour dial left at 1.0 is a "submerged" body you can shoot,
+# and a loop that never comes back up is an enemy that left the fight. So drive the whole
+# circuit — under, across, up, spray, print — rather than asserting about the wiring.
+#
+# The order at the end is the load-bearing bit. It shoots BEFORE it prints, which is the only
+# reason its spray is ever the plain rung: print first and it would be standing in its own fresh
+# field every single time, and the empowered ring would stop being a punish for surfacing into
+# the field it left last time and just become what it does.
+func _burrower_crosses_unseen() -> int:
+	var at := Vector2(9200, 0)
+	var target := _target(at + Vector2(12, 0))
+	var body := await _spawn(BURROWER, at)
+	var fails := 0
+
+	var got := await _await_beat(body, ["Burrow"])
+	fails += _expect("a burrower that spotted a target settled in %s, never diving" % got,
+		got == "Burrow")
+	var from := body.global_position
+	fails += _expect("a burrowed burrower takes damage at scale %.1f, expected 0"
+		% body.incoming_damage_scale, body.incoming_damage_scale == 0.0)
+
+	got = await _await_beat(body, ["Spray", "Ring"])
+	fails += _expect("a surfaced burrower settled in %s instead of its spray" % got,
+		got == "Spray")
+	var crossed := body.global_position.distance_to(from)
+	# Measured against its own shortest crossing rather than a number written here, so retuning
+	# the dive retunes the test with it.
+	var dig: Wander = body.fsm.states["Burrow"]
+	fails += _expect("a burrower crossed %.0fpx underground, nowhere near its own %.0fpx"
+		% [crossed, dig.speed * dig.min_time], crossed >= dig.speed * dig.min_time * 0.5)
+	fails += _expect("a surfaced burrower is still armoured at %.1f"
+		% body.incoming_damage_scale, body.incoming_damage_scale == 1.0)
+
+	got = await _await_beat(body, ["Spores"])
+	fails += _expect("a burrower that fired settled in %s, never laying its cloud" % got,
+		got == "Spores")
+
+	body.queue_free()
+	target.queue_free()
+	_clear()
+	_clear_bullets()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: burrower — dives untouchable, crosses %.0fpx, sprays, then prints" % crossed)
 	return fails
 
 # Nothing gets paid for the floor it made itself: whatever lays spores is flat wherever it
