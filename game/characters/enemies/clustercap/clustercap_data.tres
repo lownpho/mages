@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="3_whumf"]
 [ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="4_spawn"]
 [ext_resource type="PackedScene" uid="uid://bs50dxa5k05og" path="res://characters/enemies/clustercap/clusterling.tscn" id="5_clusterling"]
+[ext_resource type="Resource" uid="uid://cedui6u12dxae" path="res://characters/player/spells/poot/poot3.tres" id="9_poot"]
 [ext_resource type="Texture2D" uid="uid://chaa6p3d05s5d" path="res://characters/enemies/clustercap/clustercap.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Spawn_split"]
@@ -18,6 +19,11 @@ script = ExtResource("2_drop")
 item = ExtResource("3_whumf")
 chance = 0.1
 
+[sub_resource type="Resource" id="Drop_poot"]
+script = ExtResource("2_drop")
+item = ExtResource("9_poot")
+chance = 0.03
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 0, 8, 8)
@@ -27,5 +33,6 @@ script = ExtResource("1_res")
 display_name = "Clustercap"
 icon = SubResource("AtlasTexture_icon")
 max_health = 150
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_whumf")])
+kinds = 32
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_whumf"), SubResource("Drop_poot")])
 death_spawns = Array[ExtResource("4_spawn")]([SubResource("Spawn_split")])

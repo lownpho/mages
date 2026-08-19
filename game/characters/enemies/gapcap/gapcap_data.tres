@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_cpvvt"]
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://bl4mt13rthr33" path="res://characters/player/spells/blam/blam3.tres" id="3_cpvvt"]
+[ext_resource type="Resource" uid="uid://bxm3pkf11x32w" path="res://characters/player/spells/blam/blam3_insect.tres" id="3_cpvvt"]
 [ext_resource type="Texture2D" uid="uid://cncswepu3h0st" path="res://characters/enemies/gapcap/gapcap.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_blam"]
@@ -20,4 +20,5 @@ region = Rect2(0, 0, 8, 8)
 script = ExtResource("1_res")
 display_name = "Gapcap"
 icon = SubResource("AtlasTexture_icon")
+kinds = 32
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_blam")])

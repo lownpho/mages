@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_w2fgw"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://beq6ob6afbo20" path="res://characters/player/spells/pew/pew2.tres" id="3_pew"]
+[ext_resource type="Resource" uid="uid://cbwx63i54r0nw" path="res://characters/player/spells/pew/pew3_insect.tres" id="3_pew"]
 [ext_resource type="Texture2D" uid="uid://dcqawshnuss7f" path="res://characters/enemies/normiecap/normiecap.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_pew"]
@@ -21,4 +21,5 @@ script = ExtResource("1_res")
 display_name = "Normiecap"
 icon = SubResource("AtlasTexture_icon")
 max_health = 64
+kinds = 32
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew")])

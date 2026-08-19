@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_2mmyh"]
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
-[ext_resource type="Resource" uid="uid://dunh44bpspsay" path="res://characters/player/spells/snipe/snipe3.tres" id="3_snipe"]
+[ext_resource type="Resource" uid="uid://eae7n2m750ww" path="res://characters/player/spells/snipe/snipe3_insect.tres" id="3_snipe"]
 [ext_resource type="Texture2D" uid="uid://ccbuhx0d6305a" path="res://characters/enemies/deathcap/deathcap.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_snipe"]
@@ -22,4 +22,5 @@ display_name = "Deathcap"
 icon = SubResource("AtlasTexture_icon")
 rarity = 1
 max_health = 340
+kinds = 32
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_snipe")])
