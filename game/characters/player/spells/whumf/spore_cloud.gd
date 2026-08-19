@@ -11,10 +11,10 @@ class_name SporeCloud
 ## a room the dungeon has coated is a room to cross, never a free bomb to cash in.
 
 const GROUP := "spore_clouds"
-## The patch is 16px of art, so it covers a tile either side of itself. Tied to the sheet
+## The patch is 32px of art, so it covers two tiles either side of itself. Tied to the sheet
 ## rather than exported: a radius that disagrees with the picture is a lie about where it
 ## is safe to stand.
-const RADIUS := 1.0 * GameConstants.PX_PER_TILE
+const RADIUS := 2.0 * GameConstants.PX_PER_TILE
 ## Half a body, added only to the `feeds` query — see the note there.
 const BODY_REACH := 0.5 * GameConstants.PX_PER_TILE
 const TICK_INTERVAL := 0.5
@@ -80,8 +80,8 @@ static func any_covers(point: Vector2, foe_side: bool, slack: float = 0.0) -> bo
 ## laid itself.
 ##
 ## Half a body wide of slack, because "standing in spores" is a claim about the two sprites the
-## player can see touching, not about the single pixel a body's origin sits on: the patch is 16px
-## of art and a body is another 8px, so one visibly parked in the field is up to 12px off the
+## player can see touching, not about the single pixel a body's origin sits on: the patch is 32px
+## of art and a body is another 8px, so one visibly parked in the field is up to 20px off the
 ## nearest centre. Rooted bodies ate this constantly — nothing lobs dust onto a turret's exact
 ## pixel, it lands beside it — so a shellcap standing in an obvious field kept firing its plain
 ## volley. Only this query is generous; ticking and detonation still answer on the patch itself,

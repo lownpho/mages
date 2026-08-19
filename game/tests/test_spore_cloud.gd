@@ -203,7 +203,9 @@ func _check_a_lob_plants_where_it_lands() -> void:
 	await get_tree().physics_frame
 	var ctx := CastContext.new(spell, spitter)
 	var bullet: BaseBullet = ctx.spawn_bullet(spell.bullet, Vector2.RIGHT, spitter.global_position)
-	for _i in 10:
+	# Long enough for the blob to clear a patch's own radius — the check below is about the
+	# lob landing downrange, and a flight cut shorter than the patch is wide can't show that.
+	for _i in 20:
 		await get_tree().physics_frame
 	var landed := bullet.global_position
 	# What a Hurtbox does when the blob arrives; range end and walls run the same expiry.

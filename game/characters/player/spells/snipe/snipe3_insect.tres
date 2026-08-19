@@ -48,6 +48,6 @@ max_shots = 7
 effect_scene = ExtResource("6_ibvgv")
 cooldown = 4.0
 weakness = 4
-blurb = "No aim required"
+blurb = "No aim required. Now with spore pesticide."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 6

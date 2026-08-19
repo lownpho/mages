@@ -840,6 +840,14 @@ func _turret_reads_the_floor(id: String, spell: SummonResource, fed: String, pla
 		var got := await _await_beat(minion, [fed, plain])
 		fails += _expect("%s on %s took %s, expected %s" % [id, leg[0], got, leg[2]],
 			got == leg[2])
+		# The beat AFTER the first is where a fed turret used to slip: two spells are two
+		# cooldown clocks, so once the empowered one is cooling the plain rung is the only
+		# thing left willing to run, and the ladder quietly hands the weak version back.
+		if leg[2] == fed:
+			while _state(minion) == fed:
+				await get_tree().physics_frame
+			var again := await _await_beat(minion, [fed, plain])
+			fails += _expect("a fed %s followed %s with %s" % [id, fed, again], again == fed)
 		minion.queue_free()
 		_clear()
 		await get_tree().physics_frame

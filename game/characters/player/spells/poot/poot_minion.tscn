@@ -134,7 +134,7 @@ seen_state = "Pick"
 
 [node name="Pick" type="Node" parent="FSM"]
 script = ExtResource("b_gate")
-beats = Array[String](["FedShot", "Shot"])
+beats = Array[String](["FedShot", "Shot", "Rest"])
 lost_state = "Rest"
 
 [node name="FedShot" type="Node" parent="FSM"]
@@ -152,5 +152,6 @@ script = ExtResource("b_cast")
 range_probe_path = NodePath("../../ReachProbe")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_shot")
+refuses_cloud = true
 done_state = "Rest"
 attack_anim = "attack"

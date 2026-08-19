@@ -52,6 +52,11 @@ class_name Behaviour
 ## reach. Never set it on the beat that LAYS clouds: nothing gets paid for the floor it made
 ## itself, which is what stops a room of printers spiralling.
 @export var needs_cloud: bool = false
+## The other half of that pair: refuse while the caster DOES stand in its own spores. Without
+## it the ladder drops to the plain beat the moment the empowered one is merely cooling — two
+## spells are two cooldown clocks, so a fed creature would spend the gaps firing the weak
+## version it was supposed to have traded away. Set on the plain rung, never on the fed one.
+@export var refuses_cloud: bool = false
 
 var _spent: bool = false
 var _range_probe: RayCast2D
@@ -94,6 +99,8 @@ func can_run() -> bool:
 	if not _in_range():
 		return false
 	if needs_cloud and not SporeCloud.feeds(creature):
+		return false
+	if refuses_cloud and SporeCloud.feeds(creature):
 		return false
 	return _ready_to_run()
 

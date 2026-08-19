@@ -106,7 +106,7 @@ initial_state = "Pick"
 
 [node name="Pick" type="Node" parent="FSM" unique_id=1674313882]
 script = ExtResource("b_gate")
-beats = Array[String](["HardRing", "Ring"])
+beats = Array[String](["HardRing", "Ring", "Rest"])
 lost_state = "Rest"
 
 [node name="HardRing" type="Node" parent="FSM" unique_id=173559028]
@@ -122,6 +122,7 @@ needs_cloud = true
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_ring")
+refuses_cloud = true
 done_state = "Rest"
 
 [node name="Rest" type="Node" parent="FSM" unique_id=307250747]
