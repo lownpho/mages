@@ -17,6 +17,10 @@ class_name SpellResource
 ## away from (a heal, a summon), which would otherwise be taxed for being cast the
 ## only way it can be. Exempt casts also leave another spell's repeat chain intact.
 @export var repeat_exempt: bool = false
+## What this cast is made to kill (see GameConstants.KIND_*): a hit on a creature whose
+## `kinds` overlap lands for double. Empty on every base spell — a weakness arrives only on a
+## side tier the player went and got (see the design's side tiers).
+@export_flags("Insect:4", "Fungal:32") var weakness: int = 0
 ## Line shown above the stat grid in the slot tooltip. Never seen on an enemy's
 ## bespoke casts, which are never held in a slot.
 @export_multiline var blurb: String = "I didn't take notes on this"

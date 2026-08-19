@@ -334,6 +334,13 @@ func _on_hurt(damage: int, source: Node) -> void:
 	# parting shot short (and health can't run out twice).
 	if _dead or _dying:
 		return
+	# The weakness first, so a matching hit burns twice as much shield too: the doubling is a
+	# property of the hit, not of what's left after mitigation. Whatever carries no weakness —
+	# an enemy's bullet, a spore cloud, a contact zone, a test hitting us with no source at
+	# all — has no such property and changes nothing.
+	var weakness = source.get("weakness") if source else null
+	if data and weakness is int and weakness & data.kinds:
+		damage *= 2
 	# A shield eats the hit before armour or health see it, matching the player's order.
 	if damage_absorber and is_instance_valid(damage_absorber):
 		damage = damage_absorber.absorb(damage)

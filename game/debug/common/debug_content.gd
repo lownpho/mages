@@ -19,7 +19,10 @@ static func scan_items() -> Dictionary:
 		for path in _walk_tres(ITEM_DIRS[cat]):
 			var res := load(path)
 			var item := res as ItemResource
-			if item != null:
+			# A spell folder also holds the bespoke casts its minions fire. Those are
+			# ItemResources too, but nothing gives them to a player, so they carry no icon
+			# — and an iconless entry has nothing to draw in a palette that shows no text.
+			if item != null and item.icon != null:
 				entries.append({"name": path.get_file().trim_suffix(".tres"), "item": item})
 		entries.sort_custom(func(a, b): return a["name"] < b["name"])
 		out[cat] = entries
@@ -54,8 +57,11 @@ static func find_item(query: String) -> ItemResource:
 	for cat in ITEM_DIRS:
 		for path in _walk_tres(ITEM_DIRS[cat]):
 			var itname := path.get_file().trim_suffix(".tres")
+			var item := load(path) as ItemResource
+			if item == null or item.icon == null:
+				continue
 			if itname == query:
-				exact = load(path) as ItemResource
+				exact = item
 			elif itname.begins_with(query) or itname.contains(query):
 				partial.append(path)
 	if exact != null:

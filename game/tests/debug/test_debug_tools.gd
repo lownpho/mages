@@ -37,6 +37,8 @@ func _test_scan_items() -> void:
 	for cat in items:
 		for entry in items[cat]:
 			_check(entry["item"] is ItemResource, "scanned %s is an ItemResource" % entry["name"])
+			# Keeps a minion's bespoke cast (poot_shot, blops_ring, …) out of the palettes.
+			_check(entry["item"].icon != null, "scanned %s has an icon" % entry["name"])
 
 
 func _test_scan_enemies() -> void:
@@ -51,6 +53,7 @@ func _test_find_item() -> void:
 	var exact := DebugContent.find_item("blam1")
 	_check(exact != null and exact is BulletSpellResource, "find_item exact blam1")
 	_check(DebugContent.find_item("zzz_no_such_item") == null, "find_item miss is null")
+	_check(DebugContent.find_item("poot_shot") == null, "find_item skips a bespoke minion cast")
 
 
 func _test_debug_state() -> void:

@@ -19,6 +19,9 @@ var pierce: bool
 ## This cast's damage, read off the spell (bullets carry none — see BulletResource).
 ## null for spells that resolve their own number, like heal.
 var damage: ScalingProfile
+## Kinds this cast hits for double (see GameConstants.KIND_*), stamped onto everything it
+## spawns — the victim resolves it, so the same shot doubles or doesn't per target.
+var weakness: int
 
 const _BulletScene = preload("res://items/bullets/base_bullet.tscn")
 
@@ -41,6 +44,7 @@ func _init(p_spell: SpellResource, p_caster: Node2D) -> void:
 	pierce = caster.get("bullets_pierce") == true
 	# Only damage-dealing spells declare one; get() keeps this agnostic of subclass.
 	damage = spell.get("damage")
+	weakness = spell.weakness
 
 func _stat(key: String) -> int:
 	var value = caster.get(key)
@@ -61,6 +65,7 @@ func spawn_bullet(bullet: BulletResource, direction: Vector2, position: Vector2,
 	var b: BaseBullet = _BulletScene.instantiate()
 	b.data = bullet
 	b.damage = damage
+	b.weakness = weakness
 	b.collision_layer = bullet_layer
 	b.base_direction = direction
 	b.position = position

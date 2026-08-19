@@ -17,6 +17,9 @@ const STAGE_RADII_PX = [2.0, 3.0, 4.0, 6.0, 8.0]
 var data: BwoomResource
 var ctx: CastContext
 
+## Kinds this line doubles against, read by the victim exactly as a bullet's are.
+var weakness: int = 0
+
 var _caster: Node2D
 var _elapsed := 0.0
 var _launched := false
@@ -26,6 +29,7 @@ var _travelled := 0.0
 func setup(spell: SpellResource, caster: Node2D) -> void:
 	data = spell
 	ctx = CastContext.new(spell, caster)
+	weakness = ctx.weakness
 	_caster = caster
 	global_position = _hold_position()
 

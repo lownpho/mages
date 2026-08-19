@@ -31,6 +31,13 @@ extends Node
 ##     generation is the difference between a room and a screensaver, and nothing in the split
 ##     seam counts generations — it's the child's missing stat sheet that ends it, so the test
 ##     kills a child and watches for a third wave that must never arrive.
+##
+## Then the payout, which is the same kind of silent claim — a side tier is its own tier with
+## one integer changed, so a drop wired back to the plain file looks correct in the bag and
+## simply never doubles:
+##   - the weakness itself: an insect-targeted hit lands for double on an insect and flat on
+##     everything else, whatever spawned it (a bullet, a blast, a contact zone).
+##   - every basic spell the roster pays out is the insect side tier, never the plain one.
 ## Run: godot --headless --path game res://tests/test_mycelium.tscn
 
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
@@ -74,6 +81,15 @@ const ROSTER := {
 	"myceling": MYCELING,
 	"clusterling": CLUSTERLING,
 }
+# The only insect the game ships, and so the only thing an insect side tier can be proven on.
+const WASP := preload("res://characters/enemies/wasp/wasp.tscn")
+# The player's half of the set: two planted turrets that read the floor from the other side.
+const POOT := preload("res://characters/player/spells/poot/poot3.tres")
+const BLOPS := preload("res://characters/player/spells/blops/blops3.tres")
+const STUB_CASTER := preload("res://tests/support/stub_caster.gd")
+# Spells the Mycelium pays out as side tiers. A body that drops one of these drops the
+# badged copy — the plain tier is the drop it would have gotten anywhere else.
+const SIDE_TIERED := ["pew", "blam", "ring", "snipe"]
 
 func _ready() -> void:
 	var fails := 0
@@ -107,6 +123,10 @@ func _ready() -> void:
 	fails += await _rollcap_bounces()
 	fails += await _rollcap_rides_the_floor()
 	fails += await _rollcap_splits_once()
+	fails += await _weakness_doubles()
+	fails += _pays_the_badged_tier()
+	fails += await _turret_reads_the_floor("poot", POOT, "FedShot", "Shot")
+	fails += await _turret_reads_the_floor("blops", BLOPS, "HardRing", "Ring")
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -777,6 +797,110 @@ func _coat(center: Vector2, reach: int = 3, foe: bool = true) -> void:
 
 # The first of `beats` the body enters. Returns whatever it settled on when nothing does, so
 # the failure names the state it got stuck in.
+# Double or nothing, resolved on the victim: the same source hits an insect twice as hard as
+# it hits anything else. Both halves have to hold — a weakness that never matches is a drop that
+# quietly does nothing, and one that always matches is a global damage buff nobody authored.
+func _weakness_doubles() -> int:
+	var fails := 0
+	# Any damage source will do — the victim reads `weakness` off whatever hit it, so a blast
+	# and a bullet and a contact zone all resolve identically.
+	var source := DamageZone.new()
+	source.weakness = GameConstants.KIND_INSECT
+	# Well under the wasp's own health, or the doubling would be hidden by the floor at 0.
+	for probe in [["wasp", WASP, 10], ["sporefly", ROSTER["sporefly"], 5]]:
+		var body := await _spawn(probe[1], Vector2.ZERO)
+		var before: int = body.health
+		body.hurtbox.hurt.emit(5, source)
+		await get_tree().physics_frame
+		fails += _expect("an insect-seeking 5 took %d off a %s, expected %d"
+			% [before - body.health, probe[0], probe[2]], before - body.health == probe[2])
+		body.queue_free()
+		await get_tree().physics_frame
+	source.free()
+	if fails == 0:
+		print("  ok: weakness — insect doubles on the wasp, flat on everything else")
+	return fails
+
+# The set's two turrets, from the player's side of the same seam: planted where you aimed,
+# rooted there, and fed by YOUR spores and nothing the dungeon laid. Both halves fail silently —
+# a fed rung that never fires is a turret that looks like it works, and one the dungeon's own
+# floor empowers hands the room's ammunition to the side it was meant to threaten.
+func _turret_reads_the_floor(id: String, spell: SummonResource, fed: String, plain: String) -> int:
+	var fails := 0
+	var at := Vector2(spell.spawn_distance, 0)  # a caster at the origin aiming right
+	var foe := _foe(at + Vector2(24, 0))
+	for leg in [["clean floor", -1, plain], ["the dungeon's spores", 1, plain],
+			["your own field", 0, fed]]:
+		if leg[1] >= 0:
+			_coat(at, 3, leg[1] == 1)
+		var minion := await _plant(spell)
+		fails += _expect("a planted %s stood %.0fpx off its aim point"
+			% [id, minion.global_position.distance_to(at)],
+			minion.global_position.distance_to(at) <= 1.0)
+		var got := await _await_beat(minion, [fed, plain])
+		fails += _expect("%s on %s took %s, expected %s" % [id, leg[0], got, leg[2]],
+			got == leg[2])
+		minion.queue_free()
+		_clear()
+		await get_tree().physics_frame
+	foe.queue_free()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: %s — planted on your aim, %s in your own field, %s otherwise"
+			% [id, fed, plain])
+	return fails
+
+# Cast the summon the way the game does — the effect scene, set up from a caster — rather than
+# placing the minion by hand, so the placement this checks is the one the player gets.
+func _plant(spell: SummonResource) -> Creature:
+	var caster := Node2D.new()
+	caster.set_script(STUB_CASTER)
+	add_child(caster)
+	var effect: Node2D = spell.effect_scene.instantiate()
+	effect.setup(spell, caster)
+	add_child(effect)
+	var minion: Creature = null
+	while minion == null:
+		await get_tree().physics_frame
+		for node in get_tree().get_nodes_in_group("summon"):
+			minion = node
+	_wake(minion)
+	caster.queue_free()
+	return minion
+
+# Something for a turret to shoot at: on the enemy layer and in the enemy group, which is what
+# a summon hunts and what its reach probe can see.
+func _foe(at: Vector2) -> CharacterBody2D:
+	var body := CharacterBody2D.new()
+	body.collision_layer = 32
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	body.add_child(shape)
+	body.add_to_group("enemies")
+	body.position = at
+	add_child(body)
+	return body
+
+# The roster pays what it casts, badged (see the design's drops). Nothing at runtime can tell
+# a side tier from its plain twin except this one field, so a drop left pointing at the plain
+# .tres is a bug with no symptom until someone counts damage in the hive.
+func _pays_the_badged_tier() -> int:
+	var fails := 0
+	for id in ROSTER:
+		var body: Creature = ROSTER[id].instantiate()
+		if body.data:
+			for drop in body.data.drops:
+				var stem: String = drop.item.resource_path.get_file().get_basename()
+				var spell := stem.trim_suffix("_insect").rstrip("0123456789")
+				# Anything else is a set piece (Whumf, the detonator), which drops unchanged.
+				if spell in SIDE_TIERED:
+					fails += _expect("%s pays a plain %s" % [id, stem],
+						drop.item.weakness == GameConstants.KIND_INSECT)
+		body.free()
+	if fails == 0:
+		print("  ok: drops — every basic tier the roster pays is the insect side tier")
+	return fails
+
 func _await_beat(body: Creature, beats: Array, ms: int = 20000) -> String:
 	var deadline := Time.get_ticks_msec() + ms
 	while Time.get_ticks_msec() < deadline:

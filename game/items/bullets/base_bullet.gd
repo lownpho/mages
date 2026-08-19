@@ -9,6 +9,9 @@ var data: BulletResource
 ## CastContext.spawn_bullet — so the same def fires for 20 from the player and 8
 ## from an enemy. null = a bullet that deals no damage of its own.
 var damage: ScalingProfile
+## Kinds this shot doubles against, stamped from the cast alongside the damage. The victim
+## resolves it (see Creature._on_hurt); 0 = a plain shot, which is every base spell.
+var weakness: int = 0
 var base_direction: Vector2 = Vector2.UP
 var target: Node2D  ## Homing lock, set by the firing effect. null = fly straight.
 var skill: int = 0

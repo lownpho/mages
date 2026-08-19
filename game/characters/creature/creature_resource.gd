@@ -17,6 +17,10 @@ class_name CreatureResource
 enum Rarity {COMMON, RARE, BOSS}
 @export var rarity: Rarity = Rarity.COMMON
 @export var max_health: int = 100
+## What this creature is made of (see GameConstants.KIND_*). A spell whose `weakness` overlap
+## hits it for double; everything else is unaffected — a mismatch is never punished. Most
+## creatures carry one; two only where it's obvious (the moss golem is stone AND plant).
+@export_flags("Insect:4", "Fungal:32") var kinds: int = 0
 ## Each entry is rolled independently on death, so a creature can drop several items at once.
 @export var drops: Array[LootDrop] = []
 ## Bodies left behind on death, spawned on the same path as the drops — a bloatcap bursting

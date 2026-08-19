@@ -21,6 +21,7 @@ func on_expire(bullet: BaseBullet) -> void:
 		_spawn_vfx(bullet)
 	var zone := DamageZone.new()
 	zone.damage = bullet.computed_damage()
+	zone.weakness = bullet.weakness  # a splash hit weakness exactly as the direct one does
 	zone.collision_layer = bullet.collision_layer  # faction inherited from the bullet
 	zone.collision_mask = 0
 	zone.monitoring = false

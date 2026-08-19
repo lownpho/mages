@@ -11,6 +11,14 @@ const LAYER_ENEMY_BULLETS := 512
 ## it, so it blocks their fire while player bullets and creatures pass through.
 const LAYER_SPELL_BARRIER := 1024
 
+## What a creature is made of (CreatureResource.kinds) and what a spell is made to kill
+## (SpellResource.weakness). One bitwise `and` in Creature._on_hurt doubles the hit — the
+## collision mask one layer up. Only the kinds something is actually made of are listed:
+## the bits are explicit in both @export_flags hints, so a kind can come back at its own
+## value without renumbering a single .tres.
+const KIND_INSECT := 4
+const KIND_FUNGAL := 32
+
 ## Canvas z ladder (world space), authored in the editor: each scene carries
 ## its value as a literal, and these constants are the reference list — keep
 ## them in sync. Gaps of 10 leave room for new layers. Default z 0 (no
