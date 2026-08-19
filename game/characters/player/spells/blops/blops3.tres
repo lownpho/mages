@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://kclx66ur1dx3"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="2_effect"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_pymrr"]
+[ext_resource type="PackedScene" uid="uid://c20w6ptpjauk" path="res://characters/player/spells/blops/blops_minion.tscn" id="3_minion"]
+[ext_resource type="Resource" uid="uid://chvxvyvum8kvv" path="res://characters/player/spells/blops/blops_ring.tres" id="5_cast"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5f1d"]
+atlas = ExtResource("2_pymrr")
+region = Rect2(104, 48, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+minion_scenes = Array[PackedScene]([ExtResource("3_minion")])
+count = 1
+spawn_distance = 8.0
+minion_health = 80
+minion_lifetime = 20.0
+minion_spell = ExtResource("5_cast")
+effect_scene = ExtResource("2_effect")
+cooldown = 8.0
+cast_time = 0.6
+blurb = "Owns the circle it sits in"
+icon = SubResource("AtlasTexture_s5f1d")
+skill_modifier = 8
+max_health_modifier = 25

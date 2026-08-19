@@ -1,0 +1,156 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
+[ext_resource type="Texture2D" path="res://characters/player/spells/poot/poot.png" id="3_tex"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
+[ext_resource type="Resource" path="res://characters/player/spells/poot/poot_shot.tres" id="6_shot"]
+[ext_resource type="Resource" path="res://characters/player/spells/poot/poot_shot_fed.tres" id="7_fed"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_poot"]
+radius = 3.0
+
+[sub_resource type="AtlasTexture" id="AT_idle"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fed_idle"]
+atlas = ExtResource("3_tex")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fed_atk0"]
+atlas = ExtResource("3_tex")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AT_fed_atk1"]
+atlas = ExtResource("3_tex")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_poot"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_atk1")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fed_atk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fed_atk1")
+}],
+"loop": false,
+"name": &"fed_attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fed_idle")
+}],
+"loop": true,
+"name": &"fed_idle",
+"speed": 1.0
+}]
+
+[node name="PootMinion" type="CharacterBody2D" groups=["summon"]]
+collision_layer = 16
+motion_mode = 1
+script = ExtResource("1_creature")
+target_groups = Array[String](["enemies"])
+bullet_collision_layer = 256
+max_health = 60
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_poot")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_poot")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -2)
+
+[node name="Hurtbox" parent="." instance=ExtResource("2_hbox")]
+collision_mask = 512
+radius = 4.0
+
+[node name="ReachProbe" type="RayCast2D" parent="."]
+target_position = Vector2(80, 0)
+collision_mask = 33
+
+[node name="Caster" parent="." instance=ExtResource("5_caster")]
+
+[node name="FSM" parent="." instance=ExtResource("4_fsm")]
+initial_state = "Rest"
+
+[node name="Rest" type="Node" parent="FSM"]
+script = ExtResource("b_gate")
+beats = Array[String](["FedIdle", "Idle"])
+
+[node name="FedIdle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+anim = "fed_idle"
+min_time = 0.2
+max_time = 0.2
+next_state = "Rest"
+damage_scale = 0.2
+needs_cloud = true
+probe_path = NodePath("../../ReachProbe")
+seen_state = "Pick"
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 0.2
+max_time = 0.2
+next_state = "Rest"
+probe_path = NodePath("../../ReachProbe")
+seen_state = "Pick"
+
+[node name="Pick" type="Node" parent="FSM"]
+script = ExtResource("b_gate")
+beats = Array[String](["FedShot", "Shot"])
+lost_state = "Rest"
+
+[node name="FedShot" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+range_probe_path = NodePath("../../ReachProbe")
+damage_scale = 0.2
+needs_cloud = true
+caster_path = NodePath("../../Caster")
+spell = ExtResource("7_fed")
+done_state = "Rest"
+attack_anim = "fed_attack"
+
+[node name="Shot" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+range_probe_path = NodePath("../../ReachProbe")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_shot")
+done_state = "Rest"
+attack_anim = "attack"

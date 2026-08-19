@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://cedui6u12dxae"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="2_effect"]
+[ext_resource type="Texture2D" uid="uid://ddkodux03acrc" path="res://characters/player/spells/spells.png" id="2_s5f1d"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/poot/poot_minion.tscn" id="3_minion"]
+[ext_resource type="Resource" uid="uid://bwa1bxh7vgm7s" path="res://characters/player/spells/poot/poot_shot.tres" id="5_cast"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x10m7"]
+atlas = ExtResource("2_s5f1d")
+region = Rect2(104, 24, 8, 8)
+
+[resource]
+script = ExtResource("1_script")
+minion_scenes = Array[PackedScene]([ExtResource("3_minion")])
+count = 1
+spawn_distance = 8.0
+minion_health = 60
+minion_lifetime = 20.0
+minion_spell = ExtResource("5_cast")
+effect_scene = ExtResource("2_effect")
+cooldown = 6.0
+cast_time = 0.3
+blurb = "It stays where I put it"
+icon = SubResource("AtlasTexture_x10m7")
+skill_modifier = 2
+speed_modifier = 2
+max_health_modifier = 25
+defence_modifier = 2

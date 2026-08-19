@@ -53,11 +53,14 @@ func _slot(i: int, perp: Vector2) -> Vector2:
 
 # The minion's attack is whichever Cast beat its FSM carries — found by type rather than by
 # a hardcoded node name, so a minion scene is free to call its attack state whatever suits.
+# A beat that already carries a spell is left alone, for the same reason a minion with its own
+# CreatureResource is: it authored its own fight (Poot and Blops each ladder a plain rung and a
+# spore-fed one), and stamping one spell over that would collapse the ladder into its own floor.
 func _inject_spell(minion: Creature, spell: SpellResource) -> void:
 	if spell == null:
 		return
 	for state in minion.get_node("FSM").get_children():
-		if state is Cast:
+		if state is Cast and state.spell == null:
 			state.spell = spell
 			return
 

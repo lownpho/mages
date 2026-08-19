@@ -20,6 +20,9 @@ class_name SummonResource
 @export var minion_health: int = 8
 ## Seconds each minion survives before it expires.
 @export var minion_lifetime: float = 15.0
+## Stamped onto the minion's first empty Cast beat, and the cast every view of this spell
+## reports. A minion that authors its own beats keeps them (see summon_spawner) — Poot and
+## Blops name their plain rung here, which is exactly what they fire off coated floor.
 @export var minion_spell: SpellResource
 ## The spritesheet for this tier. The minion scene authors the animation layout
 ## (regions/frames/durations, identical across a summon's tiers); the spawner swaps
