@@ -70,7 +70,11 @@ func _check_ticks() -> void:
 # would make the combo delete anything it touched.
 func _check_blast_lands_once() -> void:
 	var spell := _whumf()
-	var victim := _victim(Vector2(6, 0), "enemies")
+	# Halfway out along the ring, so the victim stands in the centre patch AND a ring one
+	# whatever the spread is retuned to — a hardcoded spot silently stops overlapping the
+	# moment the ring widens, and then this proves nothing while still passing.
+	var victim := _victim(
+		Vector2(spell.spread_tiles * GameConstants.PX_PER_TILE * 0.5, 0), "enemies")
 	await _cast(spell, Vector2.ZERO)
 	var clouds := _clouds()
 	var overlapping := 0

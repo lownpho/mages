@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Drop_pew"]
 script = ExtResource("2_drop")
 item = ExtResource("3_pew")
-chance = 0.06
+chance = 0.03
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
