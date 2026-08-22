@@ -1,0 +1,27 @@
+[gd_resource type="TileSet" format=3 uid="uid://c1vnhben8pf5n"]
+
+[ext_resource type="Texture2D" uid="uid://dfm8o28t7tvyl" path="res://world_content/biomes/mycelium/art/mycelium_walls.png" id="1_walls"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_walls"]
+texture = ExtResource("1_walls")
+texture_region_size = Vector2i(8, 8)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+3:0/0 = 0
+3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+4:0/0 = 0
+4:0/0/probability = 0.1
+4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+5:0/0 = 0
+5:0/0/probability = 0.1
+5:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+
+[resource]
+tile_size = Vector2i(8, 8)
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 816
+sources/0 = SubResource("TileSetAtlasSource_walls")

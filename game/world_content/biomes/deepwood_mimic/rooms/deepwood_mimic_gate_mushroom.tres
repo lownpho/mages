@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="4_rf"]
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="5_gen"]
 [ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="6_door"]
-[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/mushroom_door.tres" id="7_ddata"]
+[ext_resource type="Resource" uid="uid://dw007qyxfraiw" path="res://world_content/biomes/deepwood_mimic/mushroom_door.tres" id="7_ddata"]
 
 [sub_resource type="Resource" id="feat_door"]
 script = ExtResource("4_rf")

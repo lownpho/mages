@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BiomeDef" format=3]
+[gd_resource type="Resource" script_class="BiomeDef" format=3 uid="uid://bmjju667v7wd8"]
 
 [ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="1_biome"]
 [ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="7_pres"]
@@ -12,8 +12,8 @@ size_cells = Vector2i(2, 1)
 open_passage_chance = 0.15
 bsp_stop_chance = 0.75
 decor_density = 0.04
+fallback_room_type = &"deepwood_mimic_open"
 doors_min = 2
 doors_max = 3
 door_style = 2
-fallback_room_type = &"deepwood_mimic_open"
 presentation = ExtResource("7_pres")
