@@ -1,6 +1,6 @@
 # Biome catalogue — the design's half of the source of truth.
 #
-# WORDS ONLY. Room types, their difficulty tier, their generator and their whole
+# WORDS ONLY. Room types, their depth tier, their generator and their whole
 # enemy spawn table are read out of game/world_content/**.tres by
 # design/tools/extract.py, as is the starter kit (world.gd's STARTER_SPELLS).
 # The room tables here used to be hand-written and had already drifted from the
@@ -39,13 +39,27 @@ families:
       The second biome, tuned to pressure long-range, squishy builds and push the player into close
       quarters. Enemies have far more health and hit harder. It is the largest biome in the world —
       twice the footprint of either glade — and both glades gate into it. It has two sub-biomes:
-      the animal deepwood, and the small mimic pocket hanging off its side. The two remaining ones
-      (insect, fungal) are proposals; they stay in the ideas section below.
+      the animal deepwood, and the small mimic pocket hanging off its side. The insect one is
+      still a proposal and stays in the ideas section below; the fungal one left the deepwood
+      entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.
     enemies_intro: >
       The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood
       sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**,
       and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are
       built to introduce it one mechanic at a time.
+  - id: mycelium
+    name: Mycelium
+    tier_label: T3
+    intro: >
+      The dungeon behind the mimic deepwood's mushroom door — eight floors down, one way through,
+      a boss at the bottom. A floor is the smallest biome the packer will take, so the whole
+      descent is ordinary worldgen stacked in a column. Art and rooms only so far: the floors
+      carve but spawn nothing.
+    enemies_intro: >
+      Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers,
+      a rot heavy and three rares. Half of them print spore clouds and the other half fight
+      harder while standing in them. None of it is placed yet — the floors carve, and every
+      room's table is empty.
 biomes:
   - id: glade_start
     name: Starting glade
@@ -75,4 +89,14 @@ biomes:
       blinks, then the two logs that are bombs — and the cave rooms after that pair one of them
       with something from the shared pool, so the mine is never the only thing asking for your
       attention. Its three rares each escort the common they are a variant of. There is no boss;
-      the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.
+      the deepest room is the mushroom door down into the Mycelium, which leads nowhere yet.
+  - id: mycelium
+    name: Mycelium floor
+    intro: >
+      One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open
+      passages, and a cave generator that carves the wall mass rather than scattering blockers.
+      It has its own tileset and its own GenConfig; it is not in the overworld's registry yet,
+      so nothing reaches it in a run.
+    planned_roster: [sporespitter, puffcap, spiralcap, ringcap, shellcap, bloatcap,
+                     clustercap, rollcap, sporefly, gapcap, normiecap, mould_golem,
+                     burrower, deathcap, maulcap]

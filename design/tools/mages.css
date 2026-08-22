@@ -212,13 +212,6 @@ button.btn:hover { background: var(--lime); color: var(--bg); }
 .badge.biome        { background: var(--plum); color: var(--dim); }
 .badge.tier         { background: var(--green-dk); color: var(--text); }
 .badge.hold, .badge.k { background: var(--grey); color: var(--bg-deep); }
-/* Difficulty 1-10, walking the palette from calm to alarming. */
-.badge.diff         { background: var(--green-dk); color: var(--text); }
-.badge.diff.d3, .badge.diff.d4 { background: var(--green); color: var(--bg); }
-.badge.diff.d5, .badge.diff.d6 { background: var(--yellow); }
-.badge.diff.d7, .badge.diff.d8 { background: var(--orange); }
-.badge.diff.d9      { background: var(--red); }
-
 .badge.planned      { background: transparent; color: var(--grey); box-shadow: inset 0 0 0 2px var(--plum); }
 
 /* =============================================

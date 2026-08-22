@@ -116,6 +116,22 @@ spells:
     category: summon
     description: >
       One heavy minion firing a ring around itself; a walking turret that denies an area.
+  - id: poot
+    name: Poot
+    category: summon
+    description: >
+      A capped mushroom planted where you aim: a single-shot turret that never moves and never
+      chases. It fires faster and takes half damage while it stands in a spore cloud. The only
+      summon you can put somewhere before the fight arrives, so it plays as prep — seed the
+      doorway, lay a Whumf over it, walk away.
+  - id: blops
+    name: Blops
+    category: summon
+    description: >
+      The heavy half of the pair: a planted mushroom that pulses a rotating ring around itself
+      rather than aiming, and hits twice as hard while it stands in a spore cloud. Poot covers a
+      lane, Blops owns a circle — out of a cloud a mediocre area denier, in one the reason to
+      hold the room.
   - id: charge_dash
     name: ChargeDash
     category: utility
@@ -165,8 +181,8 @@ spells:
       clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area
       rather than a bigger hit: standing in three overlapping patches costs one blast, not
       three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the
-      Mycelium's own floor can never blow you up. The first piece of that dungeon's set to
-      ship; Poot and Blops, the turrets that stand in the field, are still proposals.
+      Mycelium's own floor can never blow you up. The first piece of that dungeon's set — Poot and
+      Blops are the turrets that stand in the field, and Zaap's second tier is the match.
   - id: nope
     name: Nope
     category: utility

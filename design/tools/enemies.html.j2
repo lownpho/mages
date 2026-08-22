@@ -27,7 +27,6 @@
           <option value="biome">Biome</option>
           <option value="name">Name</option>
           <option value="rarity">Rarity</option>
-          <option value="difficulty">Difficulty</option>
           <option value="max_health">HP</option>
           <option value="damage_max">Damage</option>
       </select>
@@ -137,7 +136,7 @@
           return b ? b.name : id;
         } },
       { key: "rarity", label: "Rarity", order: RARITY, vals: function (e) { return [e.rarity]; } },
-      { key: "difficulty", label: "Difficulty", vals: function (e) { return [e.difficulty]; } },
+      { key: "kinds", label: "Kind", vals: function (e) { return e.kinds; } },
       { key: "casts", label: "Casts", vals: function (e) { return e.casts; } },
       { key: "drops", label: "Drops",
         vals: function (e) { return e.drops.map(function (d) { return d.spell; }); } }
@@ -158,7 +157,6 @@
       rarity: function (a, b) {
         return RARITY.indexOf(a.rarity) - RARITY.indexOf(b.rarity) || a.name.localeCompare(b.name);
       },
-      difficulty: function (a, b) { return b.difficulty - a.difficulty; },
       max_health: function (a, b) { return b.max_health - a.max_health; },
       damage_max: function (a, b) { return b.damage_max - a.damage_max; }
     },
@@ -166,9 +164,9 @@
       var head = el("div", "card-head", [
         D.sprite(e.icon, 3),
         el("span", "name", e.name),
-        el("span", "badge rar-" + e.rarity, e.rarity),
-        el("span", "badge diff d" + Math.min(e.difficulty, 9), "diff " + e.difficulty)
-      ].concat(e.biomes.map(function (b) {
+        el("span", "badge rar-" + e.rarity, e.rarity)
+      ].concat(e.kinds.map(function (k) { return el("span", "badge k", k); }))
+       .concat(e.biomes.map(function (b) {
         return el("span", "badge biome" + (b.planned ? " planned" : ""),
                   b.name + (b.planned ? " (planned)" : ""));
       })));

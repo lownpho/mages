@@ -5,7 +5,7 @@
 
 Player spawns with: **Pew**, **Blam**, **Fireball**.
 
-Notation: `Nx` count (a range prints `1-2x`), `+` means "together in the room", `-` separates the variations the generator may roll for that room (it picks one). Rooms are listed in placement order — difficulty tier, then id.
+Notation: `Nx` count (a range prints `1-2x`), `+` means "together in the room", `-` separates the variations the generator may roll for that room (it picks one). Rooms are listed in placement order — depth tier, then id.
 
 ## Glade (T1/T2)
 
@@ -78,7 +78,7 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 
 ## Deepwood (T3)
 
-The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The two remaining ones (insect, fungal) are proposals; they stay in the ideas section below.
+The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.
 
 ### Deepwood
 
@@ -136,7 +136,7 @@ The animal sub-biome, and the bulk of the forest. The rooms run a teach-then-tes
 
 ### Mimic deepwood
 
-A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the door down to the mushroom dungeon, which leads nowhere yet.
+A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the mushroom door down into the Mycelium, which leads nowhere yet.
 
 | Tier | Room | Shape | Count | Enemy group variations |
 |---|---|---|---|---|
@@ -168,6 +168,42 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 | Elder Stalker *(rare)* | **blam t3** (30%), **blink t2** (60%) |
 | Umbra *(rare)* | **blink t2** (50%), **pew t3** (30%) |
 
+## Mycelium (T3)
+
+The dungeon behind the mimic deepwood's mushroom door — eight floors down, one way through, a boss at the bottom. A floor is the smallest biome the packer will take, so the whole descent is ordinary worldgen stacked in a column. Art and rooms only so far: the floors carve but spawn nothing.
+
+### Mycelium floor
+
+One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run.
+
+| Tier | Room | Shape | Count | Enemy group variations |
+|---|---|---|---|---|
+| T0 | cave | cave | w3 | *(empty)* |
+| T0 | open | empty | w2 | *(empty)* |
+| T0 | pocket | cave | w2 | *(empty)* |
+
+Nothing spawns here yet — every room above carries an empty table. Planned roster: bloatcap, clustercap, gapcap, mould_golem, normiecap, puffcap, ringcap, rollcap, shellcap, spiralcap, sporefly, sporespitter, burrower, deathcap, maulcap.
+
+#### Mycelium floor drops
+
+| Enemy | Items dropped |
+|---|---|
+| Bloatcap | **oop t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
+| Clustercap | **whumf t3** (1%), **poot t3** (1%) |
+| Gapcap | **blam t3** *(insect)* (3%) |
+| Mould Golem | **nope** (10%), **whumf t3** (1%), **poot t3** (1%) |
+| Normiecap | **pew t3** *(insect)* (3%) |
+| Puffcap | **oop t2** (2%), **poot t3** (1%) |
+| Ringcap | **ring t3** *(insect)* (3%), **blops t3** (1%) |
+| Rollcap | **pew t3** *(insect)* (3%) |
+| Shellcap | **snipe t3** *(insect)* (3%), **blops t3** (1%) |
+| Spiralcap | **ring t3** *(insect)* (3%), **blops t3** (1%) |
+| Sporefly | **pew t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%) |
+| Sporespitter | **blam t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%), **blops t3** (1%) |
+| Burrower *(rare)* | **zaap t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
+| Deathcap *(rare)* | **snipe t3** *(insect)* (40%) |
+| Maulcap *(rare)* | **blam t3** *(insect)* (40%) |
+
 <!-- END GENERATED CATALOGUE -->
 
 ---
@@ -176,45 +212,80 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 
 ## Deepwood sub-biomes (T3)
 
-The deepwood ships as one biome (see the catalogue above) with an empty spawn table. The design
-splits it into four sub-biomes in encounter order — animal, mimic, insect, fungal — over a
-shared pool of natives that appears in all four. The **shared pool and the animal and mimic
-sub-biomes are built**; what follows are the two that aren't. Each adds three commons, three
-rares (almost all variants of another enemy) and its boss: 16 per sub-biome. Commons drop T2,
-rares guarantee T3, bosses drop their T3 signatures.
+The deepwood splits into three sub-biomes in encounter order — animal, mimic, insect — over a
+shared pool of natives that appears in all three. The **shared pool and the animal and mimic
+sub-biomes are built and spawning**; both are in the catalogue above. What follows is the one
+that isn't. It adds three commons, three rares (almost all variants of another enemy) and its
+boss: 16 per sub-biome. Commons drop T2, rares guarantee T3, bosses drop their T3 signatures.
+
+A fourth sub-biome, fungal, was planned here and **left** — it is the
+[Mycelium](#the-mycelium-dungeon) now, a dungeon behind the mimic biome's mushroom door. Its
+mechanic wanted spore clouds that last and a floor you fight over, which a biome you can enter
+from any side and leave at any time cannot promise.
 
 Each sub-biome introduces at most three new mechanics; later ones reuse and combine earlier
-ones (ledger in enemies.md). Spells still waiting on these two: Halo, Slurp, Fwoosh. Reserved
-for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing Lights, Vroop, Beep Boop,
-Nyoom, Shing, Splay.
+ones (ledger in enemies.md). Spells still waiting on this one: Halo. Slurp and Vroop are
+earmarked for the hive. Reserved for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp,
+Piercing Lights, Beep Boop, Nyoom, Shing, Splay, Fwoosh.
 
-### Insect deepwood
+## The Mycelium *(dungeon)*
 
-Swarms and crawlers; the walls stop being safe. Introduces the wall crawl and the bullet
-escort; detonation goes mobile.
+The first thing in the game that is not a biome. Eight floors under the mimic deepwood's
+mushroom door, one way down, a boss at the bottom and a secret boss for much later. The
+roster, the spore-cloud mechanic, the floor pool and the drops are in
+[enemies.md](enemies.md#the-mycelium-dungeon); what follows is only its shape in the world.
 
-Roster: longleg, beetle, ticktick, weaver *(rare)*, goliath *(rare)*, drone *(rare)*, hive
-queen *(boss)*.
+### Shape
 
-Drops: Snipe T2, Oop T2, Zoing T3, Halo T3, Bzzz T3.
+A **floor is a biome** — the smallest one the packer will take, 1x1 macro-cells, three to five
+rooms, no branching, a single down-stair. A **dungeon is a world**: eight of those stacked in
+a column, each floor REQUIRED-adjacent to the next, generated from its own `GenConfig` with
+`world_width_cells = 1`.
 
-### Fungal deepwood
+That is almost entirely reuse. Floors are BiomeDefs, their rooms are RoomTypeDefs with their
+own spawn tables, the descent is the `Door` feature that already carries the player between
+biomes, and the rooms' 0..3 depth tier still does entrance-depth placement inside each floor.
+Eight near-identical BiomeDefs sharing one `presentation` is a copy-paste, not a system.
 
-The wood, rotting: they paint the floor, you contest it. Introduces spore clouds, split on
-death, and the drain leech; recombines everything else.
+**One floor is built**: `biomes/mycelium/` with its own tileset, three room types and its own
+`mycelium_gen_config.tres` (`world_width_cells = 1`, `starting_biome = mycelium`). It carves
+and it is in the catalogue above; nothing in the overworld's registry points at it, so a run
+cannot reach it yet, and its rooms spawn nothing.
 
-Roster: sporespitter, leech, bloatcap, elder leech *(rare)*, rot golem *(rare)*, creeper mold
-*(rare)*, rotmaw *(boss)*.
+The one genuinely new thing is that **the mushroom door has to swap worlds**, not rooms:
+enter, and the streamer is pointed at a second generated world with a second config; exit or
+die, and you are back in the overworld run where you left it. Everything else — the seed, the
+hash fold, the streaming, the save — works unchanged on a second world because none of it
+assumes there is only one.
 
-Drops: Fwoosh T2, Slurp T2, Slurp T3, Nope T3.
+**Skipped:** a bespoke dungeon generator, and floors as a new layer under `worldgen/layers/`.
+A floor is a small biome and a dungeon is a short world; if eight stacked 1x1s turn out to
+pack badly, that is a packer fix, not a reason for a second generator.
 
-### Rooms
+### Rolled floors
 
-The animal and mimic rooms are in the catalogue above, tables filled. The two sub-biomes still to
-come each want the same recipe: single-mechanic showcases early, testing later, mixed groups by
-depth, three rare rooms, a boss room, and a gate room to the next biome.
+The dungeon is built to be re-run, so a floor's **content is drawn, not scripted**. Each floor
+rolls its encounter from a depth-tiered pool: a couple of rooms are pinned per floor, the rest
+come off the pool with the ordinary `weight` / `min_per_biome` / `max_per_biome` quotas. Two
+descents should disagree about what the dungeon is, and no single run meets the whole roster.
 
-### Deepwood drops
+Eight floors rather than ten for the same reason. A dungeon you are meant to run several times
+should end before it becomes an evening.
 
-Built enemies' drops are in the catalogue above. The rest live in the enemies.md ideas section.
+### The hidden room
 
+The secret boss sits behind a door placed on a random floor, off the path — a WORLD-unique
+room with `unique_allowed_biomes` set to the dungeon's floors, which is the machinery the
+shrine already uses. No key, no flag, no unlock: it is open from the first descent and the
+boss behind it simply kills you until your kit can handle it.
+
+### Floors and presentation
+
+All eight floors share one presentation and one art folder, built from the fungal art already
+sitting in `biomes/deepwood/art/` (`fungal_trees.png`, `fungal_decor.png`). Depth reads off the
+roster and the state of the floor rather than off eight palettes — a room you have coated in
+spores looks nothing like one you have not, and that is the only progression cue the dungeon
+needs.
+
+The mimic biome's existing `deepwood_mimic_gate_mushroom` room is the entrance and needs no
+change; it currently has a door that leads nowhere, which is exactly the seam.

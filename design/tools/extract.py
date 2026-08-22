@@ -228,6 +228,8 @@ def _spell_record(spell, d: Defaults) -> dict:
         "cooldown": _num(d.get(spell, "cooldown", 0)),
         "cast_time": _num(d.get(spell, "cast_time", 0)),
         "channeled": bool(d.get(spell, "channeled", False)),
+        # Empty on every base spell: a weakness is exploited only by a side tier.
+        "weakness": _weaknesses(spell.get("weakness")) or None,
     }
 
     grants = {
@@ -259,6 +261,10 @@ def _spell_record(spell, d: Defaults) -> dict:
             "lifetime": _num(d.get(spell, "minion_lifetime", 0)),
         }
         weapon = spell.get("minion_spell")
+        # A minion whose scene authors its own beats names the plain one as an external
+        # `.tres` rather than inlining it (Poot, Blops); follow the path to the same numbers.
+        if isinstance(weapon, str):
+            weapon = tres.load(GAME / weapon.removeprefix("res://"))
         if weapon is not None:
             entry["minion_cast"] = {
                 "cooldown": _num(d.get(weapon, "cooldown", 0)),
@@ -284,6 +290,24 @@ def _tier_of(stem: str) -> int:
     return int(m.group(1)) if m else 1
 
 
+# A side tier is an existing tier that exploits one weakness: same spell, same numbers, one
+# field filled in. `blam3_insect` is Blam T3 strong against insect, so it resolves to blam/t3
+# for every join (drops, docs) and carries the weakness it hits alongside.
+# Bit values, matching the @export_flags hints (unused kinds are dropped, not renumbered).
+WEAKNESSES = {"insect": 4, "fungal": 32}
+
+
+def _weakness_of(stem: str) -> tuple[str, str | None]:
+    """`blam3_insect` -> ('blam3', 'insect'); a plain tier -> (stem, None)."""
+    base, _, suffix = stem.rpartition("_")
+    return (base, suffix) if base and suffix in WEAKNESSES else (stem, None)
+
+
+def _weaknesses(mask) -> list[str]:
+    """A SpellResource.weakness bitfield -> the kind names it doubles against."""
+    return [name for name, bit in WEAKNESSES.items() if int(mask or 0) & bit]
+
+
 def spell_tiers(d: Defaults) -> dict[str, list]:
     """-> {spell id: [tier record, ...]} for every shipped spell folder."""
     out: dict[str, list] = {}
@@ -293,11 +317,12 @@ def spell_tiers(d: Defaults) -> dict[str, list]:
         stem = folder.name
         tiers = sorted(
             p for p in folder.glob("*.tres")
-            if re.fullmatch(rf"{re.escape(stem)}\d*", p.stem)
+            if re.fullmatch(rf"{re.escape(stem)}\d*(_[a-z]+)?", p.stem)
+            and _weakness_of(p.stem)[0].rstrip("0123456789") == stem
         )
         records = [
             {
-                "tier": _tier_of(p.stem),
+                "tier": _tier_of(_weakness_of(p.stem)[0]),
                 "source": str(p.relative_to(ROOT)),
                 **_spell_record(tres.load(p), d),
             }
@@ -344,13 +369,16 @@ def _scene_numbers(path: Path, d: Defaults) -> dict:
 
 
 def _drop(drop, d: Defaults) -> dict:
-    """A LootDrop -> the spell tier it hands out. `pew1` -> pew t1, `nope` -> nope."""
+    """A LootDrop -> the spell tier it hands out. `pew1` -> pew t1, `nope` -> nope,
+    `blam3_insect` -> blam t3, strong against insect."""
     stem = Path(drop.get("item") or "").stem
-    spell = re.sub(r"\d+$", "", stem)
+    tier_stem, weakness = _weakness_of(stem)
+    spell = re.sub(r"\d+$", "", tier_stem)
     return {
         "item": stem,
         "spell": spell,
-        "tier": _tier_of(stem) if spell != stem else None,
+        "tier": _tier_of(tier_stem) if spell != tier_stem else None,
+        "weakness": weakness,
         "chance": _num(d.get(drop, "chance", 1)),
     }
 
@@ -386,6 +414,7 @@ def enemies(d: Defaults) -> dict[str, dict]:
             "name": d.get(data, "display_name", "") or folder.name.replace("_", " "),
             "rarity": RARITIES[_num(d.get(data, "rarity", 0))],
             "max_health": _num(d.get(data, "max_health", 0)),
+            "kinds": _weaknesses(d.get(data, "kinds", 0)),
             "icon": _icon(data.get("icon")),
             **_scene_numbers(folder / f"{folder.name}.tscn", d),
         }

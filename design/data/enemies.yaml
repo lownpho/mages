@@ -18,10 +18,6 @@
 # Per enemy:
 #   id          : the enemy's FOLDER NAME under characters/enemies/ — the join key
 #                 to the game, the same id spawn tables and the console use.
-#   difficulty  : 1-10 judgement call — how hard it is to fight WHERE YOU MEET IT,
-#                 weighing HP, per-hit damage, mobility and how it punishes a
-#                 misread. Authored, NOT derived: 1 is a speed bump, 5 a real
-#                 threat, 10 the hardest thing in the game.
 #   description : literal markdown block, emitted verbatim (may carry a bullet list)
 #   art         : the "**Art:**" line — the sprite's intent. The sprite itself is
 #                 pulled off the CreatureResource icon and drawn on the card.
@@ -37,7 +33,6 @@
 
 enemies:
   - id: sproutling
-    difficulty: 1
     description: |
       Rooted in place, watching. It sits in `Idle` until the player is in sight, then spits a
       single slow seed at a steady pace. This is the first enemy the player meets. The seed is slow
@@ -50,7 +45,6 @@ enemies:
         - {from: Idle, to: Attack, when: sees player}
         - {from: Attack, to: Idle, when: lost sight}
   - id: hopper
-    difficulty: 2
     description: |
       A quick closer, and the first enemy that actually comes at you. It `Wander`s until it spots
       you, then weaves in and pokes at short range with a fast single shot. Fragile and low-damage
@@ -69,7 +63,6 @@ enemies:
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: wasp
-    difficulty: 1
     description: |
       A hostile version of the player's Bzzz summon. It flits in on the same flying-minion
       behaviour and pesters you with quick stings. Fragile and never a real threat alone. Its job is
@@ -87,7 +80,6 @@ enemies:
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: mandrake
-    difficulty: 2
     description: |
       Low HP, high tempo, always in a pack. Mandrakes uproot and sprint straight at you, wailing a
       slow sound wave as they close. One is trivial. The point is the group: three or four converge
@@ -105,7 +97,6 @@ enemies:
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: seedling
-    difficulty: 2
     description: |
       A sproutling that grew up: the same rooted plant, but instead of one lazy seed it opens into a
       slow ring. Where the sproutling teaches that enemies shoot, the seedling teaches you not to
@@ -119,7 +110,6 @@ enemies:
         - {from: Idle, to: Ring, when: sees player}
         - {from: Ring, to: Idle, when: lost sight}
   - id: dirt_golem
-    difficulty: 3
     description: |
       The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings
       barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You
@@ -135,7 +125,6 @@ enemies:
         - {from: Ring, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost sight}
   - id: thornthrower
-    difficulty: 3
     description: |
       `Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing
       thorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.
@@ -150,7 +139,6 @@ enemies:
         - {from: Attack, to: Chase, when: out of range}
         - {from: Chase, to: Wander, when: lost}
   - id: rosebud
-    difficulty: 3
     description: |
       Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into
       a defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it
@@ -167,7 +155,6 @@ enemies:
         - {from: Bud, to: Bloom, when: windup done}
         - {from: Bloom, to: Idle, when: ring fired}
   - id: viper
-    difficulty: 4
     description: |
       The one enemy that runs from you. The instant it sees you it picks a random direction and
       slithers off, and it turns to fight only when it can't flee: cornered, it unloads a wide
@@ -183,7 +170,6 @@ enemies:
         - {from: Barrage, to: Flee, when: shots fired (new dir)}
         - {from: Flee, to: Idle, when: lost}
   - id: mandraker
-    difficulty: 5
     description: |
       Rare mandrake that casts fireball
     art: a root-bodied figure with a screaming face; the wave is two expanding arcs. Palette towards
@@ -201,7 +187,6 @@ enemies:
         - {from: Fireball, to: Chase, when: done}
         - {from: Chase, to: Idle, when: lost}
   - id: fae
-    difficulty: 6
     description: |
       The glade's floral capstone. It is a flitting sprite that hangs at range and rolls a fresh
       attack each phase on a `PatternPicker`, so the fight never settles into one rhythm. No single
@@ -230,7 +215,6 @@ enemies:
         - {from: Chase, to: Pattern, when: close enough}
         - {from: Pattern, to: Idle, when: lost}
   - id: thornmess
-    difficulty: 7
     description: |
       The rooted capstone. It stays on the ground and runs a `PatternPicker`
       split into two HP-gated pools. It idles until you are in range, then fires thornthrower
@@ -254,7 +238,6 @@ enemies:
         - {from: Missiles, to: Desperation, when: low HP}
         - {from: Desperation, to: Missiles, when: wave placed}
   - id: moth
-    difficulty: 3
     description: |
       The deepwood's basic flier and its returning face. It flits in on quick wings, pokes twice
       with a dust burst at short range, then bolts for a beat before closing again — it never
@@ -273,7 +256,6 @@ enemies:
         - {from: Retreat, to: Chase, when: retreat over}
         - {from: Chase, to: Idle, when: lost}
   - id: moon_moth
-    difficulty: 3
     description: |
       Moth variant, and the one you fight at arm's length. Same flit-in, poke, bolt loop, but the
       poke is a pair of scale rings pulsed off its own body, each rotated off the last, so it has
@@ -295,7 +277,6 @@ enemies:
         - {from: Retreat, to: Chase, when: retreat over}
         - {from: Chase, to: Idle, when: lost}
   - id: needle_moth
-    difficulty: 4
     description: |
       Moth variant, and the one that taxes the dodge. It strikes from five tiles out and leaves
       two homing dust-needles behind it, so its retreat is what buys the shot its time: you are
@@ -316,7 +297,6 @@ enemies:
         - {from: Retreat, to: Chase, when: retreat over}
         - {from: Chase, to: Idle, when: lost}
   - id: stalker
-    difficulty: 5
     description: |
       The basic pouncer, and the biome's signature jump-scare. It sits in `Disguise` as a scenery
       prop, watching through a probe that only reaches five tiles. Step into that — or hit it —
@@ -336,7 +316,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Disguise, when: lost}
   - id: snake
-    difficulty: 4
     description: |
       A skittish corridor-denier. It wanders until it spots you, then bolts in a random direction;
       when its back hits a wall it stands and fires twin parallel shots that ricochet, then bolts
@@ -355,7 +334,6 @@ enemies:
         - {from: Volley, to: Flee, when: burst fired}
         - {from: Flee, to: Idle, when: lost}
   - id: coral_snake
-    difficulty: 3
     description: |
       Snake variant, and the one that corners early. It sees you late and panics at nearly double
       the retreat range, so it hits a wall almost immediately and answers with a short-range
@@ -373,7 +351,6 @@ enemies:
         - {from: Volley, to: Flee, when: burst fired}
         - {from: Flee, to: Idle, when: lost}
   - id: ash_snake
-    difficulty: 4
     description: |
       Snake variant, and the one that turns a room into a hazard. It flees furthest and fires the
       longest, fastest shots of the three, bouncing five times and losing power on each — a volley
@@ -391,7 +368,6 @@ enemies:
         - {from: Volley, to: Flee, when: burst fired}
         - {from: Flee, to: Idle, when: lost}
   - id: grimling
-    difficulty: 4
     description: |
       Pack hunter. It wanders, then weaves in and fires a three-bolt burst at five tiles, with no
       recovery between bursts while you stay in reach. Grimlings share a pack group: one alert —
@@ -412,7 +388,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: shard_grimling
-    difficulty: 4
     description: |
       Grimling variant, and the pack's back line. It shares the pack, but it stops at nine tiles
       and fans a spread of gloom shards instead of closing. On its own the fan is easy to walk out
@@ -435,7 +410,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: wisp_grimling
-    difficulty: 3
     description: |
       Grimling variant, and the one that finds you. It sees furthest, runs fastest, and calls from
       nearly twice the radius its packmates do, so the first wisp to spot you is what turns a room
@@ -459,7 +433,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: moss_golem
-    difficulty: 6
     description: |
       The golem recipe at deepwood weight — the toughest thing in the biome that isn't a boss, and
       the slowest. It walks you down, and on arrival it hardens into a shell (a channeled absorb,
@@ -483,7 +456,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: thornback
-    difficulty: 5
     description: |
       A charger, introducing the **charge-dash with flank fire**. It runs a long telegraphed
       windup, then a straight high-speed dash that sheds bullets off both flanks, then a rooted
@@ -501,7 +473,6 @@ enemies:
         - {from: Recover, to: Charge, when: still sees player}
         - {from: Recover, to: Idle, when: lost}
   - id: owl
-    difficulty: 4
     description: |
       The perch sniper. It sits still and charges a Bwoom shot at anything inside ten tiles, the
       wind-up itself being the telegraph. Get too close, or out of its band, and it repositions a
@@ -520,7 +491,6 @@ enemies:
         - {from: Recover, to: Reposition, when: timer / player closed in}
         - {from: Reposition, to: Bwoom, when: repositioned / cornered}
   - id: mole
-    difficulty: 5
     description: |
       Introduces the **burrow**. It dives underground where it cannot be hit at all, and the only
       tell is a dirt plume tracking toward you; inside three tiles it erupts with a pair of
@@ -542,7 +512,6 @@ enemies:
         - {from: Surface, to: Dive, when: timer}
         - {from: Surface, to: Idle, when: lost}
   - id: grimlord
-    difficulty: 6
     description: |
       A larger, darker grimling, the pack's alpha, and the one grimling that rolls its beat: a
       `PatternPicker` swaps its move at low health rather than adding one. Above a quarter health
@@ -570,7 +539,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Idle, when: lost}
   - id: razorback
-    difficulty: 7
     description: |
       Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch,
       chaining charge after charge for as long as you stay inside its very long sight line; only a
@@ -590,7 +558,6 @@ enemies:
         - {from: Stun, to: Charge, when: recovered}
         - {from: Stun, to: Idle, when: lost}
   - id: great_owl
-    difficulty: 6
     description: |
       Owl variant: bigger, and its firing band is most of the map — it charges from twenty-four
       tiles, further than anything else in the biome can answer. The wind-up is longer and the
@@ -609,7 +576,6 @@ enemies:
         - {from: Reposition, to: Bwoom, when: repositioned / cornered}
         - {from: Reposition, to: Idle, when: lost}
   - id: gnarlking
-    difficulty: 9
     description: |
       The apex of the animal deepwood, and the one boss that doesn't roll: it runs ordered `Gate`
       ladders, so what it does next is decided by the arena rather than by dice. The fight
@@ -674,7 +640,6 @@ enemies:
         - {from: Winded, to: Summon}
         - {from: WindedShort, to: Summon}
   - id: bramble_stalker
-    difficulty: 5
     description: |
       The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing
       to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings
@@ -698,7 +663,6 @@ enemies:
         - {from: Recover, to: Chase, when: out of range}
         - {from: Chase, to: Disguise, when: lost}
   - id: shade
-    difficulty: 5
     description: |
       A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a
       short burst, then blinks somewhere else nearby and bursts again. Nothing about a single
@@ -720,7 +684,6 @@ enemies:
         - {from: Recover, to: Volley, when: burst ready}
         - {from: Recover, to: Idle, when: lost}
   - id: cinderstone
-    difficulty: 4
     description: |
       A trap with a health bar. It sits among the real rocks and litter until you step close — or
       clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with
@@ -740,7 +703,6 @@ enemies:
         - {from: Disguise, to: Fuse, when: player close / hit}
         - {from: Fuse, to: "[*]", when: detonated}
   - id: adder
-    difficulty: 7
     description: |
       Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits
       a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as
@@ -757,7 +719,6 @@ enemies:
         - {from: Flee, to: Volley, when: cornered}
         - {from: Volley, to: Flee, when: spray fired}
   - id: bristlestone
-    difficulty: 4
     description: |
       The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the
       same rock sitting in the same litter, and it triggers the same way — step close, or clip it
@@ -781,7 +742,6 @@ enemies:
         - {from: Disguise, to: Fuse, when: player close / hit}
         - {from: Fuse, to: "[*]", when: burst away}
   - id: elder_stalker
-    difficulty: 7
     description: |
       Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone
       homing seed from across the room, blinks the moment it has fired, and greets you with a
@@ -806,7 +766,6 @@ enemies:
         - {from: Recover, to: Aim, when: snipe ready}
         - {from: Recover, to: Disguise, when: lost}
   - id: umbra
-    difficulty: 7
     description: |
       Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on
       the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so
@@ -825,3 +784,403 @@ enemies:
         - {from: Blink, to: Recover, when: behind player}
         - {from: Recover, to: Volley, when: burst ready}
         - {from: Recover, to: Idle, when: lost}
+  - id: puffcap
+    description: |
+      The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom
+      decor with no attack and barely any detection, it inhales when something comes close and
+      pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never
+      one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick
+      them off from range and keep the floor, because shooting one dead never sets it off. Nothing
+      you carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and
+      only your own answer to light.
+    art: a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the
+      fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame
+      swells it past its own width before the pop.
+    casts: [whumf]
+    notes: it pops through the player's own Whumf effect with `consumes_caster` on — the mine IS
+      its payload, exactly as the cinderstone's Oop is. The chain is pack aggro — entering the
+      inhale calls every packmate a few tiles out into theirs.
+    fsm:
+      start: Rooted
+      transitions:
+        - {from: Rooted, to: Inhale, when: player close / neighbour popped}
+        - {from: Inhale, to: "[*]", when: spores down}
+  - id: sporespitter
+    description: |
+      The fuse factory, and the first thing the Mycelium shows you. Rooted, long-sighted, and
+      it answers **by where you stand**: from across the room it arcs a spore blob on a slow
+      cadence that leaves a lasting patch where the blob lands rather than where it stands, and
+      the moment you close on it the cap coughs a shotgun cone into your face instead. So it has
+      no comfortable range — walk in and you eat the barrel, hang back and it paints the floor
+      you were going to cross. One is a zoning puzzle. Three, spread around a room, and the
+      floor is gone by the time you have crossed it, none of it yours to spend, since only your
+      own spores answer to light.
+    art: a bent mushroom with a spout-shaped cap in rust, sickly lime gills and a pale stalk;
+      the attack row swells the stalk and puffs the cheek on the spit.
+    casts: [whumf, blam]
+    notes: the lob is an ordinary bullet carrying a `SporePayload` — the patch is planted by the
+      shot expiring, so a body, a wall or the end of its range all plant it the same way. Its two
+      beats hang off a `Gate` whose first rung is the cone behind a short range probe, so the
+      choice is the player's position rather than a roll or a rotation, and the lob is simply
+      what is left when you are not close enough to be shot.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Blam, when: player close}
+        - {from: Idle, to: Lob, when: player far}
+        - {from: Blam, to: Lob, when: player backs off}
+        - {from: Lob, to: Blam, when: player closes}
+        - {from: Lob, to: Idle, when: lost sight}
+  - id: mould_golem
+    description: |
+      The slow tank, and the one body in the Mycelium that walks at you rather than waiting.
+      Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the
+      space around it three times over, each turn drifting off the last so the gaps never sit
+      still. The shield is the fight: it is a wall of health that arrives on a clock, and
+      whether you burn it down or walk around it decides whether the room is a fight or a
+      detour. It never idles — lose it and it simply keeps coming.
+    art: the moss golem gone to rot — pale fungal white where the stone was, and the moss on
+      its crown sagged from a live green to a dead slate one, with the sprouts at its shoulders
+      the only part still growing.
+    casts: [ring, nope]
+    notes: the moss golem's scene with the idle beat swapped for a `wander`, so "never idles"
+      is a state that walks rather than a dial. The shield is the player's own Nope, channelled
+      — its `cast_time` caps the channel, which is why the golem stands still through the whole
+      wind-up and why the shell pose IS the telegraph.
+    fsm:
+      start: Walk
+      transitions:
+        - {from: Walk, to: Chase, when: sees player}
+        - {from: Chase, to: Shell, when: in range}
+        - {from: Shell, to: Ring, when: shield up}
+        - {from: Ring, to: Recover, when: pulsed}
+        - {from: Recover, to: Shell, when: clock lapses}
+        - {from: Chase, to: Walk, when: lost}
+  - id: sporefly
+    description: |
+      The moth, exactly: flits in, pokes twice at short range, bolts for a beat, closes again,
+      and never stands and trades. The twist is that the poke **leaves a small patch of spores
+      where it struck you**, so the thing chipping you is also the thing seeding the floor you
+      are standing on — back off from one and you back into what the last one left. The patches
+      are short-lived on their own, which is what keeps twos and threes of these a moving
+      problem rather than a room that fills up and stays filled.
+    art: the deepwood moth sheet gone pale and dusty — bone wings over a grey body, and the
+      moth's amber eyes swapped for the Mycelium's lime, which is the whole difference between
+      an animal that lives in the woods and one that lives in the spores.
+    casts: [pew, whumf]
+    notes: the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with
+      a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring
+      exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they
+      are inert terrain and nothing can light them.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Poke, when: in range}
+        - {from: Poke, to: Retreat, when: struck}
+        - {from: Retreat, to: Chase, when: beat over}
+        - {from: Chase, to: Idle, when: lost}
+  - id: spiralcap
+    description: |
+      The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that
+      lays one slow lane of spores and winds it around the room like a lighthouse — it never
+      aims at you, never looks for you, and never reacts to being shot. The lane is a fact
+      about the room rather than an attack on you: you read where it is going and walk the gap,
+      and because the shots are slow and the bearing drifts every one of them, the arm behind
+      it curls into a spiral you have to cross rather than a wall you wait out. Two of them
+      turning opposite ways is a floor all by itself.
+    art: a tall thin stalk in pale bone under a drooping magenta cap with a lime gill band, the
+      rim curling past the gills; no eyes at all, because it is an object rather than an animal.
+      The attack row tips the cap hard to each side and bends the stalk with it, so the lean
+      says which way the lane is pointing.
+    casts: [ring]
+    notes: no probes and no detection — the sweep is one `cast()` whose spell owns everything,
+      with `aim_mode` on INDEPENDENT so the burst commits to its own random bearing and
+      `rotation_per_shot` walking that bearing a full turn over the burst. The rest between
+      revolutions is an ordinary `hold`, and is the only window it ever gives you.
+    fsm:
+      start: Sweep
+      transitions:
+        - {from: Sweep, to: Rest, when: revolution done}
+        - {from: Rest, to: Sweep, when: clock lapses}
+  - id: bloatcap
+    description: |
+      The first splitter, and the one enemy whose death you get to aim. It waddles at you and
+      shoves with the cap for very little; the damage you put in swells it visibly rather than
+      dropping it, and when it finally goes it bursts into a field of spores and a brood of
+      mycelings that sprint the last few tiles and pop into small patches of their own. So the
+      question is never whether it goes off, only where — walk it into the corner you had
+      already written off, or shoot it where you were about to stand and lose the floor.
+    art: a fat button mushroom in off-white with rot spots and stubby feet, drawn in inflation
+      stages; the burst row squashes it flat and blows the cap out into spores. The mycelings
+      are the same body at half the size, two frames each.
+    casts: [pew, whumf]
+    notes: a pure printer — everything it does is spores, so coated floor buys it nothing and
+      neither the shove nor the burst has an empowered twin. The brood is a `death_spawns`
+      entry on its stat sheet rather than death code, and the mycelings carry no
+      `CreatureResource` at all, so they leave no drops and no kill count. The swell is a
+      health window on a second, faster waddle behind the same `Gate`, and both waddles carry
+      a clock so the Gate is asked again mid-chase rather than once at the start of it. A
+      myceling's contact pop lays its patch and kills it, and dying is what throws the ring —
+      the patch is the printing cast and stays flat, the ring is the consumer one and comes
+      wider off coated floor, so the brood empowers without anything being paid for the floor
+      it laid itself.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Waddle, when: sees player}
+        - {from: Waddle, to: Nudge, when: in reach}
+        - {from: Nudge, to: Swell, when: under half health}
+        - {from: Swell, to: Nudge, when: in reach}
+        - {from: Waddle, to: Idle, when: lost}
+        - {from: Nudge, to: Burst, when: killed}
+  - id: clustercap
+    description: |
+      A knot of caps that walks the floor it is painting — it closes on you between lobs,
+      swelling as you shoot it exactly as its pale cousin does, and comes apart on death into
+      three small clustercaps that root where they land and go on lobbing. Killing it does not
+      reduce the room's fire, it multiplies it and nails it down, and the three land spread out,
+      so one moving problem becomes three fixed ones on the far side of a floor it has already
+      coated. The correct play is often to leave it walking while you deal with everything
+      else, which is a thing nothing else in the game asks of you. The brood cannot split
+      again — one death, one multiplication, and the room ends.
+    art: the bloatcap sheet recoloured dusky violet, so the family reads at a glance and the
+      darker body says this one is worse; the clusterlings are the myceling sprite under the
+      same recolour.
+    casts: [whumf]
+    notes: a pure printer, so the lob stays flat however coated the floor is. The split is
+      three `death_spawns` of the clusterling — a rooted lobber that throws a ring of pods when
+      it dies, wider if it is standing in spores. It carries no `CreatureResource` at all, and no
+      stat sheet means no `death_spawns` to hold, so the one-generation rule is structural rather
+      than a counter someone has to remember to check; the brood also leaves no drops and no
+      kill count. The swell is a health window on a second, slower walk behind the same `Gate`,
+      which is why both walks carry a clock — a rung that never ends is a Gate never asked
+      again.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Walk, when: sees player}
+        - {from: Walk, to: Lob, when: cadence}
+        - {from: Lob, to: Walk, when: shot away}
+        - {from: Walk, to: Swell, when: under half health}
+        - {from: Swell, to: Lob, when: cadence}
+        - {from: Walk, to: Idle, when: lost}
+        - {from: Lob, to: Split, when: killed}
+  - id: rollcap
+    description: |
+      A spore ball on a heading, and the only body in the Mycelium that is not fighting you —
+      it rolls, it reflects off whatever it runs into, and it never once turns to look. There
+      is nothing to bait, nothing to out-range and nothing to break line of sight with: it is
+      a hazard with a health bar, wandering a room you are trying to read. Killing it costs
+      you, because it comes apart into two smaller, faster balls, and those are the end of it
+      — one death, one split, so a room of them stays a room rather than a screensaver.
+
+      Coated floor is what wakes it up: standing in spores it rolls faster **and** starts
+      pewing at you as it goes. So the only thing that turns the room's own floor into an
+      attack is the body that was not attacking, and a ball you were happily walking around
+      becomes the reason to clear the field it is about to cross.
+    art: a round spore-ball in the family's pale cap flesh, wrapped in rust bands that sweep
+      across it as it turns, with a squashed frame it flattens into off a wall; the split
+      halves are the same ball drawn smaller, so what is left after a kill reads instantly.
+    casts: [pew]
+    notes: the one body with no beat but its own, which is why its empowerment lives inside
+      the roll rather than behind a `needs_cloud` rung of a `Gate` — the roll never ends, so
+      there is no hand-off for a ladder to make, and a `cast` beat would plant the ball to
+      fire. Coated floor pays it twice over instead — faster, and shooting. Its contact hit is
+      a `DamageZone` rather than a caster, so running you over is an attack with no spell
+      behind it. The roster's one bespoke behaviour lives in its own folder — a heading
+      picked on entry and bounced off the collision normals `move_and_slide` already reports.
+      The split is two `death_spawns` of a smaller ball that carries no `CreatureResource` —
+      no stat sheet is no `death_spawns`, so the two-stage rule is structural rather than a
+      generation counter, exactly as the clusterlings are.
+    fsm:
+      start: Roll
+      transitions:
+        - {from: Roll, to: Roll, when: bounce}
+        - {from: Roll, to: Pew, when: standing in spores}
+        - {from: Pew, to: Roll, when: shot away}
+        - {from: Roll, to: Split, when: killed}
+  - id: shellcap
+    description: |
+      The sniper, and the clock on every encounter it is in. A rooted armoured cap at the far
+      end of the floor that lobs a homing volley the length of the room — the one body here
+      that reaches you wherever you stand. You cannot out-range it and you cannot ignore it,
+      so the shape of every room it is in is you crossing that room through everything else to
+      get to it, while the darts curve in behind you the whole way.
+
+      On coated floor the volley opens into a three-shot fan, and the far end of the room
+      stops arriving one bullet at a time. It lays nothing itself, so that is a field somebody
+      else painted — the turret is the body that most repays letting a printer work.
+    art: a low hard-shelled cap in cold grey, sunk into the ground behind a thick dark rim with
+      a lime firing slit under it, so it reads as a bunker rather than a mushroom. It has no
+      eyes and never turns; the tell is the charge glowing up through the shell before the slit
+      splits open.
+    casts: [snipe]
+    notes: pure composition — a `cast` behind a room-length `range_probe`, so the dispatcher
+      answers "can it even reach you" before it commits rather than rearing into a slam at
+      nothing. The empowered rung is the ordinary `needs_cloud` first rung of its `Gate`, and
+      the only thing that changes is the spell's fire pattern, which is the spell's business
+      and not the beat's.
+    fsm:
+      start: Watch
+      transitions:
+        - {from: Watch, to: Volley, when: player in the room}
+        - {from: Volley, to: Watch, when: reload}
+  - id: gapcap
+    description: |
+      The one thing that closes hard, and it only does it once at a time. It sprints the gap,
+      dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the
+      whole enemy is a single committed lunge you either sidestep or eat, and what you get for
+      sidestepping it is a free window with the thing standing helpless in front of you. It is
+      the dungeon's answer to a player who solves every room from max range.
+
+      Spores turn the free window off. Standing in a field it lunges further, fires the cone
+      twice, and recovers in about half the time — the same enemy, with the gap between its
+      commitment and its next one closed. Whether the lunge is a mistake it makes or a mistake
+      you make is decided by whose floor it is standing on.
+    art: a squat rust-red cap on two thick stubby legs, its rim split across the front like a
+      mouth over a pale gill band; the lunge row throws the cap out ahead of the legs and the
+      strike row flattens the whole body into the ground before the mouth opens.
+    casts: [blam]
+    notes: pure composition, and the roster's clearest case of the empowerment being a shape
+      rather than a number — `approach` to `cast` to a rooted `hold`, with a `needs_cloud`
+      twin of each of the three. The fed lunge is a longer clock on the same chase, the fed
+      cone is a second shot on the same spell, and the shorter root is simply where that cone
+      hands off, so nothing is gated that a `Gate` does not already list.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Lunge, when: sees player}
+        - {from: Lunge, to: Cone, when: arrived}
+        - {from: Cone, to: Rooted, when: fired}
+        - {from: Rooted, to: Idle, when: recovered}
+  - id: ringcap
+    description: |
+      The spiralcap's brother, and the same idea with the twist taken out. It stands rooted and
+      throws whole rings — no lean, no aim, no drift between shots — three of them a beat apart,
+      then rests. Where the spiralcap hands you a moving lane to walk, this hands you a wall
+      that arrives, then a gap, then another wall, so you are not reading a curve any more,
+      you are counting. Two of them out of phase is a room with no still moments in it.
+
+      Coated floor changes nothing about the pattern and everything about eating it: the ring
+      comes out as a heavier, hotter shot for the same spacing. It is the roster's plainest
+      empowerment on purpose — the one body where standing in a field costs you health rather
+      than options.
+    art: the spiralcap's silhouette in cold slate blue, same stalk and same drooping cap, so the
+      family reads before the behaviour does; the gill band is pale cyan and flares straight out
+      flat on every ring, because nothing here leans.
+    casts: [ring]
+    notes: no probes and no detection, exactly as its brother has none — the rings are a fact
+      about the room rather than an attack on you. The whole cadence is the spell's, three
+      shots on a `shot_interval` with `rotation_per_shot` left at zero and `aim_mode` on
+      INDEPENDENT, so the beat is one `cast()` and the `hold` behind it is the only window it
+      ever gives. Its empowered rung swaps the BulletResource and nothing else, which is the
+      thinnest a `needs_cloud` ladder can honestly get.
+    fsm:
+      start: Rings
+      transitions:
+        - {from: Rings, to: Rest, when: three thrown}
+        - {from: Rest, to: Rings, when: clock lapses}
+  - id: normiecap
+    description: |
+      A mushroom that walks up and spits at you. It notices you, it closes, it fires from about
+      two tiles out, and if you walk away it gives up and goes back to standing there. There is
+      no phase, no second idea and nothing to read — it is the body a room uses to make you
+      commit to a direction while something with an actual plan sets up behind it.
+
+      It still drinks. On coated floor the spit comes faster, harder and one shot longer, which
+      is the whole point of putting the rule on the plainest thing in the dungeon: even the
+      speed bump is worse on floor you let stand, so there is no body in the Mycelium a player
+      can safely ignore the clouds around.
+    art: the plainest mushroom that can be drawn at this size — a tan cap over a pale stem with
+      two dark eyes under the brim, and a base that picks up when it walks. Deliberately the
+      least memorable thing on the sheet.
+    casts: [pew]
+    notes: four library beats in a ring and nothing else — `hold` to `approach` to a two-rung
+      `Gate` to `hold` — which makes it the roster's reference for what composition alone buys
+      you, with no script and no bespoke node anywhere. The chase carries the LOS probe and the
+      shot carries none, so giving up is the pursuit's job and re-closing is the recovery's, the
+      split every ranged body in the game uses; the recovery points back at the Gate rather than
+      at a shot, so the floor is re-read between every burst instead of once on the way in.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Chase, when: sees player}
+        - {from: Chase, to: Spit, when: in range}
+        - {from: Spit, to: Recover, when: shot away}
+        - {from: Recover, to: Spit, when: still in range}
+        - {from: Recover, to: Chase, when: player backed off}
+        - {from: Chase, to: Idle, when: lost}
+  - id: burrower
+    description: |
+      The mole's trick, fungal, and the one body in the Mycelium that decides where the room
+      is. It dives, crosses the floor unseen and untouchable, comes up somewhere you are not,
+      sprays whatever is in front of it, puffs a patch of spores and goes straight back down.
+      It is never fighting you — it is redrawing the floor, and it redraws it against you.
+
+      The order of those two casts is the whole enemy. It shoots first and prints second, so
+      the cloud it just laid never pays for the spray that came before it: on clean floor the
+      spray is a short cone you can be out of, and the only thing that opens it into a full
+      ring is surfacing into a field it left standing on an earlier lap. The rare is the body
+      that punishes you for letting its own leftovers sit.
+    art: the graveyard's `burrower` sprite, revived — a mound of turned earth with two yellow
+      eyes under it, four rows for the dive, the travelling hump, the surfacing spray of dirt
+      and the surfaced idle.
+    casts: [whumf, blam]
+    notes: pure composition. The crossing is a `wander` at `damage_scale = 0` — a random heading
+      on a clock is exactly "surfaces somewhere you are not", and the armour dial is what makes
+      it unseen without a second mechanism. The spray is the plain rung of a two-rung `Gate`
+      and the ring the `needs_cloud` one; the cloud is a `cast` after both, which is where the
+      printer rule ends up being an ordering rather than a flag.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Dive, when: sees player}
+        - {from: Dive, to: Burrow, when: under}
+        - {from: Burrow, to: Surface, when: crossed}
+        - {from: Surface, to: Spray, when: clean floor}
+        - {from: Surface, to: Ring, when: standing in its own field}
+        - {from: Spray, to: Spores, when: shot away}
+        - {from: Ring, to: Spores, when: shot away}
+        - {from: Spores, to: Dive, when: cloud down}
+        - {from: Spores, to: Idle, when: lost}
+  - id: deathcap
+    description: |
+      A shellcap that got old. Same bunker, same slit, same refusal to ever turn — but it
+      reloads in about half the time, its darts curve harder, and the fan it opens into on
+      coated floor is five wide instead of three. Nothing about it is new, which is the point:
+      it is the room telling you that the sniper you already know how to walk through is not
+      the sniper in this room.
+
+      It is the rare a turret line wants, because it does not change the shape of the encounter
+      at all — it only shortens the window you were crossing in.
+    art: the shellcap recoloured — pale violet shell over a plum rim, with the firing slit lit
+      magenta instead of lime, so a room reads which of the two it is before the first shot.
+    casts: [snipe]
+    notes: a straight copy of the shellcap's wiring with its own numbers, down to the
+      `range_probe` on both rungs; the only structural difference is a shorter reload.
+    fsm:
+      start: Watch
+      transitions:
+        - {from: Watch, to: Volley, when: player in the room}
+        - {from: Volley, to: Watch, when: reload}
+  - id: maulcap
+    description: |
+      A gapcap with more of everything the gapcap already had. It sprints further, its cone is
+      six pellets wide instead of five, and the fed lunge dumps three of them rather than two
+      before it roots. The sidestep still works — it is one committed charge and it still
+      cannot follow — but the window it leaves you afterwards is shorter and the price of
+      misreading it is most of a health bar.
+    art: the gapcap recoloured — a charcoal-blue cap over an ember-orange stalk, so the one
+      thing in the room that is going to run at you is the one thing that glows.
+    casts: [blam]
+    notes: the gapcap's exact node graph with harder dials on both lunges and both cones. Its
+      empowerment is still the pair of behaviour dials rather than a spell — further and
+      briefer — so `needs_cloud` sits on the lunge as well as the cast.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Lunge, when: sees player}
+        - {from: Lunge, to: Cone, when: in range}
+        - {from: Cone, to: Root, when: shot away}
+        - {from: Root, to: Idle, when: recovered}

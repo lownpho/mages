@@ -159,7 +159,6 @@ def join(design: dict, game: dict) -> dict:
             **{k: v for k, v in g.items() if k not in ("icon", "attacks")},
             "attacks": attacks,
             "id": e["id"],
-            "difficulty": e["difficulty"],
             "description": e["description"],
             "blurb": _first_paragraph(e["description"]),
             "art": e["art"],
@@ -225,6 +224,11 @@ def join(design: dict, game: dict) -> dict:
 # One predicate per way the yaml and the game can disagree. This is what catches
 # the drift that used to sit in the docs unnoticed.
 
+def _numbers(tier: dict) -> dict:
+    """Everything about a tier except which file it came from and what it is strong against."""
+    return {k: v for k, v in tier.items() if k not in ("source", "weakness")}
+
+
 def validate(design: dict, game: dict) -> list[str]:
     errors = []
 
@@ -238,6 +242,18 @@ def validate(design: dict, game: dict) -> list[str]:
     for sid in game["spells"]:
         if sid not in yaml_spells:
             errors.append(f"{sid}/ ships .tres files but is not in spells.yaml")
+    # A side tier is its tier plus one weakness it exploits and NOTHING else: same burst,
+    # same numbers, same grants. Nothing links the duplicated .tres to the one it was copied
+    # from, so retuning the base is exactly when the two quietly stop agreeing.
+    for sid, tiers in game["spells"].items():
+        for t in tiers:
+            if not t.get("weakness"):
+                continue
+            base = next((b for b in tiers if b["tier"] == t["tier"] and not b.get("weakness")), None)
+            if base is None:
+                errors.append(f"{Path(t['source']).stem}: a side tier of a t{t['tier']} that doesn't exist")
+            elif _numbers(t) != _numbers(base):
+                errors.append(f"{Path(t['source']).stem}: differs from {sid} t{t['tier']} by more than its weakness")
 
     yaml_enemies = {e["id"] for e in design["enemies"]["enemies"]}
     for e in design["enemies"]["enemies"]:
@@ -394,7 +410,7 @@ def render_spells_md(data: dict) -> str:
             rows = []
             for t in sp["tiers"]:
                 rows.append([
-                    f"T{t['tier']}",
+                    f"T{t['tier']}" + (f" *({'/'.join(t['weakness'])})*" if t.get("weakness") else ""),
                     f"{t['cooldown']}s",
                     f"{t['cast_time']}s" if t["cast_time"] else "instant",
                     burst(t) or "—",
@@ -414,7 +430,8 @@ def render_spells_md(data: dict) -> str:
 
 def _drops_text(enemy: dict) -> str:
     return ", ".join(
-        f"**{d['spell']}{f' t{d['tier']}' if d['tier'] else ''}** ({round(d['chance'] * 100)}%)"
+        f"**{d['spell']}{f' t{d['tier']}' if d['tier'] else ''}**"
+        f"{f' *({d['weakness']})*' if d.get('weakness') else ''} ({round(d['chance'] * 100)}%)"
         for d in enemy["drops"]
     ) or "—"
 
@@ -429,7 +446,9 @@ def render_enemies_md(data: dict) -> str:
             lines += [f"### {e['name']}{suffix}", "", e["description"].rstrip("\n"), ""]
             lines += [f"**Art:** {e['art']}", ""]
 
-            rows = [["Difficulty", f"{e['difficulty']} / 10"], ["HP", e["max_health"]]]
+            rows = [["HP", e["max_health"]]]
+            if e["kinds"]:
+                rows.insert(0, ["Kinds", ", ".join(e["kinds"])])
             if e.get("speed_px"):
                 rows.append(["Speed", f"{e['speed_px']} px/s"])
             if e.get("probes"):
@@ -465,7 +484,7 @@ def render_biomes_md(data: dict) -> str:
     lines += [
         "Notation: `Nx` count (a range prints `1-2x`), `+` means \"together in the room\", "
         "`-` separates the variations the generator may roll for that room (it picks one). "
-        "Rooms are listed in placement order — difficulty tier, then id.",
+        "Rooms are listed in placement order — depth tier, then id.",
         "",
     ]
     rooms_by_biome: dict[str, list] = {}

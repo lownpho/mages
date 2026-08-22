@@ -18,7 +18,6 @@ cheap. You can always outrun it, so the threat is the space it fills.
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 180 |
 | Speed | 12 px/s |
 | Range | detect 12, ring 3 |
@@ -45,7 +44,6 @@ crowds your space.
 
 | Stat |  |
 |---|---|
-| Difficulty | 2 / 10 |
 | HP | 38 |
 | Speed | 18 px/s |
 | Range | detect 7, chase 8, attack 3 |
@@ -74,7 +72,6 @@ are *for*, and they spawn in exactly the clumps that reward one.
 
 | Stat |  |
 |---|---|
-| Difficulty | 2 / 10 |
 | HP | 30 |
 | Speed | 28 px/s |
 | Range | detect 8, chase 12, attack 4 |
@@ -103,7 +100,6 @@ chases. It works as area denial, and it stays a speed bump in both glade flavour
 
 | Stat |  |
 |---|---|
-| Difficulty | 2 / 10 |
 | HP | 45 |
 | Range | detect 4 |
 | ring | **13** dmg — 3s cd, Ring x6, 6 tiles range |
@@ -126,7 +122,6 @@ enough to sidestep on reflex, so it teaches that enemies shoot without much risk
 
 | Stat |  |
 |---|---|
-| Difficulty | 1 / 10 |
 | HP | 25 |
 | Range | detect 7 |
 | attack | **8** dmg — 2s cd, Single, 9 tiles range |
@@ -150,7 +145,7 @@ side. It also appears in the insect deepwood.
 
 | Stat |  |
 |---|---|
-| Difficulty | 1 / 10 |
+| Kinds | insect |
 | HP | 18 |
 | Speed | 40 px/s |
 | Range | detect 10, chase 14, attack 3 |
@@ -176,7 +171,6 @@ Rare mandrake that casts fireball
 
 | Stat |  |
 |---|---|
-| Difficulty | 5 / 10 |
 | HP | 200 |
 | Speed | 28 px/s |
 | Range | detect 8, chase 16, attack 4, fireball 9 |
@@ -208,7 +202,6 @@ chasing. Cut the angle, trap it against a tree, and eat the barrage to claim the
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 180 |
 | Speed | 32 px/s |
 | Range | detect 12, retreat 1.5 |
@@ -242,7 +235,6 @@ chip over many cycles.
 
 | Stat |  |
 |---|---|
-| Difficulty | 6 / 10 |
 | HP | 1500 |
 | Speed | 28 px/s |
 | Range | detect 16 |
@@ -276,7 +268,6 @@ you to read the telegraph instead of face-tanking.
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 30 |
 | Range | detect 5 |
 | ring | **16** dmg — Ring x8, 4 @ 1s, 8 tiles range |
@@ -301,7 +292,6 @@ thorn that you have to keep moving to outrun. It is cheap pressure that punishes
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 50 |
 | Speed | 32 px/s |
 | Range | detect 8, chase 12, attack 6 |
@@ -329,7 +319,6 @@ seeds the room with the biome's rooted plants, then returns to the cycle.
 
 | Stat |  |
 |---|---|
-| Difficulty | 7 / 10 |
 | HP | 2000 |
 | Speed | 32 px/s |
 | Range | detect 22, missile 20, close 4 |
@@ -371,7 +360,6 @@ up close; everything about it is dangerous a second later.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 90 |
 | Speed | 40 px/s |
 | Range | detect 11, retreat 1.375 |
@@ -400,7 +388,6 @@ the snake's: harmless at distance, a wall of pellets the moment you crowd it.
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 90 |
 | Speed | 30 px/s |
 | Range | detect 7, retreat 3 |
@@ -429,7 +416,6 @@ up a shot, and the pack punishes you for focusing one down without a plan for th
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 90 |
 | Speed | 40 px/s |
 | Range | detect 10, chase 13, attack 3 |
@@ -461,7 +447,6 @@ in the light.
 
 | Stat |  |
 |---|---|
-| Difficulty | 5 / 10 |
 | HP | 150 |
 | Speed | 30 px/s |
 | Range | detect 11, chase 15, erupt 3 |
@@ -494,7 +479,6 @@ through it.
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 55 |
 | Speed | 44 px/s |
 | Range | detect 12, chase 15, attack 2, retreat 1.5 |
@@ -527,7 +511,6 @@ never stand.
 
 | Stat |  |
 |---|---|
-| Difficulty | 6 / 10 |
 | HP | 500 |
 | Speed | 14 px/s |
 | Range | detect 14, chase 17, attack 3 |
@@ -561,7 +544,6 @@ you moving while heavier things line up.
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 55 |
 | Speed | 44 px/s |
 | Range | detect 13, chase 16, attack 3, retreat 1.25 |
@@ -591,7 +573,6 @@ only over a narrow cone — a sidestep won't shake one, breaking the angle will.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 55 |
 | Speed | 46 px/s |
 | Range | detect 14, chase 17, attack 3, retreat 1.75 |
@@ -624,7 +605,6 @@ its fire.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 120 |
 | Speed | 46 px/s |
 | Range | detect 18, snipe 10, close 5, retreat 2 |
@@ -653,7 +633,6 @@ of sight on, never the one you trade with at range.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 110 |
 | Speed | 30 px/s |
 | Range | detect 12, chase 16, attack 8 |
@@ -686,7 +665,6 @@ ways.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 90 |
 | Speed | 35 px/s |
 | Range | detect 9, retreat 2 |
@@ -715,7 +693,6 @@ between shots. Lose it and it becomes a prop again. Introduces **prop disguise**
 
 | Stat |  |
 |---|---|
-| Difficulty | 5 / 10 |
 | HP | 150 |
 | Speed | 36 px/s |
 | Range | detect 5, chase 16, attack 3 |
@@ -745,7 +722,6 @@ sidestep the dash and burn it during recovery. Trees are your friend.
 
 | Stat |  |
 |---|---|
-| Difficulty | 5 / 10 |
 | HP | 350 |
 | Speed | 14 px/s |
 | Range | detect 14 |
@@ -775,7 +751,6 @@ recruiting.
 
 | Stat |  |
 |---|---|
-| Difficulty | 3 / 10 |
 | HP | 60 |
 | Speed | 54 px/s |
 | Range | detect 18, chase 20, attack 3 |
@@ -808,7 +783,6 @@ whole fight is spent closing.
 
 | Stat |  |
 |---|---|
-| Difficulty | 6 / 10 |
 | HP | 300 |
 | Speed | 42 px/s |
 | Range | detect 28, snipe 24, close 7, retreat 2.5 |
@@ -841,7 +815,6 @@ a gauntlet.
 
 | Stat |  |
 |---|---|
-| Difficulty | 6 / 10 |
 | HP | 380 |
 | Speed | 38 px/s |
 | Range | detect 11, chase 14, attack 3 |
@@ -879,7 +852,6 @@ do the work.
 
 | Stat |  |
 |---|---|
-| Difficulty | 7 / 10 |
 | HP | 420 |
 | Speed | 18 px/s |
 | Range | detect 20 |
@@ -934,7 +906,6 @@ are ground down while the boss walks into your face anyway.
 
 | Stat |  |
 |---|---|
-| Difficulty | 9 / 10 |
 | HP | 5000 |
 | Speed | 82 px/s |
 | Range | detect 22, close 6, slam 2, volley 4 |
@@ -991,7 +962,6 @@ stop letting it arrive.
 
 | Stat |  |
 |---|---|
-| Difficulty | 5 / 10 |
 | HP | 110 |
 | Speed | 40 px/s |
 | Range | detect 3, chase 12, attack 5 |
@@ -1027,7 +997,6 @@ for it, is a pair of dry burr spines in the moss on top.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 1 |
 | Range | trigger 2 |
 | ploop | **32** dmg — Ring x6, 3 @ 0.1s, 4 tiles range |
@@ -1054,7 +1023,6 @@ question is where you are standing when the fuse ends.
 
 | Stat |  |
 |---|---|
-| Difficulty | 4 / 10 |
 | HP | 1 |
 | Range | trigger 2 |
 | oop | **60** dmg — Single, 0 tiles range, blast 5 tiles (splash only) |
@@ -1081,7 +1049,6 @@ the blink is its whole movement.
 
 | Stat |  |
 |---|---|
-| Difficulty | 5 / 10 |
 | HP | 70 |
 | Range | detect 12 |
 | blink | 0.6s cd |
@@ -1111,7 +1078,6 @@ take it in the open, where the bounces have nothing to come back off.
 
 | Stat |  |
 |---|---|
-| Difficulty | 7 / 10 |
 | HP | 320 |
 | Speed | 46 px/s |
 | Range | detect 12, retreat 2 |
@@ -1140,7 +1106,6 @@ fight is about closing the gap between its cycle rather than out-running it.
 
 | Stat |  |
 |---|---|
-| Difficulty | 7 / 10 |
 | HP | 260 |
 | Range | detect 22, blast 5 |
 | blast | **24** dmg — 1.6s cd, Shotgun x5, 5 tiles range |
@@ -1177,7 +1142,6 @@ you to make. Clear it first, or fight it with a wall behind you.
 
 | Stat |  |
 |---|---|
-| Difficulty | 7 / 10 |
 | HP | 200 |
 | Range | detect 12 |
 | blink | 0.6s cd |
@@ -1196,6 +1160,521 @@ stateDiagram-v2
     Recover --> Idle : lost
 ```
 
+## Mycelium
+
+Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. None of it is placed yet — the floors carve, and every room's table is empty.
+
+### Bloatcap
+
+The first splitter, and the one enemy whose death you get to aim. It waddles at you and
+shoves with the cap for very little; the damage you put in swells it visibly rather than
+dropping it, and when it finally goes it bursts into a field of spores and a brood of
+mycelings that sprint the last few tiles and pop into small patches of their own. So the
+question is never whether it goes off, only where — walk it into the corner you had
+already written off, or shoot it where you were about to stand and lose the floor.
+
+**Art:** a fat button mushroom in off-white with rot spots and stubby feet, drawn in inflation stages; the burst row squashes it flat and blows the cap out into spores. The mycelings are the same body at half the size, two frames each.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 70 |
+| Speed | 24 px/s |
+| Range | detect 9, chase 12, attack 1.75 |
+| burst | **20** dmg —  |
+| nudge | **6** dmg — 1.4s cd, Single, 2 tiles range |
+| myceling_burst | **5** dmg — Ring x6, 4 tiles range |
+| myceling_pop | **10** dmg —  |
+| myceling_wide_burst | **8** dmg — Ring x8, 2 @ 0.12s, 6 tiles range |
+| Drops | **oop t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
+
+**Notes:** a pure printer — everything it does is spores, so coated floor buys it nothing and neither the shove nor the burst has an empowered twin. The brood is a `death_spawns` entry on its stat sheet rather than death code, and the mycelings carry no `CreatureResource` at all, so they leave no drops and no kill count. The swell is a health window on a second, faster waddle behind the same `Gate`, and both waddles carry a clock so the Gate is asked again mid-chase rather than once at the start of it. A myceling's contact pop lays its patch and kills it, and dying is what throws the ring — the patch is the printing cast and stays flat, the ring is the consumer one and comes wider off coated floor, so the brood empowers without anything being paid for the floor it laid itself.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Waddle : sees player
+    Waddle --> Nudge : in reach
+    Nudge --> Swell : under half health
+    Swell --> Nudge : in reach
+    Waddle --> Idle : lost
+    Nudge --> Burst : killed
+```
+
+### Clustercap
+
+A knot of caps that walks the floor it is painting — it closes on you between lobs,
+swelling as you shoot it exactly as its pale cousin does, and comes apart on death into
+three small clustercaps that root where they land and go on lobbing. Killing it does not
+reduce the room's fire, it multiplies it and nails it down, and the three land spread out,
+so one moving problem becomes three fixed ones on the far side of a floor it has already
+coated. The correct play is often to leave it walking while you deal with everything
+else, which is a thing nothing else in the game asks of you. The brood cannot split
+again — one death, one multiplication, and the room ends.
+
+**Art:** the bloatcap sheet recoloured dusky violet, so the family reads at a glance and the darker body says this one is worse; the clusterlings are the myceling sprite under the same recolour.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 150 |
+| Speed | 20 px/s |
+| Range | detect 14, chase 16 |
+| lob | **24** dmg — 3s cd, Single, 14 tiles range, SporePayload |
+| clusterling_pop | **24** dmg — Ring x8, 2 @ 0.25s, 5 tiles range |
+| clusterling_wide_pop | **48** dmg — Ring x10, 3 @ 0.12s, 7 tiles range |
+| Drops | **whumf t3** (1%), **poot t3** (1%) |
+
+**Notes:** a pure printer, so the lob stays flat however coated the floor is. The split is three `death_spawns` of the clusterling — a rooted lobber that throws a ring of pods when it dies, wider if it is standing in spores. It carries no `CreatureResource` at all, and no stat sheet means no `death_spawns` to hold, so the one-generation rule is structural rather than a counter someone has to remember to check; the brood also leaves no drops and no kill count. The swell is a health window on a second, slower walk behind the same `Gate`, which is why both walks carry a clock — a rung that never ends is a Gate never asked again.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Walk : sees player
+    Walk --> Lob : cadence
+    Lob --> Walk : shot away
+    Walk --> Swell : under half health
+    Swell --> Lob : cadence
+    Walk --> Idle : lost
+    Lob --> Split : killed
+```
+
+### Gapcap
+
+The one thing that closes hard, and it only does it once at a time. It sprints the gap,
+dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the
+whole enemy is a single committed lunge you either sidestep or eat, and what you get for
+sidestepping it is a free window with the thing standing helpless in front of you. It is
+the dungeon's answer to a player who solves every room from max range.
+
+Spores turn the free window off. Standing in a field it lunges further, fires the cone
+twice, and recovers in about half the time — the same enemy, with the gap between its
+commitment and its next one closed. Whether the lunge is a mistake it makes or a mistake
+you make is decided by whose floor it is standing on.
+
+**Art:** a squat rust-red cap on two thick stubby legs, its rim split across the front like a mouth over a pale gill band; the lunge row throws the cap out ahead of the legs and the strike row flattens the whole body into the ground before the mouth opens.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 100 |
+| Speed | 86 px/s |
+| Range | detect 12, cone 3 |
+| cone | **24** dmg — 2s cd, Shotgun x5, 4 tiles range |
+| double_cone | **24** dmg — 2s cd, Shotgun x5, 2 @ 0.25s, 5 tiles range |
+| Drops | **blam t3** *(insect)* (3%) |
+
+**Notes:** pure composition, and the roster's clearest case of the empowerment being a shape rather than a number — `approach` to `cast` to a rooted `hold`, with a `needs_cloud` twin of each of the three. The fed lunge is a longer clock on the same chase, the fed cone is a second shot on the same spell, and the shorter root is simply where that cone hands off, so nothing is gated that a `Gate` does not already list.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Lunge : sees player
+    Lunge --> Cone : arrived
+    Cone --> Rooted : fired
+    Rooted --> Idle : recovered
+```
+
+### Mould Golem
+
+The slow tank, and the one body in the Mycelium that walks at you rather than waiting.
+Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the
+space around it three times over, each turn drifting off the last so the gaps never sit
+still. The shield is the fight: it is a wall of health that arrives on a clock, and
+whether you burn it down or walk around it decides whether the room is a fight or a
+detour. It never idles — lose it and it simply keeps coming.
+
+**Art:** the moss golem gone to rot — pale fungal white where the stone was, and the moss on its crown sagged from a live green to a dead slate one, with the sprouts at its shoulders the only part still growing.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 560 |
+| Speed | 14 px/s |
+| Range | detect 14, chase 17, attack 3 |
+| ring | **36** dmg — 2.6s cd, Ring x8, 3 @ 0.6s, 8 tiles range |
+| shell | 5s cd, absorbs 90 |
+| wide_ring | **44** dmg — 2.6s cd, Ring x12, 4 @ 0.5s, 10 tiles range |
+| Drops | **nope** (10%), **whumf t3** (1%), **poot t3** (1%) |
+
+**Notes:** the moss golem's scene with the idle beat swapped for a `wander`, so "never idles" is a state that walks rather than a dial. The shield is the player's own Nope, channelled — its `cast_time` caps the channel, which is why the golem stands still through the whole wind-up and why the shell pose IS the telegraph.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Walk
+    Walk --> Chase : sees player
+    Chase --> Shell : in range
+    Shell --> Ring : shield up
+    Ring --> Recover : pulsed
+    Recover --> Shell : clock lapses
+    Chase --> Walk : lost
+```
+
+### Normiecap
+
+A mushroom that walks up and spits at you. It notices you, it closes, it fires from about
+two tiles out, and if you walk away it gives up and goes back to standing there. There is
+no phase, no second idea and nothing to read — it is the body a room uses to make you
+commit to a direction while something with an actual plan sets up behind it.
+
+It still drinks. On coated floor the spit comes faster, harder and one shot longer, which
+is the whole point of putting the rule on the plainest thing in the dungeon: even the
+speed bump is worse on floor you let stand, so there is no body in the Mycelium a player
+can safely ignore the clouds around.
+
+**Art:** the plainest mushroom that can be drawn at this size — a tan cap over a pale stem with two dark eyes under the brim, and a base that picks up when it walks. Deliberately the least memorable thing on the sheet.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 64 |
+| Speed | 40 px/s |
+| Range | detect 12, chase 14, shoot 2 |
+| hard_pew | **28** dmg — 1.2s cd, Single, 3 @ 0.2s, 4 tiles range |
+| pew | **20** dmg — 1.2s cd, Single, 3 @ 0.25s, 4 tiles range |
+| Drops | **pew t3** *(insect)* (3%) |
+
+**Notes:** four library beats in a ring and nothing else — `hold` to `approach` to a two-rung `Gate` to `hold` — which makes it the roster's reference for what composition alone buys you, with no script and no bespoke node anywhere. The chase carries the LOS probe and the shot carries none, so giving up is the pursuit's job and re-closing is the recovery's, the split every ranged body in the game uses; the recovery points back at the Gate rather than at a shot, so the floor is re-read between every burst instead of once on the way in.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Spit : in range
+    Spit --> Recover : shot away
+    Recover --> Spit : still in range
+    Recover --> Chase : player backed off
+    Chase --> Idle : lost
+```
+
+### Puffcap
+
+The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom
+decor with no attack and barely any detection, it inhales when something comes close and
+pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never
+one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick
+them off from range and keep the floor, because shooting one dead never sets it off. Nothing
+you carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and
+only your own answer to light.
+
+**Art:** a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame swells it past its own width before the pop.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 40 |
+| Range | trigger 2 |
+| pop | **25** dmg —  |
+| Drops | **oop t2** (2%), **poot t3** (1%) |
+
+**Notes:** it pops through the player's own Whumf effect with `consumes_caster` on — the mine IS its payload, exactly as the cinderstone's Oop is. The chain is pack aggro — entering the inhale calls every packmate a few tiles out into theirs.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Rooted
+    Rooted --> Inhale : player close / neighbour popped
+    Inhale --> [*] : spores down
+```
+
+### Ringcap
+
+The spiralcap's brother, and the same idea with the twist taken out. It stands rooted and
+throws whole rings — no lean, no aim, no drift between shots — three of them a beat apart,
+then rests. Where the spiralcap hands you a moving lane to walk, this hands you a wall
+that arrives, then a gap, then another wall, so you are not reading a curve any more,
+you are counting. Two of them out of phase is a room with no still moments in it.
+
+Coated floor changes nothing about the pattern and everything about eating it: the ring
+comes out as a heavier, hotter shot for the same spacing. It is the roster's plainest
+empowerment on purpose — the one body where standing in a field costs you health rather
+than options.
+
+**Art:** the spiralcap's silhouette in cold slate blue, same stalk and same drooping cap, so the family reads before the behaviour does; the gill band is pale cyan and flares straight out flat on every ring, because nothing here leans.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 90 |
+| hard_ring | **34** dmg — Ring x8, 5 @ 0.5s, 12 tiles range |
+| ring | **22** dmg — Ring x8, 3 @ 1.1s, 12 tiles range |
+| Drops | **ring t3** *(insect)* (3%), **blops t3** (1%) |
+
+**Notes:** no probes and no detection, exactly as its brother has none — the rings are a fact about the room rather than an attack on you. The whole cadence is the spell's, three shots on a `shot_interval` with `rotation_per_shot` left at zero and `aim_mode` on INDEPENDENT, so the beat is one `cast()` and the `hold` behind it is the only window it ever gives. Its empowered rung swaps the BulletResource and nothing else, which is the thinnest a `needs_cloud` ladder can honestly get.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Rings
+    Rings --> Rest : three thrown
+    Rest --> Rings : clock lapses
+```
+
+### Rollcap
+
+A spore ball on a heading, and the only body in the Mycelium that is not fighting you —
+it rolls, it reflects off whatever it runs into, and it never once turns to look. There
+is nothing to bait, nothing to out-range and nothing to break line of sight with: it is
+a hazard with a health bar, wandering a room you are trying to read. Killing it costs
+you, because it comes apart into two smaller, faster balls, and those are the end of it
+— one death, one split, so a room of them stays a room rather than a screensaver.
+
+Coated floor is what wakes it up: standing in spores it rolls faster **and** starts
+pewing at you as it goes. So the only thing that turns the room's own floor into an
+attack is the body that was not attacking, and a ball you were happily walking around
+becomes the reason to clear the field it is about to cross.
+
+**Art:** a round spore-ball in the family's pale cap flesh, wrapped in rust bands that sweep across it as it turns, with a squashed frame it flattens into off a wall; the split halves are the same ball drawn smaller, so what is left after a kill reads instantly.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 60 |
+| Speed | 40 px/s |
+| pew | **20** dmg — 1.1s cd, Single, 4 @ 0.2s, 8 tiles range |
+| Drops | **pew t3** *(insect)* (3%) |
+
+**Notes:** the one body with no beat but its own, which is why its empowerment lives inside the roll rather than behind a `needs_cloud` rung of a `Gate` — the roll never ends, so there is no hand-off for a ladder to make, and a `cast` beat would plant the ball to fire. Coated floor pays it twice over instead — faster, and shooting. Its contact hit is a `DamageZone` rather than a caster, so running you over is an attack with no spell behind it. The roster's one bespoke behaviour lives in its own folder — a heading picked on entry and bounced off the collision normals `move_and_slide` already reports. The split is two `death_spawns` of a smaller ball that carries no `CreatureResource` — no stat sheet is no `death_spawns`, so the two-stage rule is structural rather than a generation counter, exactly as the clusterlings are.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Roll
+    Roll --> Roll : bounce
+    Roll --> Pew : standing in spores
+    Pew --> Roll : shot away
+    Roll --> Split : killed
+```
+
+### Shellcap
+
+The sniper, and the clock on every encounter it is in. A rooted armoured cap at the far
+end of the floor that lobs a homing volley the length of the room — the one body here
+that reaches you wherever you stand. You cannot out-range it and you cannot ignore it,
+so the shape of every room it is in is you crossing that room through everything else to
+get to it, while the darts curve in behind you the whole way.
+
+On coated floor the volley opens into a three-shot fan, and the far end of the room
+stops arriving one bullet at a time. It lays nothing itself, so that is a field somebody
+else painted — the turret is the body that most repays letting a printer work.
+
+**Art:** a low hard-shelled cap in cold grey, sunk into the ground behind a thick dark rim with a lime firing slit under it, so it reads as a bunker rather than a mushroom. It has no eyes and never turns; the tell is the charge glowing up through the shell before the slit splits open.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 160 |
+| Range | room 16 |
+| fan | **32** dmg — 3s cd, Shotgun x3, 5 @ 0.35s, 16 tiles range |
+| volley | **26** dmg — 3s cd, Single, 3 @ 0.35s, 16 tiles range, homing 70° cone |
+| Drops | **snipe t3** *(insect)* (3%), **blops t3** (1%) |
+
+**Notes:** pure composition — a `cast` behind a room-length `range_probe`, so the dispatcher answers "can it even reach you" before it commits rather than rearing into a slam at nothing. The empowered rung is the ordinary `needs_cloud` first rung of its `Gate`, and the only thing that changes is the spell's fire pattern, which is the spell's business and not the beat's.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Watch
+    Watch --> Volley : player in the room
+    Volley --> Watch : reload
+```
+
+### Spiralcap
+
+The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that
+lays one slow lane of spores and winds it around the room like a lighthouse — it never
+aims at you, never looks for you, and never reacts to being shot. The lane is a fact
+about the room rather than an attack on you: you read where it is going and walk the gap,
+and because the shots are slow and the bearing drifts every one of them, the arm behind
+it curls into a spiral you have to cross rather than a wall you wait out. Two of them
+turning opposite ways is a floor all by itself.
+
+**Art:** a tall thin stalk in pale bone under a drooping magenta cap with a lime gill band, the rim curling past the gills; no eyes at all, because it is an object rather than an animal. The attack row tips the cap hard to each side and bends the stalk with it, so the lean says which way the lane is pointing.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 90 |
+| sweep | **32** dmg — Single, 40 @ 0.25s, 10 tiles range |
+| twin_sweep | **40** dmg — Ring x2, 40 @ 0.25s, 12 tiles range |
+| Drops | **ring t3** *(insect)* (3%), **blops t3** (1%) |
+
+**Notes:** no probes and no detection — the sweep is one `cast()` whose spell owns everything, with `aim_mode` on INDEPENDENT so the burst commits to its own random bearing and `rotation_per_shot` walking that bearing a full turn over the burst. The rest between revolutions is an ordinary `hold`, and is the only window it ever gives you.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Sweep
+    Sweep --> Rest : revolution done
+    Rest --> Sweep : clock lapses
+```
+
+### Sporefly
+
+The moth, exactly: flits in, pokes twice at short range, bolts for a beat, closes again,
+and never stands and trades. The twist is that the poke **leaves a small patch of spores
+where it struck you**, so the thing chipping you is also the thing seeding the floor you
+are standing on — back off from one and you back into what the last one left. The patches
+are short-lived on their own, which is what keeps twos and threes of these a moving
+problem rather than a room that fills up and stays filled.
+
+**Art:** the deepwood moth sheet gone pale and dusty — bone wings over a grey body, and the moth's amber eyes swapped for the Mycelium's lime, which is the whole difference between an animal that lives in the woods and one that lives in the spores.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 80 |
+| Speed | 44 px/s |
+| Range | detect 12, chase 16, attack 3, retreat 1.25 |
+| dust | **28** dmg — 0.9s cd, Single, 2 @ 0.4s, 5 tiles range, SporePayload |
+| Drops | **pew t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%) |
+
+**Notes:** the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they are inert terrain and nothing can light them.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Chase : sees player
+    Chase --> Poke : in range
+    Poke --> Retreat : struck
+    Retreat --> Chase : beat over
+    Chase --> Idle : lost
+```
+
+### Sporespitter
+
+The fuse factory, and the first thing the Mycelium shows you. Rooted, long-sighted, and
+it answers **by where you stand**: from across the room it arcs a spore blob on a slow
+cadence that leaves a lasting patch where the blob lands rather than where it stands, and
+the moment you close on it the cap coughs a shotgun cone into your face instead. So it has
+no comfortable range — walk in and you eat the barrel, hang back and it paints the floor
+you were going to cross. One is a zoning puzzle. Three, spread around a room, and the
+floor is gone by the time you have crossed it, none of it yours to spend, since only your
+own spores answer to light.
+
+**Art:** a bent mushroom with a spout-shaped cap in rust, sickly lime gills and a pale stalk; the attack row swells the stalk and puffs the cheek on the spit.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 55 |
+| Range | detect 11, close 3 |
+| blam | **24** dmg — 2.5s cd, Shotgun x3, 2 @ 0.4s, 4 tiles range |
+| lob | **4** dmg — 2s cd, Single, 9 tiles range, SporePayload |
+| wide_blam | **30** dmg — 2.5s cd, Shotgun x5, 3 @ 0.35s, 5 tiles range |
+| Drops | **blam t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%), **blops t3** (1%) |
+
+**Notes:** the lob is an ordinary bullet carrying a `SporePayload` — the patch is planted by the shot expiring, so a body, a wall or the end of its range all plant it the same way. Its two beats hang off a `Gate` whose first rung is the cone behind a short range probe, so the choice is the player's position rather than a roll or a rotation, and the lob is simply what is left when you are not close enough to be shot.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Blam : player close
+    Idle --> Lob : player far
+    Blam --> Lob : player backs off
+    Lob --> Blam : player closes
+    Lob --> Idle : lost sight
+```
+
+### Burrower *(rare)*
+
+The mole's trick, fungal, and the one body in the Mycelium that decides where the room
+is. It dives, crosses the floor unseen and untouchable, comes up somewhere you are not,
+sprays whatever is in front of it, puffs a patch of spores and goes straight back down.
+It is never fighting you — it is redrawing the floor, and it redraws it against you.
+
+The order of those two casts is the whole enemy. It shoots first and prints second, so
+the cloud it just laid never pays for the spray that came before it: on clean floor the
+spray is a short cone you can be out of, and the only thing that opens it into a full
+ring is surfacing into a field it left standing on an earlier lap. The rare is the body
+that punishes you for letting its own leftovers sit.
+
+**Art:** the graveyard's `burrower` sprite, revived — a mound of turned earth with two yellow eyes under it, four rows for the dive, the travelling hump, the surfacing spray of dirt and the surfaced idle.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 220 |
+| Speed | 56 px/s |
+| Range | detect 14, spray 6 |
+| ring | **20** dmg — 1s cd, Ring x10, 2 @ 0.35s, 6 tiles range |
+| spores | **22** dmg —  |
+| spray | **18** dmg — 1s cd, Shotgun x4, 4 tiles range |
+| Drops | **zaap t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
+
+**Notes:** pure composition. The crossing is a `wander` at `damage_scale = 0` — a random heading on a clock is exactly "surfaces somewhere you are not", and the armour dial is what makes it unseen without a second mechanism. The spray is the plain rung of a two-rung `Gate` and the ring the `needs_cloud` one; the cloud is a `cast` after both, which is where the printer rule ends up being an ordering rather than a flag.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Dive : sees player
+    Dive --> Burrow : under
+    Burrow --> Surface : crossed
+    Surface --> Spray : clean floor
+    Surface --> Ring : standing in its own field
+    Spray --> Spores : shot away
+    Ring --> Spores : shot away
+    Spores --> Dive : cloud down
+    Spores --> Idle : lost
+```
+
+### Deathcap *(rare)*
+
+A shellcap that got old. Same bunker, same slit, same refusal to ever turn — but it
+reloads in about half the time, its darts curve harder, and the fan it opens into on
+coated floor is five wide instead of three. Nothing about it is new, which is the point:
+it is the room telling you that the sniper you already know how to walk through is not
+the sniper in this room.
+
+It is the rare a turret line wants, because it does not change the shape of the encounter
+at all — it only shortens the window you were crossing in.
+
+**Art:** the shellcap recoloured — pale violet shell over a plum rim, with the firing slit lit magenta instead of lime, so a room reads which of the two it is before the first shot.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 340 |
+| Range | room 18 |
+| fan | **28** dmg — 2.6s cd, Shotgun x5, 6 @ 0.3s, 16 tiles range |
+| volley | **20** dmg — 2.6s cd, Single, 4 @ 0.3s, 16 tiles range, homing 80° cone |
+| Drops | **snipe t3** *(insect)* (40%) |
+
+**Notes:** a straight copy of the shellcap's wiring with its own numbers, down to the `range_probe` on both rungs; the only structural difference is a shorter reload.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Watch
+    Watch --> Volley : player in the room
+    Volley --> Watch : reload
+```
+
+### Maulcap *(rare)*
+
+A gapcap with more of everything the gapcap already had. It sprints further, its cone is
+six pellets wide instead of five, and the fed lunge dumps three of them rather than two
+before it roots. The sidestep still works — it is one committed charge and it still
+cannot follow — but the window it leaves you afterwards is shorter and the price of
+misreading it is most of a health bar.
+
+**Art:** the gapcap recoloured — a charcoal-blue cap over an ember-orange stalk, so the one thing in the room that is going to run at you is the one thing that glows.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 260 |
+| Speed | 104 px/s |
+| Range | detect 15, cone 3.5 |
+| cone | **34** dmg — 1.8s cd, Shotgun x6, 5 tiles range |
+| double_cone | **34** dmg — 1.8s cd, Shotgun x6, 3 @ 0.3s, 6 tiles range |
+| Drops | **blam t3** *(insect)* (40%) |
+
+**Notes:** the gapcap's exact node graph with harder dials on both lunges and both cones. Its empowerment is still the pair of behaviour dials rather than a spell — further and briefer — so `needs_cloud` sits on the lunge as well as the cast.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Lunge : sees player
+    Lunge --> Cone : in range
+    Cone --> Root : shot away
+    Root --> Idle : recovered
+```
+
 <!-- END GENERATED CATALOGUE -->
 
 ---
@@ -1205,15 +1684,19 @@ stateDiagram-v2
 ## Deepwood
 
 The forest biome, T3: everything has more health and hits harder, tuned to pressure
-long-range squishy builds and push the player into close quarters. It comes in four
+long-range squishy builds and push the player into close quarters. It comes in three
 flavours, in encounter order: the **animal deepwood** (beasts, boss **gnarlking**), the
-**mimic deepwood** (props that come alive, boss **mother tree**), the **insect deepwood**
-(swarms and crawlers, boss **hive queen**), and the **fungal deepwood** (rot and spores,
-boss **rotmaw**).
+**mimic deepwood** (props that come alive, boss **mother tree**), and the **insect
+deepwood** (swarms and crawlers, boss **hive queen**).
 
 **The shared pool and the animal and mimic sub-biomes are built** — they moved up into the
-catalogue above. What remains below are the two unbuilt sub-biomes: insect and fungal.
-Their sprites exist; nothing else does.
+catalogue above. What remains below is the one unbuilt sub-biome, insect. Its sprites
+exist; nothing else does.
+
+The fungal roster **left the deepwood** and became the [Mycelium](#the-mycelium-dungeon), an
+eight-floor dungeon behind the mimic biome's mushroom door. It was always the odd one out —
+a sub-biome whose whole mechanic was the floor turning against you, which a wandering
+overworld biome cannot commit to and a descent can.
 
 Each sub-biome adds three commons, three rares (almost all cheap variants of another enemy —
 the mandraker recipe; only the drone is bespoke), and its boss: 16 per sub-biome. Every enemy
@@ -1223,24 +1706,29 @@ bosses drop their T3 signatures — the glade's structure one tier up.
 The mechanics are budgeted: each sub-biome introduces at most three, and later sub-biomes
 reuse and combine earlier ones instead of adding more.
 
-| #   | Mechanic                 | Introduced by       | Reused / combined                           |
-| --- | ------------------------ | ------------------- | ------------------------------------------- |
-| 1   | prop disguise *(built)*  | stalker *(shared)*  | mimic doubles down; bloatcap                |
-| 2   | charge-dash *(built)*    | thornback           | gnarlking; mother tree's thorn rush         |
-| 3   | burrow *(built)*         | mole                | rotmaw dives between patterns               |
-| 4   | blink teleport *(built)* | shade               | elder stalker; umbra                        |
-| 5   | self-detonation *(built)*| cinderstone *(static)* | ticktick *(mobile)*; mycelings *(+ clouds)* |
-| 6   | wall crawl               | longleg             | weaver; creeper mold *(+ clouds)*           |
-| 7   | bullet escort            | drone               | hive queen's swarm phase                    |
-| 8   | lingering spore clouds   | sporespitter        | creeper mold; rot golem; rotmaw             |
-| 9   | split on death           | bloatcap            | rotmaw splits at low HP                     |
-| 10  | drain leech              | leech               | elder leech's aura; rotmaw's drain phase    |
+| #   | Mechanic          | Introduced by          | Reused / combined                            |
+| --- | ----------------- | ---------------------- | -------------------------------------------- |
+| 1   | prop disguise     | stalker *(shared)*     | the mimic sub-biome doubles down on it       |
+| 2   | charge-dash       | thornback              | gnarlking; mother tree's thorn rush          |
+| 3   | burrow            | mole                   | the Mycelium's rotmaw dives between patterns |
+| 4   | blink teleport    | shade                  | elder stalker; umbra                         |
+| 5   | self-detonation   | cinderstone *(static)* | ticktick *(mobile)*; the Mycelium's puffcap  |
+| 6   | wall crawl *(unbuilt)* | longleg           | weaver                                       |
+| 7   | bullet escort *(unbuilt)* | drone          | hive queen's swarm phase                     |
+
+The first five ship; the enemies that introduce them are in the catalogue above.
+
+The Mycelium's own mechanics (spore clouds, electric detonation, splitting) are budgeted in
+its own ledger — a dungeon you descend on purpose can teach from scratch, where a fourth
+overworld sub-biome could only have recombined.
 
 Spells introduced here: Bwoom, ChargeDash, Thwomp, Halp and Zoing all ship (the animal roster
 drops them), and so do Blink and Oop (the shade and umbra carry the two Blink tiers, the
-cinderstone its own Oop). Ploop ships as a spell but nothing drops it since the mother tree was
-cut. Halo, Slurp and Fwoosh wait on the sub-biomes below. Reserved for future T3 biomes: Kaboom, Krak,
-Brrr, Clang, Chomp, Piercing Lights, Vroop, Beep Boop, Nyoom, Shing, Splay.
+cinderstone its own Oop), and Ploop, off the bristlestone, though the mother tree it was written
+for was cut. Halo waits on the insect sub-biome below; Whumf, Poot and Blops left with the fungal
+roster and are now the Mycelium's set. Slurp and Vroop are earmarked for the hive. Reserved
+for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing Lights, Beep Boop, Nyoom,
+Shing, Splay, Fwoosh.
 
 **Mimic deepwood** — the sub-biome is built except for its boss, which was cut from the
 game and is a proposal again.
@@ -1497,222 +1985,11 @@ stateDiagram-v2
     Pattern --> Idle : lost
 ```
 
-**Fungal deepwood** — the wood, rotting: a turf war where they paint the floor and you
-contest it. The finale sub-biome: three new mechanics (spore clouds, split on death, the
-drain leech), everything else recombined from the other three.
-
-### sporespitter *(fungal)*
-
-Rooted lobber, introducing **lingering spore clouds**. It arcs spore blobs at you on a
-slow cadence, and every burst leaves a cloud that hangs there ticking damage — a miss
-still costs you floor. One sporespitter is a zoning puzzle; two facing each other own the
-room between them.
-
-**Art:** a bent mushroom with a spout-shaped cap, pale stalk and sickly green gills; a
-cheek-puff frame on the spit.
-
-| Stat | |
-|---|---|
-| HP | med |
-| Speed | stationary |
-| Detection | med |
-| Attack | lobbed blob → lingering DoT cloud, low tick dmg, slow cadence |
-| Casts | Pew, Fwoosh (the cloud) |
-| Drops | **Fwoosh** (t2), **Pew** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Spit : sees player
-    Spit --> Idle : lost sight
-```
-
-### leech *(fungal)*
-
-Introduces the **drain leech**. A slow slug that creeps in and latches a drain beam:
-while it holds, you bleed and it heals the same amount. The beam breaks on range or line
-of sight, so the fight is about geometry — put a trunk between you, or kill it faster
-than it drinks. In a mixed room it quietly undoes all your damage if ignored.
-
-**Art:** a glossy umber slug that pulses brighter while latched; the beam is a dotted
-line of drips flowing the wrong way.
-
-| Stat | |
-|---|---|
-| HP | med |
-| Speed | slow |
-| Detection | med |
-| Attack | latch drain beam, low dps, self-heals for the same |
-| Casts | Slurp |
-| Drops | **Slurp** (t2) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Chase : sees player
-    Chase --> Latch : in range
-    Latch --> Chase : beam broken
-    Chase --> Idle : lost
-```
-
-### bloatcap *(fungal)*
-
-Introduces **split on death**, and reuses half the biome doing it. It hides among the
-real mushroom scenery (the stalker's trick), waddles at you when you get close, and pops
-when it dies (the cinderstone's trick): one spore cloud plus two or three mycelings —
-fist-sized copies that sprint and pop in turn into smaller clouds. Killing it point-blank
-is a mistake; killing it at range is three more kills.
-
-**Art:** a fat button mushroom, off-white cap with rot spots and stubby feet; mycelings
-are the same sprite at half size.
-
-| Stat | |
-|---|---|
-| HP | med |
-| Speed | slow (waddling chase) |
-| Detection | short probe |
-| Attack | death-pop cloud + myceling brood |
-| Casts | Oop (the pop) |
-| Drops | **Oop** (t2) |
-
-**Notes:** mycelings are its spawn, not a roster entry; they carry no drops.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> Chase : player close
-    Chase --> Disguise : lost
-    Chase --> Pop : dies
-```
-
-### elder leech *(fungal, rare)*
-
-Leech variant: the beam is gone, replaced by a drain aura with nothing to break.
-Everything near it — you, your minions — feeds it. It creeps forward tanking through its
-own healing, and the only answers are range or overwhelming burst.
-
-**Art:** the leech sprite grown long and pale, ringed by a faint spore shimmer.
-
-| Stat | |
-|---|---|
-| HP | high |
-| Speed | slow |
-| Detection | med |
-| Attack | drain aura, low dps in a radius, self-heals per target |
-| Casts | Slurp |
-| Drops | **Slurp** (t3) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Creep : sees player
-    Creep --> Idle : lost
-```
-
-### rot golem *(fungal, rare)*
-
-Moss golem variant, mold-eaten: everywhere it lumbers it leaves a trail of spore cloud,
-so its slow chase quietly redraws the room. Kite it in circles and you fence yourself in;
-fight it where you can afford to give up ground.
-
-**Art:** the moss golem recoloured to rot: pale fungal white over sagging green, gills
-sprouting from the shoulders.
-
-| Stat | |
-|---|---|
-| HP | very high |
-| Speed | slow |
-| Detection | long |
-| Attack | `RingPattern`, med dmg + a lingering cloud trail |
-| Casts | Ring, Fwoosh (the trail) |
-| Drops | **Nope** (t3), **Fwoosh** (t3) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Chase : sees player
-    Chase --> Shell : in range
-    Shell --> Ring : shell drops
-    Ring --> Chase : out of range
-    Chase --> Idle : lost sight
-```
-
-### creeper mold *(fungal, rare)*
-
-Longleg variant gone moldy: the wall crawl and the spore trail combined. It circles the
-room's edges painting them with rot, squeezing the fight toward the middle, and puffs
-short-range spores at you if you press it. The safe zone shrinks the longer it lives.
-
-**Art:** the longleg sprite half-swallowed by pale mold, trailing spore flecks.
-
-| Stat | |
-|---|---|
-| HP | med |
-| Speed | slow (wall-crawling) |
-| Detection | med |
-| Attack | short `ShotgunPattern` spore puff, low dmg + the wall cloud trail |
-| Casts | Blam, Fwoosh (the trail) |
-| Drops | **Fwoosh** (t3) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Crawl
-    Crawl --> Circle : sees player
-    Circle --> Puff : player close
-    Puff --> Circle : repelled
-    Circle --> Crawl : lost
-```
-
-### rotmaw *(boss, fungal)*
-
-The fungal capstone: a vast split-capped maw on a `PatternPicker`, and the biome's
-recombination exam.
-
-- **Spore Carpet**: sweeps lanes of lingering cloud across the arena, shrinking the clean
-  floor each pass.
-- **Brood**: burps up a wave of mycelings that sprint and pop.
-- **Drain**: latches the leech beam wide and heals off everything it holds — break line
-  of sight or lose the damage race. Demonstrates **Slurp**.
-- **Burrow**: dives underground (the mole's trick) and resurfaces across the room,
-  cutting your positioning out from under you between patterns.
-
-At low HP it **splits into two half-HP maws**, each running a reduced pool (carpet +
-brood only) — the desperation swaps the drain out rather than layering more on top.
-
-**Art:** a huge split-capped fungus with a toothy maw between the halves, pale flesh and
-rot-green gills (boss sheet).
-
-| Stat | |
-|---|---|
-| HP | very high (boss) |
-| Speed | stationary mid-pattern; submerged dashes between |
-| Detection | long |
-| Attack | spore lanes / myceling waves / drain beam |
-| Casts | Slurp, Fwoosh, brood |
-| Drops | **Slurp** (t3), **Fwoosh** (t3) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Pattern : sees player
-    Pattern --> Carpet : roll
-    Pattern --> Brood : roll
-    Pattern --> Drain : roll
-    Pattern --> Burrow : roll
-    Carpet --> Pattern
-    Brood --> Pattern : cleared
-    Drain --> Pattern : beam broken
-    Burrow --> Pattern : resurfaced
-    Pattern --> Split : low HP
-    Split --> Pattern : as two maws
-    Pattern --> Idle : lost
-```
-
 ### Deepwood drops
 
 Commons drop T2 — generic and signature both — rares guarantee T3, bosses drop their T3
-signatures. Between them the four sub-biomes **cover** a full tier-2 kit and seed the tier-3
-one; the built rosters' drops are in the catalogue above, these two are what's left.
+signatures. Between them the three sub-biomes **cover** a full tier-2 kit and seed the tier-3
+one; the built rosters' drops are in the catalogue above, the insect one is what's left.
 
 | Enemy | Drops |
 |---|---|
@@ -1723,13 +2000,361 @@ one; the built rosters' drops are in the catalogue above, these two are what's l
 | goliath *(rare)* | **Ring** (t3), **Nope** (t3) |
 | drone *(rare)* | **Halo** (t3) |
 | hive queen *(boss)* | **Bzzz** (t3) |
-| sporespitter | **Fwoosh** (t2), **Pew** (t2) |
-| leech | **Slurp** (t2) |
-| bloatcap | **Oop** (t2) |
-| elder leech *(rare)* | **Slurp** (t3) |
-| rot golem *(rare)* | **Nope** (t3), **Fwoosh** (t3) |
-| creeper mold *(rare)* | **Fwoosh** (t3) |
-| rotmaw *(boss)* | **Slurp** (t3), **Fwoosh** (t3) |
+
+The Mycelium's drops are in its own section — a dungeon pays out differently, and mixing the
+two tables is how a guaranteed set reward gets mistaken for a drop chance.
+
+
+## The Mycelium *(dungeon)*
+
+Behind the mushroom door at the bottom of the mimic deepwood — the one that already ships and
+already leads nowhere. Eight floors down, a boss at the bottom, a secret boss for much later,
+and a set of three spells. It is the game's first **dungeon** rather than a biome: you go in
+on purpose, you go one way, and the floors are rolled, so you go in more than once.
+
+**The dungeon fills the room with fuses and sells you the match.**
+
+That is the whole design. Half the roster prints spore clouds and the other half fights
+harder while standing in them; **electricity detonates a cloud, and the blast chains through
+every cloud touching it**. Zaap is the match, a new Zaap tier drops down here, and your own
+Whumf is how you lay fuses of your own. The clouds are not a hazard you route around — they
+are the floor both sides are fighting over, and the fight is about when to spend it.
+
+The fungal roster used to be the fourth deepwood sub-biome, and moved because none of this
+fits a wandering overworld biome. A biome has to stay playable from any door in any order, so
+the strongest thing spore clouds could do there was tick for chip damage and time out. A
+dungeon can commit.
+
+### The clouds
+
+One primitive, both sides. A **spore cloud** is a patch of floor that lingers, ticks for very
+little, and can be set off. It has no health and nothing shoots it.
+
+| | |
+|---|---|
+| **Anything standing in it** | casts a **stronger version of its spells** — a different beat with its own numbers, not a damage multiplier bolted on |
+| **The cast that lays the cloud** | is never the empowered one. A body gets nothing for the floor it made itself; every *other* cast it carries still empowers |
+| **The player standing in it** | takes a small tick. That is all: no slow, no root, no blindness |
+| **Hit by electricity** | detonates for far more than it ever ticks, and the blast chains into every adjacent cloud |
+| **Some clouds drift** | the ones that came off a driftcap wander on their own, so a cleared lane does not stay cleared |
+
+Three rulings hold the mechanic together:
+
+- **The detonation cannot hurt the player.** Whumf lays spores *around* you, so a
+  self-damaging blast would make the player's own combo suicide. Spending the field is cost
+  enough — a detonated room is a room where nothing is ramping any more.
+- **Electricity only.** Fire does not trigger clouds. Fireball is the starting spell, and a
+  universal detonator every player already owns deletes the puzzle before it is posed.
+- **Printing is not free.** A body that fills the room with spores does not also get paid for
+  standing in them. That is what stops the dungeon spiralling: the more floor the room lays
+  down, the more it is arming the bodies that *don't* lay any — and you.
+
+The rule being about **casts** rather than creatures is what keeps it readable. You never have
+to remember which mushroom cares; you read what a body is doing. The thing puffing spores at
+you is exactly as dangerous as it was, and the thing shooting at you through them is not.
+
+Mechanically it is one flag: a beat that is only eligible while its caster stands in spores,
+and a `Gate` per body whose first rung is the empowered version and whose fallback is the
+plain one. No creature carries a "powered" mode; it simply has one more beat than it can
+always reach.
+
+### The feel
+
+Slow or static, long range, short leash. Almost nothing here chases you for more than a
+moment — turrets are rooted, heavies are slow, and the fliers dart in and leave. The player's
+problem is **space**, not pursuit: you thread a room rather than kite it, and the clouds are
+what shrink the room while you do.
+
+**On clean floor the roster is deepwood-hard, and no harder.** Commons sit in the same band as
+a grimling or a snake, heavies in the thornback's; a room you have not let coat itself plays
+like the forest above it. The dungeon's whole threat budget is in the clouds, which
+means the player sets it: every patch you leave standing is a room that fights a tier above
+its stat block.
+
+This is why the set is three stationary things. The Mycelium is the first place in the game
+that asks you to hold a position instead of an aim.
+
+### Structure
+
+A floor is **small**: three to five rooms, one path, one descent. **Eight floors**, and the
+last is the boss. Short enough to want again — the dungeon is built to be re-run, so it
+should end before it becomes an evening.
+
+Floors **roll from a depth-tiered encounter pool** rather than running a script: a couple are
+pinned, the rest are drawn. That is the existing `weight` / `min_per_biome` / `max_per_biome`
+quota machinery doing what it already does, one level up.
+
+| Depth | Draws from |
+|---|---|
+| 1–2 | one mechanic at a time: a spitter room, a puffcap minefield, a first splitter |
+| 3–5 | mixed — a turret line plus movers, splitters under covering fire, the first mould golem |
+| 6–7 | the rare, and the roster at full density |
+| 8 | rotmaw |
+
+A floor wants **at least one printer and one consumer** in every room it rolls. A room of pure
+printers coats itself and threatens nothing; a room of pure consumers never gets its floor and
+plays like a thin deepwood encounter. The pool is drawn, but that pairing is the one constraint
+on the draw.
+
+You are not meant to see all thirteen in one descent. Two runs of the same dungeon should
+disagree about what the dungeon is.
+
+### Drops
+
+Every drop is derived from what the body **casts**, so the roster teaches its own loot table.
+
+1. **The basic spells it casts, at T3, strong against insect.** A gapcap casts Blam and pays
+   Blam; a shellcap casts Snipe and pays Snipe. See [side tiers](spells.md#side-tiers).
+2. **Whumf, unchanged**, off anything that lays clouds — the weak version of the set's first
+   piece, findable on the way down, so the dungeon tells you what it pays out before you have
+   beaten it.
+3. **Blops** off the **turrets**, **Poot** off anything that **casts Whumf**. The set's two
+   stationary pieces come off the roster's stationary halves, so what drops teaches what the
+   piece does. rotmaw then guarantees whichever piece you are still missing.
+4. **A new Zaap tier**, off the rare — the enabling item, since the dungeon's whole mechanic
+   is gated on owning the detonator.
+
+The side tier is the common roll and the set piece is the rare one, so a body carrying both is
+not a jackpot, it is one likely drop and one lottery.
+
+This supersedes the earlier no-power-creep rule, which paid T2 sidegrades throughout. The
+Mycelium pays a tier up because it is the hardest content in the game and because its payout
+has to arm you for the **hive**, which drops fungal side tiers and arms you to come back. Two
+dungeons pointing at each other, each easier after the other — the multiple-runs loop without a
+grind, and the deepwood signs already tell the player: *"for some reason mushrooms and insects
+hate each other."*
+
+### Kinds
+
+Every enemy in the game gets a **kind** — the enemy half of [tags](spells.md#tags). One
+bitfield, one `and` in the hurtbox, double damage on a match. **Two of the kinds ship**:
+`insect`, on the wasp, and `fungal`, on the whole Mycelium roster. The catalogue above shows
+each enemy's kinds; anything without a Kinds row carries none yet.
+
+The rest are proposals, and only the assignment is — the mechanism is already in the game:
+
+| Kind | Roster |
+|---|---|
+| plant | sproutling, seedling, mandrake, mandraker, thornthrower, rosebud, thornmess, thornback |
+| beast | hopper, viper, snake, coral snake, ash snake, moth, moon moth, needle moth, owl, great owl, mole, razorback |
+| insect | the insect deepwood roster, on top of the wasp |
+| spirit | fae, grimling, shard grimling, wisp grimling, grimlord, shade, umbra |
+| stone | dirt golem, cinderstone, bristlestone |
+| plant + stone | moss golem |
+| plant + beast | gnarlking |
+
+**Mushrooms are not plants.** Fungal is its own kind, and nothing in the base game is strong
+against it — so a player arriving from the plant-heavy glade with a plant-killing kit finds it
+does exactly nothing here. The first descent is the one fight where your tag advantages are all
+switched off, and the way to switch one back on is to go clear the hive.
+
+Mimics (stalker, elder stalker, the logs) are **plant**: they are furniture made of wood, and a
+plant-killing spell working on them is the joke landing correctly.
+
+---
+
+### The roster
+
+Seventeen. Fifteen are built and in the catalogue above; what follows is the two that are
+not, plus the two bosses.
+
+Every body is a **printer** or a **consumer**, and most carry both kinds of cast. What sorts
+them is which cast is theirs: the one that lays spores never empowers, so a pure printer is
+flat wherever it stands and a body with a second cast fights above its weight on coated floor.
+The built roster is five **turrets** (rooted, long-range, and the reason the rooms read as
+patterns rather than fights), three **splitters** (three flavours of one verb — killing
+something here rarely makes the room simpler), three **movers** (short-leashed, and the only
+things here that come to you), a **heavy**, and three **rares**. The two unbuilt bodies are
+both movers.
+
+The rares are cheap on purpose: only the **burrower** is a new idea, the heavy that redraws
+the room and drops the detonator. The **deathcap** and the **maulcap** are the shellcap and
+the gapcap with harder numbers and a recoloured sheet, so a room with one in it plays the
+shape you already know at a speed you don't. A dungeon that rolls its floors wants rares often
+enough to matter, and a rare whose whole content is a second stat block costs nothing to roll
+and still changes what a familiar encounter is worth.
+
+### cindergnat *(fungal)*
+
+The moth pattern with an errand: before it commits it **darts to the nearest cloud to
+empower**, then comes at you with an exploding blob. It loses the empowerment the moment it
+leaves the cloud, so what you are watching is a shuttle — cloud, you, cloud, you — and the
+counter is to fight it where there is nothing to drink, or to detonate the cloud it is
+standing in while it is standing in it.
+
+It is the rule made literal: the one body that goes looking for the floor the rest of the
+roster laid.
+
+**Art:** the needle moth recoloured — rust wings over a dark cap-body, a glow while empowered.
+
+| Stat | |
+|---|---|
+| Kinds | fungal |
+| HP | low |
+| Speed | fast (dart and retreat) |
+| Detection | long, short leash |
+| Attack | an exploding blob, med dmg |
+| In a cloud | the blast doubles — and it will go and stand in one to get it |
+| Casts | Fireball |
+| Drops | **Fireball** (t3, *insect*) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Wander
+    Wander --> Feed : sees player
+    Feed --> Strike : empowered
+    Strike --> Feed : back to a cloud
+    Strike --> Wander : lost
+```
+
+### driftcap *(fungal)*
+
+Barely an enemy — a floating cap that drifts across the room ignoring walls and terrain,
+shedding clouds behind it that then **wander off on their own**. It is how the dungeon stops
+a cleared lane from staying cleared, and it is the one thing the ground game cannot answer:
+you can pop every rooted mushroom on the floor and the air will still be filling it in.
+
+The purest printer in the game, and correspondingly the one body that gains nothing anywhere.
+
+**Art:** the graveyard's `spore_drone` — a small ballooning cap trailing spore flecks,
+translucent gills lit from inside.
+
+| Stat | |
+|---|---|
+| Kinds | fungal |
+| HP | low |
+| Speed | slow, drifting, ignores terrain |
+| Detection | none — it drifts regardless |
+| Attack | none of its own; a trail of drifting clouds |
+| In a cloud | — (printer) |
+| Casts | Whumf |
+| Drops | **Whumf**, **Poot** |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Drift
+    Drift --> Shed : timer
+    Shed --> Drift : cloud released
+```
+
+**Bosses**
+
+### rotmaw *(boss, fungal)*
+
+A bullet-hell capstone on a **`Gate`** rather than a roll — a rotation you can learn, because
+you will fight it more than once. It is rooted for most of the fight and the arena is the
+opponent.
+
+1. **Spiral** — a ring-with-drift of spore shots that winds outward, the classic curtain. Each
+   shot that lands leaves a cloud, so the pattern builds its own floor. This is its printing
+   cast, so it is the one beat that never empowers.
+2. **Lanes** — two sweeping spiralcap-style lines from opposite walls, closing.
+3. **Brood** *(below half)* — a wave of mycelings that sprint and burst, replacing clean floor.
+4. **Burrow** *(only while you are far)* — dives and resurfaces underneath you. Range is not a
+   place you get to stand.
+5. **Rest** — the floor of the ladder, always eligible. Your burn window.
+
+The fight's lever is the one the dungeon spent seven floors teaching, and the printer rule is
+what sharpens it: the arena fills with clouds the maw itself laid, and **everything that
+crosses them fights harder except the maw**. Lanes, burrow and the brood all come out
+empowered on coated floor; the spiral does not. So leaving the field standing does not feed
+the boss, it feeds four of its five beats and its adds — and detonating it costs you the
+ammunition you were saving. At quarter health it **splits into two half-HP maws**, each
+running Spiral and Rest only — desperation replaces the puzzle with two bodies and a clock
+rather than stacking a third thing on top.
+
+**Art:** a huge split-capped fungus with a toothy maw between the halves, pale flesh and
+rot-green gills (boss sheet); `rotmaw_half` for the split.
+
+| Stat | |
+|---|---|
+| Kinds | fungal |
+| HP | very high (boss) |
+| Speed | rooted mid-beat; submerged dashes between |
+| Detection | the arena |
+| Attack | spiral curtain / closing lanes / myceling waves / burrow |
+| In a cloud | every beat but the spiral, and the whole brood |
+| Casts | Whumf, brood |
+| Drops | **the set piece you are missing** (Whumf, Poot, Blops), then insect side tiers once the set is done |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Gate : sees player
+    Gate --> Burrow : player far
+    Gate --> Brood : below half
+    Gate --> Spiral : roll of the ladder
+    Gate --> Lanes : roll of the ladder
+    Gate --> Rest : nothing else eligible
+    Spiral --> Gate
+    Lanes --> Gate
+    Brood --> Gate : cleared
+    Burrow --> Gate
+    Rest --> Gate
+    Gate --> Split : quarter health
+    Split --> Gate : as two maws (spiral + rest)
+```
+
+### the Mother *(secret boss, fungal)*
+
+A colossal rooted cap behind a hidden door on one of the floors — the thing the dungeon grew
+out of, and much stronger than anything else in the game when you first find it.
+
+**It is gated by your kit, not by a key.** It is always reachable and it simply kills you
+until your kit can handle it, which means no unlock flag, no quest item, no new system: the
+fight *is* the lock. The honest gate is the loop — she is a fungal boss, so what kills
+her is the **fungal side tiers from the hive**, and the hive is the dungeon you needed the
+Mycelium's insect side tiers to clear. Beating her is the point where the two dungeons close
+on each other.
+
+Where rotmaw moves and divides, the Mother never moves at all and never splits. She is rooted
+dead centre, she coats the arena faster than you can detonate it, and every beat is a curtain
+you read. She is a printer to the last: none of it makes her stronger, all of it makes the
+room worse. The fight is the Zaap economy from upstairs, run at a speed that punishes hoarding
+and punishes spending.
+
+**Art:** the graveyard's `mother_cap` — an enormous pallid cap sagging over a ring of tiny
+fruiting bodies, gills breathing. Reviving it as the secret boss is why it is not a rare.
+
+| Stat | |
+|---|---|
+| Kinds | fungal |
+| HP | enormous |
+| Speed | rooted, permanently |
+| Detection | the arena |
+| Attack | overlapping curtains; the whole floor coated on a clock |
+| In a cloud | — (printer, and the room is all hers) |
+| Casts | Whumf, brood, *(bespoke curtain spells)* |
+| Drops | the **t3** set pieces — Whumf, Poot and Blops one tier up |
+
+**Notes:** the last thing you do, and the only fight the dungeon does not let you make easier
+by managing the floor.
+
+### Mycelium drops
+
+Derived from casts, per the rules above: the side tier is the common roll, the set piece the
+rare one. The built bodies drop what their `.tres` ship, in the catalogue above. What is left
+is what the unbuilt ones are aimed at.
+
+| Enemy | Group | Prints? | Target drops |
+|---|---|---|---|
+| cindergnat | mover | consumer | **Fireball** (t3, *insect*) |
+| driftcap | mover | prints | **Whumf**, **Poot** |
+| rotmaw *(boss)* | boss | prints | the set piece you are missing, then insect side tiers |
+| the Mother *(secret boss)* | secret | prints | **Whumf**, **Poot**, **Blops** (t3) |
+
+Whumf is the one drop that is not a tier up: the weak version of the set's first piece, off
+anything that lays clouds, so the dungeon shows its payout before you have earned it.
+
+**Art:** fifteen of the seventeen ship. Live and ready: rotmaw + rotmaw_half. Graveyard, back
+with `git mv`: spore_drone (driftcap), mother_cap (the Mother). Recolour off an existing
+sheet: cindergnat (the needle moth).
+
+`creeper_mold`, `leech` and `elder_leech` are **in the graveyard**: the wall crawler duplicated
+the insect biome's mechanic, and the two leeches went with the life-drain theme, which is the
+hive's now. The **spell** moved to the hive; the mushrooms that used to carry it did not, and
+nothing in this design reaches them. Revive with a `git mv` if the hive wants a fungal leech
+after all.
 
 
 ## other ideas

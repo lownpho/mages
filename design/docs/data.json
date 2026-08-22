@@ -120,6 +120,37 @@
       "speed_tiles": 14,
       "pierce": false
      }
+    },
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/pew/pew3_insect.tres",
+     "kind": "bullet",
+     "cooldown": 1.5,
+     "cast_time": 0,
+     "channeled": false,
+     "weakness": [
+      "insect"
+     ],
+     "grants": {
+      "speed": 8
+     },
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 10,
+      "interval": 0.18
+     },
+     "amount": {
+      "base": 7,
+      "skill": 0,
+      "speed": 0.75,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 9,
+      "speed_tiles": 14,
+      "pierce": false
+     }
     }
    ]
   },
@@ -193,6 +224,81 @@
      "amount": {
       "base": 5,
       "skill": 0.25,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 18,
+      "speed_tiles": 18,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "homing",
+       "turn_deg": 540,
+       "cone_deg": 90,
+       "range_tiles": 0
+      }
+     ]
+    },
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/snipe/snipe3.tres",
+     "kind": "bullet",
+     "cooldown": 4,
+     "cast_time": 0,
+     "channeled": false,
+     "grants": {
+      "skill": 6
+     },
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 7,
+      "interval": 0.1
+     },
+     "amount": {
+      "base": 6,
+      "skill": 0.3,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 18,
+      "speed_tiles": 18,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "homing",
+       "turn_deg": 540,
+       "cone_deg": 90,
+       "range_tiles": 0
+      }
+     ]
+    },
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/snipe/snipe3_insect.tres",
+     "kind": "bullet",
+     "cooldown": 4,
+     "cast_time": 0,
+     "channeled": false,
+     "weakness": [
+      "insect"
+     ],
+     "grants": {
+      "skill": 6
+     },
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 7,
+      "interval": 0.1
+     },
+     "amount": {
+      "base": 6,
+      "skill": 0.3,
       "speed": 0,
       "defence": 0
      },
@@ -317,6 +423,39 @@
       "speed_tiles": 16,
       "pierce": false
      }
+    },
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/blam/blam3_insect.tres",
+     "kind": "bullet",
+     "cooldown": 2,
+     "cast_time": 0,
+     "channeled": false,
+     "weakness": [
+      "insect"
+     ],
+     "grants": {
+      "skill": 10,
+      "defence": 7
+     },
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 26,
+      "count": 3,
+      "interval": 0.3
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0.3,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 16,
+      "pierce": false
+     }
     }
    ]
   },
@@ -361,7 +500,7 @@
      },
      "projectile": {
       "range_tiles": 5,
-      "speed_tiles": 12,
+      "speed_tiles": 16,
       "pierce": false
      }
     },
@@ -390,7 +529,7 @@
      },
      "projectile": {
       "range_tiles": 5,
-      "speed_tiles": 8,
+      "speed_tiles": 16,
       "pierce": false
      }
     },
@@ -419,7 +558,39 @@
      },
      "projectile": {
       "range_tiles": 6,
-      "speed_tiles": 8,
+      "speed_tiles": 16,
+      "pierce": false
+     }
+    },
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/ring/ring3_insect.tres",
+     "kind": "bullet",
+     "cooldown": 3,
+     "cast_time": 0,
+     "channeled": false,
+     "weakness": [
+      "insect"
+     ],
+     "grants": {
+      "skill": 8,
+      "max_health": 30
+     },
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 12,
+      "count": 5,
+      "interval": 0.6
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0.3,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 16,
       "pierce": false
      }
     }
@@ -854,6 +1025,120 @@
    ]
   },
   {
+   "id": "poot",
+   "name": "Poot",
+   "category": "summon",
+   "description": "A capped mushroom planted where you aim: a single-shot turret that never moves and never chases. It fires faster and takes half damage while it stands in a spore cloud. The only summon you can put somewhere before the fight arrives, so it plays as prep — seed the doorway, lay a Whumf over it, walk away.",
+   "per_tier": "",
+   "kind": "summon",
+   "hold": "charged",
+   "scaling": [
+    "skill"
+   ],
+   "grants": [
+    "defence",
+    "max_health",
+    "skill",
+    "speed"
+   ],
+   "tiers": [
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/poot/poot3.tres",
+     "kind": "summon",
+     "cooldown": 6,
+     "cast_time": 0.3,
+     "channeled": false,
+     "grants": {
+      "skill": 2,
+      "speed": 2,
+      "max_health": 25,
+      "defence": 2
+     },
+     "minion": {
+      "count": 1,
+      "health": 60,
+      "lifetime": 20
+     },
+     "minion_cast": {
+      "cooldown": 1,
+      "shots": {
+       "pattern": "SinglePattern",
+       "per_shot": 1,
+       "count": 4,
+       "interval": 0.25
+      },
+      "amount": {
+       "base": 6,
+       "skill": 0.25,
+       "speed": 0,
+       "defence": 0
+      },
+      "projectile": {
+       "range_tiles": 12,
+       "speed_tiles": 14,
+       "pierce": false
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "blops",
+   "name": "Blops",
+   "category": "summon",
+   "description": "The heavy half of the pair: a planted mushroom that pulses a rotating ring around itself rather than aiming, and hits twice as hard while it stands in a spore cloud. Poot covers a lane, Blops owns a circle — out of a cloud a mediocre area denier, in one the reason to hold the room.",
+   "per_tier": "",
+   "kind": "summon",
+   "hold": "charged",
+   "scaling": [
+    "skill"
+   ],
+   "grants": [
+    "max_health",
+    "skill"
+   ],
+   "tiers": [
+    {
+     "tier": 3,
+     "source": "game/characters/player/spells/blops/blops3.tres",
+     "kind": "summon",
+     "cooldown": 8,
+     "cast_time": 0.6,
+     "channeled": false,
+     "grants": {
+      "skill": 8,
+      "max_health": 25
+     },
+     "minion": {
+      "count": 1,
+      "health": 80,
+      "lifetime": 20
+     },
+     "minion_cast": {
+      "cooldown": 2.5,
+      "shots": {
+       "pattern": "RingPattern",
+       "per_shot": 8,
+       "count": 4,
+       "interval": 0.5
+      },
+      "amount": {
+       "base": 7,
+       "skill": 0.25,
+       "speed": 0,
+       "defence": 0
+      },
+      "projectile": {
+       "range_tiles": 8,
+       "speed_tiles": 10,
+       "pierce": false
+      }
+     }
+    }
+   ]
+  },
+  {
    "id": "charge_dash",
    "name": "ChargeDash",
    "category": "utility",
@@ -1080,7 +1365,7 @@
    "id": "whumf",
    "name": "Whumf",
    "category": "utility",
-   "description": "Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that dungeon's set to ship; Poot and Blops, the turrets that stand in the field, are still proposals.",
+   "description": "Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that dungeon's set — Poot and Blops are the turrets that stand in the field, and Zaap's second tier is the match.",
    "per_tier": "",
    "kind": "effect",
    "hold": "no",
@@ -1098,7 +1383,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/whumf/whumf3.tres",
      "kind": "effect",
-     "cooldown": 4,
+     "cooldown": 3,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -1187,6 +1472,7 @@
    "name": "Ash Snake",
    "rarity": "common",
    "max_health": 90,
+   "kinds": [],
    "speed_px": 40,
    "probes": {
     "detect": 11,
@@ -1197,6 +1483,7 @@
      "item": "zoing2",
      "spell": "zoing",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -1233,7 +1520,6 @@
     }
    ],
    "id": "ash_snake",
-   "difficulty": 4,
    "description": "Snake variant, and the one that turns a room into a hazard. It flees furthest and fires the\nlongest, fastest shots of the three, bouncing five times and losing power on each — a volley\nthat keeps crossing the room long after the snake has gone. Nothing about it is dangerous\nup close; everything about it is dangerous a second later.\n",
    "blurb": "Snake variant, and the one that turns a room into a hazard. It flees furthest and fires the longest, fastest shots of the three, bouncing five times and losing power on each — a volley that keeps crossing the room long after the snake has gone. Nothing about it is dangerous up close; everything about it is dangerous a second later.",
    "art": "the snake recoloured ashen — pale grey-lavender scales with cyan eyes.",
@@ -1296,10 +1582,216 @@
    ]
   },
   {
+   "source": "game/characters/enemies/bloatcap/bloatcap_data.tres",
+   "name": "Bloatcap",
+   "rarity": "common",
+   "max_health": 70,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 24,
+   "probes": {
+    "detect": 9,
+    "chase": 12,
+    "attack": 1.75
+   },
+   "drops": [
+    {
+     "item": "oop2",
+     "spell": "oop",
+     "tier": 2,
+     "weakness": null,
+     "chance": 0.02
+    },
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "bloatcap_burst",
+     "kind": "effect",
+     "cooldown": 0,
+     "cast_time": 0.5,
+     "channeled": false,
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "name": "burst"
+    },
+    {
+     "cast": "bloatcap_nudge",
+     "kind": "bullet",
+     "cooldown": 1.4,
+     "cast_time": 0.35,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 6,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 2,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "name": "nudge"
+    },
+    {
+     "cast": "myceling_burst",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 6,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 5,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "name": "myceling_burst"
+    },
+    {
+     "cast": "myceling_pop",
+     "kind": "effect",
+     "cooldown": 0,
+     "cast_time": 0.35,
+     "channeled": false,
+     "amount": {
+      "base": 10,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "name": "myceling_pop"
+    },
+    {
+     "cast": "myceling_wide_burst",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 2,
+      "interval": 0.12
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 8,
+      "pierce": false
+     },
+     "name": "myceling_wide_burst"
+    }
+   ],
+   "id": "bloatcap",
+   "description": "The first splitter, and the one enemy whose death you get to aim. It waddles at you and\nshoves with the cap for very little; the damage you put in swells it visibly rather than\ndropping it, and when it finally goes it bursts into a field of spores and a brood of\nmycelings that sprint the last few tiles and pop into small patches of their own. So the\nquestion is never whether it goes off, only where — walk it into the corner you had\nalready written off, or shoot it where you were about to stand and lose the floor.\n",
+   "blurb": "The first splitter, and the one enemy whose death you get to aim. It waddles at you and shoves with the cap for very little; the damage you put in swells it visibly rather than dropping it, and when it finally goes it bursts into a field of spores and a brood of mycelings that sprint the last few tiles and pop into small patches of their own. So the question is never whether it goes off, only where — walk it into the corner you had already written off, or shoot it where you were about to stand and lose the floor.",
+   "art": "a fat button mushroom in off-white with rot spots and stubby feet, drawn in inflation stages; the burst row squashes it flat and blows the cap out into spores. The mycelings are the same body at half the size, two frames each.",
+   "casts": [
+    "pew",
+    "whumf"
+   ],
+   "notes": "a pure printer — everything it does is spores, so coated floor buys it nothing and neither the shove nor the burst has an empowered twin. The brood is a `death_spawns` entry on its stat sheet rather than death code, and the mycelings carry no `CreatureResource` at all, so they leave no drops and no kill count. The swell is a health window on a second, faster waddle behind the same `Gate`, and both waddles carry a clock so the Gate is asked again mid-chase rather than once at the start of it. A myceling's contact pop lays its patch and kills it, and dying is what throws the ring — the patch is the printing cast and stays flat, the ring is the consumer one and comes wider off coated floor, so the brood empowers without anything being paid for the floor it laid itself.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Waddle",
+      "when": "sees player"
+     },
+     {
+      "from": "Waddle",
+      "to": "Nudge",
+      "when": "in reach"
+     },
+     {
+      "from": "Nudge",
+      "to": "Swell",
+      "when": "under half health"
+     },
+     {
+      "from": "Swell",
+      "to": "Nudge",
+      "when": "in reach"
+     },
+     {
+      "from": "Waddle",
+      "to": "Idle",
+      "when": "lost"
+     },
+     {
+      "from": "Nudge",
+      "to": "Burst",
+      "when": "killed"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/bloatcap/bloatcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 20,
+   "damage": "5-20",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/bramble_stalker/bramble_stalker_data.tres",
    "name": "Bramble Stalker",
    "rarity": "common",
    "max_health": 110,
+   "kinds": [],
    "speed_px": 40,
    "probes": {
     "detect": 3,
@@ -1311,6 +1803,7 @@
      "item": "ring2",
      "spell": "ring",
      "tier": 2,
+     "weakness": null,
      "chance": 0.06
     }
    ],
@@ -1342,7 +1835,6 @@
     }
    ],
    "id": "bramble_stalker",
-   "difficulty": 5,
    "description": "The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing\nto point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings\nof thorns off its own body. The ring means there is no safe side of it — the answer is\ndistance, not footwork — and the rings drift a little each wave, so a gap you found in the\nfirst one is somewhere else in the second. Hard to lead on the approach, trivial once you\nstop letting it arrive.\n",
    "blurb": "The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings of thorns off its own body. The ring means there is no safe side of it — the answer is distance, not footwork — and the rings drift a little each wave, so a gap you found in the first one is somewhere else in the second. Hard to lead on the approach, trivial once you stop letting it arrive.",
    "art": "a leafy deepwood bush, built from the biome's own decor bush — same three greens, same sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the bramble-red thorns push out after them, one per flank as it winds up.",
@@ -1414,6 +1906,7 @@
    "name": "Bristlestone",
    "rarity": "common",
    "max_health": 1,
+   "kinds": [],
    "probes": {
     "trigger": 2
    },
@@ -1422,6 +1915,7 @@
      "item": "ploop2",
      "spell": "ploop",
      "tier": 2,
+     "weakness": null,
      "chance": 0.04
     }
    ],
@@ -1453,7 +1947,6 @@
     }
    ],
    "id": "bristlestone",
-   "difficulty": 4,
    "description": "The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the\nsame rock sitting in the same litter, and it triggers the same way — step close, or clip it\nwith a shot, and the fuse runs. What comes out is the difference: instead of one big blast\nit bursts into a full ring of piercing darts that carry clean across the room and straight\nthrough anything in the way.\n\nBetween the two of them a room of rocks stops being scenery you ignore. The blast one\npunishes standing next to it, the dart one punishes standing anywhere in line with it,\nand until one goes off you don't know which you're walking past. The tell, if you look\nfor it, is a pair of dry burr spines in the moss on top.\n",
    "blurb": "The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the same rock sitting in the same litter, and it triggers the same way — step close, or clip it with a shot, and the fuse runs. What comes out is the difference: instead of one big blast it bursts into a full ring of piercing darts that carry clean across the room and straight through anything in the way.",
    "art": "the cinderstone's boulder, moss and all, with two pale burr spines standing out of the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.",
@@ -1500,6 +1993,7 @@
    "name": "Cinderstone",
    "rarity": "common",
    "max_health": 1,
+   "kinds": [],
    "probes": {
     "trigger": 2
    },
@@ -1508,6 +2002,7 @@
      "item": "oop2",
      "spell": "oop",
      "tier": 2,
+     "weakness": null,
      "chance": 0.04
     }
    ],
@@ -1546,7 +2041,6 @@
     }
    ],
    "id": "cinderstone",
-   "difficulty": 4,
    "description": "A trap with a health bar. It sits among the real rocks and litter until you step close — or\nclip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with\nit. Spot the boulder that is slightly too round and spend it from range, or route around it\nand leave it armed for whatever chases you. It never moves and never fires twice; the only\nquestion is where you are standing when the fuse ends.\n",
    "blurb": "A trap with a health bar. It sits among the real rocks and litter until you step close — or clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with it. Spot the boulder that is slightly too round and spend it from range, or route around it and leave it armed for whatever chases you. It never moves and never fires twice; the only question is where you are standing when the fuse ends.",
    "art": "a mossy grey boulder, the same stone the deepwood scatters everywhere, with one hairline seam down its face; the seam lights amber through the fuse until the whole rock glows.",
@@ -1589,10 +2083,189 @@
    ]
   },
   {
+   "source": "game/characters/enemies/clustercap/clustercap_data.tres",
+   "name": "Clustercap",
+   "rarity": "common",
+   "max_health": 150,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 20,
+   "probes": {
+    "detect": 14,
+    "chase": 16
+   },
+   "drops": [
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "clustercap_lob",
+     "kind": "bullet",
+     "cooldown": 3,
+     "cast_time": 0.7,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 14,
+      "speed_tiles": 8,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "lob"
+    },
+    {
+     "cast": "clusterling_pop",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 2,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "name": "clusterling_pop"
+    },
+    {
+     "cast": "clusterling_wide_pop",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 10,
+      "count": 3,
+      "interval": 0.12
+     },
+     "amount": {
+      "base": 48,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 7,
+      "speed_tiles": 12,
+      "pierce": false
+     },
+     "name": "clusterling_wide_pop"
+    }
+   ],
+   "id": "clustercap",
+   "description": "A knot of caps that walks the floor it is painting — it closes on you between lobs,\nswelling as you shoot it exactly as its pale cousin does, and comes apart on death into\nthree small clustercaps that root where they land and go on lobbing. Killing it does not\nreduce the room's fire, it multiplies it and nails it down, and the three land spread out,\nso one moving problem becomes three fixed ones on the far side of a floor it has already\ncoated. The correct play is often to leave it walking while you deal with everything\nelse, which is a thing nothing else in the game asks of you. The brood cannot split\nagain — one death, one multiplication, and the room ends.\n",
+   "blurb": "A knot of caps that walks the floor it is painting — it closes on you between lobs, swelling as you shoot it exactly as its pale cousin does, and comes apart on death into three small clustercaps that root where they land and go on lobbing. Killing it does not reduce the room's fire, it multiplies it and nails it down, and the three land spread out, so one moving problem becomes three fixed ones on the far side of a floor it has already coated. The correct play is often to leave it walking while you deal with everything else, which is a thing nothing else in the game asks of you. The brood cannot split again — one death, one multiplication, and the room ends.",
+   "art": "the bloatcap sheet recoloured dusky violet, so the family reads at a glance and the darker body says this one is worse; the clusterlings are the myceling sprite under the same recolour.",
+   "casts": [
+    "whumf"
+   ],
+   "notes": "a pure printer, so the lob stays flat however coated the floor is. The split is three `death_spawns` of the clusterling — a rooted lobber that throws a ring of pods when it dies, wider if it is standing in spores. It carries no `CreatureResource` at all, and no stat sheet means no `death_spawns` to hold, so the one-generation rule is structural rather than a counter someone has to remember to check; the brood also leaves no drops and no kill count. The swell is a health window on a second, slower walk behind the same `Gate`, which is why both walks carry a clock — a rung that never ends is a Gate never asked again.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Walk",
+      "when": "sees player"
+     },
+     {
+      "from": "Walk",
+      "to": "Lob",
+      "when": "cadence"
+     },
+     {
+      "from": "Lob",
+      "to": "Walk",
+      "when": "shot away"
+     },
+     {
+      "from": "Walk",
+      "to": "Swell",
+      "when": "under half health"
+     },
+     {
+      "from": "Swell",
+      "to": "Lob",
+      "when": "cadence"
+     },
+     {
+      "from": "Walk",
+      "to": "Idle",
+      "when": "lost"
+     },
+     {
+      "from": "Lob",
+      "to": "Split",
+      "when": "killed"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/clustercap/clustercap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 48,
+   "damage": "24-48",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/coral_snake/coral_snake_data.tres",
    "name": "Coral Snake",
    "rarity": "common",
    "max_health": 90,
+   "kinds": [],
    "speed_px": 30,
    "probes": {
     "detect": 7,
@@ -1603,6 +2276,7 @@
      "item": "zoing2",
      "spell": "zoing",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -1640,7 +2314,6 @@
     }
    ],
    "id": "coral_snake",
-   "difficulty": 3,
    "description": "Snake variant, and the one that corners early. It sees you late and panics at nearly double\nthe retreat range, so it hits a wall almost immediately and answers with a short-range\nshotgun of twice-bouncing shots instead of a lane-filling pair. The trade is the reverse of\nthe snake's: harmless at distance, a wall of pellets the moment you crowd it.\n",
    "blurb": "Snake variant, and the one that corners early. It sees you late and panics at nearly double the retreat range, so it hits a wall almost immediately and answers with a short-range shotgun of twice-bouncing shots instead of a lane-filling pair. The trade is the reverse of the snake's: harmless at distance, a wall of pellets the moment you crowd it.",
    "art": "the snake recoloured hot coral — banded orange over red, white eye pixel.",
@@ -1707,6 +2380,7 @@
    "name": "Dirt Golem",
    "rarity": "common",
    "max_health": 180,
+   "kinds": [],
    "speed_px": 12,
    "probes": {
     "detect": 12,
@@ -1717,12 +2391,14 @@
      "item": "ring1",
      "spell": "ring",
      "tier": 1,
+     "weakness": null,
      "chance": 0.2
     },
     {
      "item": "nope",
      "spell": "nope",
      "tier": null,
+     "weakness": null,
      "chance": 0.2
     }
    ],
@@ -1754,7 +2430,6 @@
     }
    ],
    "id": "dirt_golem",
-   "difficulty": 3,
    "description": "The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings\nbarely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You\nlearn to read an area denier that sits still and then lumbers after you, and here a misread is\ncheap. You can always outrun it, so the threat is the space it fills.\n",
    "blurb": "The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You learn to read an area denier that sits still and then lumbers after you, and here a misread is cheap. You can always outrun it, so the threat is the space it fills.",
    "art": "the golem sprite in packed-earth browns with grass tufts on its shoulders.",
@@ -1812,10 +2487,139 @@
    ]
   },
   {
+   "source": "game/characters/enemies/gapcap/gapcap_data.tres",
+   "name": "Gapcap",
+   "rarity": "common",
+   "max_health": 100,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 86,
+   "probes": {
+    "detect": 12,
+    "cone": 3
+   },
+   "drops": [
+    {
+     "item": "blam3_insect",
+     "spell": "blam",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "gapcap_cone",
+     "kind": "bullet",
+     "cooldown": 2,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 50,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "cone"
+    },
+    {
+     "cast": "gapcap_double_cone",
+     "kind": "bullet",
+     "cooldown": 2,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 50,
+      "count": 2,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "double_cone"
+    }
+   ],
+   "id": "gapcap",
+   "description": "The one thing that closes hard, and it only does it once at a time. It sprints the gap,\ndumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the\nwhole enemy is a single committed lunge you either sidestep or eat, and what you get for\nsidestepping it is a free window with the thing standing helpless in front of you. It is\nthe dungeon's answer to a player who solves every room from max range.\n\nSpores turn the free window off. Standing in a field it lunges further, fires the cone\ntwice, and recovers in about half the time — the same enemy, with the gap between its\ncommitment and its next one closed. Whether the lunge is a mistake it makes or a mistake\nyou make is decided by whose floor it is standing on.\n",
+   "blurb": "The one thing that closes hard, and it only does it once at a time. It sprints the gap, dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the whole enemy is a single committed lunge you either sidestep or eat, and what you get for sidestepping it is a free window with the thing standing helpless in front of you. It is the dungeon's answer to a player who solves every room from max range.",
+   "art": "a squat rust-red cap on two thick stubby legs, its rim split across the front like a mouth over a pale gill band; the lunge row throws the cap out ahead of the legs and the strike row flattens the whole body into the ground before the mouth opens.",
+   "casts": [
+    "blam"
+   ],
+   "notes": "pure composition, and the roster's clearest case of the empowerment being a shape rather than a number — `approach` to `cast` to a rooted `hold`, with a `needs_cloud` twin of each of the three. The fed lunge is a longer clock on the same chase, the fed cone is a second shot on the same spell, and the shorter root is simply where that cone hands off, so nothing is gated that a `Gate` does not already list.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Lunge",
+      "when": "sees player"
+     },
+     {
+      "from": "Lunge",
+      "to": "Cone",
+      "when": "arrived"
+     },
+     {
+      "from": "Cone",
+      "to": "Rooted",
+      "when": "fired"
+     },
+     {
+      "from": "Rooted",
+      "to": "Idle",
+      "when": "recovered"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/gapcap/gapcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 24,
+   "damage": "24",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/grimling/grimling_data.tres",
    "name": "Grimling",
    "rarity": "common",
    "max_health": 90,
+   "kinds": [],
    "speed_px": 40,
    "probes": {
     "detect": 10,
@@ -1827,12 +2631,14 @@
      "item": "pew2",
      "spell": "pew",
      "tier": 2,
+     "weakness": null,
      "chance": 0.5
     },
     {
      "item": "halp2",
      "spell": "halp",
      "tier": 2,
+     "weakness": null,
      "chance": 0.02
     }
    ],
@@ -1864,7 +2670,6 @@
     }
    ],
    "id": "grimling",
-   "difficulty": 4,
    "description": "Pack hunter. It wanders, then weaves in and fires a three-bolt burst at five tiles, with no\nrecovery between bursts while you stay in reach. Grimlings share a pack group: one alert —\nor one hit — wakes every grimling of any kind in the radius. The weave makes it hard to line\nup a shot, and the pack punishes you for focusing one down without a plan for the rest.\n",
    "blurb": "Pack hunter. It wanders, then weaves in and fires a three-bolt burst at five tiles, with no recovery between bursts while you stay in reach. Grimlings share a pack group: one alert — or one hit — wakes every grimling of any kind in the radius. The weave makes it hard to line up a shot, and the pack punishes you for focusing one down without a plan for the rest.",
    "art": "a small hunched shadow-sprite, gloom-black body with two amber eyes and needle limbs; quick flickering run frames.",
@@ -1946,6 +2751,7 @@
    "name": "Hopper",
    "rarity": "common",
    "max_health": 38,
+   "kinds": [],
    "speed_px": 18,
    "probes": {
     "detect": 7,
@@ -1957,12 +2763,14 @@
      "item": "pew1",
      "spell": "pew",
      "tier": 1,
+     "weakness": null,
      "chance": 0.15
     },
     {
      "item": "heal1",
      "spell": "heal",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -1994,7 +2802,6 @@
     }
    ],
    "id": "hopper",
-   "difficulty": 2,
    "description": "A quick closer, and the first enemy that actually comes at you. It `Wander`s until it spots\nyou, then weaves in and pokes at short range with a fast single shot. Fragile and low-damage\nalone; it turns up in pairs with sproutlings, so it teaches you to keep moving while something\ncrowds your space.\n",
    "blurb": "A quick closer, and the first enemy that actually comes at you. It `Wander`s until it spots you, then weaves in and pokes at short range with a fast single shot. Fragile and low-damage alone; it turns up in pairs with sproutlings, so it teaches you to keep moving while something crowds your space.",
    "art": "a small round critter with two eyes and stubby legs, glade green (8×8): a two-frame idle and a three-frame hop.",
@@ -2066,6 +2873,7 @@
    "name": "Mandrake",
    "rarity": "common",
    "max_health": 30,
+   "kinds": [],
    "speed_px": 28,
    "probes": {
     "detect": 8,
@@ -2077,6 +2885,7 @@
      "item": "blam1",
      "spell": "blam",
      "tier": 1,
+     "weakness": null,
      "chance": 0.2
     }
    ],
@@ -2108,7 +2917,6 @@
     }
    ],
    "id": "mandrake",
-   "difficulty": 2,
    "description": "Low HP, high tempo, always in a pack. Mandrakes uproot and sprint straight at you, wailing a\nslow sound wave as they close. One is trivial. The point is the group: three or four converge\nso the waves overlap and force you to move. This is the glade's lesson in what the AoE spells\nare *for*, and they spawn in exactly the clumps that reward one.\n",
    "blurb": "Low HP, high tempo, always in a pack. Mandrakes uproot and sprint straight at you, wailing a slow sound wave as they close. One is trivial. The point is the group: three or four converge so the waves overlap and force you to move. This is the glade's lesson in what the AoE spells are *for*, and they spawn in exactly the clumps that reward one.",
    "art": "a root-bodied figure with a screaming face; the wave is two expanding arcs.",
@@ -2180,6 +2988,7 @@
    "name": "Mole",
    "rarity": "common",
    "max_health": 150,
+   "kinds": [],
    "speed_px": 30,
    "probes": {
     "detect": 11,
@@ -2191,6 +3000,7 @@
      "item": "ring2",
      "spell": "ring",
      "tier": 2,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -2222,7 +3032,6 @@
     }
    ],
    "id": "mole",
-   "difficulty": 5,
    "description": "Introduces the **burrow**. It dives underground where it cannot be hit at all, and the only\ntell is a dirt plume tracking toward you; inside three tiles it erupts with a pair of\nrotating ring bursts, scratches around on the surface for a beat — your punish window —\nthen dives again. Fighting it is rhythm reading: move off the plume, hit it while it blinks\nin the light.\n",
    "blurb": "Introduces the **burrow**. It dives underground where it cannot be hit at all, and the only tell is a dirt plume tracking toward you; inside three tiles it erupts with a pair of rotating ring bursts, scratches around on the surface for a beat — your punish window — then dives again. Fighting it is rhythm reading: move off the plume, hit it while it blinks in the light.",
    "art": "a plump maroon-brown mole with oversized pale claws and a pink snout; a travelling dirt-mound sprite while submerged, a burst-of-soil frame on eruption.",
@@ -2294,6 +3103,7 @@
    "name": "Moon Moth",
    "rarity": "common",
    "max_health": 55,
+   "kinds": [],
    "speed_px": 44,
    "probes": {
     "detect": 12,
@@ -2306,6 +3116,7 @@
      "item": "ring2",
      "spell": "ring",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -2337,7 +3148,6 @@
     }
    ],
    "id": "moon_moth",
-   "difficulty": 3,
    "description": "Moth variant, and the one you fight at arm's length. Same flit-in, poke, bolt loop, but the\npoke is a pair of scale rings pulsed off its own body, each rotated off the last, so it has\nto be right on top of you to land anything. It commits closer than the moth and leaves\nsooner. Standing still to trade with one puts you inside the pulse; step off it, not\nthrough it.\n",
    "blurb": "Moth variant, and the one you fight at arm's length. Same flit-in, poke, bolt loop, but the poke is a pair of scale rings pulsed off its own body, each rotated off the last, so it has to be right on top of you to land anything. It commits closer than the moth and leaves sooner. Standing still to trade with one puts you inside the pulse; step off it, not through it.",
    "art": "the moth recoloured moonlit — pale blue-white wings over a dusk body.",
@@ -2409,6 +3219,7 @@
    "name": "Moss Golem",
    "rarity": "common",
    "max_health": 500,
+   "kinds": [],
    "speed_px": 14,
    "probes": {
     "detect": 14,
@@ -2420,12 +3231,14 @@
      "item": "ring2",
      "spell": "ring",
      "tier": 2,
+     "weakness": null,
      "chance": 0.08
     },
     {
      "item": "nope",
      "spell": "nope",
      "tier": null,
+     "weakness": null,
      "chance": 0.3
     }
    ],
@@ -2466,7 +3279,6 @@
     }
    ],
    "id": "moss_golem",
-   "difficulty": 6,
    "description": "The golem recipe at deepwood weight — the toughest thing in the biome that isn't a boss, and\nthe slowest. It walks you down, and on arrival it hardens into a shell (a channeled absorb,\nthe rosebud's trick) that eats whatever you spent punishing the approach; then three rotating\nrings pulse out, each turned off the last, dense enough that its own tile is a place you\nnever stand.\n",
    "blurb": "The golem recipe at deepwood weight — the toughest thing in the biome that isn't a boss, and the slowest. It walks you down, and on arrival it hardens into a shell (a channeled absorb, the rosebud's trick) that eats whatever you spent punishing the approach; then three rotating rings pulse out, each turned off the last, dense enough that its own tile is a place you never stand.",
    "art": "the golem sprite overgrown: deep-green moss over grey stone, with dim eye-lights; a clenched, hardened frame for the shell.",
@@ -2549,6 +3361,7 @@
    "name": "Moth",
    "rarity": "common",
    "max_health": 55,
+   "kinds": [],
    "speed_px": 44,
    "probes": {
     "detect": 13,
@@ -2561,6 +3374,7 @@
      "item": "pew2",
      "spell": "pew",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -2592,7 +3406,6 @@
     }
    ],
    "id": "moth",
-   "difficulty": 3,
    "description": "The deepwood's basic flier and its returning face. It flits in on quick wings, pokes twice\nwith a dust burst at short range, then bolts for a beat before closing again — it never\nstands and trades. Always in twos and threes: fragile chip pressure whose job is to keep\nyou moving while heavier things line up.\n",
    "blurb": "The deepwood's basic flier and its returning face. It flits in on quick wings, pokes twice with a dust burst at short range, then bolts for a beat before closing again — it never stands and trades. Always in twos and threes: fragile chip pressure whose job is to keep you moving while heavier things line up.",
    "art": "a dusty grey-brown moth with big rounded wings and two pale eye pixels; a two-frame flutter.",
@@ -2665,10 +3478,172 @@
    ]
   },
   {
+   "source": "game/characters/enemies/mould_golem/mould_golem_data.tres",
+   "name": "Mould Golem",
+   "rarity": "common",
+   "max_health": 560,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 14,
+   "probes": {
+    "detect": 14,
+    "chase": 17,
+    "attack": 3
+   },
+   "drops": [
+    {
+     "item": "nope",
+     "spell": "nope",
+     "tier": null,
+     "weakness": null,
+     "chance": 0.1
+    },
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "mould_golem_ring",
+     "kind": "bullet",
+     "cooldown": 2.6,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 3,
+      "interval": 0.6
+     },
+     "amount": {
+      "base": 36,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 8,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "name": "ring"
+    },
+    {
+     "cast": "mould_golem_shell",
+     "kind": "nope",
+     "cooldown": 5,
+     "cast_time": 1.3,
+     "channeled": true,
+     "absorb": 90,
+     "name": "shell"
+    },
+    {
+     "cast": "mould_golem_wide_ring",
+     "kind": "bullet",
+     "cooldown": 2.6,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 12,
+      "count": 4,
+      "interval": 0.5
+     },
+     "amount": {
+      "base": 44,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 10,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "name": "wide_ring"
+    }
+   ],
+   "id": "mould_golem",
+   "description": "The slow tank, and the one body in the Mycelium that walks at you rather than waiting.\nVery high HP, a shield it puts up before it commits, and then a ring pulse that fills the\nspace around it three times over, each turn drifting off the last so the gaps never sit\nstill. The shield is the fight: it is a wall of health that arrives on a clock, and\nwhether you burn it down or walk around it decides whether the room is a fight or a\ndetour. It never idles — lose it and it simply keeps coming.\n",
+   "blurb": "The slow tank, and the one body in the Mycelium that walks at you rather than waiting. Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the space around it three times over, each turn drifting off the last so the gaps never sit still. The shield is the fight: it is a wall of health that arrives on a clock, and whether you burn it down or walk around it decides whether the room is a fight or a detour. It never idles — lose it and it simply keeps coming.",
+   "art": "the moss golem gone to rot — pale fungal white where the stone was, and the moss on its crown sagged from a live green to a dead slate one, with the sprouts at its shoulders the only part still growing.",
+   "casts": [
+    "ring",
+    "nope"
+   ],
+   "notes": "the moss golem's scene with the idle beat swapped for a `wander`, so \"never idles\" is a state that walks rather than a dial. The shield is the player's own Nope, channelled — its `cast_time` caps the channel, which is why the golem stands still through the whole wind-up and why the shell pose IS the telegraph.",
+   "fsm": {
+    "start": "Walk",
+    "transitions": [
+     {
+      "from": "Walk",
+      "to": "Chase",
+      "when": "sees player"
+     },
+     {
+      "from": "Chase",
+      "to": "Shell",
+      "when": "in range"
+     },
+     {
+      "from": "Shell",
+      "to": "Ring",
+      "when": "shield up"
+     },
+     {
+      "from": "Ring",
+      "to": "Recover",
+      "when": "pulsed"
+     },
+     {
+      "from": "Recover",
+      "to": "Shell",
+      "when": "clock lapses"
+     },
+     {
+      "from": "Chase",
+      "to": "Walk",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/mould_golem/mould_golem.png",
+    "region": [
+     0,
+     0,
+     16,
+     16
+    ]
+   },
+   "damage_max": 44,
+   "damage": "36-44",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/needle_moth/needle_moth_data.tres",
    "name": "Needle Moth",
    "rarity": "common",
    "max_health": 55,
+   "kinds": [],
    "speed_px": 46,
    "probes": {
     "detect": 14,
@@ -2681,6 +3656,7 @@
      "item": "snipe2",
      "spell": "snipe",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -2720,7 +3696,6 @@
     }
    ],
    "id": "needle_moth",
-   "difficulty": 4,
    "description": "Moth variant, and the one that taxes the dodge. It strikes from five tiles out and leaves\ntwo homing dust-needles behind it, so its retreat is what buys the shot its time: you are\ndealing with the moth that just left while the next one comes in. The needles turn hard but\nonly over a narrow cone — a sidestep won't shake one, breaking the angle will.\n",
    "blurb": "Moth variant, and the one that taxes the dodge. It strikes from five tiles out and leaves two homing dust-needles behind it, so its retreat is what buys the shot its time: you are dealing with the moth that just left while the next one comes in. The needles turn hard but only over a narrow cone — a sidestep won't shake one, breaking the angle will.",
    "art": "the moth recoloured rust — tan-orange wings over a dark plum body.",
@@ -2788,10 +3763,148 @@
    ]
   },
   {
+   "source": "game/characters/enemies/normiecap/normiecap_data.tres",
+   "name": "Normiecap",
+   "rarity": "common",
+   "max_health": 64,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 40,
+   "probes": {
+    "detect": 12,
+    "chase": 14,
+    "shoot": 2
+   },
+   "drops": [
+    {
+     "item": "pew3_insect",
+     "spell": "pew",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "normiecap_hard_pew",
+     "kind": "bullet",
+     "cooldown": 1.2,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 3,
+      "interval": 0.2
+     },
+     "amount": {
+      "base": 28,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 14,
+      "pierce": false
+     },
+     "name": "hard_pew"
+    },
+    {
+     "cast": "normiecap_pew",
+     "kind": "bullet",
+     "cooldown": 1.2,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 3,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "pew"
+    }
+   ],
+   "id": "normiecap",
+   "description": "A mushroom that walks up and spits at you. It notices you, it closes, it fires from about\ntwo tiles out, and if you walk away it gives up and goes back to standing there. There is\nno phase, no second idea and nothing to read — it is the body a room uses to make you\ncommit to a direction while something with an actual plan sets up behind it.\n\nIt still drinks. On coated floor the spit comes faster, harder and one shot longer, which\nis the whole point of putting the rule on the plainest thing in the dungeon: even the\nspeed bump is worse on floor you let stand, so there is no body in the Mycelium a player\ncan safely ignore the clouds around.\n",
+   "blurb": "A mushroom that walks up and spits at you. It notices you, it closes, it fires from about two tiles out, and if you walk away it gives up and goes back to standing there. There is no phase, no second idea and nothing to read — it is the body a room uses to make you commit to a direction while something with an actual plan sets up behind it.",
+   "art": "the plainest mushroom that can be drawn at this size — a tan cap over a pale stem with two dark eyes under the brim, and a base that picks up when it walks. Deliberately the least memorable thing on the sheet.",
+   "casts": [
+    "pew"
+   ],
+   "notes": "four library beats in a ring and nothing else — `hold` to `approach` to a two-rung `Gate` to `hold` — which makes it the roster's reference for what composition alone buys you, with no script and no bespoke node anywhere. The chase carries the LOS probe and the shot carries none, so giving up is the pursuit's job and re-closing is the recovery's, the split every ranged body in the game uses; the recovery points back at the Gate rather than at a shot, so the floor is re-read between every burst instead of once on the way in.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Chase",
+      "when": "sees player"
+     },
+     {
+      "from": "Chase",
+      "to": "Spit",
+      "when": "in range"
+     },
+     {
+      "from": "Spit",
+      "to": "Recover",
+      "when": "shot away"
+     },
+     {
+      "from": "Recover",
+      "to": "Spit",
+      "when": "still in range"
+     },
+     {
+      "from": "Recover",
+      "to": "Chase",
+      "when": "player backed off"
+     },
+     {
+      "from": "Chase",
+      "to": "Idle",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/normiecap/normiecap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 28,
+   "damage": "20-28",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/owl/owl_data.tres",
    "name": "Owl",
    "rarity": "common",
    "max_health": 120,
+   "kinds": [],
    "speed_px": 46,
    "probes": {
     "detect": 18,
@@ -2804,12 +3917,14 @@
      "item": "bwoom2",
      "spell": "bwoom",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     },
     {
      "item": "pew2",
      "spell": "pew",
      "tier": 2,
+     "weakness": null,
      "chance": 0.07
     }
    ],
@@ -2830,7 +3945,6 @@
     }
    ],
    "id": "owl",
-   "difficulty": 4,
    "description": "The perch sniper. It sits still and charges a Bwoom shot at anything inside ten tiles, the\nwind-up itself being the telegraph. Get too close, or out of its band, and it repositions a\nfew tiles before charging again; being cornered mid-reposition just makes it fire. It\noutranges most of what you carry at this depth, so your move is to close the gap through\nits fire.\n",
    "blurb": "The perch sniper. It sits still and charges a Bwoom shot at anything inside ten tiles, the wind-up itself being the telegraph. Get too close, or out of its band, and it repositions a few tiles before charging again; being cornered mid-reposition just makes it fire. It outranges most of what you carry at this depth, so your move is to close the gap through its fire.",
    "art": "a brown oval with an oversized head and two big amber eyes. The eye rule taken to a whole creature.",
@@ -2888,10 +4002,311 @@
    ]
   },
   {
+   "source": "game/characters/enemies/puffcap/puffcap_data.tres",
+   "name": "Puffcap",
+   "rarity": "common",
+   "max_health": 40,
+   "kinds": [
+    "fungal"
+   ],
+   "probes": {
+    "trigger": 2
+   },
+   "drops": [
+    {
+     "item": "oop2",
+     "spell": "oop",
+     "tier": 2,
+     "weakness": null,
+     "chance": 0.02
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "puffcap_pop",
+     "kind": "effect",
+     "cooldown": 0,
+     "cast_time": 0.5,
+     "channeled": false,
+     "amount": {
+      "base": 25,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "name": "pop"
+    }
+   ],
+   "id": "puffcap",
+   "description": "The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom\ndecor with no attack and barely any detection, it inhales when something comes close and\npops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never\none cap. That is the whole encounter: walk into a field and it coats itself for good, or pick\nthem off from range and keep the floor, because shooting one dead never sets it off. Nothing\nyou carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and\nonly your own answer to light.\n",
+   "blurb": "The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom decor with no attack and barely any detection, it inhales when something comes close and pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick them off from range and keep the floor, because shooting one dead never sets it off. Nothing you carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and only your own answer to light.",
+   "art": "a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame swells it past its own width before the pop.",
+   "casts": [
+    "whumf"
+   ],
+   "notes": "it pops through the player's own Whumf effect with `consumes_caster` on — the mine IS its payload, exactly as the cinderstone's Oop is. The chain is pack aggro — entering the inhale calls every packmate a few tiles out into theirs.",
+   "fsm": {
+    "start": "Rooted",
+    "transitions": [
+     {
+      "from": "Rooted",
+      "to": "Inhale",
+      "when": "player close / neighbour popped"
+     },
+     {
+      "from": "Inhale",
+      "to": "[*]",
+      "when": "spores down"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/puffcap/puffcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 25,
+   "damage": "25",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/ringcap/ringcap_data.tres",
+   "name": "Ringcap",
+   "rarity": "common",
+   "max_health": 90,
+   "kinds": [
+    "fungal"
+   ],
+   "drops": [
+    {
+     "item": "ring3_insect",
+     "spell": "ring",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    },
+    {
+     "item": "blops3",
+     "spell": "blops",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "ringcap_hard_ring",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 5,
+      "interval": 0.5
+     },
+     "amount": {
+      "base": 34,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "name": "hard_ring"
+    },
+    {
+     "cast": "ringcap_ring",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 3,
+      "interval": 1.1
+     },
+     "amount": {
+      "base": 22,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "name": "ring"
+    }
+   ],
+   "id": "ringcap",
+   "description": "The spiralcap's brother, and the same idea with the twist taken out. It stands rooted and\nthrows whole rings — no lean, no aim, no drift between shots — three of them a beat apart,\nthen rests. Where the spiralcap hands you a moving lane to walk, this hands you a wall\nthat arrives, then a gap, then another wall, so you are not reading a curve any more,\nyou are counting. Two of them out of phase is a room with no still moments in it.\n\nCoated floor changes nothing about the pattern and everything about eating it: the ring\ncomes out as a heavier, hotter shot for the same spacing. It is the roster's plainest\nempowerment on purpose — the one body where standing in a field costs you health rather\nthan options.\n",
+   "blurb": "The spiralcap's brother, and the same idea with the twist taken out. It stands rooted and throws whole rings — no lean, no aim, no drift between shots — three of them a beat apart, then rests. Where the spiralcap hands you a moving lane to walk, this hands you a wall that arrives, then a gap, then another wall, so you are not reading a curve any more, you are counting. Two of them out of phase is a room with no still moments in it.",
+   "art": "the spiralcap's silhouette in cold slate blue, same stalk and same drooping cap, so the family reads before the behaviour does; the gill band is pale cyan and flares straight out flat on every ring, because nothing here leans.",
+   "casts": [
+    "ring"
+   ],
+   "notes": "no probes and no detection, exactly as its brother has none — the rings are a fact about the room rather than an attack on you. The whole cadence is the spell's, three shots on a `shot_interval` with `rotation_per_shot` left at zero and `aim_mode` on INDEPENDENT, so the beat is one `cast()` and the `hold` behind it is the only window it ever gives. Its empowered rung swaps the BulletResource and nothing else, which is the thinnest a `needs_cloud` ladder can honestly get.",
+   "fsm": {
+    "start": "Rings",
+    "transitions": [
+     {
+      "from": "Rings",
+      "to": "Rest",
+      "when": "three thrown"
+     },
+     {
+      "from": "Rest",
+      "to": "Rings",
+      "when": "clock lapses"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/ringcap/ringcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 34,
+   "damage": "22-34",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/rollcap/rollcap_data.tres",
+   "name": "Rollcap",
+   "rarity": "common",
+   "max_health": 60,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 40,
+   "drops": [
+    {
+     "item": "pew3_insect",
+     "spell": "pew",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "rollcap_pew",
+     "kind": "bullet",
+     "cooldown": 1.1,
+     "cast_time": 0,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 4,
+      "interval": 0.2
+     },
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 8,
+      "speed_tiles": 12,
+      "pierce": false
+     },
+     "name": "pew"
+    }
+   ],
+   "id": "rollcap",
+   "description": "A spore ball on a heading, and the only body in the Mycelium that is not fighting you —\nit rolls, it reflects off whatever it runs into, and it never once turns to look. There\nis nothing to bait, nothing to out-range and nothing to break line of sight with: it is\na hazard with a health bar, wandering a room you are trying to read. Killing it costs\nyou, because it comes apart into two smaller, faster balls, and those are the end of it\n— one death, one split, so a room of them stays a room rather than a screensaver.\n\nCoated floor is what wakes it up: standing in spores it rolls faster **and** starts\npewing at you as it goes. So the only thing that turns the room's own floor into an\nattack is the body that was not attacking, and a ball you were happily walking around\nbecomes the reason to clear the field it is about to cross.\n",
+   "blurb": "A spore ball on a heading, and the only body in the Mycelium that is not fighting you — it rolls, it reflects off whatever it runs into, and it never once turns to look. There is nothing to bait, nothing to out-range and nothing to break line of sight with: it is a hazard with a health bar, wandering a room you are trying to read. Killing it costs you, because it comes apart into two smaller, faster balls, and those are the end of it — one death, one split, so a room of them stays a room rather than a screensaver.",
+   "art": "a round spore-ball in the family's pale cap flesh, wrapped in rust bands that sweep across it as it turns, with a squashed frame it flattens into off a wall; the split halves are the same ball drawn smaller, so what is left after a kill reads instantly.",
+   "casts": [
+    "pew"
+   ],
+   "notes": "the one body with no beat but its own, which is why its empowerment lives inside the roll rather than behind a `needs_cloud` rung of a `Gate` — the roll never ends, so there is no hand-off for a ladder to make, and a `cast` beat would plant the ball to fire. Coated floor pays it twice over instead — faster, and shooting. Its contact hit is a `DamageZone` rather than a caster, so running you over is an attack with no spell behind it. The roster's one bespoke behaviour lives in its own folder — a heading picked on entry and bounced off the collision normals `move_and_slide` already reports. The split is two `death_spawns` of a smaller ball that carries no `CreatureResource` — no stat sheet is no `death_spawns`, so the two-stage rule is structural rather than a generation counter, exactly as the clusterlings are.",
+   "fsm": {
+    "start": "Roll",
+    "transitions": [
+     {
+      "from": "Roll",
+      "to": "Roll",
+      "when": "bounce"
+     },
+     {
+      "from": "Roll",
+      "to": "Pew",
+      "when": "standing in spores"
+     },
+     {
+      "from": "Pew",
+      "to": "Roll",
+      "when": "shot away"
+     },
+     {
+      "from": "Roll",
+      "to": "Split",
+      "when": "killed"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/rollcap/rollcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 20,
+   "damage": "20",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/rosebud/rosebud_data.tres",
    "name": "Rosebud",
    "rarity": "common",
    "max_health": 30,
+   "kinds": [],
    "probes": {
     "detect": 5
    },
@@ -2900,12 +4315,14 @@
      "item": "ring1",
      "spell": "ring",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     },
     {
      "item": "nope",
      "spell": "nope",
      "tier": null,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -2937,7 +4354,6 @@
     }
    ],
    "id": "rosebud",
-   "difficulty": 3,
    "description": "Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into\na defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it\nblooms into a `RingPattern` whose aim rotates slightly each pulse, and idles again. It teaches\nyou to read the telegraph instead of face-tanking.\n",
    "blurb": "Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into a defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it blooms into a `RingPattern` whose aim rotates slightly each pulse, and idles again. It teaches you to read the telegraph instead of face-tanking.",
    "art": "a closed rose bud on a stem, glade greens with red petals; a petal-spread frame to bloom, a clamped-shut frame for the shell.",
@@ -2989,6 +4405,7 @@
    "name": "Seedling",
    "rarity": "common",
    "max_health": 45,
+   "kinds": [],
    "probes": {
     "detect": 4
    },
@@ -2997,12 +4414,14 @@
      "item": "ring1",
      "spell": "ring",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     },
     {
      "item": "heal1",
      "spell": "heal",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -3034,7 +4453,6 @@
     }
    ],
    "id": "seedling",
-   "difficulty": 2,
    "description": "A sproutling that grew up: the same rooted plant, but instead of one lazy seed it opens into a\nslow ring. Where the sproutling teaches that enemies shoot, the seedling teaches you not to\nstand next to the thing that shoots. The ring makes its own tile expensive even though it never\nchases. It works as area denial, and it stays a speed bump in both glade flavours.\n",
    "blurb": "A sproutling that grew up: the same rooted plant, but instead of one lazy seed it opens into a slow ring. Where the sproutling teaches that enemies shoot, the seedling teaches you not to stand next to the thing that shoots. The ring makes its own tile expensive even though it never chases. It works as area denial, and it stays a speed bump in both glade flavours.",
    "art": "the sproutling sprite crowned with a ring of buds.",
@@ -3086,6 +4504,7 @@
    "name": "Shade",
    "rarity": "common",
    "max_health": 70,
+   "kinds": [],
    "probes": {
     "detect": 12
    },
@@ -3094,12 +4513,14 @@
      "item": "blink2",
      "spell": "blink",
      "tier": 2,
+     "weakness": null,
      "chance": 0.08
     },
     {
      "item": "pew3",
      "spell": "pew",
      "tier": 3,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -3139,7 +4560,6 @@
     }
    ],
    "id": "shade",
-   "difficulty": 5,
    "description": "A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a\nshort burst, then blinks somewhere else nearby and bursts again. Nothing about a single\nburst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes\nstanding still and rewards fighting it while moving to something else. It never walks —\nthe blink is its whole movement.\n",
    "blurb": "A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a short burst, then blinks somewhere else nearby and bursts again. Nothing about a single burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes standing still and rewards fighting it while moving to something else. It never walks — the blink is its whole movement.",
    "art": "a wispy near-black silhouette with a faint violet edge and two pale eyes; a barely-there body that blinks out.",
@@ -3201,6 +4621,7 @@
    "name": "Shard Grimling",
    "rarity": "common",
    "max_health": 110,
+   "kinds": [],
    "speed_px": 30,
    "probes": {
     "detect": 12,
@@ -3212,12 +4633,14 @@
      "item": "blam2",
      "spell": "blam",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     },
     {
      "item": "halp2",
      "spell": "halp",
      "tier": 2,
+     "weakness": null,
      "chance": 0.02
     }
    ],
@@ -3250,7 +4673,6 @@
     }
    ],
    "id": "shard_grimling",
-   "difficulty": 4,
    "description": "Grimling variant, and the pack's back line. It shares the pack, but it stops at nine tiles\nand fans a spread of gloom shards instead of closing. On its own the fan is easy to walk out\nof; with two of them behind a pack the cones overlap and the gaps you were stepping into\nclose. The long wind-up is the tell, so the shard grimling is the one you push or break line\nof sight on, never the one you trade with at range.\n",
    "blurb": "Grimling variant, and the pack's back line. It shares the pack, but it stops at nine tiles and fans a spread of gloom shards instead of closing. On its own the fan is easy to walk out of; with two of them behind a pack the cones overlap and the gaps you were stepping into close. The long wind-up is the tell, so the shard grimling is the one you push or break line of sight on, never the one you trade with at range.",
    "art": "the grimling recoloured dark plum, with a duller eye-glow.",
@@ -3323,10 +4745,141 @@
    ]
   },
   {
+   "source": "game/characters/enemies/shellcap/shellcap_data.tres",
+   "name": "Shellcap",
+   "rarity": "common",
+   "max_health": 160,
+   "kinds": [
+    "fungal"
+   ],
+   "probes": {
+    "room": 16
+   },
+   "drops": [
+    {
+     "item": "snipe3_insect",
+     "spell": "snipe",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    },
+    {
+     "item": "blops3",
+     "spell": "blops",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "shellcap_fan",
+     "kind": "bullet",
+     "cooldown": 3,
+     "cast_time": 0.6,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 3,
+      "spread_deg": 10,
+      "count": 5,
+      "interval": 0.35
+     },
+     "amount": {
+      "base": 32,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 16,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "fan"
+    },
+    {
+     "cast": "shellcap_volley",
+     "kind": "bullet",
+     "cooldown": 3,
+     "cast_time": 0.6,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 3,
+      "interval": 0.35
+     },
+     "amount": {
+      "base": 26,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 16,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "homing",
+       "turn_deg": 200,
+       "cone_deg": 70,
+       "range_tiles": 3
+      }
+     ],
+     "name": "volley"
+    }
+   ],
+   "id": "shellcap",
+   "description": "The sniper, and the clock on every encounter it is in. A rooted armoured cap at the far\nend of the floor that lobs a homing volley the length of the room — the one body here\nthat reaches you wherever you stand. You cannot out-range it and you cannot ignore it,\nso the shape of every room it is in is you crossing that room through everything else to\nget to it, while the darts curve in behind you the whole way.\n\nOn coated floor the volley opens into a three-shot fan, and the far end of the room\nstops arriving one bullet at a time. It lays nothing itself, so that is a field somebody\nelse painted — the turret is the body that most repays letting a printer work.\n",
+   "blurb": "The sniper, and the clock on every encounter it is in. A rooted armoured cap at the far end of the floor that lobs a homing volley the length of the room — the one body here that reaches you wherever you stand. You cannot out-range it and you cannot ignore it, so the shape of every room it is in is you crossing that room through everything else to get to it, while the darts curve in behind you the whole way.",
+   "art": "a low hard-shelled cap in cold grey, sunk into the ground behind a thick dark rim with a lime firing slit under it, so it reads as a bunker rather than a mushroom. It has no eyes and never turns; the tell is the charge glowing up through the shell before the slit splits open.",
+   "casts": [
+    "snipe"
+   ],
+   "notes": "pure composition — a `cast` behind a room-length `range_probe`, so the dispatcher answers \"can it even reach you\" before it commits rather than rearing into a slam at nothing. The empowered rung is the ordinary `needs_cloud` first rung of its `Gate`, and the only thing that changes is the spell's fire pattern, which is the spell's business and not the beat's.",
+   "fsm": {
+    "start": "Watch",
+    "transitions": [
+     {
+      "from": "Watch",
+      "to": "Volley",
+      "when": "player in the room"
+     },
+     {
+      "from": "Volley",
+      "to": "Watch",
+      "when": "reload"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/shellcap/shellcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 32,
+   "damage": "26-32",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/snake/snake_data.tres",
    "name": "Snake",
    "rarity": "common",
    "max_health": 90,
+   "kinds": [],
    "speed_px": 35,
    "probes": {
     "detect": 9,
@@ -3337,6 +4890,7 @@
      "item": "zoing2",
      "spell": "zoing",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -3373,7 +4927,6 @@
     }
    ],
    "id": "snake",
-   "difficulty": 4,
    "description": "A skittish corridor-denier. It wanders until it spots you, then bolts in a random direction;\nwhen its back hits a wall it stands and fires twin parallel shots that ricochet, then bolts\nagain. Trivial in open rooms; in narrow passages the bouncing pair covers the corridor both\nways.\n",
    "blurb": "A skittish corridor-denier. It wanders until it spots you, then bolts in a random direction; when its back hits a wall it stands and fires twin parallel shots that ricochet, then bolts again. Trivial in open rooms; in narrow passages the bouncing pair covers the corridor both ways.",
    "art": "a low serpentine coil in deepwood two-tone green, a forked head with a white eye pixel; weave frames.",
@@ -3441,10 +4994,441 @@
    ]
   },
   {
+   "source": "game/characters/enemies/spiralcap/spiralcap_data.tres",
+   "name": "Spiralcap",
+   "rarity": "common",
+   "max_health": 90,
+   "kinds": [
+    "fungal"
+   ],
+   "drops": [
+    {
+     "item": "ring3_insect",
+     "spell": "ring",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    },
+    {
+     "item": "blops3",
+     "spell": "blops",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "spiralcap_sweep",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 40,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 32,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 10,
+      "speed_tiles": 8,
+      "pierce": false
+     },
+     "name": "sweep"
+    },
+    {
+     "cast": "spiralcap_twin_sweep",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 2,
+      "count": 40,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 40,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 8,
+      "pierce": false
+     },
+     "name": "twin_sweep"
+    }
+   ],
+   "id": "spiralcap",
+   "description": "The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that\nlays one slow lane of spores and winds it around the room like a lighthouse — it never\naims at you, never looks for you, and never reacts to being shot. The lane is a fact\nabout the room rather than an attack on you: you read where it is going and walk the gap,\nand because the shots are slow and the bearing drifts every one of them, the arm behind\nit curls into a spiral you have to cross rather than a wall you wait out. Two of them\nturning opposite ways is a floor all by itself.\n",
+   "blurb": "The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that lays one slow lane of spores and winds it around the room like a lighthouse — it never aims at you, never looks for you, and never reacts to being shot. The lane is a fact about the room rather than an attack on you: you read where it is going and walk the gap, and because the shots are slow and the bearing drifts every one of them, the arm behind it curls into a spiral you have to cross rather than a wall you wait out. Two of them turning opposite ways is a floor all by itself.",
+   "art": "a tall thin stalk in pale bone under a drooping magenta cap with a lime gill band, the rim curling past the gills; no eyes at all, because it is an object rather than an animal. The attack row tips the cap hard to each side and bends the stalk with it, so the lean says which way the lane is pointing.",
+   "casts": [
+    "ring"
+   ],
+   "notes": "no probes and no detection — the sweep is one `cast()` whose spell owns everything, with `aim_mode` on INDEPENDENT so the burst commits to its own random bearing and `rotation_per_shot` walking that bearing a full turn over the burst. The rest between revolutions is an ordinary `hold`, and is the only window it ever gives you.",
+   "fsm": {
+    "start": "Sweep",
+    "transitions": [
+     {
+      "from": "Sweep",
+      "to": "Rest",
+      "when": "revolution done"
+     },
+     {
+      "from": "Rest",
+      "to": "Sweep",
+      "when": "clock lapses"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/spiralcap/spiralcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 40,
+   "damage": "32-40",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/sporefly/sporefly_data.tres",
+   "name": "Sporefly",
+   "rarity": "common",
+   "max_health": 80,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 44,
+   "probes": {
+    "detect": 12,
+    "chase": 16,
+    "attack": 3,
+    "retreat": 1.25
+   },
+   "drops": [
+    {
+     "item": "pew3_insect",
+     "spell": "pew",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    },
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "sporefly_dust",
+     "kind": "bullet",
+     "cooldown": 0.9,
+     "cast_time": 0.35,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 2,
+      "interval": 0.4
+     },
+     "amount": {
+      "base": 28,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "dust"
+    }
+   ],
+   "id": "sporefly",
+   "description": "The moth, exactly: flits in, pokes twice at short range, bolts for a beat, closes again,\nand never stands and trades. The twist is that the poke **leaves a small patch of spores\nwhere it struck you**, so the thing chipping you is also the thing seeding the floor you\nare standing on — back off from one and you back into what the last one left. The patches\nare short-lived on their own, which is what keeps twos and threes of these a moving\nproblem rather than a room that fills up and stays filled.\n",
+   "blurb": "The moth, exactly: flits in, pokes twice at short range, bolts for a beat, closes again, and never stands and trades. The twist is that the poke **leaves a small patch of spores where it struck you**, so the thing chipping you is also the thing seeding the floor you are standing on — back off from one and you back into what the last one left. The patches are short-lived on their own, which is what keeps twos and threes of these a moving problem rather than a room that fills up and stays filled.",
+   "art": "the deepwood moth sheet gone pale and dusty — bone wings over a grey body, and the moth's amber eyes swapped for the Mycelium's lime, which is the whole difference between an animal that lives in the woods and one that lives in the spores.",
+   "casts": [
+    "pew",
+    "whumf"
+   ],
+   "notes": "the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they are inert terrain and nothing can light them.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Chase",
+      "when": "sees player"
+     },
+     {
+      "from": "Chase",
+      "to": "Poke",
+      "when": "in range"
+     },
+     {
+      "from": "Poke",
+      "to": "Retreat",
+      "when": "struck"
+     },
+     {
+      "from": "Retreat",
+      "to": "Chase",
+      "when": "beat over"
+     },
+     {
+      "from": "Chase",
+      "to": "Idle",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/sporefly/sporefly.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 28,
+   "damage": "28",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/sporespitter/sporespitter_data.tres",
+   "name": "Sporespitter",
+   "rarity": "common",
+   "max_health": 55,
+   "kinds": [
+    "fungal"
+   ],
+   "probes": {
+    "detect": 11,
+    "close": 3
+   },
+   "drops": [
+    {
+     "item": "blam3_insect",
+     "spell": "blam",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.03
+    },
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "blops3",
+     "spell": "blops",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "sporespitter_blam",
+     "kind": "bullet",
+     "cooldown": 2.5,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 3,
+      "spread_deg": 0,
+      "count": 2,
+      "interval": 0.4
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 14,
+      "pierce": false
+     },
+     "name": "blam"
+    },
+    {
+     "cast": "sporespitter_lob",
+     "kind": "bullet",
+     "cooldown": 2,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 4,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 9,
+      "speed_tiles": 11,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "lob"
+    },
+    {
+     "cast": "sporespitter_wide_blam",
+     "kind": "bullet",
+     "cooldown": 2.5,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 30,
+      "count": 3,
+      "interval": 0.35
+     },
+     "amount": {
+      "base": 30,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 14,
+      "pierce": false
+     },
+     "name": "wide_blam"
+    }
+   ],
+   "id": "sporespitter",
+   "description": "The fuse factory, and the first thing the Mycelium shows you. Rooted, long-sighted, and\nit answers **by where you stand**: from across the room it arcs a spore blob on a slow\ncadence that leaves a lasting patch where the blob lands rather than where it stands, and\nthe moment you close on it the cap coughs a shotgun cone into your face instead. So it has\nno comfortable range — walk in and you eat the barrel, hang back and it paints the floor\nyou were going to cross. One is a zoning puzzle. Three, spread around a room, and the\nfloor is gone by the time you have crossed it, none of it yours to spend, since only your\nown spores answer to light.\n",
+   "blurb": "The fuse factory, and the first thing the Mycelium shows you. Rooted, long-sighted, and it answers **by where you stand**: from across the room it arcs a spore blob on a slow cadence that leaves a lasting patch where the blob lands rather than where it stands, and the moment you close on it the cap coughs a shotgun cone into your face instead. So it has no comfortable range — walk in and you eat the barrel, hang back and it paints the floor you were going to cross. One is a zoning puzzle. Three, spread around a room, and the floor is gone by the time you have crossed it, none of it yours to spend, since only your own spores answer to light.",
+   "art": "a bent mushroom with a spout-shaped cap in rust, sickly lime gills and a pale stalk; the attack row swells the stalk and puffs the cheek on the spit.",
+   "casts": [
+    "whumf",
+    "blam"
+   ],
+   "notes": "the lob is an ordinary bullet carrying a `SporePayload` — the patch is planted by the shot expiring, so a body, a wall or the end of its range all plant it the same way. Its two beats hang off a `Gate` whose first rung is the cone behind a short range probe, so the choice is the player's position rather than a roll or a rotation, and the lob is simply what is left when you are not close enough to be shot.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Blam",
+      "when": "player close"
+     },
+     {
+      "from": "Idle",
+      "to": "Lob",
+      "when": "player far"
+     },
+     {
+      "from": "Blam",
+      "to": "Lob",
+      "when": "player backs off"
+     },
+     {
+      "from": "Lob",
+      "to": "Blam",
+      "when": "player closes"
+     },
+     {
+      "from": "Lob",
+      "to": "Idle",
+      "when": "lost sight"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/sporespitter/sporespitter.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 30,
+   "damage": "4-30",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/sproutling/sproutling_data.tres",
    "name": "Sproutling",
    "rarity": "common",
    "max_health": 25,
+   "kinds": [],
    "probes": {
     "detect": 7
    },
@@ -3453,12 +5437,14 @@
      "item": "pew1",
      "spell": "pew",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     },
     {
      "item": "heal1",
      "spell": "heal",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -3490,7 +5476,6 @@
     }
    ],
    "id": "sproutling",
-   "difficulty": 1,
    "description": "Rooted in place, watching. It sits in `Idle` until the player is in sight, then spits a\nsingle slow seed at a steady pace. This is the first enemy the player meets. The seed is slow\nenough to sidestep on reflex, so it teaches that enemies shoot without much risk.\n",
    "blurb": "Rooted in place, watching. It sits in `Idle` until the player is in sight, then spits a single slow seed at a steady pace. This is the first enemy the player meets. The seed is slow enough to sidestep on reflex, so it teaches that enemies shoot without much risk.",
    "art": "a stem, a leaf, and two eyes. The simplest sprite in the biome, in glade green.",
@@ -3542,6 +5527,7 @@
    "name": "Stalker",
    "rarity": "common",
    "max_health": 150,
+   "kinds": [],
    "speed_px": 36,
    "probes": {
     "detect": 5,
@@ -3553,6 +5539,7 @@
      "item": "blam2",
      "spell": "blam",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     }
    ],
@@ -3585,7 +5572,6 @@
     }
    ],
    "id": "stalker",
-   "difficulty": 5,
    "description": "The basic pouncer, and the biome's signature jump-scare. It sits in `Disguise` as a scenery\nprop, watching through a probe that only reaches five tiles. Step into that — or hit it —\nand it reveals, then weaves in and blasts a point-blank shotgun cone with no recovery\nbetween shots. Lose it and it becomes a prop again. Introduces **prop disguise**.\n",
    "blurb": "The basic pouncer, and the biome's signature jump-scare. It sits in `Disguise` as a scenery prop, watching through a probe that only reaches five tiles. Step into that — or hit it — and it reveals, then weaves in and blasts a point-blank shotgun cone with no recovery between shots. Lose it and it becomes a prop again. Introduces **prop disguise**.",
    "art": "a dark violet-grey cap on a thin stalk with a green leaf flick, indistinguishable from decor until the amber eyes open on reveal.",
@@ -3662,6 +5648,7 @@
    "name": "Thornback",
    "rarity": "common",
    "max_health": 350,
+   "kinds": [],
    "speed_px": 14,
    "probes": {
     "detect": 14
@@ -3671,6 +5658,7 @@
      "item": "charge_dash2",
      "spell": "charge_dash",
      "tier": 2,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -3706,7 +5694,6 @@
     }
    ],
    "id": "thornback",
-   "difficulty": 5,
    "description": "A charger, introducing the **charge-dash with flank fire**. It runs a long telegraphed\nwindup, then a straight high-speed dash that sheds bullets off both flanks, then a rooted\nrecovery that is your punish window. It locks heading at launch and can't corner, so\nsidestep the dash and burn it during recovery. Trees are your friend.\n",
    "blurb": "A charger, introducing the **charge-dash with flank fire**. It runs a long telegraphed windup, then a straight high-speed dash that sheds bullets off both flanks, then a rooted recovery that is your punish window. It locks heading at launch and can't corner, so sidestep the dash and burn it during recovery. Trees are your friend.",
    "art": "a wide squat body, dark-brown armour over a tan body, a spike array along the back.",
@@ -3773,6 +5760,7 @@
    "name": "Thornthrower",
    "rarity": "common",
    "max_health": 50,
+   "kinds": [],
    "speed_px": 32,
    "probes": {
     "detect": 8,
@@ -3784,6 +5772,7 @@
      "item": "snipe1",
      "spell": "snipe",
      "tier": 1,
+     "weakness": null,
      "chance": 0.2
     }
    ],
@@ -3823,7 +5812,6 @@
     }
    ],
    "id": "thornthrower",
-   "difficulty": 3,
    "description": "`Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing\nthorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.\n",
    "blurb": "`Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing thorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.",
    "art": "an uprooted thorn-plant on root legs, muted glade green with red thorn tips; the missile is a spinning thorn.",
@@ -3880,6 +5868,9 @@
    "name": "Wasp",
    "rarity": "common",
    "max_health": 18,
+   "kinds": [
+    "insect"
+   ],
    "speed_px": 40,
    "probes": {
     "detect": 10,
@@ -3891,18 +5882,21 @@
      "item": "bzzz1",
      "spell": "bzzz",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     },
     {
      "item": "pew1",
      "spell": "pew",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     },
     {
      "item": "zaap1",
      "spell": "zaap",
      "tier": 1,
+     "weakness": null,
      "chance": 0.1
     }
    ],
@@ -3934,7 +5928,6 @@
     }
    ],
    "id": "wasp",
-   "difficulty": 1,
    "description": "A hostile version of the player's Bzzz summon. It flits in on the same flying-minion\nbehaviour and pesters you with quick stings. Fragile and never a real threat alone. Its job is\nto show the summon's logic from the other side, and to drop the spell that turns wasps to your\nside. It also appears in the insect deepwood.\n",
    "blurb": "A hostile version of the player's Bzzz summon. It flits in on the same flying-minion behaviour and pesters you with quick stings. Fragile and never a real threat alone. Its job is to show the summon's logic from the other side, and to drop the spell that turns wasps to your side. It also appears in the insect deepwood.",
    "art": "a small bee in a hostile ochre two-tone (the Bzzz summon recoloured), with eye pixels.",
@@ -4006,6 +5999,7 @@
    "name": "Wisp Grimling",
    "rarity": "common",
    "max_health": 60,
+   "kinds": [],
    "speed_px": 54,
    "probes": {
     "detect": 18,
@@ -4017,12 +6011,14 @@
      "item": "pew2",
      "spell": "pew",
      "tier": 2,
+     "weakness": null,
      "chance": 0.05
     },
     {
      "item": "halp2",
      "spell": "halp",
      "tier": 2,
+     "weakness": null,
      "chance": 0.02
     }
    ],
@@ -4054,7 +6050,6 @@
     }
    ],
    "id": "wisp_grimling",
-   "difficulty": 3,
    "description": "Grimling variant, and the one that finds you. It sees furthest, runs fastest, and calls from\nnearly twice the radius its packmates do, so the first wisp to spot you is what turns a room\ninto a pack. Its poke is a fast triple flicker at four tiles for almost no damage — the\nthreat is never the bolt, it's who else is now coming. Kill it first or the fight keeps\nrecruiting.\n",
    "blurb": "Grimling variant, and the one that finds you. It sees furthest, runs fastest, and calls from nearly twice the radius its packmates do, so the first wisp to spot you is what turns a room into a pack. Its poke is a fast triple flicker at four tiles for almost no damage — the threat is never the bolt, it's who else is now coming. Kill it first or the fight keeps recruiting.",
    "art": "the grimling recoloured pale — washed lavender body, bright eye-glow; the brightest thing in the gloom.",
@@ -4131,6 +6126,7 @@
    "name": "Adder",
    "rarity": "rare",
    "max_health": 320,
+   "kinds": [],
    "speed_px": 46,
    "probes": {
     "detect": 12,
@@ -4141,6 +6137,7 @@
      "item": "zoing2",
      "spell": "zoing",
      "tier": 2,
+     "weakness": null,
      "chance": 0.5
     }
    ],
@@ -4178,7 +6175,6 @@
     }
    ],
    "id": "adder",
-   "difficulty": 7,
    "description": "Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits\na wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as\nwell as ahead. Cornering it in a hallway is the natural move and precisely the mistake;\ntake it in the open, where the bounces have nothing to come back off.\n",
    "blurb": "Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as well as ahead. Cornering it in a hallway is the natural move and precisely the mistake; take it in the open, where the bounces have nothing to come back off.",
    "art": "the snake coil in rare charcoal with amber banding.",
@@ -4235,10 +6231,315 @@
    ]
   },
   {
+   "source": "game/characters/enemies/burrower/burrower_data.tres",
+   "name": "Burrower",
+   "rarity": "rare",
+   "max_health": 220,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 56,
+   "probes": {
+    "detect": 14,
+    "spray": 6
+   },
+   "drops": [
+    {
+     "item": "zaap2",
+     "spell": "zaap",
+     "tier": 2,
+     "weakness": null,
+     "chance": 0.02
+    },
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "burrower_ring",
+     "kind": "bullet",
+     "cooldown": 1,
+     "cast_time": 0.45,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 10,
+      "count": 2,
+      "interval": 0.35
+     },
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "name": "ring"
+    },
+    {
+     "cast": "burrower_spores",
+     "kind": "effect",
+     "cooldown": 0,
+     "cast_time": 0.4,
+     "channeled": false,
+     "amount": {
+      "base": 22,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "name": "spores"
+    },
+    {
+     "cast": "burrower_spray",
+     "kind": "bullet",
+     "cooldown": 1,
+     "cast_time": 0.3,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 4,
+      "spread_deg": 60,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 18,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 11,
+      "pierce": false
+     },
+     "name": "spray"
+    }
+   ],
+   "id": "burrower",
+   "description": "The mole's trick, fungal, and the one body in the Mycelium that decides where the room\nis. It dives, crosses the floor unseen and untouchable, comes up somewhere you are not,\nsprays whatever is in front of it, puffs a patch of spores and goes straight back down.\nIt is never fighting you — it is redrawing the floor, and it redraws it against you.\n\nThe order of those two casts is the whole enemy. It shoots first and prints second, so\nthe cloud it just laid never pays for the spray that came before it: on clean floor the\nspray is a short cone you can be out of, and the only thing that opens it into a full\nring is surfacing into a field it left standing on an earlier lap. The rare is the body\nthat punishes you for letting its own leftovers sit.\n",
+   "blurb": "The mole's trick, fungal, and the one body in the Mycelium that decides where the room is. It dives, crosses the floor unseen and untouchable, comes up somewhere you are not, sprays whatever is in front of it, puffs a patch of spores and goes straight back down. It is never fighting you — it is redrawing the floor, and it redraws it against you.",
+   "art": "the graveyard's `burrower` sprite, revived — a mound of turned earth with two yellow eyes under it, four rows for the dive, the travelling hump, the surfacing spray of dirt and the surfaced idle.",
+   "casts": [
+    "whumf",
+    "blam"
+   ],
+   "notes": "pure composition. The crossing is a `wander` at `damage_scale = 0` — a random heading on a clock is exactly \"surfaces somewhere you are not\", and the armour dial is what makes it unseen without a second mechanism. The spray is the plain rung of a two-rung `Gate` and the ring the `needs_cloud` one; the cloud is a `cast` after both, which is where the printer rule ends up being an ordering rather than a flag.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Dive",
+      "when": "sees player"
+     },
+     {
+      "from": "Dive",
+      "to": "Burrow",
+      "when": "under"
+     },
+     {
+      "from": "Burrow",
+      "to": "Surface",
+      "when": "crossed"
+     },
+     {
+      "from": "Surface",
+      "to": "Spray",
+      "when": "clean floor"
+     },
+     {
+      "from": "Surface",
+      "to": "Ring",
+      "when": "standing in its own field"
+     },
+     {
+      "from": "Spray",
+      "to": "Spores",
+      "when": "shot away"
+     },
+     {
+      "from": "Ring",
+      "to": "Spores",
+      "when": "shot away"
+     },
+     {
+      "from": "Spores",
+      "to": "Dive",
+      "when": "cloud down"
+     },
+     {
+      "from": "Spores",
+      "to": "Idle",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/burrower/burrower.png",
+    "region": [
+     0,
+     16,
+     8,
+     8
+    ]
+   },
+   "damage_max": 22,
+   "damage": "18-22",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/deathcap/deathcap_data.tres",
+   "name": "Deathcap",
+   "rarity": "rare",
+   "max_health": 340,
+   "kinds": [
+    "fungal"
+   ],
+   "probes": {
+    "room": 18
+   },
+   "drops": [
+    {
+     "item": "snipe3_insect",
+     "spell": "snipe",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.4
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "deathcap_fan",
+     "kind": "bullet",
+     "cooldown": 2.6,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 5,
+      "spread_deg": 14,
+      "count": 6,
+      "interval": 0.3
+     },
+     "amount": {
+      "base": 28,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 16,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "fan"
+    },
+    {
+     "cast": "deathcap_volley",
+     "kind": "bullet",
+     "cooldown": 2.6,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 4,
+      "interval": 0.3
+     },
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 16,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "homing",
+       "turn_deg": 240,
+       "cone_deg": 80,
+       "range_tiles": 4
+      }
+     ],
+     "name": "volley"
+    }
+   ],
+   "id": "deathcap",
+   "description": "A shellcap that got old. Same bunker, same slit, same refusal to ever turn — but it\nreloads in about half the time, its darts curve harder, and the fan it opens into on\ncoated floor is five wide instead of three. Nothing about it is new, which is the point:\nit is the room telling you that the sniper you already know how to walk through is not\nthe sniper in this room.\n\nIt is the rare a turret line wants, because it does not change the shape of the encounter\nat all — it only shortens the window you were crossing in.\n",
+   "blurb": "A shellcap that got old. Same bunker, same slit, same refusal to ever turn — but it reloads in about half the time, its darts curve harder, and the fan it opens into on coated floor is five wide instead of three. Nothing about it is new, which is the point: it is the room telling you that the sniper you already know how to walk through is not the sniper in this room.",
+   "art": "the shellcap recoloured — pale violet shell over a plum rim, with the firing slit lit magenta instead of lime, so a room reads which of the two it is before the first shot.",
+   "casts": [
+    "snipe"
+   ],
+   "notes": "a straight copy of the shellcap's wiring with its own numbers, down to the `range_probe` on both rungs; the only structural difference is a shorter reload.",
+   "fsm": {
+    "start": "Watch",
+    "transitions": [
+     {
+      "from": "Watch",
+      "to": "Volley",
+      "when": "player in the room"
+     },
+     {
+      "from": "Volley",
+      "to": "Watch",
+      "when": "reload"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/deathcap/deathcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 28,
+   "damage": "20-28",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/elder_stalker/elder_stalker_data.tres",
    "name": "Elder Stalker",
    "rarity": "rare",
    "max_health": 260,
+   "kinds": [],
    "probes": {
     "detect": 22,
     "blast": 5
@@ -4248,12 +6549,14 @@
      "item": "blam3",
      "spell": "blam",
      "tier": 3,
+     "weakness": null,
      "chance": 0.3
     },
     {
      "item": "blink2",
      "spell": "blink",
      "tier": 2,
+     "weakness": null,
      "chance": 0.6
     }
    ],
@@ -4360,7 +6663,6 @@
     }
    ],
    "id": "elder_stalker",
-   "difficulty": 7,
    "description": "Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone\nhoming seed from across the room, blinks the moment it has fired, and greets you with a\nshotgun cone wherever it lands. The seed forces you to move; the blink means the ground you\nmoved to is the wrong ground. It never chases — every reposition is a teleport — so the\nfight is about closing the gap between its cycle rather than out-running it.\n",
    "blurb": "Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone homing seed from across the room, blinks the moment it has fired, and greets you with a shotgun cone wherever it lands. The seed forces you to move; the blink means the ground you moved to is the wrong ground. It never chases — every reposition is a teleport — so the fight is about closing the gap between its cycle rather than out-running it.",
    "art": "a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on reveal; taller than the stalker.",
@@ -4441,6 +6743,7 @@
    "name": "Great Owl",
    "rarity": "rare",
    "max_health": 300,
+   "kinds": [],
    "speed_px": 42,
    "probes": {
     "detect": 28,
@@ -4453,6 +6756,7 @@
      "item": "bwoom2",
      "spell": "bwoom",
      "tier": 2,
+     "weakness": null,
      "chance": 0.8
     }
    ],
@@ -4473,7 +6777,6 @@
     }
    ],
    "id": "great_owl",
-   "difficulty": 6,
    "description": "Owl variant: bigger, and its firing band is most of the map — it charges from twenty-four\ntiles, further than anything else in the biome can answer. The wind-up is longer and the\ntelegraph brighter, so the duel stays honest, but it re-perches further away too and the\nwhole fight is spent closing.\n",
    "blurb": "Owl variant: bigger, and its firing band is most of the map — it charges from twenty-four tiles, further than anything else in the biome can answer. The wind-up is longer and the telegraph brighter, so the duel stays honest, but it re-perches further away too and the whole fight is spent closing.",
    "art": "the owl sprite enlarged, pale barn-owl white with amber eyes.",
@@ -4540,6 +6843,7 @@
    "name": "Grimlord",
    "rarity": "rare",
    "max_health": 380,
+   "kinds": [],
    "speed_px": 38,
    "probes": {
     "detect": 11,
@@ -4551,18 +6855,21 @@
      "item": "blam3",
      "spell": "blam",
      "tier": 3,
+     "weakness": null,
      "chance": 0.5
     },
     {
      "item": "ring3",
      "spell": "ring",
      "tier": 3,
+     "weakness": null,
      "chance": 0.3
     },
     {
      "item": "halp2",
      "spell": "halp",
      "tier": 2,
+     "weakness": null,
      "chance": 0.2
     }
    ],
@@ -4644,7 +6951,6 @@
     }
    ],
    "id": "grimlord",
-   "difficulty": 6,
    "description": "A larger, darker grimling, the pack's alpha, and the one grimling that rolls its beat: a\n`PatternPicker` swaps its move at low health rather than adding one. Above a quarter health\nit weaves in and sprays five bolts at four tiles. Below it, the spray is gone and it enrages\n— seven bolts, faster, from wherever it stands, with no range check at all. On death it\nbursts one parting ring. The weave plus the enrage turns the last sliver of its health into\na gauntlet.\n",
    "blurb": "A larger, darker grimling, the pack's alpha, and the one grimling that rolls its beat: a `PatternPicker` swaps its move at low health rather than adding one. Above a quarter health it weaves in and sprays five bolts at four tiles. Below it, the spray is gone and it enrages — seven bolts, faster, from wherever it stands, with no range check at all. On death it bursts one parting ring. The weave plus the enrage turns the last sliver of its health into a gauntlet.",
    "art": "the grimling silhouette enlarged and near-black, red eye-glow; the enrage frame brightens the eyes.",
@@ -4735,6 +7041,7 @@
    "name": "Mandraker",
    "rarity": "rare",
    "max_health": 200,
+   "kinds": [],
    "speed_px": 28,
    "probes": {
     "detect": 8,
@@ -4747,12 +7054,14 @@
      "item": "fireball2",
      "spell": "fireball",
      "tier": 2,
+     "weakness": null,
      "chance": 0.5
     },
     {
      "item": "blam2",
      "spell": "blam",
      "tier": 2,
+     "weakness": null,
      "chance": 0.3
     }
    ],
@@ -4816,7 +7125,6 @@
     }
    ],
    "id": "mandraker",
-   "difficulty": 5,
    "description": "Rare mandrake that casts fireball\n",
    "blurb": "Rare mandrake that casts fireball",
    "art": "a root-bodied figure with a screaming face; the wave is two expanding arcs. Palette towards red",
@@ -4895,10 +7203,139 @@
    ]
   },
   {
+   "source": "game/characters/enemies/maulcap/maulcap_data.tres",
+   "name": "Maulcap",
+   "rarity": "rare",
+   "max_health": 260,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 104,
+   "probes": {
+    "detect": 15,
+    "cone": 3.5
+   },
+   "drops": [
+    {
+     "item": "blam3_insect",
+     "spell": "blam",
+     "tier": 3,
+     "weakness": "insect",
+     "chance": 0.4
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "maulcap_cone",
+     "kind": "bullet",
+     "cooldown": 1.8,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 6,
+      "spread_deg": 55,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 34,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "cone"
+    },
+    {
+     "cast": "maulcap_double_cone",
+     "kind": "bullet",
+     "cooldown": 1.8,
+     "cast_time": 0.25,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 6,
+      "spread_deg": 55,
+      "count": 3,
+      "interval": 0.3
+     },
+     "amount": {
+      "base": 34,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "double_cone"
+    }
+   ],
+   "id": "maulcap",
+   "description": "A gapcap with more of everything the gapcap already had. It sprints further, its cone is\nsix pellets wide instead of five, and the fed lunge dumps three of them rather than two\nbefore it roots. The sidestep still works — it is one committed charge and it still\ncannot follow — but the window it leaves you afterwards is shorter and the price of\nmisreading it is most of a health bar.\n",
+   "blurb": "A gapcap with more of everything the gapcap already had. It sprints further, its cone is six pellets wide instead of five, and the fed lunge dumps three of them rather than two before it roots. The sidestep still works — it is one committed charge and it still cannot follow — but the window it leaves you afterwards is shorter and the price of misreading it is most of a health bar.",
+   "art": "the gapcap recoloured — a charcoal-blue cap over an ember-orange stalk, so the one thing in the room that is going to run at you is the one thing that glows.",
+   "casts": [
+    "blam"
+   ],
+   "notes": "the gapcap's exact node graph with harder dials on both lunges and both cones. Its empowerment is still the pair of behaviour dials rather than a spell — further and briefer — so `needs_cloud` sits on the lunge as well as the cast.",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Lunge",
+      "when": "sees player"
+     },
+     {
+      "from": "Lunge",
+      "to": "Cone",
+      "when": "in range"
+     },
+     {
+      "from": "Cone",
+      "to": "Root",
+      "when": "shot away"
+     },
+     {
+      "from": "Root",
+      "to": "Idle",
+      "when": "recovered"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/maulcap/maulcap.png",
+    "region": [
+     0,
+     0,
+     8,
+     8
+    ]
+   },
+   "damage_max": 34,
+   "damage": "34",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium floor",
+     "planned": true
+    }
+   ]
+  },
+  {
    "source": "game/characters/enemies/razorback/razorback_data.tres",
    "name": "Razorback",
    "rarity": "rare",
    "max_health": 420,
+   "kinds": [],
    "speed_px": 18,
    "probes": {
     "detect": 20
@@ -4908,6 +7345,7 @@
      "item": "charge_dash2",
      "spell": "charge_dash",
      "tier": 2,
+     "weakness": null,
      "chance": 0.5
     }
    ],
@@ -4943,7 +7381,6 @@
     }
    ],
    "id": "razorback",
-   "difficulty": 7,
    "description": "Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch,\nchaining charge after charge for as long as you stay inside its very long sight line; only a\nhead-on wall hit stuns it into a real punish window. Fight it near trees and make the forest\ndo the work.\n",
    "blurb": "Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch, chaining charge after charge for as long as you stay inside its very long sight line; only a head-on wall hit stuns it into a real punish window. Fight it near trees and make the forest do the work.",
    "art": "the thornback silhouette in near-black armour with red spike tips.",
@@ -5020,6 +7457,7 @@
    "name": "Umbra",
    "rarity": "rare",
    "max_health": 200,
+   "kinds": [],
    "probes": {
     "detect": 12
    },
@@ -5028,12 +7466,14 @@
      "item": "blink2",
      "spell": "blink",
      "tier": 2,
+     "weakness": null,
      "chance": 0.5
     },
     {
      "item": "pew3",
      "spell": "pew",
      "tier": 3,
+     "weakness": null,
      "chance": 0.3
     }
    ],
@@ -5073,7 +7513,6 @@
     }
    ],
    "id": "umbra",
-   "difficulty": 7,
    "description": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on\nthe far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so\nwhat changed is entirely where it fires it from. Turning to face it puts your back to\nwhatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking\nyou to make. Clear it first, or fight it with a wall behind you.\n",
    "blurb": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so what changed is entirely where it fires it from. Turning to face it puts your back to whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking you to make. Clear it first, or fight it with a wall behind you.",
    "art": "the shade silhouette in deeper black with a thin red edge.",
@@ -5135,6 +7574,7 @@
    "name": "Viper",
    "rarity": "rare",
    "max_health": 180,
+   "kinds": [],
    "speed_px": 32,
    "probes": {
     "detect": 12,
@@ -5145,6 +7585,7 @@
      "item": "blam2",
      "spell": "blam",
      "tier": 2,
+     "weakness": null,
      "chance": 0.5
     }
    ],
@@ -5177,7 +7618,6 @@
     }
    ],
    "id": "viper",
-   "difficulty": 4,
    "description": "The one enemy that runs from you. The instant it sees you it picks a random direction and\nslithers off, and it turns to fight only when it can't flee: cornered, it unloads a wide\nshotgun barrage and bolts again in a fresh direction. It carries tier-2 gear, so it is worth\nchasing. Cut the angle, trap it against a tree, and eat the barrage to claim the drop.\n",
    "blurb": "The one enemy that runs from you. The instant it sees you it picks a random direction and slithers off, and it turns to fight only when it can't flee: cornered, it unloads a wide shotgun barrage and bolts again in a fresh direction. It carries tier-2 gear, so it is worth chasing. Cut the angle, trap it against a tree, and eat the barrage to claim the drop.",
    "art": "the snake sprite in a rare venom-green with gold banding.",
@@ -5239,6 +7679,7 @@
    "name": "Fae",
    "rarity": "boss",
    "max_health": 1500,
+   "kinds": [],
    "speed_px": 28,
    "probes": {
     "detect": 16
@@ -5248,12 +7689,14 @@
      "item": "blam2",
      "spell": "blam",
      "tier": 2,
+     "weakness": null,
      "chance": 0.66
     },
     {
      "item": "ring2",
      "spell": "ring",
      "tier": 2,
+     "weakness": null,
      "chance": 0.66
     }
    ],
@@ -5311,7 +7754,6 @@
     }
    ],
    "id": "fae",
-   "difficulty": 6,
    "description": "The glade's floral capstone. It is a flitting sprite that hangs at range and rolls a fresh\nattack each phase on a `PatternPicker`, so the fight never settles into one rhythm. No single\nphase is deadly, but each one runs long, so you win by dealing steady damage while avoiding\nchip over many cycles.\n\n- **Rings** (`RingPattern`): pulses full rings for several seconds to weave through.\n- **Aimed shotgun** (`Volley` + `ShotgunPattern`): a tight cone fired several times in a row.\n  Punishes standing still.\n- **Rest** (`FaeRest`): does nothing briefly. Your burn window.\n- **Chase**: flits straight at you at half your speed without shooting, just to shove you out of\n  position. It breaks off and rolls a new phase once it gets close enough.\n",
    "blurb": "The glade's floral capstone. It is a flitting sprite that hangs at range and rolls a fresh attack each phase on a `PatternPicker`, so the fight never settles into one rhythm. No single phase is deadly, but each one runs long, so you win by dealing steady damage while avoiding chip over many cycles.",
    "art": "a small winged figure, one bright fill and a trail of light (16×16 boss sheet).",
@@ -5396,6 +7838,7 @@
    "name": "Gnarlking",
    "rarity": "boss",
    "max_health": 5000,
+   "kinds": [],
    "speed_px": 82,
    "probes": {
     "detect": 22,
@@ -5408,24 +7851,28 @@
      "item": "thwomp3",
      "spell": "thwomp",
      "tier": 3,
+     "weakness": null,
      "chance": 1
     },
     {
      "item": "halp2",
      "spell": "halp",
      "tier": 2,
+     "weakness": null,
      "chance": 0.6
     },
     {
      "item": "blam3",
      "spell": "blam",
      "tier": 3,
+     "weakness": null,
      "chance": 1
     },
     {
      "item": "charge_dash2",
      "spell": "charge_dash",
      "tier": 2,
+     "weakness": null,
      "chance": 0.6
     }
    ],
@@ -5556,7 +8003,6 @@
     }
    ],
    "id": "gnarlking",
-   "difficulty": 9,
    "description": "The apex of the animal deepwood, and the one boss that doesn't roll: it runs ordered `Gate`\nladders, so what it does next is decided by the arena rather than by dice. The fight\nalternates two modes and **the player sets the pace of the swap**.\n\nEverything it owns is a close-quarters weapon, and the whole kit is **range-gated** — it\nnever swings at air. Out of reach it simply walks you down, and distance is a delay, not an\nanswer.\n\n- **Call → Hunt** *(armoured)*: it rings in a brood of six grimlings — the plain, shard and\n  wisp kinds mixed — then comes for you. While any of them stand it takes about a third\n  damage, and it works the ladder by distance: **Ground Slam** inside 6 tiles (radial\n  shockwave, damage falling off with distance, big knockback — demonstrates **Thwomp**),\n  **Shotgun Volley** inside 8, and outside both it **closes**, at a steady advance you can\n  outpace but not shake. Chipping the boss here is a poor trade against clearing the pack,\n  but not a wasted one.\n- **Charge** *(unarmoured)*: the moment the brood is dead — or its 26s life runs out — the\n  charge unlocks and the ranged kit drops entirely. The thornback's charge-dash writ large:\n  a locked-heading lunge shedding `FlankPattern` bullets. It can't corner.\n- **Stalk → second Charge**: after the lunge it prowls for a beat. Still within reach and it\n  immediately charges again; broken away and it goes straight to **Winded**. Your footwork\n  sets the length of the burst.\n- **Stagger**: sidestep a charge into a tree and the head-on slam staggers it — three and a\n  half seconds rooted, taking *extra* damage. The fight's best window, and you have to earn it.\n- **Winded**: heaves briefly, then calls the next brood.\n\nThe decision the loop poses: clear the adds fast and you reach the burn window sooner but\nmeet the charge sooner too, with the pack's chip damage still on you; ignore them and you\nare ground down while the boss walks into your face anyway.\n",
    "blurb": "The apex of the animal deepwood, and the one boss that doesn't roll: it runs ordered `Gate` ladders, so what it does next is decided by the arena rather than by dice. The fight alternates two modes and **the player sets the pace of the swap**.",
    "art": "a towering forest-lord of bark, antler, and gloom, pale glowing eyes, oversized frame; a rear-and-slam pose for the slam (boss sheet).",
@@ -5710,6 +8156,7 @@
    "name": "Thornmess",
    "rarity": "boss",
    "max_health": 2000,
+   "kinds": [],
    "speed_px": 32,
    "probes": {
     "detect": 22,
@@ -5721,18 +8168,21 @@
      "item": "jimmy1",
      "spell": "jimmy",
      "tier": 1,
+     "weakness": null,
      "chance": 1
     },
     {
      "item": "snipe2",
      "spell": "snipe",
      "tier": 2,
+     "weakness": null,
      "chance": 0.66
     },
     {
      "item": "ring2",
      "spell": "ring",
      "tier": 2,
+     "weakness": null,
      "chance": 0.66
     }
    ],
@@ -5861,7 +8311,6 @@
     }
    ],
    "id": "thornmess",
-   "difficulty": 7,
    "description": "The rooted capstone. It stays on the ground and runs a `PatternPicker`\nsplit into two HP-gated pools. It idles until you are in range, then fires thornthrower\nmissiles. If you break range it uproots and sprints to close, where it behaves like a rosebud\nor fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen,\nseeds the room with the biome's rooted plants, then returns to the cycle.\n",
    "blurb": "The rooted capstone. It stays on the ground and runs a `PatternPicker` split into two HP-gated pools. It idles until you are in range, then fires thornthrower missiles. If you break range it uproots and sprints to close, where it behaves like a rosebud or fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen, seeds the room with the biome's rooted plants, then returns to the cycle.",
    "art": "a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red thorn tips (boss sheet).",
@@ -6002,6 +8451,33 @@
     "adder",
     "elder_stalker",
     "umbra"
+   ]
+  },
+  {
+   "id": "mycelium",
+   "name": "Mycelium",
+   "tier_label": "T3",
+   "intro": "The dungeon behind the mimic deepwood's mushroom door — eight floors down, one way through, a boss at the bottom. A floor is the smallest biome the packer will take, so the whole descent is ordinary worldgen stacked in a column. Art and rooms only so far: the floors carve but spawn nothing.",
+   "enemies_intro": "Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. None of it is placed yet — the floors carve, and every room's table is empty.",
+   "biomes": [
+    "mycelium"
+   ],
+   "roster": [
+    "bloatcap",
+    "clustercap",
+    "gapcap",
+    "mould_golem",
+    "normiecap",
+    "puffcap",
+    "ringcap",
+    "rollcap",
+    "shellcap",
+    "spiralcap",
+    "sporefly",
+    "sporespitter",
+    "burrower",
+    "deathcap",
+    "maulcap"
    ]
   }
  ],
@@ -6177,6 +8653,41 @@
     "deepwood_mimic_rare_adder",
     "deepwood_mimic_rare_elder_stalker",
     "deepwood_mimic_rare_umbra"
+   ]
+  },
+  {
+   "id": "mycelium",
+   "source": "game/world_content/biomes/mycelium/mycelium.tres",
+   "family": "mycelium",
+   "size_cells": [
+    1,
+    1
+   ],
+   "fallback_room_type": "mycelium_open",
+   "name": "Mycelium floor",
+   "intro": "One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run.",
+   "roster": [
+    "bloatcap",
+    "clustercap",
+    "gapcap",
+    "mould_golem",
+    "normiecap",
+    "puffcap",
+    "ringcap",
+    "rollcap",
+    "shellcap",
+    "spiralcap",
+    "sporefly",
+    "sporespitter",
+    "burrower",
+    "deathcap",
+    "maulcap"
+   ],
+   "planned": true,
+   "room_ids": [
+    "mycelium_cave",
+    "mycelium_open",
+    "mycelium_pocket"
    ]
   }
  ],
@@ -9900,6 +12411,60 @@
    ],
    "biome_name": "Mimic deepwood",
    "family": "deepwood"
+  },
+  {
+   "id": "mycelium_cave",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_cave.tres",
+   "difficulty": 0,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 0,
+   "groups_max": 0,
+   "scale_with_size": true,
+   "features": [],
+   "variations": [],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_open",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_open.tres",
+   "difficulty": 0,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 2,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 0,
+   "groups_max": 0,
+   "scale_with_size": true,
+   "features": [],
+   "variations": [],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_pocket",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_pocket.tres",
+   "difficulty": 0,
+   "generator": "cave",
+   "footprint_blob": true,
+   "weight": 2,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 0,
+   "groups_max": 0,
+   "scale_with_size": true,
+   "features": [],
+   "variations": [],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
   }
  ],
  "starter_kit": [
