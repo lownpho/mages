@@ -42,6 +42,77 @@ static func scan_enemy_ids() -> Array[StringName]:
 	return out
 
 
+## Enemy ids grouped by the biome whose rooms spawn them: [{label, ids}], in world order
+## (sub-biomes sharing a BiomeDef.family merge into one entry, as they do in the bestiary).
+## Every GenConfig in world_content/ is read, so a side dungeon groups like the main world.
+## Enemies no spawn table claims — built, not placed yet — close the list under "other".
+static func scan_enemy_groups() -> Array:
+	var valid: Dictionary = {}
+	for eid in scan_enemy_ids():
+		if eid != &"placeholder":
+			valid[eid] = true
+	var by_label: Dictionary = {}   # label -> {enemy id: true}; insertion order = world order
+	for path in scan_gen_configs():
+		var cfg := load(path) as GenConfig
+		if cfg == null:
+			continue
+		var label_of: Dictionary = {}
+		for b in cfg.biomes:
+			label_of[b.id] = b.family if b.family != &"" else b.id
+		for rt in cfg.room_types:
+			# A WORLD-unique room type names no owning biome; it spawns in each it allows.
+			var biomes: Array = [rt.biome] if rt.biome != &"" else Array(rt.unique_allowed_biomes)
+			for biome in biomes:
+				var label: StringName = label_of.get(biome, biome)
+				for entry in rt.enemies:
+					for id in _entry_enemy_ids(entry):
+						if valid.has(id):
+							by_label.get_or_add(label, {})[id] = true
+	var out: Array = []
+	var claimed: Dictionary = {}
+	for label in by_label:
+		var ids: Array[StringName] = []
+		for id in by_label[label]:
+			ids.append(id)
+			claimed[id] = true
+		# StringName < compares pointers, not text — sort on the String form.
+		ids.sort_custom(func(a, b): return String(a) < String(b))
+		out.append({"label": label, "ids": ids})
+	var rest: Array[StringName] = []
+	for eid in valid:
+		if not claimed.has(eid):
+			rest.append(eid)
+	rest.sort_custom(func(a, b): return String(a) < String(b))
+	if not rest.is_empty():
+		out.append({"label": &"other", "ids": rest})
+	return out
+
+
+## Both spawn-table shapes: a single type, or a mixed pack's members.
+static func _entry_enemy_ids(entry: SpawnTableEntry) -> Array[StringName]:
+	var out: Array[StringName] = []
+	if entry == null:
+		return out
+	if entry.members.is_empty():
+		if entry.enemy_id != &"":
+			out.append(entry.enemy_id)
+		return out
+	for m in entry.members:
+		if m != null and m.enemy_id != &"":
+			out.append(m.enemy_id)
+	return out
+
+
+## Every world config: the main world plus the side dungeons (mycelium), sorted.
+static func scan_gen_configs() -> PackedStringArray:
+	var out: PackedStringArray = []
+	for f in DirAccess.get_files_at("res://world_content/"):
+		if f.ends_with("gen_config.tres"):
+			out.append("res://world_content/" + f)
+	out.sort()
+	return out
+
+
 static func enemy_scene(enemy_id: StringName) -> PackedScene:
 	var path := "%s/%s/%s.tscn" % [ENEMIES_DIR, enemy_id, enemy_id]
 	if ResourceLoader.exists(path):

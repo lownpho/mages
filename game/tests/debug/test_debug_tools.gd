@@ -12,6 +12,7 @@ var _failures := 0
 func _ready() -> void:
 	_test_scan_items()
 	_test_scan_enemies()
+	_test_enemy_groups()
 	_test_find_item()
 	_test_debug_state()
 	_test_console()
@@ -47,6 +48,23 @@ func _test_scan_enemies() -> void:
 	_check(&"wolf" in ids, "wolf is in the roster")
 	_check(DebugContent.enemy_scene(&"wolf") != null, "wolf scene loads")
 	_check(DebugContent.enemy_scene(&"no_such_enemy") == null, "unknown enemy is null")
+
+
+## The biome tabs in the combat lab's brush palette: every enemy lands in exactly one group,
+## so the tabs together still show the whole roster.
+func _test_enemy_groups() -> void:
+	var groups := DebugContent.scan_enemy_groups()
+	_check(not groups.is_empty(), "scan_enemy_groups found groups")
+	var seen: Dictionary = {}
+	for g in groups:
+		_check(String(g["label"]) != "", "group has a label")
+		_check(not g["ids"].is_empty(), "group %s is non-empty" % g["label"])
+		for id in g["ids"]:
+			_check(not seen.has(id), "%s is in one group only" % id)
+			seen[id] = true
+	for eid in DebugContent.scan_enemy_ids():
+		if eid != &"placeholder":
+			_check(seen.has(eid), "%s is grouped" % eid)
 
 
 func _test_find_item() -> void:

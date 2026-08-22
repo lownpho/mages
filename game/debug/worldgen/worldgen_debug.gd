@@ -102,16 +102,6 @@ func _apply_cli_config() -> void:
 		push_error("worldgen_debug: config %s did not load a GenConfig" % path)
 
 
-## Every GenConfig in world_content/: the main world plus the side dungeons.
-func _scan_configs() -> PackedStringArray:
-	var out: PackedStringArray = []
-	for f in DirAccess.get_files_at("res://world_content/"):
-		if f.ends_with("gen_config.tres"):
-			out.append("res://world_content/" + f)
-	out.sort()
-	return out
-
-
 ## Swap the world the tool browses. The streamer's built world is stale, so it is dropped —
 ## _set_fly_active rebuilds it on the next visit to view 4.
 func _on_config_picked(idx: int) -> void:
@@ -546,7 +536,7 @@ func _build_extra_ui() -> void:
 	bm.pressed.connect(_bookmark_seed)
 	bar.add_child(bm)
 	_cfg_dd = OptionButton.new()
-	_cfg_paths = _scan_configs()
+	_cfg_paths = DebugContent.scan_gen_configs()
 	for path in _cfg_paths:
 		var label := path.get_file().trim_suffix("gen_config.tres").trim_suffix("_")
 		_cfg_dd.add_item(label if label != "" else "world")

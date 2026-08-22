@@ -34,6 +34,7 @@ const PLACEHOLDER_SCENE := preload("res://debug/placeholder/placeholder.tscn")
 
 var _panel: PanelContainer
 var _tabs: TabContainer
+var _brush_tabs: TabContainer
 var _hint: Label
 var _brush: StringName = DUMMY_ID
 var _brush_buttons: Dictionary = {}    ## enemy id -> Button, for highlight
@@ -431,27 +432,48 @@ func _build_walls_tab(box: VBoxContainer) -> void:
 		_save_walls())
 
 
+## One tab per biome (see DebugContent.scan_enemy_groups) — the whole roster in one grid was
+## 60 buttons deep. The dummy leads the "other" tab: it is lab-only, so no biome claims it.
+## Pages size to their grid; the enemies tab's own scroll handles the overflow.
 func _build_brush_list(box: VBoxContainer) -> void:
 	_header(box, "brush")
-	var ids: Array[StringName] = [DUMMY_ID]
-	for eid in DebugContent.scan_enemy_ids():
-		if eid != &"placeholder":
-			ids.append(eid)
-	var grid := GridContainer.new()
-	grid.columns = 2
-	box.add_child(grid)
-	for eid in ids:
-		var b := Button.new()
-		b.text = String(eid)
-		b.clip_text = true
-		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.pressed.connect(func():
-			_brush = eid
-			_highlight_brush()
-			_save_state())
-		grid.add_child(b)
-		_brush_buttons[eid] = b
+	var groups := DebugContent.scan_enemy_groups()
+	var other: Dictionary = {}
+	for g in groups:
+		if g["label"] == &"other":
+			other = g
+	if other.is_empty():
+		other = {"label": &"other", "ids": []}
+		groups.append(other)
+	other["ids"].insert(0, DUMMY_ID)
+
+	_brush_tabs = TabContainer.new()
+	box.add_child(_brush_tabs)
+	for group in groups:
+		var grid := GridContainer.new()
+		grid.name = String(group["label"])
+		grid.columns = 2
+		_brush_tabs.add_child(grid)
+		for eid in group["ids"]:
+			_brush_button(grid, eid)
+	if _brush_tabs.get_tab_count() > 0:
+		_brush_tabs.current_tab = clampi(DebugState.get_value("combat_lab", "brush_tab", 0),
+				0, _brush_tabs.get_tab_count() - 1)
+	_brush_tabs.tab_changed.connect(func(_i): _save_state())
+
+
+func _brush_button(parent: Control, eid: StringName) -> void:
+	var b := Button.new()
+	b.text = String(eid)
+	b.clip_text = true
+	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	b.pressed.connect(func():
+		_brush = eid
+		_highlight_brush()
+		_save_state())
+	parent.add_child(b)
+	_brush_buttons[eid] = b
 
 
 func _highlight_brush() -> void:
@@ -612,3 +634,5 @@ func _save_state() -> void:
 	DebugState.set_value("combat_lab", "cheat_def", _cheat_buff.defence_modifier)
 	if _tabs != null:
 		DebugState.set_value("combat_lab", "tab", _tabs.current_tab)
+	if _brush_tabs != null:
+		DebugState.set_value("combat_lab", "brush_tab", _brush_tabs.current_tab)
