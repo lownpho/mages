@@ -30,7 +30,7 @@ extends Resource
 @export var doors_max: int = 0
 ## Art a door LEADING HERE wears (frame order matches Door.Style; int to keep worldgen/core free
 ## of a runtime dependency).
-@export_enum("Wood", "Hedge", "Cave", "Portal", "Stairs", "Mushroom") var door_style: int = 3
+@export_enum("Wood", "Hedge", "Cave", "Portal", "Stairs Up", "Mushroom", "Stairs Down") var door_style: int = 3
 
 ## Organic-shell overrides, -1 = inherit the GenConfig dial. These are what make one biome's
 ## walls read differently from another's (thin/fat bands, ragged vs clean edges, corner bulk).

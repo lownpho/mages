@@ -102,6 +102,8 @@ static func _pack(rng: RandomNumberGenerator, config: GenConfig, w: int) -> Arra
 
 ## REQUIRED pairs must share an edge segment >= 1 cell; FORBIDDEN pairs must not.
 static func _adjacency_ok(placements: Array, config: GenConfig) -> bool:
+	if config.adjacency == null:
+		return true
 	var rect_by_id: Dictionary = {}   # biome id -> Rect2i; lookups only, never iterated
 	for p in placements:
 		rect_by_id[p.id] = p.rect

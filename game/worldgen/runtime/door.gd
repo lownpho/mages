@@ -9,9 +9,10 @@ extends Area2D
 ## Every door in the game (dungeon entrance, dungeon floor stairs, tutorial exit)
 ## is this one scene: only the exported data differs.
 
-## Art variants packed in doors.png, one 16×16 frame each (left → right). PORTAL and STAIRS
-## have no frame drawn yet and render blank.
-enum Style { WOOD, HEDGE, CAVE, PORTAL, STAIRS, MUSHROOM }
+## Art variants packed in doors.png, one 16×16 frame each (left → right). PORTAL has no frame
+## drawn yet and renders blank. STAIRS_UP/STAIRS_DOWN are one biome's two vertical ends, so the
+## pair only means anything where something picks between them — a flat biome just uses one.
+enum Style { WOOD, HEDGE, CAVE, PORTAL, STAIRS_UP, MUSHROOM, STAIRS_DOWN }
 
 const _FRAME_W := 16
 
