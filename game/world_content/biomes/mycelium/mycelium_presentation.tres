@@ -3,11 +3,13 @@
 [ext_resource type="Script" uid="uid://8c2ouwfg7awf" path="res://worldgen/core/biome_presentation.gd" id="1"]
 [ext_resource type="TileSet" uid="uid://baixldlcbub86" path="res://world_content/biomes/mycelium/art/mycelium_ground_tileset.tres" id="1_ju426"]
 [ext_resource type="TileSet" uid="uid://c1vnhben8pf5n" path="res://world_content/biomes/mycelium/art/mycelium_walls_tileset.tres" id="3"]
+[ext_resource type="TileSet" path="res://world_content/biomes/mycelium/art/mycelium_decor_tileset.tres" id="4_decor"]
 
 [resource]
 script = ExtResource("1")
 floor_tileset = ExtResource("1_ju426")
 floor_autotile = true
 wall_tileset = ExtResource("3")
+object_bg_tileset = ExtResource("4_decor")
 map_floor_color = Color(0.278431, 0.176471, 0.235294, 1)
 map_wall_color = Color(0.188235, 0.172549, 0.180392, 1)

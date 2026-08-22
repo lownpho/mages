@@ -1,17 +1,17 @@
-[gd_resource type="Resource" script_class="BiomeDef" format=3]
+[gd_resource type="Resource" script_class="BiomeDef" format=3 uid="uid://ch4xnv5rihl56"]
 
 [ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="1_biome"]
-[ext_resource type="Resource" path="res://world_content/biomes/mycelium/mycelium_presentation.tres" id="2_pres"]
+[ext_resource type="Resource" uid="uid://fmyqtx4r3dtg" path="res://world_content/biomes/mycelium/mycelium_presentation.tres" id="2_pres"]
 
 [resource]
 script = ExtResource("1_biome")
 id = &"mycelium"
 display_color = Color(0.28, 0.18, 0.24, 1)
 family = &"mycelium"
-size_cells = Vector2i(1, 1)
+size_cells = Vector2i(2, 2)
 open_passage_chance = 0.15
 bsp_stop_chance = 0.75
-decor_density = 0.0
-fallback_room_type = &"mycelium_open"
+decor_density = 0.02
+fallback_room_type = &"mycelium_cave"
 door_style = 4
 presentation = ExtResource("2_pres")
