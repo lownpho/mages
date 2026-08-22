@@ -46,10 +46,11 @@ func toggle_reach() -> void:
 
 func _draw() -> void:
 	var view := get_viewport_rect().size
-	var font := ThemeDB.fallback_font
+	var font := DebugState.UI_FONT
+	var fs := DebugState.UI_FONT_SIZE
 	if _out == null:
 		draw_string(font, Vector2(MARGIN, TOP + 20), "no room selected — pick one in the biome view (2)",
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
+				HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.8, 0.85, 0.9))
 		return
 	var w := _out.width
 	var h := _out.height
@@ -62,7 +63,7 @@ func _draw() -> void:
 			"%s  @%s  %dx%d tiles  tier %d  depth %d/%d  %d spawns   [P] protected  [M] reach" % [
 			_spec.type_id, _spec.origin_slot, w, h, _tier, _spec.depth, _spec.biome_max_depth,
 			_out.spawns.size()],
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.9, 0.92, 1.0))
+			HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.9, 0.92, 1.0))
 
 	# Tiles.
 	draw_rect(Rect2(origin, Vector2(w, h) * ppt), CLASS_COLORS[RoomBuilder.FLOOR])
@@ -106,9 +107,9 @@ func _draw() -> void:
 
 	# Spawns: numbered markers + the id list on the right strip.
 	var list_x := view.x - MARGIN - SIDE_W
-	draw_string(font, Vector2(list_x, origin.y), "spawns", HORIZONTAL_ALIGNMENT_LEFT, -1, 14,
+	draw_string(font, Vector2(list_x, origin.y), "spawns", HORIZONTAL_ALIGNMENT_LEFT, -1, fs,
 			Color(0.9, 0.92, 1.0))
-	var line_y := origin.y + 18.0
+	var line_y := origin.y + 12.0
 	for i in _out.spawns.size():
 		var sp = _out.spawns[i]
 		if not (sp is Dictionary):
@@ -122,8 +123,8 @@ func _draw() -> void:
 		else:
 			draw_circle(pos, maxf(3.0, ppt * 0.6), Color(0.9, 0.2, 0.2))
 			label = String(sp.get("enemy_id", &"?"))
-		draw_string(font, pos + Vector2(4, -4), str(i), HORIZONTAL_ALIGNMENT_LEFT, -1, 11,
+		draw_string(font, pos + Vector2(4, -4), str(i), HORIZONTAL_ALIGNMENT_LEFT, -1, fs,
 				Color.WHITE)
 		draw_string(font, Vector2(list_x, line_y), "%2d  %s  @%s" % [i, label, stile],
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.8, 0.85, 0.9))
-		line_y += 15.0
+				HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.8, 0.85, 0.9))
+		line_y += 10.0

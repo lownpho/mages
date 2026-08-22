@@ -8,6 +8,14 @@ extends RefCounted
 
 const PATH := "user://debug_state.cfg"
 
+## Debug scenes render in native window pixels (the game's 320x180 stretch is unusable for a
+## dense tool UI), upscaled by this much so the 8px pixel font reads like it does in the combat
+## lab. Views lay out in logical (pre-scale) px and label themselves with the same font, so map
+## text matches the Control chrome around it.
+const UI_SCALE := 3.0
+const UI_FONT := preload("res://gui/m3x6.ttf")
+const UI_FONT_SIZE := 8
+
 static var _cfg: ConfigFile = null
 static var _cli: Dictionary = {}
 static var _cli_parsed := false

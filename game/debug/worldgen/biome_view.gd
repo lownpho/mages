@@ -31,13 +31,17 @@ func set_data(spec: WorldSpec, config: GenConfig, graph: BiomeGraph, selected: V
 
 
 ## Main-grid layout shared by _draw and hit-testing: [origin: Vector2, slot_px: float].
-## The region is rectangular now (graph.size_slots).
+## The region is rectangular now (graph.size_slots). The overview band sits in the top-right
+## corner, so the grid dodges it sideways rather than starting below it — reserving its height
+## across the full width cost half the vertical space, and this view IS the rooms.
 func _layout() -> Array:
 	var view := get_viewport_rect().size
 	var s := _graph.size_slots
-	var main_top: float = TOP + _spec.grid_h * OVERVIEW_CELL + 16.0
-	var slot_px := minf((view.x - 2.0 * MARGIN) / s.x, (view.y - main_top - MARGIN) / s.y)
-	return [Vector2((view.x - slot_px * s.x) * 0.5, main_top), slot_px]
+	var main_top := TOP + 24.0   # clears the seed toolbar
+	var avail_w: float = view.x - 2.0 * MARGIN - _spec.grid_w * OVERVIEW_CELL - MARGIN
+	var slot_px := minf(avail_w / s.x, (view.y - main_top - MARGIN) / s.y)
+	var band_w: float = _spec.grid_w * OVERVIEW_CELL + MARGIN
+	return [Vector2((view.x - band_w - slot_px * s.x) * 0.5, main_top), slot_px]
 
 
 ## Index (into _graph.rooms) of the room under a screen position, or -1 outside the main grid.
@@ -77,11 +81,12 @@ func cell_at_screen_pos(pos: Vector2) -> Vector2i:
 
 func _draw() -> void:
 	var view := get_viewport_rect().size
-	var font := ThemeDB.fallback_font
+	var font := DebugState.UI_FONT
+	var fs := DebugState.UI_FONT_SIZE
 	if _graph == null:
 		_draw_overview()
-		draw_string(font, Vector2(MARGIN, view.y - 12), "unclaimed cell — no biome here",
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
+		draw_string(font, Vector2(MARGIN, view.y - 8), "unclaimed cell — no biome here",
+				HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.8, 0.85, 0.9))
 		return
 	var s := _graph.size_slots
 	var t := float(_config.room_slot_tiles)
@@ -114,20 +119,18 @@ func _draw() -> void:
 		draw_rect(rect.grow(-2.0), outline, false, 2.0)
 		if ui == _selected_room:
 			draw_rect(rect.grow(-5.0), Color.WHITE, false, 3.0)
-		var tag := String(u.type_id).to_upper()
-		draw_string(font, rect.position + Vector2(7, 19), tag,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(0, 0, 0, 0.85))
-		draw_string(font, rect.position + Vector2(6, 18), tag,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color.WHITE)
+		var tag := String(u.type_id).trim_prefix(String(_graph.biome_id) + "_").to_upper()
+		draw_string(font, rect.position + Vector2(4, 11), tag,
+				HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color.WHITE)
 		for p in u.passages:
 			_draw_passage(lt, u.size_slots, p, origin, slot_px, ppt)
 
 	_draw_overview()
 
-	draw_string(font, Vector2(MARGIN, view.y - 12),
+	draw_string(font, Vector2(MARGIN, view.y - 8),
 			"biome %s  %s slots  rooms:%d   arrows/click select — Enter/double-click opens the room, T flies there"
 			% [_graph.biome_id, _graph.size_slots, _graph.rooms.size()],
-			HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.8, 0.85, 0.9))
+			HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.8, 0.85, 0.9))
 
 
 ## Types the biome guarantees (min_per_biome >= 1 on the room type itself) — replaces the old
@@ -176,7 +179,7 @@ func _draw_passage(lt: Vector2, size: Vector2i, p, origin: Vector2, slot_px: flo
 ## world_view's main grid) so a multi-cell biome reads as one shape.
 func _draw_overview() -> void:
 	var o := _overview_origin()
-	var font := ThemeDB.fallback_font
+	var font := DebugState.UI_FONT
 	for y in _spec.grid_h:
 		for x in _spec.grid_w:
 			var bid := _spec.biome_at(Vector2i(x, y))
@@ -195,4 +198,5 @@ func _draw_overview() -> void:
 			if Vector2i(x, y) == _selected:
 				var rect := Rect2(o + Vector2(x, y) * OVERVIEW_CELL, Vector2(OVERVIEW_CELL, OVERVIEW_CELL))
 				draw_rect(rect.grow(-1.0), Color.WHITE, false, 2.0)
-	draw_string(font, o + Vector2(0, -4), "world", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.8, 0.8, 0.85))
+	draw_string(font, o + Vector2(0, -3), "world", HORIZONTAL_ALIGNMENT_LEFT, -1,
+			DebugState.UI_FONT_SIZE, Color(0.8, 0.8, 0.85))

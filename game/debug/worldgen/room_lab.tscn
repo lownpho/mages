@@ -16,7 +16,7 @@ script = ExtResource("2")
 [node name="Panel" type="PanelContainer" parent="UI" unique_id=443607958]
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_right = 320.0
+offset_right = 240.0
 grow_vertical = 2
 
 [node name="Scroll" type="ScrollContainer" parent="UI/Panel" unique_id=692616105]
@@ -24,7 +24,7 @@ layout_mode = 2
 horizontal_scroll_mode = 0
 
 [node name="VBox" type="VBoxContainer" parent="UI/Panel/Scroll" unique_id=1667272577]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6

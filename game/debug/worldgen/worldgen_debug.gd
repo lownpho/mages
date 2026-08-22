@@ -21,6 +21,8 @@ extends Node2D
 ## F2 stats sidebar (per-biome room/type/depth counts + build timings), L legend.
 ## Everything (seed, view, selection, camera, toggles) persists across runs; CLI deep-links:
 ##   godot --path game res://debug/worldgen/worldgen_debug.tscn -- seed=123 view=4 pos=40,20
+## `config=mycelium` (or a full res:// path) browses a different world config entirely; the
+## toolbar dropdown does the same from inside the editor, and the pick is remembered.
 
 @export var config: GenConfig
 
@@ -58,13 +60,18 @@ var _stats_label: Label
 var _legend_label: Label
 var _bm_dd: OptionButton
 var _bm_seeds: Array[int] = []
+var _cfg_dd: OptionButton
+var _cfg_paths: PackedStringArray = []
 
 
 func _ready() -> void:
 	# The game viewport is 320×180 with canvas_items stretch — unusable for a debug UI.
-	# This scene renders in native window pixels instead; views lay out from window size.
+	# This scene lays out in window pixels instead, upscaled so the 8px theme font reads like
+	# it does in the combat lab. Everything below is in logical (pre-scale) px.
 	get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
+	get_window().content_scale_factor = DebugState.UI_SCALE
 	_seed_edit.text_submitted.connect(_on_seed_submitted)
+	_apply_cli_config()
 	_streamer.config = config
 	_streamer.target = _flycam
 	_streamer.streaming = false   # only view 4 streams
@@ -75,6 +82,53 @@ func _ready() -> void:
 	_push_history(world_seed)
 	_rebuild()
 	_switch_view(current_view)
+
+
+## `config=<name>` swaps the whole generator config — a bare name resolves to
+## world_content/<name>_gen_config.tres, so a side world (the mycelium dungeon) can be
+## browsed without editing the scene. With no CLI arg the last toolbar pick is restored.
+## Must run before the streamer takes its copy.
+func _apply_cli_config() -> void:
+	var arg := DebugState.cli_arg("config")
+	var path: String = DebugState.get_value("worldgen_debug", "config", "")
+	if arg != "":
+		path = arg if arg.begins_with("res://") else "res://world_content/%s_gen_config.tres" % arg
+	if path == "" or path == config.resource_path:
+		return
+	var c := ResourceLoader.load(path)
+	if c is GenConfig:
+		config = c
+	else:
+		push_error("worldgen_debug: config %s did not load a GenConfig" % path)
+
+
+## Every GenConfig in world_content/: the main world plus the side dungeons.
+func _scan_configs() -> PackedStringArray:
+	var out: PackedStringArray = []
+	for f in DirAccess.get_files_at("res://world_content/"):
+		if f.ends_with("gen_config.tres"):
+			out.append("res://world_content/" + f)
+	out.sort()
+	return out
+
+
+## Swap the world the tool browses. The streamer's built world is stale, so it is dropped —
+## _set_fly_active rebuilds it on the next visit to view 4.
+func _on_config_picked(idx: int) -> void:
+	if idx < 0 or idx >= _cfg_paths.size() or _cfg_paths[idx] == config.resource_path:
+		return
+	var c := ResourceLoader.load(_cfg_paths[idx])
+	if not (c is GenConfig):
+		push_error("worldgen_debug: %s is not a GenConfig" % _cfg_paths[idx])
+		return
+	config = c
+	_cfg_dd.selected = idx
+	_streamer.config = c
+	_streamer.world_spec = null
+	selected_biome = Vector2i.ZERO
+	selected_room = 0
+	_rebuild()
+	_save_state()
 
 
 func _exit_tree() -> void:
@@ -418,7 +472,7 @@ func _set_fly_active(on: bool) -> void:
 	_fly_hud.visible = on and _player == null
 	_fly_overlay.visible = on
 	if on and _player == null:
-		_fly_cam2d.zoom = Vector2(2, 2)   # 8px tiles visible
+		_fly_cam2d.zoom = Vector2(2, 2) / DebugState.UI_SCALE   # 2x on screen after the upscale
 		_fly_cam2d.make_current()
 
 
@@ -440,7 +494,7 @@ func _toggle_drop_in() -> void:
 		var cam: Camera2D = _player.get_node("Camera2D")
 		# Content scaling is disabled in this scene, so the game's 320×180 view must be
 		# zoomed up by hand to keep the play view life-sized.
-		var win := get_window().size
+		var win := get_viewport_rect().size
 		var z := maxf(1.0, floorf(minf(win.x / 320.0, win.y / 180.0)))
 		cam.zoom = Vector2(z, z)
 		cam.make_current()
@@ -467,9 +521,11 @@ func _build_extra_ui() -> void:
 	var ui: CanvasLayer = $UI
 
 	var bar := HBoxContainer.new()
+	bar.theme = DebugUi.theme()
+	_seed_edit.theme = bar.theme
 	bar.anchor_left = 1.0
 	bar.anchor_right = 1.0
-	bar.offset_left = -420.0
+	bar.offset_left = -520.0
 	bar.offset_top = 46.0
 	bar.offset_bottom = 74.0
 	ui.add_child(bar)
@@ -489,6 +545,14 @@ func _build_extra_ui() -> void:
 	bm.text = "bookmark"
 	bm.pressed.connect(_bookmark_seed)
 	bar.add_child(bm)
+	_cfg_dd = OptionButton.new()
+	_cfg_paths = _scan_configs()
+	for path in _cfg_paths:
+		var label := path.get_file().trim_suffix("gen_config.tres").trim_suffix("_")
+		_cfg_dd.add_item(label if label != "" else "world")
+	_cfg_dd.selected = _cfg_paths.find(config.resource_path)
+	_cfg_dd.item_selected.connect(_on_config_picked)
+	bar.add_child(_cfg_dd)
 	_bm_dd = OptionButton.new()
 	_bm_dd.fit_to_longest_item = false
 	_bm_dd.item_selected.connect(_on_bookmark_picked)
@@ -497,7 +561,6 @@ func _build_extra_ui() -> void:
 
 	_stats_label = Label.new()
 	_stats_label.position = Vector2(16, 84)
-	_stats_label.add_theme_font_size_override("font_size", 13)
 	_stats_label.modulate = Color(0.85, 0.95, 1.0)
 	_stats_label.visible = false
 	ui.add_child(_stats_label)
@@ -507,7 +570,6 @@ func _build_extra_ui() -> void:
 	_legend_label.anchor_bottom = 1.0
 	_legend_label.offset_left = 16.0
 	_legend_label.offset_top = -150.0
-	_legend_label.add_theme_font_size_override("font_size", 13)
 	_legend_label.modulate = Color(1.0, 0.95, 0.7)
 	_legend_label.visible = false
 	ui.add_child(_legend_label)
@@ -568,6 +630,7 @@ func _restore_state() -> void:
 
 
 func _save_state() -> void:
+	DebugState.set_value("worldgen_debug", "config", config.resource_path)
 	DebugState.set_value("worldgen_debug", "seed", world_seed)
 	DebugState.set_value("worldgen_debug", "view", current_view)
 	DebugState.set_value("worldgen_debug", "biome", selected_biome)

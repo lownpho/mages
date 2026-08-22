@@ -283,5 +283,5 @@ func _draw_room(out: RoomOutput, cell_pos: Vector2, cell_size: Vector2, room_see
 
 	var label := "%s  %dx%d  %d spawns  seed %d" % [
 		out.type_id, w, h, out.spawns.size(), room_seed]
-	draw_string(ThemeDB.fallback_font, cell_pos + Vector2(2, cell_size.y - 3), label,
-			HORIZONTAL_ALIGNMENT_LEFT, cell_size.x, 12, Color(0.82, 0.85, 0.9))
+	draw_string(DebugState.UI_FONT, cell_pos + Vector2(2, cell_size.y - 3), label,
+			HORIZONTAL_ALIGNMENT_LEFT, cell_size.x, DebugState.UI_FONT_SIZE, Color(0.82, 0.85, 0.9))

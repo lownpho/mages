@@ -95,20 +95,10 @@ func _on_input_gui(event: InputEvent) -> void:
 		_input.accept_event()
 
 
-## Size + scale the panel for the current window: game pixels when the window stretches
-## canvas items, an integer upscale when content scaling is disabled (debug tools).
+## Span the viewport in logical pixels — the window's own scaling (the game's 320x180 stretch,
+## or a debug scene's content_scale_factor) already sizes those up on screen.
 func _fit_to_window() -> void:
-	var win := get_window()
-	var s := 1.0
-	var logical := Vector2(win.size)
-	if win.content_scale_mode == Window.CONTENT_SCALE_MODE_DISABLED:
-		s = maxf(1.0, floorf(win.size.x / 480.0))
-		logical = Vector2(win.size) / s
-	else:
-		logical = Vector2(win.content_scale_size)
-	transform = Transform2D().scaled(Vector2(s, s))
-	_root.position = Vector2.ZERO
-	_root.custom_minimum_size = Vector2(logical.x, 0)
+	_root.custom_minimum_size = Vector2(get_viewport().get_visible_rect().size.x, 0)
 
 
 func _on_submitted(text: String) -> void:

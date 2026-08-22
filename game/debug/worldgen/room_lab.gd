@@ -20,7 +20,7 @@ extends Node2D
 const SHARED_ROOMS_DIR := "res://world_content/rooms"
 const BIOMES_DIR := "res://world_content/biomes"
 const GENERATORS_DIR := "res://worldgen/generators"
-const PANEL_W := 320.0
+const PANEL_W := 240.0
 const FROM_ROOM_TYPE := "(from room type)"
 const NO_GENERATOR := "(none — empty room)"
 const DIRTY := Color(1.0, 0.9, 0.3)
@@ -73,6 +73,8 @@ var _dials: Dictionary = {}
 
 func _ready() -> void:
 	get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
+	get_window().content_scale_factor = DebugState.UI_SCALE
+	$UI/Panel.theme = DebugUi.theme()
 	_view.panel_width = PANEL_W
 	_scan_content()
 	_slot_tiles = config.room_slot_tiles
@@ -304,7 +306,6 @@ func _build_ui() -> void:
 	btns.add_child(wb)
 	vbox.add_child(btns)
 	_seed_label = Label.new()
-	_seed_label.add_theme_font_size_override("font_size", 12)
 	vbox.add_child(_seed_label)
 
 	var hdr := Label.new()
@@ -383,7 +384,6 @@ func _labeled(text: String, control: Control) -> Control:
 	var row := VBoxContainer.new()
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 12)
 	row.add_child(lbl)
 	row.add_child(control)
 	return row
@@ -411,7 +411,6 @@ func _dial_row(parent: VBoxContainer, text: String, control: Control,
 	var top := HBoxContainer.new()
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 12)
 	lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(lbl)
 	var refresh := Callable()

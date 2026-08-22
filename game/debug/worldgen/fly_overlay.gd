@@ -105,7 +105,7 @@ func _rooms_in_rect(rect: Rect2) -> Array:
 
 func _draw_rooms(rect: Rect2, lw: float, zoom: float) -> void:
 	var spx := config.room_slot_tiles * GameConstants.PX_PER_TILE
-	var font := ThemeDB.fallback_font
+	var font := DebugState.UI_FONT
 	for spec in _rooms_in_rect(rect):
 		var rrect := Rect2(Vector2(spec.origin_slot) * spx, Vector2(spec.size_slots) * spx)
 		if show_heat:
@@ -113,7 +113,7 @@ func _draw_rooms(rect: Rect2, lw: float, zoom: float) -> void:
 		if show_bounds:
 			draw_rect(rrect, Color(1, 1, 1, 0.55), false, lw)
 			# Tag stays readable at any zoom: font size is screen-fixed, drawn scaled.
-			var fs := 13.0 / zoom
+			var fs := DebugState.UI_FONT_SIZE / zoom
 			draw_string(font, rrect.position + Vector2(4.0 / zoom, fs + 2.0 / zoom),
 					"%s  t%d d%d" % [spec.type_id, spec.tier(), spec.depth],
 					HORIZONTAL_ALIGNMENT_LEFT, -1, int(fs), Color(1, 1, 0.6, 0.9))

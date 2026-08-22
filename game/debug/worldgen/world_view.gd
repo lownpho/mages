@@ -54,7 +54,7 @@ func _draw() -> void:
 	var lay := _layout()
 	var origin: Vector2 = lay[0]
 	var cell: float = lay[1]
-	var font := ThemeDB.fallback_font
+	var font := DebugState.UI_FONT
 	var s := float(_config.biome_slots)
 
 	# Cells: unclaimed = dark sealed mass, no label. Biome labels once per placement (top-left).
@@ -72,8 +72,8 @@ func _draw() -> void:
 	for p in _spec.placements:
 		var prect := Rect2(origin + Vector2(p.rect.position) * cell, Vector2(p.rect.size) * cell)
 		draw_rect(prect.grow(-1.0), Color.BLACK, false, 3.0)   # region outline over the cell grid
-		draw_string(font, prect.position + Vector2(10, 24), String(p.id),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.BLACK)
+		draw_string(font, prect.position + Vector2(8, 20), String(p.id),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, DebugState.UI_FONT_SIZE * 2, Color.BLACK)
 
 	# Contract ticks — only on edges where the two cells belong to DIFFERENT biomes (a contract
 	# exists exactly there). Fraction along the edge = (slot + door-center-within-slot) / slots.
@@ -105,8 +105,8 @@ func _draw() -> void:
 		var pos: Vector2 = origin + (Vector2(ur.world_slot) + Vector2(0.5, 0.5)) / s * cell
 		draw_circle(pos, 6.0, Color.GOLD)
 		draw_circle(pos, 6.0, Color.BLACK, false, 1.5)
-		draw_string(ThemeDB.fallback_font, pos + Vector2(8, 4), String(ur.type_id),
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.BLACK)
+		draw_string(DebugState.UI_FONT, pos + Vector2(8, 3), String(ur.type_id),
+				HORIZONTAL_ALIGNMENT_LEFT, -1, DebugState.UI_FONT_SIZE, Color.BLACK)
 
 	# Selection ring (click to move it; Enter/double-click drills into the biome view).
 	if _selected.x >= 0 and _selected.x < _spec.grid_w and _selected.y < _spec.grid_h:
