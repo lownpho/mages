@@ -52,6 +52,13 @@ func _ready() -> void:
 	GameState.track_player(_player)
 	GameState.persist()
 
+	# A door out of the overworld (the mycelium gate) is a round trip: stash where the player
+	# stood, so coming back puts them on that door rather than at the run's spawn. Harmless on
+	# the other way out — death clears the save, and the title's New/Continue both overwrite it.
+	SceneManager.scene_changing.connect(func(_target: PackedScene) -> void:
+		GameState.pending_player_position = _player.global_position
+		GameState.has_pending_position = true)
+
 	if GameState.fresh_start:
 		GameState.fresh_start = false
 		_drop_starter_gear()

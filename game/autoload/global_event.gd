@@ -53,6 +53,11 @@ signal world_ready(streamer: WorldStreamer)
 # `heading` (the cardinal it walked in on), so it comes out the other end still walking away.
 signal warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i)
 
+# A stair door was walked into: move the player one dungeon floor (delta -1 up, +1 down). The
+# dungeon scene owns the floors and answers this; walking off either end of the ladder leaves
+# for the overworld.
+signal floor_change_requested(delta: int, body: Node2D)
+
 # Leaderboard signals
 # Emitted when the Talo session opens or closes (login, logout, restore at boot).
 signal leaderboard_session_changed(logged_in: bool)

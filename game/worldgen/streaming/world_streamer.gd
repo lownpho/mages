@@ -348,6 +348,12 @@ func get_room_output(spec: RoomSpec) -> RoomOutput:
 	return out
 
 
+## A biome's room graph (graph level only, no tiles), built on first ask and cached for the run.
+## The mycelium dungeon reads it to find the floor's stairs.
+func biome_graph(biome_id: StringName) -> BiomeGraph:
+	return _room_graphs.get_biome_graph(world_spec, biome_id, config)
+
+
 # --- Warp doors ---------------------------------------------------------------------------------
 
 ## This seed's warp-door map, built on first use — it needs every biome's room graph (graph

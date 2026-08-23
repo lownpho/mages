@@ -44,10 +44,11 @@ y_sort_enabled = true
 [node name="Enemies" type="Node2D" parent="FlyView/Entities" unique_id=1592004821]
 y_sort_enabled = true
 
-[node name="EntitySpawner" type="Node" parent="FlyView" unique_id=1985330771 node_paths=PackedStringArray("streamer", "enemies_parent")]
+[node name="EntitySpawner" type="Node" parent="FlyView" unique_id=1985330771 node_paths=PackedStringArray("streamer", "enemies_parent", "features_parent")]
 script = ExtResource("8")
 streamer = NodePath("../Streamer")
 enemies_parent = NodePath("../Entities/Enemies")
+features_parent = NodePath("../Entities")
 
 [node name="FlyOverlay" type="Node2D" parent="FlyView" unique_id=1806976058]
 z_index = 900

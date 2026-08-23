@@ -16,7 +16,11 @@ extends Node2D
 ##
 ## Fly view: O room bounds+tags, G chunk grid, H tier heatmap, V biome borders, and P drops a
 ## REAL, invulnerable player in at the camera position (P/Esc returns to the camera) — walk
-## and fight the actual room; use the ` console to `give`/`equip` gear.
+## and fight the actual room; use the ` console to `give`/`equip` gear. Doors work for the
+## drop-in player: a warp door moves it beside its twin, a dungeon config's stairs walk the floors
+## (each floor is a reseed, so every view follows the player down), and a gate into another world
+## — the mycelium one — swaps the browsed config instead of dropping the tool into the real game.
+## Nothing in here ever leaves the tool.
 ##
 ## F2 stats sidebar (per-biome room/type/depth counts + build timings), L legend.
 ## Everything (seed, view, selection, camera, toggles) persists across runs; CLI deep-links:
@@ -53,6 +57,9 @@ var _room_graphs: RoomGraph = null   ## per-session BiomeGraph cache; reset on r
 var _hist: Array[int] = []           ## seed history for [ / ]
 var _hist_pos := -1
 var _player: CharacterBody2D = null  ## drop-in player (fly view), null while flying
+var _floor := 1                      ## dungeon floor the fly view is on (1 for a flat world)
+var _floor_base := 0                 ## the tool's own seed; for a dungeon config, the RUN every floor derives from
+var _return_config: GenConfig = null ## world walked out of through a door, for the way back
 var _layout_ms := 0.0
 var _graphs_ms := 0.0
 
@@ -79,7 +86,21 @@ func _ready() -> void:
 	_restore_state()
 	if world_seed == 0:
 		world_seed = randi()   # UI-side reroll, not generation code — global RNG is fine here
-	_push_history(world_seed)
+	_floor_base = world_seed
+	_push_history(_floor_base)
+	world_seed = _seed_for_floor(1)
+	GlobalEvent.warp_requested.connect(_on_warp_requested)
+	GlobalEvent.floor_change_requested.connect(_on_floor_change)
+	# A scene-change door (the mimic deepwood's mycelium gate) would drop the tool into the real
+	# game — and walking out of THAT lands in world.tscn, which persists over the player's run.
+	# So the tool takes the door itself: it opens the destination's world HERE. Clearing
+	# target_scene is what stops door.gd doing its own scene change (it warns instead, harmlessly).
+	_entities.child_entered_tree.connect(func(n: Node) -> void:
+		if not (n is Door) or n.target_scene == null:
+			return
+		var dest: PackedScene = n.target_scene
+		n.target_scene = null
+		n.body_entered.connect(func(_b: Node2D) -> void: _enter_world(dest)))
 	_rebuild()
 	_switch_view(current_view)
 
@@ -111,13 +132,21 @@ func _on_config_picked(idx: int) -> void:
 	if not (c is GenConfig):
 		push_error("worldgen_debug: %s is not a GenConfig" % _cfg_paths[idx])
 		return
+	_use_config(c)
+
+
+## Browse another world: floor 1 of it, selection reset, everything rebuilt. `keep_player` is for
+## a door walked through — the player stays in play and is put down on the far side by the caller.
+func _use_config(c: GenConfig, keep_player := false) -> void:
 	config = c
-	_cfg_dd.selected = idx
+	_cfg_dd.selected = maxi(0, _cfg_paths.find(c.resource_path))
 	_streamer.config = c
 	_streamer.world_spec = null
+	_floor = 1                          # the new config may stack floors where the old one did not
+	world_seed = _seed_for_floor(1)
 	selected_biome = Vector2i.ZERO
 	selected_room = 0
-	_rebuild()
+	_rebuild(keep_player)
 	_save_state()
 
 
@@ -172,8 +201,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		KEY_BRACKETRIGHT:
 			_history_step(1)
 		KEY_C:
-			DisplayServer.clipboard_set(str(world_seed))
-			print("worldgen debug: seed %d copied" % world_seed)
+			DisplayServer.clipboard_set(str(_floor_base))
+			print("worldgen debug: seed %d copied" % _floor_base)
 		KEY_B:
 			_bookmark_seed()
 		KEY_T:
@@ -315,11 +344,21 @@ func _on_seed_submitted(text: String) -> void:
 
 
 func _apply_seed(s: int, from_history := false) -> void:
-	world_seed = s
+	_floor_base = s
+	_floor = 1          # a hand-picked seed is the run, entered at its first floor
+	world_seed = _seed_for_floor(1)
 	if not from_history:
 		_push_history(s)
 	_rebuild()
 	_save_state()
+
+
+## The seed a floor generates from. A flat config has one world and one seed; a dungeon config
+## makes the tool's seed the RUN seed, with every floor — floor 1 included — derived from it, so
+## the tool browses exactly the floors the game builds for that run, and walking a stair down and
+## back up returns to the floor you left.
+func _seed_for_floor(n: int) -> int:
+	return DungeonFloors.floor_seed(_floor_base, n) if config.floors > 1 else _floor_base
 
 
 func _push_history(s: int) -> void:
@@ -341,8 +380,8 @@ func _history_step(dir: int) -> void:
 func _bookmark_seed() -> void:
 	var note := "%s  view %d  biome %s" % [Time.get_date_string_from_system(), current_view,
 			spec.biome_at(selected_biome) if spec != null else &"?"]
-	DebugState.set_value("wg_bookmarks", str(world_seed), note)
-	print("worldgen debug: bookmarked seed %d (%s)" % [world_seed, note])
+	DebugState.set_value("wg_bookmarks", str(_floor_base), note)
+	print("worldgen debug: bookmarked seed %d (%s)" % [_floor_base, note])
 	_refresh_bookmarks()
 
 
@@ -365,14 +404,17 @@ func _on_bookmark_picked(idx: int) -> void:
 
 # --- Rebuild / views ------------------------------------------------------------------------------
 
-func _rebuild() -> void:
-	if _player != null:
-		_toggle_drop_in()   # never keep a live player across a world swap
+## `keep_player` is for a stair: the drop-in player survives the swap because it is put down on
+## the new floor in the same breath. Any other reseed drops it — it would be left standing in a
+## world that no longer exists.
+func _rebuild(keep_player := false) -> void:
+	if _player != null and not keep_player:
+		_toggle_drop_in()
 	var t0 := Time.get_ticks_usec()
 	spec = WorldLayout.build(world_seed, config)
 	_layout_ms = (Time.get_ticks_usec() - t0) / 1000.0
 	if spec == null:
-		_seed_label.text = "seed %d — LAYOUT FAILED (unsatisfiable adjacency rules?)" % world_seed
+		_seed_label.text = "seed %d — LAYOUT FAILED (unsatisfiable adjacency rules?)" % _floor_base
 		return
 	_room_graphs = RoomGraph.new()   # fresh cache — the whole world changed
 	t0 = Time.get_ticks_usec()
@@ -442,8 +484,10 @@ func _switch_view(v: int) -> void:
 
 
 func _refresh_header() -> void:
-	_seed_label.text = "seed %d   view %d   [R]eroll [[/]]history [C]opy [B]ookmark  [Enter]drill [Esc]back [T]eleport  [L]egend [F2]stats" % [
-			world_seed, current_view]
+	# The seed on screen is the one you type: the run, not the floor it derives.
+	var floors := "   floor %d" % _floor if config.floors > 1 else ""
+	_seed_label.text = "seed %d%s   view %d   [R]eroll [[/]]history [C]opy [B]ookmark  [Enter]drill [Esc]back [T]eleport  [L]egend [F2]stats" % [
+			_floor_base, floors, current_view]
 
 
 ## Enter/leave fly mode: the fly camera and streaming loop only run in view 4. Loaded chunks are
@@ -505,6 +549,73 @@ func _toggle_drop_in() -> void:
 		_fly_hud.visible = true
 
 
+# --- Doors ----------------------------------------------------------------------------------------
+# Only the drop-in player trips these — the fly camera is no body, so it still passes through.
+
+func _on_warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i) -> void:
+	var dest := _streamer.door_exit_position(target_slot, heading)
+	if dest != Vector2.INF:
+		body.global_position = dest
+
+
+## Walking a door into another world: the destination scene carries the GenConfig it streams, so
+## the tool switches to that world and puts the player down at its entrance stair (its own spawn
+## if it has no floors). The world walked out of is remembered, so the ladder's ends come back.
+func _enter_world(dest: PackedScene) -> void:
+	if _player == null:
+		return
+	var cfg := _config_in(dest)
+	if cfg == null:
+		push_warning("worldgen debug: %s streams no GenConfig — nowhere to go" % dest.resource_path)
+		return
+	var from := config
+	_use_config(cfg, true)
+	_return_config = from
+	_player.global_position = DungeonFloors.stair_position(_streamer, config.stair_up_room) \
+			if config.floors > 1 else _streamer.find_spawn_position()
+	_refresh_header()
+
+
+## The GenConfig a world scene streams, read off a bare instance — never added to the tree, so
+## nothing in it runs.
+static func _config_in(scene: PackedScene) -> GenConfig:
+	var root := scene.instantiate()
+	var cfg: GenConfig = null
+	for n in root.find_children("*", "", true, false):
+		if n is WorldStreamer:
+			cfg = n.config
+			break
+	root.free()
+	return cfg
+
+
+## A stair door: a floor is just another seed, so the tool takes the change as a reseed and every
+## view follows the player down instead of still showing the floor above. The player keeps
+## playing, put down at the stair it did NOT take. Both ends of the ladder leave for the
+## overworld, which the tool has no way to show — those two simply do nothing.
+func _on_floor_change(delta: int, _body: Node2D) -> void:
+	if _player == null:
+		return
+	var n := DungeonFloors.next_floor(config, _floor, delta)
+	if n == 0:
+		# Both ends of the ladder leave for the world the gate was in. The tool has no gate door
+		# to land on over there, so it uses that world's spawn.
+		if _return_config != null:
+			var back := _return_config
+			_use_config(back, true)
+			_return_config = null
+			_player.global_position = _streamer.find_spawn_position()
+			print("worldgen debug: left the dungeon — %s, at its spawn" % back.resource_path)
+			_refresh_header()
+		return
+	_floor = n
+	world_seed = _seed_for_floor(n)
+	_rebuild(true)
+	_player.global_position = DungeonFloors.stair_position(_streamer,
+			config.stair_up_room if delta > 0 else config.stair_down_room)
+	_refresh_header()
+
+
 # --- Extra UI (stats, legend, seed toolbar) -------------------------------------------------------
 
 func _build_extra_ui() -> void:
@@ -529,7 +640,7 @@ func _build_extra_ui() -> void:
 	bar.add_child(fwd)
 	var copy := Button.new()
 	copy.text = "copy"
-	copy.pressed.connect(func(): DisplayServer.clipboard_set(str(world_seed)))
+	copy.pressed.connect(func(): DisplayServer.clipboard_set(str(_floor_base)))
 	bar.add_child(copy)
 	var bm := Button.new()
 	bm.text = "bookmark"
@@ -589,7 +700,7 @@ const LEGENDS := {
 	1: "world view — colored cells: biomes (dark = sealed void) · black frames: biome regions\nred ticks: border-contract door crossings · gold dots: world-unique rooms\nclick: select biome · double-click/Enter: open biome view",
 	2: "biome view — one rect per room, hue = room TYPE, hot = higher tier\ncyan outline: quota (guaranteed) type · gold: world-unique · white flash: selected\npassages — white: tree edge · yellow: loop · red: border contract; short tick = door, long = open\nclick room: select · double-click/Enter: room view · corner map: switch biome",
 	3: "room view — grey: wall · dark: floor · mid-grey: blocker · green: decor floor\ncyan wash [P]: PROTECTED tiles · green wash [M]: reachable tiles\nred dots: enemy spawns (list on the right) · gold: features · red/white edge marks: passages",
-	4: "fly view — WASD/arrows fly · wheel zoom · yellow box: real 320x180 play view\n[O] room bounds+tags · [G] chunk grid · [H] tier heatmap (green0..red3) · [V] biome borders\n[P] drop in as a real (invulnerable) player at the camera — ` console: give/equip gear",
+	4: "fly view — WASD/arrows fly · wheel zoom · yellow box: real 320x180 play view\n[O] room bounds+tags · [G] chunk grid · [H] tier heatmap (green0..red3) · [V] biome borders\n[P] drop in as a real (invulnerable) player at the camera — ` console: give/equip gear\ndoors work for the drop-in: warps hop to their twin, stairs walk the dungeon's floors, gates swap world",
 }
 
 
@@ -621,7 +732,7 @@ func _restore_state() -> void:
 
 func _save_state() -> void:
 	DebugState.set_value("worldgen_debug", "config", config.resource_path)
-	DebugState.set_value("worldgen_debug", "seed", world_seed)
+	DebugState.set_value("worldgen_debug", "seed", _floor_base)
 	DebugState.set_value("worldgen_debug", "view", current_view)
 	DebugState.set_value("worldgen_debug", "biome", selected_biome)
 	DebugState.set_value("worldgen_debug", "room", selected_room)

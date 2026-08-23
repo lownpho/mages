@@ -1,5 +1,5 @@
 extends Node
-## Headless fountain smoke test: both biome styles resolve their art, a hurt body is
+## Headless fountain smoke test: every biome style resolves its art, a hurt body is
 ## restored to full and the fountain goes dormant, and a second touch does nothing while
 ## the cooldown runs. Run:
 ##   godot --headless --path game res://tests/test_fountain.tscn
@@ -16,13 +16,13 @@ class FakePlayer:
 func _ready() -> void:
 	var fails: Array[String] = []
 
-	for style in [Fountain.Style.GLADE, Fountain.Style.DEEPWOOD]:
+	for style in Fountain.Style.values():
 		var f: Fountain = FOUNTAIN.instantiate()
 		f.style = style
 		f.cooldown = 5.0
 		add_child(f)
 		var sprite: AnimatedSprite2D = f.get_node("AnimatedSprite2D")
-		var biome := "glade" if style == Fountain.Style.GLADE else "deepwood"
+		var biome: String = Fountain.Style.keys()[style].to_lower()
 
 		if sprite.animation != &"%s_flow" % biome:
 			fails.append("%s: idle art is %s" % [biome, sprite.animation])

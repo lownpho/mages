@@ -25,11 +25,14 @@ var _pending_restore: Dictionary = {}
 
 
 func _ready() -> void:
-	GlobalEvent.world_ready.connect(_on_world_ready)
+	GlobalEvent.world_ready.connect(rebuild)
 	set_process(false)
 
 
-func _on_world_ready(streamer: WorldStreamer) -> void:
+## Point the map at a streamer's world: a fresh, fully fogged state (any pending restore applied
+## on top). The overworld arrives here through world_ready; a dungeon floor calls it directly on
+## every rebuild, each floor being its own space with its own fog.
+func rebuild(streamer: WorldStreamer) -> void:
 	_streamer = streamer
 	active = MapState.new()
 	active.setup(streamer, MapState.ZOOM_TILES_PER_PX)

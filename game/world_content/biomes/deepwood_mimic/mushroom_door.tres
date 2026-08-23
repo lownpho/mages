@@ -1,7 +1,9 @@
 [gd_resource type="Resource" script_class="DoorResource" format=3 uid="uid://dw007qyxfraiw"]
 
 [ext_resource type="Script" uid="uid://dfq0w05gtqm0s" path="res://worldgen/runtime/door_resource.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/mycelium.tscn" id="2_dungeon"]
 
 [resource]
 script = ExtResource("1")
 style = 5
+target_scene = ExtResource("2_dungeon")

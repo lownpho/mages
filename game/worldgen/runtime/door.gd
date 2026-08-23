@@ -29,6 +29,10 @@ const _FRAME_W := 16
 ## instead — the world moves the player beside that door and back again. Vector2i.MAX = not one.
 @export var target_slot := Vector2i.MAX
 
+## Stair doors ignore both of the above and move the player one dungeon floor instead: -1 up,
+## +1 down. The dungeon scene owns the floors and answers `floor_change_requested`; 0 = not one.
+@export var floor_delta := 0
+
 # Guards against firing twice while the deferred scene change is pending.
 var _used := false
 # A door only fires while nothing was standing in it as of the last physics step: a warp lands
@@ -63,6 +67,7 @@ func setup(res) -> void:
 	style = res.style            # setter re-applies the art once in-tree
 	target_scene = res.target_scene
 	target_slot = res.target_slot
+	floor_delta = res.floor_delta
 
 
 ## Which way `body` was walking into this door, as one of the four cardinals — how it was moving
@@ -94,6 +99,11 @@ func _on_body_entered(body: Node2D) -> void:
 	if not _armed:
 		return
 	if Time.get_ticks_msec() - _last_use_ms < _COOLDOWN_MS:
+		return
+	if floor_delta != 0:
+		_armed = false   # re-arms once the player is clear, so the stair works in both directions
+		_last_use_ms = Time.get_ticks_msec()
+		GlobalEvent.floor_change_requested.emit(floor_delta, body)
 		return
 	if target_slot != Vector2i.MAX:
 		_armed = false   # re-arms once the player is clear of it, so the door works both ways

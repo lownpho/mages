@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://8c2ouwfg7awf" path="res://worldgen/core/biome_presentation.gd" id="1"]
 [ext_resource type="TileSet" uid="uid://baixldlcbub86" path="res://world_content/biomes/mycelium/art/mycelium_ground_tileset.tres" id="1_ju426"]
 [ext_resource type="TileSet" uid="uid://c1vnhben8pf5n" path="res://world_content/biomes/mycelium/art/mycelium_walls_tileset.tres" id="3"]
-[ext_resource type="TileSet" path="res://world_content/biomes/mycelium/art/mycelium_decor_tileset.tres" id="4_decor"]
+[ext_resource type="TileSet" uid="uid://cij1tkrmj8dmt" path="res://world_content/biomes/mycelium/art/mycelium_decor_tileset.tres" id="4_decor"]
 
 [resource]
 script = ExtResource("1")

@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="RoomTypeDef" format=3 uid="uid://c6diofx37ajwk"]
+
+[ext_resource type="Script" uid="uid://85nnqx50mcsn" path="res://worldgen/core/spawn_table_entry.gd" id="1_2copa"]
+[ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="1_def"]
+[ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="2_rf"]
+[ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="3_gen"]
+[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="4_door"]
+[ext_resource type="Resource" path="res://world_content/biomes/mycelium/stair_up.tres" id="5_data"]
+
+[sub_resource type="Resource" id="feat_door"]
+script = ExtResource("2_rf")
+scene = ExtResource("4_door")
+data = ExtResource("5_data")
+
+[sub_resource type="Resource" id="gen"]
+script = ExtResource("3_gen")
+fill_prob = 0.38
+
+[resource]
+script = ExtResource("1_def")
+id = &"mycelium_stair_up"
+biome = &"mycelium"
+generator = SubResource("gen")
+weight = 0
+min_per_biome = 1
+max_per_biome = 1
+features = Array[ExtResource("2_rf")]([SubResource("feat_door")])

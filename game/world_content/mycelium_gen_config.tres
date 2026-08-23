@@ -4,8 +4,10 @@
 [ext_resource type="Resource" uid="uid://ch4xnv5rihl56" path="res://world_content/biomes/mycelium/mycelium.tres" id="b_myc"]
 [ext_resource type="Script" uid="uid://ebitj0qutpum" path="res://worldgen/core/gen_config.gd" id="cfg"]
 [ext_resource type="Script" uid="uid://bqbtxkumbv2ql" path="res://worldgen/core/room_type_def.gd" id="rtdef"]
+[ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_stair_down.tres" id="r_down"]
 [ext_resource type="Resource" uid="uid://bhnfqgwyi84m0" path="res://world_content/biomes/mycelium/rooms/mycelium_cave.tres" id="r_m1"]
 [ext_resource type="Resource" uid="uid://bb7qnfdgjcy0n" path="res://world_content/biomes/mycelium/rooms/mycelium_pocket.tres" id="r_m2"]
+[ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_stair_up.tres" id="r_up"]
 
 [resource]
 script = ExtResource("cfg")
@@ -19,6 +21,9 @@ spawn_min_dist_from_doors = 2
 wall_noise_period = 2
 wall_inset_max = 2
 starting_biome = &"mycelium"
+floors = 10
+stair_up_room = &"mycelium_stair_up"
+stair_down_room = &"mycelium_stair_down"
 prefetch_radius_chunks = 1
 biomes = Array[ExtResource("bdef")]([ExtResource("b_myc")])
-room_types = Array[ExtResource("rtdef")]([ExtResource("r_m1"), ExtResource("r_m2")])
+room_types = Array[ExtResource("rtdef")]([ExtResource("r_m1"), ExtResource("r_m2"), ExtResource("r_up"), ExtResource("r_down")])

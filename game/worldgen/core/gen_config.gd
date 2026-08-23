@@ -35,6 +35,14 @@ extends Resource
 @export_group("Well-known ids")
 @export var starting_biome: StringName = &"glade"           ## hosts the player spawn; presentation fallback
 
+## A config with floors > 1 is a DUNGEON: the same world generated once per floor, walked with
+## the two stair rooms below. Deliberately NOT hashed — how many floors are stacked cannot change
+## what any one of them lays out, so retuning the depth must not re-roll a saved world.
+@export_group("Dungeon (not hashed — floors are seeds, not layout)")
+@export var floors: int = 1                                 ## 1 = a flat world with no stairs
+@export var stair_up_room: StringName                       ## quota room holding the stair to the floor above
+@export var stair_down_room: StringName                     ## …and the one below
+
 @export_group("Runtime (not hashed — cannot affect the generated world)")
 @export var chunk_tiles: int = 32              ## tiles per streaming chunk side (a view, not content)
 @export var max_layout_retries: int = 1000     ## layout attempts before config error
@@ -123,6 +131,15 @@ func validate() -> bool:
 			push_error("GenConfig: biome '%s' quota demands cover %d slots but the region only has %d"
 					% [b.id, demand_area, region.x * region.y])
 			return false
+	# A dungeon walks its floors through the stairs, so every floor must be guaranteed both of
+	# them — a weighted stair room would leave the player standing on a floor with no way on.
+	if floors > 1:
+		for id in [stair_up_room, stair_down_room]:
+			var rt := room_type_by_id(id)
+			if rt == null or rt.min_per_biome < 1:
+				push_error("GenConfig: %d floors need stair room '%s' to exist and be guaranteed (min_per_biome >= 1)"
+						% [floors, id])
+				return false
 	return true
 
 
