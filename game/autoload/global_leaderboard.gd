@@ -318,13 +318,13 @@ func parse_kills(raw: String) -> Dictionary:
 			out[String(key)] = int(parsed[key])
 	return out
 
-# Spell slot contents in slot order, e.g. "pew_3,,heal_1,..." — empty string for an
+# Inventory contents in slot order, e.g. "pew_3,,heal_1,..." — empty string for an
 # empty slot. Ids are the .tres basenames, the same ids the design data uses.
 # Outside a run (login submit at the title) the live inventory is empty, but a saved
 # run may still hold the real loadout — peek the save rather than report nothing.
 func _loadout_string() -> String:
 	var out := PackedStringArray()
-	for slot in GlobalInventory.spell_slots.slots:
+	for slot in GlobalInventory.slots.slots:
 		out.append(slot.item.resource_path.get_file().get_basename() if slot.item else "")
 	if not "".join(out).is_empty():
 		return ",".join(out)
@@ -336,7 +336,7 @@ func _saved_loadout_string(slot_count: int) -> String:
 	var cfg := ConfigFile.new()
 	var loaded := cfg.load(GameState.SAVE_PATH) == OK if GameState.has_save() else false
 	for i in slot_count:
-		var path: String = cfg.get_value("inventory", "spell_%d" % i, "") if loaded else ""
+		var path: String = cfg.get_value("inventory", "slot_%d" % i, "") if loaded else ""
 		out.append(path.get_file().get_basename())
 	return ",".join(out)
 

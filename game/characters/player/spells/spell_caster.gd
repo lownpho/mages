@@ -98,6 +98,15 @@ func cancel(spell: SpellResource) -> void:
 	_cast_timer.stop()
 	_start_cooldown(spell)
 
+## Drop everything in flight — wind-up, channel and any live burst — each onto its full
+## cooldown. The player's line switch roots the mage, so no cast may outlive it.
+func abort() -> void:
+	if _channel_spell != null:
+		end_channel()
+	elif _pending_spell != null:
+		cancel(_pending_spell)
+	_cancel_bursts()
+
 ## True when `spell` is off cooldown and its last over-time effect has finished.
 func ready_for(spell: SpellResource) -> bool:
 	var cd: Timer = _cooldowns.get(spell)

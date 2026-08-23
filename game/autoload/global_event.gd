@@ -13,10 +13,10 @@ signal player_defence_changed(defence: int)
 # Inventory signals
 signal slot_updated(slot: GlobalInventory.Slot)
 signal item_picked_up(slot: GlobalInventory.Slot)
-# Emitted only for spell (loadout) slots — the player recomputes stats here
+# Emitted on any inventory slot edit — the player recomputes stats here
 signal equipment_changed(slot: GlobalInventory.Slot)
-# Emitted when SHIFT cycles which spell page the cast buttons drive
-signal spell_page_changed(page: int)
+# Emitted when SHIFT cycles which inventory line the cast buttons drive
+signal active_line_changed(line: int)
 # Emitted when a player drops an item from the inventory to the ground
 signal item_dropped(item: ItemResource)
 # Emitted when an enemy dies and a loot roll succeeds, once per dropped item

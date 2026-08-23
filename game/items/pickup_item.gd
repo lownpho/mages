@@ -16,7 +16,7 @@ extends Area2D
 @export var pickup_delay := 0.4
 
 # The concrete item this pickup carries. Resolved once (rolling `table` at most once) so the
-# icon on the ground can never disagree with what lands in the bag.
+# icon on the ground can never disagree with what lands in the inventory.
 var _carried: ItemResource
 
 
@@ -37,9 +37,9 @@ func _resolve() -> void:
 	$Sprite2D.texture = _carried.icon if _carried else null
 
 func _on_body_entered(_body: Node2D) -> void:
-	if GlobalInventory.has_item(_carried):
-		return
-	var slot = GlobalInventory.bag_slots.add_at_first_empty(_carried)
-	if slot:
+	# Copies are welcome — just not two of a spell in one line, so a pickup waits on the
+	# ground until some line has room for it.
+	var slot := GlobalInventory.first_slot_for(_carried)
+	if slot and slot.set_item(_carried):
 		GlobalEvent.item_picked_up.emit(slot)
 		queue_free()

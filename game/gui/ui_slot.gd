@@ -21,8 +21,8 @@ const _ICON_X = {
 @export var slot_texture: AtlasTexture:
 	set(value):
 		slot_texture = value
-		# Settable at runtime: the spell rows swap frames when SHIFT flips the
-		# active page.
+		# Settable at runtime: the rows swap frames when SHIFT flips the
+		# active line.
 		if is_node_ready() and slot_texture:
 			$SlotTexture.texture = slot_texture
 
@@ -199,7 +199,7 @@ func _show_focus_tip() -> void:
 		return   # a slot mounted outside a CanvasLayer (debug scenes) has nowhere to put it
 	layer.add_child(panel)
 	# Right of the slot — the strip hugs the left screen edge, so there is always room that way.
-	# Only the vertical needs clamping, for a bottom-row bag slot with a tall grid.
+	# Only the vertical needs clamping, for a bottom-row slot with a tall grid.
 	var tip_size := panel.get_combined_minimum_size()
 	var pos := global_position + Vector2(size.x + 2, 0)
 	pos.y = clampf(pos.y, 0.0, maxf(0.0, get_viewport_rect().size.y - tip_size.y))
@@ -231,8 +231,8 @@ func _get_drag_data(_position):
 	return null
 
 func _can_drop_data(_position, data) -> bool:
-	return GlobalInventory.can_equip(data.slot.item, slot) \
-		and (not slot.item or GlobalInventory.can_equip(slot.item, data.slot))
+	return GlobalInventory.can_equip(data.slot.item, slot, data.slot) \
+		and (not slot.item or GlobalInventory.can_equip(slot.item, data.slot, slot))
 
 func _drop_data(_position, data) -> void:
 	_drag_accepted = true
@@ -255,12 +255,7 @@ func _notification(what: int) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if event.double_click:
-				# The first click of the pair armed carry — disarm before equipping.
-				cancel_carry()
-				_auto_equip()
-			else:
-				_activate()
+			_activate()
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			cancel_carry()
 	elif event.is_action_pressed("ui_accept"):
@@ -275,12 +270,6 @@ func _gui_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("discard"):
 		_discard()
 		accept_event()
-
-func _auto_equip() -> void:
-	if slot.item and slot.type == GlobalInventory.ItemType.BAG:
-		var target = GlobalInventory.get_equipment_slot_for_item(slot.item)
-		if target:
-			GlobalInventory.swap_items(slot, target)
 
 # One press = one step of the carry flow: lift, cancel (same slot), or place/swap.
 func _activate() -> void:
@@ -297,8 +286,8 @@ func _activate() -> void:
 		# The carried item vanished under us (e.g. console edit) — nothing to place.
 		cancel_carry()
 		return
-	if GlobalInventory.can_equip(source.slot.item, slot) \
-		and (not slot.item or GlobalInventory.can_equip(slot.item, source.slot)):
+	if GlobalInventory.can_equip(source.slot.item, slot, source.slot) \
+		and (not slot.item or GlobalInventory.can_equip(slot.item, source.slot, slot)):
 		cancel_carry()
 		GlobalInventory.swap_items(slot, source.slot)
 	else:

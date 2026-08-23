@@ -69,11 +69,12 @@ func _ready() -> void:
 	hurtbox.hurt.connect(_on_hurt)
 
 	GlobalEvent.equipment_changed.connect(_on_equipment_changed)
+	GlobalEvent.active_line_changed.connect(func(_line: int) -> void: _on_equipment_changed(null))
 	GlobalEvent.player_health_changed.connect(_on_health_or_max_health_changed)
 	GlobalEvent.player_max_health_changed.connect(_on_health_or_max_health_changed)
 
 	# equipment_changed only fires on slot edits, not when a fresh player spawns in a
-	# new scene — so fold the persisted GlobalInventory loadout into the stats once.
+	# new scene — so fold the persisted GlobalInventory line into the stats once.
 	_recompute_stats()
 	health = max_health
 	_broadcast_stats()
@@ -233,8 +234,11 @@ func _recompute_stats() -> void:
 	speed = base_speed
 	defence = base_defence
 
-	for slot in GlobalInventory.spell_slots.slots:
-		if slot.item:
+	# Only the active line grants stats — a line is a whole build, and switching
+	# lines re-rolls the mage's stats along with the four castable spells.
+	for i in GlobalInventory.LINE_SIZE:
+		var slot := GlobalInventory.active_slot(i)
+		if slot and slot.item:
 			max_health += slot.item.max_health_modifier
 			skill += slot.item.skill_modifier
 			speed += slot.item.speed_modifier

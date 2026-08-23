@@ -83,12 +83,8 @@ func _gather_owned_icons() -> Array[Texture2D]:
 	var cfg := ConfigFile.new()
 	if cfg.load(GameState.SAVE_PATH) != OK:
 		return icons
-	var keys := []
-	for i in range(GlobalInventory.BAG_SIZE):
-		keys.append("bag_%d" % i)
-	for i in range(GlobalInventory.SPELL_SLOT_SIZE):
-		keys.append("spell_%d" % i)
-	for key in keys:
+	for i in range(GlobalInventory.SIZE):
+		var key := "slot_%d" % i
 		var path: String = cfg.get_value("inventory", key, "")
 		if path.is_empty() or not ResourceLoader.exists(path):
 			continue

@@ -274,10 +274,9 @@ func _world_signature() -> String:
 
 
 func _save_inventory(cfg: ConfigFile) -> void:
-	for i in range(GlobalInventory.bag_slots.slots.size()):
-		_save_slot(cfg, "bag_%d" % i, GlobalInventory.bag_slots.at(i))
-	for i in range(GlobalInventory.spell_slots.slots.size()):
-		_save_slot(cfg, "spell_%d" % i, GlobalInventory.spell_slots.at(i))
+	for i in range(GlobalInventory.SIZE):
+		_save_slot(cfg, "slot_%d" % i, GlobalInventory.slots.at(i))
+	cfg.set_value("inventory", "active_line", GlobalInventory.active_line)
 
 
 func _save_slot(cfg: ConfigFile, key: String, slot: GlobalInventory.Slot) -> void:
@@ -287,10 +286,10 @@ func _save_slot(cfg: ConfigFile, key: String, slot: GlobalInventory.Slot) -> voi
 func _load_inventory(cfg: ConfigFile) -> void:
 	_suspend_autosave = true
 	GlobalInventory.reset()
-	for i in range(GlobalInventory.bag_slots.slots.size()):
-		_load_slot(cfg, "bag_%d" % i, GlobalInventory.bag_slots.at(i))
-	for i in range(GlobalInventory.spell_slots.slots.size()):
-		_load_slot(cfg, "spell_%d" % i, GlobalInventory.spell_slots.at(i))
+	# Pre-rework saves stored bag_*/spell_* keys; those simply read as empty.
+	for i in range(GlobalInventory.SIZE):
+		_load_slot(cfg, "slot_%d" % i, GlobalInventory.slots.at(i))
+	GlobalInventory.set_line(cfg.get_value("inventory", "active_line", 0))
 	_suspend_autosave = false
 
 

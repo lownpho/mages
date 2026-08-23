@@ -58,7 +58,7 @@ func _ready() -> void:
 	_restore_loadout()
 	# Connected after the restore so re-slotting the stored kit doesn't rewrite the file.
 	GlobalEvent.slot_updated.connect(func(_slot): _save_loadout())
-	GlobalEvent.spell_page_changed.connect(func(_page): _save_loadout())
+	GlobalEvent.active_line_changed.connect(func(_line): _save_loadout())
 	_build_ui()
 	_apply_god()
 	_set_panel_open(false)
@@ -481,8 +481,7 @@ func _highlight_brush() -> void:
 		_brush_buttons[eid].modulate = Color(1.0, 0.9, 0.3) if eid == _brush else Color.WHITE
 
 
-## Icon grids per category. LMB equips (weapon/hat/robe slot, spells to the first free spell
-## slot, else bag); RMB drops the item as a real ground pickup, exercising the pickup flow.
+## Icon grids per category. LMB equips into the first free inventory slot; RMB drops the item as a real ground pickup, exercising the pickup flow.
 func _build_item_palette(box: VBoxContainer) -> void:
 	var items := DebugContent.scan_items()
 	for cat in items:
@@ -508,12 +507,7 @@ func _build_item_palette(box: VBoxContainer) -> void:
 
 
 func _equip_item(item: ItemResource) -> void:
-	if item.get_item_type() == GlobalInventory.ItemType.SPELL:
-		var idx := GlobalInventory.spell_slots.first_empty()
-		if idx >= 0:
-			GlobalInventory.spell_slots.add_at(idx, item)
-			return
-	GlobalInventory.bag_slots.add_at_first_empty(item)
+	GlobalInventory.slots.add_at_first_empty(item)
 
 
 # --- Small control builders (theme font is 8px — keep everything dense) ---------------------
@@ -586,18 +580,15 @@ func _save_walls() -> void:
 	DebugState.set_value("combat_lab", "walls", flat)
 
 
-## The lab keeps its own loadout (spell slots + bag + active page), stored as .tres paths in
+## The lab keeps its own loadout (the 12 slots + active line), stored as .tres paths in
 ## debug_state.cfg and re-slotted on entry — the kit you assembled to test something survives
 ## an F5. Separate from the run save, so the player's save.cfg is never touched.
 func _restore_loadout() -> void:
-	for i in GlobalInventory.spell_slots.slots.size():
-		_restore_slot(GlobalInventory.spell_slots.at(i), "spell_%d" % i)
-	for i in GlobalInventory.bag_slots.slots.size():
-		_restore_slot(GlobalInventory.bag_slots.at(i), "bag_%d" % i)
-	GlobalInventory.active_spell_page = clampi(
-			DebugState.get_value("combat_lab", "spell_page", 0), 0, GlobalInventory.SPELL_PAGES - 1)
-	# The HUD read the page in its own _ready (before this node's) — re-announce it.
-	GlobalEvent.spell_page_changed.emit(GlobalInventory.active_spell_page)
+	for i in GlobalInventory.SIZE:
+		_restore_slot(GlobalInventory.slots.at(i), "slot_%d" % i)
+	GlobalInventory.set_line(DebugState.get_value("combat_lab", "active_line", 0))
+	# The HUD read the line in its own _ready (before this node's) — re-announce it.
+	GlobalEvent.active_line_changed.emit(GlobalInventory.active_line)
 
 
 func _restore_slot(slot: GlobalInventory.Slot, key: String) -> void:
@@ -610,11 +601,9 @@ func _restore_slot(slot: GlobalInventory.Slot, key: String) -> void:
 
 
 func _save_loadout() -> void:
-	for i in GlobalInventory.spell_slots.slots.size():
-		_save_slot(GlobalInventory.spell_slots.at(i), "spell_%d" % i)
-	for i in GlobalInventory.bag_slots.slots.size():
-		_save_slot(GlobalInventory.bag_slots.at(i), "bag_%d" % i)
-	DebugState.set_value("combat_lab", "spell_page", GlobalInventory.active_spell_page)
+	for i in GlobalInventory.SIZE:
+		_save_slot(GlobalInventory.slots.at(i), "slot_%d" % i)
+	DebugState.set_value("combat_lab", "active_line", GlobalInventory.active_line)
 
 
 func _save_slot(slot: GlobalInventory.Slot, key: String) -> void:

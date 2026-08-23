@@ -1,14 +1,13 @@
 extends Node
 
-const BAG_SIZE = 9
-# The spell loadout: SPELL_PAGES pages of SPELL_PAGE_SIZE slots each. The cast
-# buttons (LMB/RMB/MMB) drive the active page's slots; SPACE cycles pages.
-const SPELL_PAGE_SIZE = 3
-const SPELL_PAGES = 2
-const SPELL_SLOT_SIZE = SPELL_PAGE_SIZE * SPELL_PAGES
+# The inventory is the loadout: LINES rows of LINE_SIZE spells, all carried, one line
+# live. The cast buttons drive the active line's slots; switching lines is the only way
+# to reach the others, and it costs a rooted wind-up (see PlayerCastInput).
+const LINE_SIZE = 4
+const LINES = 3
+const SIZE = LINE_SIZE * LINES
 
-# ItemType.BAG is used as the slot category for bag slots — no item should ever have type BAG.
-enum ItemType {BAG, SPELL, OTHER}
+enum ItemType {SPELL, OTHER}
 
 class Slot:
 	var type: ItemType
@@ -36,8 +35,7 @@ class Slot:
 
 	func _emit_changed() -> void:
 		GlobalEvent.slot_updated.emit(self)
-		if type == GlobalInventory.ItemType.SPELL:
-			GlobalEvent.equipment_changed.emit(self)
+		GlobalEvent.equipment_changed.emit(self)
 
 class ArraySlot:
 	var slots: Array[Slot] = []
@@ -76,85 +74,78 @@ class ArraySlot:
 		slots[p_index].clear_item()
 		return true
 
-var bag_slots: ArraySlot
-var spell_slots: ArraySlot
+var slots: ArraySlot
 
-## Which spell page (row of SPELL_PAGE_SIZE slots) the cast buttons drive.
-var active_spell_page: int = 0
+## Which line (row of LINE_SIZE slots) the cast buttons drive.
+var active_line: int = 0
 
 func _ready() -> void:
-	bag_slots = ArraySlot.new(ItemType.BAG, BAG_SIZE, [ItemType.BAG, ItemType.SPELL, ItemType.OTHER])
-	spell_slots = ArraySlot.new(ItemType.SPELL, SPELL_SLOT_SIZE)
+	slots = ArraySlot.new(ItemType.SPELL, SIZE, [ItemType.SPELL, ItemType.OTHER])
 
-## Slot behind a cast button (0..SPELL_PAGE_SIZE-1) on the active page.
-func active_spell_slot(index: int) -> Slot:
-	return spell_slots.at(active_spell_page * SPELL_PAGE_SIZE + index)
+## Slot behind a cast button (0..LINE_SIZE-1) on the active line.
+func active_slot(index: int) -> Slot:
+	return slots.at(active_line * LINE_SIZE + index)
 
-func cycle_spell_page() -> void:
-	active_spell_page = (active_spell_page + 1) % SPELL_PAGES
-	GlobalEvent.spell_page_changed.emit(active_spell_page)
+## The line a slot index belongs to.
+func line_of(index: int) -> int:
+	@warning_ignore("integer_division")
+	return index / LINE_SIZE
 
-# Empty every slot — bag and spells. Called when starting a new game so nothing
-# carries over from a previous run. Each clear re-emits slot_updated /
-# equipment_changed, so any live UI and player stats reset too.
+func set_line(line: int) -> void:
+	line = posmod(line, LINES)
+	if line == active_line:
+		return
+	active_line = line
+	GlobalEvent.active_line_changed.emit(active_line)
+
+func cycle_line() -> void:
+	set_line(active_line + 1)
+
+# Empty every slot. Called when starting a new game so nothing carries over from a
+# previous run. Each clear re-emits slot_updated / equipment_changed, so any live UI and
+# player stats reset too.
 func reset() -> void:
-	for slot in bag_slots.slots:
+	for slot in slots.slots:
 		slot.clear_item()
-	for slot in spell_slots.slots:
-		slot.clear_item()
-	if active_spell_page != 0:
-		active_spell_page = 0
-		GlobalEvent.spell_page_changed.emit(0)
-
-# True if the player already carries this item — anywhere in the bag or the spell
-# loadout. Identity is the underlying resource (same .tres path), so a second copy of
-# a spell the player already owns counts as a duplicate.
-func has_item(item: ItemResource) -> bool:
-	if item == null:
-		return false
-	for slot in bag_slots.slots + spell_slots.slots:
-		var owned := slot.item
-		if owned == null:
-			continue
-		if owned == item or (owned.resource_path != "" and owned.resource_path == item.resource_path):
-			return true
-	return false
+	set_line(0)
 
 # A spell's id is its folder, so blam1/blam2/blam3 are all "blam" — only one tier
-# of a spell may sit in the loadout at a time.
+# of a spell may sit in a given line at a time.
 func spell_family(item: ItemResource) -> String:
 	if item == null or item.resource_path == "":
 		return ""
 	return item.resource_path.get_base_dir().get_file()
 
 # Whether the player may drop this item into that slot: type compatibility plus the
-# one-tier-per-spell rule. Bypassed on purpose by the console, the combat lab and
-# save loading — this is the player-facing restriction only.
-func can_equip(item: ItemResource, target: Slot) -> bool:
+# one-tier-per-spell rule, scoped to the target's own line — the same spell may sit in
+# two different lines, it just can't be castable twice off one line. `source` is the slot
+# the item is leaving, excluded from the scan: since a duplicate copy is the very same
+# .tres, matching on the resource is no longer enough to tell a move from a second copy.
+# Bypassed on purpose by the console, the combat lab and save loading — this is the
+# player-facing restriction only.
+func can_equip(item: ItemResource, target: Slot, source: Slot = null) -> bool:
 	if not target.can_place_item(item):
 		return false
-	if target.type != ItemType.SPELL:
+	var target_index := slots.slots.find(target)
+	if target_index == -1:
 		return true
 	var family := spell_family(item)
-	for slot in spell_slots.slots:
-		if slot == target or slot.item == null:
+	for i in slots.slots.size():
+		var slot := slots.at(i)
+		if i == target_index or slot == source or slot.item == null:
 			continue
-		if slot.item.resource_path == item.resource_path:
-			continue  # the same spell, being moved between slots
+		if line_of(i) != line_of(target_index):
+			continue
 		if spell_family(slot.item) == family:
 			return false
 	return true
 
-func get_equipment_slot_for_item(item: ItemResource) -> Slot:
-	if item.get_item_type() == ItemType.SPELL:
-		# Prefer the slot holding another tier of the same spell, so equipping blam2
-		# swaps blam1 out instead of being refused.
-		var family := spell_family(item)
-		for slot in spell_slots.slots:
-			if slot.item != null and spell_family(slot.item) == family:
-				return slot
-		var idx = spell_slots.first_empty()
-		return spell_slots.at(idx if idx != -1 else 0)
+# First slot a picked-up item may legally land in, scanning line by line — null when the
+# inventory is full or every line with room already holds that spell.
+func first_slot_for(item: ItemResource) -> Slot:
+	for slot in slots.slots:
+		if slot.item == null and can_equip(item, slot):
+			return slot
 	return null
 
 # Swaps items between two slots atomically: both slot_updated (and equipment_changed

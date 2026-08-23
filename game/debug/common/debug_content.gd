@@ -147,10 +147,7 @@ static func find_item(query: String) -> ItemResource:
 ## equip/stat/UI pipeline. Returns how many items were reloaded.
 static func reload_slotted_items() -> int:
 	var n := 0
-	var slots: Array = []
-	slots.append_array(GlobalInventory.bag_slots.slots)
-	slots.append_array(GlobalInventory.spell_slots.slots)
-	for slot in slots:
+	for slot in GlobalInventory.slots.slots:
 		if slot.item == null or slot.item.resource_path == "":
 			continue
 		var fresh := ResourceLoader.load(slot.item.resource_path, "",
