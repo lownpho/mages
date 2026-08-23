@@ -13,10 +13,6 @@ class_name SpellResource
 ## hits, the caster calls channel_released() on the effect — channeled
 ## effects must implement it. The caster is rooted for the channel.
 @export var channeled: bool = false
-## Exempt from SpellCaster.repeat_penalty — for a spell there is no point rotating
-## away from (a heal, a summon), which would otherwise be taxed for being cast the
-## only way it can be. Exempt casts also leave another spell's repeat chain intact.
-@export var repeat_exempt: bool = false
 ## What this cast is made to kill (see GameConstants.KIND_*): a hit on a creature whose
 ## `kinds` overlap lands for double. Empty on every base spell — a weakness arrives only on a
 ## side tier the player went and got (see the design's side tiers).

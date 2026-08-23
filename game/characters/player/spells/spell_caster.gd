@@ -14,20 +14,9 @@ signal cast_resolved(spell)
 ## A channel ended (release, cap, or the host's own timing).
 signal channel_ended(spell)
 
-## Fraction added to a spell's cooldown per consecutive cast of that same spell, so
-## leaning on one slot costs more than rotating through the loadout. 0 disables it —
-## only the player's caster sets it; enemies rotate on their own timing.
-@export var repeat_penalty: float = 0.0
-
-# Where the stretch stops: at 0.25 the fourth repeat and everything after it costs
-# double, rather than escalating into a spell you may as well not own.
-const REPEAT_CAP := 4
-
 @onready var host: Node2D = get_parent()
 
 var _cooldowns: Dictionary = {}  # SpellResource -> one-shot cooldown Timer
-var _last_spell: SpellResource   # last penalised cast, for the repeat chain
-var _repeats := 0
 # SpellResource -> live over-time effect (one exposing "finished", e.g. a bullet-spell
 # burst): the cooldown starts when it ends, and the spell can't recast while live.
 var _await_finish: Dictionary = {}
@@ -52,7 +41,6 @@ func cast(spell: SpellResource, aim: Vector2 = Vector2.ZERO) -> bool:
 		return false
 	if aim != Vector2.ZERO and "aim_direction" in host:
 		host.aim_direction = aim
-	_track_repeat(spell)
 	if spell.channeled:
 		_begin_channel(spell)
 	elif spell.cast_time > 0.0:
@@ -178,14 +166,6 @@ func _resolve_cooldown(spell: SpellResource, effect: Node) -> void:
 	else:
 		_start_cooldown(spell)
 
-# A repeat_exempt spell is transparent: it isn't stretched, and it doesn't break
-# someone else's chain either — otherwise a heal between two pews is a free reset.
-func _track_repeat(spell: SpellResource) -> void:
-	if repeat_penalty <= 0.0 or spell.repeat_exempt:
-		return
-	_repeats = _repeats + 1 if spell == _last_spell else 0
-	_last_spell = spell
-
 func _start_cooldown(spell: SpellResource) -> void:
 	var cd: Timer = _cooldowns.get(spell)
 	if not cd:
@@ -198,13 +178,8 @@ func _start_cooldown(spell: SpellResource) -> void:
 	if spell.cooldown <= 0.0:
 		cd.stop()
 		return
-	# The chain belongs to whichever spell is at its head, so a burst that only lands
-	# here when it ends can't collect a penalty someone else earned.
-	var wait := spell.cooldown
-	if _repeats > 0 and spell == _last_spell:
-		wait *= 1.0 + repeat_penalty * mini(_repeats, REPEAT_CAP)
-	cd.start(wait)
-	GlobalEvent.spell_cooldown_started.emit(spell, wait)
+	cd.start(spell.cooldown)
+	GlobalEvent.spell_cooldown_started.emit(spell, spell.cooldown)
 
 func _spawn_effect(spell: SpellResource) -> Node:
 	var effect = spell.effect_scene.instantiate()

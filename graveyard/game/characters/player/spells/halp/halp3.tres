@@ -57,7 +57,6 @@ minion_sheet = ExtResource("9_sheet")
 effect_scene = ExtResource("3_effect")
 cooldown = 15.0
 cast_time = 0.5
-repeat_exempt = true
 blurb = "Do they think I'm their mom?"
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 4
