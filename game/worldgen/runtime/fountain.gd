@@ -6,7 +6,7 @@ extends Area2D
 ## dormant (still water, no animation) until `cooldown` lapses.
 
 ## Art variants packed one sheet per biome, frame 0 dormant + 4 flowing.
-enum Style { GLADE, DEEPWOOD }
+enum Style { GLADE, DEEPWOOD, MYCELIUM }
 
 @export var style := Style.GLADE: # Runs on assignment so the editor preview tracks the choice.
 	set(value):
@@ -30,7 +30,7 @@ func _ready() -> void:
 func _apply_style() -> void:
 	if not is_node_ready():
 		return
-	var biome := "glade" if style == Style.GLADE else "deepwood"
+	var biome: String = Style.keys()[style].to_lower()
 	_sprite.play("%s_%s" % [biome, "dormant" if _cooldown.time_left > 0.0 else "flow"])
 
 

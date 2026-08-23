@@ -1,9 +1,10 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://worldgen/runtime/fountain.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://world_content/biomes/glade/art/glade_fountain.png" id="2_glade"]
 [ext_resource type="Texture2D" path="res://world_content/biomes/deepwood/art/deepwood_fountain.png" id="3_deep"]
-[ext_resource type="Texture2D" uid="uid://dhe2lau4ax0p7" path="res://characters/player/heal_aura.png" id="4_aura"]
+[ext_resource type="Texture2D" path="res://world_content/biomes/mycelium/art/mycelium_fountain.png" id="4_myc"]
+[ext_resource type="Texture2D" uid="uid://dhe2lau4ax0p7" path="res://characters/player/heal_aura.png" id="5_aura"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g0"]
 atlas = ExtResource("2_glade")
@@ -45,8 +46,53 @@ region = Rect2(48, 0, 16, 16)
 atlas = ExtResource("3_deep")
 region = Rect2(64, 0, 16, 16)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_m0"]
+atlas = ExtResource("4_myc")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m1"]
+atlas = ExtResource("4_myc")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2"]
+atlas = ExtResource("4_myc")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3"]
+atlas = ExtResource("4_myc")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m4"]
+atlas = ExtResource("4_myc")
+region = Rect2(64, 0, 16, 16)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_fountain"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m4")
+}],
+"loop": true,
+"name": &"mycelium_flow",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m0")
+}],
+"loop": false,
+"name": &"mycelium_dormant",
+"speed": 1.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_d1")
@@ -99,19 +145,19 @@ animations = [{
 }]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a0"]
-atlas = ExtResource("4_aura")
+atlas = ExtResource("5_aura")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a1"]
-atlas = ExtResource("4_aura")
+atlas = ExtResource("5_aura")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a2"]
-atlas = ExtResource("4_aura")
+atlas = ExtResource("5_aura")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a3"]
-atlas = ExtResource("4_aura")
+atlas = ExtResource("5_aura")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_aura"]
