@@ -41,6 +41,8 @@
 [ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_exam_press.tres" id="r34"]
 [ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_rare.tres" id="r35"]
 [ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_approach.tres" id="r36"]
+[ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_boss.tres" id="r37"]
+[ext_resource type="Resource" path="res://world_content/biomes/mycelium/rooms/mycelium_mother.tres" id="r38"]
 
 [resource]
 script = ExtResource("cfg")
@@ -59,4 +61,4 @@ stair_up_room = &"mycelium_stair_up"
 stair_down_room = &"mycelium_stair_down"
 prefetch_radius_chunks = 1
 biomes = Array[ExtResource("bdef")]([ExtResource("b_myc")])
-room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r20"), ExtResource("r21"), ExtResource("r22"), ExtResource("r23"), ExtResource("r24"), ExtResource("r25"), ExtResource("r26"), ExtResource("r27"), ExtResource("r28"), ExtResource("r29"), ExtResource("r30"), ExtResource("r31"), ExtResource("r32"), ExtResource("r33"), ExtResource("r34"), ExtResource("r35"), ExtResource("r36")])
+room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r20"), ExtResource("r21"), ExtResource("r22"), ExtResource("r23"), ExtResource("r24"), ExtResource("r25"), ExtResource("r26"), ExtResource("r27"), ExtResource("r28"), ExtResource("r29"), ExtResource("r30"), ExtResource("r31"), ExtResource("r32"), ExtResource("r33"), ExtResource("r34"), ExtResource("r35"), ExtResource("r36"), ExtResource("r37"), ExtResource("r38")])

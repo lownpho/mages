@@ -45,6 +45,8 @@ func _ready() -> void:
 			if DoorLinks.exit_tile(out).x < 0:
 				fails.append("floor %d '%s' has no reachable tile to arrive on" % [f, type_id])
 		_check_populated(graph, cfg, seed_v, f, fails)
+		if f == config.floors:
+			_check_boss_slots(graph, cfg, seed_v, fails)
 
 	# The ladder: its two ends leave, everything between them steps one floor.
 	if DungeonFloors.next_floor(config, 1, -1) != 0:
@@ -62,6 +64,25 @@ func _ready() -> void:
 			print("  FAIL: ", f2)
 		print("FAILED: %d" % fails.size())
 	get_tree().quit(0 if fails.is_empty() else 1)
+
+
+## The last floor stands the combat lab's placeholder where each boss fight will be, placed as a
+## room feature — so until the real scenes exist, the slots are walkable rather than empty.
+func _check_boss_slots(graph: BiomeGraph, cfg: GenConfig, seed_v: int, fails: Array[String]) -> void:
+	for type_id in [&"mycelium_boss", &"mycelium_mother"]:
+		var placed := 0
+		for room in graph.rooms:
+			if room.type_id != type_id:
+				continue
+			placed += 1
+			var dummies := 0
+			for sp in RoomBuilder.build(room, cfg, seed_v).spawns:
+				if sp.has("feature"):
+					dummies += 1
+			if dummies != 1:
+				fails.append("'%s' stands %d dummies, want 1" % [type_id, dummies])
+		if placed != 1:
+			fails.append("the last floor placed '%s' %d times, want 1" % [type_id, placed])
 
 
 ## Static content: a pool that can spend its budget, enemies that exist, ambient caps everywhere.
