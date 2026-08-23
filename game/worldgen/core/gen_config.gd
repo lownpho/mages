@@ -42,6 +42,11 @@ extends Resource
 @export var floors: int = 1                                 ## 1 = a flat world with no stairs
 @export var stair_up_room: StringName                       ## quota room holding the stair to the floor above
 @export var stair_down_room: StringName                     ## …and the one below
+## Content per floor, floor 1 first. A floor swaps the WHOLE config, so a dungeon introduces room
+## types as it descends instead of drawing every floor from one pool; short or empty and a floor
+## falls back to this config. Not hashed here for the same reason the depth isn't — the config a
+## floor actually generates from is the one whose hash that floor mixes in.
+@export var floor_configs: Array[GenConfig] = []
 
 @export_group("Runtime (not hashed — cannot affect the generated world)")
 @export var chunk_tiles: int = 32              ## tiles per streaming chunk side (a view, not content)

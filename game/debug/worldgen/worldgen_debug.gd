@@ -60,6 +60,7 @@ var _player: CharacterBody2D = null  ## drop-in player (fly view), null while fl
 var _floor := 1                      ## dungeon floor the fly view is on (1 for a flat world)
 var _floor_base := 0                 ## the tool's own seed; for a dungeon config, the RUN every floor derives from
 var _return_config: GenConfig = null ## world walked out of through a door, for the way back
+var _floor_config: GenConfig = null   ## the current floor's content pool; `config` stays the dungeon
 var _layout_ms := 0.0
 var _graphs_ms := 0.0
 
@@ -410,8 +411,12 @@ func _on_bookmark_picked(idx: int) -> void:
 func _rebuild(keep_player := false) -> void:
 	if _player != null and not keep_player:
 		_toggle_drop_in()
+	# A dungeon floor swaps the whole content pool, so everything that reads ROOM TYPES below asks
+	# the floor's config; `config` stays the dungeon and keeps answering for dials and depth.
+	_floor_config = DungeonFloors.config_for(config, _floor)
+	_streamer.config = _floor_config
 	var t0 := Time.get_ticks_usec()
-	spec = WorldLayout.build(world_seed, config)
+	spec = WorldLayout.build(world_seed, _floor_config)
 	_layout_ms = (Time.get_ticks_usec() - t0) / 1000.0
 	if spec == null:
 		_seed_label.text = "seed %d — LAYOUT FAILED (unsatisfiable adjacency rules?)" % _floor_base
@@ -419,13 +424,13 @@ func _rebuild(keep_player := false) -> void:
 	_room_graphs = RoomGraph.new()   # fresh cache — the whole world changed
 	t0 = Time.get_ticks_usec()
 	for p in spec.placements:
-		_room_graphs.get_biome_graph(spec, p.id, config)   # warm the cache + time it
+		_room_graphs.get_biome_graph(spec, p.id, _floor_config)   # warm the cache + time it
 	_graphs_ms = (Time.get_ticks_usec() - t0) / 1000.0
 	selected_biome = Vector2i(clampi(selected_biome.x, 0, spec.grid_w - 1),
 			clampi(selected_biome.y, 0, spec.grid_h - 1))
-	_world_view.set_data(spec, config)
+	_world_view.set_data(spec, _floor_config)
 	_world_view.set_selected(selected_biome)
-	_fly_draw.set_data(spec, config, _room_graphs)
+	_fly_draw.set_data(spec, _floor_config, _room_graphs)
 	_refresh_stats()
 	_refresh_header()
 	if current_view == 2:
@@ -443,13 +448,13 @@ func _selected_graph() -> BiomeGraph:
 	var bid := spec.biome_at(selected_biome)
 	if bid == &"":
 		return null
-	return _room_graphs.get_biome_graph(spec, bid, config)
+	return _room_graphs.get_biome_graph(spec, bid, _floor_config)
 
 
 func _refresh_biome_view() -> void:
 	if spec == null:
 		return
-	_biome_view.set_data(spec, config, _selected_graph(), selected_biome, selected_room)
+	_biome_view.set_data(spec, _floor_config, _selected_graph(), selected_biome, selected_room)
 
 
 ## Build the selected room's REAL output (same call the streamer makes) and show it.
@@ -460,7 +465,7 @@ func _refresh_room_view() -> void:
 		return
 	selected_room = clampi(selected_room, 0, graph.rooms.size() - 1)
 	var rspec: RoomSpec = graph.rooms[selected_room]
-	_room_view.set_data(rspec, RoomBuilder.build(rspec, config, world_seed))
+	_room_view.set_data(rspec, RoomBuilder.build(rspec, _floor_config, world_seed))
 
 
 # Views live as sibling CanvasItems; only the active one is visible. View 4 is the streamed

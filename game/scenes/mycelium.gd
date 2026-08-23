@@ -18,35 +18,38 @@ const OVERWORLD := "res://scenes/world.tscn"
 @onready var _player: Node2D = $WorldRoot/Entities/Player
 
 var _floor := 1
+var _config: GenConfig   ## the dungeon; a floor builds from its own config hanging off this one
 var _overworld_map: Dictionary = {}
 
 
 func _ready() -> void:
 	# The overworld's discovered map is still the live one until we build over it; hand it back on
 	# the way out, so a trip down here doesn't re-fog everything the player had already walked.
+	_config = _streamer.config
 	_overworld_map = GlobalMap.to_dict()
 	_streamer.biome_entered.connect(GlobalEvent.biome_entered.emit)
 	GlobalEvent.floor_change_requested.connect(_on_floor_change)
 	_streamer.target = _player
-	_enter_floor(1, _streamer.config.stair_up_room)
+	_enter_floor(1, _config.stair_up_room)
 
 
 func _on_floor_change(delta: int, _body: Node2D) -> void:
-	var n := DungeonFloors.next_floor(_streamer.config, _floor, delta)
+	var n := DungeonFloors.next_floor(_config, _floor, delta)
 	if n == 0:
 		GlobalMap.restore(_overworld_map)
 		SceneManager.go_to(load(OVERWORLD))
 		return
 	# Arriving on a floor means arriving at the stair you did NOT take: descending lands at the
 	# next floor's up stair, climbing at the previous floor's down stair.
-	_enter_floor(n, _streamer.config.stair_up_room if delta > 0 else _streamer.config.stair_down_room)
+	_enter_floor(n, _config.stair_up_room if delta > 0 else _config.stair_down_room)
 
 
-# One floor = one seed: rooms, stairs and (once they exist) enemies all fall out of the generator,
-# so a floor costs a rebuild and nothing else. The streamer frees the old floor's chunks — and
-# with them its enemies — before the new one streams in.
+# One floor = one seed and one content pool: rooms, stairs and enemies all fall out of the
+# generator, so a floor costs a config swap and a rebuild and nothing else. The streamer frees the
+# old floor's chunks — and with them its enemies — before the new one streams in.
 func _enter_floor(n: int, arrive_at: StringName) -> void:
 	_floor = n
+	_streamer.config = DungeonFloors.config_for(_config, n)
 	_streamer.build_world(DungeonFloors.floor_seed(GameState.active_seed, n))
 	_player.global_position = DungeonFloors.stair_position(_streamer, arrive_at)
 	GlobalMap.rebuild(_streamer)   # each floor is its own space: own fog, own textures

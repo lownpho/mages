@@ -14,6 +14,15 @@ static func next_floor(config: GenConfig, current: int, delta: int) -> int:
 	return n if n >= 1 and n <= config.floors else 0
 
 
+## The config a floor generates from: `GenConfig.floor_configs` indexed by depth, falling back to
+## the dungeon's own config. One floor is one content pool, which is how the descent introduces
+## rooms as it goes without a second generator or a floor-aware layer.
+static func config_for(config: GenConfig, n: int) -> GenConfig:
+	if n >= 1 and n <= config.floor_configs.size() and config.floor_configs[n - 1] != null:
+		return config.floor_configs[n - 1]
+	return config
+
+
 ## A floor's world seed. Derived from the RUN seed rather than the floor above, so floor N is the
 ## same floor every time you walk back onto it.
 static func floor_seed(run_seed: int, n: int) -> int:
