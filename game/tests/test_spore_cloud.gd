@@ -24,6 +24,7 @@ func _ready() -> void:
 	await _check_blast_lands_once()
 	await _check_an_enemy_field_is_inert()
 	await _check_light_lights_it()
+	await _check_a_blink_lights_it()
 	await _check_a_puffcap_is_its_own_payload()
 	await _check_a_lob_plants_where_it_lands()
 
@@ -168,6 +169,38 @@ func _check_light_lights_it() -> void:
 		caster.free()
 		victim.free()
 		_clear()
+
+# Blink arrives as a flash, and light is what spends spores. Both ends light: two patches a
+# full hop apart, so neither can be the other one chaining, and the departure patch proves the
+# vanish counts too rather than only the landing.
+func _check_a_blink_lights_it() -> void:
+	var spell: BlinkResource = load("res://characters/player/spells/blink/blink2.tres")
+	var hop := spell.distance_tiles * GameConstants.PX_PER_TILE
+	var caster := _stub(Vector2.ZERO)   # stub_caster aims RIGHT
+	var victim := _victim(Vector2(hop, 0), "enemies")
+	var here := _cloud(Vector2.ZERO, false, ["enemies"])
+	var there := _cloud(Vector2(hop, 0), false, ["enemies"])
+	await get_tree().physics_frame
+
+	var effect: Node = spell.effect_scene.instantiate()
+	effect.setup(spell, caster)
+	add_child(effect)
+	await get_tree().physics_frame
+
+	if caster.global_position.x != hop:
+		_fails.append("the blink didn't hop (%s)" % caster.global_position)
+	for leg: Array in [["left", here], ["landed in", there]]:
+		var cloud: SporeCloud = leg[1]
+		if is_instance_valid(cloud) and cloud.covers(cloud.global_position):
+			_fails.append("the patch it %s survived the blink" % leg[0])
+	# Only the landing patch covers the victim, so this is one blast, not both ends stacking.
+	if victim.health != 70:
+		_fails.append("a blink lit the field but the blast paid %d" % (100 - victim.health))
+	if is_instance_valid(effect):
+		effect.free()
+	victim.free()
+	caster.free()
+	_clear()
 
 # The enemy side of the same spell: a foe-coloured field where it stood, hunting the player —
 # and the puffcap gone with it, because a mine IS its payload. Sized off the pop's own

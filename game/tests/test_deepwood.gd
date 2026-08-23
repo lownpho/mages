@@ -493,8 +493,9 @@ func _fire_zoing(from: Vector2, dir: Vector2) -> BaseBullet:
 	return b
 
 # The shade never walks — Idle, Volley and Blink all plant it — so the only thing that can
-# move it is the blink effect. Boxed in, the same blink has to leave it exactly where it is:
-# every candidate landing spot is through a wall, and refusing beats teleporting into rock.
+# move it is the blink effect. Walled in, the same blink has to leave it exactly where it is:
+# the pocket is ringed by rock thicker than the hop, so every candidate landing spot is INSIDE
+# a wall rather than merely behind one — that is the only thing a blink refuses now.
 func _shade_blinks() -> int:
 	var target := _target(Vector2(40, 0))
 	var shade: Creature = SHADE.instantiate()
@@ -508,9 +509,11 @@ func _shade_blinks() -> int:
 	var fails := _expect("the shade blinked off its spot", shade.global_position != origin)
 	shade.queue_free()
 
+	# A pocket 24px across in a slab 64px thick: the shade's 4-tile hop can't clear the rock,
+	# so every bearing lands in solid stone.
 	var walls := [
-		_wall(Vector2(16, 0), Vector2(8, 80)), _wall(Vector2(-16, 0), Vector2(8, 80)),
-		_wall(Vector2(0, 16), Vector2(80, 8)), _wall(Vector2(0, -16), Vector2(80, 8)),
+		_wall(Vector2(44, 0), Vector2(64, 152)), _wall(Vector2(-44, 0), Vector2(64, 152)),
+		_wall(Vector2(0, 44), Vector2(152, 64)), _wall(Vector2(0, -44), Vector2(152, 64)),
 	]
 	target.position = Vector2(8, 0)
 	var boxed: Creature = SHADE.instantiate()
@@ -521,11 +524,11 @@ func _shade_blinks() -> int:
 	deadline = Time.get_ticks_msec() + 3000
 	while Time.get_ticks_msec() < deadline:
 		await get_tree().physics_frame
-	fails += _expect("a walled-in blink refused rather than teleporting through",
+	fails += _expect("a blink with nowhere clear to land refused rather than landing in rock",
 		boxed.global_position == penned)
 
 	if fails == 0:
-		print("  ok: shade — the blink moves its caster, and refuses through walls")
+		print("  ok: shade — the blink moves its caster, and refuses a landing inside rock")
 	boxed.queue_free()
 	target.queue_free()
 	for w in walls:
@@ -621,6 +624,10 @@ func _oop_mine_arms_and_blows() -> int:
 # The player's Blink is the same effect the shade casts with one dial moved: it lands along
 # the caster's AIM instead of on a random bearing. A flipped default reads as a mobility
 # spell that throws you somewhere you didn't choose.
+#
+# Cast straight at a wall with open floor behind it: the hop goes THROUGH, undiminished. The
+# wall standing between the two ends is the whole point of the spell, so a hop that shortened
+# or refused here would be the old ray check creeping back.
 func _player_blink_hops_along_aim() -> int:
 	var caster := Node2D.new()
 	caster.set_script(preload("res://tests/support/stub_caster.gd"))
@@ -628,13 +635,15 @@ func _player_blink_hops_along_aim() -> int:
 	add_child(caster)
 	var spell_caster := SpellCaster.new()
 	caster.add_child(spell_caster)
+	var wall := _wall(caster.position + Vector2(40, 0), Vector2(8, 80))
 	await get_tree().physics_frame
 
 	var from := caster.global_position
 	spell_caster.cast(BLINK)   # stub_caster aims RIGHT
 	await get_tree().physics_frame
 	var moved := caster.global_position - from
-	var fails := _expect("blink hopped the spell's distance along the aim (%s)" % moved,
+	var fails := _expect("blink hopped the spell's distance along the aim, through the wall (%s)"
+		% moved,
 		is_equal_approx(moved.x, BLINK.distance_tiles * GameConstants.PX_PER_TILE)
 			and is_zero_approx(moved.y))
 
@@ -649,7 +658,8 @@ func _player_blink_hops_along_aim() -> int:
 		get_tree().root.find_child("Blink", false, false) == null)
 
 	if fails == 0:
-		print("  ok: blink — the tier lands along the aim, leaving an afterimage behind")
+		print("  ok: blink — the tier lands along the aim through a wall, afterimage behind")
+	wall.queue_free()
 	caster.queue_free()
 	await get_tree().physics_frame
 	return fails

@@ -5,17 +5,11 @@ class_name SporeDetonator
 ## Fireball would make every player a detonator by accident. A bullet carrying this lights
 ## any cloud it crosses and keeps flying: the match isn't spent on the fuse.
 ##
-## Only your OWN spores light (SporeCloud.detonate refuses the rest). An enemy's field is
-## skipped rather than merely no-opped, so a match crossing the dungeon's floor on its way to
-## your field still has a fuse to reach.
+## Only your OWN spores light — SporeCloud.light owns that rule, and Blink's arrival flash
+## goes through the same call.
 ##
 ## A marker behaviour rather than a flag on BulletResource, because a new kind of bullet is
 ## a new mix of behaviours.
 
 func on_step(bullet: BaseBullet, _delta: float) -> void:
-	for cloud in bullet.get_tree().get_nodes_in_group(SporeCloud.GROUP):
-		if cloud.foe:
-			continue
-		if cloud.covers(bullet.global_position):
-			cloud.detonate(bullet.target_groups)
-			return
+	SporeCloud.light(bullet.global_position, bullet.target_groups)

@@ -94,6 +94,20 @@ static func feeds(body: Node2D) -> bool:
 	return any_covers(body.global_position,
 		layer != null and layer != GameConstants.LAYER_PLAYER_BULLETS, BODY_REACH)
 
+## Light `point`: whatever the player laid there goes off, chaining from there. The one entry
+## point for every source of light — a Zaap bullet crossing the patch, a Blink arriving in it —
+## so a new one is a call rather than a second copy of the rule.
+static func light(point: Vector2, groups: Array) -> void:
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null:
+		return
+	for cloud in tree.get_nodes_in_group(GROUP):
+		# An enemy's field is skipped rather than merely refused, so light crossing the
+		# dungeon's floor on its way to yours still has a fuse to reach.
+		if not cloud.foe and cloud.covers(point):
+			cloud.detonate(groups)
+			return
+
 ## Set off by light. The blast jumps to every cloud touching this one and hits each
 ## victim ONCE — the chain widens the area, it doesn't stack hits — and it hunts the
 ## DETONATOR's enemies rather than each cloud's, so lighting your own field can never be a
