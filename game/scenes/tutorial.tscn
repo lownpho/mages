@@ -10,41 +10,40 @@
 [ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="8_door"]
 [ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="9_world"]
 
-[node name="Tutorial" type="Node2D"]
+[node name="Tutorial" type="Node2D" unique_id=1442309371]
 script = ExtResource("1_tut")
 
-[node name="Floor" type="TileMapLayer" parent="."]
+[node name="Floor" type="TileMapLayer" parent="." unique_id=1677566102]
 z_index = -20
 tile_set = ExtResource("2_floor")
 
-[node name="Decor" type="TileMapLayer" parent="."]
+[node name="Decor" type="TileMapLayer" parent="." unique_id=1275188746]
 z_index = -19
 tile_set = ExtResource("3_decor")
 
-[node name="UI" parent="." instance=ExtResource("5_ui")]
+[node name="UI" parent="." unique_id=197727230 instance=ExtResource("5_ui")]
 
-[node name="DamageNumbers" parent="." instance=ExtResource("6_dmgnum")]
+[node name="DamageNumbers" parent="." unique_id=667106152 instance=ExtResource("6_dmgnum")]
 
-[node name="Pickups" type="Node2D" parent="." groups=["pickups"]]
+[node name="Pickups" type="Node2D" parent="." unique_id=1124944988 groups=["pickups"]]
 z_index = 10
 z_as_relative = false
 
-[node name="Entities" type="Node2D" parent="."]
+[node name="Entities" type="Node2D" parent="." unique_id=2061953209]
 y_sort_enabled = true
 
-[node name="Walls" type="TileMapLayer" parent="Entities"]
+[node name="Walls" type="TileMapLayer" parent="Entities" unique_id=1521685324]
 y_sort_enabled = true
-physics_quadrant_size = 16
 tile_set = ExtResource("4_trees")
 
-[node name="Signs" type="Node2D" parent="Entities"]
+[node name="Signs" type="Node2D" parent="Entities" unique_id=1218936627]
 y_sort_enabled = true
 
-[node name="EntranceDoor" parent="Entities" instance=ExtResource("8_door")]
-style = 4
+[node name="Enemies" type="Node2D" parent="Entities" unique_id=483956241]
+y_sort_enabled = true
 
-[node name="ExitDoor" parent="Entities" instance=ExtResource("8_door")]
+[node name="ExitDoor" parent="Entities" unique_id=710683147 instance=ExtResource("8_door")]
 style = 1
 target_scene = ExtResource("9_world")
 
-[node name="Player" parent="Entities" instance=ExtResource("7_player")]
+[node name="Player" parent="Entities" unique_id=515903545 instance=ExtResource("7_player")]

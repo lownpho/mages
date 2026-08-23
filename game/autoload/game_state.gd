@@ -54,6 +54,13 @@ var has_pending_position := false
 ## empty and stale entries from an abandoned seed are simply never matched again.
 var notable_kills: Dictionary = {}
 
+## True while a scene that is NOT a run is live — the tutorial. Everything that would touch the
+## player's saved run checks it: the save file and its cloud mirror here, the bestiary and the
+## leaderboard in their own autoloads. The tutorial is reachable from the title with a real run
+## already saved, and it can be left three ways (its exit door, death, the HUD's quit button),
+## so "writes nothing" has to hold at the writers rather than at each way out.
+var sandbox := false
+
 var _tracked_player: Node2D = null
 var _save_timer: Timer
 var _suspend_autosave := false
@@ -173,6 +180,8 @@ func in_run() -> bool:
 
 ## Wipe the save so there is nothing to Continue. Called on death.
 func clear_save() -> void:
+	if sandbox:
+		return
 	active_seed = 0
 	has_pending_position = false
 	_tracked_player = null
@@ -184,7 +193,8 @@ func clear_save() -> void:
 
 
 ## The run ended (the player died): wipe the run — save and inventory — and return to
-## the title screen. The bestiary (its own autoload) persists across runs.
+## the title screen. The bestiary (its own autoload) persists across runs. In a sandbox
+## there is no run to end, so clear_save() no-ops and this is only the trip home.
 func game_over() -> void:
 	clear_save()
 	_suspend_autosave = true
@@ -197,6 +207,8 @@ func game_over() -> void:
 ## player is being tracked), and the full inventory. Called on world entry, on every
 ## inventory change, and periodically while playing.
 func persist() -> void:
+	if sandbox:
+		return
 	var cfg := ConfigFile.new()
 	cfg.set_value("world", "version", SAVE_VERSION)
 	cfg.set_value("world", "seed", active_seed)

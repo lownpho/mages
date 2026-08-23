@@ -344,8 +344,8 @@ func _saved_loadout_string(slot_count: int) -> String:
 # --- Death handling -----------------------------------------------------------
 
 func _on_player_died(source: Node) -> void:
-	if not logged_in:
-		return
+	if not logged_in or GameState.sandbox:
+		return   # a tutorial death is not a run ending
 	# Captured before the first await: the moment this handler yields, player.gd
 	# resumes and game_over() wipes the seed, the inventory and the save.
 	# (Typed: Talo's typed-dictionary params reject untyped Dictionary variables.)

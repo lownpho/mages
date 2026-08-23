@@ -260,6 +260,8 @@ func _room_type_biomes(rt: RoomTypeDef) -> Array:
 	return []
 
 func _on_creature_died(data: CreatureResource, _position: Vector2) -> void:
+	if GameState.sandbox:
+		return   # a tutorial kill is not a discovery
 	var id := _id_for(data)
 	if id == &"" or not _roster.has(id):
 		return
