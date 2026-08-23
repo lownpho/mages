@@ -21,8 +21,12 @@ func _ready() -> void:
 		cloud.position = ctx.origin if i == 0 else ctx.origin + \
 			Vector2(spread, 0).rotated(TAU * (i - 1) / data.ring_clouds)
 		cloud.lifetime = data.cloud_lifetime
-		cloud.tick_damage = data.tick_damage.compute(ctx.skill, ctx.speed, ctx.defence)
-		cloud.blast_damage = data.blast_damage.compute(ctx.skill, ctx.speed, ctx.defence)
+		# Left unset by every enemy cast: the dungeon's spores all hurt the same, and that
+		# number is SporeCloud's own.
+		if data.tick_damage:
+			cloud.tick_damage = data.tick_damage.compute(ctx.skill, ctx.speed, ctx.defence)
+		if data.blast_damage:
+			cloud.blast_damage = data.blast_damage.compute(ctx.skill, ctx.speed, ctx.defence)
 		cloud.target_groups = ctx.target_groups
 		cloud.foe = ctx.bullet_layer != GameConstants.LAYER_PLAYER_BULLETS
 		# Deferred: a direct add_child to root fails while our own _ready is still busy

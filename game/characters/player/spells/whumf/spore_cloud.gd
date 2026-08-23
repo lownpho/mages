@@ -21,9 +21,12 @@ const TICK_INTERVAL := 0.5
 ## Seconds of die-back animation, taken out of the end of the lifetime.
 const WITHER_TIME := 1.2
 
-# Stamped by whoever lays the cloud, before it enters the tree.
+# Stamped by whoever lays the cloud, before it enters the tree. The damage defaults are the
+# DUNGEON's: every enemy spore on the floor hurts the same, whether a puffcap popped or a
+# spitter lobbed it, so the number is authored here and nowhere else. Only the player's Whumf
+# overrides it, because only the player's spores scale with stats and only theirs can be lit.
 var lifetime: float = 12.0
-var tick_damage: int = 1
+var tick_damage: int = 5
 var blast_damage: int = 0
 var target_groups: Array = ["enemies"]
 ## Whose floor this is. Player clouds are blue, enemy ones purple, both glinting yellow —
