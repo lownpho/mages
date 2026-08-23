@@ -1625,12 +1625,6 @@
      "cooldown": 0,
      "cast_time": 0.5,
      "channeled": false,
-     "amount": {
-      "base": 20,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
      "name": "burst"
     },
     {
@@ -1689,12 +1683,6 @@
      "cooldown": 0,
      "cast_time": 0.35,
      "channeled": false,
-     "amount": {
-      "base": 10,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
      "name": "myceling_pop"
     },
     {
@@ -1776,13 +1764,13 @@
      8
     ]
    },
-   "damage_max": 20,
-   "damage": "5-20",
+   "damage_max": 8,
+   "damage": "5-8",
    "biomes": [
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -2256,7 +2244,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -2610,7 +2598,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -3634,7 +3622,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -3895,7 +3883,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -4035,12 +4023,6 @@
      "cooldown": 0,
      "cast_time": 0.5,
      "channeled": false,
-     "amount": {
-      "base": 25,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
      "name": "pop"
     }
    ],
@@ -4076,13 +4058,13 @@
      8
     ]
    },
-   "damage_max": 25,
-   "damage": "25",
+   "damage_max": 0,
+   "damage": "",
    "biomes": [
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -4200,7 +4182,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -4297,7 +4279,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -4870,7 +4852,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -5107,7 +5089,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -5235,7 +5217,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -5419,7 +5401,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -6298,12 +6280,6 @@
      "cooldown": 0,
      "cast_time": 0.4,
      "channeled": false,
-     "amount": {
-      "base": 22,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
      "name": "spores"
     },
     {
@@ -6401,13 +6377,13 @@
      8
     ]
    },
-   "damage_max": 22,
-   "damage": "18-22",
+   "damage_max": 20,
+   "damage": "18-20",
    "biomes": [
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -6530,7 +6506,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -7326,7 +7302,7 @@
     {
      "id": "mycelium",
      "name": "Mycelium floor",
-     "planned": true
+     "planned": false
     }
    ]
   },
@@ -8660,12 +8636,12 @@
    "source": "game/world_content/biomes/mycelium/mycelium.tres",
    "family": "mycelium",
    "size_cells": [
-    1,
+    2,
     1
    ],
-   "fallback_room_type": "mycelium_open",
+   "fallback_room_type": "mycelium_cave",
    "name": "Mycelium floor",
-   "intro": "One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run.",
+   "intro": "One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run. Each of the ten floors is its own config off the dungeon's `floor_configs`, drawing from a pool that grows as you descend: floor 1 is a primer of four bodies met one to a room, every third floor introduces nothing and only combines, and puffcaps are terrain — every room on every floor lays a field of them.",
    "roster": [
     "bloatcap",
     "clustercap",
@@ -8683,11 +8659,51 @@
     "deathcap",
     "maulcap"
    ],
-   "planned": true,
+   "planned": false,
    "room_ids": [
+    "mycelium_bloat",
     "mycelium_cave",
-    "mycelium_open",
-    "mycelium_pocket"
+    "mycelium_lane",
+    "mycelium_spitter",
+    "mycelium_stair_up",
+    "mycelium_walkers",
+    "mycelium_ball",
+    "mycelium_bloat_walk",
+    "mycelium_flier",
+    "mycelium_lane_walk",
+    "mycelium_paint",
+    "mycelium_ring",
+    "mycelium_approach",
+    "mycelium_ball_field",
+    "mycelium_churn",
+    "mycelium_cluster",
+    "mycelium_exam_turrets",
+    "mycelium_flier_line",
+    "mycelium_gauntlet",
+    "mycelium_golem",
+    "mycelium_lane_paint",
+    "mycelium_lunge",
+    "mycelium_ring_line",
+    "mycelium_snipe",
+    "mycelium_two_lanes",
+    "mycelium_boss",
+    "mycelium_cluster_press",
+    "mycelium_crossfire",
+    "mycelium_deathcap_line",
+    "mycelium_exam_press",
+    "mycelium_gap_press",
+    "mycelium_golem_press",
+    "mycelium_hold",
+    "mycelium_mother",
+    "mycelium_press",
+    "mycelium_rare",
+    "mycelium_rare_burrower",
+    "mycelium_rare_deathcap",
+    "mycelium_rare_maulcap",
+    "mycelium_ring_lunge",
+    "mycelium_snipe_line",
+    "mycelium_squeeze",
+    "mycelium_stair_down"
    ]
   }
  ],
@@ -12413,6 +12429,40 @@
    "family": "deepwood"
   },
   {
+   "id": "mycelium_bloat",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_bloat.tres",
+   "difficulty": 0,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 2,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bloatcap",
+       "min": 2,
+       "max": 3
+      },
+      {
+       "enemy": "puffcap",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
    "id": "mycelium_cave",
    "biome": "mycelium",
    "source": "game/world_content/biomes/mycelium/rooms/mycelium_cave.tres",
@@ -12422,47 +12472,1989 @@
    "weight": 3,
    "min_per_biome": 0,
    "max_per_biome": 99,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
    "features": [],
-   "variations": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 6
+      }
+     ]
+    }
+   ],
    "biome_name": "Mycelium floor",
    "family": "mycelium"
   },
   {
-   "id": "mycelium_open",
+   "id": "mycelium_lane",
    "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_open.tres",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lane.tres",
    "difficulty": 0,
-   "generator": "empty",
+   "generator": "cave",
    "footprint_blob": false,
    "weight": 2,
    "min_per_biome": 0,
    "max_per_biome": 99,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
    "features": [],
-   "variations": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    }
+   ],
    "biome_name": "Mycelium floor",
    "family": "mycelium"
   },
   {
-   "id": "mycelium_pocket",
+   "id": "mycelium_spitter",
    "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_pocket.tres",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_spitter.tres",
    "difficulty": 0,
    "generator": "cave",
-   "footprint_blob": true,
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_stair_up",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_stair_up.tres",
+   "difficulty": 0,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [
+    "door"
+   ],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "puffcap",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_walkers",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_walkers.tres",
+   "difficulty": 0,
+   "generator": "cave",
+   "footprint_blob": false,
    "weight": 2,
    "min_per_biome": 0,
    "max_per_biome": 99,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
    "features": [],
-   "variations": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 2
+      },
+      {
+       "enemy": "puffcap",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_ball",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ball.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "rollcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_bloat_walk",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_bloat_walk.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_flier",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_flier.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "sporefly",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_lane_walk",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lane_walk.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_paint",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_paint.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_ring",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ring.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_approach",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_approach.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "mould_golem",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_ball_field",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ball_field.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "rollcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "rollcap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_churn",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_churn.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "rollcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_cluster",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_cluster.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "clustercap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "clustercap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_exam_turrets",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_exam_turrets.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "rollcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_flier_line",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_flier_line.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "sporefly",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_gauntlet",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_gauntlet.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_golem",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_golem.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "mould_golem",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "mould_golem",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_lane_paint",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lane_paint.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_lunge",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lunge.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 3
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_ring_line",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ring_line.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_snipe",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_snipe.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_two_lanes",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_two_lanes.tres",
+   "difficulty": 2,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 1,
+   "max_per_biome": 2,
+   "groups_min": 1,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_boss",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_boss.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [
+    "placeholder"
+   ],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "puffcap",
+       "min": 5,
+       "max": 6
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_cluster_press",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_cluster_press.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "clustercap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "mould_golem",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_crossfire",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_crossfire.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_deathcap_line",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_deathcap_line.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_exam_press",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_exam_press.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "clustercap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_gap_press",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_gap_press.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_golem_press",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_golem_press.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "mould_golem",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_hold",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_hold.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "mould_golem",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "ringcap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_mother",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_mother.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [
+    "placeholder"
+   ],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_press",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_press.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 3,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 2,
+       "max": 2
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_rare",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "burrower",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "deathcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "maulcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_rare_burrower",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare_burrower.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "burrower",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_rare_deathcap",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare_deathcap.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "deathcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_rare_maulcap",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare_maulcap.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "maulcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporefly",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 3
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_ring_lunge",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ring_lunge.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    },
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "normiecap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_snipe_line",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_snipe_line.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shellcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "spiralcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 4,
+       "max": 5
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_squeeze",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_squeeze.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 4,
+   "min_per_biome": 0,
+   "max_per_biome": 99,
+   "groups_min": 2,
+   "groups_max": 2,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "gapcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "ringcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "bloatcap",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "sporespitter",
+       "min": 1,
+       "max": 1
+      },
+      {
+       "enemy": "puffcap",
+       "min": 3,
+       "max": 4
+      }
+     ]
+    }
+   ],
+   "biome_name": "Mycelium floor",
+   "family": "mycelium"
+  },
+  {
+   "id": "mycelium_stair_down",
+   "biome": "mycelium",
+   "source": "game/world_content/biomes/mycelium/rooms/mycelium_stair_down.tres",
+   "difficulty": 3,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [
+    "door"
+   ],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "puffcap",
+       "min": 2,
+       "max": 3
+      }
+     ]
+    }
+   ],
    "biome_name": "Mycelium floor",
    "family": "mycelium"
   }

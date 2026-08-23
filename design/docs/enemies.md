@@ -1181,10 +1181,10 @@ already written off, or shoot it where you were about to stand and lose the floo
 | HP | 70 |
 | Speed | 24 px/s |
 | Range | detect 9, chase 12, attack 1.75 |
-| burst | **20** dmg —  |
+| burst |  |
 | nudge | **6** dmg — 1.4s cd, Single, 2 tiles range |
 | myceling_burst | **5** dmg — Ring x6, 4 tiles range |
-| myceling_pop | **10** dmg —  |
+| myceling_pop |  |
 | myceling_wide_burst | **8** dmg — Ring x8, 2 @ 0.12s, 6 tiles range |
 | Drops | **oop t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
 
@@ -1364,7 +1364,7 @@ only your own answer to light.
 | Kinds | fungal |
 | HP | 40 |
 | Range | trigger 2 |
-| pop | **25** dmg —  |
+| pop |  |
 | Drops | **oop t2** (2%), **poot t3** (1%) |
 
 **Notes:** it pops through the player's own Whumf effect with `consumes_caster` on — the mine IS its payload, exactly as the cinderstone's Oop is. The chain is pack aggro — entering the inhale calls every packmate a few tiles out into theirs.
@@ -1593,7 +1593,7 @@ that punishes you for letting its own leftovers sit.
 | Speed | 56 px/s |
 | Range | detect 14, spray 6 |
 | ring | **20** dmg — 1s cd, Ring x10, 2 @ 0.35s, 6 tiles range |
-| spores | **22** dmg —  |
+| spores |  |
 | spray | **18** dmg — 1s cd, Shotgun x4, 4 tiles range |
 | Drops | **zaap t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
 

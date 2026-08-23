@@ -96,7 +96,7 @@ biomes:
       One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open
       passages, and a cave generator that carves the wall mass rather than scattering blockers.
       It has its own tileset and its own GenConfig; it is not in the overworld's registry yet,
-      so nothing reaches it in a run.
-    planned_roster: [sporespitter, puffcap, spiralcap, ringcap, shellcap, bloatcap,
-                     clustercap, rollcap, sporefly, gapcap, normiecap, mould_golem,
-                     burrower, deathcap, maulcap]
+      so nothing reaches it in a run. Each of the ten floors is its own config off the dungeon's
+      `floor_configs`, drawing from a pool that grows as you descend: floor 1 is a primer of four
+      bodies met one to a room, every third floor introduces nothing and only combines, and
+      puffcaps are terrain — every room on every floor lays a field of them.

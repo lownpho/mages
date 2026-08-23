@@ -174,15 +174,53 @@ The dungeon behind the mimic deepwood's mushroom door — eight floors down, one
 
 ### Mycelium floor
 
-One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run.
+One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run. Each of the ten floors is its own config off the dungeon's `floor_configs`, drawing from a pool that grows as you descend: floor 1 is a primer of four bodies met one to a room, every third floor introduces nothing and only combines, and puffcaps are terrain — every room on every floor lays a field of them.
 
 | Tier | Room | Shape | Count | Enemy group variations |
 |---|---|---|---|---|
-| T0 | cave | cave | w3 | *(empty)* |
-| T0 | open | empty | w2 | *(empty)* |
-| T0 | pocket | cave | w2 | *(empty)* |
-
-Nothing spawns here yet — every room above carries an empty table. Planned roster: bloatcap, clustercap, gapcap, mould_golem, normiecap, puffcap, ringcap, rollcap, shellcap, spiralcap, sporefly, sporespitter, burrower, deathcap, maulcap.
+| T0 | bloat | cave | w2 | 2-3x bloatcap + 2-3x puffcap |
+| T0 | cave | cave | w3 | 4-6x puffcap |
+| T0 | lane | cave | w2 | 1x spiralcap + 2-3x puffcap |
+| T0 | spitter | cave | w3 | 1x sporespitter + 2-3x puffcap |
+| T0 | stair_up | cave | 1 | 2-3x puffcap |
+| T0 | walkers | cave | w2 | 1-2x normiecap + 2-3x puffcap |
+| T1 | ball | cave | w3 | 1x rollcap + 1x sporespitter + 4-5x puffcap |
+| T1 | bloat_walk | cave | w3 | 1x bloatcap + 2x normiecap + 3-4x puffcap |
+| T1 | flier | cave | w3 | 2x sporefly + 1x ringcap + 3-4x puffcap |
+| T1 | lane_walk | cave | w4 | 1x spiralcap + 1x normiecap + 4-5x puffcap - 1x spiralcap + 2x normiecap + 4-5x puffcap |
+| T1 | paint | cave | w4 | 1x sporespitter + 1x normiecap + 3-4x puffcap - 1x sporespitter + 1x bloatcap + 3-4x puffcap |
+| T1 | ring | cave | w3 | 1x ringcap + 1x normiecap + 4-5x puffcap - 1x ringcap + 1x sporespitter + 4-5x puffcap |
+| T2 | approach | cave | w3 | 1x shellcap + 1x sporefly + 1x mould_golem + 4-5x puffcap |
+| T2 | ball_field | cave | w3 | 1x rollcap + 1x gapcap + 3-4x puffcap - 2x rollcap + 1x sporespitter + 3-4x puffcap |
+| T2 | churn | cave | w4 | 1x bloatcap + 2x sporefly + 1x ringcap + 4-5x puffcap - 1x rollcap + 1x sporefly + 1x shellcap + 4-5x puffcap |
+| T2 | cluster | cave | w4 | 1x clustercap + 1x ringcap + 4-5x puffcap - 1x clustercap + 1x sporefly + 4-5x puffcap |
+| T2 | exam_turrets | cave | w4 | 1x shellcap + 1x ringcap + 1x sporefly + 1x rollcap + 4-5x puffcap |
+| T2 | flier_line | cave | w4 | 2x sporefly + 1x shellcap + 4-5x puffcap - 1x sporefly + 1x spiralcap + 1x normiecap + 4-5x puffcap |
+| T2 | gauntlet | cave | w4 | 1x ringcap + 1x spiralcap + 1x sporespitter + 1x gapcap + 4-5x puffcap |
+| T2 | golem | cave | w4 | 1x mould_golem + 1x sporespitter + 4-5x puffcap - 1x mould_golem + 1x bloatcap + 4-5x puffcap |
+| T2 | lane_paint | cave | w4 | 1x spiralcap + 1x sporespitter + 1x normiecap + 4-5x puffcap |
+| T2 | lunge | cave | w3 | 1x gapcap + 1x sporespitter + 3x puffcap - 1x gapcap + 1x bloatcap + 3x puffcap |
+| T2 | ring_line | cave | w4 | 2x ringcap + 1x sporespitter + 4-5x puffcap - 1x ringcap + 1x spiralcap + 1x sporespitter + 4-5x puffcap |
+| T2 | snipe | cave | w3 | 1x shellcap + 1x sporespitter + 4-5x puffcap - 1x shellcap + 1x bloatcap + 4-5x puffcap |
+| T2 | two_lanes | cave | w3 | 2x spiralcap + 1x bloatcap + 4-5x puffcap |
+| T3 | boss | cave | 1 | 5-6x puffcap |
+| T3 | cluster_press | cave | w4 | 1x clustercap + 1x mould_golem + 1x sporefly + 3-4x puffcap |
+| T3 | crossfire | cave | w4 | 2x spiralcap + 1x sporespitter + 1x normiecap + 4-5x puffcap - 1x spiralcap + 1x sporespitter + 2x bloatcap + 4-5x puffcap |
+| T3 | deathcap_line | cave | w4 | 1x shellcap + 1x gapcap + 1x sporefly + 4-5x puffcap |
+| T3 | exam_press | cave | w4 | 1x clustercap + 1x bloatcap + 2x sporefly + 1x gapcap + 3-4x puffcap |
+| T3 | gap_press | cave | w3 | 1x bloatcap + 1x gapcap + 1x sporespitter + 3-4x puffcap |
+| T3 | golem_press | cave | w3 | 1x mould_golem + 1x shellcap + 1x sporefly + 3x puffcap |
+| T3 | hold | cave | w4 | 1x mould_golem + 2x ringcap + 1x sporespitter + 4-5x puffcap |
+| T3 | mother | cave | 1 | 4-5x puffcap |
+| T3 | press | cave | w3 | 1x bloatcap + 1x sporespitter + 2x normiecap + 3-4x puffcap |
+| T3 | rare | cave | 1 | 1x burrower + 4-5x puffcap - 1x deathcap + 1x sporefly + 4-5x puffcap - 1x maulcap + 1x sporefly + 4-5x puffcap |
+| T3 | rare_burrower | cave | 1 | 1x burrower + 1x ringcap + 4-5x puffcap |
+| T3 | rare_deathcap | cave | 1 | 1x deathcap + 1x sporefly + 4-5x puffcap |
+| T3 | rare_maulcap | cave | 1 | 1x maulcap + 1x sporefly + 3x puffcap |
+| T3 | ring_lunge | cave | w4 | 1x ringcap + 1x gapcap + 3-4x puffcap - 1x ringcap + 1x gapcap + 1x normiecap + 3-4x puffcap |
+| T3 | snipe_line | cave | w4 | 1x shellcap + 1x spiralcap + 1x ringcap + 4-5x puffcap |
+| T3 | squeeze | cave | w4 | 1x gapcap + 1x ringcap + 1x bloatcap + 1x sporespitter + 3-4x puffcap |
+| T3 | stair_down | cave | 1 | 2-3x puffcap |
 
 #### Mycelium floor drops
 
