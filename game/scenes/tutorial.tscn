@@ -1,33 +1,50 @@
 [gd_scene format=3 uid="uid://bkg6pxrhomx2x"]
 
-[ext_resource type="Script" path="res://scenes/tutorial.gd" id="0_tut"]
-[ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="2_ui"]
-[ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="3_dn"]
-[ext_resource type="TileSet" uid="uid://5naib54qurrk" path="res://scenes/glade_autotile_tileset.tres" id="5_floor"]
-[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="6_trees"]
-[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="7_door"]
-[ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="8_world"]
+[ext_resource type="Script" uid="uid://8adv04v4iykp" path="res://scenes/tutorial.gd" id="1_tut"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://world_content/biomes/glade_start/glade_floor_tileset.tres" id="2_floor"]
+[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://world_content/biomes/glade_start/glade_decor_tileset.tres" id="3_decor"]
+[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="4_trees"]
+[ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_ui"]
+[ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="6_dmgnum"]
+[ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="7_player"]
+[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="8_door"]
+[ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="9_world"]
 
-[node name="Tutorial" type="Node2D" unique_id=432005115]
-script = ExtResource("0_tut")
+[node name="Tutorial" type="Node2D"]
+script = ExtResource("1_tut")
 
-[node name="UI" parent="." unique_id=964745218 instance=ExtResource("2_ui")]
+[node name="Floor" type="TileMapLayer" parent="."]
+z_index = -20
+tile_set = ExtResource("2_floor")
 
-[node name="DamageNumbers" parent="." unique_id=446028959 instance=ExtResource("3_dn")]
+[node name="Decor" type="TileMapLayer" parent="."]
+z_index = -19
+tile_set = ExtResource("3_decor")
 
-[node name="floor" type="TileMapLayer" parent="." unique_id=1250818274]
-tile_set = ExtResource("5_floor")
+[node name="UI" parent="." instance=ExtResource("5_ui")]
 
-[node name="World" type="Node2D" parent="." unique_id=1136083433]
+[node name="DamageNumbers" parent="." instance=ExtResource("6_dmgnum")]
+
+[node name="Pickups" type="Node2D" parent="." groups=["pickups"]]
+z_index = 10
+z_as_relative = false
+
+[node name="Entities" type="Node2D" parent="."]
 y_sort_enabled = true
 
-[node name="trees" type="TileMapLayer" parent="World" unique_id=1038939880]
+[node name="Walls" type="TileMapLayer" parent="Entities"]
 y_sort_enabled = true
-tile_set = ExtResource("6_trees")
+physics_quadrant_size = 16
+tile_set = ExtResource("4_trees")
 
-[node name="Player" parent="World" unique_id=2110851455 instance=ExtResource("1_player")]
+[node name="Signs" type="Node2D" parent="Entities"]
+y_sort_enabled = true
 
-[node name="ExitDoor" parent="World" unique_id=1282620795 instance=ExtResource("7_door")]
+[node name="EntranceDoor" parent="Entities" instance=ExtResource("8_door")]
+style = 4
+
+[node name="ExitDoor" parent="Entities" instance=ExtResource("8_door")]
 style = 1
-target_scene = ExtResource("8_world")
+target_scene = ExtResource("9_world")
+
+[node name="Player" parent="Entities" instance=ExtResource("7_player")]

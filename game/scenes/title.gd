@@ -1,14 +1,17 @@
 extends Control
 
 ## The startup screen. New (roll a fresh world and start in the glade with starter gear),
-## Continue (resume the saved seed) and Quit. New/Continue open the streamed world;
-## Continue is disabled until a save exists.
+## Continue (resume the saved seed), Tutorial and Quit. New/Continue open the streamed world;
+## Continue is disabled until a save exists. Tutorial opens the hand-laid floor instead, which
+## rolls its own run only if the player walks out its exit.
 
 @export var new_game_scene: PackedScene
 @export var continue_scene: PackedScene
+@export var tutorial_scene: PackedScene
 
 @onready var _new_btn: Button = %NewButton
 @onready var _continue_btn: Button = %ContinueButton
+@onready var _tutorial_btn: Button = %TutorialButton
 @onready var _quit_btn: Button = %QuitButton
 @onready var _account_btn: Button = %AccountButton
 @onready var _board_btn: Button = %LeaderboardButton
@@ -34,13 +37,14 @@ func _ready() -> void:
 
 	# Button idle/selected/disabled looks come from the project theme; hover just
 	# moves the keyboard/pad focus so the two selection cues can never disagree.
-	for btn in [_new_btn, _continue_btn, _quit_btn, _board_btn, _account_btn]:
+	for btn in [_new_btn, _continue_btn, _tutorial_btn, _quit_btn, _board_btn, _account_btn]:
 		btn.mouse_entered.connect(func() -> void:
 			if not btn.disabled:
 				btn.grab_focus())
 
 	_new_btn.pressed.connect(_on_new)
 	_continue_btn.pressed.connect(_on_continue)
+	_tutorial_btn.pressed.connect(func() -> void: SceneManager.go_to(tutorial_scene))
 	_quit_btn.pressed.connect(get_tree().quit)
 
 	# The meta row (bottom corner, apart from the run menu) is the online side:
