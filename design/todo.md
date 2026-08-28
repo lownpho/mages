@@ -1,12 +1,16 @@
 # now
 
 mycelium tileset and decor, stairs
-mycelium rooms with enemies
 mycelium floors
-
+mycelium rooms with enemies
+merge all
 4 spells only
+remove cooldown creep
+
 spell rebalance (think about sets)
 spell blurbs
+
+tutorial scene with menu entry
 
 make biomes bigger overall (not glade)
 rebalance drops in biomes
@@ -21,6 +25,29 @@ page completion unlock things!
 interactions:
 mine that if shot explodes huge fireball
 area that draws enemy in catches on fire or shoots enemies outward or catches on water
+
+
+some spells feel like they have no reason to be equipped
+blink: should give huge amount of skill
+chargedash: should give speed and defence?
+sets:
+- high damage (high skill, low def low speed)
+  - fireball snipe zoing blam/ring/blops/blink
+  - defensive option: with nope or summon
+- high damage (high speed, low skill, low def)
+  - zaap pew bzz chargedash(speed def)
+- high def
+  - nope, bwoom, summon/blam, thwomp
+- miner
+  - skill spell, mines
+- summoner
+  - 3 skill spell, summons
+- fungal (high skill, low def, med hp, med speed)
+  - whumf blops poot zaap/blink
+
+what else?
+
+
 
 
 # next
@@ -70,14 +97,12 @@ new spells:
 
 # tip signs
 ## glade
--
 - Modern maps are marvelous. You can place dots on them as a reminder for later.
 - Feel free to throw away spells you don't like: they do not harm the environment.
 - Some creatures are rarer than other but it is easier to learn spells from them.
 - Be careful with doors: they can take you to places you are not prepared for.
-- Casting the same spell multiple times in a row causes fatigue.
 
 ## deepwood
 - Evil mushrooms retreated in a dungeon underground. Watch out.
-- Watch out. There is a terrible swarm living beneath these woods.
+- Watch out. There are terrible swarms living beneath these woods.
 - For some reason mushrooms and insects hate each other.
