@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
 [ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_ynr7d"]
 [ext_resource type="Resource" uid="uid://dyjwr0o44wf6k" path="res://characters/player/spells/pew/pew1.tres" id="2_staff"]
-[ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="3_heal"]
+[ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="3_zaap"]
 [ext_resource type="Texture2D" uid="uid://bdjd0es466ai5" path="res://characters/enemies/sproutling/sproutling.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_staff"]
@@ -13,9 +13,9 @@ item = ExtResource("2_staff")
 chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
-[sub_resource type="Resource" id="Resource_heal"]
+[sub_resource type="Resource" id="Resource_zaap"]
 script = ExtResource("1_dpl6y")
-item = ExtResource("3_heal")
+item = ExtResource("3_zaap")
 chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
@@ -28,4 +28,4 @@ script = ExtResource("1")
 display_name = "Sproutling"
 icon = SubResource("AtlasTexture_icon")
 max_health = 25
-drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_staff"), SubResource("Resource_heal")])
+drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_staff"), SubResource("Resource_zaap")])

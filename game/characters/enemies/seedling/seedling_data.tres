@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
 [ext_resource type="Resource" uid="uid://qjq7lp1l3b7s" path="res://characters/player/spells/ring/ring1.tres" id="2_rune"]
-[ext_resource type="Resource" uid="uid://c0nvpgtufjh8s" path="res://characters/player/spells/heal/heal1.tres" id="3_heal"]
+[ext_resource type="Resource" uid="uid://c7aw2incf3pcw" path="res://characters/player/spells/zaap/zaap1.tres" id="3_zaap"]
 [ext_resource type="Texture2D" uid="uid://bher6cuar4fky" path="res://characters/enemies/seedling/seedling.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Resource_rune"]
@@ -12,9 +12,9 @@ item = ExtResource("2_rune")
 chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
-[sub_resource type="Resource" id="Resource_heal"]
+[sub_resource type="Resource" id="Resource_zaap"]
 script = ExtResource("1_dpl6y")
-item = ExtResource("3_heal")
+item = ExtResource("3_zaap")
 chance = 0.1
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
@@ -27,4 +27,4 @@ script = ExtResource("1")
 display_name = "Seedling"
 icon = SubResource("AtlasTexture_icon")
 max_health = 45
-drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_rune"), SubResource("Resource_heal")])
+drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_rune"), SubResource("Resource_zaap")])
