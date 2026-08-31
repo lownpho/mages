@@ -58,10 +58,6 @@ signal warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i)
 # for the overworld.
 signal floor_change_requested(delta: int, body: Node2D)
 
-# Leaderboard signals
-# Emitted when the Talo session opens or closes (login, logout, restore at boot).
-signal leaderboard_session_changed(logged_in: bool)
-
 # Debug signals
 # Emitted by every Hurtbox on a successful hit. victim is the character struck,
 # source is the bullet/damage area. The debug overlay tallies these.

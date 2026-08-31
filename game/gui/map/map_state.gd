@@ -19,6 +19,15 @@ const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
 ## encounter (room ids are per-biome, so this is an explicit list).
 const BOSS_TYPES: Array[StringName] = [&"glade_boss_d3", &"deepwood_arena"]
 
+## Fountains are common healing pools, not landmarks — they don't earn a minimap marker like
+## rarer features do.
+const _FOUNTAIN_SCENES: Array[PackedScene] = [
+	preload("res://worldgen/runtime/fountain.tscn"),
+	preload("res://worldgen/runtime/glade_fountain.tscn"),
+	preload("res://worldgen/runtime/deepwood_fountain.tscn"),
+	preload("res://worldgen/runtime/mycelium_fountain.tscn"),
+]
+
 var world_seed: int = 0
 var world_tiles := Vector2i.ZERO      ## image dimensions (1 px per tile)
 var discovered: Dictionary = {}       ## origin_slot (Vector2i) -> true
@@ -157,7 +166,7 @@ func _paint_room(room: RoomOutput) -> void:
 		markers.append({"tile": Vector2i(ox + (room.width >> 1), oy + (room.height >> 1)),
 				"kind": MARKER_BOSS})
 	for sp in room.spawns:
-		if sp is Dictionary and sp.has("feature"):
+		if sp is Dictionary and sp.has("feature") and sp["feature"] not in _FOUNTAIN_SCENES:
 			var t: Vector2i = sp.get("tile", Vector2i.ZERO)
 			markers.append({"tile": Vector2i(ox + t.x, oy + t.y), "kind": MARKER_FEATURE})
 

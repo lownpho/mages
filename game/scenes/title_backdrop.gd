@@ -5,9 +5,9 @@ extends CanvasLayer
 ##
 ## Deliberately INERT. What turns a generated world into a *run* is world.gd, not the streamer: it
 ## bridges the streamer's biome_entered onto GlobalEvent (which the bestiary writes to disk),
-## emits world_ready (which the leaderboard books as a run and reports to Talo), and calls
-## GameState.persist(). None of that happens here. There is no EntitySpawner either, so nothing
-## spawns, nothing fights, and no save file is touched. The seed is local — GameState.active_seed
+## emits world_ready, and calls GameState.persist(). None of that happens here. There is no
+## EntitySpawner either, so nothing spawns, nothing fights, and no save file is touched. The
+## seed is local — GameState.active_seed
 ## still belongs to the run, so what you see here is never the world New or Continue gives you.
 
 ## Radius of the drift, in px. Small on purpose: it has to stay inside the spawn room rather than

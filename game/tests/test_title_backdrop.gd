@@ -2,9 +2,8 @@ extends Node
 ## Headless test that the title screen's backdrop is INERT. It runs the real generator, so the
 ## risk is not that it looks wrong — it is that it quietly behaves like a run: world.gd relays
 ## biome_entered onto GlobalEvent (which the bestiary writes to user://bestiary.cfg), emits
-## world_ready (which the leaderboard reports to Talo as a run started), and calls
-## GameState.persist() (which overwrites user://save.cfg). A backdrop doing any of that would
-## corrupt a player's save and their stats just by them looking at the menu. Run:
+## world_ready, and calls GameState.persist() (which overwrites user://save.cfg). A backdrop
+## doing any of that would corrupt a player's save just by them looking at the menu. Run:
 ##   godot --headless --path game res://tests/test_title_backdrop.tscn
 
 const BACKDROP := preload("res://scenes/title_backdrop.tscn")
@@ -56,7 +55,7 @@ func _ready() -> void:
 
 	# ...and it still must not have behaved like a run.
 	if saw_world_ready:
-		fails.append("emitted GlobalEvent.world_ready — the leaderboard books that as a run")
+		fails.append("emitted GlobalEvent.world_ready — that books this as a real run")
 	if not saw_biome.is_empty():
 		fails.append("emitted biome_entered %s — the bestiary persists visited biomes" % str(saw_biome))
 	if _mtime(GameState.SAVE_PATH) != before["save"]:

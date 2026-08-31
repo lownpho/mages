@@ -258,6 +258,11 @@ func _gui_input(event: InputEvent) -> void:
 			_activate()
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			cancel_carry()
+		# A mouse click grabs focus same as pad navigation would, but keyboard/mouse play
+		# never means to leave it parked here — ui_accept (Space) shares its key with cast4,
+		# so a stale focused slot would silently eat the next spell cast instead of casting it.
+		if not GlobalInput.using_gamepad:
+			release_focus()
 	elif event.is_action_pressed("ui_accept"):
 		_activate()
 		accept_event()

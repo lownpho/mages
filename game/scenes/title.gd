@@ -13,12 +13,6 @@ extends Control
 @onready var _continue_btn: Button = %ContinueButton
 @onready var _tutorial_btn: Button = %TutorialButton
 @onready var _quit_btn: Button = %QuitButton
-@onready var _account_btn: Button = %AccountButton
-@onready var _board_btn: Button = %LeaderboardButton
-@onready var _auth_dialog: PanelContainer = %AuthDialog
-@onready var _board: Control = %LeaderboardPanel
-@onready var _menu: VBoxContainer = $Menu
-@onready var _meta_row: HBoxContainer = $MetaRow
 @onready var _bg: ColorRect = $Bg
 @onready var _title_label: Label = $TitleLabel
 
@@ -37,7 +31,7 @@ func _ready() -> void:
 
 	# Button idle/selected/disabled looks come from the project theme; hover just
 	# moves the keyboard/pad focus so the two selection cues can never disagree.
-	for btn in [_new_btn, _continue_btn, _tutorial_btn, _quit_btn, _board_btn, _account_btn]:
+	for btn in [_new_btn, _continue_btn, _tutorial_btn, _quit_btn]:
 		btn.mouse_entered.connect(func() -> void:
 			if not btn.disabled:
 				btn.grab_focus())
@@ -47,24 +41,6 @@ func _ready() -> void:
 	_tutorial_btn.pressed.connect(func() -> void: SceneManager.go_to(tutorial_scene))
 	_quit_btn.pressed.connect(get_tree().quit)
 
-	# The meta row (bottom corner, apart from the run menu) is the online side:
-	# LEADERBOARD (only offered with an account) and the account button, which
-	# doubles as the status readout — LOGIN when logged out, the account name when
-	# logged in (pressing it then logs out). Either overlay swallows both button
-	# groups while open so hover can't steal focus from it.
-	_account_btn.pressed.connect(_on_account)
-	_board_btn.pressed.connect(func() -> void: _board.visible = not _board.visible)
-	for overlay in [_auth_dialog, _board]:
-		overlay.visibility_changed.connect(func() -> void:
-			var overlay_open: bool = _auth_dialog.visible or _board.visible
-			_menu.visible = not overlay_open
-			_meta_row.visible = not overlay_open)
-	GlobalEvent.leaderboard_session_changed.connect(func(_logged_in: bool) -> void: _refresh_account())
-	_refresh_account()
-
-	# identify() is async, so the account's run can land after the menu is up — and it
-	# may be a run this machine has never seen.
-	GameState.cloud_sync_finished.connect(_refresh_continue)
 	_refresh_continue()
 	_continue_btn.mouse_entered.connect(_show_icon_popup)
 	_continue_btn.mouse_exited.connect(_hide_icon_popup)
@@ -125,20 +101,6 @@ func _hide_icon_popup() -> void:
 	if _icon_popup:
 		_icon_popup.queue_free()
 		_icon_popup = null
-
-
-func _refresh_account() -> void:
-	_account_btn.text = GlobalLeaderboard.username().to_upper() if GlobalLeaderboard.logged_in else "LOGIN"
-	_board_btn.visible = GlobalLeaderboard.logged_in
-	if not GlobalLeaderboard.logged_in:
-		_board.hide()
-
-
-func _on_account() -> void:
-	if GlobalLeaderboard.logged_in:
-		GlobalLeaderboard.logout()
-	else:
-		_auth_dialog.open()
 
 
 func _on_new() -> void:

@@ -8,8 +8,8 @@ extends Node2D
 ## reorder the tutorial; add an entry and the floor grows a room to hold it.
 ##
 ## Deliberately save-free: no WorldStreamer, no EntitySpawner, and it never emits
-## GlobalEvent.world_ready (which is what books a run on the leaderboard) or calls
-## GameState.persist(). Only walking out the exit commits to a run.
+## GlobalEvent.world_ready or calls GameState.persist(). Only walking out the exit commits to
+## a run.
 ##
 ## Layout is data, tiles are painted from the glade tilesets' own tiles, so there is no
 ## hand-painted tilemap in the scene file to keep in sync with the room list.

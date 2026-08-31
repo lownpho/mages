@@ -3,8 +3,6 @@
 [ext_resource type="Script" uid="uid://d3k62qcc8eu13" path="res://scenes/title.gd" id="1_title"]
 [ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="4_cont"]
 [ext_resource type="PackedScene" uid="uid://bkg6pxrhomx2x" path="res://scenes/tutorial.tscn" id="8_tut"]
-[ext_resource type="Script" uid="uid://dsjyip1cr2inx" path="res://scenes/auth_dialog.gd" id="5_auth"]
-[ext_resource type="PackedScene" path="res://gui/leaderboard/leaderboard_panel.tscn" id="6_board"]
 [ext_resource type="PackedScene" path="res://scenes/title_backdrop.tscn" id="7_backdrop"]
 
 [node name="Title" type="Control" unique_id=1270687267]
@@ -61,7 +59,7 @@ alignment = 1
 [node name="NewButton" type="Button" parent="Menu" unique_id=1565615204]
 unique_name_in_owner = true
 layout_mode = 2
-focus_neighbor_top = NodePath("../../MetaRow/AccountButton")
+focus_neighbor_top = NodePath("../QuitButton")
 focus_neighbor_bottom = NodePath("../ContinueButton")
 text = "NEW"
 
@@ -83,108 +81,7 @@ text = "TUTORIAL"
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../TutorialButton")
-focus_neighbor_bottom = NodePath("../../MetaRow/LeaderboardButton")
+focus_neighbor_bottom = NodePath("../NewButton")
 text = "QUIT"
-
-[node name="MetaRow" type="HBoxContainer" parent="." unique_id=1731284095]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -80.0
-offset_top = -54.0
-offset_right = 80.0
-offset_bottom = -40.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 4
-alignment = 1
-
-[node name="LeaderboardButton" type="Button" parent="MetaRow" unique_id=1948210377]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-focus_neighbor_left = NodePath("../AccountButton")
-focus_neighbor_top = NodePath("../../Menu/QuitButton")
-focus_neighbor_right = NodePath("../AccountButton")
-focus_neighbor_bottom = NodePath("../../Menu/NewButton")
-text = "LEADERBOARD"
-
-[node name="AccountButton" type="Button" parent="MetaRow" unique_id=738201455]
-unique_name_in_owner = true
-layout_mode = 2
-focus_neighbor_left = NodePath("../LeaderboardButton")
-focus_neighbor_top = NodePath("../../Menu/QuitButton")
-focus_neighbor_right = NodePath("../LeaderboardButton")
-focus_neighbor_bottom = NodePath("../../Menu/NewButton")
-text = "LOGIN"
-
-[node name="AuthDialog" type="PanelContainer" parent="." unique_id=1204773310]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -55.0
-offset_top = -30.0
-offset_right = 55.0
-offset_bottom = 30.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("5_auth")
-
-[node name="Form" type="VBoxContainer" parent="AuthDialog" unique_id=1024881733]
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="NameEdit" type="LineEdit" parent="AuthDialog/Form" unique_id=1416286793]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "NAME"
-max_length = 20
-caret_blink = true
-
-[node name="PasswordEdit" type="LineEdit" parent="AuthDialog/Form" unique_id=1918122645]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "PASSWORD"
-caret_blink = true
-secret = true
-secret_character = "*"
-
-[node name="ErrorLabel" type="Label" parent="AuthDialog/Form" unique_id=1364160492]
-unique_name_in_owner = true
-layout_mode = 2
-horizontal_alignment = 1
-
-[node name="Buttons" type="HBoxContainer" parent="AuthDialog/Form" unique_id=1122392041]
-layout_mode = 2
-theme_override_constants/separation = 4
-alignment = 1
-
-[node name="LoginButton" type="Button" parent="AuthDialog/Form/Buttons" unique_id=1668064023]
-unique_name_in_owner = true
-layout_mode = 2
-text = "LOGIN"
-
-[node name="RegisterButton" type="Button" parent="AuthDialog/Form/Buttons" unique_id=1489228035]
-unique_name_in_owner = true
-layout_mode = 2
-text = "REGISTER"
-
-[node name="LeaderboardPanel" parent="." unique_id=1610394827 instance=ExtResource("6_board")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="TitleBackdrop" parent="." instance=ExtResource("7_backdrop")]
