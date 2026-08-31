@@ -149,13 +149,13 @@ func _test_combat_lab() -> void:
 	var pew := DebugContent.find_item("pew1")
 	lab._equip_item(pew)
 	var slotted := false
-	for slot in GlobalInventory.slots.slots:
+	for slot in GlobalInventory.all_slots():
 		if slot.item == pew:
 			slotted = true
 	_check(slotted, "palette click equipped the spell")
 	var persisted := false
-	for i in GlobalInventory.SIZE:
-		if DebugState.get_value("combat_lab", "slot_%d" % i, "") == pew.resource_path:
+	for key in _lab_slot_keys():
+		if DebugState.get_value("combat_lab", key, "") == pew.resource_path:
 			persisted = true
 	_check(persisted, "equipping wrote the loadout to DebugState")
 	GlobalInventory.reset()
@@ -164,8 +164,18 @@ func _test_combat_lab() -> void:
 	_restore_lab_loadout(stored)
 
 
-## The lab state this test perturbs — the loadout slots ("slot_N") and the painted
-## arena ("walls") — as key -> value.
+## Every DebugState key the lab stores one slot under, spell row then bag.
+static func _lab_slot_keys() -> Array[String]:
+	var keys: Array[String] = []
+	for i in GlobalInventory.SPELL_SLOTS:
+		keys.append("spell_%d" % i)
+	for i in GlobalInventory.BAG_SIZE:
+		keys.append("bag_%d" % i)
+	return keys
+
+
+## The lab state this test perturbs — the loadout slots ("spell_N"/"bag_N") and the
+## painted arena ("walls") — as key -> value.
 func _snapshot_lab_loadout() -> Dictionary:
 	var out: Dictionary = {}
 	for key in DebugState.keys("combat_lab"):
@@ -183,7 +193,7 @@ func _restore_lab_loadout(stored: Dictionary) -> void:
 
 
 static func _is_lab_session_key(key: String) -> bool:
-	return key.begins_with("slot_") or key == "active_line" or key == "walls"
+	return key.begins_with("spell_") or key.begins_with("bag_") or key == "walls"
 
 
 func _test_worldgen_debug() -> void:

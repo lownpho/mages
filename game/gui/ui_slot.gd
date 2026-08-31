@@ -21,8 +21,6 @@ const _ICON_X = {
 @export var slot_texture: AtlasTexture:
 	set(value):
 		slot_texture = value
-		# Settable at runtime: the rows swap frames when SHIFT flips the
-		# active line.
 		if is_node_ready() and slot_texture:
 			$SlotTexture.texture = slot_texture
 
@@ -34,8 +32,7 @@ var slot: GlobalInventory.Slot = null:
 		slot = value
 		if is_node_ready():
 			update_texture()
-			# Rebinding (e.g. a spell-page flip) must also move the cooldown
-			# curtain to whatever the slot now shows.
+			# Rebinding must also move the cooldown curtain to whatever the slot now shows.
 			_refresh_cooldown_overlay()
 
 static var _drag_source: MarginContainer = null

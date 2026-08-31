@@ -8,10 +8,11 @@ extends Node
 
 const SAVE_PATH := "user://save.cfg"
 
-## Bumped when the save shape changes incompatibly (v2: the spell-only loadout —
-## no weapon/hat/robe slots, no mana). An older save simply reads as "nothing to
-## continue" rather than being migrated.
-const SAVE_VERSION := 0
+## Bumped when the save shape changes incompatibly (v1: the spell row plus a bag, in
+## place of the three switchable spell lines and their slot_* keys). An older save simply
+## reads as "nothing to continue" rather than being migrated — better than loading a run
+## back with an empty inventory because its keys no longer mean anything.
+const SAVE_VERSION := 1
 
 ## The world is a pure function of (seed, gen_version, CONFIG_HASH); the same seed lays out
 ## a different map once the generation code or config changes. We stamp the save with the
@@ -221,9 +222,10 @@ func _world_signature() -> String:
 
 
 func _save_inventory(cfg: ConfigFile) -> void:
-	for i in range(GlobalInventory.SIZE):
-		_save_slot(cfg, "slot_%d" % i, GlobalInventory.slots.at(i))
-	cfg.set_value("inventory", "active_line", GlobalInventory.active_line)
+	for i in range(GlobalInventory.SPELL_SLOTS):
+		_save_slot(cfg, "spell_%d" % i, GlobalInventory.spell_slots.at(i))
+	for i in range(GlobalInventory.BAG_SIZE):
+		_save_slot(cfg, "bag_%d" % i, GlobalInventory.bag_slots.at(i))
 
 
 func _save_slot(cfg: ConfigFile, key: String, slot: GlobalInventory.Slot) -> void:
@@ -233,10 +235,10 @@ func _save_slot(cfg: ConfigFile, key: String, slot: GlobalInventory.Slot) -> voi
 func _load_inventory(cfg: ConfigFile) -> void:
 	_suspend_autosave = true
 	GlobalInventory.reset()
-	# Pre-rework saves stored bag_*/spell_* keys; those simply read as empty.
-	for i in range(GlobalInventory.SIZE):
-		_load_slot(cfg, "slot_%d" % i, GlobalInventory.slots.at(i))
-	GlobalInventory.set_line(cfg.get_value("inventory", "active_line", 0))
+	for i in range(GlobalInventory.SPELL_SLOTS):
+		_load_slot(cfg, "spell_%d" % i, GlobalInventory.spell_slots.at(i))
+	for i in range(GlobalInventory.BAG_SIZE):
+		_load_slot(cfg, "bag_%d" % i, GlobalInventory.bag_slots.at(i))
 	_suspend_autosave = false
 
 

@@ -1,7 +1,7 @@
 extends Node
-## Headless check on the HUD's pad focus ladder: the strip's 12 inventory slots and its
-## buttons must chain as ONE 4-wide grid so dpad navigation is deterministic instead of
-## Godot's geometric guess, with the edges parked on themselves. Run:
+## Headless check on the HUD's pad focus ladder: the strip's 4 spell slots, its 8 bag slots
+## and its buttons must chain as ONE 4-wide grid so dpad navigation is deterministic instead
+## of Godot's geometric guess, with the edges parked on themselves. Run:
 ##   godot --headless --path game res://tests/test_ui_focus.tscn
 
 const UI_SCENE := preload("res://gui/ui.tscn")
@@ -14,11 +14,12 @@ func _ready() -> void:
 	add_child(ui)
 
 	var nav := []
-	nav.append_array(ui.get_node("%Slots").get_children())
+	for group in ["%SpellSlots", "%Bag"]:
+		nav.append_array(ui.get_node(group).get_children())
 	for name_ in ["%BestiaryButton", "%MapButton", "%QuitButton"]:
 		nav.append(ui.get_node(name_))
 
-	var expected := GlobalInventory.SIZE + 3
+	var expected := GlobalInventory.SPELL_SLOTS + GlobalInventory.BAG_SIZE + 3
 	if nav.size() != expected:
 		fails.append("ladder is %d controls, expected %d" % [nav.size(), expected])
 
@@ -32,19 +33,6 @@ func _ready() -> void:
 		_check(fails, nav, i, c.focus_neighbor_top, i - COLUMNS, "top")
 		_check(fails, nav, i, c.focus_neighbor_bottom, i + COLUMNS, "bottom")
 
-	# --- line frames: each row wears its own colour, bright only while it is the live line ---
-	var frame_x := func(i: int) -> int:
-		return int((ui.get_node("%Slots").get_child(i).slot_texture as AtlasTexture).region.position.x)
-	for line in GlobalInventory.LINES:
-		GlobalInventory.set_line(line)
-		for i in GlobalInventory.SIZE:
-			var row := GlobalInventory.line_of(i)
-			var want: int = (ui.LINE_FRAME_X[row] if row == line else ui.DIM_FRAME_X[row])
-			if frame_x.call(i) != want:
-				fails.append("slot %d frame is x=%d on line %d, expected x=%d"
-						% [i, frame_x.call(i), line, want])
-	GlobalInventory.set_line(0)
-
 	# --- focus tooltip: the dpad's stand-in for mouse hover ---
 	# Needs a pad and an item carrying modifiers; a bare slot must stay silent, same as the
 	# mouse tooltip does.
@@ -53,7 +41,7 @@ func _ready() -> void:
 	if spell == null or spell.get_modifiers().is_empty():
 		fails.append("test fixture: pew1 has no modifiers to show")
 	else:
-		GlobalInventory.slots.at(0).set_item(spell)
+		GlobalInventory.spell_slots.at(0).set_item(spell)
 		GlobalInput._set_gamepad(true)
 
 		slot_ui.grab_focus()
@@ -71,13 +59,13 @@ func _ready() -> void:
 		if _tip(ui) != null:
 			fails.append("focus tooltip shown while on mouse")
 		slot_ui.release_focus()
-		GlobalInventory.slots.at(0).clear_item()
+		GlobalInventory.spell_slots.at(0).clear_item()
 
 	# --- blurb: text alone raises the tip, and an item with nothing at all stays silent ---
 	var mute := SpellResource.new()
 	mute.cooldown = 0.0   # the only modifier a bare spell would otherwise carry
 	GlobalInput._set_gamepad(true)
-	GlobalInventory.slots.at(0).set_item(mute)
+	GlobalInventory.spell_slots.at(0).set_item(mute)
 
 	slot_ui.grab_focus()
 	if _tip(ui) == null:
@@ -90,7 +78,7 @@ func _ready() -> void:
 	if _tip(ui) != null:
 		fails.append("tooltip shown for an item with nothing to say")
 	slot_ui.release_focus()
-	GlobalInventory.slots.at(0).clear_item()
+	GlobalInventory.spell_slots.at(0).clear_item()
 	GlobalInput._set_gamepad(false)
 
 	if fails.is_empty():

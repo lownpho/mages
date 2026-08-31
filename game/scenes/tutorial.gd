@@ -19,16 +19,17 @@ extends Node2D
 const PROGRESSION: Array[String] = [
 	"",   # entrance: its sign is INTRO_SIGN, which stands at the spawn instead of the centre
 	"""Spells lie on the ground here. Walk over one to pick it up.
-A robe will not take a spell it already holds.""",
+Your four cast slots will not hold two tiers of one spell.""",
 	"""You cast spells with LEFT, MIDDLE, RIGHT MOUSE and SPACE.
 On a pad: L1, L2, R1 and R2. Try it.""",
 	"""You cast where you aim: at the mouse, or with the right stick.
 With no stick held, you cast the way you are running.""",
-	"""You have 3 robes but you can only wear one at a time.
-Switch robe with SHIFT, or Y on a pad.
-Drag and drop spells between robes, or across slots of one robe.
+	"""The top four slots are the ones you cast from.
+The grey bag below just carries what you are not using.
+Drag and drop spells between them, or across the four.
 On a pad: START for the slots, A to lift a spell, A again to place.""",
-	"""Robes and spells change what you are made of.
+	"""The spells you cast change what you are made of.
+A spell sitting in the bag changes nothing.
 Watch the numbers on the left.
 Some will suit you better than others.""",
 	"""The bar on the left is your life. Enemies take it from you.

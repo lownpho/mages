@@ -181,17 +181,15 @@ func _cmd_give(args: PackedStringArray, equip: bool) -> void:
 	if item == null:
 		_say("no unique item matches '%s'" % args[0])
 		return
-	# equip aims at the live line and ignores the one-tier-per-line rule (that is the
+	# equip aims at the spell row and ignores the one-tier-per-spell rule (that is the
 	# player-facing restriction); give takes the first slot anywhere that will have it.
 	if equip:
-		for i in GlobalInventory.LINE_SIZE:
-			var slot := GlobalInventory.active_slot(i)
-			if slot.item == null and slot.set_item(item):
-				_say("equipped %s" % args[0])
-				return
-		_say("active line is full")
+		if GlobalInventory.spell_slots.add_at_first_empty(item) != null:
+			_say("equipped %s" % args[0])
+		else:
+			_say("spell row is full")
 		return
-	if GlobalInventory.slots.add_at_first_empty(item) != null:
+	if GlobalInventory.add_at_first_empty(item) != null:
 		_say("stashed %s" % args[0])
 	else:
 		var p := _player()
@@ -286,7 +284,7 @@ func _cmd_kit(args: PackedStringArray) -> void:
 		_say("nothing drops in '%s'" % args[0])
 		return
 	# One tier per spell already, so can_equip has nothing to say.
-	var slots: Array = GlobalInventory.slots.slots
+	var slots: Array = GlobalInventory.all_slots()
 	var families := best.keys()
 	families.sort()
 	var n := 0

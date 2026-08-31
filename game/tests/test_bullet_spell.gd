@@ -5,10 +5,9 @@ extends Node
 ## re-casting is blocked while the burst is live; starting an exclusive spell —
 ## a cast-time spell, a channel, or a second bullet spell — CANCELS the live burst
 ## onto its full cooldown (a single-shot instant bullet spell like zaap is a burst
-## too, so it's exclusive as well). Slots live on three lines of four
-## (set_line flips which four the cast actions drive). Last subtest covers the
-## burst's own shape — rotation_per_shot spiralling, aim_mode Independent ignoring the
-## caster — off a bare SpellCaster. Run:
+## too, so it's exclusive as well). The four cast actions drive the four spell-row
+## slots, one each. Last subtest covers the burst's own shape — rotation_per_shot
+## spiralling, aim_mode Independent ignoring the caster — off a bare SpellCaster. Run:
 ##   godot --headless --path game res://tests/test_bullet_spell.tscn
 
 const PLAYER_SCENE := preload("res://characters/player/player.tscn")
@@ -22,11 +21,10 @@ var pew2: BulletSpellResource
 var spawned: Dictionary = {}  # BulletResource -> bullets spawned carrying it
 var directions: Array[Vector2] = []  # every spawned bullet's launch direction, in order
 var last_bullet: BaseBullet  # most recently spawned, for the homing-lock check
-# Derived from the line geometry rather than written out: these were once hardcoded to a
-# two-wide page, so when the loadout grew another cast button every "line 1" index
-# silently addressed line 0 instead.
-@onready var swap_slot: int = GlobalInventory.LINE_SIZE      # line 1, cast1
-@onready var nope_slot: int = GlobalInventory.LINE_SIZE + 1  # line 1, cast2
+# The back half of the spell row: cast3 is the shared slot each cancel test loads with the
+# spell it cancels *with*, cast4 keeps nope.
+const SWAP_SLOT := 2
+const NOPE_SLOT := 3
 
 func _ready() -> void:
 	get_tree().root.child_entered_tree.connect(_on_root_child)
@@ -36,12 +34,11 @@ func _ready() -> void:
 	input = player.get_node("PlayerCastInput")
 	pew1 = load("res://characters/player/spells/pew/pew1.tres")
 	pew2 = load("res://characters/player/spells/pew/pew2.tres")
-	# Line 0 holds the pews for every test; line 1 slot 0 is the swap slot each
-	# cancel test loads with the spell it cancels *with* (one line doesn't fit them
-	# all at once), and line 1 slot 1 keeps nope.
-	GlobalInventory.slots.at(0).set_item(pew1)
-	GlobalInventory.slots.at(1).set_item(pew2)
-	GlobalInventory.slots.at(nope_slot).set_item(
+	# cast1/cast2 hold the pews for every test. Slotted directly, so the one-tier-per-spell
+	# rule (a player-facing restriction) doesn't stop the two pews sharing the row.
+	GlobalInventory.spell_slots.at(0).set_item(pew1)
+	GlobalInventory.spell_slots.at(1).set_item(pew2)
+	GlobalInventory.spell_slots.at(NOPE_SLOT).set_item(
 		load("res://characters/player/spells/nope/nope.tres"))
 	# Let the tree finish assembling before effects get added to the root.
 	await get_tree().physics_frame
@@ -55,12 +52,10 @@ func _ready() -> void:
 	await _test_burst_rotation()
 	await _test_homing_lock()
 	await _test_nope_leech()
-	await _test_line_switch_roots()
 
 	# Leave no equipment behind for a later scene run in the same session.
-	for i in GlobalInventory.SIZE:
-		GlobalInventory.slots.at(i).clear_item()
-	GlobalInventory.set_line(0)
+	for slot in GlobalInventory.all_slots():
+		slot.clear_item()
 	if fails.is_empty():
 		print("ALL PASS")
 	else:
@@ -86,36 +81,12 @@ func _burst_live(spell: SpellResource) -> bool:
 	var effect = caster._await_finish.get(spell)
 	return effect != null and is_instance_valid(effect)
 
-# Page 1, slot 0 — the shared slot each cancel test loads with its own spell.
+# cast3 — the shared slot each cancel test loads with its own spell.
 func _equip_swap_slot(path: String) -> void:
-	GlobalInventory.slots.at(swap_slot).set_item(load(path))
+	GlobalInventory.spell_slots.at(SWAP_SLOT).set_item(load(path))
 
 func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
-
-# Switching lines is a rooted wind-up, not a free bar flip: the mage is planted in Cast
-# for SWITCH_TIME, the live burst dies onto its cooldown, and only then does the line move.
-func _test_line_switch_roots() -> void:
-	spawned.clear()
-	GlobalInventory.set_line(0)
-	input._try_cast(0)
-	await _wait(0.3)
-	input._start_switch()
-	if _burst_live(pew1):
-		fails.append("line switch left the burst running")
-	if not _cooling(pew1):
-		fails.append("line switch did not put the burst on cooldown")
-	if player.fsm.current_state.name != "Cast" or player.can_act:
-		fails.append("line switch did not root the player")
-	if GlobalInventory.active_line != 0:
-		fails.append("line moved before the switch finished")
-	await _wait(PlayerCastInput.SWITCH_TIME + 0.1)
-	if GlobalInventory.active_line != 1:
-		fails.append("line did not advance when the switch finished")
-	if player.fsm.current_state.name != "Idle" or not player.can_act:
-		fails.append("player stayed rooted after the switch")
-	GlobalInventory.set_line(0)
-	await _wait_off_cooldown(pew1)
 
 # Cooldowns persist across subtests; wait one out so the next cast is clean. Polls the
 # caster rather than sleeping spell.cooldown.
@@ -145,9 +116,7 @@ func _test_cast_cancels_burst() -> void:
 	_equip_swap_slot("res://characters/player/spells/fireball/fireball1.tres")
 	input._try_cast(0)
 	await _wait(0.6)  # ~3 of 6 shots at 0.25s cadence
-	GlobalInventory.set_line(1)
-	input._try_cast(0)  # fireball: cast_time > 0, must cancel the burst
-	GlobalInventory.set_line(0)
+	input._try_cast(SWAP_SLOT)  # fireball: cast_time > 0, must cancel the burst
 	var at_cancel := _count(pew1)
 	if at_cancel == 0 or at_cancel >= pew1.max_shots:
 		fails.append("unexpected shot count at cancel: %d" % at_cancel)
@@ -182,26 +151,23 @@ func _test_instant_bullet_cancels_burst() -> void:
 	_equip_swap_slot("res://characters/player/spells/zaap/zaap1.tres")
 	input._try_cast(0)
 	await _wait(0.3)
-	# Flip to line 1 mid-burst and cast zaap — a single-shot instant bullet spell
-	# (cast_time 0, max_shots 1). It's still a burst, so it's exclusive: it cancels
-	# the live pew burst onto cooldown like any other bullet spell.
-	GlobalInventory.set_line(1)
+	# Cast zaap mid-burst — a single-shot instant bullet spell (cast_time 0, max_shots 1).
+	# It's still a burst, so it's exclusive: it cancels the live pew burst onto cooldown
+	# like any other bullet spell.
 	var at_cancel := _count(pew1)
-	input._try_cast(0)  # zaap (line 1, slot 0)
+	input._try_cast(SWAP_SLOT)  # zaap
 	if not _cooling(pew1) or _burst_live(pew1):
 		fails.append("instant bullet spell did not cancel the live burst onto cooldown")
 	await _wait(0.4)
 	if _count(pew1) != at_cancel:
 		fails.append("cancelled burst kept firing under an instant bullet spell")
-	GlobalInventory.set_line(0)
 	await _wait_off_cooldown(pew1)
 
 func _test_channel_cancels_burst() -> void:
 	spawned.clear()
 	input._try_cast(0)
 	await _wait(0.3)
-	GlobalInventory.set_line(1)
-	input._try_cast(1)  # nope (line 1, slot 1): channeled, cancels at press
+	input._try_cast(NOPE_SLOT)  # nope: channeled, cancels at press
 	var at_cancel := _count(pew1)
 	if not _cooling(pew1) or _burst_live(pew1):
 		fails.append("channel did not cancel the live burst onto cooldown")
@@ -209,7 +175,6 @@ func _test_channel_cancels_burst() -> void:
 	await _wait(0.5)
 	if _count(pew1) != at_cancel:
 		fails.append("channel-cancelled burst kept firing")
-	GlobalInventory.set_line(0)
 	await _wait_off_cooldown(pew1)
 
 # Nope pays back leech_fraction of everything it soaks, and hits too small to round up to

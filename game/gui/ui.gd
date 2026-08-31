@@ -1,12 +1,5 @@
 extends CanvasLayer
 
-# One frame colour per inventory line, bright while that line is live and dark while it
-# isn't — the palette-safe "which line casts" cue (and the colour the mage's robe will
-# eventually wear). x offsets into the y=24 row of ui.png, bright row then dark row.
-const _UI := preload("res://gui/ui.png")
-const LINE_FRAME_X := [16, 24, 32]
-const DIM_FRAME_X := [40, 48, 56]
-
 const UiSlot = preload("res://gui/ui_slot.gd")
 
 func _ready() -> void:
@@ -15,14 +8,14 @@ func _ready() -> void:
 	GlobalEvent.player_skill_changed.connect(_on_player_skill_changed)
 	GlobalEvent.player_speed_changed.connect(_on_player_speed_changed)
 	GlobalEvent.player_defence_changed.connect(_on_player_defence_changed)
-	GlobalEvent.active_line_changed.connect(_on_active_line_changed)
 
-	# All three lines are visible at once, one row each (cast1..cast4 left to right);
-	# SHIFT swaps which row is live, shown by the frame colours.
-	var ui_slots = %Slots.get_children()
-	for i in range(GlobalInventory.SIZE):
-		ui_slots[i].slot = GlobalInventory.slots.at(i)
-	_on_active_line_changed(GlobalInventory.active_line)
+	# The spell row is the four cast buttons, left to right; the bag below it is storage.
+	var ui_slots = %SpellSlots.get_children()
+	for i in range(GlobalInventory.SPELL_SLOTS):
+		ui_slots[i].slot = GlobalInventory.spell_slots.at(i)
+	ui_slots = %Bag.get_children()
+	for i in range(GlobalInventory.BAG_SIZE):
+		ui_slots[i].slot = GlobalInventory.bag_slots.at(i)
 
 	# Show the value overlay only while hovering the bar.
 	_setup_bar_hover(%HealthBar, %HealthValue)
@@ -68,16 +61,17 @@ func _on_panel_visibility_changed(panel: Control) -> void:
 	elif GlobalInput.ui_captured and is_instance_valid(_focus_before_panel):
 		_focus_before_panel.grab_focus()
 
-# Pad focus runs as ONE 4-wide ladder down the strip — the 12 inventory slots, then the 3
-# strip buttons — wired explicitly because Godot's geometric neighbour search wanders across
-# the panel gap between the grid and the buttons. The grid is authored at 4 columns, matching
-# this; the button row is the last rung. Edges point at themselves so focus parks there
-# instead of falling back to the geometric guess.
+# Pad focus runs as ONE 4-wide ladder down the strip — the 4 spell slots, the 8 bag slots,
+# then the 3 strip buttons — wired explicitly because Godot's geometric neighbour search
+# wanders across the panel gaps between the containers. Both grids are authored at 4 columns,
+# matching this; the button row is the last rung. Edges point at themselves so focus parks
+# there instead of falling back to the geometric guess.
 const _NAV_COLUMNS := 4
 
 func _wire_focus_ladder() -> void:
 	var nav := []
-	nav.append_array(%Slots.get_children())
+	for group in [%SpellSlots, %Bag]:
+		nav.append_array(group.get_children())
 	nav.append_array([%BestiaryButton, %MapButton, %QuitButton])
 	for i in nav.size():
 		var c: Control = nav[i]
@@ -91,18 +85,6 @@ func _nav_path(nav: Array, from: int, to: int) -> NodePath:
 	var src: Control = nav[from]
 	return src.get_path_to(nav[to] if to >= 0 and to < nav.size() else src)
 
-
-func _on_active_line_changed(line: int) -> void:
-	var ui_slots = %Slots.get_children()
-	for i in range(GlobalInventory.SIZE):
-		var row := GlobalInventory.line_of(i)
-		ui_slots[i].slot_texture = _line_frame(row, row == line)
-
-func _line_frame(line: int, live: bool) -> AtlasTexture:
-	var frame := AtlasTexture.new()
-	frame.atlas = _UI
-	frame.region = Rect2(LINE_FRAME_X[line] if live else DIM_FRAME_X[line], 24, 8, 8)
-	return frame
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Reaching _unhandled_input at all means the click missed every Control (an open
@@ -147,7 +129,7 @@ func _toggle_slot_nav() -> void:
 	if GlobalInput.ui_captured:
 		_exit_slot_nav()
 	elif GlobalInput.using_gamepad:
-		%Slots.get_child(0).grab_focus()
+		%SpellSlots.get_child(0).grab_focus()
 		GlobalInput.set_ui_captured(true)
 
 func _exit_slot_nav() -> void:

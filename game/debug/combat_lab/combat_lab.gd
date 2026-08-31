@@ -58,7 +58,6 @@ func _ready() -> void:
 	_restore_loadout()
 	# Connected after the restore so re-slotting the stored kit doesn't rewrite the file.
 	GlobalEvent.slot_updated.connect(func(_slot): _save_loadout())
-	GlobalEvent.active_line_changed.connect(func(_line): _save_loadout())
 	_build_ui()
 	_apply_god()
 	_set_panel_open(false)
@@ -507,7 +506,7 @@ func _build_item_palette(box: VBoxContainer) -> void:
 
 
 func _equip_item(item: ItemResource) -> void:
-	GlobalInventory.slots.add_at_first_empty(item)
+	GlobalInventory.add_at_first_empty(item)
 
 
 # --- Small control builders (theme font is 8px — keep everything dense) ---------------------
@@ -580,15 +579,14 @@ func _save_walls() -> void:
 	DebugState.set_value("combat_lab", "walls", flat)
 
 
-## The lab keeps its own loadout (the 12 slots + active line), stored as .tres paths in
+## The lab keeps its own loadout (the spell row + the bag), stored as .tres paths in
 ## debug_state.cfg and re-slotted on entry — the kit you assembled to test something survives
 ## an F5. Separate from the run save, so the player's save.cfg is never touched.
 func _restore_loadout() -> void:
-	for i in GlobalInventory.SIZE:
-		_restore_slot(GlobalInventory.slots.at(i), "slot_%d" % i)
-	GlobalInventory.set_line(DebugState.get_value("combat_lab", "active_line", 0))
-	# The HUD read the line in its own _ready (before this node's) — re-announce it.
-	GlobalEvent.active_line_changed.emit(GlobalInventory.active_line)
+	for i in GlobalInventory.SPELL_SLOTS:
+		_restore_slot(GlobalInventory.spell_slots.at(i), "spell_%d" % i)
+	for i in GlobalInventory.BAG_SIZE:
+		_restore_slot(GlobalInventory.bag_slots.at(i), "bag_%d" % i)
 
 
 func _restore_slot(slot: GlobalInventory.Slot, key: String) -> void:
@@ -601,9 +599,10 @@ func _restore_slot(slot: GlobalInventory.Slot, key: String) -> void:
 
 
 func _save_loadout() -> void:
-	for i in GlobalInventory.SIZE:
-		_save_slot(GlobalInventory.slots.at(i), "slot_%d" % i)
-	DebugState.set_value("combat_lab", "active_line", GlobalInventory.active_line)
+	for i in GlobalInventory.SPELL_SLOTS:
+		_save_slot(GlobalInventory.spell_slots.at(i), "spell_%d" % i)
+	for i in GlobalInventory.BAG_SIZE:
+		_save_slot(GlobalInventory.bag_slots.at(i), "bag_%d" % i)
 
 
 func _save_slot(slot: GlobalInventory.Slot, key: String) -> void:

@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://damb0ttdu4w2i" path="res://gui/slot.tscn" id="3_cemxd"]
 [ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="3_vuvel"]
 [ext_resource type="Texture2D" uid="uid://dh4pvghdubtap" path="res://gui/spellslot_atlas.tres" id="5_cl6af"]
+[ext_resource type="Texture2D" uid="uid://ju3vyif5e1uy" path="res://gui/bagslot_atlas.tres" id="6_bagsl"]
 [ext_resource type="Script" uid="uid://ccpwooxs0hukx" path="res://gui/minimap/minimap_view.gd" id="7_mmap"]
 [ext_resource type="PackedScene" uid="uid://c8w66s0eu7mav" path="res://gui/bestiary/bestiary.tscn" id="8_besty"]
 [ext_resource type="PackedScene" uid="uid://b4c7i8maqnjuh" path="res://gui/map/map_panel.tscn" id="9_map"]
@@ -179,12 +180,12 @@ text = "2"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="SlotsPanel" type="PanelContainer" parent="Strip/VBox" unique_id=1261662778]
+[node name="SpellsPanel" type="PanelContainer" parent="Strip/VBox" unique_id=1261662778]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Slots" type="GridContainer" parent="Strip/VBox/SlotsPanel" unique_id=978616163]
+[node name="SpellSlots" type="GridContainer" parent="Strip/VBox/SpellsPanel" unique_id=978616163]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
@@ -193,53 +194,67 @@ theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 columns = 4
 
-[node name="Slot1" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1145388472 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot1" parent="Strip/VBox/SpellsPanel/SpellSlots" unique_id=1145388472 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="Slot2" parent="Strip/VBox/SlotsPanel/Slots" unique_id=2070639545 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot2" parent="Strip/VBox/SpellsPanel/SpellSlots" unique_id=2070639545 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="Slot3" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1145388473 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot3" parent="Strip/VBox/SpellsPanel/SpellSlots" unique_id=1145388473 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="Slot4" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1224079581 instance=ExtResource("3_cemxd")]
+[node name="SpellSlot4" parent="Strip/VBox/SpellsPanel/SpellSlots" unique_id=1224079581 instance=ExtResource("3_cemxd")]
 layout_mode = 2
 slot_texture = ExtResource("5_cl6af")
 
-[node name="Slot5" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1224079582 instance=ExtResource("3_cemxd")]
+[node name="BagPanel" type="PanelContainer" parent="Strip/VBox" unique_id=1787820405]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
-[node name="Slot6" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1224079583 instance=ExtResource("3_cemxd")]
+[node name="Bag" type="GridContainer" parent="Strip/VBox/BagPanel" unique_id=2093897494]
+unique_name_in_owner = true
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 4
 
-[node name="Slot7" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1283858996 instance=ExtResource("3_cemxd")]
+[node name="BagSlot1" parent="Strip/VBox/BagPanel/Bag" unique_id=1224079582 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_bagsl")
 
-[node name="Slot8" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1839894379 instance=ExtResource("3_cemxd")]
+[node name="BagSlot2" parent="Strip/VBox/BagPanel/Bag" unique_id=1224079583 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_bagsl")
 
-[node name="Slot9" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1629656975 instance=ExtResource("3_cemxd")]
+[node name="BagSlot3" parent="Strip/VBox/BagPanel/Bag" unique_id=1283858996 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_bagsl")
 
-[node name="Slot10" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1730542681 instance=ExtResource("3_cemxd")]
+[node name="BagSlot4" parent="Strip/VBox/BagPanel/Bag" unique_id=1839894379 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_bagsl")
 
-[node name="Slot11" parent="Strip/VBox/SlotsPanel/Slots" unique_id=465033505 instance=ExtResource("3_cemxd")]
+[node name="BagSlot5" parent="Strip/VBox/BagPanel/Bag" unique_id=1629656975 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_bagsl")
 
-[node name="Slot12" parent="Strip/VBox/SlotsPanel/Slots" unique_id=1303224182 instance=ExtResource("3_cemxd")]
+[node name="BagSlot6" parent="Strip/VBox/BagPanel/Bag" unique_id=1730542681 instance=ExtResource("3_cemxd")]
 layout_mode = 2
-slot_texture = ExtResource("5_cl6af")
+slot_texture = ExtResource("6_bagsl")
+
+[node name="BagSlot7" parent="Strip/VBox/BagPanel/Bag" unique_id=465033505 instance=ExtResource("3_cemxd")]
+layout_mode = 2
+slot_texture = ExtResource("6_bagsl")
+
+[node name="BagSlot8" parent="Strip/VBox/BagPanel/Bag" unique_id=1303224182 instance=ExtResource("3_cemxd")]
+layout_mode = 2
+slot_texture = ExtResource("6_bagsl")
 
 [node name="BestiaryChip" type="PanelContainer" parent="Strip/VBox" unique_id=1751972716]
 layout_mode = 2

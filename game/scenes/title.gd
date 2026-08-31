@@ -53,9 +53,9 @@ func _refresh_continue() -> void:
 	_owned_icons = _gather_owned_icons()
 
 
-## Peeks the save file for the icons of every item the saved run owns (equipped +
-## bagged + slotted spells), without touching the live GlobalInventory — Continue
-## hasn't been pressed yet, so nothing should actually load until it is.
+## Peeks the save file for the icons of every item the saved run owns (the spell row
+## then the bag), without touching the live GlobalInventory — Continue hasn't been
+## pressed yet, so nothing should actually load until it is.
 func _gather_owned_icons() -> Array[Texture2D]:
 	var icons: Array[Texture2D] = []
 	if not GameState.has_save():
@@ -63,8 +63,12 @@ func _gather_owned_icons() -> Array[Texture2D]:
 	var cfg := ConfigFile.new()
 	if cfg.load(GameState.SAVE_PATH) != OK:
 		return icons
-	for i in range(GlobalInventory.SIZE):
-		var key := "slot_%d" % i
+	var keys: Array[String] = []
+	for i in range(GlobalInventory.SPELL_SLOTS):
+		keys.append("spell_%d" % i)
+	for i in range(GlobalInventory.BAG_SIZE):
+		keys.append("bag_%d" % i)
+	for key in keys:
 		var path: String = cfg.get_value("inventory", key, "")
 		if path.is_empty() or not ResourceLoader.exists(path):
 			continue

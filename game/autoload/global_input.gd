@@ -14,7 +14,7 @@ signal ui_capture_changed(captured: bool)
 var using_gamepad := false
 
 ## True while the HUD owns input for slot navigation — gameplay input (movement,
-## casts, line switching) must stand down. Set only via set_ui_captured.
+## casts) must stand down. Set only via set_ui_captured.
 var ui_captured := false
 
 ## False for the trailing events of a wheel burst — every wheel handler gates on this so
