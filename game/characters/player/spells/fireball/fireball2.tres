@@ -30,7 +30,7 @@ behaviours = Array[ExtResource("1_44aw5")]([SubResource("Resource_1iwir")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 15.0
+base_damage = 30.0
 skill_scaling = 2.0
 
 [sub_resource type="Resource" id="SinglePattern_1"]
@@ -51,4 +51,4 @@ cooldown = 4.0
 cast_time = 0.5
 blurb = "I like fire."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 10
+skill_modifier = 14
