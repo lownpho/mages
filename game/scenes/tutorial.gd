@@ -19,7 +19,7 @@ extends Node2D
 const PROGRESSION: Array[String] = [
 	"",   # entrance: its sign is INTRO_SIGN, which stands at the spawn instead of the centre
 	"""Spells lie on the ground here. Walk over one to pick it up.
-Your four cast slots will not hold two tiers of one spell.""",
+Your four cast slots will not hold two of the same spell.""",
 	"""You cast spells with LEFT, MIDDLE, RIGHT MOUSE and SPACE.
 On a pad: L1, L2, R1 and R2. Try it.""",
 	"""You cast where you aim: at the mouse, or with the right stick.
