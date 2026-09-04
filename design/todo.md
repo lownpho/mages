@@ -1,4 +1,7 @@
+# notes
+
 # now
+## done
 
 mycelium tileset and decor, stairs
 mycelium floors
@@ -9,9 +12,12 @@ remove cooldown creep
 
 spell rebalance (think about sets)
 spell blurbs
+make doors move you to a random (but fixed place in adjacent biomes)
+fix tutorial scene: mechanics are simpler
 
-tutorial scene with menu entry
-
+## to do
+bosses can be killed multiple times
+bosses heal up after some inactivity
 make biomes bigger overall (not glade)
 rebalance drops in biomes
 grimoire
