@@ -25,8 +25,10 @@ const _FRAME_W := 16
 ## a door before its destination exists; it just warns and stays put when used.
 @export var target_scene: PackedScene
 
-## Two-way warp doors ignore `target_scene` and name the world slot of their twin's room
-## instead — the world moves the player beside that door and back again. Vector2i.MAX = not one.
+## One-way warp doors ignore `target_scene` and name the world slot of the room they lead to
+## instead — the world puts the player down in that room, somewhere else in the overworld. There
+## is no way back through it: the landing is an ordinary room, which only by chance has a door of
+## its own. Vector2i.MAX = not one.
 @export var target_slot := Vector2i.MAX
 
 ## Stair doors ignore both of the above and move the player one dungeon floor instead: -1 up,
@@ -35,9 +37,9 @@ const _FRAME_W := 16
 
 # Guards against firing twice while the deferred scene change is pending.
 var _used := false
-# A door only fires while nothing was standing in it as of the last physics step: a warp lands
-# the player beside their destination door (and a streamed-in door can materialise right under
-# them), which must not read as walking through it. `_physics_process` runs BEFORE the step
+# A door only fires while nothing was standing in it as of the last physics step: a streamed-in
+# door can materialise right under the player (including one in the room a warp just dropped them
+# in), which must not read as walking through it. `_physics_process` runs BEFORE the step
 # whose body_entered signals arrive, so `_armed` always describes the frame the body came from.
 # Overlap data is empty until the node has been through a step, hence the settle frames.
 const _SETTLE_FRAMES := 2
@@ -45,8 +47,9 @@ const _SETTLE_FRAMES := 2
 var _armed := false
 var _settle := _SETTLE_FRAMES
 
-# Using any door locks EVERY door for a moment: a warp puts the player down beside their twin, and
-# a fast enough body can trip a second door before that arrival settles and slip through the pair.
+# Using any door locks EVERY door for a moment: a warp can land the player next to a door the
+# destination room happens to hold, and a fast enough body could trip it before the arrival
+# settles and be flung straight on again.
 const _COOLDOWN_MS := 1000
 static var _last_use_ms := -_COOLDOWN_MS
 
@@ -106,7 +109,7 @@ func _on_body_entered(body: Node2D) -> void:
 		GlobalEvent.floor_change_requested.emit(floor_delta, body)
 		return
 	if target_slot != Vector2i.MAX:
-		_armed = false   # re-arms once the player is clear of it, so the door works both ways
+		_armed = false   # re-arms once the player is clear, so the door still works if they return
 		_last_use_ms = Time.get_ticks_msec()
 		GlobalEvent.warp_requested.emit(target_slot, body, _heading_of(body))
 		return

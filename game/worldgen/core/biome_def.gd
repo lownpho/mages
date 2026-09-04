@@ -21,8 +21,9 @@ extends Resource
 ## hash_fold below. &"" = fall back to the lowest-difficulty room heuristic.
 @export var spawn_room_type: StringName = &""
 
-## How many of this biome's ordinary rooms hold a two-way warp door (DoorLinks rolls the count,
-## the rooms, and who each one links to). PRESENTATION tier: doors are a feature overlay drawn
+## How many of this biome's ordinary rooms hold a one-way warp door (DoorLinks rolls the count,
+## the rooms, and where each one leads — some ordinary room elsewhere in the world, never another
+## door). PRESENTATION tier: doors are a feature overlay drawn
 ## from their own RNG stream, so retuning these re-rolls the doors and nothing else — they are
 ## NOT folded into hash_fold below. 0 = this biome has no doors.
 @export_group("Doors")

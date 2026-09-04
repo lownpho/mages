@@ -1,12 +1,16 @@
 extends Node
-## Headless tests for the two-way warp doors (DoorLinks). Asserts:
+## Headless tests for the one-way warp doors (DoorLinks). Asserts:
 ##   - Determinism: the same seed builds an identical link map twice.
-##   - Symmetry: every link is two-way, no door pairs with itself, counts are even.
+##   - Unchained: no door leads to itself, every destination is an ordinary room the map can
+##     name, and destinations are NOT drawn from the door rooms — a landing that holds a door of
+##     its own is chance, so the count of those stays a small fraction of all links.
 ##   - Placement: door counts honour each biome's doors_min/doors_max, doors only land in
 ##     ordinary rooms (never a pinned set-piece), and every door tile + its exit tile is
 ##     reachable floor.
 ##   - The room's spawn list carries the door, wearing the DESTINATION biome's art.
-##   - Variety: different seeds put doors in different rooms and pair them differently.
+##   - Gates: an authored door naming a target_biome (the glades' cave mouth into the deepwood)
+##     resolves to a fixed ordinary room in that biome, the same one on a rebuild.
+##   - Variety: different seeds put doors in different rooms and link them differently.
 ## Run: godot --headless --path game res://tests/worldgen/test_doors.tscn
 
 const SEEDS := 25
@@ -19,6 +23,8 @@ func _ready() -> void:
 	var maps: Array[Dictionary] = []
 	var total_doors := 0
 	var cross_biome := 0
+	var landed_on_door := 0
+	var gates := 0
 	for i in SEEDS:
 		var seed_v := 15_485_863 * i + 7
 		var streamer := WorldStreamer.new()
@@ -35,23 +41,29 @@ func _ready() -> void:
 		if a != b:
 			fails.append("link map not deterministic (seed %d)" % seed_v)
 		maps.append(a)
-		other.free()
 
-		# --- Symmetry ------------------------------------------------------------------------
-		if links.count() % 2 != 0:
-			fails.append("odd door count %d (seed %d)" % [links.count(), seed_v])
+		# --- Unchained: every landing is an ordinary room, picked without regard for doors -----
 		for slot in a:
-			var twin: Vector2i = a[slot]
-			if twin == slot:
-				fails.append("door at %s links to itself (seed %d)" % [slot, seed_v])
-			elif links.partner_of(twin) != slot:
-				fails.append("link %s -> %s is one-way (seed %d)" % [slot, twin, seed_v])
+			var dest: Vector2i = a[slot]
+			if dest == slot:
+				fails.append("door at %s leads to itself (seed %d)" % [slot, seed_v])
+			var dest_spec: RoomSpec = links.room_at(dest)
+			if dest_spec == null:
+				fails.append("door at %s lands in %s, which names no room (seed %d)"
+						% [slot, dest, seed_v])
+			else:
+				var drt := config.room_type_by_id(dest_spec.type_id)
+				if drt == null or drt.weight <= 0 \
+						or drt.unique_scope != RoomTypeDef.UniqueScope.NONE:
+					fails.append("door at %s lands in pinned/unique room %s (seed %d)"
+							% [slot, dest_spec.type_id, seed_v])
+			if a.has(dest):
+				landed_on_door += 1   # only chance — counted, not failed
 			if links.room_at(slot) == null:
 				fails.append("door at %s has no room spec (seed %d)" % [slot, seed_v])
 		total_doors += links.count()
 
 		# --- Per-biome counts and room eligibility --------------------------------------------
-		var short_biomes := 0   # the odd door out is dropped world-wide, costing ONE biome one door
 		for p in streamer.world_spec.placements:
 			var biome := config.biome_by_id(p.id)
 			var placed := 0
@@ -68,18 +80,13 @@ func _ready() -> void:
 								% [spec.type_id, seed_v])
 					if links.room_at(a[slot]).biome_id != p.id:
 						cross_biome += 1
-			# The max is firm. The min is a PICK count: an odd world-wide total drops one door,
-			# so exactly one biome may come out one short — never two, never more than one short.
+			# Both ends are firm now that linking drops nothing: every room picked keeps its door.
 			if placed > biome.doors_max:
 				fails.append("%s placed %d doors over its max %d (seed %d)"
 						% [p.id, placed, biome.doors_max, seed_v])
 			if biome.doors_max > 0 and placed < biome.doors_min:
-				short_biomes += 1
-				if placed < biome.doors_min - 1:
-					fails.append("%s placed %d doors, min %d (seed %d)"
-							% [p.id, placed, biome.doors_min, seed_v])
-		if short_biomes > 1:
-			fails.append("%d biomes short of their door min (seed %d)" % [short_biomes, seed_v])
+				fails.append("%s placed %d doors, min %d (seed %d)"
+						% [p.id, placed, biome.doors_min, seed_v])
 
 		# --- The door reaches the room's spawn list, and both tiles are walkable --------------
 		for slot in a:
@@ -124,6 +131,45 @@ func _ready() -> void:
 			if streamer.door_exit_position(a[slot]) == Vector2.INF:
 				fails.append("no exit position for %s (seed %d)" % [a[slot], seed_v])
 
+		# --- Authored gates: a hand-placed door naming a biome lands in that biome, and stays put
+		var placed_biomes := {}
+		for p in streamer.world_spec.placements:
+			placed_biomes[p.id] = true
+		for p in streamer.world_spec.placements:
+			for room in streamer.biome_graph(p.id).rooms:
+				var rt := config.room_type_by_id(room.type_id)
+				if rt == null:
+					continue
+				var want: StringName = _gate_biome(rt)
+				if want == &"":
+					continue
+				var res := _gate_door(streamer.get_room_output(room))
+				if not placed_biomes.has(want):
+					# The gate's biome missed this world: the door is dropped, never left dead.
+					if res != null:
+						fails.append("gate %s kept a door with %s absent (seed %d)"
+								% [room.type_id, want, seed_v])
+					continue
+				if res == null:
+					fails.append("gate room %s carries no door (seed %d)"
+							% [room.type_id, seed_v])
+					continue
+				gates += 1
+				var dest_spec: RoomSpec = links.room_at(res.target_slot)
+				if dest_spec == null:
+					fails.append("gate %s targets %s, which names no room (seed %d)"
+							% [room.type_id, res.target_slot, seed_v])
+				elif dest_spec.biome_id != want:
+					fails.append("gate %s targets %s in %s, want %s (seed %d)"
+							% [room.type_id, res.target_slot, dest_spec.biome_id, want, seed_v])
+				elif streamer.door_exit_position(res.target_slot) == Vector2.INF:
+					fails.append("gate %s has no exit position (seed %d)"
+							% [room.type_id, seed_v])
+				var twin := _gate_door(other.get_room_output(room))
+				if twin == null or twin.target_slot != res.target_slot:
+					fails.append("gate %s moved on a rebuild (seed %d)" % [room.type_id, seed_v])
+
+		other.free()
 		streamer.free()
 
 	# --- Variety: no two seeds may lay their doors out the same way --------------------------
@@ -136,11 +182,21 @@ func _ready() -> void:
 		fails.append("%d seed pairs produced an identical link map" % repeats)
 	if total_doors == 0:
 		fails.append("no doors placed in %d seeds" % SEEDS)
+	# Destinations are rolled over EVERY ordinary room, so landing on another door room is a
+	# coincidence — with a few doors among hundreds of rooms it must stay rare. A chained
+	# implementation would score 100%.
+	if total_doors > 0 and landed_on_door * 3 > total_doors:
+		fails.append("%d of %d doors land in another door's room — destinations look chained"
+				% [landed_on_door, total_doors])
+	if gates == 0:
+		fails.append("no authored gate doors resolved in %d seeds" % SEEDS)
 
 	await _check_live_door(fails)
 
 	print("== doors ==")
 	print("  %d seeds, %d doors, %d links crossing a biome" % [SEEDS, total_doors, cross_biome])
+	print("  %d gates resolved, %d links landing in another door's room (chance)"
+			% [gates, landed_on_door])
 
 	if fails.is_empty():
 		print("ALL PASS")
@@ -151,10 +207,10 @@ func _ready() -> void:
 	get_tree().quit(0 if fails.is_empty() else 1)
 
 
-## The live node: a warp door must stay silent while the player stands in it (a warp lands them
-## beside their destination door, and a streamed-in door can appear right under them), then fire
-## once they step off and walk back in — that guard is what stops a link bouncing them straight
-## back where they came from.
+## The live node: a warp door must stay silent while the player stands in it (a streamed-in door
+## can appear right under them, including one in the room a warp just dropped them in), then fire
+## once they step off and walk back in — that guard, with the global cooldown, is what stops an
+## arrival being flung straight on again.
 func _check_live_door(fails: Array[String]) -> void:
 	var door: Node2D = load("res://worldgen/runtime/door.tscn").instantiate()
 	door.target_slot = Vector2i(3, 4)
@@ -190,7 +246,7 @@ func _check_live_door(fails: Array[String]) -> void:
 		fails.append("door read heading %s, want north (0, -1)" % headings[0])
 
 	# The global cooldown: stepping off and straight back in again inside the second is refused,
-	# whichever door you reach — that is what stops a link chaining you through the pair.
+	# whichever door you reach — so a landing beside a door can't fling you on immediately.
 	var second: Node2D = load("res://worldgen/runtime/door.tscn").instantiate()
 	second.target_slot = Vector2i(5, 6)
 	second.global_position = Vector2(0, 200)
@@ -204,6 +260,23 @@ func _check_live_door(fails: Array[String]) -> void:
 	second.queue_free()
 	door.queue_free()
 	body.queue_free()
+
+
+## The biome an authored GATE door on this room type names, or &"" when it carries none — the
+## deepwood cave mouths in the glades are the only ones today.
+static func _gate_biome(rt: RoomTypeDef) -> StringName:
+	for f in rt.features:
+		if f.data is DoorResource and f.data.target_biome != &"":
+			return f.data.target_biome
+	return &""
+
+
+## The DoorResource of the door in a finished room, or null when it holds none.
+static func _gate_door(out: RoomOutput) -> DoorResource:
+	for sp in out.spawns:
+		if sp.get("feature_data") is DoorResource:
+			return sp["feature_data"]
+	return null
 
 
 func _reachable(out: RoomOutput, t: Vector2i) -> bool:
@@ -227,5 +300,5 @@ func _physics_frames(n: int) -> void:
 func _map_of(links: DoorLinks) -> Dictionary:
 	var out := {}
 	for slot in links.slots():
-		out[slot] = links.partner_of(slot)
+		out[slot] = links.target_of(slot)
 	return out

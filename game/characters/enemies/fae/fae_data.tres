@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://cuqnush86i5lt"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_1gc8n"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="1_dpl6y"]
 [ext_resource type="Resource" uid="uid://br5jxq2xs1ns6" path="res://characters/player/spells/blam/blam2.tres" id="drop_1"]
 [ext_resource type="Resource" uid="uid://xhtt31bw1wvp" path="res://characters/player/spells/ring/ring2.tres" id="drop_2"]

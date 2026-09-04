@@ -364,10 +364,11 @@ func door_links() -> DoorLinks:
 	return _door_links
 
 
-## World position a player warping to `target_slot` lands on: beside that room's door, never on
-## it, and on the far side of it relative to `heading` (the cardinal they walked in on) so they
-## come out still moving away from it. Vector2.INF when the slot holds no door (content edited
-## under a live run) — the caller leaves the player where they are.
+## World position a player warping to `target_slot` lands on: beside that room's centre tile, on
+## the far side of it relative to `heading` (the cardinal they walked in on) so they come out
+## still moving the same way. The centre is also where a door sits in the rare case the landing
+## room holds one, so an arrival never lands standing in a door. Vector2.INF when no door names
+## that slot (content edited under a live run) — the caller leaves the player where they are.
 func door_exit_position(target_slot: Vector2i, heading := Vector2i.ZERO) -> Vector2:
 	var links := door_links()
 	var spec: RoomSpec = links.room_at(target_slot) if links != null else null

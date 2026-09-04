@@ -58,7 +58,7 @@ project/assembly_name="yarpg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/yard/plugin.cfg")
+enabled=PackedStringArray()
 
 [global_group]
 

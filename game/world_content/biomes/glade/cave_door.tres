@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="DoorResource" format=3 uid="uid://bcavedoor00001"]
+[gd_resource type="Resource" script_class="DoorResource" format=3 uid="uid://bh7j16fiw6465"]
 
-[ext_resource type="Script" path="res://worldgen/runtime/door_resource.gd" id="1"]
+[ext_resource type="Script" uid="uid://dfq0w05gtqm0s" path="res://worldgen/runtime/door_resource.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
 style = 2
-target_scene = null
+target_biome = &"deepwood"

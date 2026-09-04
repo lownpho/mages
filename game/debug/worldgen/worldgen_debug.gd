@@ -17,7 +17,7 @@ extends Node2D
 ## Fly view: O room bounds+tags, G chunk grid, H tier heatmap, V biome borders, and P drops a
 ## REAL, invulnerable player in at the camera position (P/Esc returns to the camera) — walk
 ## and fight the actual room; use the ` console to `give`/`equip` gear. Doors work for the
-## drop-in player: a warp door moves it beside its twin, a dungeon config's stairs walk the floors
+## drop-in player: a warp door moves it to that door's destination, a dungeon config's stairs walk the floors
 ## (each floor is a reseed, so every view follows the player down), and a gate into another world
 ## — the mycelium one — swaps the browsed config instead of dropping the tool into the real game.
 ## Nothing in here ever leaves the tool.
@@ -705,7 +705,7 @@ const LEGENDS := {
 	1: "world view — colored cells: biomes (dark = sealed void) · black frames: biome regions\nred ticks: border-contract door crossings · gold dots: world-unique rooms\nclick: select biome · double-click/Enter: open biome view",
 	2: "biome view — one rect per room, hue = room TYPE, hot = higher tier\ncyan outline: quota (guaranteed) type · gold: world-unique · white flash: selected\npassages — white: tree edge · yellow: loop · red: border contract; short tick = door, long = open\nclick room: select · double-click/Enter: room view · corner map: switch biome",
 	3: "room view — grey: wall · dark: floor · mid-grey: blocker · green: decor floor\ncyan wash [P]: PROTECTED tiles · green wash [M]: reachable tiles\nred dots: enemy spawns (list on the right) · gold: features · red/white edge marks: passages",
-	4: "fly view — WASD/arrows fly · wheel zoom · yellow box: real 320x180 play view\n[O] room bounds+tags · [G] chunk grid · [H] tier heatmap (green0..red3) · [V] biome borders\n[P] drop in as a real (invulnerable) player at the camera — ` console: give/equip gear\ndoors work for the drop-in: warps hop to their twin, stairs walk the dungeon's floors, gates swap world",
+	4: "fly view — WASD/arrows fly · wheel zoom · yellow box: real 320x180 play view\n[O] room bounds+tags · [G] chunk grid · [H] tier heatmap (green0..red3) · [V] biome borders\n[P] drop in as a real (invulnerable) player at the camera — ` console: give/equip gear\ndoors work for the drop-in: warps hop one-way to their destination, stairs walk the dungeon's floors, gates swap world",
 }
 
 
