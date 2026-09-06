@@ -193,6 +193,8 @@ min_time = 1.0
 max_time = 2.5
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Chase" type="Node" parent="FSM" unique_id=1052400286]
 script = ExtResource("b_approach")
@@ -221,8 +223,8 @@ telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
 
 [node name="Recover" type="Node" parent="FSM" unique_id=1876249738]
 script = ExtResource("b_hold")
-min_time = 0.4
-max_time = 0.8
+min_time = 0.6
+max_time = 1.2
 next_state = "Shell"
 probe_path = NodePath("../../AttackProbe")
 lost_state = "Chase"

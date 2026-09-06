@@ -135,6 +135,8 @@ next_state = "Watch"
 probe_path = NodePath("../../RoomProbe")
 seen_state = "Pick"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Pick" type="Node" parent="FSM" unique_id=1226030203]
 script = ExtResource("b_gate")
@@ -166,8 +168,8 @@ range_probe_path = NodePath("../../RoomProbe")
 
 [node name="Reload" type="Node" parent="FSM" unique_id=1155147735]
 script = ExtResource("b_hold")
-min_time = 0.6
-max_time = 0.9
+min_time = 0.9
+max_time = 1.4
 next_state = "Pick"
 probe_path = NodePath("../../RoomProbe")
 lost_state = "Watch"

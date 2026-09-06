@@ -248,7 +248,10 @@ func _pack_hears_detection() -> int:
 	var spotter := _grimling(Vector2(60, 0))
 	await get_tree().physics_frame
 	_wake(spotter)
-	var deadline := Time.get_ticks_msec() + 1000
+	# Generous against the reaction times: the spotter takes up to Hold.react_max to notice
+	# and the deaf one up to Pack.react_max to answer, so the call can legitimately take two
+	# full seconds to land. The claim is that it lands, not when.
+	var deadline := Time.get_ticks_msec() + 4000
 	while _calm(deaf) and Time.get_ticks_msec() < deadline:
 		await get_tree().physics_frame
 	fails += _expect("a sighting alone (nobody hurt) calls the pack", not _calm(deaf))
@@ -283,9 +286,14 @@ func _pack_relays() -> int:
 	fails += _expect("pack starts calm (nothing engaged on its own)",
 		_calm(hit) and _calm(middle) and _calm(far))
 
-	# call_group is immediate, so the whole cascade resolves inside this emit.
+	# Being hit is a direct provocation and still engages on the frame; answering a CALL is
+	# a rolled reaction (Pack.react_min/max), so the cascade now spreads over up to a second
+	# per hop instead of resolving inside this emit. Two hops to reach `far`.
 	hit.hurtbox.hurt.emit(1, self)
 	fails += _expect("the grimling that was hit engages", _state(hit) == "Chase")
+	var landed := Time.get_ticks_msec() + 4000
+	while (_calm(middle) or _calm(far)) and Time.get_ticks_msec() < landed:
+		await get_tree().physics_frame
 	fails += _expect("a packmate in radius answers the call", _state(middle) == "Chase")
 	fails += _expect("the relay reaches a packmate out of the hit one's radius",
 		_state(far) == "Chase")
@@ -325,7 +333,8 @@ func _mixed_knot() -> int:
 	var wisp := _grimling(Vector2(100, 0), WISP)
 	await get_tree().physics_frame
 	_wake(wisp)
-	var deadline := Time.get_ticks_msec() + 1000
+	# Same two rolled reactions as the relay above: the wisp's own, then the shard's answer.
+	var deadline := Time.get_ticks_msec() + 4000
 	while _calm(shard) and Time.get_ticks_msec() < deadline:
 		await get_tree().physics_frame
 	fails += _expect("a wisp's sighting calls the shard grimling into the fight",

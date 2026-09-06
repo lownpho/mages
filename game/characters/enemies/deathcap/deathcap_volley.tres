@@ -40,5 +40,5 @@ damage = SubResource("ScalingProfile_volley")
 shot_interval = 0.3
 max_shots = 4
 effect_scene = ExtResource("3_scene")
-cooldown = 2.6
+cooldown = 3.4
 cast_time = 0.5

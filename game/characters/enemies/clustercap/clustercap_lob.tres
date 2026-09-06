@@ -37,5 +37,5 @@ bullet = SubResource("Bullet_blob")
 damage = SubResource("ScalingProfile_lob")
 max_shots = 1
 effect_scene = ExtResource("3_scene")
-cooldown = 3.0
+cooldown = 3.9
 cast_time = 0.7

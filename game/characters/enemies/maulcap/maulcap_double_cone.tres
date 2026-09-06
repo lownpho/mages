@@ -35,5 +35,5 @@ damage = SubResource("ScalingProfile_double_cone")
 shot_interval = 0.3
 max_shots = 3
 effect_scene = ExtResource("3_scene")
-cooldown = 1.8
+cooldown = 2.7
 cast_time = 0.25

@@ -107,7 +107,13 @@ radius = 3.0
 [node name="Caster" parent="." unique_id=324628300 instance=ExtResource("5_caster")]
 
 [node name="FSM" parent="." unique_id=919954930 instance=ExtResource("4_fsm")]
-initial_state = "Pick"
+initial_state = "Wake"
+
+[node name="Wake" type="Node" parent="FSM" unique_id=1734125908]
+script = ExtResource("b_hold")
+min_time = 0.0
+max_time = 1.0
+next_state = "Pick"
 
 [node name="Pick" type="Node" parent="FSM" unique_id=2065707098]
 script = ExtResource("b_gate")
@@ -129,6 +135,6 @@ done_state = "Rest"
 
 [node name="Rest" type="Node" parent="FSM" unique_id=1528961740]
 script = ExtResource("b_hold")
-min_time = 2.0
-max_time = 3.0
+min_time = 2.6
+max_time = 3.9
 next_state = "Pick"

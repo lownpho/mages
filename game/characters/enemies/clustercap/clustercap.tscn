@@ -203,6 +203,8 @@ next_state = "Idle"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Pick"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Pick" type="Node" parent="FSM"]
 script = ExtResource("b_gate")

@@ -33,5 +33,5 @@ bullet = SubResource("Bullet_dart")
 damage = SubResource("ScalingProfile_fan")
 shot_interval = 0.3
 effect_scene = ExtResource("3_scene")
-cooldown = 2.6
+cooldown = 3.4
 cast_time = 0.5

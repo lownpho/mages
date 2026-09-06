@@ -33,5 +33,5 @@ damage = SubResource("ScalingProfile_hard_pew")
 shot_interval = 0.2
 max_shots = 3
 effect_scene = ExtResource("3_scene")
-cooldown = 1.2
+cooldown = 1.8
 cast_time = 0.25

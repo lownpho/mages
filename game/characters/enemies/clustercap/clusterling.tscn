@@ -112,6 +112,8 @@ max_time = 1.2
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Lob"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Lob" type="Node" parent="FSM" unique_id=1283805056]
 script = ExtResource("b_cast")

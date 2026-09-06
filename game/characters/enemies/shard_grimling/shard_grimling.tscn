@@ -134,6 +134,8 @@ collision_mask = 17
 [node name="Pack" type="Node" parent="." groups=["pack_grimling"]]
 script = ExtResource("c_pack")
 group = &"pack_grimling"
+react_min = 0.0
+react_max = 1.0
 
 [node name="FSM" parent="." instance=ExtResource("4_fsm")]
 initial_state = "Idle"
@@ -146,6 +148,8 @@ next_state = "Wander"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Wander" type="Node" parent="FSM"]
 script = ExtResource("b_wander")
@@ -156,6 +160,8 @@ max_time = 1.2
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Chase" type="Node" parent="FSM"]
 script = ExtResource("b_approach")

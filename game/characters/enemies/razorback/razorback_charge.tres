@@ -34,5 +34,5 @@ bullet = SubResource("Resource_thorn")
 damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.1
 effect_scene = ExtResource("99_effect")
-cooldown = 0.3
+cooldown = 1.5
 cast_time = 0.5

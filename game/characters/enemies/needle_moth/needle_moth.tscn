@@ -145,6 +145,8 @@ max_time = 1.6
 next_state = "Wander"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Wander" type="Node" parent="FSM"]
 script = ExtResource("b_wander")
@@ -154,6 +156,8 @@ min_time = 0.4
 max_time = 1.0
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Chase" type="Node" parent="FSM"]
 script = ExtResource("b_approach")
@@ -178,5 +182,5 @@ retreat_probe_path = NodePath("../../RetreatProbe")
 cornered_state = "Chase"
 speed = 46.0
 retreat_range = 14.0
-duration = 2.4
+duration = 3.6
 done_state = "Chase"

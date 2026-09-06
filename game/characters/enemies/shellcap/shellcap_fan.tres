@@ -33,5 +33,5 @@ damage = SubResource("ScalingProfile_fan")
 shot_interval = 0.35
 max_shots = 5
 effect_scene = ExtResource("3_scene")
-cooldown = 3.0
+cooldown = 3.9
 cast_time = 0.6

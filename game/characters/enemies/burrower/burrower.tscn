@@ -144,6 +144,8 @@ next_state = "Idle"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Dive"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Dive" type="Node" parent="FSM"]
 script = ExtResource("b_hold")
@@ -204,8 +206,8 @@ telegraph_color = Color(0.556863, 0.278431, 0.549020, 1)
 
 [node name="Rest" type="Node" parent="FSM"]
 script = ExtResource("b_hold")
-min_time = 0.6
-max_time = 1.0
+min_time = 0.9
+max_time = 1.5
 next_state = "Dive"
 probe_path = NodePath("../../DetectProbe")
 lost_state = "Idle"

@@ -30,11 +30,24 @@ class_name Hold
 ## recovery side: with both at 0 the arrive and leave tests share one threshold, and a creature
 ## whose spell is still cooling ping-pongs recover→chase→attack on a two-frame cycle.
 @export var lost_margin: float = 0.0
+## Reaction time: seconds between the probe spotting the target and the hand-off to
+## `seen_state`, rolled fresh every time they come into view. Every creature sleeps
+## off-screen (Creature._ready wires a VisibleOnScreenEnabler2D), so a whole room wakes on
+## the ONE frame the player sees it and then aggros on the ONE frame after — without this a
+## group fires in waves, and no amount of jitter further down the loop ever breaks that
+## opening lockstep, because it is set before the loop starts. The beat keeps idling or
+## drifting while it runs, so the tell is a creature carrying on for a moment rather than
+## freezing mid-step, and breaking line of sight spends the reaction instead of banking it.
+## 0/0 reacts on the frame, which is what a solo enemy wants — there is nobody to sync with.
+@export var react_min: float = 0.0
+@export var react_max: float = 0.0
 
 var _timer: Timer
 var _elapsed: bool = false
 var _probe: RayCast2D
 var _lost_probe: RayCast2D
+## Seconds left on the reaction; <0 means we are not reacting to anything yet.
+var _react_left: float = -1.0
 
 func _ready() -> void:
 	super()
@@ -64,6 +77,7 @@ func enter() -> void:
 		creature.hurtbox.hurt.connect(_on_hit)
 	# Timer.start(0) keeps the previous wait_time instead of expiring at once, so a
 	# zero-length hold (a pure wait-for-cooldown) skips the timer entirely.
+	_react_left = -1.0
 	var wait := randf_range(min_time, max_time)
 	_elapsed = wait <= 0.0
 	if not _elapsed:
@@ -81,8 +95,14 @@ func exit() -> void:
 func physics_update(delta: float) -> void:
 	if _probe and (seen_state != "" or lost_state != ""):
 		if seen_state != "" and creature.look_for_target(_probe):
-			go_to(seen_state)
+			if _reacted(delta):
+				go_to(seen_state)
+				return
+			# Mid-flinch: drift on, but don't let the ordinary timer hand us somewhere else
+			# and re-roll the reaction we already committed to.
+			_tick(delta)
 			return
+		_react_left = -1.0
 		# Arriving is tested against the probe, giving up against the probe plus lost_margin, so
 		# a target parked between the two rings does neither and the beat simply runs on.
 		if lost_state != "" and not creature.look_for_target(_lost_probe if _lost_probe else _probe):
@@ -91,6 +111,16 @@ func physics_update(delta: float) -> void:
 	_tick(delta)
 	if _elapsed and _next_ready():
 		go_to(next_state)
+
+# The reaction clock. The first frame the target is in view rolls it; every frame after
+# counts it down. A 0/0 roll lands on true immediately, so an unauthored beat reacts on the
+# frame exactly as it always did.
+func _reacted(delta: float) -> bool:
+	if _react_left < 0.0:
+		_react_left = randf_range(react_min, react_max)
+	else:
+		_react_left -= delta
+	return _react_left <= 0.0
 
 # Movement seam: Wander overrides this to drift while it holds.
 func _tick(_delta: float) -> void:

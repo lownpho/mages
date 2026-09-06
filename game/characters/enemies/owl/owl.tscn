@@ -169,6 +169,8 @@ max_time = 2.0
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Bwoom"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Bwoom" type="Node" parent="FSM" unique_id=415002087]
 script = ExtResource("b_cast")
@@ -185,8 +187,8 @@ max_release_fraction = 1.0
 
 [node name="Recover" type="Node" parent="FSM" unique_id=1265311285]
 script = ExtResource("b_hold")
-min_time = 1.0
-max_time = 1.8
+min_time = 1.3
+max_time = 2.3
 next_state = "Reposition"
 probe_path = NodePath("../../CloseProbe")
 seen_state = "Reposition"

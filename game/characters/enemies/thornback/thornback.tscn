@@ -182,6 +182,8 @@ max_time = 2.2
 next_state = "Wander"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Charge"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Wander" type="Node" parent="FSM" unique_id=1620796088]
 script = ExtResource("b_wander")
@@ -191,6 +193,8 @@ min_time = 0.6
 max_time = 1.4
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Charge"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Charge" type="Node" parent="FSM" unique_id=2127259932]
 script = ExtResource("b_charge")
@@ -204,8 +208,8 @@ telegraph_color = Color(0.933333, 0.631373, 0.376471, 1)
 [node name="Recover" type="Node" parent="FSM" unique_id=233440042]
 script = ExtResource("b_hold")
 anim = "recover"
-min_time = 1.0
-max_time = 1.4
+min_time = 1.3
+max_time = 1.8
 next_state = "Charge"
 probe_path = NodePath("../../DetectProbe")
 lost_state = "Idle"

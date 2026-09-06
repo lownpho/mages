@@ -160,7 +160,7 @@ metadata/_edit_lock_ = true
 [node name="AimArrow" type="Sprite2D" parent="." unique_id=1645469095]
 z_index = -1
 texture = ExtResource("10_aim")
-offset = Vector2(10, 0)
+offset = Vector2(18, 0)
 
 [node name="LowHealthAura" type="AnimatedSprite2D" parent="." unique_id=555001001]
 visible = false

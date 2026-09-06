@@ -148,6 +148,8 @@ group = &"pack_puffcap"
 radius_tiles = 3.0
 alert_state = "Inhale"
 from_states = Array[String](["Rooted"])
+react_min = 0.0
+react_max = 1.0
 
 [node name="FSM" parent="." instance=ExtResource("4_fsm")]
 initial_state = "Rooted"
@@ -158,6 +160,8 @@ min_time = 4.0
 next_state = "Rooted"
 probe_path = NodePath("../../TriggerProbe")
 seen_state = "Inhale"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Inhale" type="Node" parent="FSM"]
 script = ExtResource("b_cast")

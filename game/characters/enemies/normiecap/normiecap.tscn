@@ -167,6 +167,8 @@ max_time = 2.5
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Chase"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Chase" type="Node" parent="FSM"]
 script = ExtResource("b_approach")

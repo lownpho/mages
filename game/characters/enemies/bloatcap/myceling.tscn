@@ -118,6 +118,8 @@ next_state = "Idle"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Sprint"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Sprint" type="Node" parent="FSM"]
 script = ExtResource("b_approach")

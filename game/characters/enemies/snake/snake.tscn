@@ -115,6 +115,8 @@ max_time = 2.2
 next_state = "Wander"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Flee"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Wander" type="Node" parent="FSM" unique_id=475825886]
 script = ExtResource("b_wander")
@@ -124,6 +126,8 @@ min_time = 0.5
 max_time = 1.4
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Flee"
+react_min = 0.0
+react_max = 1.0
 
 [node name="Flee" type="Node" parent="FSM" unique_id=674663652]
 script = ExtResource("b_flee")

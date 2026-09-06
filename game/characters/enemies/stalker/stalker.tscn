@@ -137,6 +137,8 @@ next_state = "Disguise"
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Reveal"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Reveal" type="Node" parent="FSM" unique_id=729050671]
 script = ExtResource("b_hold")

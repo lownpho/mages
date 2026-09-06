@@ -187,8 +187,8 @@ max_release_fraction = 1.0
 
 [node name="Recover" type="Node" parent="FSM"]
 script = ExtResource("b_hold")
-min_time = 0.8
-max_time = 1.4
+min_time = 1.2
+max_time = 2.1
 next_state = "Reposition"
 probe_path = NodePath("../../CloseProbe")
 seen_state = "Reposition"

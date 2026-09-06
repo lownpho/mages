@@ -15,6 +15,6 @@ speed_tiles = 16.0
 damage = SubResource("ScalingProfile_tick")
 range_tiles = 30.0
 effect_scene = ExtResource("2_scene")
-cooldown = 4.0
+cooldown = 5.2
 cast_time = 2.0
 channeled = true

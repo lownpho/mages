@@ -32,5 +32,5 @@ bullet = SubResource("Bullet_nudge")
 damage = SubResource("ScalingProfile_nudge")
 max_shots = 1
 effect_scene = ExtResource("3_scene")
-cooldown = 1.4
+cooldown = 2.1
 cast_time = 0.35

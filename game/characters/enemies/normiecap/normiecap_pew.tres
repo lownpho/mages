@@ -32,5 +32,5 @@ bullet = SubResource("Bullet_pew")
 damage = SubResource("ScalingProfile_pew")
 max_shots = 3
 effect_scene = ExtResource("3_scene")
-cooldown = 1.2
+cooldown = 1.8
 cast_time = 0.25

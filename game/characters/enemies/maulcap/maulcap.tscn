@@ -171,6 +171,8 @@ max_time = 1.6
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Pick"
 alert_on_hit = true
+react_min = 0.0
+react_max = 1.0
 
 [node name="Pick" type="Node" parent="FSM"]
 script = ExtResource("b_gate")
@@ -218,11 +220,11 @@ telegraph_color = Color(0.933333, 0.494118, 0.105882, 1)
 [node name="Root" type="Node" parent="FSM"]
 script = ExtResource("b_hold")
 anim = "root"
-min_time = 1.6
-max_time = 2.6
+min_time = 2.4
+max_time = 3.9
 
 [node name="ShortRoot" type="Node" parent="FSM"]
 script = ExtResource("b_hold")
 anim = "root"
-min_time = 0.8
-max_time = 1.4
+min_time = 1.2
+max_time = 2.1
