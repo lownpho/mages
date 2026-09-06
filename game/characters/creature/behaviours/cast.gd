@@ -9,8 +9,9 @@ class_name Cast
 # honours, and the sprite is driven FROM it (see Creature.play_fitted) rather than the shot
 # being triggered by a sprite frame — so an enemy's tell lives in its spell data and can't
 # drift from its art. A channel is the same story: nobody holds a button here, so SpellCaster
-# caps it at `cast_time` and the creature charges for exactly that long — the owl's growing
-# Bwoom ball IS its telegraph. Recovery is not this state's business either: the beat hands
+# caps it at `cast_time` — the owl's growing Bwoom ball IS its telegraph. This beat can also
+# loose it earlier, at a randomised fraction of `cast_time` (see min/max_release_fraction),
+# so a charge doesn't always land at max_ticks. Recovery is not this state's business either: the beat hands
 # off to `done_state` the moment the burst ends, and a Hold pointed back here parks the
 # creature until `cooldown` lapses.
 
@@ -38,6 +39,11 @@ class_name Cast
 @export var attack_anim: String = "attack"
 ## Incoming damage during the wind-up; <1 makes the telegraph a bad moment to trade.
 @export var windup_damage_scale: float = 1.0
+## For a channeled spell: fraction of cast_time (randomised per cast, min..max) to hold
+## before releasing early. 1.0/1.0 (default) charges the full channel, as before — nothing
+## changes for a beat that doesn't set these.
+@export_range(0.0, 1.0) var min_release_fraction: float = 1.0
+@export_range(0.0, 1.0) var max_release_fraction: float = 1.0
 ## Colour the creature strobes while the wind-up runs. Author it as the creature's own
 ## accent (usually its eye colour) so the flash reads as "this one is about to fire" —
 ## a pack of mixed grimlings tells you which member committed. Default transparent: a
@@ -50,6 +56,9 @@ var _probe: RayCast2D
 var _exit_probe: RayCast2D
 var _winding_up: bool = false
 var _refused: bool = false
+var _windup_elapsed: float = 0.0
+## Elapsed time to release the channel at, in seconds; >= spell.cast_time disables early release.
+var _release_at: float = INF
 
 func _ready() -> void:
 	super()
@@ -93,6 +102,9 @@ func enter() -> void:
 		creature.play_fitted(windup_anim if windup_anim != "" else attack_anim, spell.cast_time)
 		if telegraph_color.a > 0.0:
 			creature.telegraph(telegraph_color)
+		_windup_elapsed = 0.0
+		_release_at = randf_range(min_release_fraction, max_release_fraction) * spell.cast_time \
+				if spell.channeled else INF
 	elif started:
 		creature.play(attack_anim)
 
@@ -107,7 +119,7 @@ func exit() -> void:
 	if _exit_probe:
 		_exit_probe.enabled = false
 
-func physics_update(_delta: float) -> void:
+func physics_update(delta: float) -> void:
 	# The spell was still cooling when we got here — a hand-off that doesn't gate on
 	# can_run (a Flee running out its clock back onto its attack) can always land on a
 	# cooling beat. Pass the beat on rather than acting out a shot that isn't coming: the
@@ -122,6 +134,13 @@ func physics_update(_delta: float) -> void:
 	# target went. Guard against a stale flag (the caster already resolved or never started)
 	# so we can never sit here frozen.
 	if _winding_up:
+		# A held-below-cap channel: loose it early rather than riding it to the cast_time
+		# cap, so the release point (and therefore the damage) varies per cast.
+		if _release_at < spell.cast_time:
+			_windup_elapsed += delta
+			if _windup_elapsed >= _release_at:
+				_caster.end_channel()
+				return
 		if _caster.is_casting(spell):
 			_track_aim(player)
 			return

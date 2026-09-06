@@ -182,6 +182,8 @@ exit_margin = 32.0
 windup_anim = "charge"
 attack_anim = "attack"
 telegraph_color = Color(0.87451, 0.964706, 0.960784, 1)
+min_release_fraction = 0.5
+max_release_fraction = 1.0
 
 [node name="Recover" type="Node" parent="FSM"]
 script = ExtResource("b_hold")
