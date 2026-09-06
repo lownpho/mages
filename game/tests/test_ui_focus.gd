@@ -34,8 +34,8 @@ func _ready() -> void:
 		_check(fails, nav, i, c.focus_neighbor_bottom, i + COLUMNS, "bottom")
 
 	# --- focus tooltip: the dpad's stand-in for mouse hover ---
-	# Needs a pad and an item carrying modifiers; a bare slot must stay silent, same as the
-	# mouse tooltip does.
+	# Needs a pad and an item carrying modifiers; a bare slot must stay silent, same as it
+	# does under the cursor.
 	var spell := load("res://characters/player/spells/pew/pew1.tres")
 	var slot_ui: Control = nav[0]
 	if spell == null or spell.get_modifiers().is_empty():
@@ -53,13 +53,40 @@ func _ready() -> void:
 		if _tip(ui) != null:
 			fails.append("tooltip outlived focus")
 
-		# Mouse users get Godot's own hover tooltip — ours must not double up.
+		# On mouse and keyboard the tip follows the cursor, not focus, so a focused slot
+		# with nothing hovering it must stay silent.
 		GlobalInput._set_gamepad(false)
 		slot_ui.grab_focus()
 		if _tip(ui) != null:
 			fails.append("focus tooltip shown while on mouse")
 		slot_ui.release_focus()
 		GlobalInventory.spell_slots.at(0).clear_item()
+
+	# --- one parking spot: every slot's tip lands in the same place, clear of the strip ---
+	# The whole point of the custom tip — a per-slot position would put half of them over the
+	# strip they describe.
+	if spell != null and not spell.get_modifiers().is_empty():
+		var strip: Control = ui.get_node("Strip")
+		GlobalInput._set_gamepad(true)
+		var seen := {}
+		for pair in [[GlobalInventory.spell_slots, "%SpellSlots", 0],
+				[GlobalInventory.bag_slots, "%Bag", GlobalInventory.BAG_SIZE - 1]]:
+			pair[0].at(pair[2]).set_item(spell)
+			var c: Control = ui.get_node(pair[1]).get_child(pair[2])
+			c.grab_focus()
+			var tip := _tip(ui)
+			if tip == null:
+				fails.append("no tooltip on %s" % c.name)
+			else:
+				seen[tip.global_position] = true
+				if tip.global_position.x < strip.global_position.x + strip.size.x:
+					fails.append("%s's tip overlaps the strip" % c.name)
+			c.release_focus()
+			await get_tree().process_frame
+			pair[0].at(pair[2]).clear_item()
+		if seen.size() > 1:
+			fails.append("tips park at %d different positions: %s" % [seen.size(), seen.keys()])
+		GlobalInput._set_gamepad(false)
 
 	# --- blurb: text alone raises the tip, and an item with nothing at all stays silent ---
 	var mute := SpellResource.new()
