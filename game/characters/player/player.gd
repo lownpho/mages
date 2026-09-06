@@ -83,6 +83,12 @@ func _ready() -> void:
 # the player never touches it (twin-stick convention).
 var _pad_aim := Vector2.RIGHT
 
+# The aim arrow is a gamepad affordance — on mouse the cursor already says where
+# you're pointing. It shows while the right stick is pushed and lingers briefly
+# after, so rolling the stick through its centre doesn't blink the arrow off.
+const _AIM_ARROW_LINGER_MS := 400
+var _pad_aim_active_until_ms := 0
+
 # Aim for spells and bullet bursts: the direction from the player toward the
 # mouse, or the pad aim when the last input device was a gamepad. The single
 # aim read in the spell path — effects take a direction, never a position.
@@ -123,7 +129,7 @@ func apply_knockback(impulse: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	_sample_pad_aim()
-	aim_arrow.rotation = get_aim_direction().angle()
+	_update_aim_arrow()
 	if _is_dashing():
 		velocity = _dash_velocity
 		move_and_slide()
@@ -141,11 +147,18 @@ func _sample_pad_aim() -> void:
 	var stick := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
 	if stick != Vector2.ZERO:
 		_pad_aim = stick.normalized()
+		_pad_aim_active_until_ms = Time.get_ticks_msec() + _AIM_ARROW_LINGER_MS
 		return
 	# Right stick idle: while moving, aim follows the run so casts go forward.
 	var moving := get_input_direction()
 	if moving != Vector2.ZERO:
 		_pad_aim = moving
+
+func _update_aim_arrow() -> void:
+	var aiming := GlobalInput.using_gamepad and Time.get_ticks_msec() < _pad_aim_active_until_ms
+	aim_arrow.visible = aiming
+	if aiming:
+		aim_arrow.rotation = get_aim_direction().angle()
 
 func _on_idle_physics_update(_delta: float) -> void:
 	if _is_dashing():

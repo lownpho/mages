@@ -67,13 +67,26 @@ func _input(event: InputEvent) -> void:
 		if event.is_action_released(action):
 			_held.erase(action)
 	if event is InputEventJoypadButton:
-		_set_gamepad(true)
+		if event.pressed and _is_gamepad(event.device):
+			_set_gamepad(true)
 	elif event is InputEventJoypadMotion:
 		# Deadzone: resting sticks/triggers report noise; only a deliberate push flips.
-		if absf(event.axis_value) > 0.5:
+		if absf(event.axis_value) > 0.5 and _is_gamepad(event.device):
 			_set_gamepad(true)
 	elif event is InputEventKey or event is InputEventMouseButton or event is InputEventMouseMotion:
 		_set_gamepad(false)
+
+## True only for a device the engine has a gamepad mapping for.
+##
+## Linux hands Godot every evdev node that carries EV_ABS plus buttons, so plain HID
+## gadgets register as joypads — a Keychron K6 Pro's "System Control" endpoint shows up
+## as device 0 with a hat axis, and one media key then reads as a D-pad slam. That flipped
+## the game to pad mode: the OS cursor vanished and aim froze to _pad_aim's stick, which on
+## a phantom pad never moves. An unmapped device can't drive the game anyway — is_joy_known
+## is exactly the promise that button/axis indices match the JoyButton/JoyAxis constants our
+## bindings are written against — so ignoring it here costs nothing and stops the hijack.
+func _is_gamepad(device: int) -> bool:
+	return Input.is_joy_known(device)
 
 func _set_gamepad(gamepad: bool) -> void:
 	if using_gamepad == gamepad:
