@@ -2751,6 +2751,13 @@
      "tier": 1,
      "weakness": null,
      "chance": 0.1
+    },
+    {
+     "item": "blam1",
+     "spell": "blam",
+     "tier": 1,
+     "weakness": null,
+     "chance": 0.1
     }
    ],
    "attacks": [

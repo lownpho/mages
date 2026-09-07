@@ -34,7 +34,7 @@ Onboarding: single-enemy rooms first, small mixed groups by T2, then the biome's
 | Enemy | Items dropped |
 |---|---|
 | Dirt Golem | **ring t1** (20%), **nope** (20%) |
-| Hopper | **pew t1** (15%), **zaap t1** (10%) |
+| Hopper | **pew t1** (15%), **zaap t1** (10%), **blam t1** (10%) |
 | Mandrake | **blam t1** (20%), **fireball t1** (20%) |
 | Seedling | **ring t1** (10%), **zaap t1** (10%) |
 | Sproutling | **pew t1** (10%), **zaap t1** (10%) |
@@ -65,7 +65,7 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 | Enemy | Items dropped |
 |---|---|
 | Dirt Golem | **ring t1** (20%), **nope** (20%) |
-| Hopper | **pew t1** (15%), **zaap t1** (10%) |
+| Hopper | **pew t1** (15%), **zaap t1** (10%), **blam t1** (10%) |
 | Mandrake | **blam t1** (20%), **fireball t1** (20%) |
 | Rosebud | **ring t1** (10%), **nope** (10%) |
 | Seedling | **ring t1** (10%), **zaap t1** (10%) |

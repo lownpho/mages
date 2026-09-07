@@ -48,7 +48,7 @@ crowds your space.
 | Speed | 18 px/s |
 | Range | detect 7, chase 8, attack 3 |
 | attack | **7** dmg — 0.7s cd, Single, 3 @ 0.3s, 5 tiles range |
-| Drops | **pew t1** (15%), **zaap t1** (10%) |
+| Drops | **pew t1** (15%), **zaap t1** (10%), **blam t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
