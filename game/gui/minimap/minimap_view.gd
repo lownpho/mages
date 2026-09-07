@@ -2,10 +2,11 @@ extends Control
 ## The strip minimap: draws the shared MapState's discovered-world textures with the player fixed
 ## at the centre, north-up. The state (fog-of-war discovery, textures, markers) is owned by
 ## GlobalMap; this widget only renders the active one and steps its own zoom. The widget never
-## resizes — +/-, or the wheel while hovering it, step tiles-per-pixel (MapState.ZOOM_TILES_PER_PX;
-## off the map the wheel cycles the spell page instead). Walls render at
-## every zoom from a per-level majority-downsampled image, so explored dead ends stay flagged when
-## zoomed out. Live enemies show only inside discovered rooms, so nothing leaks through fog of war.
+## resizes — +/-, the wheel while hovering it, or Y + dpad up/down on a pad, step tiles-per-pixel
+## (MapState.ZOOM_TILES_PER_PX; off the map the wheel cycles the spell page instead). Walls
+## render at every zoom from a per-level majority-downsampled image, so explored dead ends stay
+## flagged when zoomed out. Live enemies show only inside discovered rooms, so nothing leaks
+## through fog of war.
 
 const ENEMIES_MAX_TPP := 4  ## live enemy dots hidden at zooms coarser than this
 
@@ -45,7 +46,8 @@ func _process(_dt: float) -> void:
 
 
 ## The +/- keys zoom wherever the cursor is; the wheel only zooms while hovering the widget
-## (see _gui_input), since elsewhere it cycles the player's spell page.
+## (see _gui_input), since elsewhere it cycles the player's spell page. On a pad it's the
+## Y + dpad up/down chord (see _pad_chord_dir).
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == null:
 		return
@@ -53,6 +55,28 @@ func _unhandled_input(event: InputEvent) -> void:
 		_step_zoom(-1)
 	elif event.is_action_pressed("minimap_zoom_out"):
 		_step_zoom(1)
+	else:
+		var dir := _pad_chord_dir(event)
+		if dir != 0:
+			_step_zoom(dir)
+			get_viewport().set_input_as_handled()
+
+
+## Zoom direction for the pad chord — hold Y ("minimap_zoom_mod") and tap dpad up/down — or 0
+## when the event isn't it. The dpad can't zoom on its own: bare, it belongs to HUD slot focus
+## and to whatever panel is open, so the strip only listens while the modifier is down. Joypad
+## events only, since the same ui_up/ui_down carry the arrow keys, which stay the menus'. The
+## chord also stands down whenever the UI has captured input: the strip is then either behind
+## the open full map (which zooms on its own bare dpad) or under slot navigation.
+func _pad_chord_dir(event: InputEvent) -> int:
+	if not event is InputEventJoypadButton or GlobalInput.ui_captured \
+			or not Input.is_action_pressed("minimap_zoom_mod"):
+		return 0
+	if event.is_action_pressed("ui_up"):
+		return -1
+	if event.is_action_pressed("ui_down"):
+		return 1
+	return 0
 
 
 func _step_zoom(dir: int) -> void:

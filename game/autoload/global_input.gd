@@ -13,8 +13,10 @@ signal ui_capture_changed(captured: bool)
 ## cursor), OS cursor visibility, and where a discarded item lands.
 var using_gamepad := false
 
-## True while the HUD owns input for slot navigation — gameplay input (movement,
-## casts) must stand down. Set only via set_ui_captured.
+## True while the HUD owns input for slot navigation — the cast buttons stand down so a
+## bumper can't fire a spell under the player's feet mid-sort. Movement is NOT gated: focus
+## rides the dpad, never the left stick, so the mage keeps walking. Set only via
+## set_ui_captured.
 var ui_captured := false
 
 ## False for the trailing events of a wheel burst — every wheel handler gates on this so

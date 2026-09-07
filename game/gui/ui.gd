@@ -60,6 +60,19 @@ func _on_panel_visibility_changed(panel: Control) -> void:
 		get_viewport().gui_release_focus()
 	elif GlobalInput.ui_captured and is_instance_valid(_focus_before_panel):
 		_focus_before_panel.grab_focus()
+	_show_panel_ring(panel, panel.visible and GlobalInput.ui_captured)
+
+# Releasing focus leaves slot navigation with nothing lit, and on a pad that ring is the only
+# sign the HUD still holds the buttons — the dpad and A are the panel's, and the cast buttons
+# are off — while the mage walks on as usual. So the button that opened the panel wears the
+# ring for as long as the panel is up, painted on as its normal style. Cosmetic only: real
+# focus stays released, so the dpad still reaches the panel. Mouse play never lights it.
+func _show_panel_ring(panel: Control, on: bool) -> void:
+	var btn: Button = %BestiaryButton if panel == %BestiaryPanel else %MapButton
+	if on:
+		btn.add_theme_stylebox_override(&"normal", btn.get_theme_stylebox(&"focus"))
+	else:
+		btn.remove_theme_stylebox_override(&"normal")
 
 # Pad focus runs as ONE 4-wide ladder down the strip — the 4 spell slots, the 8 bag slots,
 # then the 3 strip buttons — wired explicitly because Godot's geometric neighbour search

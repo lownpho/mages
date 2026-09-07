@@ -23,9 +23,10 @@ func _ready() -> void:
 	_rebuild()
 
 ## Pad paging: dpad left/right turn the page, the only interaction the book has (its cards are
-## display-only, and close is the HUD's B/Start). Gated on ui_captured — the HUD only raises it
-## for a pad-opened panel, and it's what stops a left stick push paging the book while it walks
-## the mage. Focus is released while a panel is open, so nothing consumes these first.
+## display-only, and close is the HUD's B/Start). Gated on ui_captured so only a pad-opened book
+## pages — the keyboard's arrow keys share ui_left/ui_right and belong to whatever else has them.
+## The left stick never gets here (it's bound to movement alone), so the mage keeps walking while
+## the book is up. Focus is released while a panel is open, so nothing consumes these first.
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible or not GlobalInput.ui_captured:
 		return

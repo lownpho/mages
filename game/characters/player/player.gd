@@ -103,10 +103,10 @@ func can_burst_fire() -> bool:
 	return can_act or _is_dashing()
 
 func get_input_direction() -> Vector2:
-	# While the HUD captures input (controller slot navigation) the stick moves
-	# the focus, not the mage.
-	if GlobalInput.ui_captured:
-		return Vector2.ZERO
+	# The mage walks even while the HUD holds input: slot focus rides the dpad and the arrow
+	# keys — never the left stick — so nothing here competes with it. The world doesn't pause
+	# for the bag either, and standing the player still in a live fight to sort it just gets
+	# them hit. Only the cast buttons stand down (see PlayerCastInput).
 	var direction_x := Input.get_axis("left", "right")
 	var direction_y := Input.get_axis("up", "down")
 	return Vector2(direction_x, direction_y).normalized()

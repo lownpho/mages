@@ -118,6 +118,22 @@ func _ready() -> void:
 	GlobalInventory.spell_slots.at(0).clear_item()
 	GlobalInput._set_gamepad(false)
 
+	# --- open panel: the strip keeps a ring, so pad players can see the HUD still owns input ---
+	# Focus is released while a panel is up (the dpad belongs to the panel), so the button that
+	# opened it wears the focus box as its normal style instead. Mouse play lights nothing.
+	var map_button: Button = ui.get_node("%MapButton")
+	var ring: StyleBox = map_button.get_theme_stylebox(&"focus")
+	for captured in [false, true]:
+		GlobalInput.set_ui_captured(captured)
+		ui.get_node("%MapPanel").visible = true
+		var lit := map_button.get_theme_stylebox(&"normal") == ring
+		if lit != captured:
+			fails.append("open map ring is %s with ui_captured %s" % [lit, captured])
+		ui.get_node("%MapPanel").visible = false
+		if map_button.has_theme_stylebox_override(&"normal"):
+			fails.append("the ring outlived the open map (ui_captured %s)" % captured)
+	GlobalInput.set_ui_captured(false)
+
 	if fails.is_empty():
 		print("ALL PASS")
 	else:

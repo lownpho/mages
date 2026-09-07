@@ -1,9 +1,11 @@
 extends Control
 ## The full-screen map: renders the whole active MapState — the same discovered-world textures,
 ## markers and pins the strip minimap uses (via GlobalMap) — but framed to show everything at once,
-## with wheel-zoom (around the cursor), drag-pan, and click-to-pin. Opened from the pin button on
-## the HUD strip; Esc / clicking outside closes it (ui.gd, same as the bestiary). Re-fits to the
-## discovered world each time it opens, so it always frames what the player has seen so far.
+## with wheel-zoom (around the cursor), drag-pan, and click-to-pin. On a pad that reads as dpad
+## up/down zoom, right-stick pan, and Y to pin the view centre (which the reticle marks). Opened
+## from the pin button on the HUD strip; Esc / clicking outside closes it (ui.gd, same as the
+## bestiary). Re-fits to the discovered world each time it opens, so it always frames what the
+## player has seen so far.
 ##
 ## When dungeon floors arrive this becomes the paged "book": one MapState per space, this view
 ## renders GlobalMap's active one and page controls swap spaces. Today there is a single space.
@@ -84,8 +86,8 @@ func _process(dt: float) -> void:
 
 
 ## The pad's answer to drag-pan: the right stick slides the view. Gated on ui_captured — the
-## HUD only raises that for a pad-opened panel, so the stick can never pan the map and steer
-## the mage at the same time. Zoom is in _unhandled_input; pins stay mouse-only.
+## HUD only raises that for a pad-opened panel, so the stick never pans the map and aims the
+## mage at the same time. Zoom and the pin button are in _unhandled_input.
 func _pad_pan(dt: float) -> void:
 	if not GlobalInput.ui_captured:
 		return
@@ -141,6 +143,12 @@ func _snap_cam() -> void:
 ## +/- zoom the open map around its centre — or dpad up/down on a pad, which is free here
 ## because the HUD releases slot focus while a panel is open. Marked handled so the strip
 ## minimap — which binds the same actions — doesn't zoom underneath the panel as well.
+##
+## Y pins: with no cursor to aim, the pad pans the map under a fixed reticle and pins what sits
+## at the centre, which is also how it clears a pin (the same toggle the mouse tap uses, so a
+## pin near enough to the centre comes off instead of stacking a second one). Y is the strip
+## minimap's zoom modifier too, but that chord stands down while the HUD holds input — exactly
+## when this panel is open — so the button is free here.
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == null or not is_visible_in_tree():
 		return
@@ -149,9 +157,26 @@ func _unhandled_input(event: InputEvent) -> void:
 		_zoom(size * 0.5, 1)
 	elif event.is_action_pressed("minimap_zoom_out") or (pad and event.is_action_pressed("ui_down")):
 		_zoom(size * 0.5, -1)
+	elif pad and event.is_action_pressed("map_pin"):
+		_toggle_pin_at(_screen_to_world(_centre_px()))
 	else:
 		return
 	get_viewport().set_input_as_handled()
+
+
+## The reticle's pixel: the view centre floored onto the pixel grid the map blits to. Both the
+## drawn ticks and Y's pin read this one spot, so the cross marks the tile that gets pinned even
+## when an odd panel size puts the true centre on a half pixel — half a pixel is half a zoom step
+## of world, which at 16 tiles per pixel is eight tiles away from the tile under the cross.
+func _centre_px() -> Vector2:
+	return (size * 0.5).floor()
+
+
+## Drop a pin on the world tile under `world`, or clear one already within reach of it. The
+## reach grows with the zoom, so a pin stays as easy to hit at 16 tiles per pixel as at 4
+## pixels per tile.
+func _toggle_pin_at(world: Vector2) -> void:
+	GlobalMap.toggle_pin(Vector2i(world.floor()), maxi(1, int(ceil(_tpp * 3))))
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -172,8 +197,7 @@ func _gui_input(event: InputEvent) -> void:
 			else:
 				_dragging = false
 				if not _drag_moved:   # a tap, not a drag → drop/remove a pin
-					GlobalMap.toggle_pin(Vector2i(_screen_to_world(event.position).floor()),
-							maxi(1, int(ceil(_tpp * 3))))
+					_toggle_pin_at(_screen_to_world(event.position))
 		# Consume every mouse button over the map — zoom, pan and pin alike. Otherwise the wheel
 		# events leak to ui.gd's _unhandled_input, which reads any press as an outside click and
 		# closes the panel.
@@ -232,6 +256,25 @@ func _draw() -> void:
 		_dot(Vector2(p) + Vector2(0.5, 0.5), PIN_PX, COLOR_PIN, true)   # pins clamp to the border
 	if _player != null and is_instance_valid(_player):
 		_dot(_player.global_position / GameConstants.PX_PER_TILE, MARKER_PX, COLOR_PLAYER, false)
+	if GlobalInput.ui_captured:
+		_draw_reticle()
+
+
+const RETICLE_ARM := 3   ## length in px of each reticle tick
+const RETICLE_GAP := 2   ## px of clear space between the centre and a tick
+
+## The pad's stand-in for the cursor: four ticks around the view centre, marking the tile Y
+## would pin. Drawn only while the HUD holds input, since that is the pad-opened case — the
+## mouse aims with the cursor and would just be reading a cross it can't use. Hollow, so the
+## centre tile and any pin already on it stay visible.
+func _draw_reticle() -> void:
+	var c := _centre_px()
+	var across := Vector2(RETICLE_ARM, 1.0)
+	var down := Vector2(1.0, RETICLE_ARM)
+	draw_rect(Rect2(c - Vector2(RETICLE_GAP + RETICLE_ARM, 0.0), across), COLOR_PIN)
+	draw_rect(Rect2(c + Vector2(RETICLE_GAP + 1.0, 0.0), across), COLOR_PIN)
+	draw_rect(Rect2(c - Vector2(0.0, RETICLE_GAP + RETICLE_ARM), down), COLOR_PIN)
+	draw_rect(Rect2(c + Vector2(0.0, RETICLE_GAP + 1.0), down), COLOR_PIN)
 
 
 ## Blit the world-texture slice visible through `region` (in tiles), clamped to the world so
