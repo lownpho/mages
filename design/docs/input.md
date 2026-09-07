@@ -1,0 +1,147 @@
+# Input map
+
+Every binding the game ships, what consumes it, and the context rules that decide who gets an
+event first. Bindings live in `game/project.godot` under `[input]`; this file is the reading of
+them, not a second source of truth — when the two disagree, the project file wins.
+
+Device mode is tracked by `GlobalInput` (`game/autoload/global_input.gd`): the last meaningful
+event flips `using_gamepad`, which picks the aim source and hides or shows the OS cursor. Both
+devices are live at all times; nothing needs selecting in a menu.
+
+## Play
+
+| Action | Keyboard / mouse | Controller | Does | Handled in |
+| --- | --- | --- | --- | --- |
+| `up` `down` `left` `right` | W A S D | Left stick | Move the mage | `player.gd:105` |
+| `aim_up` `aim_down` `aim_left` `aim_right` | — (cursor aims) | Right stick | Aim | `player.gd:146` |
+| `cast1` | LMB | L1 | Cast spell slot 1 | `player_cast_input.gd:26` |
+| `cast2` | MMB | L2 | Cast spell slot 2 | `player_cast_input.gd:26` |
+| `cast3` | RMB | R1 | Cast spell slot 3 | `player_cast_input.gd:26` |
+| `cast4` | Space | R2 | Cast spell slot 4 | `player_cast_input.gd:26` |
+| `menu` | Escape | Start | Toggle slot navigation; closes an open panel | `ui.gd:102` |
+| `discard` | Q | X | Drop the carried (or focused) item on the floor | `ui_slot.gd:300` |
+| `minimap_zoom_in` | `=` / `+` / KP+ | — | Zoom the strip minimap (or the open map) in | `minimap_view.gd:51`, `map_view.gd:152` |
+| `minimap_zoom_out` | `-` / KP− | — | Zoom the strip minimap (or the open map) out | `minimap_view.gd:51`, `map_view.gd:152` |
+| `minimap_zoom_mod` | — | Y (held) | Modifier: Y + dpad up/down zooms the strip minimap | `minimap_view.gd:71` |
+| `map_pin` | — (LMB on the map) | Y | Pin / unpin the open map's centre tile | `map_view.gd:152` |
+| `ui_accept` | Enter, Space | A | Activate the focused slot or button (lift / place an item) | `ui_slot.gd:300` |
+| `ui_cancel` | Escape | B | Put a carried item back; close a panel; leave slot navigation | `ui_slot.gd:300`, `ui.gd:102` |
+| `ui_up` `ui_down` `ui_left` `ui_right` | Arrow keys | Dpad | Move slot focus; page the bestiary; zoom the open map | Godot focus nav, `bestiary.gd:30`, `map_view.gd:152` |
+
+Aim on a pad holds its last direction, and follows the run when the right stick has never been
+touched (`player.gd:146`), so casting forward while sprinting needs no second stick.
+
+Mouse-only, with no action behind them:
+
+- **Wheel over the strip minimap** — zoom it (`minimap_view.gd:94`).
+- **Wheel over the open map** — zoom around the cursor (`map_view.gd:182`).
+- **Drag on the open map** — pan. A press that moves less than 3px counts as a tap, not a drag.
+- **Tap on the open map / minimap** — pin or unpin that tile.
+- **LMB drag between slots** — Godot drag & drop (`ui_slot.gd:261`); **RMB** cancels a carry.
+- **Hover a bar** — swaps the bar for its numeric value (`ui.gd`).
+
+## Deadzones
+
+`0.2` for movement and casts, `0.4` for aim (the stick must be pushed deliberately before it
+overrides the held aim), `0.5` for the `ui_*` actions.
+
+## Who gets an event: the context rules
+
+**`GlobalInput.ui_captured`** is raised while the HUD owns input — entered with Start on a pad,
+left with Start or B (`ui.gd:141`). It is narrower than it sounds:
+
+- **Casts stand down** (`player_cast_input.gd:26`), so a bumper can't fire a spell mid-sort.
+- **Movement does not.** Slot focus rides the dpad and the arrow keys, never the left stick, so
+  the mage keeps walking while the bag, map or bestiary is up. The world doesn't pause — there
+  is no pause menu by design — and freezing the player in a live fight to sort loot only gets
+  them hit. `test_pad_input.gd` asserts the dpad/stick split that makes this safe.
+- **Panels read it as "a pad opened me"**: the map's stick-pan and pin reticle, the bestiary's
+  dpad paging, and the map's bare-dpad zoom all gate on it, so none of them answer to a mouse
+  session that clicked the panel open.
+
+**An open panel** (bestiary or map) takes the dpad and the sticks. `ui.gd:57` releases slot
+focus while one is up — otherwise dpad-left would walk the strip buttons underneath it — and
+restores it on close. Because nothing is focused, the button that opened the panel wears its
+focus ring painted on as a normal style (`ui.gd:70`), so a pad player can still see the HUD
+holds the buttons.
+
+**Y is context-split.** While a panel is open it pins the map centre; during play it is the
+strip minimap's zoom modifier. They can't collide: the minimap chord stands down whenever
+`ui_captured` is true, which is exactly when a pad has a panel open (`minimap_view.gd:71`).
+
+**Handler phase** matters more than usual here, since several nodes want the same events:
+
+- `_input` — `GlobalInput` only, to settle `wheel_fresh` before anyone reads it.
+- `_gui_input` — the widget under the cursor (slots, the map's clicks and wheel). The map
+  consumes *every* mouse button over itself, or the wheel would reach `ui.gd:102`, which reads
+  any press outside a Control as an outside click and closes the panel.
+- `_unhandled_input` — everything pad- and key-driven: casts, panel zoom/paging, the HUD's
+  Start/B. An open panel marks its events handled so the strip minimap underneath doesn't act
+  on the same press.
+
+**Space is shared** by `cast4` and `ui_accept`. A slot left focused under a mouse cursor would
+therefore eat the next Space cast instead of casting it, which is why a mouse click on a slot
+releases focus again (`ui_slot.gd:300`) while pad navigation keeps it.
+
+**`fresh_press`** (`global_input.gd:46`) — analog triggers stream one event per value step, and
+each reports `is_action_pressed`, so `cast2`/`cast4` would fire several times per pull. Any
+discrete action on a trigger goes through this. **`wheel_fresh`** (`global_input.gd:59`) is the
+same idea for the wheel: web reports pixel deltas, so one notch arrives as a burst.
+
+## Controller button budget
+
+| Button | Bound to |
+| --- | --- |
+| A / B | `ui_accept` / `ui_cancel` |
+| X | `discard` |
+| Y | `map_pin`, `minimap_zoom_mod` (context-split, above) |
+| L1 / R1 | `cast1` / `cast3` |
+| L2 / R2 | `cast2` / `cast4` |
+| Dpad | `ui_*` — slot focus, bestiary paging, map zoom |
+| Left stick | movement |
+| Right stick | aim; map pan while the map is open |
+| Start | `menu` |
+
+Buttons are named Xbox-style throughout: A/B/X/Y read as Cross/Circle/Square/Triangle on a Sony
+pad and B/A/Y/X on a Nintendo one.
+
+Free: **Back/Select** (button 4) and **both stick clicks** (L3/R3, buttons 7 and 8).
+
+One engine default to know about: Godot binds **`ui_select` to Y** out of the box. Only
+`Tree`/`ItemList`-style controls consume it and the game declares none, so it reaches nothing —
+`test_pad_input.gd` fails if a project action ever lands on Y, and the whitelist there is where
+to revisit this if such a control appears.
+
+Escape is doubly bound — `menu` and `ui_cancel` — which `ui.gd:102` resolves by order: an open
+panel closes first, then slot navigation exits. On web, Escape is reserved by the Fullscreen API
+and can't be `preventDefault()`'d, so the keyboard half of `menu` is skipped there; the pad's
+Start still works.
+
+## Menus
+
+The title screen is plain Godot UI: arrows/dpad move focus, Enter/Space/A activate, and the
+buttons are clickable. Nothing custom.
+
+## Debug (not shipped controls)
+
+| Key | Does | Where |
+| --- | --- | --- |
+| F3 | Toggle the damage/DPS overlay; Backspace resets it | `debug/overlay/debug_overlay.gd:28` |
+| ` (backquote) or F10 | Toggle the debug console; Escape closes it, ↑/↓ walk its history | `debug/console/debug_console.gd:55` |
+
+`scenes/worldgen_debug.tscn` (`debug/worldgen/worldgen_debug.gd:187`) adds its own keyboard-only
+set: `1`–`4` switch view, `R` reseeds, `Enter`/`Escape` drill in and out, `[`/`]` step history,
+`C` copies the seed, `B` bookmarks it, `T` teleports, `L` and `F2` toggle the legend and stats,
+arrows move the selection in view 2, and `P`/`M`/`O`/`G`/`H`/`V` toggle per-view overlays. The
+room lab (`debug/worldgen/room_lab.gd:100`) uses `R`, `P`, `M`, `T`, `C` and Escape, plus LMB to
+pin a cell. The flycam in view 4 flies on WASD/arrows and zooms on the wheel
+(`debug/flycam/flycam.gd`).
+
+## Known drift
+
+`spells.md` describes a six-slot loadout across two pages, with the wheel, Space or R2 cycling
+the active page. The code has **four** spell slots (`GlobalInventory.SPELL_SLOTS`), one per cast
+button, and no page-cycling action exists — the wheel only zooms the maps. `minimap_view.gd`'s
+header comment ("off the map the wheel cycles the spell page instead") describes the same
+unimplemented control. Either the pages are still to come or both texts want a pass; nothing in
+this table depends on it.
