@@ -56,15 +56,22 @@ offset_bottom = 8.0
 focus_mode = 0
 texture_normal = SubResource("AtlasTexture_close")
 
-[node name="Entries" type="GridContainer" parent="Margin/Content" unique_id=574813597]
-unique_name_in_owner = true
+[node name="EntriesArea" type="CenterContainer" parent="Margin/Content" unique_id=574813598]
 layout_mode = 1
-anchors_preset = 0
-offset_left = 42.0
-offset_top = 30.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 9.0
+offset_bottom = -9.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Entries" type="GridContainer" parent="Margin/Content/EntriesArea" unique_id=574813597]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
-columns = 6
+columns = 8
 
 [node name="Nav" type="HBoxContainer" parent="Margin/Content" unique_id=1889797344]
 layout_mode = 1
