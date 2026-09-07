@@ -36,8 +36,9 @@ func _ready() -> void:
 
 	# --- page grouping is DERIVED from the room spawn tables (not a stored biome field): each
 	# enemy files onto the page whose rooms spawn it, and glade_start + glade_veggie share
-	# family "glade" so they merge into one page — as do deepwood + deepwood_mimic.
-	# Ordering is commons alpha, rares, bosses last. ---
+	# family "glade" so they merge into one page — as do deepwood + deepwood_mimic. The mycelium
+	# page proves the walk reaches a DUNGEON: its config hangs off a door, and its enemies live
+	# on the per-floor configs under that. Ordering is commons alpha, rares, bosses last. ---
 	var pages := GlobalBestiary.pages()
 	var want_glade: Array[StringName] = [
 		&"dirt_golem", &"hopper", &"mandrake", &"rosebud", &"seedling", &"sproutling",
@@ -53,31 +54,38 @@ func _ready() -> void:
 		&"adder", &"elder_stalker", &"great_owl", &"grimlord", &"razorback", &"umbra",
 		&"gnarlking",
 	]
-	if pages.size() != 2:
-		fails.append("expected the glade and deepwood pages, got %d: %s" % [pages.size(), str(pages)])
+	var want_mycelium: Array[StringName] = [
+		&"bloatcap", &"clustercap", &"gapcap", &"mould_golem", &"normiecap", &"puffcap",
+		&"ringcap", &"rollcap", &"shellcap", &"spiralcap", &"sporefly", &"sporespitter",
+		&"burrower", &"deathcap", &"maulcap",
+	]
+	var want_pages := [want_glade, want_deepwood, want_mycelium]
+	if pages.size() != want_pages.size():
+		fails.append("expected %d pages, got %d: %s" % [want_pages.size(), pages.size(), str(pages)])
 	else:
-		if pages[0]["ids"] != want_glade:
-			fails.append("glade page %s != %s" % [str(pages[0]["ids"]), str(want_glade)])
-		if pages[1]["ids"] != want_deepwood:
-			fails.append("deepwood page %s != %s" % [str(pages[1]["ids"]), str(want_deepwood)])
+		for i in want_pages.size():
+			if pages[i]["ids"] != want_pages[i]:
+				fails.append("page %d %s != %s" % [i, str(pages[i]["ids"]), str(want_pages[i])])
 
 	# filed_ids: distinct enemies across all pages (the whole-game completion denominator) —
 	# a subset of the roster (unreachable enemies excluded), each counted once.
 	var filed := GlobalBestiary.filed_ids()
-	var want_filed := want_glade.size() + want_deepwood.size()
+	var want_filed := want_glade.size() + want_deepwood.size() + want_mycelium.size()
 	if filed.size() != want_filed:
 		fails.append("filed_ids size %d != %d: %s" % [filed.size(), want_filed, str(filed)])
 	for id in filed:
 		if not roster.has(id):
 			fails.append("filed id not in roster: %s" % id)
 
-	# The merged family page is labelled with the family and closes with every sub-biome's boss.
+	# The merged family page is labelled with the family, and titled by the one sub-biome that
+	# authors a display_name. A page with none falls back to its label capitalised.
 	var page: Dictionary = pages[0]
 	if page["biome"] != &"glade":
 		fails.append("merged page label %s != glade" % page["biome"])
-	var want_bosses := [&"fae", &"thornmess"]
-	if page["bosses"] != want_bosses:
-		fails.append("page bosses %s != %s" % [str(page["bosses"]), str(want_bosses)])
+	var want_titles := ["The Glade", "Deepwood", "Mycelium"]
+	for i in want_titles.size():
+		if pages[i]["title"] != want_titles[i]:
+			fails.append("page %d title '%s' != '%s'" % [i, pages[i]["title"], want_titles[i]])
 
 	# --- kill -> unlock flow ---
 	var unlocked: Array = []

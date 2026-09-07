@@ -19,7 +19,7 @@ var _kills: Dictionary = {}
 var _roster: Array[StringName] = []
 var _groups: Array = []  # Array of Array[StringName], one per page, display-ordered
 var _group_biomes: Array[StringName] = []  # page label of each group, same order
-var _group_bosses: Array = []  # Array of Array[StringName]: the boss ids of each group (family pages can close with several), same order
+var _group_titles: Array[String] = []  # display title of each group, same order
 
 func _ready() -> void:
 	_scan_roster()
@@ -34,12 +34,11 @@ func roster() -> Array[StringName]:
 	return _roster
 
 ## The roster as display pages — one page per biome label, every one of them in the book from
-## the start: each entry is `{biome, bosses, ids}` (`bosses` is the page's boss enemy ids,
-## several when a family page merges sub-biomes, empty if it has none). Biomes wired into
-## gen_config come first in world order, remaining labels alphabetically; inside a page commons
-## sort alphabetically, rare enemies follow, the bosses close it. The bestiary panel renders one
-## page per element and badges it with the boss emblems; the debug console reads it to hand out
-## a biome's whole drop pool.
+## the start: each entry is `{biome, title, ids}` (`biome` is the page label, `title` what the
+## book prints above it). Biomes wired into gen_config come first in world order, remaining
+## labels alphabetically; inside a page commons sort alphabetically, rare enemies follow, the
+## bosses close it. The bestiary panel renders one page per element; the debug console reads it
+## to hand out a biome's whole drop pool.
 func pages() -> Array:
 	var out: Array = []
 	for i in _groups.size():
@@ -47,7 +46,7 @@ func pages() -> Array:
 	return out
 
 func _page(i: int) -> Dictionary:
-	return {"biome": _group_biomes[i], "bosses": _group_bosses[i], "ids": _groups[i]}
+	return {"biome": _group_biomes[i], "title": _group_titles[i], "ids": _groups[i]}
 
 ## The distinct enemies filed on any biome page — the encounterable roster the book measures
 ## whole-game completion against. An enemy with a data sheet but in no spawn table is unreachable,
@@ -136,39 +135,49 @@ func _scan_roster() -> void:
 # in that page's biome(s) spawns it. So the book always matches where enemies are actually
 # met, a shared enemy files onto every page it appears in, and an enemy in no spawn table
 # (unreachable) simply isn't in the book. Biomes sharing a BiomeDef.family merge into one
-# page labelled with the family (sub-biome variants read as one chapter); a boss per
-# sub-biome means a page can close with several bosses — _group_bosses keeps them all.
+# page labelled with the family (sub-biome variants read as one chapter), titled by the first
+# of them to author a BiomeDef.display_name.
 # Ordering (commons alpha → rares → bosses) comes from CreatureResource.rarity.
+# The book is GLOBAL: it walks every reachable config (see _all_configs), so a dungeon's
+# floors file onto their biome's page exactly like an overworld biome's rooms do.
 func _build_groups() -> void:
 	_groups.clear()
 	_group_biomes.clear()
-	_group_bosses.clear()
-	var cfg: GenConfig = load(GEN_CONFIG_PATH)
+	_group_titles.clear()
+	var configs := _all_configs()
 	var label_of: Dictionary = {}  # biome id -> page label (family when set)
-	for biome_def in cfg.biomes:
-		label_of[biome_def.id] = biome_def.family if biome_def.family != &"" else biome_def.id
+	var title_of: Dictionary = {}  # page label -> authored title, first one wins
+	for cfg in configs:
+		for biome_def in cfg.biomes:
+			var biome_label: StringName = biome_def.family if biome_def.family != &"" else biome_def.id
+			label_of[biome_def.id] = biome_label
+			if biome_def.display_name != "" and not title_of.has(biome_label):
+				title_of[biome_label] = biome_def.display_name
 	var by_label: Dictionary = {}  # page label -> Array of {id, rarity}
 	var seen: Dictionary = {}      # "label|id" -> true, dedupe an enemy repeated across a page's rooms
-	for rt in cfg.room_types:
-		for biome in _room_type_biomes(rt):
-			var label: StringName = label_of.get(biome, biome)
-			for entry in rt.enemies:
-				for id in _entry_enemy_ids(entry):
-					if not _roster.has(id):
-						continue  # only trackable enemies (those with a <id>_data.tres)
-					var key := "%s|%s" % [label, id]
-					if seen.has(key):
-						continue
-					seen[key] = true
-					by_label.get_or_add(label, []).append({"id": id, "rarity": load_data(id).rarity})
-	# Page order: gen_config biome order (first appearance of each label), then any
+	for cfg in configs:
+		for rt in cfg.room_types:
+			for biome in _room_type_biomes(rt):
+				var label: StringName = label_of.get(biome, biome)
+				for entry in rt.enemies:
+					for id in _entry_enemy_ids(entry):
+						if not _roster.has(id):
+							continue  # only trackable enemies (those with a <id>_data.tres)
+						var key := "%s|%s" % [label, id]
+						if seen.has(key):
+							continue
+						seen[key] = true
+						by_label.get_or_add(label, []).append({"id": id, "rarity": load_data(id).rarity})
+	# Page order: biome order across the configs as walked (first appearance of each label), so
+	# the overworld's pages come first and a dungeon's follow the door it hangs off. Then any
 	# stragglers alphabetically (room types name registered biomes, so this is just
 	# belt-and-braces).
 	var label_order: Array = []
-	for biome_def in cfg.biomes:
-		var label: StringName = label_of[biome_def.id]
-		if label not in label_order:
-			label_order.append(label)
+	for cfg in configs:
+		for biome_def in cfg.biomes:
+			var label: StringName = label_of[biome_def.id]
+			if label not in label_order:
+				label_order.append(label)
 	var extra: Array = by_label.keys().filter(func(b: StringName) -> bool: return b not in label_order)
 	extra.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
 	for label in label_order + extra:
@@ -180,14 +189,51 @@ func _build_groups() -> void:
 				return a["rarity"] < b["rarity"]
 			return String(a["id"]) < String(b["id"]))
 		var group: Array[StringName] = []
-		var bosses: Array[StringName] = []
 		for e in entries:
 			group.append(e["id"])
-			if e["rarity"] == CreatureResource.Rarity.BOSS:
-				bosses.append(e["id"])
 		_groups.append(group)
 		_group_biomes.append(label)
-		_group_bosses.append(bosses)
+		# No authored name: the label capitalised, which already reads right for a biome whose
+		# id is its name ("deepwood" -> "Deepwood").
+		_group_titles.append(title_of.get(label, String(label).capitalize()))
+
+## Every GenConfig whose rooms the player can reach, overworld first: the world's own, then each
+## dungeon a door leads into, then that dungeon's per-floor configs — which is where a descent's
+## enemies actually live, since a floor swaps the whole config. Walking the door link is what
+## keeps the book global without a second registry to keep in sync: a dungeon wired up for the
+## player is wired up for the bestiary.
+func _all_configs() -> Array[GenConfig]:
+	var out: Array[GenConfig] = []
+	_collect_configs(load(GEN_CONFIG_PATH), out)
+	return out
+
+# Identity-deduped (load() hands back the same instance for a path), which also stops a pair of
+# doors pointing at each other from recursing forever.
+func _collect_configs(cfg: GenConfig, out: Array[GenConfig]) -> void:
+	if cfg == null or out.has(cfg):
+		return
+	out.append(cfg)
+	for floor_cfg in cfg.floor_configs:
+		_collect_configs(floor_cfg, out)
+	for rt in cfg.room_types:
+		for feature in rt.features:
+			var door := feature.data as DoorResource
+			if door != null and door.target_scene != null:
+				_collect_configs(_scene_config(door.target_scene), out)
+
+# The GenConfig a dungeon scene's WorldStreamer carries, read off the packed scene state the same
+# way idle_frames reads a creature's SpriteFrames — no instantiation, so building the book never
+# spins up a dungeon. Null when the scene holds no config (an ordinary door's target).
+func _scene_config(scene: PackedScene) -> GenConfig:
+	var st := scene.get_state()
+	for i in st.get_node_count():
+		for p in st.get_node_property_count(i):
+			if st.get_node_property_name(i, p) != &"config":
+				continue
+			var cfg := st.get_node_property_value(i, p) as GenConfig
+			if cfg != null:
+				return cfg
+	return null
 
 ## Every enemy id a spawn-table entry can produce: a mixed pack lists them on its PackMembers
 ## (and its own enemy_id is unset), a single-type entry carries enemy_id directly.

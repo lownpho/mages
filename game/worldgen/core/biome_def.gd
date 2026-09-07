@@ -10,6 +10,10 @@ extends Resource
 @export var id: StringName                                     ## unique biome identity
 @export var display_color: Color = Color.WHITE                 ## debug minimap fill only — NOT hashed
 @export var family: StringName = &""                           ## UI grouping (bestiary pages, sub-biome variants) — NOT hashed; &"" = ungrouped
+## What the bestiary titles this biome's page. Only the FIRST biome of a family needs one (the
+## page is the family's, not the sub-biome's); "" falls back to the page label capitalised, which
+## is already right for a biome whose id reads as its name. UI tier — NOT hashed.
+@export var display_name: String = ""
 @export var size_cells := Vector2i.ONE                         ## macro-cells this biome claims on the world grid (w×h)
 @export_range(0.0, 1.0, 0.01) var open_passage_chance: float = 0.5   ## P(passage is OPEN vs DOOR) in L2
 @export_range(-1.0, 1.0, 0.01) var bsp_stop_chance: float = -1.0     ## P(a splittable rect stops early — bigger rooms) in L2; -1 = inherit GenConfig.bsp_stop_chance
@@ -48,7 +52,8 @@ extends Resource
 @export var presentation: BiomePresentation = null
 
 
-## display_color, family and presentation are deliberately absent — all presentation-tier.
+## display_color, family, display_name and presentation are deliberately absent — all
+## presentation-tier.
 func hash_fold(h: int) -> int:
 	h = WgHash.fold_var(h, id)
 	h = WgHash.fold_var(h, size_cells)
