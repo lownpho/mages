@@ -1,24 +1,23 @@
 extends PanelContainer
 
-## The bestiary book: one page per discovered biome. A page shows that biome's roster as a
-## fixed-cell grid (commons first, then rares, the boss last) plus a completion counter —
-## how many of the biome's enemies have been killed vs its total — and the whole-game total
-## sits by the page nav. Only discovered biomes get a page (visited, or one of its enemies
-## killed), so the book grows as the player explores. Lives on the live game (no pausing),
-## toggled from the skull button on the HUD strip; Esc or the close button dismisses it.
+## The bestiary book: one page per biome, all of them in the book from the start. A page shows
+## that biome's roster as a fixed-cell grid (commons first, then rares, the boss last) plus a
+## completion counter — how many of the biome's enemies have been killed vs its total — and the
+## whole-game total sits by the page nav. What fills in is the individual cards, which stay
+## locked until their enemy is killed. Lives on the live game (no pausing), toggled from the
+## skull button on the HUD strip; Esc or the close button dismisses it.
 
 const ENTRY_SCENE := preload("res://gui/bestiary/bestiary_entry.tscn")
 
 var _page := 0
-var _pages: Array = []  # Array of {biome, color, ids}, one per discovered biome
+var _pages: Array = []  # Array of {biome, bosses, ids}, one per biome
 
 func _ready() -> void:
 	%PrevPage.pressed.connect(func() -> void: _set_page(_page - 1))
 	%NextPage.pressed.connect(func() -> void: _set_page(_page + 1))
 	%CloseButton.pressed.connect(hide)
 	visibility_changed.connect(_on_visibility_changed)
-	# Crossing a border or a section-revealing kill while the book is open still lands.
-	GlobalEvent.biome_entered.connect(func(_biome: StringName) -> void: _refresh_if_open())
+	# An unlocking kill while the book is open still lands.
 	GlobalEvent.bestiary_entry_unlocked.connect(func(_id: StringName) -> void: _refresh_if_open())
 	_rebuild()
 
@@ -46,7 +45,7 @@ func _refresh_if_open() -> void:
 		_rebuild()
 
 func _rebuild() -> void:
-	_pages = GlobalBestiary.visible_pages()
+	_pages = GlobalBestiary.pages()
 	_set_page(_page)
 
 func _set_page(page: int) -> void:

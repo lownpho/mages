@@ -21,11 +21,6 @@ signal item_dropped(item: ItemResource)
 # Emitted when an enemy dies and a loot roll succeeds, once per dropped item
 signal loot_dropped(item: ItemResource, position: Vector2)
 
-# Emitted when the player steps into a biome, including the starting biome at spawn.
-# Relayed from WorldStreamer.biome_entered by world.gd; dungeon scenes can emit it
-# directly on entry. The bestiary reveals a biome's section on first visit.
-signal biome_entered(biome_id: StringName)
-
 # Emitted by the player on real death (not debug_never_die), before the run is torn
 # down. source is the damage source that landed the killing hit.
 signal player_died(source: Node)

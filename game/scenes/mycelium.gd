@@ -27,7 +27,6 @@ func _ready() -> void:
 	# the way out, so a trip down here doesn't re-fog everything the player had already walked.
 	_config = _streamer.config
 	_overworld_map = GlobalMap.to_dict()
-	_streamer.biome_entered.connect(GlobalEvent.biome_entered.emit)
 	GlobalEvent.floor_change_requested.connect(_on_floor_change)
 	_streamer.target = _player
 	_enter_floor(1, _config.stair_up_room)

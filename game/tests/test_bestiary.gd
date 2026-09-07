@@ -1,13 +1,14 @@
 extends Node
 ## Headless bestiary smoke test: roster derivation, spawn-table-derived page grouping (biomes
-## sharing a BiomeDef.family merge into one page), the kill→unlock flow through
-## GlobalEvent.creature_died, summon exclusion, and the to_dict/restore save shape. Run:
+## sharing a BiomeDef.family merge into one page, every page in the book from the start), the
+## kill→unlock flow through GlobalEvent.creature_died, summon exclusion, and the to_dict/restore
+## save shape. Run:
 ##   godot --headless --path game res://tests/test_bestiary.tscn
 
 func _ready() -> void:
 	var fails: Array[String] = []
 
-	# Kills/visits persist to user://bestiary.cfg and are loaded at _ready, so run against a clean
+	# Kills persist to user://bestiary.cfg and are loaded at _ready, so run against a clean
 	# in-memory slate for determinism — then restore the player's real progress at the end so a
 	# headless test run never clobbers their save.
 	var real_save := GlobalBestiary.to_dict()
@@ -37,7 +38,7 @@ func _ready() -> void:
 	# enemy files onto the page whose rooms spawn it, and glade_start + glade_veggie share
 	# family "glade" so they merge into one page — as do deepwood + deepwood_mimic.
 	# Ordering is commons alpha, rares, bosses last. ---
-	var groups := GlobalBestiary.grouped_roster()
+	var pages := GlobalBestiary.pages()
 	var want_glade: Array[StringName] = [
 		&"dirt_golem", &"hopper", &"mandrake", &"rosebud", &"seedling", &"sproutling",
 		&"thornthrower", &"wasp",
@@ -52,16 +53,13 @@ func _ready() -> void:
 		&"adder", &"elder_stalker", &"great_owl", &"grimlord", &"razorback", &"umbra",
 		&"gnarlking",
 	]
-	if groups.size() != 2:
-		fails.append("expected the glade and deepwood pages, got %d: %s" % [groups.size(), str(groups)])
+	if pages.size() != 2:
+		fails.append("expected the glade and deepwood pages, got %d: %s" % [pages.size(), str(pages)])
 	else:
-		if groups[0] != want_glade:
-			fails.append("glade page %s != %s" % [str(groups[0]), str(want_glade)])
-		if groups[1] != want_deepwood:
-			fails.append("deepwood page %s != %s" % [str(groups[1]), str(want_deepwood)])
-	var pages := GlobalBestiary.visible_pages()
-	if not pages.is_empty():
-		fails.append("pages visible before any visit/kill: %s" % str(pages))
+		if pages[0]["ids"] != want_glade:
+			fails.append("glade page %s != %s" % [str(pages[0]["ids"]), str(want_glade)])
+		if pages[1]["ids"] != want_deepwood:
+			fails.append("deepwood page %s != %s" % [str(pages[1]["ids"]), str(want_deepwood)])
 
 	# filed_ids: distinct enemies across all pages (the whole-game completion denominator) —
 	# a subset of the roster (unreachable enemies excluded), each counted once.
@@ -73,17 +71,11 @@ func _ready() -> void:
 		if not roster.has(id):
 			fails.append("filed id not in roster: %s" % id)
 
-	# --- section visibility: visiting EITHER merged sub-biome reveals the family page ---
-	if not GlobalBestiary.visible_grouped_roster().is_empty():
-		fails.append("sections visible before any visit/kill: %s" % str(GlobalBestiary.visible_grouped_roster()))
-	GlobalEvent.biome_entered.emit(&"glade_veggie")
-	var vis := GlobalBestiary.visible_grouped_roster()
-	if vis.size() != 1 or not vis[0].has(&"thornmess"):
-		fails.append("visiting glade_veggie should reveal the glade page, got %s" % str(vis))
-	var page: Dictionary = GlobalBestiary.visible_pages()[0]
+	# The merged family page is labelled with the family and closes with every sub-biome's boss.
+	var page: Dictionary = pages[0]
 	if page["biome"] != &"glade":
 		fails.append("merged page label %s != glade" % page["biome"])
-	var want_bosses := [&"fae", &"thornmess"]  # a family page closes with every sub-biome's boss
+	var want_bosses := [&"fae", &"thornmess"]
 	if page["bosses"] != want_bosses:
 		fails.append("page bosses %s != %s" % [str(page["bosses"]), str(want_bosses)])
 
@@ -109,35 +101,32 @@ func _ready() -> void:
 	if updated.size() != 2:
 		fails.append("pathless CreatureResource was tracked")
 
-	# Killing an enemy of an unvisited page reveals it (fresh slate, no visits, one viper kill).
+	# Completion counts only unlocked entries, so a fresh slate reads 0/N and one kill reads 1/N.
 	GlobalBestiary.restore({})
+	if GlobalBestiary.completion(page["ids"]) != Vector2i(0, page["ids"].size()):
+		fails.append("fresh slate completion %s" % str(GlobalBestiary.completion(page["ids"])))
 	GlobalEvent.creature_died.emit(GlobalBestiary.load_data(&"viper"), Vector2.ZERO)
-	if GlobalBestiary.visible_grouped_roster().size() != 1:
-		fails.append("viper kill should reveal the glade page: %s" % str(GlobalBestiary.visible_grouped_roster()))
-	# Killing a trackable-but-unfiled enemy records the kill but adds no page — it belongs to
-	# no page's derived roster. (ent is gitignored WIP, so only assert when it's on disk.)
+	if GlobalBestiary.completion(page["ids"]) != Vector2i(1, page["ids"].size()):
+		fails.append("viper kill completion %s" % str(GlobalBestiary.completion(page["ids"])))
+	# Killing a trackable-but-unfiled enemy records the kill but counts toward no page — it
+	# belongs to no page's derived roster. (ent is gitignored WIP, so only assert when on disk.)
 	if roster.has(&"ent"):
 		GlobalEvent.creature_died.emit(GlobalBestiary.load_data(&"ent"), Vector2.ZERO)
 		if not GlobalBestiary.is_unlocked(&"ent"):
 			fails.append("ent kill not recorded")
-		if GlobalBestiary.visible_grouped_roster().size() != 1:
-			fails.append("unfiled ent kill should not add a section: %s" % str(GlobalBestiary.visible_grouped_roster()))
+		if GlobalBestiary.completion(GlobalBestiary.filed_ids()).x != 1:
+			fails.append("unfiled ent kill should not count toward completion")
 
 	# --- save shape ---
-	GlobalEvent.biome_entered.emit(&"glade_start")
 	var saved := GlobalBestiary.to_dict()
 	GlobalBestiary.restore({})
 	if GlobalBestiary.is_unlocked(&"viper"):
 		fails.append("restore({}) did not clear kills")
-	if not GlobalBestiary.visible_grouped_roster().is_empty():
-		fails.append("restore({}) did not clear visited biomes")
 	GlobalBestiary.restore(saved)
 	if GlobalBestiary.kill_count(&"viper") != 1:
 		fails.append("restore lost kill counts")
-	if GlobalBestiary.visible_grouped_roster().size() != 1:
-		fails.append("restore lost visited biomes")
 
-	# Put the player's real progress back and reflush it (the kill/visit emits above overwrote
+	# Put the player's real progress back and reflush it (the kill emits above overwrote
 	# the save file mid-test).
 	GlobalBestiary.restore(real_save)
 	GlobalBestiary._save()

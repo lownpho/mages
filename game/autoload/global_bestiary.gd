@@ -1,7 +1,8 @@
 extends Node
 
-## Bestiary progress tracker: kill counts per enemy type. An entry unlocks the first
-## time that enemy type is killed. Enemy types are keyed by their folder id under
+## Bestiary progress tracker: kill counts per enemy type. Every page is in the book from
+## the start; an individual entry unlocks the first time that enemy type is killed, so the
+## page shows what is left to find. Enemy types are keyed by their folder id under
 ## characters/enemies/<id>/ — the same string id spawn tables use (SpawnTableEntry.enemy_id)
 ## — derived here from the CreatureResource's resource_path, so tracking needs no
 ## per-enemy registration: any enemy with an authored <id>_data.tres is trackable.
@@ -9,27 +10,22 @@ extends Node
 const ENEMIES_ROOT := "res://characters/enemies/"
 const GEN_CONFIG_PATH := "res://world_content/gen_config.tres"
 
-## Its own save file, separate from GameState's run save: kill counts and visited
-## biomes persist across new games and death, so they can't live in a file that
-## GameState.clear_save() deletes.
+## Its own save file, separate from GameState's run save: kill counts persist across new
+## games and death, so they can't live in a file that GameState.clear_save() deletes.
 const SAVE_PATH := "user://bestiary.cfg"
 
 # enemy_id -> kill count. An id is unlocked iff it has a key here.
 var _kills: Dictionary = {}
-# biome id -> true, for every biome the player has ever stepped into.
-var _visited: Dictionary = {}
 var _roster: Array[StringName] = []
 var _groups: Array = []  # Array of Array[StringName], one per page, display-ordered
 var _group_biomes: Array[StringName] = []  # page label of each group, same order
 var _group_bosses: Array = []  # Array of Array[StringName]: the boss ids of each group (family pages can close with several), same order
-var _group_members: Array = []  # Array of Array[StringName]: the biome ids merged into each page
 
 func _ready() -> void:
 	_scan_roster()
 	_build_groups()
 	_load()
 	GlobalEvent.creature_died.connect(_on_creature_died)
-	GlobalEvent.biome_entered.connect(_on_biome_entered)
 
 ## Every trackable enemy id, alphabetical. An enemy folder is trackable when it carries
 ## a <id>_data.tres stat sheet — behaviours/ and the debug placeholder don't, so they
@@ -37,36 +33,13 @@ func _ready() -> void:
 func roster() -> Array[StringName]:
 	return _roster
 
-## The roster grouped for display: one group per biome label. Biomes wired into
-## gen_config come first in world order, remaining labels alphabetically; inside a
-## group commons sort alphabetically, rare enemies follow, the boss closes the group.
-func grouped_roster() -> Array:
-	return _groups
-
-## Only the groups the player has discovered: a section shows once its biome has been
-## visited, or once any of its enemies is unlocked — the fallback covers labels that
-## aren't walkable biomes (e.g. dungeon guards), which surface on first kill.
-func visible_grouped_roster() -> Array:
-	var out: Array = []
-	for i in _groups.size():
-		if _is_group_visible(i):
-			out.append(_groups[i])
-	return out
-
-## Discovered biomes as display pages — one page per biome, richest form for the book UI:
-## each entry is `{biome, bosses, ids}` (ids commons→rares→bosses; `bosses` is the page's boss
-## enemy ids, several when a family page merges sub-biomes, empty if it has none), same
-## order/visibility as visible_grouped_roster. The bestiary panel renders one page per element
-## and badges it with the boss emblems.
-func visible_pages() -> Array:
-	var out: Array = []
-	for i in _groups.size():
-		if _is_group_visible(i):
-			out.append(_page(i))
-	return out
-
-## Every page, discovered or not — same shape as visible_pages(). The debug console reads it
-## to hand out a biome's whole drop pool.
+## The roster as display pages — one page per biome label, every one of them in the book from
+## the start: each entry is `{biome, bosses, ids}` (`bosses` is the page's boss enemy ids,
+## several when a family page merges sub-biomes, empty if it has none). Biomes wired into
+## gen_config come first in world order, remaining labels alphabetically; inside a page commons
+## sort alphabetically, rare enemies follow, the bosses close it. The bestiary panel renders one
+## page per element and badges it with the boss emblems; the debug console reads it to hand out
+## a biome's whole drop pool.
 func pages() -> Array:
 	var out: Array = []
 	for i in _groups.size():
@@ -75,10 +48,6 @@ func pages() -> Array:
 
 func _page(i: int) -> Dictionary:
 	return {"biome": _group_biomes[i], "bosses": _group_bosses[i], "ids": _groups[i]}
-
-func _is_group_visible(i: int) -> bool:
-	return _group_members[i].any(func(b: StringName) -> bool: return _visited.has(b)) \
-		or _groups[i].any(func(id: StringName) -> bool: return _kills.has(id))
 
 ## The distinct enemies filed on any biome page — the encounterable roster the book measures
 ## whole-game completion against. An enemy with a data sheet but in no spawn table is unreachable,
@@ -132,27 +101,21 @@ func is_unlocked(enemy_id: StringName) -> bool:
 
 ## Save payload; the roster is re-derived from disk, only progress is serialized.
 func to_dict() -> Dictionary:
-	return {"kills": _kills.duplicate(), "visited": _visited.duplicate()}
+	return {"kills": _kills.duplicate()}
 
 func restore(dict: Dictionary) -> void:
 	_kills = dict.get("kills", {}).duplicate()
-	_visited = dict.get("visited", {}).duplicate()
 
 func _save() -> void:
 	var cfg := ConfigFile.new()
-	var data := to_dict()
-	cfg.set_value("bestiary", "kills", data["kills"])
-	cfg.set_value("bestiary", "visited", data["visited"])
+	cfg.set_value("bestiary", "kills", _kills)
 	cfg.save(SAVE_PATH)
 
 func _load() -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(SAVE_PATH) != OK:
 		return
-	restore({
-		"kills": cfg.get_value("bestiary", "kills", {}),
-		"visited": cfg.get_value("bestiary", "visited", {}),
-	})
+	restore({"kills": cfg.get_value("bestiary", "kills", {})})
 
 func _data_path(enemy_id: StringName) -> String:
 	return ENEMIES_ROOT + "%s/%s_data.tres" % [enemy_id, enemy_id]
@@ -169,12 +132,6 @@ func _scan_roster() -> void:
 	# get_directories_at gives no order guarantee across platforms/exports.
 	_roster.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
 
-func _on_biome_entered(biome_id: StringName) -> void:
-	if _visited.has(biome_id):
-		return
-	_visited[biome_id] = true
-	_save()
-
 # Bestiary membership is DERIVED, not stored: an enemy files onto a page because some room
 # in that page's biome(s) spawns it. So the book always matches where enemies are actually
 # met, a shared enemy files onto every page it appears in, and an enemy in no spawn table
@@ -186,18 +143,15 @@ func _build_groups() -> void:
 	_groups.clear()
 	_group_biomes.clear()
 	_group_bosses.clear()
-	_group_members.clear()
 	var cfg: GenConfig = load(GEN_CONFIG_PATH)
 	var label_of: Dictionary = {}  # biome id -> page label (family when set)
 	for biome_def in cfg.biomes:
 		label_of[biome_def.id] = biome_def.family if biome_def.family != &"" else biome_def.id
 	var by_label: Dictionary = {}  # page label -> Array of {id, rarity}
-	var members: Dictionary = {}   # page label -> {biome id: true}
 	var seen: Dictionary = {}      # "label|id" -> true, dedupe an enemy repeated across a page's rooms
 	for rt in cfg.room_types:
 		for biome in _room_type_biomes(rt):
 			var label: StringName = label_of.get(biome, biome)
-			members.get_or_add(label, {})[biome] = true
 			for entry in rt.enemies:
 				for id in _entry_enemy_ids(entry):
 					if not _roster.has(id):
@@ -234,9 +188,6 @@ func _build_groups() -> void:
 		_groups.append(group)
 		_group_biomes.append(label)
 		_group_bosses.append(bosses)
-		var member_ids: Array[StringName] = []
-		member_ids.assign(members.get(label, {label: true}).keys())
-		_group_members.append(member_ids)
 
 ## Every enemy id a spawn-table entry can produce: a mixed pack lists them on its PackMembers
 ## (and its own enemy_id is unset), a single-type entry carries enemy_id directly.
