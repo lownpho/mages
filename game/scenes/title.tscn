@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://d3k62qcc8eu13" path="res://scenes/title.gd" id="1_title"]
 [ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="4_cont"]
-[ext_resource type="PackedScene" uid="uid://bkg6pxrhomx2x" path="res://scenes/tutorial.tscn" id="8_tut"]
 [ext_resource type="PackedScene" path="res://scenes/title_backdrop.tscn" id="7_backdrop"]
+[ext_resource type="PackedScene" uid="uid://bkg6pxrhomx2x" path="res://scenes/tutorial.tscn" id="8_tut"]
 
 [node name="Title" type="Control" unique_id=1270687267]
 layout_mode = 3
@@ -84,4 +84,4 @@ focus_neighbor_top = NodePath("../TutorialButton")
 focus_neighbor_bottom = NodePath("../NewButton")
 text = "QUIT"
 
-[node name="TitleBackdrop" parent="." instance=ExtResource("7_backdrop")]
+[node name="TitleBackdrop" parent="." unique_id=1469044109 instance=ExtResource("7_backdrop")]

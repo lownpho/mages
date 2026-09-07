@@ -49,4 +49,4 @@ effect_scene = ExtResource("3_scene")
 cooldown = 4.0
 blurb = "No aim required"
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 6
+skill_modifier = 8

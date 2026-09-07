@@ -23,4 +23,4 @@ cooldown = 20.0
 cast_time = 0.8
 blurb = "Sláinte!"
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 20
+max_health_modifier = 25

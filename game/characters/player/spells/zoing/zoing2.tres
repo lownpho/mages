@@ -51,5 +51,5 @@ effect_scene = ExtResource("3_scene")
 cooldown = 4.0
 blurb = "Bounce against walls. Goes well with magic skill."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 6
-speed_modifier = 2
+skill_modifier = 8
+speed_modifier = 3

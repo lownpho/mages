@@ -55,4 +55,3 @@ cast_time = 0.3
 blurb = "Bzzz"
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 3
-max_health_modifier = 15

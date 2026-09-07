@@ -25,5 +25,5 @@ cooldown = 4.0
 cast_time = 0.2
 blurb = "Panic button. Works better with armour."
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 25
-defence_modifier = 7
+max_health_modifier = 30
+defence_modifier = 9

@@ -50,4 +50,4 @@ cooldown = 4.0
 weakness = 4
 blurb = "No aim required. Now with spore pesticide."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 6
+skill_modifier = 8

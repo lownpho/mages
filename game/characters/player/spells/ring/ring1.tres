@@ -43,5 +43,5 @@ effect_scene = ExtResource("3_scene")
 cooldown = 3.0
 blurb = "Boring."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 3
-max_health_modifier = 15
+skill_modifier = 4
+max_health_modifier = 20

@@ -23,5 +23,5 @@ cooldown = 8.0
 cast_time = 0.6
 blurb = "Owns the circle it sits in"
 icon = SubResource("AtlasTexture_s5f1d")
-skill_modifier = 8
-max_health_modifier = 25
+skill_modifier = 10
+max_health_modifier = 30

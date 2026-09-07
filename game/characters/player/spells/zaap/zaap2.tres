@@ -51,4 +51,4 @@ effect_scene = ExtResource("3_scene")
 cooldown = 2.0
 blurb = "Bounce against enemies. Goes well with speed."
 icon = SubResource("AtlasTexture_icon")
-speed_modifier = 9
+speed_modifier = 12

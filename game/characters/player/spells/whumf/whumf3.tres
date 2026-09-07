@@ -32,5 +32,5 @@ effect_scene = ExtResource("3_scene")
 cooldown = 3.0
 blurb = "Spores extracted from dark mycelium. They look sensible to light."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 4
-max_health_modifier = 25
+skill_modifier = 5
+max_health_modifier = 30

@@ -15,5 +15,5 @@ effect_scene = ExtResource("99_effect")
 cooldown = 2.0
 blurb = "Through the wall, not around it. Never into it."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 2
-speed_modifier = 8
+skill_modifier = 3
+speed_modifier = 10

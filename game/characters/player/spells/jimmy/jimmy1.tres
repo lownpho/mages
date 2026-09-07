@@ -56,5 +56,5 @@ cooldown = 21.0
 cast_time = 1.0
 blurb = "His name is Jimmy"
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 30
-defence_modifier = 1
+max_health_modifier = 40
+defence_modifier = 2

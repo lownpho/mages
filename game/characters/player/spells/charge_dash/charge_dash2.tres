@@ -46,5 +46,5 @@ cooldown = 6.0
 cast_time = 0.3
 blurb = "More effective if I run fast."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 6
-speed_modifier = 2
+skill_modifier = 8
+speed_modifier = 3

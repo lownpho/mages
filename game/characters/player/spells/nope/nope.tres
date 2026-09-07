@@ -10,12 +10,12 @@ region = Rect2(96, 8, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-leech_fraction = 1.0
+leech_fraction = 0.8
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
-cast_time = 1.5
+cooldown = 3.0
+cast_time = 1.0
 channeled = true
 blurb = "Protecting yourself requires focus."
 icon = SubResource("AtlasTexture_icon")
-max_health_modifier = 20
-defence_modifier = 5
+max_health_modifier = 25
+defence_modifier = 6

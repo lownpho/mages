@@ -58,5 +58,5 @@ cooldown = 15.0
 cast_time = 0.5
 blurb = "Do they think I'm their mom?"
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 2
-max_health_modifier = 35
+skill_modifier = 3
+max_health_modifier = 30

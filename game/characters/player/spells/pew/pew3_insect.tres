@@ -43,4 +43,4 @@ cooldown = 1.5
 weakness = 4
 blurb = "Contains spore pesticide. Still boring."
 icon = SubResource("AtlasTexture_icon")
-speed_modifier = 8
+speed_modifier = 10

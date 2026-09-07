@@ -48,4 +48,4 @@ cooldown = 2.0
 cast_time = 0.2
 blurb = "I really hope they fall for it. I put all my speed into it."
 icon = SubResource("AtlasTexture_icon")
-speed_modifier = 6
+speed_modifier = 8
