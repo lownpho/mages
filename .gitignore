@@ -19,3 +19,9 @@ design/tools/__pycache__/
 
 # Symlink to the website repo (lownpho.github.io) for editing the game's page here
 /webpage
+
+# The design tooling's own venv, built by design/tools/pre-commit
+design/tools/.venv/
+
+# Agent worktrees live inside the repo; git sees each one as a gitlink
+.claude/worktrees/
