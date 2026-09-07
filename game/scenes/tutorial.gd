@@ -70,9 +70,10 @@ const SIGN_SCENE := preload("res://worldgen/runtime/under_construction_sign.tscn
 
 ## The starter kit, dropped on the floor of the casting room so the player has spells in hand by
 ## the time that room's sign explains the cast buttons — a run entered from the title never
-## called GameState.new_game(), so the loadout arrives empty. Read off world.gd rather than
-## relisted: one starter kit, not two that can drift apart.
-const STARTER_SPELLS := preload("res://scenes/world.gd").STARTER_SPELLS
+## called GameState.new_game(), so the loadout arrives empty. Rolled off world.gd rather than
+## relisted: one starter pool, not two that can drift apart. Every spell in it is offensive, so
+## whichever hand comes up can still kill the first fight.
+const WorldScript := preload("res://scenes/world.gd")
 const STARTER_ROOM := 1
 
 ## The first fight, and the room it waits in. Asleep until it is on screen (the scene carries
@@ -260,9 +261,10 @@ func _place_props(rooms: Array[Rect2i]) -> void:
 	intro.position = _to_px(rooms[0].get_center() + Vector2i(-3, 3))
 	_signs.add_child(intro)
 
-	for i in STARTER_SPELLS.size():
-		var angle := TAU * i / STARTER_SPELLS.size()
-		GlobalEvent.loot_dropped.emit(STARTER_SPELLS[i],
+	var starter_hand := WorldScript.roll_starter_hand()
+	for i in starter_hand.size():
+		var angle := TAU * i / starter_hand.size()
+		GlobalEvent.loot_dropped.emit(starter_hand[i],
 				_to_px(rooms[STARTER_ROOM].get_center()) + Vector2(20, 0).rotated(angle))
 
 	var foe: Node2D = FIRST_FIGHT.instantiate()

@@ -33,7 +33,8 @@ func _ready() -> void:
 	# empty and the starter kit on the floor is the ONLY way to arm the player. Drop it or move
 	# it past the first fight and the sproutling becomes unkillable — which looks like a stuck
 	# player, not a broken constant.
-	fails += _expect("the starter kit is dropped", not TutorialScript.STARTER_SPELLS.is_empty())
+	fails += _expect("the starter kit is dropped",
+			not TutorialScript.WorldScript.roll_starter_hand().is_empty())
 	fails += _expect("spells are handed over before the first fight",
 			TutorialScript.STARTER_ROOM < TutorialScript.FIRST_FIGHT_ROOM)
 

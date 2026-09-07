@@ -4,13 +4,22 @@ extends Node2D
 @export var generate_world := true
 @export var world_seed := 0          # 0 = random each run, captured once for the session
 
-## The design's spawn_with kit, dropped next to the player on a brand-new run — the whole
-## starter loadout, no tutorial.
-const STARTER_SPELLS: Array[Resource] = [
+## Every tier-1 spell a run may open with, dropped next to the player on a brand-new run —
+## the whole starter loadout, no tutorial. Offensive spells only: the tier-1 summons and Heal
+## are long-cooldown support, and a run that opened on a hand of them would have nothing to
+## kill the first room with.
+const STARTER_POOL: Array[Resource] = [
 	preload("res://characters/player/spells/pew/pew1.tres"),
 	preload("res://characters/player/spells/blam/blam1.tres"),
+	preload("res://characters/player/spells/snipe/snipe1.tres"),
+	preload("res://characters/player/spells/ring/ring1.tres"),
 	preload("res://characters/player/spells/fireball/fireball1.tres"),
+	preload("res://characters/player/spells/zaap/zaap1.tres"),
 ]
+
+## How many of the pool a fresh run is handed — one per cast button. Restates
+## GlobalInventory.SPELL_SLOTS because an autoload's constants aren't reachable from a const.
+const STARTER_COUNT := 4
 
 @onready var _streamer: WorldStreamer = $WorldRoot/WorldStreamer
 @onready var _player: Node2D = $WorldRoot/Entities/Player
@@ -75,9 +84,19 @@ func _on_warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i) 
 
 
 # Drop the starter spells beside the player, using the same loot_dropped path enemies
-# use (GlobalPickups makes the pickups).
+# use (GlobalPickups makes the pickups). The hand is STARTER_COUNT distinct spells drawn
+# from STARTER_POOL — distinct because one tier per spell is all the row would hold anyway.
 func _drop_starter_gear() -> void:
 	var origin := _player.global_position
-	for i in STARTER_SPELLS.size():
-		var angle := TAU * i / STARTER_SPELLS.size()
-		GlobalEvent.loot_dropped.emit(STARTER_SPELLS[i], origin + Vector2(20, 0).rotated(angle))
+	var hand := roll_starter_hand()
+	for i in hand.size():
+		var angle := TAU * i / hand.size()
+		GlobalEvent.loot_dropped.emit(hand[i], origin + Vector2(20, 0).rotated(angle))
+
+# STARTER_COUNT spells picked from the pool without repeats: shuffle a copy and take the
+# front of it, so the draw stays uniform and can never hand out the same spell twice.
+# Static because the tutorial arms the player from the same pool (see tutorial.gd).
+static func roll_starter_hand() -> Array[Resource]:
+	var pool := STARTER_POOL.duplicate()
+	pool.shuffle()
+	return pool.slice(0, min(STARTER_COUNT, pool.size()))
