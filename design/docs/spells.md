@@ -466,7 +466,7 @@ On a long cooldown, raises a bubble that absorbs incoming damage and pays a slic
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | 1.5s | — | — | — | max_health +25, defence +6 |
+| T1 | 3s | 1s | — | — | — | max_health +25, defence +6 |
 
 ### Heal
 

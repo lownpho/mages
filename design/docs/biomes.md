@@ -35,7 +35,7 @@ Onboarding: single-enemy rooms first, small mixed groups by T2, then the biome's
 |---|---|
 | Dirt Golem | **ring t1** (20%), **nope** (20%) |
 | Hopper | **pew t1** (15%), **zaap t1** (10%) |
-| Mandrake | **blam t1** (20%) |
+| Mandrake | **blam t1** (20%), **fireball t1** (20%) |
 | Seedling | **ring t1** (10%), **zaap t1** (10%) |
 | Sproutling | **pew t1** (10%), **zaap t1** (10%) |
 | Wasp | **bzzz t1** (10%), **pew t1** (10%), **zaap t1** (10%) |
@@ -66,7 +66,7 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 |---|---|
 | Dirt Golem | **ring t1** (20%), **nope** (20%) |
 | Hopper | **pew t1** (15%), **zaap t1** (10%) |
-| Mandrake | **blam t1** (20%) |
+| Mandrake | **blam t1** (20%), **fireball t1** (20%) |
 | Rosebud | **ring t1** (10%), **nope** (10%) |
 | Seedling | **ring t1** (10%), **zaap t1** (10%) |
 | Sproutling | **pew t1** (10%), **zaap t1** (10%) |
@@ -165,7 +165,7 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 | Snake | **zoing t2** (5%) |
 | Stalker | **blam t2** (5%) |
 | Adder *(rare)* | **zoing t2** (50%) |
-| Elder Stalker *(rare)* | **blam t3** (30%), **blink t2** (60%) |
+| Elder Stalker *(rare)* | **blam t3** (30%), **blink t2** (60%), **snipe t3** (35%) |
 | Umbra *(rare)* | **blink t2** (50%), **pew t3** (30%) |
 
 ## Mycelium (T3)
@@ -226,12 +226,12 @@ One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather 
 
 | Enemy | Items dropped |
 |---|---|
-| Bloatcap | **oop t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
+| Bloatcap | **whumf t3** (1%), **poot t3** (1%) |
 | Clustercap | **whumf t3** (1%), **poot t3** (1%) |
 | Gapcap | **blam t3** *(insect)* (3%) |
 | Mould Golem | **nope** (10%), **whumf t3** (1%), **poot t3** (1%) |
 | Normiecap | **pew t3** *(insect)* (3%) |
-| Puffcap | **oop t2** (2%), **poot t3** (1%) |
+| Puffcap | **poot t3** (1%) |
 | Ringcap | **ring t3** *(insect)* (3%), **blops t3** (1%) |
 | Rollcap | **pew t3** *(insect)* (3%) |
 | Shellcap | **snipe t3** *(insect)* (3%), **blops t3** (1%) |

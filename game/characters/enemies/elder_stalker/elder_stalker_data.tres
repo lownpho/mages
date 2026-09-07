@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://cbl1nk2t1er2r" path="res://characters/player/spells/blink/blink2.tres" id="3_xl3l2"]
 [ext_resource type="Resource" uid="uid://bl4mt13rthr33" path="res://characters/player/spells/blam/blam3.tres" id="4_blam"]
+[ext_resource type="Resource" uid="uid://dunh44bpspsay" path="res://characters/player/spells/snipe/snipe3.tres" id="5_snipe"]
 [ext_resource type="Texture2D" uid="uid://c7rqi25s65owo" path="res://characters/enemies/elder_stalker/elder_stalker.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_blam"]
@@ -18,6 +19,12 @@ item = ExtResource("3_xl3l2")
 chance = 0.6
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
+[sub_resource type="Resource" id="Drop_snipe"]
+script = ExtResource("2_drop")
+item = ExtResource("5_snipe")
+chance = 0.35
+metadata/_custom_type_script = "uid://cevjj2hnv0juj"
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("icon_png")
 region = Rect2(0, 16, 8, 16)
@@ -28,4 +35,4 @@ display_name = "Elder Stalker"
 icon = SubResource("AtlasTexture_icon")
 rarity = 1
 max_health = 260
-drops = Array[ExtResource("2_drop")]([SubResource("Drop_blam"), SubResource("Resource_v6xvd")])
+drops = Array[ExtResource("2_drop")]([SubResource("Drop_blam"), SubResource("Resource_v6xvd"), SubResource("Drop_snipe")])

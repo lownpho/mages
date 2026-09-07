@@ -76,7 +76,7 @@ are *for*, and they spawn in exactly the clumps that reward one.
 | Speed | 28 px/s |
 | Range | detect 8, chase 12, attack 4 |
 | attack | **12** dmg — 1.2s cd, Single, 6 tiles range |
-| Drops | **blam t1** (20%) |
+| Drops | **blam t1** (20%), **fireball t1** (20%) |
 
 ```mermaid
 stateDiagram-v2
@@ -1114,7 +1114,7 @@ fight is about closing the gap between its cycle rather than out-running it.
 | blink | 0.4s cd |
 | seed | **32** dmg — 3.2s cd, Single, 20 tiles range, homing 150° cone |
 | seed_fast | **32** dmg — 2.4s cd, Single, 20 tiles range, homing 150° cone |
-| Drops | **blam t3** (30%), **blink t2** (60%) |
+| Drops | **blam t3** (30%), **blink t2** (60%), **snipe t3** (35%) |
 
 **Notes:** below a quarter health the seed's wind-up drops to near-instant — the same beat with a shorter telegraph, swapped in by health window.
 
@@ -1188,7 +1188,7 @@ already written off, or shoot it where you were about to stand and lose the floo
 | myceling_burst | **5** dmg — Ring x6, 4 tiles range |
 | myceling_pop |  |
 | myceling_wide_burst | **8** dmg — Ring x8, 2 @ 0.12s, 6 tiles range |
-| Drops | **oop t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
+| Drops | **whumf t3** (1%), **poot t3** (1%) |
 
 **Notes:** a pure printer — everything it does is spores, so coated floor buys it nothing and neither the shove nor the burst has an empowered twin. The brood is a `death_spawns` entry on its stat sheet rather than death code, and the mycelings carry no `CreatureResource` at all, so they leave no drops and no kill count. The swell is a health window on a second, faster waddle behind the same `Gate`, and both waddles carry a clock so the Gate is asked again mid-chase rather than once at the start of it. A myceling's contact pop lays its patch and kills it, and dying is what throws the ring — the patch is the printing cast and stays flat, the ring is the consumer one and comes wider off coated floor, so the brood empowers without anything being paid for the floor it laid itself.
 
@@ -1367,7 +1367,7 @@ only your own answer to light.
 | HP | 40 |
 | Range | trigger 2 |
 | pop |  |
-| Drops | **oop t2** (2%), **poot t3** (1%) |
+| Drops | **poot t3** (1%) |
 
 **Notes:** it pops through the player's own Whumf effect with `consumes_caster` on — the mine IS its payload, exactly as the cinderstone's Oop is. The chain is pack aggro — entering the inhale calls every packmate a few tiles out into theirs.
 

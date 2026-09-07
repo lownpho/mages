@@ -1417,8 +1417,8 @@
      "tier": 1,
      "source": "game/characters/player/spells/nope/nope.tres",
      "kind": "nope",
-     "cooldown": 2,
-     "cast_time": 1.5,
+     "cooldown": 3,
+     "cast_time": 1,
      "channeled": true,
      "grants": {
       "max_health": 25,
@@ -1594,13 +1594,6 @@
     "attack": 1.75
    },
    "drops": [
-    {
-     "item": "oop2",
-     "spell": "oop",
-     "tier": 2,
-     "weakness": null,
-     "chance": 0.02
-    },
     {
      "item": "whumf3",
      "spell": "whumf",
@@ -2873,6 +2866,13 @@
      "tier": 1,
      "weakness": null,
      "chance": 0.2
+    },
+    {
+     "item": "fireball1",
+     "spell": "fireball",
+     "tier": 1,
+     "weakness": null,
+     "chance": 0.2
     }
    ],
    "attacks": [
@@ -3999,13 +3999,6 @@
     "trigger": 2
    },
    "drops": [
-    {
-     "item": "oop2",
-     "spell": "oop",
-     "tier": 2,
-     "weakness": null,
-     "chance": 0.02
-    },
     {
      "item": "poot3",
      "spell": "poot",
@@ -6532,6 +6525,13 @@
      "tier": 2,
      "weakness": null,
      "chance": 0.6
+    },
+    {
+     "item": "snipe3",
+     "spell": "snipe",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.35
     }
    ],
    "attacks": [
