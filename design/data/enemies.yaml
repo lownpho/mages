@@ -540,10 +540,10 @@ enemies:
         - {from: Chase, to: Idle, when: lost}
   - id: razorback
     description: |
-      Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch,
-      chaining charge after charge for as long as you stay inside its very long sight line; only a
-      head-on wall hit stuns it into a real punish window. Fight it near trees and make the forest
-      do the work.
+      Thornback variant: the recovery is shorter, not absent. Each dash ends in a brief pant and a
+      snap re-aim, so it chains charge after charge for as long as you stay inside its very long
+      sight line — but every link in that chain is a window, and a head-on wall hit stuns it into a
+      much longer one. Fight it near trees and make the forest do the work.
     art: the thornback silhouette in near-black armour with red spike tips.
     casts: [charge_dash]
     fsm:
@@ -552,7 +552,9 @@ enemies:
         - {from: Idle, to: Wander, when: timer}
         - {from: Idle, to: Charge, when: sees player}
         - {from: Wander, to: Charge, when: sees player}
-        - {from: Charge, to: Charge, when: dash over}
+        - {from: Charge, to: Recover, when: dash over}
+        - {from: Recover, to: Charge, when: timer}
+        - {from: Recover, to: Idle, when: lost}
         - {from: Charge, to: Stun, when: head-on wall}
         - {from: Charge, to: Idle, when: out of range}
         - {from: Stun, to: Charge, when: recovered}

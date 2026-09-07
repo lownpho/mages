@@ -184,8 +184,8 @@ first loadout in the game that is about a *position* instead of an aim.
 **The detonation cannot hurt you.** Whumf lays spores *around* you, so a self-damaging blast
 would make the set's own combo suicide. Spending the field is cost enough.
 
-**Electricity only.** Fire does not trigger clouds — Fireball is the starting spell, and
-letting it detonate would make every player a detonator by accident and delete the puzzle
+**Electricity only.** Fire does not trigger clouds — Fireball is one of the run's openers, and
+letting it detonate would make most players a detonator by accident and delete the puzzle
 before it is posed. One trigger, one spell family, learned in one room.
 
 **The turrets pay in-cloud only.** Poot's speed-up and Blops's doubling are the same rule the
@@ -226,10 +226,10 @@ One burst of single bullets at the cursor, then cooldown, rather than a sustaine
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 1.5s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +4 |
-| T2 | 1.5s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +6 |
-| T3 | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
-| T3 *(insect)* | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +8 |
+| T1 | 1.5s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +5 |
+| T2 | 1.5s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +8 |
+| T3 | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
+| T3 *(insect)* | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
 
 ### Snipe
 
@@ -239,10 +239,10 @@ A few homing bullets toward the first enemy in the cursor direction. They all la
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | instant | Single, 3 @ 0.1s | 4 + 0.2×skill = **9** | 18 | skill +4 |
-| T2 | 4s | instant | Single, 5 @ 0.1s | 5 + 0.25×skill = **11** | 18 | skill +6 |
-| T3 | 4s | instant | Single, 7 @ 0.1s | 6 + 0.3×skill = **14** | 18 | skill +6 |
-| T3 *(insect)* | 4s | instant | Single, 7 @ 0.1s | 6 + 0.3×skill = **14** | 18 | skill +6 |
+| T1 | 4s | instant | Single, 3 @ 0.1s | 4 + 0.2×skill = **9** | 18 | skill +5 |
+| T2 | 4s | instant | Single, 5 @ 0.1s | 5 + 0.25×skill = **11** | 18 | skill +8 |
+| T3 | 4s | instant | Single, 7 @ 0.1s | 6 + 0.3×skill = **14** | 18 | skill +8 |
+| T3 *(insect)* | 4s | instant | Single, 7 @ 0.1s | 6 + 0.3×skill = **14** | 18 | skill +8 |
 
 **Also:** homing 90° cone.
 
@@ -254,10 +254,10 @@ Two shotgun blasts back-to-back at the cursor, then cooldown: a double barrel, c
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +4, defence +3 |
-| T2 | 2s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +7, defence +5 |
-| T3 | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +10, defence +7 |
-| T3 *(insect)* | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +10, defence +7 |
+| T1 | 2s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +5, defence +4 |
+| T2 | 2s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +9, defence +6 |
+| T3 | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
+| T3 *(insect)* | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
 
 ### Ring
 
@@ -267,10 +267,10 @@ A few fast rings of bullets pulsed out of the caster. Every pulse spawns at the 
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 3s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +3, max_health +15 |
-| T2 | 3s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +5, max_health +25 |
-| T3 | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +8, max_health +30 |
-| T3 *(insect)* | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +8, max_health +30 |
+| T1 | 3s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +4, max_health +20 |
+| T2 | 3s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +6, max_health +30 |
+| T3 | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +10, max_health +40 |
+| T3 *(insect)* | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +10, max_health +40 |
 
 ## Nukes
 
@@ -278,14 +278,14 @@ Long cooldown, big single payload.
 
 ### Fireball
 
-The starting spell: the first thing a new player has in a slot, and the baseline every other nuke is read against. A homing orb toward the enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the explosion, so a shot that expires in open air still deals it. The homing and the guaranteed detonation make it hard to waste, which is what a first spell should be.
+One of the openers, and the baseline every other nuke is read against — a fresh run is handed four of the six tier-1 attack spells, so most runs start holding it. A homing orb toward the enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the explosion, so a shot that expires in open air still deals it. The homing and the guaranteed detonation make it hard to waste, which is what a first spell should be.
 
 **Scaling:** skill · **Hold:** charged · **Per tier:** damage, explosion radius
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | 0.5s | Single | 10 + 1.25×skill = **41** | 12 | skill +6 |
-| T2 | 4s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +10 |
+| T1 | 4s | 0.5s | Single | 20 + 1.25×skill = **51** | 12 | skill +10 |
+| T2 | 4s | 0.5s | Single | 30 + 2×skill = **80** | 12 | skill +15 |
 
 **Also:** blast 5 tiles (splash only).
 
@@ -297,8 +297,8 @@ An instant chain-lightning bolt that leaps between packed enemies; one lone targ
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +6 |
-| T2 | 2s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +9 |
+| T1 | 2s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +8 |
+| T2 | 2s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +12 |
 
 **Also:** SporeDetonator, chains 16x, chains 8x.
 
@@ -310,7 +310,7 @@ A fast piercing bullet that ricochets off walls; each bounce is a fresh leg of t
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 4s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +6, speed +2 |
+| T2 | 4s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +8, speed +3 |
 
 **Also:** BounceBehaviour, pierces.
 
@@ -322,7 +322,7 @@ Charges in front of the caster while held, growing per tick; on release it fires
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 4s | 2s | — | 6 + 0.5×defence = **6** | — | defence +6 |
+| T2 | 4s | 2s | — | 6 + 0.5×defence = **6** | — | defence +8 |
 
 ## Summon
 
@@ -336,7 +336,7 @@ A small squad of ranged minions firing single bullets. A walking gunline.
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 15s | 0.5s | — | — | — | skill +2, max_health +35 |
+| T2 | 15s | 0.5s | — | — | — | skill +3, max_health +30 |
 
 **Also:** 4 minions, 55 hp, 15s.
 
@@ -348,7 +348,7 @@ A fragile swarm of fast, short-range minions; chaff that dumps damage then dies.
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 12s | 0.3s | — | — | — | speed +3, max_health +15 |
+| T1 | 12s | 0.3s | — | — | — | speed +3 |
 
 **Also:** 4 minions, 15 hp, 9s.
 
@@ -360,7 +360,7 @@ One heavy minion firing a ring around itself; a walking turret that denies an ar
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 21s | 1s | — | — | — | max_health +30, defence +1 |
+| T1 | 21s | 1s | — | — | — | max_health +40, defence +2 |
 
 **Also:** 1 minions, 200 hp, 22.5s.
 
@@ -372,7 +372,7 @@ A capped mushroom planted where you aim: a single-shot turret that never moves a
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T3 | 6s | 0.3s | — | — | — | skill +2, speed +2, max_health +25, defence +2 |
+| T3 | 6s | 0.3s | — | — | — | skill +3, speed +3, max_health +30, defence +3 |
 
 **Also:** 1 minions, 60 hp, 20s.
 
@@ -384,7 +384,7 @@ The heavy half of the pair: a planted mushroom that pulses a rotating ring aroun
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T3 | 8s | 0.6s | — | — | — | skill +8, max_health +25 |
+| T3 | 8s | 0.6s | — | — | — | skill +10, max_health +30 |
 
 **Also:** 1 minions, 80 hp, 20s.
 
@@ -400,7 +400,7 @@ Charges in a direction for a short duration at high speed. Sends bullets at 90 d
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 6s | 0.3s | Flank x2, 9 @ 0.1s | 10 + 0.6×skill + 1.2×speed = **121** | 8 | skill +6, speed +2 |
+| T2 | 6s | 0.3s | Flank x2, 9 @ 0.1s | 10 + 0.6×skill + 1.2×speed = **121** | 8 | skill +8, speed +3 |
 
 **Also:** dash 80 px/s for 1s.
 
@@ -412,7 +412,7 @@ An instant radial knockback pulse; more damage the closer the enemy, chip at the
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T3 | 4s | 0.2s | — | 15 + 1.5×defence = **15** | — | max_health +25, defence +7 |
+| T3 | 4s | 0.2s | — | 15 + 1.5×defence = **15** | — | max_health +30, defence +9 |
 
 ### Blink
 
@@ -422,7 +422,7 @@ An instant hop along your aim: you vanish and reappear a fixed distance away, le
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 2s | instant | — | — | — | skill +2, speed +8 |
+| T2 | 2s | instant | — | — | — | skill +3, speed +10 |
 
 ### Oop
 
@@ -432,7 +432,7 @@ Drops a mine a tile ahead of your aim — in the doorway, not under your feet. I
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 2s | 0.2s | Single | 12 + 1×skill = **37** | 0 | skill +5 |
+| T2 | 2s | 0.2s | Single | 12 + 1×skill = **37** | 0 | skill +6 |
 
 **Also:** blast 4 tiles (splash only).
 
@@ -444,7 +444,7 @@ The mine that answers a crowd instead of a target: same drop, same arming, but o
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 2s | 0.2s | Ring x8, 3 @ 0.15s | 7 + 0.75×speed = **67** | 6 | speed +6 |
+| T2 | 2s | 0.2s | Ring x8, 3 @ 0.15s | 7 + 0.75×speed = **67** | 6 | speed +8 |
 
 **Also:** pierces.
 
@@ -456,7 +456,7 @@ Lays a field of spore clouds around you: a patch of floor that lingers, ticks wh
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T3 | 3s | instant | — | 50 + 1×skill + 1×speed + 1×defence = **155** | — | skill +4, max_health +25 |
+| T3 | 3s | instant | — | 50 + 1×skill + 1×speed + 1×defence = **155** | — | skill +5, max_health +30 |
 
 ### Nope
 
@@ -466,7 +466,7 @@ On a long cooldown, raises a bubble that absorbs incoming damage and pays a slic
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | 1.5s | — | — | — | max_health +20, defence +5 |
+| T1 | 2s | 1.5s | — | — | — | max_health +25, defence +6 |
 
 ### Heal
 
@@ -476,7 +476,7 @@ Instantly restores health. The safety net every survivability loadout considers.
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 20s | 0.8s | — | 50 + 0.5×skill + 2×defence = **62** | — | max_health +20 |
+| T1 | 20s | 0.8s | — | 50 + 0.5×skill + 2×defence = **62** | — | max_health +25 |
 
 <!-- END GENERATED CATALOGUE -->
 

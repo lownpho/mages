@@ -1,0 +1,4 @@
+# What build.py needs beyond the standard library. Installed into design/tools/.venv by the
+# pre-commit hook; pin nothing, since both are stable and the docs are regenerated anyway.
+PyYAML
+Jinja2

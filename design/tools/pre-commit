@@ -8,5 +8,30 @@
 #
 # Install once (git does not track .git/hooks):
 #     ln -sf ../../design/tools/pre-commit .git/hooks/pre-commit
+#
+# The build runs out of its own venv (design/tools/.venv, gitignored) rather than the system
+# python: a distro python upgrade drops PyYAML and Jinja2 out from under the tooling, and a
+# hook that dies on a missing import blocks every commit in the repo. The venv is built on
+# first use and rebuilt whenever it stops importing — the only two moments that need network.
+set -e
 
-exec python3 design/tools/build.py
+cd "$(git rev-parse --show-toplevel)"
+
+VENV=design/tools/.venv
+PY="$VENV/bin/python"
+
+venv_build() {
+	python3 -m venv --clear "$VENV"
+	"$PY" -m pip install --quiet --disable-pip-version-check -r design/tools/requirements.txt
+}
+
+if [ ! -x "$PY" ]; then
+	echo "design docs: building $VENV" >&2
+	venv_build
+elif ! "$PY" -c 'import yaml, jinja2' >/dev/null 2>&1; then
+	# Usually a system python upgrade that left the venv pointing at a gone interpreter.
+	echo "design docs: $VENV no longer imports, rebuilding" >&2
+	venv_build
+fi
+
+exec "$PY" design/tools/build.py

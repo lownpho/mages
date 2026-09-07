@@ -48,7 +48,7 @@ crowds your space.
 | Speed | 18 px/s |
 | Range | detect 7, chase 8, attack 3 |
 | attack | **7** dmg — 0.7s cd, Single, 3 @ 0.3s, 5 tiles range |
-| Drops | **pew t1** (15%), **heal t1** (10%) |
+| Drops | **pew t1** (15%), **zaap t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
@@ -103,7 +103,7 @@ chases. It works as area denial, and it stays a speed bump in both glade flavour
 | HP | 45 |
 | Range | detect 4 |
 | ring | **13** dmg — 3s cd, Ring x6, 6 tiles range |
-| Drops | **ring t1** (10%), **heal t1** (10%) |
+| Drops | **ring t1** (10%), **zaap t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
@@ -125,7 +125,7 @@ enough to sidestep on reflex, so it teaches that enemies shoot without much risk
 | HP | 25 |
 | Range | detect 7 |
 | attack | **8** dmg — 2s cd, Single, 9 tiles range |
-| Drops | **pew t1** (10%), **heal t1** (10%) |
+| Drops | **pew t1** (10%), **zaap t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
@@ -363,7 +363,7 @@ up close; everything about it is dangerous a second later.
 | HP | 90 |
 | Speed | 40 px/s |
 | Range | detect 11, retreat 1.375 |
-| zoing | **24** dmg — 1.6s cd, Single, 2 @ 0.45s, 13 tiles range, BounceBehaviour |
+| zoing | **24** dmg — 2.4s cd, Single, 2 @ 0.45s, 13 tiles range, BounceBehaviour |
 | Drops | **zoing t2** (5%) |
 
 ```mermaid
@@ -391,7 +391,7 @@ the snake's: harmless at distance, a wall of pellets the moment you crowd it.
 | HP | 90 |
 | Speed | 30 px/s |
 | Range | detect 7, retreat 3 |
-| zoing | **18** dmg — 1.3s cd, Shotgun x3, 8 tiles range, BounceBehaviour |
+| zoing | **18** dmg — 2s cd, Shotgun x3, 8 tiles range, BounceBehaviour |
 | Drops | **zoing t2** (5%) |
 
 ```mermaid
@@ -419,7 +419,7 @@ up a shot, and the pack punishes you for focusing one down without a plan for th
 | HP | 90 |
 | Speed | 40 px/s |
 | Range | detect 10, chase 13, attack 3 |
-| bolt | **12** dmg — 3s cd, Single, 3 @ 0.3s, 10 tiles range |
+| bolt | **12** dmg — 3.9s cd, Single, 3 @ 0.3s, 10 tiles range |
 | Drops | **pew t2** (50%), **halp t2** (2%) |
 
 ```mermaid
@@ -450,7 +450,7 @@ in the light.
 | HP | 150 |
 | Speed | 30 px/s |
 | Range | detect 11, chase 15, erupt 3 |
-| erupt | **26** dmg — 1.6s cd, Ring x9, 2 @ 0.35s, 5 tiles range |
+| erupt | **26** dmg — 2.4s cd, Ring x9, 2 @ 0.35s, 5 tiles range |
 | Drops | **ring t2** (10%) |
 
 **Notes:** untouchable for the whole burrow (`damage_scale` 0) — the surface beat is the only window.
@@ -482,7 +482,7 @@ through it.
 | HP | 55 |
 | Speed | 44 px/s |
 | Range | detect 12, chase 15, attack 2, retreat 1.5 |
-| scales | **18** dmg — 1.1s cd, Ring x6, 2 @ 0.22s, 3 tiles range |
+| scales | **18** dmg — 1.7s cd, Ring x6, 2 @ 0.22s, 3 tiles range |
 | Drops | **ring t2** (5%) |
 
 **Notes:** the shortest attack probe of the three (2 tiles) and the shortest retreat — its poke only works point-blank, so it re-closes fastest.
@@ -514,7 +514,7 @@ never stand.
 | HP | 500 |
 | Speed | 14 px/s |
 | Range | detect 14, chase 17, attack 3 |
-| ring | **36** dmg — 2.6s cd, Ring x8, 3 @ 0.6s, 8 tiles range |
+| ring | **36** dmg — 3.4s cd, Ring x8, 3 @ 0.6s, 8 tiles range |
 | shell | 5s cd, absorbs 90 |
 | Drops | **ring t2** (8%), **nope** (30%) |
 
@@ -547,7 +547,7 @@ you moving while heavier things line up.
 | HP | 55 |
 | Speed | 44 px/s |
 | Range | detect 13, chase 16, attack 3, retreat 1.25 |
-| dust | **23** dmg — 0.9s cd, Single, 2 @ 0.15s, 5 tiles range |
+| dust | **23** dmg — 1.4s cd, Single, 2 @ 0.15s, 5 tiles range |
 | Drops | **pew t2** (5%) |
 
 ```mermaid
@@ -576,7 +576,7 @@ only over a narrow cone — a sidestep won't shake one, breaking the angle will.
 | HP | 55 |
 | Speed | 46 px/s |
 | Range | detect 14, chase 17, attack 3, retreat 1.75 |
-| dart | **19** dmg — 1.2s cd, Single, 2 @ 0.2s, 9 tiles range, homing 70° cone |
+| dart | **19** dmg — 1.8s cd, Single, 2 @ 0.2s, 9 tiles range, homing 70° cone |
 | Drops | **snipe t2** (5%) |
 
 **Notes:** the longest attack probe of the three (5 tiles) and the longest retreat — it never comes into the range the other two fight at.
@@ -608,7 +608,7 @@ its fire.
 | HP | 120 |
 | Speed | 46 px/s |
 | Range | detect 18, snipe 10, close 5, retreat 2 |
-| bwoom | **16** dmg — 5s cd |
+| bwoom | **16** dmg — 6.5s cd |
 | Drops | **bwoom t2** (5%), **pew t2** (7%) |
 
 ```mermaid
@@ -636,7 +636,7 @@ of sight on, never the one you trade with at range.
 | HP | 110 |
 | Speed | 30 px/s |
 | Range | detect 12, chase 16, attack 8 |
-| shards | **13** dmg — 2.8s cd, Shotgun x3, 12 tiles range |
+| shards | **13** dmg — 3.6s cd, Shotgun x3, 12 tiles range |
 | Drops | **blam t2** (5%), **halp t2** (2%) |
 
 **Notes:** the longest attack probe of the three (9 tiles) and the longest wind-up — it never closes to the range the others fight at, and it keeps firing while they do.
@@ -668,7 +668,7 @@ ways.
 | HP | 90 |
 | Speed | 35 px/s |
 | Range | detect 9, retreat 2 |
-| zoing | **27** dmg — 1.4s cd, Parallel x2, 2 @ 0.3s, 10 tiles range, BounceBehaviour |
+| zoing | **27** dmg — 2.1s cd, Parallel x2, 2 @ 0.3s, 10 tiles range, BounceBehaviour |
 | Drops | **zoing t2** (5%) |
 
 ```mermaid
@@ -696,7 +696,7 @@ between shots. Lose it and it becomes a prop again. Introduces **prop disguise**
 | HP | 150 |
 | Speed | 36 px/s |
 | Range | detect 5, chase 16, attack 3 |
-| blast | **24** dmg — 1.7s cd, Shotgun x4, 4 tiles range |
+| blast | **24** dmg — 2.6s cd, Shotgun x4, 4 tiles range |
 | Drops | **blam t2** (5%) |
 
 ```mermaid
@@ -725,7 +725,7 @@ sidestep the dash and burn it during recovery. Trees are your friend.
 | HP | 350 |
 | Speed | 14 px/s |
 | Range | detect 14 |
-| charge | **24** dmg — 3s cd, Flank x2, 9 @ 0.1s, 6 tiles range, dash 120 px/s for 1s |
+| charge | **24** dmg — 3.9s cd, Flank x2, 9 @ 0.1s, 6 tiles range, dash 120 px/s for 1s |
 | Drops | **charge_dash t2** (10%) |
 
 ```mermaid
@@ -754,7 +754,7 @@ recruiting.
 | HP | 60 |
 | Speed | 54 px/s |
 | Range | detect 18, chase 20, attack 3 |
-| flicker | **8** dmg — 1.8s cd, Single, 3 @ 0.18s, 7 tiles range |
+| flicker | **8** dmg — 2.7s cd, Single, 3 @ 0.18s, 7 tiles range |
 | Drops | **pew t2** (5%), **halp t2** (2%) |
 
 **Notes:** pack radius 14 tiles against the grimling's default 8, and the shortest attack probe — it comes all the way in.
@@ -786,7 +786,7 @@ whole fight is spent closing.
 | HP | 300 |
 | Speed | 42 px/s |
 | Range | detect 28, snipe 24, close 7, retreat 2.5 |
-| bwoom | **18** dmg — 4s cd |
+| bwoom | **18** dmg — 5.2s cd |
 | Drops | **bwoom t2** (80%) |
 
 **Notes:** guaranteed Bwoom T3 on death.
@@ -819,8 +819,8 @@ a gauntlet.
 | Speed | 38 px/s |
 | Range | detect 11, chase 14, attack 3 |
 | burst | **13** dmg — Ring x18, 7 tiles range |
-| enrage | **13** dmg — 1.4s cd, Single, 7 @ 0.13s, 10 tiles range |
-| spray | **13** dmg — 2.4s cd, Single, 5 @ 0.26s, 10 tiles range |
+| enrage | **13** dmg — 2.1s cd, Single, 7 @ 0.13s, 10 tiles range |
+| spray | **13** dmg — 3.1s cd, Single, 5 @ 0.26s, 10 tiles range |
 | Drops | **blam t3** (50%), **ring t3** (30%), **halp t2** (20%) |
 
 **Notes:** enrage replaces the spray below 30% HP; `RingPattern` death burst. Shares the grimling pack group, so it wakes with them.
@@ -843,10 +843,10 @@ stateDiagram-v2
 
 ### Razorback *(rare)*
 
-Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch,
-chaining charge after charge for as long as you stay inside its very long sight line; only a
-head-on wall hit stuns it into a real punish window. Fight it near trees and make the forest
-do the work.
+Thornback variant: the recovery is shorter, not absent. Each dash ends in a brief pant and a
+snap re-aim, so it chains charge after charge for as long as you stay inside its very long
+sight line — but every link in that chain is a window, and a head-on wall hit stuns it into a
+much longer one. Fight it near trees and make the forest do the work.
 
 **Art:** the thornback silhouette in near-black armour with red spike tips.
 
@@ -855,7 +855,7 @@ do the work.
 | HP | 420 |
 | Speed | 18 px/s |
 | Range | detect 20 |
-| charge | **30** dmg — 0.3s cd, Flank x2, 6 @ 0.1s, 5 tiles range, dash 150 px/s for 0.7s |
+| charge | **30** dmg — 1.5s cd, Flank x2, 6 @ 0.1s, 5 tiles range, dash 150 px/s for 0.7s |
 | Drops | **charge_dash t2** (50%) |
 
 ```mermaid
@@ -864,7 +864,9 @@ stateDiagram-v2
     Idle --> Wander : timer
     Idle --> Charge : sees player
     Wander --> Charge : sees player
-    Charge --> Charge : dash over
+    Charge --> Recover : dash over
+    Recover --> Charge : timer
+    Recover --> Idle : lost
     Charge --> Stun : head-on wall
     Charge --> Idle : out of range
     Stun --> Charge : recovered
@@ -1182,7 +1184,7 @@ already written off, or shoot it where you were about to stand and lose the floo
 | Speed | 24 px/s |
 | Range | detect 9, chase 12, attack 1.75 |
 | burst |  |
-| nudge | **6** dmg — 1.4s cd, Single, 2 tiles range |
+| nudge | **6** dmg — 2.1s cd, Single, 2 tiles range |
 | myceling_burst | **5** dmg — Ring x6, 4 tiles range |
 | myceling_pop |  |
 | myceling_wide_burst | **8** dmg — Ring x8, 2 @ 0.12s, 6 tiles range |
@@ -1220,7 +1222,7 @@ again — one death, one multiplication, and the room ends.
 | HP | 150 |
 | Speed | 20 px/s |
 | Range | detect 14, chase 16 |
-| lob | **24** dmg — 3s cd, Single, 14 tiles range, SporePayload |
+| lob | **24** dmg — 3.9s cd, Single, 14 tiles range, SporePayload |
 | clusterling_pop | **24** dmg — Ring x8, 2 @ 0.25s, 5 tiles range |
 | clusterling_wide_pop | **48** dmg — Ring x10, 3 @ 0.12s, 7 tiles range |
 | Drops | **whumf t3** (1%), **poot t3** (1%) |
@@ -1260,8 +1262,8 @@ you make is decided by whose floor it is standing on.
 | HP | 100 |
 | Speed | 86 px/s |
 | Range | detect 12, cone 3 |
-| cone | **24** dmg — 2s cd, Shotgun x5, 4 tiles range |
-| double_cone | **24** dmg — 2s cd, Shotgun x5, 2 @ 0.25s, 5 tiles range |
+| cone | **24** dmg — 2.6s cd, Shotgun x5, 4 tiles range |
+| double_cone | **24** dmg — 2.6s cd, Shotgun x5, 2 @ 0.25s, 5 tiles range |
 | Drops | **blam t3** *(insect)* (3%) |
 
 **Notes:** pure composition, and the roster's clearest case of the empowerment being a shape rather than a number — `approach` to `cast` to a rooted `hold`, with a `needs_cloud` twin of each of the three. The fed lunge is a longer clock on the same chase, the fed cone is a second shot on the same spell, and the shorter root is simply where that cone hands off, so nothing is gated that a `Gate` does not already list.
@@ -1292,9 +1294,9 @@ detour. It never idles — lose it and it simply keeps coming.
 | HP | 560 |
 | Speed | 14 px/s |
 | Range | detect 14, chase 17, attack 3 |
-| ring | **36** dmg — 2.6s cd, Ring x8, 3 @ 0.6s, 8 tiles range |
+| ring | **36** dmg — 3.4s cd, Ring x8, 3 @ 0.6s, 8 tiles range |
 | shell | 5s cd, absorbs 90 |
-| wide_ring | **44** dmg — 2.6s cd, Ring x12, 4 @ 0.5s, 10 tiles range |
+| wide_ring | **44** dmg — 3.4s cd, Ring x12, 4 @ 0.5s, 10 tiles range |
 | Drops | **nope** (10%), **whumf t3** (1%), **poot t3** (1%) |
 
 **Notes:** the moss golem's scene with the idle beat swapped for a `wander`, so "never idles" is a state that walks rather than a dial. The shield is the player's own Nope, channelled — its `cast_time` caps the channel, which is why the golem stands still through the whole wind-up and why the shell pose IS the telegraph.
@@ -1330,8 +1332,8 @@ can safely ignore the clouds around.
 | HP | 64 |
 | Speed | 40 px/s |
 | Range | detect 12, chase 14, shoot 2 |
-| hard_pew | **28** dmg — 1.2s cd, Single, 3 @ 0.2s, 4 tiles range |
-| pew | **20** dmg — 1.2s cd, Single, 3 @ 0.25s, 4 tiles range |
+| hard_pew | **28** dmg — 1.8s cd, Single, 3 @ 0.2s, 4 tiles range |
+| pew | **20** dmg — 1.8s cd, Single, 3 @ 0.25s, 4 tiles range |
 | Drops | **pew t3** *(insect)* (3%) |
 
 **Notes:** four library beats in a ring and nothing else — `hold` to `approach` to a two-rung `Gate` to `hold` — which makes it the roster's reference for what composition alone buys you, with no script and no bespoke node anywhere. The chase carries the LOS probe and the shot carries none, so giving up is the pursuit's job and re-closing is the recovery's, the split every ranged body in the game uses; the recovery points back at the Gate rather than at a shot, so the floor is re-read between every burst instead of once on the way in.
@@ -1429,7 +1431,7 @@ becomes the reason to clear the field it is about to cross.
 | Kinds | fungal |
 | HP | 60 |
 | Speed | 40 px/s |
-| pew | **20** dmg — 1.1s cd, Single, 4 @ 0.2s, 8 tiles range |
+| pew | **20** dmg — 1.7s cd, Single, 4 @ 0.2s, 8 tiles range |
 | Drops | **pew t3** *(insect)* (3%) |
 
 **Notes:** the one body with no beat but its own, which is why its empowerment lives inside the roll rather than behind a `needs_cloud` rung of a `Gate` — the roll never ends, so there is no hand-off for a ladder to make, and a `cast` beat would plant the ball to fire. Coated floor pays it twice over instead — faster, and shooting. Its contact hit is a `DamageZone` rather than a caster, so running you over is an attack with no spell behind it. The roster's one bespoke behaviour lives in its own folder — a heading picked on entry and bounced off the collision normals `move_and_slide` already reports. The split is two `death_spawns` of a smaller ball that carries no `CreatureResource` — no stat sheet is no `death_spawns`, so the two-stage rule is structural rather than a generation counter, exactly as the clusterlings are.
@@ -1462,8 +1464,8 @@ else painted — the turret is the body that most repays letting a printer work.
 | Kinds | fungal |
 | HP | 160 |
 | Range | room 16 |
-| fan | **32** dmg — 3s cd, Shotgun x3, 5 @ 0.35s, 16 tiles range |
-| volley | **26** dmg — 3s cd, Single, 3 @ 0.35s, 16 tiles range, homing 70° cone |
+| fan | **32** dmg — 3.9s cd, Shotgun x3, 5 @ 0.35s, 16 tiles range |
+| volley | **26** dmg — 3.9s cd, Single, 3 @ 0.35s, 16 tiles range, homing 70° cone |
 | Drops | **snipe t3** *(insect)* (3%), **blops t3** (1%) |
 
 **Notes:** pure composition — a `cast` behind a room-length `range_probe`, so the dispatcher answers "can it even reach you" before it commits rather than rearing into a slam at nothing. The empowered rung is the ordinary `needs_cloud` first rung of its `Gate`, and the only thing that changes is the spell's fire pattern, which is the spell's business and not the beat's.
@@ -1521,7 +1523,7 @@ problem rather than a room that fills up and stays filled.
 | HP | 80 |
 | Speed | 44 px/s |
 | Range | detect 12, chase 16, attack 3, retreat 1.25 |
-| dust | **28** dmg — 0.9s cd, Single, 2 @ 0.4s, 5 tiles range, SporePayload |
+| dust | **28** dmg — 1.4s cd, Single, 2 @ 0.4s, 5 tiles range, SporePayload |
 | Drops | **pew t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%) |
 
 **Notes:** the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they are inert terrain and nothing can light them.
@@ -1554,9 +1556,9 @@ own spores answer to light.
 | Kinds | fungal |
 | HP | 55 |
 | Range | detect 11, close 3 |
-| blam | **24** dmg — 2.5s cd, Shotgun x3, 2 @ 0.4s, 4 tiles range |
-| lob | **4** dmg — 2s cd, Single, 9 tiles range, SporePayload |
-| wide_blam | **30** dmg — 2.5s cd, Shotgun x5, 3 @ 0.35s, 5 tiles range |
+| blam | **24** dmg — 3.3s cd, Shotgun x3, 2 @ 0.4s, 4 tiles range |
+| lob | **4** dmg — 2.6s cd, Single, 9 tiles range, SporePayload |
+| wide_blam | **30** dmg — 3.3s cd, Shotgun x5, 3 @ 0.35s, 5 tiles range |
 | Drops | **blam t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%), **blops t3** (1%) |
 
 **Notes:** the lob is an ordinary bullet carrying a `SporePayload` — the patch is planted by the shot expiring, so a body, a wall or the end of its range all plant it the same way. Its two beats hang off a `Gate` whose first rung is the cone behind a short range probe, so the choice is the player's position rather than a roll or a rotation, and the lob is simply what is left when you are not close enough to be shot.
@@ -1631,8 +1633,8 @@ at all — it only shortens the window you were crossing in.
 | Kinds | fungal |
 | HP | 340 |
 | Range | room 18 |
-| fan | **28** dmg — 2.6s cd, Shotgun x5, 6 @ 0.3s, 16 tiles range |
-| volley | **20** dmg — 2.6s cd, Single, 4 @ 0.3s, 16 tiles range, homing 80° cone |
+| fan | **28** dmg — 3.4s cd, Shotgun x5, 6 @ 0.3s, 16 tiles range |
+| volley | **20** dmg — 3.4s cd, Single, 4 @ 0.3s, 16 tiles range, homing 80° cone |
 | Drops | **snipe t3** *(insect)* (40%) |
 
 **Notes:** a straight copy of the shellcap's wiring with its own numbers, down to the `range_probe` on both rungs; the only structural difference is a shorter reload.
@@ -1660,8 +1662,8 @@ misreading it is most of a health bar.
 | HP | 260 |
 | Speed | 104 px/s |
 | Range | detect 15, cone 3.5 |
-| cone | **34** dmg — 1.8s cd, Shotgun x6, 5 tiles range |
-| double_cone | **34** dmg — 1.8s cd, Shotgun x6, 3 @ 0.3s, 6 tiles range |
+| cone | **34** dmg — 2.7s cd, Shotgun x6, 5 tiles range |
+| double_cone | **34** dmg — 2.7s cd, Shotgun x6, 3 @ 0.3s, 6 tiles range |
 | Drops | **blam t3** *(insect)* (40%) |
 
 **Notes:** the gapcap's exact node graph with harder dials on both lunges and both cones. Its empowerment is still the pair of behaviour dials rather than a spell — further and briefer — so `needs_cloud` sits on the lunge as well as the cast.
@@ -2043,8 +2045,8 @@ Three rulings hold the mechanic together:
 - **The detonation cannot hurt the player.** Whumf lays spores *around* you, so a
   self-damaging blast would make the player's own combo suicide. Spending the field is cost
   enough — a detonated room is a room where nothing is ramping any more.
-- **Electricity only.** Fire does not trigger clouds. Fireball is the starting spell, and a
-  universal detonator every player already owns deletes the puzzle before it is posed.
+- **Electricity only.** Fire does not trigger clouds. Fireball is one of the run's openers, and
+  a universal detonator most players already own deletes the puzzle before it is posed.
 - **Printing is not free.** A body that fills the room with spores does not also get paid for
   standing in them. That is what stops the dungeon spiralling: the more floor the room lays
   down, the more it is arming the bodies that *don't* lay any — and you.

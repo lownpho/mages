@@ -77,11 +77,11 @@ spells:
     name: Fireball
     category: nukes
     description: >
-      The starting spell: the first thing a new player has in a slot, and the baseline every other
-      nuke is read against. A homing orb toward the enemy nearest the cursor; it explodes on impact,
-      wall, or max range. All damage is the explosion, so a shot that expires in open air still
-      deals it. The homing and the guaranteed detonation make it hard to waste, which is what a
-      first spell should be.
+      One of the openers, and the baseline every other nuke is read against — a fresh run is handed
+      four of the six tier-1 attack spells, so most runs start holding it. A homing orb toward the
+      enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the
+      explosion, so a shot that expires in open air still deals it. The homing and the guaranteed
+      detonation make it hard to waste, which is what a first spell should be.
     per_tier: damage, explosion radius
   - id: zaap
     name: Zaap

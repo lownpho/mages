@@ -45,7 +45,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "speed": 4
+      "speed": 5
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -73,7 +73,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "speed": 6
+      "speed": 8
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -101,7 +101,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "speed": 8
+      "speed": 10
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -132,7 +132,7 @@
       "insect"
      ],
      "grants": {
-      "speed": 8
+      "speed": 10
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -177,7 +177,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 4
+      "skill": 5
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -213,7 +213,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 6
+      "skill": 8
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -249,7 +249,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 6
+      "skill": 8
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -288,7 +288,7 @@
       "insect"
      ],
      "grants": {
-      "skill": 6
+      "skill": 8
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -342,8 +342,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 4,
-      "defence": 3
+      "skill": 5,
+      "defence": 4
      },
      "shots": {
       "pattern": "ShotgunPattern",
@@ -372,8 +372,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 7,
-      "defence": 5
+      "skill": 9,
+      "defence": 6
      },
      "shots": {
       "pattern": "ShotgunPattern",
@@ -402,8 +402,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 10,
-      "defence": 7
+      "skill": 13,
+      "defence": 9
      },
      "shots": {
       "pattern": "ShotgunPattern",
@@ -435,8 +435,8 @@
       "insect"
      ],
      "grants": {
-      "skill": 10,
-      "defence": 7
+      "skill": 13,
+      "defence": 9
      },
      "shots": {
       "pattern": "ShotgunPattern",
@@ -483,8 +483,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 3,
-      "max_health": 15
+      "skill": 4,
+      "max_health": 20
      },
      "shots": {
       "pattern": "RingPattern",
@@ -512,8 +512,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 5,
-      "max_health": 25
+      "skill": 6,
+      "max_health": 30
      },
      "shots": {
       "pattern": "RingPattern",
@@ -541,8 +541,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 8,
-      "max_health": 30
+      "skill": 10,
+      "max_health": 40
      },
      "shots": {
       "pattern": "RingPattern",
@@ -573,8 +573,8 @@
       "insect"
      ],
      "grants": {
-      "skill": 8,
-      "max_health": 30
+      "skill": 10,
+      "max_health": 40
      },
      "shots": {
       "pattern": "RingPattern",
@@ -600,7 +600,7 @@
    "id": "fireball",
    "name": "Fireball",
    "category": "nukes",
-   "description": "The starting spell: the first thing a new player has in a slot, and the baseline every other nuke is read against. A homing orb toward the enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the explosion, so a shot that expires in open air still deals it. The homing and the guaranteed detonation make it hard to waste, which is what a first spell should be.",
+   "description": "One of the openers, and the baseline every other nuke is read against — a fresh run is handed four of the six tier-1 attack spells, so most runs start holding it. A homing orb toward the enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the explosion, so a shot that expires in open air still deals it. The homing and the guaranteed detonation make it hard to waste, which is what a first spell should be.",
    "per_tier": "damage, explosion radius",
    "kind": "bullet",
    "hold": "charged",
@@ -619,7 +619,7 @@
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
-      "skill": 6
+      "skill": 10
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -628,7 +628,7 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 10,
+      "base": 20,
       "skill": 1.25,
       "speed": 0,
       "defence": 0
@@ -654,7 +654,7 @@
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
-      "skill": 10
+      "skill": 15
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -663,7 +663,7 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 15,
+      "base": 30,
       "skill": 2,
       "speed": 0,
       "defence": 0
@@ -706,7 +706,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "speed": 6
+      "speed": 8
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -741,7 +741,7 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "speed": 9
+      "speed": 12
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -797,8 +797,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 6,
-      "speed": 2
+      "skill": 8,
+      "speed": 3
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -848,7 +848,7 @@
      "cast_time": 2,
      "channeled": true,
      "grants": {
-      "defence": 6
+      "defence": 8
      },
      "amount": {
       "base": 6,
@@ -883,8 +883,8 @@
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
-      "skill": 2,
-      "max_health": 35
+      "skill": 3,
+      "max_health": 30
      },
      "minion": {
       "count": 4,
@@ -926,7 +926,6 @@
     "flat"
    ],
    "grants": [
-    "max_health",
     "speed"
    ],
    "tiers": [
@@ -938,8 +937,7 @@
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
-      "speed": 3,
-      "max_health": 15
+      "speed": 3
      },
      "minion": {
       "count": 4,
@@ -993,8 +991,8 @@
      "cast_time": 1,
      "channeled": false,
      "grants": {
-      "max_health": 30,
-      "defence": 1
+      "max_health": 40,
+      "defence": 2
      },
      "minion": {
       "count": 1,
@@ -1050,10 +1048,10 @@
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
-      "skill": 2,
-      "speed": 2,
-      "max_health": 25,
-      "defence": 2
+      "skill": 3,
+      "speed": 3,
+      "max_health": 30,
+      "defence": 3
      },
      "minion": {
       "count": 1,
@@ -1107,8 +1105,8 @@
      "cast_time": 0.6,
      "channeled": false,
      "grants": {
-      "skill": 8,
-      "max_health": 25
+      "skill": 10,
+      "max_health": 30
      },
      "minion": {
       "count": 1,
@@ -1163,8 +1161,8 @@
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
-      "skill": 6,
-      "speed": 2
+      "skill": 8,
+      "speed": 3
      },
      "shots": {
       "pattern": "FlankPattern",
@@ -1214,8 +1212,8 @@
      "cast_time": 0.2,
      "channeled": false,
      "grants": {
-      "max_health": 25,
-      "defence": 7
+      "max_health": 30,
+      "defence": 9
      },
      "amount": {
       "base": 15,
@@ -1250,8 +1248,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 2,
-      "speed": 8
+      "skill": 3,
+      "speed": 10
      }
     }
    ]
@@ -1279,7 +1277,7 @@
      "cast_time": 0.2,
      "channeled": false,
      "grants": {
-      "skill": 5
+      "skill": 6
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -1335,7 +1333,7 @@
      "cast_time": 0.2,
      "channeled": false,
      "grants": {
-      "speed": 6
+      "speed": 8
      },
      "shots": {
       "pattern": "RingPattern",
@@ -1387,8 +1385,8 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 4,
-      "max_health": 25
+      "skill": 5,
+      "max_health": 30
      },
      "amount": {
       "base": 50,
@@ -1423,8 +1421,8 @@
      "cast_time": 1.5,
      "channeled": true,
      "grants": {
-      "max_health": 20,
-      "defence": 5
+      "max_health": 25,
+      "defence": 6
      },
      "absorb": 0
     }
@@ -1454,7 +1452,7 @@
      "cast_time": 0.8,
      "channeled": false,
      "grants": {
-      "max_health": 20
+      "max_health": 25
      },
      "amount": {
       "base": 50,
@@ -1491,7 +1489,7 @@
     {
      "cast": "ash_snake_zoing",
      "kind": "bullet",
-     "cooldown": 1.6,
+     "cooldown": 2.4,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -1630,7 +1628,7 @@
     {
      "cast": "bloatcap_nudge",
      "kind": "bullet",
-     "cooldown": 1.4,
+     "cooldown": 2.1,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -2103,7 +2101,7 @@
     {
      "cast": "clustercap_lob",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 3.9,
      "cast_time": 0.7,
      "channeled": false,
      "shots": {
@@ -2272,7 +2270,7 @@
     {
      "cast": "coral_snake_zoing",
      "kind": "bullet",
-     "cooldown": 1.3,
+     "cooldown": 2,
      "cast_time": 0.4,
      "channeled": false,
      "shots": {
@@ -2500,7 +2498,7 @@
     {
      "cast": "gapcap_cone",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 2.6,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -2526,7 +2524,7 @@
     {
      "cast": "gapcap_double_cone",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 2.6,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -2634,7 +2632,7 @@
     {
      "cast": "grimling_bolt",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 3.9,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -2755,8 +2753,8 @@
      "chance": 0.15
     },
     {
-     "item": "heal1",
-     "spell": "heal",
+     "item": "zaap1",
+     "spell": "zaap",
      "tier": 1,
      "weakness": null,
      "chance": 0.1
@@ -2996,7 +2994,7 @@
     {
      "cast": "mole_erupt",
      "kind": "bullet",
-     "cooldown": 1.6,
+     "cooldown": 2.4,
      "cast_time": 0.45,
      "channeled": false,
      "shots": {
@@ -3112,7 +3110,7 @@
     {
      "cast": "moon_moth_scales",
      "kind": "bullet",
-     "cooldown": 1.1,
+     "cooldown": 1.7,
      "cast_time": 0.45,
      "channeled": false,
      "shots": {
@@ -3234,7 +3232,7 @@
     {
      "cast": "moss_golem_ring",
      "kind": "bullet",
-     "cooldown": 2.6,
+     "cooldown": 3.4,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -3370,7 +3368,7 @@
     {
      "cast": "moth_dust",
      "kind": "bullet",
-     "cooldown": 0.9,
+     "cooldown": 1.4,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -3506,7 +3504,7 @@
     {
      "cast": "mould_golem_ring",
      "kind": "bullet",
-     "cooldown": 2.6,
+     "cooldown": 3.4,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -3540,7 +3538,7 @@
     {
      "cast": "mould_golem_wide_ring",
      "kind": "bullet",
-     "cooldown": 2.6,
+     "cooldown": 3.4,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -3652,7 +3650,7 @@
     {
      "cast": "needle_moth_dart",
      "kind": "bullet",
-     "cooldown": 1.2,
+     "cooldown": 1.8,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -3777,7 +3775,7 @@
     {
      "cast": "normiecap_hard_pew",
      "kind": "bullet",
-     "cooldown": 1.2,
+     "cooldown": 1.8,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -3802,7 +3800,7 @@
     {
      "cast": "normiecap_pew",
      "kind": "bullet",
-     "cooldown": 1.2,
+     "cooldown": 1.8,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -3920,7 +3918,7 @@
     {
      "cast": "owl_bwoom",
      "kind": "effect",
-     "cooldown": 5,
+     "cooldown": 6.5,
      "cast_time": 2.5,
      "channeled": true,
      "amount": {
@@ -4208,7 +4206,7 @@
     {
      "cast": "rollcap_pew",
      "kind": "bullet",
-     "cooldown": 1.1,
+     "cooldown": 1.7,
      "cast_time": 0,
      "channeled": false,
      "shots": {
@@ -4400,8 +4398,8 @@
      "chance": 0.1
     },
     {
-     "item": "heal1",
-     "spell": "heal",
+     "item": "zaap1",
+     "spell": "zaap",
      "tier": 1,
      "weakness": null,
      "chance": 0.1
@@ -4630,7 +4628,7 @@
     {
      "cast": "shard_grimling_shards",
      "kind": "bullet",
-     "cooldown": 2.8,
+     "cooldown": 3.6,
      "cast_time": 0.45,
      "channeled": false,
      "shots": {
@@ -4757,7 +4755,7 @@
     {
      "cast": "shellcap_fan",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 3.9,
      "cast_time": 0.6,
      "channeled": false,
      "shots": {
@@ -4783,7 +4781,7 @@
     {
      "cast": "shellcap_volley",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 3.9,
      "cast_time": 0.6,
      "channeled": false,
      "shots": {
@@ -4880,7 +4878,7 @@
     {
      "cast": "snake_zoing",
      "kind": "bullet",
-     "cooldown": 1.4,
+     "cooldown": 2.1,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -5135,7 +5133,7 @@
     {
      "cast": "sporefly_dust",
      "kind": "bullet",
-     "cooldown": 0.9,
+     "cooldown": 1.4,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -5267,7 +5265,7 @@
     {
      "cast": "sporespitter_blam",
      "kind": "bullet",
-     "cooldown": 2.5,
+     "cooldown": 3.3,
      "cast_time": 0.3,
      "channeled": false,
      "shots": {
@@ -5293,7 +5291,7 @@
     {
      "cast": "sporespitter_lob",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 2.6,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -5323,7 +5321,7 @@
     {
      "cast": "sporespitter_wide_blam",
      "kind": "bullet",
-     "cooldown": 2.5,
+     "cooldown": 3.3,
      "cast_time": 0.3,
      "channeled": false,
      "shots": {
@@ -5423,8 +5421,8 @@
      "chance": 0.1
     },
     {
-     "item": "heal1",
-     "spell": "heal",
+     "item": "zaap1",
+     "spell": "zaap",
      "tier": 1,
      "weakness": null,
      "chance": 0.1
@@ -5529,7 +5527,7 @@
     {
      "cast": "stalker_blast",
      "kind": "bullet",
-     "cooldown": 1.7,
+     "cooldown": 2.6,
      "cast_time": 0.45,
      "channeled": false,
      "shots": {
@@ -5648,7 +5646,7 @@
     {
      "cast": "thornback_charge",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 3.9,
      "cast_time": 0.85,
      "channeled": false,
      "shots": {
@@ -6008,7 +6006,7 @@
     {
      "cast": "wisp_grimling_flicker",
      "kind": "bullet",
-     "cooldown": 1.8,
+     "cooldown": 2.7,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -6411,7 +6409,7 @@
     {
      "cast": "deathcap_fan",
      "kind": "bullet",
-     "cooldown": 2.6,
+     "cooldown": 3.4,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -6437,7 +6435,7 @@
     {
      "cast": "deathcap_volley",
      "kind": "bullet",
-     "cooldown": 2.6,
+     "cooldown": 3.4,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -6740,7 +6738,7 @@
     {
      "cast": "great_owl_bwoom",
      "kind": "effect",
-     "cooldown": 4,
+     "cooldown": 5.2,
      "cast_time": 2,
      "channeled": true,
      "amount": {
@@ -6878,7 +6876,7 @@
     {
      "cast": "grimlord_enrage",
      "kind": "bullet",
-     "cooldown": 1.4,
+     "cooldown": 2.1,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -6903,7 +6901,7 @@
     {
      "cast": "grimlord_spray",
      "kind": "bullet",
-     "cooldown": 2.4,
+     "cooldown": 3.1,
      "cast_time": 0.35,
      "channeled": false,
      "shots": {
@@ -7204,7 +7202,7 @@
     {
      "cast": "maulcap_cone",
      "kind": "bullet",
-     "cooldown": 1.8,
+     "cooldown": 2.7,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -7230,7 +7228,7 @@
     {
      "cast": "maulcap_double_cone",
      "kind": "bullet",
-     "cooldown": 1.8,
+     "cooldown": 2.7,
      "cast_time": 0.25,
      "channeled": false,
      "shots": {
@@ -7329,7 +7327,7 @@
     {
      "cast": "razorback_charge",
      "kind": "bullet",
-     "cooldown": 0.3,
+     "cooldown": 1.5,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -7357,8 +7355,8 @@
     }
    ],
    "id": "razorback",
-   "description": "Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch,\nchaining charge after charge for as long as you stay inside its very long sight line; only a\nhead-on wall hit stuns it into a real punish window. Fight it near trees and make the forest\ndo the work.\n",
-   "blurb": "Thornback variant: the recovery is gone. Each dash ends in a snap re-aim and a fresh launch, chaining charge after charge for as long as you stay inside its very long sight line; only a head-on wall hit stuns it into a real punish window. Fight it near trees and make the forest do the work.",
+   "description": "Thornback variant: the recovery is shorter, not absent. Each dash ends in a brief pant and a\nsnap re-aim, so it chains charge after charge for as long as you stay inside its very long\nsight line — but every link in that chain is a window, and a head-on wall hit stuns it into a\nmuch longer one. Fight it near trees and make the forest do the work.\n",
+   "blurb": "Thornback variant: the recovery is shorter, not absent. Each dash ends in a brief pant and a snap re-aim, so it chains charge after charge for as long as you stay inside its very long sight line — but every link in that chain is a window, and a head-on wall hit stuns it into a much longer one. Fight it near trees and make the forest do the work.",
    "art": "the thornback silhouette in near-black armour with red spike tips.",
    "casts": [
     "charge_dash"
@@ -7384,8 +7382,18 @@
      },
      {
       "from": "Charge",
-      "to": "Charge",
+      "to": "Recover",
       "when": "dash over"
+     },
+     {
+      "from": "Recover",
+      "to": "Charge",
+      "when": "timer"
+     },
+     {
+      "from": "Recover",
+      "to": "Idle",
+      "when": "lost"
      },
      {
       "from": "Charge",
@@ -14459,20 +14467,7 @@
    "family": "mycelium"
   }
  ],
- "starter_kit": [
-  {
-   "item": "pew1",
-   "spell": "Pew"
-  },
-  {
-   "item": "blam1",
-   "spell": "Blam"
-  },
-  {
-   "item": "fireball1",
-   "spell": "Fireball"
-  }
- ],
+ "starter_kit": [],
  "constants": {
   "px_per_tile": 8,
   "base_stats": {
