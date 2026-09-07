@@ -15,7 +15,7 @@ design/docs/mages.css
 /game/characters/enemies/swarm/
 
 # Python bytecode from the design tooling
-design/tools/__pycache__/
+__pycache__/
 
 # Symlink to the website repo (lownpho.github.io) for editing the game's page here
 /webpage
