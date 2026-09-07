@@ -62,30 +62,40 @@ func _ready() -> void:
 		slot_ui.release_focus()
 		GlobalInventory.spell_slots.at(0).clear_item()
 
-	# --- one parking spot: every slot's tip lands in the same place, clear of the strip ---
-	# The whole point of the custom tip — a per-slot position would put half of them over the
-	# strip they describe.
+	# --- parking spot: clear of the strip, level with the panel of items being described ---
+	# The whole point of the custom tip — a per-cursor position would put half of them over the
+	# strip they describe. It parks off the panel holding the slot, not off the strip (stretched
+	# to the full screen height) or the column (starts at the minimap): either would float the tip
+	# above the icons. Every slot in one panel must still land on the same spot.
 	if spell != null and not spell.get_modifiers().is_empty():
 		var strip: Control = ui.get_node("Strip")
 		GlobalInput._set_gamepad(true)
-		var seen := {}
-		for pair in [[GlobalInventory.spell_slots, "%SpellSlots", 0],
-				[GlobalInventory.bag_slots, "%Bag", GlobalInventory.BAG_SIZE - 1]]:
-			pair[0].at(pair[2]).set_item(spell)
-			var c: Control = ui.get_node(pair[1]).get_child(pair[2])
-			c.grab_focus()
-			var tip := _tip(ui)
-			if tip == null:
-				fails.append("no tooltip on %s" % c.name)
-			else:
-				seen[tip.global_position] = true
-				if tip.global_position.x < strip.global_position.x + strip.size.x:
-					fails.append("%s's tip overlaps the strip" % c.name)
-			c.release_focus()
-			await get_tree().process_frame
-			pair[0].at(pair[2]).clear_item()
-		if seen.size() > 1:
-			fails.append("tips park at %d different positions: %s" % [seen.size(), seen.keys()])
+		for group in [["%SpellSlots", "Strip/VBox/SpellsPanel", [0, GlobalInventory.SPELL_SLOTS - 1],
+					GlobalInventory.spell_slots],
+				["%Bag", "Strip/VBox/BagPanel", [0, GlobalInventory.BAG_SIZE - 1],
+					GlobalInventory.bag_slots]]:
+			var panel: Control = ui.get_node(group[1])
+			var seen := {}
+			for index in group[2]:
+				group[3].at(index).set_item(spell)
+				var c: Control = ui.get_node(group[0]).get_child(index)
+				c.grab_focus()
+				var tip := _tip(ui)
+				if tip == null:
+					fails.append("no tooltip on %s" % c.name)
+				else:
+					seen[tip.global_position] = true
+					if tip.global_position.x < strip.global_position.x + strip.size.x:
+						fails.append("%s's tip overlaps the strip" % c.name)
+					if not is_equal_approx(tip.global_position.y, panel.global_position.y):
+						fails.append("%s's tip sits at y %s, not level with %s at y %s"
+								% [c.name, tip.global_position.y, panel.name, panel.global_position.y])
+				c.release_focus()
+				await get_tree().process_frame
+				group[3].at(index).clear_item()
+			if seen.size() > 1:
+				fails.append("%s tips park at %d different positions: %s"
+						% [panel.name, seen.size(), seen.keys()])
 		GlobalInput._set_gamepad(false)
 
 	# --- blurb: text alone raises the tip, and an item with nothing at all stays silent ---

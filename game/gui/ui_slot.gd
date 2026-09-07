@@ -12,7 +12,7 @@ const _DENY_COLOR = Palette.RED
 # Tooltip stat icons: x offset of each 8x8 glyph in the y=8 row of ui.png.
 const _UI = preload("res://gui/ui.png")
 # Wrap column for the tooltip blurb, in the 320x180 content scale.
-const _BLURB_WIDTH = 72
+const _BLURB_WIDTH = 40
 const _ICON_X = {
 	"damage": 0, "cooldown": 8, "cast": 16,
 	"health": 24, "defence": 40, "skill": 48, "speed": 56,
@@ -80,7 +80,11 @@ func _tooltip_content() -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 1)
 	if not modifiers.is_empty():
-		box.add_child(_stat_grid(modifiers))
+		var grid := _stat_grid(modifiers)
+		# The blurb sets the panel's width, so the narrower stat block would otherwise sit
+		# left of it; centre the block while the blurb under it stays left justified.
+		grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		box.add_child(grid)
 	var label := Label.new()
 	label.text = blurb
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -146,14 +150,14 @@ func _draw() -> void:
 # Godot's own hover tooltip is not used. It pops where the cursor is, which across a grid of
 # 8px slots means a dozen different spots — most of them on top of the strip the tip is
 # describing, and none of them where your eye already is. So mouse hover and pad focus both
-# raise this panel instead, always parked in the same place beside the strip: a tip lands on
-# empty screen, covers nothing, and doesn't jump as you walk the slots. One tip exists at a
-# time, hence the statics.
+# raise this panel instead, parked beside the strip and level with the panel of items it is
+# describing: a tip lands on empty screen, covers nothing, and doesn't jump as you walk the slots.
+# One tip exists at a time, hence the statics.
 
 static var _tip: PanelContainer = null
 static var _tip_owner: MarginContainer = null
 
-# Gap between the strip's right edge and the tip, and the tip's inset from the strip's top.
+# Gap between the strip's right edge and the tip.
 const _TIP_MARGIN = 2
 
 var _hovered: bool = false
@@ -211,16 +215,32 @@ func _show_tip() -> void:
 	_tip = panel
 	_tip_owner = self
 
-# The one parking spot: right of the whole strip, top-aligned with it. The strip hugs the left
-# screen edge, so there is always room that way, and clamping only guards a tip too tall or too
-# wide for what's left. Falls back to hugging the slot when there is no strip to measure.
+# The parking spot: clear of the strip's right edge, level with the panel the slot sits in — the
+# spells panel for a spell tip, the bag for a bag tip. Neither the strip (stretched to the full
+# screen height) nor the column (starts up at the minimap) says where the items are, so anchoring
+# to either left the tip floating above the icons it describes. One spot per panel still means the
+# tip holds still while you walk that panel's slots. The strip hugs the left screen edge, so there
+# is always room that way, and clamping only guards a tip too tall or too wide for what's left.
+# Falls back to hugging the slot when there is no strip to measure.
 func _tip_position(tip_size: Vector2) -> Vector2:
 	var strip := _strip()
 	var pos := global_position + Vector2(size.x + _TIP_MARGIN, 0.0)
 	if strip:
-		pos = strip.global_position + Vector2(strip.size.x + _TIP_MARGIN, _TIP_MARGIN)
+		var anchor := _item_panel()
+		pos = Vector2(strip.global_position.x + strip.size.x + _TIP_MARGIN,
+				anchor.global_position.y if anchor else global_position.y)
 	var room := get_viewport_rect().size - tip_size
 	return Vector2(clampf(pos.x, 0.0, maxf(0.0, room.x)), clampf(pos.y, 0.0, maxf(0.0, room.y)))
+
+# The framed panel holding this slot's grid — the spells panel or the bag. Null for a slot mounted
+# bare, which then anchors on itself.
+func _item_panel() -> Control:
+	var n: Node = get_parent()
+	while n != null and not (n is CanvasLayer):
+		if n is PanelContainer:
+			return n
+		n = n.get_parent()
+	return null
 
 # The strip is the slot's outermost Control ancestor inside the CanvasLayer.
 func _strip() -> Control:
