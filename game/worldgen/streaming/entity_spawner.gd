@@ -3,9 +3,8 @@ class_name WgEntitySpawner
 ## and any per-room feature scenes (doors, signs, altars) — on chunk_loaded; chunk_unloaded frees
 ## them (spawn data regenerates identically, so walking away and back restores the same enemies in
 ## the same places — minus ones defeated this session — and re-places the same features). Defeated
-## tracking is keyed by stable entity_id and lives for this session only, EXCEPT rare/boss kills
-## (CreatureResource.rarity), which are also reported to GameState so a one-of-a-kind encounter
-## can't be refarmed by closing and reopening the game (or streaming the chunk out and back).
+## tracking is keyed by stable entity_id and lives for this session only, and rares and bosses are
+## no exception: a boss is a fight you can come back to next session, not a one-shot.
 ## Features are never defeat-tracked — they always re-place.
 extends Node
 
@@ -26,8 +25,6 @@ func _ready() -> void:
 		return
 	streamer.chunk_loaded.connect(_on_chunk_loaded)
 	streamer.chunk_unloaded.connect(_on_chunk_unloaded)
-	for eid in GameState.notable_kills:
-		defeated[eid] = true
 
 
 ## Entity ids of currently live enemies, sorted (test hook — deterministic to compare).
@@ -90,8 +87,6 @@ func _on_enemy_exiting(e: Node, eid: int) -> void:
 		return
 	if "health" in e and e.health <= 0:
 		defeated[eid] = true
-		if "data" in e and e.data != null and e.data.rarity != CreatureResource.Rarity.COMMON:
-			GameState.record_notable_kill(eid)
 
 
 func _scene_for(enemy_id: StringName) -> PackedScene:

@@ -64,6 +64,18 @@ signal dash_blocked
 ## effect registers itself here in setup() and clears it when its channel ends.
 var damage_absorber: Node2D = null
 
+## A rare or boss the player walks away from mid-fight forgets it: after this long without
+## taking a hit it heals to full, drops back to its opening beat and returns to where it
+## spawned, so an unwinnable attempt is never left as a chipped-away boss standing in a
+## corner. Commons are cheap to re-kill and never leash.
+const COMBAT_RESET_SECONDS := 60.0
+# When the last hit landed, and the spot to walk back to. The reset is checked in
+# _physics_process rather than on a Timer because an off-screen creature is process-disabled
+# (see the sleep enabler): the wall clock keeps running while it sleeps, so a creature the
+# player abandoned resets on the frame it wakes, before the fight can resume.
+var _last_hurt_ms: int = 0
+var _home_position: Vector2
+
 # Set once by die(); guards against the death re-running while queue_free is pending.
 var _dead: bool = false
 # Set when health ran out and the death beat took over — the creature is walking dead until
@@ -104,6 +116,7 @@ func _ready() -> void:
 		max_health = data.max_health
 		drops = data.drops
 	health = max_health
+	_home_position = global_position
 	hurtbox.hurt.connect(_on_hurt)
 	# Sleep while off-screen: disable the whole creature (AI, physics, timers, hurtbox)
 	# when it leaves the screen and wake it when it returns, so a large world only ticks
@@ -148,12 +161,39 @@ func is_dying() -> bool:
 	return _dying
 
 func _physics_process(delta: float) -> void:
+	_tick_combat_reset()
 	if _dash_until_ms > 0:
 		_drive_dash()
 	if _knockback == Vector2.ZERO:
 		return
 	move_and_collide(_knockback * delta)
 	_knockback = _knockback.move_toward(Vector2.ZERO, KNOCKBACK_DECAY * delta)
+
+# Only ever armed while the creature is actually damaged, so an untouched boss can't reset
+# itself and _last_hurt_ms needs no priming at spawn.
+func _tick_combat_reset() -> void:
+	if _dead or _dying or health >= max_health:
+		return
+	if data == null or data.rarity == CreatureResource.Rarity.COMMON:
+		return
+	if Time.get_ticks_msec() - _last_hurt_ms < int(COMBAT_RESET_SECONDS * 1000.0):
+		return
+	reset_combat()
+
+
+## Full heal, opening state, spawn point — the whole fight rewound. Public so a scripted
+## encounter (or a test) can rewind it on purpose rather than only by neglect.
+func reset_combat() -> void:
+	health = max_health
+	_last_hurt_ms = Time.get_ticks_msec()
+	global_position = _home_position
+	_end_dash()
+	_knockback = Vector2.ZERO
+	telegraph_off()
+	# start() re-enters the initial state through transition_to, so the beat that was running
+	# gets its exit() and hands back anything it borrowed (armour scale, animation speed).
+	fsm.start()
+
 
 func _drive_dash() -> void:
 	if not is_dashing():
@@ -355,6 +395,7 @@ func _on_hurt(damage: int, source: Node) -> void:
 	# start at 0 — so a death throe pointed at an ordinary state finds nothing eligible to hand
 	# off to and the corpse lies there playing its last frame forever.
 	health = maxi(health - damage, 0)
+	_last_hurt_ms = Time.get_ticks_msec()
 	# Emit before die() frees us so the floating number still spawns on a live node.
 	GlobalEvent.entity_damaged.emit(self, damage, source)
 	if health <= 0:

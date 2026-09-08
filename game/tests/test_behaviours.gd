@@ -4,7 +4,8 @@ extends Node
 ##   - a chaser re-fires (Attack -> Recover -> Attack), so Hold's readiness gate doesn't
 ##     deadlock the fire-then-wait cycle;
 ##   - a boss's PatternPicker keeps handing off (many state changes, >1 distinct attack),
-##     so the sibling-scan pool and can_run eligibility don't stall the dispatcher.
+##     so the sibling-scan pool and can_run eligibility don't stall the dispatcher;
+##   - a boss or rare left alone heals to full and goes home, while a common stays hurt.
 ## Run: godot --headless --path game res://tests/test_behaviours.tscn
 
 const CASES := {
@@ -68,6 +69,7 @@ func _ready() -> void:
 	fails += await _enrage_lap()
 	fails += await _telegraph()
 	fails += await _puffcap_chain()
+	fails += await _combat_reset()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -470,6 +472,65 @@ func _clear_pack() -> void:
 		node.get_parent().queue_free()
 	await get_tree().physics_frame
 	await get_tree().process_frame
+
+# The out-of-combat reset: a boss or rare left alone for COMBAT_RESET_SECONDS heals to full
+# and goes home, a common never does. The clock is wall-time, so the case ages the creature's
+# last-hit stamp rather than sitting here for a minute.
+func _combat_reset() -> int:
+	var target := CharacterBody2D.new()
+	target.add_to_group("player")
+	target.position = Vector2(48, 0)
+	add_child(target)
+
+	var fails := 0
+	# fae is a BOSS, razorback a RARE, wasp a COMMON — one case each, because "rares behave
+	# like bosses" is a rule about rarity and nothing else.
+	for spec in [["fae", true], ["razorback", true], ["wasp", false]]:
+		var id: String = spec[0]
+		var resets: bool = spec[1]
+		var enemy: Creature = load("res://characters/enemies/%s/%s.tscn" % [id, id]).instantiate()
+		enemy.position = Vector2.ZERO
+		add_child(enemy)
+		await get_tree().physics_frame
+		for child in enemy.get_children():   # headless never renders (see _run)
+			if child is VisibleOnScreenEnabler2D:
+				child.queue_free()
+		enemy.process_mode = Node.PROCESS_MODE_INHERIT
+		for _frame in 120:
+			await get_tree().physics_frame
+		enemy._on_hurt(1, null)
+		var hurt_health := enemy.health
+		# Shoved off its spawn tile on purpose: a boss that holds its ground (the fae hovers
+		# in place) would otherwise pass the walk-home check by never having left.
+		enemy.global_position += Vector2(64, 0)
+		# Age the fight past the window: the reset is checked against the wall clock every
+		# physics frame, so this is the whole minute without waiting one.
+		enemy._last_hurt_ms -= int(Creature.COMBAT_RESET_SECONDS * 1000.0) + 1
+		for _frame in 4:
+			await get_tree().physics_frame
+
+		fails += _expect("%s took the test hit (%d/%d)" % [id, hurt_health, enemy.max_health],
+			hurt_health < enemy.max_health)
+		if resets:
+			fails += _expect("%s healed to full after the window (%d/%d)"
+				% [id, enemy.health, enemy.max_health], enemy.health == enemy.max_health)
+			fails += _expect("%s went home (%.1f px away)"
+				% [id, enemy.global_position.length()], enemy.global_position.length() < 1.0)
+			print("  ok: %s reset out of combat — %d/%d hp, back at spawn"
+				% [id, enemy.health, enemy.max_health])
+		else:
+			fails += _expect("%s stayed hurt (%d/%d)" % [id, enemy.health, enemy.max_health],
+				enemy.health == hurt_health)
+			print("  ok: %s (common) never resets — %d/%d hp" % [id, enemy.health, enemy.max_health])
+
+		for node in get_tree().get_nodes_in_group("enemies"):
+			node.queue_free()
+		await get_tree().physics_frame
+		await get_tree().process_frame
+	target.queue_free()
+	await get_tree().physics_frame
+	return fails
+
 
 func _expect(what: String, cond: bool) -> int:
 	if cond:

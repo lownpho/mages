@@ -39,13 +39,6 @@ var fresh_start := false
 var pending_player_position: Vector2 = Vector2.ZERO
 var has_pending_position := false
 
-## entity_id -> true for defeated rare/boss enemies in the current world, so closing and
-## reopening the game (or streaming a chunk out and back) can't refarm a one-of-a-kind
-## encounter. Entity ids are a pure hash of [world_seed, room, index] (see Population),
-## so they never collide across different seeds — a fresh new_game() naturally starts
-## empty and stale entries from an abandoned seed are simply never matched again.
-var notable_kills: Dictionary = {}
-
 ## True while a scene that is NOT a run is live — the tutorial. Everything that would touch the
 ## player's saved run checks it: the save file here, and the bestiary in its own autoload.
 ## The tutorial is reachable from the title with a real run already saved, and it can be left
@@ -97,7 +90,6 @@ func new_game() -> void:
 		active_seed = 1  # keep 0 reserved for "unset"
 	fresh_start = true
 	has_pending_position = false
-	notable_kills = {}
 	# Fresh run: nothing carries over. The bestiary (its own autoload) is intentionally
 	# left alone so kill discoveries persist across runs.
 	GlobalMap.reset()
@@ -132,16 +124,9 @@ func continue_game() -> bool:
 		GlobalMap.restore(cfg.get_value("map", "state", {}))
 	else:
 		GlobalMap.reset()
-	notable_kills = cfg.get_value("world", "notable_kills", {})
 	_load_inventory(cfg)
 	return true
 
-
-## Record a defeated rare/boss enemy and persist immediately (rare enough that this is
-## cheap, and important enough not to lose to a crash between now and the next autosave).
-func record_notable_kill(entity_id: int) -> void:
-	notable_kills[entity_id] = true
-	persist()
 
 
 ## Periodic position autosave. Once the run is left (Quit to title frees the world, so the
@@ -202,7 +187,6 @@ func persist() -> void:
 	cfg.set_value("world", "version", SAVE_VERSION)
 	cfg.set_value("world", "seed", active_seed)
 	cfg.set_value("world", "signature", _world_signature())
-	cfg.set_value("world", "notable_kills", notable_kills)
 	cfg.set_value("map", "state", GlobalMap.to_dict())
 	if is_instance_valid(_tracked_player):
 		cfg.set_value("player", "position", _tracked_player.global_position)
