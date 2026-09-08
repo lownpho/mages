@@ -1,0 +1,770 @@
+[gd_scene format=3 uid="uid://ctrvq67o362d7"]
+
+[ext_resource type="Script" uid="uid://d1hykdoln6072" path="res://gui/controls/controls.gd" id="1_ctrl"]
+[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="2_ui"]
+[ext_resource type="Script" uid="uid://t5ikpl2vcl08" path="res://gui/bestiary/page_dots.gd" id="3_dots"]
+[ext_resource type="Script" uid="uid://g1o4nn8p7k3c" path="res://gui/controls/key_prompt.gd" id="4_prompt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_close"]
+atlas = ExtResource("2_ui")
+region = Rect2(24, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arrowl"]
+atlas = ExtResource("2_ui")
+region = Rect2(0, 24, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_arrowr"]
+atlas = ExtResource("2_ui")
+region = Rect2(8, 24, 8, 8)
+
+[node name="Controls" type="PanelContainer"]
+script = ExtResource("1_ctrl")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 3
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 3
+theme_override_constants/margin_bottom = 3
+
+[node name="Content" type="Control" parent="Margin"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 1
+offset_top = 1.0
+theme_override_constants/separation = 4
+
+[node name="Heading" type="Label" parent="Margin/Content/Header"]
+layout_mode = 2
+text = "controls -"
+
+[node name="PageTitle" type="Label" parent="Margin/Content/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CloseButton" type="TextureButton" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+focus_mode = 0
+texture_normal = SubResource("AtlasTexture_close")
+
+[node name="RowsArea" type="VBoxContainer" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="play" type="VBoxContainer" parent="Margin/Content/RowsArea"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Head" type="GridContainer" parent="Margin/Content/RowsArea/play"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+columns = 3
+
+[node name="Keyboard" type="Label" parent="Margin/Content/RowsArea/play/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "keyboard"
+horizontal_alignment = 1
+
+[node name="Pad" type="Label" parent="Margin/Content/RowsArea/play/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "pad"
+horizontal_alignment = 1
+
+[node name="Rest" type="Control" parent="Margin/Content/RowsArea/play/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Bindings" type="GridContainer" parent="Margin/Content/RowsArea/play"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 7
+columns = 3
+
+[node name="MoveKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_w" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/MoveKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_w"
+
+[node name="key_a" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/MoveKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_a"
+
+[node name="key_s" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/MoveKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_s"
+
+[node name="key_d" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/MoveKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_d"
+
+[node name="MovePad" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_stick_l" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/MovePad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_stick_l"
+
+[node name="MoveText" type="Label" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Move"
+horizontal_alignment = 1
+
+[node name="AimKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/AimKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse"
+
+[node name="AimPad" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_stick_r" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/AimPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_stick_r"
+
+[node name="AimText" type="Label" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Aim"
+horizontal_alignment = 1
+
+[node name="CastFirstKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_left" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastFirstKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_left"
+
+[node name="CastFirstPad" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_l1" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastFirstPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_l1"
+
+[node name="CastFirstText" type="Label" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Cast the first spell"
+horizontal_alignment = 1
+
+[node name="CastSecondKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_middle" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastSecondKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_middle"
+
+[node name="CastSecondPad" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_l2" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastSecondPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_l2"
+
+[node name="CastSecondText" type="Label" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Cast the second spell"
+horizontal_alignment = 1
+
+[node name="CastThirdKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_right" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastThirdKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_right"
+
+[node name="CastThirdPad" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_r1" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastThirdPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_r1"
+
+[node name="CastThirdText" type="Label" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Cast the third spell"
+horizontal_alignment = 1
+
+[node name="CastFourthKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_space" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastFourthKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_space"
+
+[node name="CastFourthPad" type="HBoxContainer" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_r2" type="TextureRect" parent="Margin/Content/RowsArea/play/Bindings/CastFourthPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_r2"
+
+[node name="CastFourthText" type="Label" parent="Margin/Content/RowsArea/play/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Cast the fourth spell"
+horizontal_alignment = 1
+
+[node name="HUD" type="VBoxContainer" parent="Margin/Content/RowsArea"]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 12
+
+[node name="Head" type="GridContainer" parent="Margin/Content/RowsArea/HUD"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+columns = 3
+
+[node name="Keyboard" type="Label" parent="Margin/Content/RowsArea/HUD/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "keyboard"
+horizontal_alignment = 1
+
+[node name="Pad" type="Label" parent="Margin/Content/RowsArea/HUD/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "pad"
+horizontal_alignment = 1
+
+[node name="Rest" type="Control" parent="Margin/Content/RowsArea/HUD/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Bindings" type="GridContainer" parent="Margin/Content/RowsArea/HUD"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 7
+columns = 3
+
+[node name="BagKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_esc" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/BagKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_esc"
+
+[node name="BagPad" type="HBoxContainer" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_start" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/BagPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_start"
+
+[node name="BagText" type="Label" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Open the bag; close a panel"
+horizontal_alignment = 1
+
+[node name="ZoomKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_equals" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/ZoomKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_equals"
+
+[node name="key_minus" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/ZoomKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_minus"
+
+[node name="mouse_wheel" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/ZoomKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_wheel"
+
+[node name="ZoomPad" type="HBoxContainer" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_y" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/ZoomPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_y"
+
+[node name="chord" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/ZoomPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"chord"
+
+[node name="pad_dpad_ud" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/ZoomPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_dpad_ud"
+
+[node name="ZoomText" type="Label" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Zoom the minimap"
+horizontal_alignment = 1
+
+[node name="HoverKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse" type="TextureRect" parent="Margin/Content/RowsArea/HUD/Bindings/HoverKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse"
+
+[node name="HoverPad" type="HBoxContainer" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="HoverText" type="Label" parent="Margin/Content/RowsArea/HUD/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Hover a bar for its numbers"
+horizontal_alignment = 1
+
+[node name="bag" type="VBoxContainer" parent="Margin/Content/RowsArea"]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 12
+
+[node name="Head" type="GridContainer" parent="Margin/Content/RowsArea/bag"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+columns = 3
+
+[node name="Keyboard" type="Label" parent="Margin/Content/RowsArea/bag/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "keyboard"
+horizontal_alignment = 1
+
+[node name="Pad" type="Label" parent="Margin/Content/RowsArea/bag/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "pad"
+horizontal_alignment = 1
+
+[node name="Rest" type="Control" parent="Margin/Content/RowsArea/bag/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Bindings" type="GridContainer" parent="Margin/Content/RowsArea/bag"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 7
+columns = 3
+
+[node name="LiftKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_enter" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/LiftKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_enter"
+
+[node name="LiftPad" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_a" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/LiftPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_a"
+
+[node name="LiftText" type="Label" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Lift or place an item"
+horizontal_alignment = 1
+
+[node name="BackKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_esc" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/BackKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_esc"
+
+[node name="BackPad" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_b" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/BackPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_b"
+
+[node name="BackText" type="Label" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Put it back; leave the panel"
+horizontal_alignment = 1
+
+[node name="FocusKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_up" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/FocusKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_up"
+
+[node name="key_down" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/FocusKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_down"
+
+[node name="key_left" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/FocusKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_left"
+
+[node name="key_right" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/FocusKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_right"
+
+[node name="FocusPad" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_dpad" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/FocusPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_dpad"
+
+[node name="FocusText" type="Label" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Move the focus; turn a page"
+horizontal_alignment = 1
+
+[node name="DropKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="key_q" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/DropKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"key_q"
+
+[node name="DropPad" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_x" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/DropPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_x"
+
+[node name="DropText" type="Label" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Drop the carried or focused item"
+horizontal_alignment = 1
+
+[node name="DragKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_drag" type="TextureRect" parent="Margin/Content/RowsArea/bag/Bindings/DragKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_drag"
+
+[node name="DragPad" type="HBoxContainer" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="DragText" type="Label" parent="Margin/Content/RowsArea/bag/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Drag between slots; right-click cancels"
+horizontal_alignment = 1
+
+[node name="map" type="VBoxContainer" parent="Margin/Content/RowsArea"]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 12
+
+[node name="Head" type="GridContainer" parent="Margin/Content/RowsArea/map"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+columns = 3
+
+[node name="Keyboard" type="Label" parent="Margin/Content/RowsArea/map/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "keyboard"
+horizontal_alignment = 1
+
+[node name="Pad" type="Label" parent="Margin/Content/RowsArea/map/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.627451, 0.576471, 0.556863, 1)
+text = "pad"
+horizontal_alignment = 1
+
+[node name="Rest" type="Control" parent="Margin/Content/RowsArea/map/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Bindings" type="GridContainer" parent="Margin/Content/RowsArea/map"]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 7
+columns = 3
+
+[node name="ZoomKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_wheel" type="TextureRect" parent="Margin/Content/RowsArea/map/Bindings/ZoomKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_wheel"
+
+[node name="ZoomPad" type="HBoxContainer" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_dpad_ud" type="TextureRect" parent="Margin/Content/RowsArea/map/Bindings/ZoomPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_dpad_ud"
+
+[node name="ZoomText" type="Label" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Zoom the open map"
+horizontal_alignment = 1
+
+[node name="PanKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_drag" type="TextureRect" parent="Margin/Content/RowsArea/map/Bindings/PanKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_drag"
+
+[node name="PanPad" type="HBoxContainer" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_stick_r" type="TextureRect" parent="Margin/Content/RowsArea/map/Bindings/PanPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_stick_r"
+
+[node name="PanText" type="Label" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Pan the open map"
+horizontal_alignment = 1
+
+[node name="PinKeys" type="HBoxContainer" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="mouse_left" type="TextureRect" parent="Margin/Content/RowsArea/map/Bindings/PinKeys"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"mouse_left"
+
+[node name="PinPad" type="HBoxContainer" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+alignment = 1
+
+[node name="pad_y" type="TextureRect" parent="Margin/Content/RowsArea/map/Bindings/PinPad"]
+layout_mode = 2
+script = ExtResource("4_prompt")
+icon = &"pad_y"
+
+[node name="PinText" type="Label" parent="Margin/Content/RowsArea/map/Bindings"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Pin or unpin a tile"
+horizontal_alignment = 1
+
+[node name="Nav" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -9.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="PrevPage" type="TextureButton" parent="Margin/Content/Nav"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+texture_normal = SubResource("AtlasTexture_arrowl")
+
+[node name="PageDots" type="Control" parent="Margin/Content/Nav"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("3_dots")
+
+[node name="NextPage" type="TextureButton" parent="Margin/Content/Nav"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+texture_normal = SubResource("AtlasTexture_arrowr")

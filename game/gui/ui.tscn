@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://ccpwooxs0hukx" path="res://gui/minimap/minimap_view.gd" id="7_mmap"]
 [ext_resource type="PackedScene" uid="uid://c8w66s0eu7mav" path="res://gui/bestiary/bestiary.tscn" id="8_besty"]
 [ext_resource type="PackedScene" uid="uid://b4c7i8maqnjuh" path="res://gui/map/map_panel.tscn" id="9_map"]
+[ext_resource type="PackedScene" path="res://gui/controls/controls.tscn" id="10_ctrl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_health"]
 atlas = ExtResource("3_vuvel")
@@ -276,6 +277,11 @@ layout_mode = 2
 theme_type_variation = &"IconButton"
 icon = SubResource("AtlasTexture_map")
 
+[node name="ControlsButton" type="Button" parent="Strip/VBox/BestiaryChip/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"IconButton"
+
 [node name="QuitButton" type="Button" parent="Strip/VBox/BestiaryChip/Buttons" unique_id=1769845180]
 unique_name_in_owner = true
 layout_mode = 2
@@ -305,5 +311,18 @@ offset_left = 52.0
 offset_top = 10.0
 offset_right = -10.0
 offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ControlsPanel" parent="." instance=ExtResource("10_ctrl")]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2

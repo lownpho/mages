@@ -1,8 +1,8 @@
 extends Node
-## Headless check on the controls page: every prompt it asks for exists in the input-prompt
-## atlas, and every row it builds fits the panel the HUD gives it. Both are silent failures
-## otherwise — a typo'd icon name leaves a hole, and an over-long row just clips off the
-## right edge — and neither shows up in any other test. Run:
+## Headless check on the controls page: every prompt it shows exists in the input-prompt
+## atlas, and every row fits the panel the HUD gives it. Both are silent failures otherwise —
+## a name the atlas dropped leaves a hole, and an over-long row just clips off the right edge
+## — and neither shows up in any other test. Run:
 ##   godot --headless --path game res://tests/test_controls_page.tscn
 
 const UI_SCENE := preload("res://gui/ui.tscn")
@@ -16,23 +16,22 @@ func _ready() -> void:
 	var ui := UI_SCENE.instantiate()
 	add_child(ui)
 	var panel: PanelContainer = ui.get_node("%ControlsPanel")
-	var rows: VBoxContainer = panel.get_node("%Rows")
-	# The table is centred in this area, so the area — not the table's own width — is what a
+	# The pages are centred in this area, so the area — not a table's own width — is what a
 	# row has to fit into.
 	var area: Control = panel.get_node("%RowsArea")
-	var pages: Array = panel.PAGES
+	var pages := area.get_children()
 
 	if pages.is_empty():
 		fails.append("no pages")
 
 	# --- every prompt resolves ---
+	# KeyPrompt leaves its texture null when the atlas has no region under that name, which on
+	# the page reads as a row that quietly lost an icon.
 	for page in pages:
-		for section in page["sections"]:
-			for row in section["rows"]:
-				for name_ in row["keys"] + row["pad"]:
-					if not KeyIcons.REGIONS.has(StringName(name_)):
-						fails.append("page '%s' asks for the icon '%s', which the atlas has no region for"
-								% [page["title"], name_])
+		for prompt in page.find_children("*", "KeyPrompt", true, false):
+			if prompt.texture == null:
+				fails.append("page '%s' asks for the icon '%s', which the atlas has no region for"
+						% [page.name, prompt.icon])
 	# The strip button that opens the page is looked up by name too, in ui.gd.
 	if KeyIcons.texture(&"hud_controls") == null:
 		fails.append("no hud_controls icon for the strip button")
@@ -40,35 +39,57 @@ func _ready() -> void:
 		fails.append("the strip button never got its icon")
 
 	# --- every row fits, on every page ---
-	# The panel is only 258px wide and the description column is whatever is left after the
-	# two prompt columns, so a long line is the easy way to break this page.
+	# The panel is only 258px wide, so a third of it is not much room for a description and a
+	# long line is the easy way to break this page. Every table shares the panel's width, so
+	# they all divide into the same thirds.
 	panel.visible = true
 	await get_tree().process_frame
 	await get_tree().process_frame
 	for i in pages.size():
 		panel._set_page(i)
 		await get_tree().process_frame
+		var page: Control = pages[i]
 		var used := 0.0
-		for child in rows.get_children():
+		for child in page.get_children():
 			var wide: float = (child as Control).get_combined_minimum_size().x
 			if wide > area.size.x:
 				fails.append("page '%s': a row wants %dpx of the %dpx the page has"
-						% [pages[i]["title"], wide, area.size.x])
-			# Each prompt has to fit its column, or it shoves the columns to its right out of
-			# line on that row alone. Headings and spacers have no columns to fit.
-			if child.get_child_count() == 3:
-				var columns := [panel.KEY_COL, panel.PAD_COL]
-				for c in columns.size():
+						% [page.name, wide, area.size.x])
+			# A table's cells are three equal columns in row-major order — keyboard prompts,
+			# pad prompts, description — and every table on the page has to agree on where
+			# those columns fall, or the page reads as a wobble rather than as a table.
+			# Section headings and spacers are not tables and have no columns.
+			if child is GridContainer:
+				var columns: Array[float] = []
+				for c in child.get_child_count():
 					var cell: Control = child.get_child(c)
-					var want: float = cell.get_combined_minimum_size().x
-					if want > columns[c]:
-						fails.append("page '%s': a %dpx prompt in the %dpx column by '%s'"
-								% [pages[i]["title"], want, columns[c], child.get_child(2).text])
+					if c < child.columns:
+						columns.append(cell.size.x)
+					elif absf(cell.size.x - columns[c % child.columns]) > 1.0:
+						fails.append("page '%s': '%s' is %dpx in a %dpx column"
+								% [page.name, cell.name, cell.size.x,
+										columns[c % child.columns]])
+				# A width that does not divide by three spreads the odd pixel, not a column.
+				if columns.max() - columns.min() > 1.0:
+					fails.append("page '%s': the '%s' columns are %s wide, not equal thirds"
+							% [page.name, child.name, columns])
 			used += (child as Control).get_combined_minimum_size().y
-		used += rows.get_theme_constant(&"separation") * maxi(0, rows.get_child_count() - 1)
+		used += page.get_theme_constant(&"separation") * maxi(0, page.get_child_count() - 1)
 		if used > area.size.y:
 			fails.append("page '%s': %d rows want %dpx of the %dpx the page has"
-					% [pages[i]["title"], rows.get_child_count(), used, area.size.y])
+					% [page.name, page.get_child_count(), used, area.size.y])
+
+	# --- one page is up at a time, and it is the one the title names ---
+	panel._set_page(0)
+	var shown := 0
+	for page in pages:
+		if (page as Control).visible:
+			shown += 1
+	if shown != 1:
+		fails.append("%d pages visible at once" % shown)
+	if panel.get_node("%PageTitle").text != String(pages[0].name):
+		fails.append("the title says '%s' on the '%s' page"
+				% [panel.get_node("%PageTitle").text, pages[0].name])
 
 	# --- paging clamps instead of wrapping, and the arrows say so ---
 	panel._set_page(-1)

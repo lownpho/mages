@@ -20,10 +20,21 @@ func _ready() -> void:
 	# Show the value overlay only while hovering the bar.
 	_setup_bar_hover(%HealthBar, %HealthValue)
 
-	# The bestiary and the map are the two HUD-strip overlays; opening one closes the other so
-	# only ever one is up (Esc / an outside click closes whichever is open — see _unhandled_input).
-	%BestiaryButton.pressed.connect(_toggle_panel.bind(%BestiaryPanel))
-	%MapButton.pressed.connect(_toggle_panel.bind(%MapPanel))
+	# The bestiary, the map and the controls page are the HUD-strip overlays; opening one
+	# closes the others so only ever one is up (Esc / an outside click closes whichever is
+	# open — see _unhandled_input). The strip button each one belongs to is here too: it is
+	# what wears the focus ring while its panel is up.
+	_panel_buttons = {
+		%BestiaryPanel: %BestiaryButton,
+		%MapPanel: %MapButton,
+		%ControlsPanel: %ControlsButton,
+	}
+	for panel in _panel_buttons:
+		_panel_buttons[panel].pressed.connect(_toggle_panel.bind(panel))
+	# The other two strip icons are cut from ui.png in the scene; this one comes out of the
+	# input-prompt atlas, whose regions move whenever an icon is added, so it is looked up by
+	# name instead of pinned to a rect.
+	%ControlsButton.icon = KeyIcons.texture(&"hud_controls")
 
 	# There's no pause menu by design and no process to "quit" on the web build, so this
 	# leaves the run to the title screen. The run autosaves continuously; persist() first
@@ -35,18 +46,22 @@ func _ready() -> void:
 
 	# Clicking a strip button grabs focus, leaving its ring stuck under the
 	# cursor — only pad navigation should keep focus visible.
-	for btn in [%BestiaryButton, %MapButton, %QuitButton]:
+	for btn in [%BestiaryButton, %MapButton, %ControlsButton, %QuitButton]:
 		btn.pressed.connect(func() -> void:
 			if not GlobalInput.using_gamepad:
 				btn.release_focus())
 
-	for p in [%BestiaryPanel, %MapPanel]:
+	for p in _panel_buttons:
 		p.visibility_changed.connect(_on_panel_visibility_changed.bind(p))
 	_wire_focus_ladder()
 
+## Panel -> the strip button that opens it, in strip order. Every "which panels are there"
+## question reads this, so adding one is a matter of adding a button and a line above.
+var _panel_buttons: Dictionary = {}
+
 func _toggle_panel(panel: Control) -> void:
 	var opening: bool = not panel.visible
-	for p in [%BestiaryPanel, %MapPanel]:
+	for p in _panel_buttons:
 		p.visible = p == panel and opening
 
 # An open panel owns the dpad and the sticks (map pan/zoom, bestiary paging), so slot
@@ -68,14 +83,14 @@ func _on_panel_visibility_changed(panel: Control) -> void:
 # ring for as long as the panel is up, painted on as its normal style. Cosmetic only: real
 # focus stays released, so the dpad still reaches the panel. Mouse play never lights it.
 func _show_panel_ring(panel: Control, on: bool) -> void:
-	var btn: Button = %BestiaryButton if panel == %BestiaryPanel else %MapButton
+	var btn: Button = _panel_buttons[panel]
 	if on:
 		btn.add_theme_stylebox_override(&"normal", btn.get_theme_stylebox(&"focus"))
 	else:
 		btn.remove_theme_stylebox_override(&"normal")
 
 # Pad focus runs as ONE 4-wide ladder down the strip — the 4 spell slots, the 8 bag slots,
-# then the 3 strip buttons — wired explicitly because Godot's geometric neighbour search
+# then the 4 strip buttons — wired explicitly because Godot's geometric neighbour search
 # wanders across the panel gaps between the containers. Both grids are authored at 4 columns,
 # matching this; the button row is the last rung. Edges point at themselves so focus parks
 # there instead of falling back to the geometric guess.
@@ -85,7 +100,7 @@ func _wire_focus_ladder() -> void:
 	var nav := []
 	for group in [%SpellSlots, %Bag]:
 		nav.append_array(group.get_children())
-	nav.append_array([%BestiaryButton, %MapButton, %QuitButton])
+	nav.append_array([%BestiaryButton, %MapButton, %ControlsButton, %QuitButton])
 	for i in nav.size():
 		var c: Control = nav[i]
 		var col := i % _NAV_COLUMNS
@@ -120,10 +135,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Pad B backs out of an open panel; only the joypad binding, so web Esc
 	# (which shares ui_cancel) keeps its hands off.
 	var pad_back: bool = event.is_action_pressed("ui_cancel") and event is InputEventJoypadButton
-	if %BestiaryPanel.visible or %MapPanel.visible:
+	if _any_panel_open():
 		if outside_click or menu_pressed or pad_back:
-			%BestiaryPanel.hide()
-			%MapPanel.hide()
+			_close_panels()
 			get_viewport().set_input_as_handled()
 	elif menu_pressed:
 		_toggle_slot_nav()
@@ -133,6 +147,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		# carrying): leave slot navigation.
 		_exit_slot_nav()
 		get_viewport().set_input_as_handled()
+
+func _any_panel_open() -> bool:
+	for p in _panel_buttons:
+		if p.visible:
+			return true
+	return false
+
+func _close_panels() -> void:
+	for p in _panel_buttons:
+		p.hide()
 
 # Controller inventory access: Start enters "slot navigation" — focus lands on the
 # first spell slot and GlobalInput.ui_captured stands gameplay input down so the
