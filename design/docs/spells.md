@@ -254,10 +254,10 @@ Two shotgun blasts back-to-back at the cursor, then cooldown: a double barrel, c
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | instant | Shotgun x3, 2 @ 0.4s | 4 + 0.2×skill = **9** | 4 | skill +5, defence +4 |
-| T2 | 2s | instant | Shotgun x3, 2 @ 0.4s | 6 + 0.25×skill = **12** | 4 | skill +9, defence +6 |
-| T3 | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
-| T3 *(insect)* | 2s | instant | Shotgun x5, 3 @ 0.3s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
+| T1 | 2s | instant | Shotgun x3, 2 @ 0.2s | 4 + 0.2×skill = **9** | 4 | skill +5, defence +4 |
+| T2 | 2s | instant | Shotgun x3, 2 @ 0.2s | 6 + 0.25×skill = **12** | 4 | skill +9, defence +6 |
+| T3 | 2s | instant | Shotgun x5, 3 @ 0.15s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
+| T3 *(insect)* | 2s | instant | Shotgun x5, 3 @ 0.15s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
 
 ### Ring
 

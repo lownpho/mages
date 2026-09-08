@@ -350,7 +350,7 @@
       "per_shot": 3,
       "spread_deg": 0,
       "count": 2,
-      "interval": 0.4
+      "interval": 0.2
      },
      "amount": {
       "base": 4,
@@ -380,7 +380,7 @@
       "per_shot": 3,
       "spread_deg": 0,
       "count": 2,
-      "interval": 0.4
+      "interval": 0.2
      },
      "amount": {
       "base": 6,
@@ -410,7 +410,7 @@
       "per_shot": 5,
       "spread_deg": 26,
       "count": 3,
-      "interval": 0.3
+      "interval": 0.15
      },
      "amount": {
       "base": 8,
@@ -443,7 +443,7 @@
       "per_shot": 5,
       "spread_deg": 26,
       "count": 3,
-      "interval": 0.3
+      "interval": 0.15
      },
      "amount": {
       "base": 8,
