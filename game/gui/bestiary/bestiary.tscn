@@ -57,6 +57,7 @@ focus_mode = 0
 texture_normal = SubResource("AtlasTexture_close")
 
 [node name="EntriesArea" type="CenterContainer" parent="Margin/Content" unique_id=574813598]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,6 +69,7 @@ grow_vertical = 2
 
 [node name="Entries" type="GridContainer" parent="Margin/Content/EntriesArea" unique_id=574813597]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(222, 142)
 layout_mode = 2
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2

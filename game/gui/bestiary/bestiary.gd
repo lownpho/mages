@@ -1,8 +1,11 @@
 extends PanelContainer
 
 ## The bestiary book: one page per biome, all of them in the book from the start. A page is
-## titled with its biome's name and shows that biome's roster as a fixed-cell grid (commons
-## first, then rares, the boss last) plus a completion counter — how many of the biome's enemies
+## titled with its biome's name and shows that biome's roster as a fixed grid — the grid reserves
+## its full 8-column block in the scene whatever the page holds, so the block centres in the same
+## spot and a card lands on the same row and column whether its page has twelve enemies or
+## twenty-five; a short page just leaves the rows below it empty (commons first, then rares, the
+## boss last) plus a completion counter — how many of the biome's enemies
 ## have been killed vs its total — and the whole-game total sits by the page nav. What fills in
 ## is the individual cards, which stay locked until their enemy is killed. Lives on the live
 ## game (no pausing), toggled from the skull button on the HUD strip; Esc or the close button
