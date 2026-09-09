@@ -10,7 +10,7 @@
 [sub_resource type="Resource" id="Drop_pew"]
 script = ExtResource("2_drop")
 item = ExtResource("3_pew")
-chance = 0.5
+chance = 0.05
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_halp"]
