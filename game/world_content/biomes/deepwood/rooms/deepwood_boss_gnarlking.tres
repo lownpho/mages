@@ -13,6 +13,7 @@ enemy_id = &"gnarlking"
 [sub_resource type="Resource" id="ste_0"]
 script = ExtResource("2_ste")
 pack_spread = 2.0
+centred = true
 members = Array[ExtResource("3_pm")]([SubResource("pm_0_0")])
 
 [sub_resource type="Resource" id="gen"]

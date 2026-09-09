@@ -8,7 +8,9 @@ class_name Population
 ##    single-type entry: one size draw (`randi_range(group_min, group_max)`);
 ##    mixed pack (members non-empty): one count draw per member
 ##    (`randi_range(count_min, count_max)`); then per entity ONE candidate-index draw
-##    (`rng.randi_range(0, candidates.size()-1)`).
+##    (`rng.randi_range(0, candidates.size()-1)`). The one exception is a `centred` entry's
+##    FIRST entity (the boss): it takes the candidate nearest the room centre and consumes NO
+##    draw, exactly like a CENTER feature. Every later entity of that group draws as usual.
 ##    An empty pool consumes no draw (`_weighted_pick` returns null without drawing). If the
 ##    candidate list is empty when an entity's turn comes, that entity (and every later one,
 ##    since the list only shrinks) is skipped with no draw — a `push_warning` fires once per
@@ -19,7 +21,8 @@ class_name Population
 ##    tiles from every opening. After each pick, every candidate within squared distance < 4 of
 ##    the picked tile is dropped (order-preserving linear filter — deterministic, no Dictionary).
 ##    When `pack_spread > 0`, all members of a group (single-type or mixed) cluster around the
-##    first placed entity's tile; `_filter_within` constrains subsequent picks to that radius.
+##    first placed entity's tile — the room centre for a `centred` entry; `_filter_within`
+##    constrains subsequent picks to that radius.
 ##
 ## 2. Features rng  [world_seed, NS_FEATURES, origin_slot.x, origin_slot.y]: consumed once per
 ##    `RoomTypeDef.features` entry, IN ARRAY ORDER. Per feature: one count draw
@@ -104,13 +107,17 @@ static func _populate_enemies(out: RoomOutput, spec: RoomSpec, config: GenConfig
 								[spec.origin_slot])
 						warned = true
 					continue
-				var pool := candidates
-				if pack_spread2 > 0 and pack_centre.x >= 0:
-					pool = _filter_within(candidates, pack_centre, out.width, pack_spread2)
-					if pool.is_empty():
-						pool = candidates
-				var i := rng.randi_range(0, pool.size() - 1)
-				var tile := _tile_from_index(out.width, pool[i])
+				var tile: Vector2i
+				if entry.centred and pack_centre.x < 0:
+					tile = _nearest_to_centre(candidates, out)   # deterministic — no draw
+				else:
+					var pool := candidates
+					if pack_spread2 > 0 and pack_centre.x >= 0:
+						pool = _filter_within(candidates, pack_centre, out.width, pack_spread2)
+						if pool.is_empty():
+							pool = candidates
+					var i := rng.randi_range(0, pool.size() - 1)
+					tile = _tile_from_index(out.width, pool[i])
 				if pack_centre.x < 0:
 					pack_centre = tile
 				out.spawns.append({"enemy_id": q["enemy_id"], "tile": tile})
@@ -164,6 +171,24 @@ static func feature_tile(out: RoomOutput) -> Vector2i:
 				if dd < best_d:
 					best_d = dd
 					best = Vector2i(x, y)
+	return best
+
+
+## The candidate nearest the room centre, row-major ties first — the boss's tile for a `centred`
+## entry. Drawn from the door-clear candidate list (not the raw centre tile) so a centred spawn
+## keeps the same door-distance and no-stacking guarantees as every other enemy. Callers only
+## reach it with a non-empty list.
+static func _nearest_to_centre(candidates: PackedInt32Array, out: RoomOutput) -> Vector2i:
+	var cx := out.width >> 1
+	var cy := out.height >> 1
+	var best := Vector2i(-1, -1)
+	var best_d := 0x7fffffffffffffff
+	for idx in candidates:
+		var t := _tile_from_index(out.width, idx)
+		var dd := (t.x - cx) * (t.x - cx) + (t.y - cy) * (t.y - cy)
+		if dd < best_d:
+			best_d = dd
+			best = t
 	return best
 
 

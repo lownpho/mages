@@ -3,6 +3,12 @@
 [ext_resource type="Script" uid="uid://bqimktg6tyv2k" path="res://worldgen/core/biome_pair_rule.gd" id="1_pair"]
 [ext_resource type="Script" uid="uid://c5dh8e8yol1mn" path="res://worldgen/core/adjacency_rules.gd" id="2_rules"]
 
+[sub_resource type="Resource" id="Resource_h4wsh"]
+script = ExtResource("1_pair")
+biome_a = &"glade_start"
+biome_b = &"deepwood_mimic"
+metadata/_custom_type_script = "uid://bqimktg6tyv2k"
+
 [sub_resource type="Resource" id="req_start_veggie"]
 script = ExtResource("1_pair")
 biome_a = &"glade_start"
@@ -21,3 +27,4 @@ biome_b = &"deepwood_mimic"
 [resource]
 script = ExtResource("2_rules")
 required = Array[ExtResource("1_pair")]([SubResource("req_start_veggie"), SubResource("req_veggie_deepwood"), SubResource("req_deepwood_mimic")])
+forbidden = Array[ExtResource("1_pair")]([SubResource("Resource_h4wsh")])

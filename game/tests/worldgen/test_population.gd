@@ -1,7 +1,8 @@
 extends Node
 ## Headless tests for Layer 4 population: determinism, guaranteed placement (candidate-set
 ## sampling never silently drops an entity while candidates remain), distance constraints,
-## budgets, feature lists, empty traversal rooms, and world-wide entity-id uniqueness. Run:
+## centred (boss) placement, budgets, feature lists, empty traversal rooms, and world-wide
+## entity-id uniqueness. Run:
 ##   godot --headless --path game res://tests/worldgen/test_population.tscn
 
 const SEEDS := 60
@@ -14,6 +15,7 @@ func _ready() -> void:
 	var checked := 0
 	var with_spawns := 0
 	var with_features := 0
+	var with_centred := 0
 	for i in SEEDS:
 		if i % 20 == 0:
 			print("  seed %d/%d" % [i, SEEDS])
@@ -104,6 +106,25 @@ func _ready() -> void:
 					and enemies == 0 and _has_candidate(out, u, config):
 				fails.append("no enemy placed despite candidates (seed %d %s)" % [seed_v, u.type_id])
 
+			# CENTRED entries put their group's first entity on the candidate nearest the room
+			# centre — the boss stands in the middle of its arena, not wherever the draw fell.
+			var centred_pool := false
+			for e in rt.enemies:
+				if e.centred:
+					centred_pool = true
+					break
+			if centred_pool and enemies > 0:
+				with_centred += 1
+				var centre_tile := _centre_candidate(out, u, config)
+				var on_centre := false
+				for sp in out.spawns:
+					if sp.has("enemy_id") and sp["tile"] == centre_tile:
+						on_centre = true
+						break
+				if not on_centre:
+					fails.append("centred entry not on the centre candidate %s (seed %d %s)"
+							% [centre_tile, seed_v, u.type_id])
+
 			# Distance constraints apply to ENEMIES only.
 			var openings := RoomBuilder._opening_tiles(u, out.width, out.height)
 			for a in out.spawns.size():
@@ -138,8 +159,8 @@ func _ready() -> void:
 				break
 		if not fails.is_empty():
 			break
-	print("population: %d rooms checked (%d with spawns, %d with features) over %d seeds"
-			% [checked, with_spawns, with_features, SEEDS])
+	print("population: %d rooms checked (%d with spawns, %d with features, %d centred) over %d seeds"
+			% [checked, with_spawns, with_features, with_centred, SEEDS])
 	if with_spawns == 0:
 		fails.append("no room ever spawned anything — pools broken?")
 	if with_features == 0:
@@ -198,6 +219,36 @@ func _ready() -> void:
 			print("  FAIL: ", f)
 		print("FAILED: %d" % fails.size())
 	get_tree().quit(0 if fails.is_empty() else 1)
+
+
+## The valid candidate tile nearest the room centre (row-major ties first), or (-1, -1) when the
+## room has none — mirrors Population._nearest_to_centre over the same candidate rule.
+func _centre_candidate(out: RoomOutput, u: RoomSpec, config: GenConfig) -> Vector2i:
+	var openings := RoomBuilder._opening_tiles(u, out.width, out.height)
+	var d2 := config.spawn_min_dist_from_doors * config.spawn_min_dist_from_doors
+	var cx := out.width >> 1
+	var cy := out.height >> 1
+	var best := Vector2i(-1, -1)
+	var best_d := 0x7fffffffffffffff
+	for y in out.height:
+		for x in out.width:
+			if out.reachability_map[y * out.width + x] == 0:
+				continue
+			var ok := true
+			for j in openings.size():
+				var dx := openings[j] % out.width - x
+				@warning_ignore("integer_division")
+				var dy := openings[j] / out.width - y
+				if dx * dx + dy * dy < d2:
+					ok = false
+					break
+			if not ok:
+				continue
+			var dd := (x - cx) * (x - cx) + (y - cy) * (y - cy)
+			if dd < best_d:
+				best_d = dd
+				best = Vector2i(x, y)
+	return best
 
 
 ## True when the room has at least one valid enemy candidate tile (reachable + far enough from

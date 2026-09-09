@@ -68,7 +68,7 @@
 script = ExtResource("cfg")
 room_slot_tiles = 16
 biome_slots = 6
-world_width_cells = 3
+world_width_cells = 5
 doors_per_biome_border = 4
 pocket_seal_max_tiles = 6
 spawn_min_dist_from_doors = 2
