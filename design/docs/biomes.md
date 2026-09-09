@@ -78,7 +78,7 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 
 ## Deepwood (T3)
 
-The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.
+The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — three times the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.
 
 ### Deepwood
 
@@ -87,29 +87,29 @@ The animal sub-biome, and the bulk of the forest. The rooms run a teach-then-tes
 | Tier | Room | Shape | Count | Enemy group variations |
 |---|---|---|---|---|
 | T0 | teach_grimling | empty | 1 | 2-3x grimling |
-| T0 | teach_mole | empty | 1 | 1x mole |
-| T0 | teach_moss_golem | empty | 1 | 1x moss_golem |
 | T0 | teach_moth | empty | 1 | 2-3x moth |
-| T0 | teach_open | empty | w2 | 2-3x moth - 2-3x grimling - 1x snake - 1x owl - 1x stalker - 1x mole - 1x thornback - 1x moss_golem |
+| T0 | teach_open | empty | w2 | 2-3x moth - 2-3x grimling - 1x snake - 1x owl |
 | T0 | teach_owl | empty | 1 | 1x owl |
 | T0 | teach_snake | empty | 1 | 1x snake |
-| T0 | teach_stalker | scatter | 1 | 1x stalker |
-| T0 | teach_thornback | cave | 1 | 1x thornback |
 | T1 | pair_cave | cave | w4 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling |
 | T1 | pair_scatter | scatter | w3 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling |
-| T2 | group_open | empty | w2 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling - 2x moon_moth + 2x grimling - 2x needle_moth + 1x stalker - 1x coral_snake + 2x moth - 1x ash_snake + 1x owl - 2x shard_grimling + 1x snake - 2x wisp_grimling + 1x thornback |
-| T2 | group_trees | cave | w3 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling - 2x moon_moth + 2x grimling - 2x needle_moth + 1x stalker - 1x coral_snake + 2x moth - 1x ash_snake + 1x owl - 2x shard_grimling + 1x snake - 2x wisp_grimling + 1x thornback |
-| T2 | teach_ash_snake | empty | 1 | 1x ash_snake |
+| T1 | teach_mole | empty | 1 | 1x mole |
+| T1 | teach_moss_golem | empty | 1 | 1x moss_golem |
+| T1 | teach_stalker | scatter | 1 | 1x stalker |
+| T1 | teach_thornback | cave | 1 | 1x thornback |
+| T2 | group_open | empty | w2 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling - 2x moon_moth + 2x grimling - 2x needle_moth + 1x stalker - 1x coral_snake + 2x moth |
+| T2 | group_trees | cave | w3 | 2x moth + 1x snake - 2x moth + 2x grimling - 2x grimling + 1x owl - 1x snake + 1x owl - 1x stalker + 2x moth - 1x stalker + 2x grimling - 1x mole + 2x moth - 1x owl + 1x mole - 1x thornback + 1x snake - 1x moss_golem + 2x grimling - 2x moon_moth + 2x grimling - 2x needle_moth + 1x stalker - 1x coral_snake + 2x moth |
 | T2 | teach_coral_snake | empty | 1 | 1x coral_snake |
 | T2 | teach_moon_moth | empty | 1 | 2x moon_moth |
 | T2 | teach_needle_moth | empty | 1 | 2x needle_moth |
-| T2 | teach_shard_grimling | empty | 1 | 2x shard_grimling |
-| T2 | teach_wisp_grimling | empty | 1 | 2x wisp_grimling |
 | T3 | boss_gnarlking | arena | 1 | 1x gnarlking |
 | T3 | rare_great_owl | empty | w1 | 1x great_owl |
 | T3 | rare_grimlord | empty | w1 | 1x grimlord + 2x grimling |
 | T3 | rare_razorback | cave | w1 | 1x razorback |
 | T3 | swarm_trees | cave | w3 | 2x needle_moth + 2x grimling - 2x moon_moth + 2x shard_grimling - 1x ash_snake + 1x stalker + 2x moth - 1x coral_snake + 1x owl + 2x wisp_grimling - 1x thornback + 2x moth + 1x snake - 1x moss_golem + 2x wisp_grimling + 1x moon_moth - 1x mole + 2x shard_grimling + 1x coral_snake - 1x stalker + 1x ash_snake + 2x grimling |
+| T3 | teach_ash_snake | empty | 1 | 1x ash_snake |
+| T3 | teach_shard_grimling | empty | 1 | 2x shard_grimling |
+| T3 | teach_wisp_grimling | empty | 1 | 2x wisp_grimling |
 
 #### Deepwood drops
 
@@ -117,12 +117,12 @@ The animal sub-biome, and the bulk of the forest. The rooms run a teach-then-tes
 |---|---|
 | Ash Snake | **zoing t2** (5%) |
 | Coral Snake | **zoing t2** (5%) |
-| Grimling | **pew t2** (50%), **halp t2** (2%) |
+| Grimling | **pew t2** (5%), **halp t2** (2%) |
 | Mole | **ring t2** (10%) |
 | Moon Moth | **ring t2** (5%) |
 | Moss Golem | **ring t2** (8%), **nope** (30%) |
 | Moth | **pew t2** (5%) |
-| Needle Moth | **snipe t2** (5%) |
+| Needle Moth | **snipe t2** (10%) |
 | Owl | **bwoom t2** (5%), **pew t2** (7%) |
 | Shard Grimling | **blam t2** (5%), **halp t2** (2%) |
 | Snake | **zoing t2** (5%) |
@@ -146,7 +146,7 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 | T1 | pair_cave | cave | w3 | 1x bramble_stalker + 2x moth - 2x shade + 2x grimling - 2x cinderstone + 1x snake - 2x bristlestone + 1x stalker - 1x shade + 1x bramble_stalker - 1x cinderstone + 1x bristlestone + 2x moth - 1x bramble_stalker + 2x grimling - 1x shade + 1x moss_golem |
 | T1 | teach_bristlestone | scatter | 1 | 2x bristlestone |
 | T1 | teach_cinderstone | scatter | 1 | 2x cinderstone |
-| T3 | gate_mushroom | cave | 1 | *(empty)* |
+| T3 | gate_mushroom | cave | 3 | *(empty)* |
 | T3 | rare_adder | empty | 1 | 1x adder + 2x cinderstone |
 | T3 | rare_elder_stalker | empty | 1 | 1x elder_stalker + 2x bramble_stalker |
 | T3 | rare_umbra | empty | 1 | 1x umbra + 2x shade |
@@ -158,7 +158,7 @@ A small pocket off the side of the animal deepwood, always bordering it. Props w
 | Bramble Stalker | **ring t2** (6%) |
 | Bristlestone | **ploop t2** (4%) |
 | Cinderstone | **oop t2** (4%) |
-| Grimling | **pew t2** (50%), **halp t2** (2%) |
+| Grimling | **pew t2** (5%), **halp t2** (2%) |
 | Moss Golem | **ring t2** (8%), **nope** (30%) |
 | Moth | **pew t2** (5%) |
 | Shade | **blink t2** (8%), **pew t3** (5%) |

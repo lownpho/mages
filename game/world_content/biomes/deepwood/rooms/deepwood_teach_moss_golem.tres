@@ -19,6 +19,7 @@ script = ExtResource("1_def")
 id = &"deepwood_teach_moss_golem"
 biome = &"deepwood"
 min_size_slots = Vector2i(2, 2)
+difficulty = 1
 weight = 0
 min_per_biome = 1
 max_per_biome = 1

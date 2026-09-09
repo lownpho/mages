@@ -1236,6 +1236,7 @@
     "flat"
    ],
    "grants": [
+    "defence",
     "skill",
     "speed"
    ],
@@ -1248,8 +1249,9 @@
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 3,
-      "speed": 10
+      "skill": 10,
+      "speed": 10,
+      "defence": 5
      }
     }
    ]
@@ -2611,7 +2613,7 @@
      "spell": "pew",
      "tier": 2,
      "weakness": null,
-     "chance": 0.5
+     "chance": 0.05
     },
     {
      "item": "halp2",
@@ -3650,7 +3652,7 @@
      "spell": "snipe",
      "tier": 2,
      "weakness": null,
-     "chance": 0.05
+     "chance": 0.1
     }
    ],
    "attacks": [
@@ -8410,7 +8412,7 @@
    "id": "deepwood",
    "name": "Deepwood",
    "tier_label": "T3",
-   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — twice the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.",
+   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — three times the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.",
    "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.",
    "biomes": [
     "deepwood",
@@ -8553,7 +8555,7 @@
    "source": "game/world_content/biomes/deepwood/deepwood.tres",
    "family": "deepwood",
    "size_cells": [
-    2,
+    3,
     2
    ],
    "fallback_room_type": "deepwood_teach_open",
@@ -8582,29 +8584,29 @@
    "planned": false,
    "room_ids": [
     "deepwood_teach_grimling",
-    "deepwood_teach_mole",
-    "deepwood_teach_moss_golem",
     "deepwood_teach_moth",
     "deepwood_teach_open",
     "deepwood_teach_owl",
     "deepwood_teach_snake",
-    "deepwood_teach_stalker",
-    "deepwood_teach_thornback",
     "deepwood_pair_cave",
     "deepwood_pair_scatter",
+    "deepwood_teach_mole",
+    "deepwood_teach_moss_golem",
+    "deepwood_teach_stalker",
+    "deepwood_teach_thornback",
     "deepwood_group_open",
     "deepwood_group_trees",
-    "deepwood_teach_ash_snake",
     "deepwood_teach_coral_snake",
     "deepwood_teach_moon_moth",
     "deepwood_teach_needle_moth",
-    "deepwood_teach_shard_grimling",
-    "deepwood_teach_wisp_grimling",
     "deepwood_boss_gnarlking",
     "deepwood_rare_great_owl",
     "deepwood_rare_grimlord",
     "deepwood_rare_razorback",
-    "deepwood_swarm_trees"
+    "deepwood_swarm_trees",
+    "deepwood_teach_ash_snake",
+    "deepwood_teach_shard_grimling",
+    "deepwood_teach_wisp_grimling"
    ]
   },
   {
@@ -8612,8 +8614,8 @@
    "source": "game/world_content/biomes/deepwood_mimic/deepwood_mimic.tres",
    "family": "deepwood",
    "size_cells": [
-    2,
-    1
+    1,
+    2
    ],
    "fallback_room_type": "deepwood_mimic_open",
    "name": "Mimic deepwood",
@@ -10333,64 +10335,6 @@
    "family": "deepwood"
   },
   {
-   "id": "deepwood_teach_mole",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_mole.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_moss_golem",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_moss_golem.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
    "id": "deepwood_teach_moth",
    "biome": "deepwood",
    "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_moth.tres",
@@ -10475,46 +10419,6 @@
        "max": 1
       }
      ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
     }
    ],
    "biome_name": "Deepwood",
@@ -10579,64 +10483,6 @@
    "family": "deepwood"
   },
   {
-   "id": "deepwood_teach_stalker",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_stalker.tres",
-   "difficulty": 0,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_thornback",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_thornback.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
    "id": "deepwood_pair_cave",
    "biome": "deepwood",
    "source": "game/world_content/biomes/deepwood/rooms/deepwood_pair_cave.tres",
@@ -10645,7 +10491,7 @@
    "footprint_blob": true,
    "weight": 4,
    "min_per_biome": 0,
-   "max_per_biome": 24,
+   "max_per_biome": 36,
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
@@ -10816,7 +10662,7 @@
    "footprint_blob": false,
    "weight": 3,
    "min_per_biome": 0,
-   "max_per_biome": 20,
+   "max_per_biome": 30,
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
@@ -10971,6 +10817,122 @@
        "enemy": "grimling",
        "min": 2,
        "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_mole",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_mole.tres",
+   "difficulty": 1,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "mole",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_moss_golem",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_moss_golem.tres",
+   "difficulty": 1,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "moss_golem",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_stalker",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_stalker.tres",
+   "difficulty": 1,
+   "generator": "scatter",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "stalker",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_thornback",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_thornback.tres",
+   "difficulty": 1,
+   "generator": "cave",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "thornback",
+       "min": 1,
+       "max": 1
       }
      ]
     }
@@ -11189,51 +11151,6 @@
        "max": 2
       }
      ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "ash_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "shard_grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "wisp_grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      }
-     ]
     }
    ],
    "biome_name": "Deepwood",
@@ -11248,7 +11165,7 @@
    "footprint_blob": true,
    "weight": 3,
    "min_per_biome": 0,
-   "max_per_biome": 8,
+   "max_per_biome": 12,
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
@@ -11448,80 +11365,6 @@
        "max": 2
       }
      ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "ash_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "shard_grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "wisp_grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_ash_snake",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_ash_snake.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ash_snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
     }
    ],
    "biome_name": "Deepwood",
@@ -11605,64 +11448,6 @@
      "members": [
       {
        "enemy": "needle_moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_shard_grimling",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_shard_grimling.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shard_grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_wisp_grimling",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_wisp_grimling.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "wisp_grimling",
        "min": 2,
        "max": 2
       }
@@ -11802,7 +11587,7 @@
    "footprint_blob": true,
    "weight": 3,
    "min_per_biome": 0,
-   "max_per_biome": 20,
+   "max_per_biome": 30,
    "groups_min": 1,
    "groups_max": 1,
    "scale_with_size": true,
@@ -11953,6 +11738,93 @@
       },
       {
        "enemy": "grimling",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_ash_snake",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_ash_snake.tres",
+   "difficulty": 3,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "ash_snake",
+       "min": 1,
+       "max": 1
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_shard_grimling",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_shard_grimling.tres",
+   "difficulty": 3,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "shard_grimling",
+       "min": 2,
+       "max": 2
+      }
+     ]
+    }
+   ],
+   "biome_name": "Deepwood",
+   "family": "deepwood"
+  },
+  {
+   "id": "deepwood_teach_wisp_grimling",
+   "biome": "deepwood",
+   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_wisp_grimling.tres",
+   "difficulty": 3,
+   "generator": "empty",
+   "footprint_blob": false,
+   "weight": 0,
+   "min_per_biome": 1,
+   "max_per_biome": 1,
+   "groups_min": 1,
+   "groups_max": 1,
+   "scale_with_size": false,
+   "features": [],
+   "variations": [
+    {
+     "weight": 1,
+     "members": [
+      {
+       "enemy": "wisp_grimling",
        "min": 2,
        "max": 2
       }
@@ -12329,8 +12201,8 @@
    "generator": "cave",
    "footprint_blob": true,
    "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
+   "min_per_biome": 3,
+   "max_per_biome": 3,
    "groups_min": 0,
    "groups_max": 0,
    "scale_with_size": true,

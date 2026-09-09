@@ -202,52 +202,6 @@ weight = 2
 pack_spread = 2.0
 members = Array[ExtResource("3_pm")]([SubResource("pm_12_0"), SubResource("pm_12_1")])
 
-[sub_resource type="Resource" id="pm_13_0"]
-script = ExtResource("3_pm")
-enemy_id = &"ash_snake"
-
-[sub_resource type="Resource" id="pm_13_1"]
-script = ExtResource("3_pm")
-enemy_id = &"owl"
-
-[sub_resource type="Resource" id="ste_13"]
-script = ExtResource("2_ste")
-weight = 2
-pack_spread = 2.0
-members = Array[ExtResource("3_pm")]([SubResource("pm_13_0"), SubResource("pm_13_1")])
-
-[sub_resource type="Resource" id="pm_14_0"]
-script = ExtResource("3_pm")
-enemy_id = &"shard_grimling"
-count_min = 2
-count_max = 2
-
-[sub_resource type="Resource" id="pm_14_1"]
-script = ExtResource("3_pm")
-enemy_id = &"snake"
-
-[sub_resource type="Resource" id="ste_14"]
-script = ExtResource("2_ste")
-weight = 2
-pack_spread = 2.0
-members = Array[ExtResource("3_pm")]([SubResource("pm_14_0"), SubResource("pm_14_1")])
-
-[sub_resource type="Resource" id="pm_15_0"]
-script = ExtResource("3_pm")
-enemy_id = &"wisp_grimling"
-count_min = 2
-count_max = 2
-
-[sub_resource type="Resource" id="pm_15_1"]
-script = ExtResource("3_pm")
-enemy_id = &"thornback"
-
-[sub_resource type="Resource" id="ste_15"]
-script = ExtResource("2_ste")
-weight = 2
-pack_spread = 2.0
-members = Array[ExtResource("3_pm")]([SubResource("pm_15_0"), SubResource("pm_15_1")])
-
 [sub_resource type="Resource" id="feat_fountain"]
 script = ExtResource("3_qklp4")
 scene = ExtResource("4_fountain")
@@ -259,7 +213,7 @@ id = &"deepwood_group_open"
 biome = &"deepwood"
 difficulty = 2
 weight = 2
-enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7"), SubResource("ste_8"), SubResource("ste_9"), SubResource("ste_10"), SubResource("ste_11"), SubResource("ste_12"), SubResource("ste_13"), SubResource("ste_14"), SubResource("ste_15")])
+enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7"), SubResource("ste_8"), SubResource("ste_9"), SubResource("ste_10"), SubResource("ste_11"), SubResource("ste_12")])
 enemy_groups_min = 1
 enemy_groups_max = 1
 features = Array[ExtResource("3_qklp4")]([SubResource("feat_fountain")])

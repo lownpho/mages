@@ -34,27 +34,6 @@ enemy_id = &"owl"
 weight = 2
 pack_spread = 2.0
 
-[sub_resource type="Resource" id="ste_4"]
-script = ExtResource("2_ste")
-enemy_id = &"stalker"
-weight = 2
-pack_spread = 2.0
-
-[sub_resource type="Resource" id="ste_5"]
-script = ExtResource("2_ste")
-enemy_id = &"mole"
-pack_spread = 2.0
-
-[sub_resource type="Resource" id="ste_6"]
-script = ExtResource("2_ste")
-enemy_id = &"thornback"
-pack_spread = 2.0
-
-[sub_resource type="Resource" id="ste_7"]
-script = ExtResource("2_ste")
-enemy_id = &"moss_golem"
-pack_spread = 2.0
-
 [sub_resource type="Resource" id="feat_fountain"]
 script = ExtResource("3_jqtwa")
 scene = ExtResource("4_fountain")
@@ -65,7 +44,7 @@ script = ExtResource("1_def")
 id = &"deepwood_teach_open"
 biome = &"deepwood"
 weight = 2
-enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3"), SubResource("ste_4"), SubResource("ste_5"), SubResource("ste_6"), SubResource("ste_7")])
+enemies = Array[ExtResource("2_ste")]([SubResource("ste_0"), SubResource("ste_1"), SubResource("ste_2"), SubResource("ste_3")])
 enemy_groups_min = 1
 enemy_groups_max = 1
 features = Array[ExtResource("3_jqtwa")]([SubResource("feat_fountain")])

@@ -27,6 +27,7 @@ id = &"deepwood_teach_stalker"
 biome = &"deepwood"
 generator = SubResource("gen")
 min_size_slots = Vector2i(2, 2)
+difficulty = 1
 weight = 0
 min_per_biome = 1
 max_per_biome = 1

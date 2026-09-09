@@ -420,7 +420,7 @@ up a shot, and the pack punishes you for focusing one down without a plan for th
 | Speed | 40 px/s |
 | Range | detect 10, chase 13, attack 3 |
 | bolt | **12** dmg — 3.9s cd, Single, 3 @ 0.3s, 10 tiles range |
-| Drops | **pew t2** (50%), **halp t2** (2%) |
+| Drops | **pew t2** (5%), **halp t2** (2%) |
 
 ```mermaid
 stateDiagram-v2
@@ -577,7 +577,7 @@ only over a narrow cone — a sidestep won't shake one, breaking the angle will.
 | Speed | 46 px/s |
 | Range | detect 14, chase 17, attack 3, retreat 1.75 |
 | dart | **19** dmg — 1.8s cd, Single, 2 @ 0.2s, 9 tiles range, homing 70° cone |
-| Drops | **snipe t2** (5%) |
+| Drops | **snipe t2** (10%) |
 
 **Notes:** the longest attack probe of the three (5 tiles) and the longest retreat — it never comes into the range the other two fight at.
 

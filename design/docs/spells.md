@@ -422,7 +422,7 @@ An instant hop along your aim: you vanish and reappear a fixed distance away, le
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 2s | instant | — | — | — | skill +3, speed +10 |
+| T2 | 2s | instant | — | — | — | skill +10, speed +10, defence +5 |
 
 ### Oop
 

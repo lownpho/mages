@@ -11,16 +11,17 @@ merge all
 4 spells only
 remove cooldown creep
 
+controls recap page
 spell rebalance (think about sets)
 spell blurbs
 make doors move you to a random (but fixed place in adjacent biomes)
 fix tutorial scene: mechanics are simpler
+bosses can be killed multiple times
+bosses heal up after some inactivity
 
 ## to do
 
-controls recap page
-bosses can be killed multiple times
-bosses heal up after some inactivity
+increase blam range and prepare for a speed based blam with less range and more time between shots but less cooldown
 make biomes bigger overall (not glade)
 rebalance drops in biomes
 grimoire
