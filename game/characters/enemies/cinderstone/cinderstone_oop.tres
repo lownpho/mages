@@ -42,4 +42,4 @@ damage = SubResource("ScalingProfile_bullet")
 max_shots = 1
 effect_scene = ExtResource("99_effect")
 cooldown = 0.0
-cast_time = 0.9
+cast_time = 1.0

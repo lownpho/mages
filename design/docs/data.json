@@ -1870,7 +1870,7 @@
      "cast": "bristlestone_ploop",
      "kind": "bullet",
      "cooldown": 0,
-     "cast_time": 0.3,
+     "cast_time": 1.5,
      "channeled": false,
      "shots": {
       "pattern": "RingPattern",
@@ -1957,7 +1957,7 @@
      "cast": "cinderstone_oop",
      "kind": "bullet",
      "cooldown": 0,
-     "cast_time": 0.9,
+     "cast_time": 1,
      "channeled": false,
      "shots": {
       "pattern": "SinglePattern",
@@ -7886,7 +7886,13 @@
      },
      "dash": {
       "speed_px": 300,
-      "duration": 0.7
+      "duration": 0.7,
+      "contact": {
+       "base": 26,
+       "skill": 0,
+       "speed": 0,
+       "defence": 0
+      }
      },
      "name": "charge"
     },
@@ -7915,7 +7921,13 @@
      },
      "dash": {
       "speed_px": 300,
-      "duration": 0.6
+      "duration": 0.6,
+      "contact": {
+       "base": 26,
+       "skill": 0,
+       "speed": 0,
+       "defence": 0
+      }
      },
      "name": "charge_chain"
     },

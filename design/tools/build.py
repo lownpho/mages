@@ -355,7 +355,11 @@ def extras(tier: dict) -> list[str]:
     if tier.get("projectile", {}).get("pierce"):
         bits.append("pierces")
     if tier.get("dash"):
-        bits.append(f"dash {tier['dash']['speed_px']} px/s for {tier['dash']['duration']}s")
+        dash = tier["dash"]
+        text = f"dash {dash['speed_px']} px/s for {dash['duration']}s"
+        if dash.get("contact"):
+            text += f", {_amount_text({'amount': dash['contact']})} on contact"
+        bits.append(text)
     if tier.get("minion"):
         m = tier["minion"]
         bits.append(f"{m['count']} minions, {m['health']} hp, {m['lifetime']}s")

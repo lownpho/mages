@@ -247,6 +247,9 @@ def _spell_record(spell, d: Defaults) -> dict:
                 "speed_px": _num(d.get(spell, "dash_speed", 0)),
                 "duration": _num(d.get(spell, "dash_duration", 0)),
             }
+            contact = _amount(spell.get("contact_damage"), d)
+            if contact:
+                entry["dash"]["contact"] = contact
         elif spell.script_class == "MineResource":
             entry["mine"] = {
                 "arm_time": _num(d.get(spell, "arm_time", 0)),

@@ -913,8 +913,8 @@ are ground down while the boss walks into your face anyway.
 | Range | detect 22, close 6, slam 2, volley 4 |
 | brood | 6 minions, 8 hp, 26s |
 | brood_big | 3 minions, 8 hp, 20s |
-| charge | **26** dmg — 5s cd, Flank x2, 16 @ 0.045s, 6 tiles range, dash 300 px/s for 0.7s |
-| charge_chain | **26** dmg — Flank x2, 13 @ 0.045s, 6 tiles range, dash 300 px/s for 0.6s |
+| charge | **26** dmg — 5s cd, Flank x2, 16 @ 0.045s, 6 tiles range, dash 300 px/s for 0.7s, **26** on contact |
+| charge_chain | **26** dmg — Flank x2, 13 @ 0.045s, 6 tiles range, dash 300 px/s for 0.6s, **26** on contact |
 | slam | **48** dmg — 6s cd |
 | volley | **24** dmg — 4s cd, Shotgun x4, 4 @ 0.55s, 6 tiles range |
 | Drops | **thwomp t3** (100%), **halp t2** (60%), **blam t3** (100%), **charge_dash t2** (60%) |

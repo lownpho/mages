@@ -12,6 +12,7 @@ const FIREBALL := "res://characters/player/spells/fireball/fireball1.tres"
 const THWOMP := "res://characters/player/spells/thwomp/thwomp3.tres"
 const BWOOM := "res://characters/player/spells/bwoom/bwoom2.tres"
 const BWOOM_SCRIPT := "res://characters/player/spells/bwoom/bwoom.gd"
+const GNARLKING_CHARGE := "res://characters/enemies/gnarlking/gnarlking_charge.tres"
 
 var fails: Array[String] = []
 var _enemy_bullets := 0
@@ -100,6 +101,9 @@ func _ready() -> void:
 				% balls[0].collision_layer)
 		balls[0].queue_free()
 
+	await _charge_runs_through(enemy, caster)
+	await _owl_dies_charging()
+
 	if fails.is_empty():
 		print("ALL PASS")
 	else:
@@ -107,6 +111,72 @@ func _ready() -> void:
 		for f in fails:
 			print("  FAIL: ", f)
 	get_tree().quit(0 if fails.is_empty() else 1)
+
+# 5) A charge straight through its target: the bark peels off both flanks and misses a body
+# dead on the line, so the run itself has to land the hit — once, and not after the dash.
+func _charge_runs_through(enemy: Creature, caster: SpellCaster) -> void:
+	var spell: ChargeDashResource = load(GNARLKING_CHARGE)
+	var hits: Array[int] = []
+	var hb: Area2D = load("res://components/hurtbox.tscn").instantiate()
+	hb.collision_mask = GameConstants.LAYER_ENEMY_BULLETS
+	hb.radius = 3.5
+	hb.position = enemy.global_position + Vector2(48, 0)
+	hb.hurt.connect(func(dmg: int, src: Node) -> void:
+		if src is DamageZone:
+			hits.append(dmg))
+	add_child(hb)
+	if not caster.cast(spell, Vector2.RIGHT):
+		fails.append("creature could not cast the gnarlking's charge")
+	await _wait(spell.cast_time + spell.dash_duration + 0.3)
+	var want: int = spell.contact_damage.compute(0, 0, 0)
+	if hits.size() != 1 or hits[0] != want:
+		fails.append("a charge straight through its target hit it %s, want one %d" % [hits, want])
+	for child in enemy.get_children():
+		if child is DamageZone:
+			fails.append("the charge's contact hit outlived the dash")
+	hb.queue_free()
+
+# 6) An owl killed mid-charge takes its Bwoom ball with it: a channel is the caster holding
+# the spell, so with the caster gone there is nothing left to loose it.
+func _owl_dies_charging() -> void:
+	# A body on the player layer, so the owl's LOS probe has something to see.
+	var target := CharacterBody2D.new()
+	target.collision_layer = 16
+	var shape := CollisionShape2D.new()
+	shape.shape = CircleShape2D.new()
+	target.add_child(shape)
+	target.add_to_group("player")
+	target.position = Vector2(1024, 0)
+	add_child(target)
+	var owl: Creature = load("res://characters/enemies/owl/owl.tscn").instantiate()
+	owl.position = Vector2(1000, 0)
+	add_child(owl)
+	await get_tree().physics_frame
+	for child in owl.get_children():
+		if child is VisibleOnScreenEnabler2D:
+			child.queue_free()
+	owl.process_mode = Node.PROCESS_MODE_INHERIT
+	var balls: Array[Node] = []
+	var watch := func(n: Node) -> void:
+		if n.get_script() == load(BWOOM_SCRIPT):
+			balls.append(n)
+	get_tree().root.child_entered_tree.connect(watch)
+	var deadline := Time.get_ticks_msec() + 5000
+	while balls.is_empty() and Time.get_ticks_msec() < deadline:
+		await get_tree().physics_frame
+	get_tree().root.child_entered_tree.disconnect(watch)
+	if balls.is_empty():
+		fails.append("the owl never started charging its bwoom")
+	else:
+		await _wait(0.2)
+		owl.die()
+		await _wait(0.1)
+		if is_instance_valid(balls[0]):
+			fails.append("the owl died mid-charge but its bwoom ball stayed behind")
+			balls[0].queue_free()
+	if is_instance_valid(owl):
+		owl.queue_free()
+	target.queue_free()
 
 func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout

@@ -40,11 +40,15 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _launched:
 		return
+	# The caster died mid-channel: nobody is holding the charge any more, so it goes with
+	# them rather than hanging in the air until the cap looses it.
+	if not is_instance_valid(_caster):
+		queue_free()
+		return
 	_elapsed += delta
 	$Sprite2D.frame = _ticks() - 1
-	if is_instance_valid(_caster):
-		global_position = _hold_position()
-	# Safety net: if the caster died mid-channel, launch at the cap ourselves.
+	global_position = _hold_position()
+	# Safety net: if the channel somehow outlives its cap, launch it ourselves.
 	if _elapsed > data.cast_time + 0.1:
 		channel_released()
 
