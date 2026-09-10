@@ -8,7 +8,7 @@ class_name MapState
 ## the entire save format (see to_dict/restore).
 extends RefCounted
 
-enum { MARKER_BOSS, MARKER_FEATURE }
+enum { MARKER_BOSS, MARKER_FEATURE, MARKER_FOUNTAIN }
 
 ## Canonical tiles-per-pixel zoom steps. A downsampled wall image is pre-built for every level
 ## > 1 (see setup), so both the minimap and the full map read walls legibly at any zoom from the
@@ -19,8 +19,8 @@ const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
 ## encounter (room ids are per-biome, so this is an explicit list).
 const BOSS_TYPES: Array[StringName] = [&"glade_boss_d3", &"deepwood_arena"]
 
-## Fountains are common healing pools, not landmarks — they don't earn a minimap marker like
-## rarer features do.
+## Fountain feature scenes — they get their own MARKER_FOUNTAIN so healing pools read apart from
+## doors and other features.
 const _FOUNTAIN_SCENES: Array[PackedScene] = [
 	preload("res://worldgen/runtime/fountain.tscn"),
 	preload("res://worldgen/runtime/glade_fountain.tscn"),
@@ -166,9 +166,10 @@ func _paint_room(room: RoomOutput) -> void:
 		markers.append({"tile": Vector2i(ox + (room.width >> 1), oy + (room.height >> 1)),
 				"kind": MARKER_BOSS})
 	for sp in room.spawns:
-		if sp is Dictionary and sp.has("feature") and sp["feature"] not in _FOUNTAIN_SCENES:
+		if sp is Dictionary and sp.has("feature"):
 			var t: Vector2i = sp.get("tile", Vector2i.ZERO)
-			markers.append({"tile": Vector2i(ox + t.x, oy + t.y), "kind": MARKER_FEATURE})
+			var kind := MARKER_FOUNTAIN if sp["feature"] in _FOUNTAIN_SCENES else MARKER_FEATURE
+			markers.append({"tile": Vector2i(ox + t.x, oy + t.y), "kind": kind})
 
 
 ## Recompute the downsampled wall images for the blocks overlapping one room rectangle.

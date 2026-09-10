@@ -16,6 +16,7 @@ const COLOR_PLAYER := Palette.WHITE
 const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
+const COLOR_FOUNTAIN := Palette.PINK
 const COLOR_PIN := Palette.ORANGE
 const PIN_PX := 2  ## pin marker size in widget pixels
 
@@ -123,6 +124,8 @@ func _draw() -> void:
 	for m in _state.markers:
 		if m["kind"] == MapState.MARKER_BOSS:
 			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_BOSS, 2)
+		elif m["kind"] == MapState.MARKER_FOUNTAIN:
+			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_FOUNTAIN, 1)
 		else:
 			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_FEATURE, 1)
 	if tpp <= ENEMIES_MAX_TPP:

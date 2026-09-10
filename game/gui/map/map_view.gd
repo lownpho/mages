@@ -15,6 +15,7 @@ const COLOR_PLAYER := Palette.WHITE
 const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
+const COLOR_FOUNTAIN := Palette.PINK
 const COLOR_PIN := Palette.ORANGE
 
 const PIN_PX := 3
@@ -246,7 +247,10 @@ func _draw() -> void:
 	_draw_layer(_state.wall_texture_for(wl), region, wl)
 
 	for m in _state.markers:
-		var c: Color = COLOR_BOSS if m["kind"] == MapState.MARKER_BOSS else COLOR_FEATURE
+		var c := COLOR_FEATURE
+		match m["kind"]:
+			MapState.MARKER_BOSS: c = COLOR_BOSS
+			MapState.MARKER_FOUNTAIN: c = COLOR_FOUNTAIN
 		_dot(Vector2(m["tile"]) + Vector2(0.5, 0.5), MARKER_PX, c, false)
 	for e in get_tree().get_nodes_in_group("enemies"):
 		var et: Vector2 = e.global_position / GameConstants.PX_PER_TILE
