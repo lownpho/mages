@@ -2,6 +2,12 @@
 
 [ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="1_biome"]
 [ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="7_pres"]
+[ext_resource type="Script" path="res://worldgen/core/sign_def.gd" id="8_sdef"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/signs/deepwood_sign_mushroom_dungeon.tres" id="9_s_mush"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/signs/deepwood_sign_swarms.tres" id="10_s_swarm"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/signs/deepwood_sign_feud.tres" id="11_s_feud"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/signs/deepwood_sign_king.tres" id="12_s_king"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/signs/deepwood_sign_bow.tres" id="13_s_bow"]
 
 [resource]
 script = ExtResource("1_biome")
@@ -16,4 +22,4 @@ fallback_room_type = &"deepwood_mimic_open"
 doors_min = 2
 doors_max = 3
 door_style = 2
-presentation = ExtResource("7_pres")
+signs = Array[ExtResource("8_sdef")]([ExtResource("12_s_king"), ExtResource("9_s_mush"), ExtResource("10_s_swarm"), ExtResource("11_s_feud"), ExtResource("13_s_bow")])presentation = ExtResource("7_pres")

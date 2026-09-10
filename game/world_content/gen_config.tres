@@ -63,6 +63,22 @@
 [ext_resource type="Resource" uid="uid://dwtthor0" path="res://world_content/biomes/deepwood/rooms/deepwood_teach_thornback.tres" id="r_dw22"]
 [ext_resource type="Resource" uid="uid://dwtwisp0" path="res://world_content/biomes/deepwood/rooms/deepwood_teach_wisp_grimling.tres" id="r_dw23"]
 [ext_resource type="Resource" uid="uid://cgsp4wnr0m01" path="res://world_content/biomes/glade_start/rooms/glade_start_spawn.tres" id="r_spawn"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_start/rooms/glade_start_signpost_t0.tres" id="r_sp_gs0"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_start/rooms/glade_start_signpost_t1.tres" id="r_sp_gs1"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_start/rooms/glade_start_signpost_t2.tres" id="r_sp_gs2"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_start/rooms/glade_start_signpost_t3.tres" id="r_sp_gs3"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_signpost_t0.tres" id="r_sp_gv0"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_signpost_t1.tres" id="r_sp_gv1"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_signpost_t2.tres" id="r_sp_gv2"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_veggie/rooms/glade_veggie_signpost_t3.tres" id="r_sp_gv3"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/rooms/deepwood_signpost_t0.tres" id="r_sp_dw0"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/rooms/deepwood_signpost_t1.tres" id="r_sp_dw1"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/rooms/deepwood_signpost_t2.tres" id="r_sp_dw2"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/rooms/deepwood_signpost_t3.tres" id="r_sp_dw3"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_signpost_t0.tres" id="r_sp_dm0"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_signpost_t1.tres" id="r_sp_dm1"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_signpost_t2.tres" id="r_sp_dm2"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_signpost_t3.tres" id="r_sp_dm3"]
 
 [resource]
 script = ExtResource("cfg")
@@ -78,4 +94,4 @@ starting_biome = &"glade_start"
 prefetch_radius_chunks = 1
 biomes = Array[ExtResource("bdef")]([ExtResource("b_gs"), ExtResource("b_gv"), ExtResource("b_dw"), ExtResource("b_dwm")])
 adjacency = ExtResource("adj")
-room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r_spawn"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r_dw00"), ExtResource("r_dw01"), ExtResource("r_dw02"), ExtResource("r_dw03"), ExtResource("r_dw04"), ExtResource("r_dw05"), ExtResource("r_dw06"), ExtResource("r_dw07"), ExtResource("r_dw08"), ExtResource("r_dw09"), ExtResource("r_dw10"), ExtResource("r_dw11"), ExtResource("r_dw12"), ExtResource("r_dw13"), ExtResource("r_dw14"), ExtResource("r_dw15"), ExtResource("r_dw16"), ExtResource("r_dw17"), ExtResource("r_dw18"), ExtResource("r_dw19"), ExtResource("r_dw20"), ExtResource("r_dw21"), ExtResource("r_dw22"), ExtResource("r_dw23"), ExtResource("r_dm00"), ExtResource("r_dm01"), ExtResource("r_dm02"), ExtResource("r_dm03"), ExtResource("r_dm04"), ExtResource("r_dm05"), ExtResource("r_dm06"), ExtResource("r_dm07"), ExtResource("r_dm08"), ExtResource("r_dm09")])
+room_types = Array[ExtResource("rtdef")]([ExtResource("r0"), ExtResource("r1"), ExtResource("r2"), ExtResource("r3"), ExtResource("r4"), ExtResource("r5"), ExtResource("r_spawn"), ExtResource("r6"), ExtResource("r7"), ExtResource("r8"), ExtResource("r9"), ExtResource("r10"), ExtResource("r11"), ExtResource("r12"), ExtResource("r13"), ExtResource("r14"), ExtResource("r15"), ExtResource("r16"), ExtResource("r17"), ExtResource("r18"), ExtResource("r19"), ExtResource("r_dw00"), ExtResource("r_dw01"), ExtResource("r_dw02"), ExtResource("r_dw03"), ExtResource("r_dw04"), ExtResource("r_dw05"), ExtResource("r_dw06"), ExtResource("r_dw07"), ExtResource("r_dw08"), ExtResource("r_dw09"), ExtResource("r_dw10"), ExtResource("r_dw11"), ExtResource("r_dw12"), ExtResource("r_dw13"), ExtResource("r_dw14"), ExtResource("r_dw15"), ExtResource("r_dw16"), ExtResource("r_dw17"), ExtResource("r_dw18"), ExtResource("r_dw19"), ExtResource("r_dw20"), ExtResource("r_dw21"), ExtResource("r_dw22"), ExtResource("r_dw23"), ExtResource("r_dm00"), ExtResource("r_dm01"), ExtResource("r_dm02"), ExtResource("r_dm03"), ExtResource("r_dm04"), ExtResource("r_dm05"), ExtResource("r_dm06"), ExtResource("r_dm07"), ExtResource("r_dm08"), ExtResource("r_dm09"), ExtResource("r_sp_gs0"), ExtResource("r_sp_gs1"), ExtResource("r_sp_gs2"), ExtResource("r_sp_gs3"), ExtResource("r_sp_gv0"), ExtResource("r_sp_gv1"), ExtResource("r_sp_gv2"), ExtResource("r_sp_gv3"), ExtResource("r_sp_dw0"), ExtResource("r_sp_dw1"), ExtResource("r_sp_dw2"), ExtResource("r_sp_dw3"), ExtResource("r_sp_dm0"), ExtResource("r_sp_dm1"), ExtResource("r_sp_dm2"), ExtResource("r_sp_dm3")])

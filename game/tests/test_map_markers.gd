@@ -2,7 +2,7 @@ extends Node
 ## Headless map-marker test: discovering the whole world drops one marker per room feature, at the
 ## feature's tile — fountains as MARKER_FOUNTAIN (any scene whose root is a Fountain, so a new
 ## fountain variant can't silently fall back to the door color) and every other feature (doors)
-## as MARKER_FEATURE. Run:
+## as MARKER_FEATURE, except tip signs, which get none. Run:
 ##   godot --headless --path game res://tests/test_map_markers.tscn
 
 const SEEDS := 3
@@ -33,7 +33,7 @@ func _ready() -> void:
 		for slot: Vector2i in state.discovered:
 			var room := streamer.get_room_output(streamer.room_spec_at_tile(slot.x * ss, slot.y * ss))
 			for sp in room.spawns:
-				if sp is Dictionary and sp.has("feature"):
+				if sp is Dictionary and sp.has("feature") and not (sp.get("feature_data") is SignDef):
 					var t: Vector2i = sp.get("tile", Vector2i.ZERO)
 					var kind := MapState.MARKER_FOUNTAIN if _fountain(sp["feature"]) \
 							else MapState.MARKER_FEATURE

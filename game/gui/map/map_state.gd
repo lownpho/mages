@@ -17,10 +17,13 @@ const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
 
 ## Room types whose discovery drops a MARKER_BOSS at the room centre — each biome's summit
 ## encounter (room ids are per-biome, so this is an explicit list).
-const BOSS_TYPES: Array[StringName] = [&"glade_boss_d3", &"deepwood_arena"]
+const BOSS_TYPES: Array[StringName] = [
+	&"glade_start_boss", &"glade_veggie_boss", &"deepwood_boss_gnarlking", &"mycelium_boss",
+]
 
 ## Fountain feature scenes — they get their own MARKER_FOUNTAIN so healing pools read apart from
-## doors and other features.
+## doors and other features. Tip signs (a SignDef feature), which stand in every few rooms, get
+## no marker at all.
 const _FOUNTAIN_SCENES: Array[PackedScene] = [
 	preload("res://worldgen/runtime/fountain.tscn"),
 	preload("res://worldgen/runtime/glade_fountain.tscn"),
@@ -33,8 +36,11 @@ var world_tiles := Vector2i.ZERO      ## image dimensions (1 px per tile)
 var discovered: Dictionary = {}       ## origin_slot (Vector2i) -> true
 var markers: Array = []               ## of {tile: Vector2i (world), kind: MARKER_*} — auto, from rooms
 var pins: Array = []                  ## of Vector2i (world tile) — player-dropped, saved
+var revealed: Array = []              ## of Vector2i (room origin slot) — boss rooms a sign marked, saved
 var floor_texture: ImageTexture = null
 var wall_texture: ImageTexture = null
+
+var _boss_marked: Dictionary = {}    # origin_slot -> true: rooms already carrying their boss marker
 
 var _floor_img: Image = null
 var _wall_img: Image = null
@@ -63,6 +69,8 @@ func setup(streamer: WorldStreamer, zoom_levels: Array[int]) -> void:
 	discovered.clear()
 	markers.clear()
 	pins.clear()
+	revealed.clear()
+	_boss_marked.clear()
 
 
 ## Drop a pin at a world tile (dedup). Player-placed markers, unlike the auto room markers,
@@ -87,6 +95,29 @@ func remove_pin_near(world_tile: Vector2i, radius_tiles: int) -> bool:
 		pins.remove_at(best)
 		return true
 	return false
+
+
+## Mark a boss room before it is found — a sign pointing at it was read. It is the same marker, on
+## the same tile, that discovering the room drops, so finding the room later adds no second one.
+## Saved, since unlike the room markers a reveal can't be re-derived from discovery. True when a
+## marker appeared; false for a room already marked or a slot that isn't a room's origin.
+func reveal_boss(origin_slot: Vector2i) -> bool:
+	var ss := _streamer.config.room_slot_tiles
+	var spec := _streamer.room_spec_at_tile(origin_slot.x * ss, origin_slot.y * ss)
+	if spec == null or spec.origin_slot != origin_slot:
+		return false
+	if origin_slot not in revealed:
+		revealed.append(origin_slot)
+	var size := spec.size_slots * ss
+	return _mark_boss(origin_slot, origin_slot * ss + Vector2i(size.x >> 1, size.y >> 1))
+
+
+func _mark_boss(origin_slot: Vector2i, world_tile: Vector2i) -> bool:
+	if _boss_marked.has(origin_slot):
+		return false
+	_boss_marked[origin_slot] = true
+	markers.append({"tile": world_tile, "kind": MARKER_BOSS})
+	return true
 
 
 ## Wall overlay texture for a zoom level (1 px per `tpp` tiles); the full-res image at tpp 1.
@@ -131,10 +162,11 @@ func is_tile_discovered(world_tile: Vector2i) -> bool:
 
 
 ## Minimal save payload; images and markers are re-derived by restore() through the
-## deterministic room cache. Only discovery and the player's pins are stored — the pins are the
-## one thing that can't be re-derived (auto room markers come back with the rooms).
+## deterministic room cache. Only discovery, the player's pins and the sign-revealed boss rooms are
+## stored — those last two can't be re-derived (auto room markers come back with the rooms).
 func to_dict() -> Dictionary:
-	return {"world_seed": world_seed, "discovered": discovered.keys(), "pins": pins}
+	return {"world_seed": world_seed, "discovered": discovered.keys(), "pins": pins,
+			"revealed": revealed}
 
 
 func restore(dict: Dictionary) -> void:
@@ -144,6 +176,8 @@ func restore(dict: Dictionary) -> void:
 	pins.clear()
 	for p in dict.get("pins", []):
 		pins.append(p)   # stored as Vector2i; copy into our own array
+	for slot in dict.get("revealed", []):
+		reveal_boss(slot)
 
 
 ## Blit one room's tile classes into the images and record its static markers. The floor image
@@ -163,10 +197,9 @@ func _paint_room(room: RoomOutput) -> void:
 			if cls == RoomBuilder.WALL or cls == RoomBuilder.BLOCKER:
 				_wall_img.set_pixel(ox + x, oy + y, wc)
 	if room.type_id in BOSS_TYPES:
-		markers.append({"tile": Vector2i(ox + (room.width >> 1), oy + (room.height >> 1)),
-				"kind": MARKER_BOSS})
+		_mark_boss(room.origin_slot, Vector2i(ox + (room.width >> 1), oy + (room.height >> 1)))
 	for sp in room.spawns:
-		if sp is Dictionary and sp.has("feature"):
+		if sp is Dictionary and sp.has("feature") and not (sp.get("feature_data") is SignDef):
 			var t: Vector2i = sp.get("tile", Vector2i.ZERO)
 			var kind := MARKER_FOUNTAIN if sp["feature"] in _FOUNTAIN_SCENES else MARKER_FEATURE
 			markers.append({"tile": Vector2i(ox + t.x, oy + t.y), "kind": kind})

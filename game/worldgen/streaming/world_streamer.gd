@@ -72,6 +72,7 @@ var last_assembly_usec: int = 0
 
 var _room_graphs: RoomGraph = null            # never-evicted BiomeGraph cache
 var _door_links: DoorLinks = null             # this seed's warp-door map, built on first use
+var _sign_links: SignLinks = null             # this seed's tip-sign map, built on first use
 var _room_cache: Dictionary = {}              # Vector2i origin_slot -> RoomOutput, LRU by insertion order
 var _chunks: Dictionary = {}                  # Vector2i chunk_coord -> WgChunk
 var _fallback_pres: BiomePresentation = null  # starting biome's mapping; fallback for biomes without one
@@ -90,6 +91,7 @@ func build_world(seed_value: int) -> void:
 	world_spec = WorldLayout.build(seed_value, config)
 	_room_graphs = RoomGraph.new()
 	_door_links = null
+	_sign_links = null
 	if world_spec != null:
 		var s := config.biome_slots * config.room_slot_tiles
 		_world_chunks = Vector2i(
@@ -329,6 +331,9 @@ func get_room_output(spec: RoomSpec) -> RoomOutput:
 	var links := door_links()
 	if links != null:
 		links.add_spawn(out, spec, config)
+	var signs := sign_links()
+	if signs != null:
+		signs.add_spawn(out, spec)
 	_room_cache[key] = out
 	if _room_cache.size() > config.room_cache_capacity:
 		_room_cache.erase(_room_cache.keys()[0])   # evict least-recently-used
@@ -349,6 +354,13 @@ func door_links() -> DoorLinks:
 	if _door_links == null and world_spec != null:
 		_door_links = DoorLinks.build(world_spec, config, world_seed, _room_graphs)
 	return _door_links
+
+
+## This seed's tip-sign map, built on first use for the same reason as door_links().
+func sign_links() -> SignLinks:
+	if _sign_links == null and world_spec != null:
+		_sign_links = SignLinks.build(world_spec, config, world_seed, _room_graphs)
+	return _sign_links
 
 
 ## World position a player warping to `target_slot` lands on: beside that room's centre tile, on

@@ -37,6 +37,13 @@ extends Resource
 ## of a runtime dependency).
 @export_enum("Wood", "Hedge", "Cave", "Portal", "Stairs Up", "Mushroom", "Stairs Down") var door_style: int = 3
 
+## Tip signs for this biome. SignLinks stands one in the middle of every EMPTY room (no enemies, no
+## features — the biome's signpost rooms), dealing this list out in turn, so every sign stands at
+## least once as long as the biome has an empty room per sign. PRESENTATION tier like the doors —
+## NOT folded into hash_fold below, so editing signs re-deals the signs and nothing else.
+@export_group("Signs")
+@export var signs: Array[SignDef] = []
+
 ## Organic-shell overrides, -1 = inherit the GenConfig dial. These are what make one biome's
 ## walls read differently from another's (thin/fat bands, ragged vs clean edges, corner bulk).
 @export_group("Shell overrides (-1 = inherit)")

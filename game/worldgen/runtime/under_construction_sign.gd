@@ -16,6 +16,10 @@ const _DEFAULT_MESSAGE := "The old ammargelluted lonfo is\nworking on this featu
 		if is_node_ready():
 			$Label.text = value
 
+## Where reading this sign marks a boss on the map: the room origin slot a SignDef's reveal resolved
+## to (see SignLinks). Vector2i.MAX = it marks nothing.
+var reveal_slot := Vector2i.MAX
+
 @onready var _label: Label = $Label
 
 
@@ -28,17 +32,21 @@ func _ready() -> void:
 	body_exited.connect(_on_body_exited)
 
 
-## Configure from an UnderConstructionResource (WgEntitySpawner calls this when a room type
-## spawns a sign as its feature). Untyped param to keep no hard dependency on the resource.
+## Configure from an UnderConstructionResource or a SignDef (WgEntitySpawner calls this when a room
+## spawns a sign as a feature). Untyped param to keep no hard dependency on the resource.
 func setup(res) -> void:
 	if res == null:
 		return
 	if res.message != "":
 		message = res.message
+	if "reveal_slot" in res:
+		reveal_slot = res.reveal_slot
 
 
 func _on_body_entered(_body: Node2D) -> void:
 	_label.visible = true
+	if reveal_slot != Vector2i.MAX:
+		GlobalMap.reveal_boss(reveal_slot)
 
 
 func _on_body_exited(_body: Node2D) -> void:

@@ -12,7 +12,7 @@ extends Node
 ## into a dungeon.
 
 signal map_changed   ## active MapState was (re)built or swapped — views re-bind on this
-signal pins_changed  ## a pin was dropped or removed — non-frame-driven views redraw, save persists
+signal pins_changed  ## a pin was dropped or removed, or a sign marked a boss — non-frame-driven views redraw, save persists
 
 var active: MapState = null
 
@@ -64,6 +64,14 @@ func toggle_pin(world_tile: Vector2i, remove_radius_tiles: int) -> void:
 	if not active.remove_pin_near(world_tile, remove_radius_tiles):
 		active.add_pin(world_tile)
 	pins_changed.emit()
+
+
+## Mark a boss room on the active map before it is found: the player read a sign pointing at it.
+## Only a marker that wasn't there yet counts as a change, so walking past the same sign again
+## doesn't rewrite the save.
+func reveal_boss(origin_slot: Vector2i) -> void:
+	if active != null and active.reveal_boss(origin_slot):
+		pins_changed.emit()
 
 
 ## Minimal save payload for the whole map. Empty when no world is active yet.
