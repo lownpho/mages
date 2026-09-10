@@ -34,6 +34,10 @@ func _ready_to_run() -> bool:
 	return not weighted
 
 func _dispatch() -> void:
+	# The hand-off was queued a frame ago; if the scene was torn down in between (the player
+	# died and the run bounced to the title) there is nothing left to dispatch into.
+	if not is_inside_tree():
+		return
 	if probe_path != NodePath():
 		var probe: RayCast2D = get_node(probe_path)
 		if not creature.look_for_target(probe):

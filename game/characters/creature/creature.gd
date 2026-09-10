@@ -229,6 +229,12 @@ func make_timer(on_timeout: Callable) -> Timer:
 
 # Nearest node across target_groups — the thing this character should attack.
 func get_target() -> Node2D:
+	# Deferred work (a dispatcher's hand-off, fsm.start) can land after the tree has already
+	# detached this creature: change_scene_to_packed — which is how a death exits the run —
+	# pulls the old scene off the root a frame before it frees it, so the queued call still
+	# runs on a live node whose get_tree() is null. No tree, no target.
+	if not is_inside_tree():
+		return null
 	var nearest: Node2D = null
 	var best := INF
 	for group in target_groups:

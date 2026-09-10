@@ -70,6 +70,7 @@ func _ready() -> void:
 	fails += await _telegraph()
 	fails += await _puffcap_chain()
 	fails += await _combat_reset()
+	fails += await _torn_down()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -529,6 +530,36 @@ func _combat_reset() -> int:
 		await get_tree().process_frame
 	target.queue_free()
 	await get_tree().physics_frame
+	return fails
+
+
+# A run ends by swapping scenes, and change_scene_to_packed pulls the old scene off the root
+# a frame BEFORE it frees it — so a dispatcher's deferred hand-off still runs, on a live
+# creature with no tree under it. That used to reach get_tree() inside get_target(), which
+# is why dying to a boss's own blam printed an error on the way to the title.
+func _torn_down() -> int:
+	var fails := 0
+	for path: String in ["res://characters/enemies/sporespitter/sporespitter.tscn",
+			"res://characters/enemies/gnarlking/gnarlking.tscn"]:
+		var id := path.get_file().get_basename()
+		var enemy: Creature = load(path).instantiate()
+		add_child(enemy)
+		await get_tree().physics_frame
+		var dispatchers: Array[Node] = []
+		for state: State in enemy.fsm.states.values():
+			if state is PatternPicker or state is Gate:
+				dispatchers.append(state)
+		fails += _expect("%s has a dispatcher to test" % id, not dispatchers.is_empty())
+		# Exactly the queued hand-off enter() makes, left pending across the detach.
+		for dispatcher in dispatchers:
+			dispatcher.call_deferred("_dispatch")
+		remove_child(enemy)
+		await get_tree().process_frame  # the deferred queue flushes here, out of tree
+		fails += _expect("%s targets nothing once detached" % id, enemy.get_target() == null)
+		enemy.queue_free()
+		await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: dispatch after teardown — hand-offs and targeting no-op out of tree")
 	return fails
 
 
