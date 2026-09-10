@@ -499,7 +499,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 5,
+      "range_tiles": 6,
       "speed_tiles": 16,
       "pierce": false
      }
@@ -528,7 +528,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 5,
+      "range_tiles": 6,
       "speed_tiles": 16,
       "pierce": false
      }
@@ -557,7 +557,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 6,
+      "range_tiles": 7,
       "speed_tiles": 16,
       "pierce": false
      }
@@ -589,7 +589,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 6,
+      "range_tiles": 7,
       "speed_tiles": 16,
       "pierce": false
      }
@@ -601,7 +601,7 @@
    "name": "Fireball",
    "category": "nukes",
    "description": "One of the openers, and the baseline every other nuke is read against — a fresh run is handed four of the six tier-1 attack spells, so most runs start holding it. A homing orb toward the enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the explosion, so a shot that expires in open air still deals it. The homing and the guaranteed detonation make it hard to waste, which is what a first spell should be.",
-   "per_tier": "damage, explosion radius",
+   "per_tier": "",
    "kind": "bullet",
    "hold": "charged",
    "scaling": [
@@ -614,41 +614,6 @@
     {
      "tier": 1,
      "source": "game/characters/player/spells/fireball/fireball1.tres",
-     "kind": "bullet",
-     "cooldown": 4,
-     "cast_time": 0.5,
-     "channeled": false,
-     "grants": {
-      "skill": 10
-     },
-     "shots": {
-      "pattern": "SinglePattern",
-      "per_shot": 1,
-      "count": 1,
-      "interval": 0.25
-     },
-     "amount": {
-      "base": 20,
-      "skill": 1.25,
-      "speed": 0,
-      "defence": 0
-     },
-     "projectile": {
-      "range_tiles": 12,
-      "speed_tiles": 16,
-      "pierce": false
-     },
-     "behaviours": [
-      {
-       "type": "blast",
-       "radius_tiles": 5,
-       "blast_only": true
-      }
-     ]
-    },
-    {
-     "tier": 2,
-     "source": "game/characters/player/spells/fireball/fireball2.tres",
      "kind": "bullet",
      "cooldown": 4,
      "cast_time": 0.5,
@@ -844,8 +809,8 @@
      "tier": 2,
      "source": "game/characters/player/spells/bwoom/bwoom2.tres",
      "kind": "effect",
-     "cooldown": 4,
-     "cast_time": 2,
+     "cooldown": 3,
+     "cast_time": 1,
      "channeled": true,
      "grants": {
       "defence": 8
@@ -7034,9 +6999,9 @@
    },
    "drops": [
     {
-     "item": "fireball2",
+     "item": "fireball1",
      "spell": "fireball",
-     "tier": 2,
+     "tier": 1,
      "weakness": null,
      "chance": 0.5
     },

@@ -176,7 +176,7 @@ Rare mandrake that casts fireball
 | Range | detect 8, chase 16, attack 4, fireball 9 |
 | fireball | **30** dmg — 6s cd, Single, 6 tiles range, blast 3 tiles (splash only) |
 | attack | **15** dmg — 2s cd, Single, 7 tiles range |
-| Drops | **fireball t2** (50%), **blam t2** (30%) |
+| Drops | **fireball t1** (50%), **blam t2** (30%) |
 
 ```mermaid
 stateDiagram-v2

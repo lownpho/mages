@@ -82,7 +82,6 @@ spells:
       enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the
       explosion, so a shot that expires in open air still deals it. The homing and the guaranteed
       detonation make it hard to waste, which is what a first spell should be.
-    per_tier: damage, explosion radius
   - id: zaap
     name: Zaap
     category: nukes

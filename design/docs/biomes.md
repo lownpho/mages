@@ -39,7 +39,7 @@ Onboarding: single-enemy rooms first, small mixed groups by T2, then the biome's
 | Seedling | **ring t1** (10%), **zaap t1** (10%) |
 | Sproutling | **pew t1** (10%), **zaap t1** (10%) |
 | Wasp | **bzzz t1** (10%), **pew t1** (10%), **zaap t1** (10%) |
-| Mandraker *(rare)* | **fireball t2** (50%), **blam t2** (30%) |
+| Mandraker *(rare)* | **fireball t1** (50%), **blam t2** (30%) |
 | Viper *(rare)* | **blam t2** (50%) |
 | Fae *(boss)* | **blam t2** (66%), **ring t2** (66%) |
 
@@ -72,7 +72,7 @@ Brings in the plant roster: thornthrower and rosebud both show up from T1. Group
 | Sproutling | **pew t1** (10%), **zaap t1** (10%) |
 | Thornthrower | **snipe t1** (20%) |
 | Wasp | **bzzz t1** (10%), **pew t1** (10%), **zaap t1** (10%) |
-| Mandraker *(rare)* | **fireball t2** (50%), **blam t2** (30%) |
+| Mandraker *(rare)* | **fireball t1** (50%), **blam t2** (30%) |
 | Viper *(rare)* | **blam t2** (50%) |
 | Thornmess *(boss)* | **jimmy t1** (100%), **snipe t2** (66%), **ring t2** (66%) |
 

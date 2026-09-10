@@ -178,7 +178,8 @@ func _test_channel_cancels_burst() -> void:
 	await _wait_off_cooldown(pew1)
 
 # Nope pays back leech_fraction of everything it soaks, and hits too small to round up to
-# a point of health carry over instead of vanishing.
+# a point of health carry over instead of vanishing. The 1-point hits hold for any
+# leech_fraction in [0.5, 1): one leeches under a point, two leech over it.
 func _test_nope_leech() -> void:
 	var nope: NopeResource = load("res://characters/player/spells/nope/nope.tres")
 	var shield := nope.effect_scene.instantiate()
@@ -186,17 +187,17 @@ func _test_nope_leech() -> void:
 	shield.setup(nope, player)
 	player.health = player.max_health - 50
 	var before: int = player.health
-	player.damage_absorber.absorb(20)
-	var want := int(20 * nope.leech_fraction)
-	if player.health - before != want:
-		fails.append("nope leeched %d off a 20 hit, want %d" % [player.health - before, want])
-	before = player.health
-	player.damage_absorber.absorb(5)
+	player.damage_absorber.absorb(1)
 	if player.health != before:
 		fails.append("nope rounded a sub-point leech up")
-	player.damage_absorber.absorb(5)
+	player.damage_absorber.absorb(1)
 	if player.health != before + 1:
 		fails.append("nope dropped the carried-over leech fraction")
+	before = player.health
+	player.damage_absorber.absorb(20)
+	var want := int(22 * nope.leech_fraction - 1)
+	if player.health - before != want:
+		fails.append("nope leeched %d off a 20 hit, want %d" % [player.health - before, want])
 	shield.channel_released()
 	player.health = player.max_health
 

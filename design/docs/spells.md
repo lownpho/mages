@@ -267,10 +267,10 @@ A few fast rings of bullets pulsed out of the caster. Every pulse spawns at the 
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 3s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 5 | skill +4, max_health +20 |
-| T2 | 3s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 5 | skill +6, max_health +30 |
-| T3 | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +10, max_health +40 |
-| T3 *(insect)* | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 6 | skill +10, max_health +40 |
+| T1 | 3s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 6 | skill +4, max_health +20 |
+| T2 | 3s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 6 | skill +6, max_health +30 |
+| T3 | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 7 | skill +10, max_health +40 |
+| T3 *(insect)* | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 7 | skill +10, max_health +40 |
 
 ## Nukes
 
@@ -280,12 +280,11 @@ Long cooldown, big single payload.
 
 One of the openers, and the baseline every other nuke is read against — a fresh run is handed four of the six tier-1 attack spells, so most runs start holding it. A homing orb toward the enemy nearest the cursor; it explodes on impact, wall, or max range. All damage is the explosion, so a shot that expires in open air still deals it. The homing and the guaranteed detonation make it hard to waste, which is what a first spell should be.
 
-**Scaling:** skill · **Hold:** charged · **Per tier:** damage, explosion radius
+**Scaling:** skill · **Hold:** charged
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | 0.5s | Single | 20 + 1.25×skill = **51** | 12 | skill +10 |
-| T2 | 4s | 0.5s | Single | 30 + 2×skill = **80** | 12 | skill +15 |
+| T1 | 4s | 0.5s | Single | 30 + 2×skill = **80** | 12 | skill +15 |
 
 **Also:** blast 5 tiles (splash only).
 
@@ -322,7 +321,7 @@ Charges in front of the caster while held, growing per tick; on release it fires
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 4s | 2s | — | 6 + 0.5×defence = **6** | — | defence +8 |
+| T2 | 3s | 1s | — | 6 + 0.5×defence = **6** | — | defence +8 |
 
 ## Summon
 
