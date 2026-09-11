@@ -20,8 +20,14 @@ __pycache__/
 # Symlink to the website repo (lownpho.github.io) for editing the game's page here
 /webpage
 
+# Symlink to the website repo's mages page
+/website/
+
 # The design tooling's own venv, built by design/tools/pre-commit
 design/tools/.venv/
 
 # Agent worktrees live inside the repo; git sees each one as a gitlink
 .claude/worktrees/
+
+# Agent scratch work (research, issues, prototypes), never committed
+/.scratch/
