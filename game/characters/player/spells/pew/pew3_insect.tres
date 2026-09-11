@@ -40,6 +40,6 @@ shot_interval = 0.18
 max_shots = 10
 effect_scene = ExtResource("3_scene")
 weakness = 4
-blurb = "Contains spore pesticide. Still boring."
+blurb = "Contains spore PEWsticide. Works better if I'm fast."
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 10

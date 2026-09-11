@@ -18,29 +18,29 @@ extends Node2D
 ## empty entry is a room with nothing to teach yet, and gets no sign at all.
 const PROGRESSION: Array[String] = [
 	"",   # entrance: its sign is INTRO_SIGN, which stands at the spawn instead of the centre
-	"""Spells lie on the ground here. Walk over one to pick it up.
-Your four cast slots will not hold two of the same spell.""",
+	"""Spell ideas lie on the ground here. Walk over one to learn it.
+You can keep only 4 unique spells in your mind at each given time.""",
 	"""You cast spells with LEFT, MIDDLE, RIGHT MOUSE and SPACE.
 On a pad: L1, L2, R1 and R2. Try it.""",
 	"""You cast where you aim: at the mouse, or with the right stick.
 With no stick held, you cast the way you are running.""",
-	"""The top four slots are the ones you cast from.
-The grey bag below just carries what you are not using.
+	"""The top four slots are the spells you know how to cast right now.
+The grey slots below just carry what you can easily remember.
 Drag and drop spells between them, or across the four.
 On a pad: START for the slots, A to lift a spell, A again to place.""",
-	"""The spells you cast change what you are made of.
-A spell sitting in the bag changes nothing.
+	"""Knowing how to cast spells changes your abilities.
+A spell you can't cast right now changes nothing.
 Watch the numbers on the left.
 Some will suit you better than others.""",
 	"""The bar on the left is your life. Enemies take it from you.
 Lose all of it and your run ends here.""",
-	"A vicious enemy. Kill it before it kills you.",
+	"A vicious creature. Kill it before it kills you.",
 	"""Step into the fountain to be made whole again.
 It runs dry for a while after.""",
-	"""You will not want every spell you find.
-Drag one off the slots and drop it to throw it away.
+	"""You will not want to learn every spell you find.
+Drag one off the slots and drop it to forget it.
 Q does the same, or X on a pad.""",
-	"""Through this door the real thing begins.
+	"""Through this door the real adventure begins.
 Good luck.""",
 ]
 
