@@ -41,7 +41,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/pew/pew1.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -69,7 +69,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/pew/pew2.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -97,7 +97,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/pew/pew3.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -125,7 +125,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/pew/pew3_insect.tres",
      "kind": "bullet",
-     "cooldown": 1.5,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "weakness": [

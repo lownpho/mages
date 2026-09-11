@@ -226,10 +226,10 @@ One burst of single bullets at the cursor, then cooldown, rather than a sustaine
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 1.5s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +5 |
-| T2 | 1.5s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +8 |
-| T3 | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
-| T3 *(insect)* | 1.5s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
+| T1 | 1s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +5 |
+| T2 | 1s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +8 |
+| T3 | 1s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
+| T3 *(insect)* | 1s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
 
 ### Snipe
 
