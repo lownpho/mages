@@ -2,7 +2,7 @@
 
 [ext_resource type="Resource" uid="uid://dnvie6uf32gsw" path="res://world_content/biomes/glade_veggie/glade_veggie_presentation.tres" id="1_77f8n"]
 [ext_resource type="Script" uid="uid://cnc7wcmwjqf7y" path="res://worldgen/core/biome_def.gd" id="2_def"]
-[ext_resource type="Script" path="res://worldgen/core/sign_def.gd" id="3_sdef"]
+[ext_resource type="Script" uid="uid://cm7db5fshrrml" path="res://worldgen/core/sign_def.gd" id="3_sdef"]
 [ext_resource type="Resource" path="res://world_content/biomes/glade/signs/glade_sign_maps.tres" id="4_s_maps"]
 [ext_resource type="Resource" path="res://world_content/biomes/glade/signs/glade_sign_throw_away.tres" id="5_s_throw"]
 [ext_resource type="Resource" path="res://world_content/biomes/glade/signs/glade_sign_rare_creatures.tres" id="6_s_rare"]
@@ -22,8 +22,9 @@ open_passage_chance = 0.8
 bsp_stop_chance = 0.5
 room_extra_connection_chance = 0.75
 decor_density = 0.08
+fallback_room_type = &"glade_veggie_open_fallback"
 doors_min = 2
 doors_max = 3
 door_style = 1
-signs = Array[ExtResource("3_sdef")]([ExtResource("8_s_memory"), ExtResource("9_s_twisted"), ExtResource("4_s_maps"), ExtResource("10_s_fae"), ExtResource("5_s_throw"), ExtResource("6_s_rare"), ExtResource("11_s_fused"), ExtResource("7_s_doors")])fallback_room_type = &"glade_veggie_open_fallback"
+signs = Array[ExtResource("3_sdef")]([ExtResource("8_s_memory"), ExtResource("9_s_twisted"), ExtResource("4_s_maps"), ExtResource("10_s_fae"), ExtResource("5_s_throw"), ExtResource("6_s_rare"), ExtResource("11_s_fused"), ExtResource("7_s_doors")])
 presentation = ExtResource("1_77f8n")
