@@ -28,11 +28,11 @@ GlobalInventory="*res://autoload/global_inventory.gd"
 GlobalPickups="*res://autoload/global_pickups.gd"
 SceneManager="*res://autoload/scene_manager.gd"
 GlobalBestiary="*res://autoload/global_bestiary.gd"
-GlobalGrimoire="*res://autoload/global_grimoire.gd"
 GlobalMap="*res://autoload/global_map.gd"
 GameState="*res://autoload/game_state.gd"
 GlobalInput="*res://autoload/global_input.gd"
 DebugConsole="*res://debug/console/debug_console.gd"
+GlobalGrimoire="*res://autoload/global_grimoire.gd"
 
 [debug]
 
@@ -47,6 +47,7 @@ gdscript/warnings/function_used_as_property=2
 
 window/size/viewport_width=320
 window/size/viewport_height=180
+window/size/mode=3
 window/size/window_width_override=1920
 window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
