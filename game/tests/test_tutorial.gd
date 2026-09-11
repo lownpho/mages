@@ -48,7 +48,7 @@ func _ready() -> void:
 
 ## The tutorial is reachable from the title with a real run already saved, and it can be left
 ## three ways: its exit door, death (game_over), and the HUD's quit button. None of them may
-## touch the save, its cloud mirror, or the bestiary.
+## touch the save, its cloud mirror, the bestiary or the grimoire.
 ##
 ## This has to use the player's ACTUAL save files to mean anything, so it snapshots both and puts
 ## them back exactly — including "did not exist", which has to go back to not existing. Nothing
@@ -56,6 +56,8 @@ func _ready() -> void:
 func _writes_nothing() -> int:
 	var save_before := _snapshot(GameState.SAVE_PATH)
 	var bestiary_before := _snapshot(GlobalBestiary.SAVE_PATH)
+	var grimoire_before := _snapshot(GlobalGrimoire.SAVE_PATH)
+	var grimoire_progress := GlobalGrimoire.to_dict()
 	var fails := 0
 
 	# A run worth protecting: a save Continue would offer.
@@ -86,6 +88,15 @@ func _writes_nothing() -> int:
 	fails += _expect("a tutorial kill files no bestiary entry",
 			GlobalBestiary.kill_count(&"sproutling") == kills_before)
 
+	# The starter kit on the casting room floor is picked up the way any drop is. A clean slate,
+	# so "not learned" can't pass just because the player's real progress already had it.
+	GlobalGrimoire.restore({})
+	var kit_pickup := GlobalInventory.Slot.new(GlobalInventory.ItemType.BAG)
+	kit_pickup.item = load("res://characters/player/spells/pew/pew1.tres")
+	GlobalEvent.item_picked_up.emit(kit_pickup)
+	fails += _expect("a tutorial pickup learns no grimoire entry",
+			not GlobalGrimoire.is_learned(&"pew1"))
+
 	tut.free()
 	await get_tree().process_frame
 	fails += _expect("leaving the tutorial lowers the sandbox", not GameState.sandbox)
@@ -94,9 +105,14 @@ func _writes_nothing() -> int:
 	GlobalEvent.creature_died.emit(foe, Vector2.ZERO)
 	fails += _expect("the same kill counts outside the sandbox",
 			GlobalBestiary.kill_count(&"sproutling") == kills_before + 1)
+	GlobalEvent.item_picked_up.emit(kit_pickup)
+	fails += _expect("the same pickup is learned outside the sandbox",
+			GlobalGrimoire.is_learned(&"pew1"))
 
 	_restore(GameState.SAVE_PATH, save_before)
 	_restore(GlobalBestiary.SAVE_PATH, bestiary_before)
+	_restore(GlobalGrimoire.SAVE_PATH, grimoire_before)
+	GlobalGrimoire.restore(grimoire_progress)
 	return fails
 
 

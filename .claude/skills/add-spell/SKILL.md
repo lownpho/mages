@@ -183,6 +183,12 @@ hardcode 8.
    from the `.tres`. The build fails if the yaml names a spell that doesn't ship, or a shipped
    spell is missing from the yaml.
 
+8. **Name the tier files right — the grimoire reads them.** Every `<spell>.tres`,
+   `<spell><n>.tres` and `<spell><n>_<kind>.tres` in the folder is a grimoire entry of its own (a
+   silhouette until it is picked up), with nothing to register. Keep any other file in the folder
+   off that naming (`poot_shot.tres`, not `poot4.tres`), or the book shows it as a spell.
+   `tests/test_grimoire.tscn` checks every entry loads as a spell with an icon and an effect scene.
+
    ```bash
    design/tools/.venv/bin/python design/tools/build.py     # --check to verify without writing
    ```

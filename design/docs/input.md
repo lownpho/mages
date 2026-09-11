@@ -31,7 +31,7 @@ devices are live at all times; nothing needs selecting in a menu.
 | `map_pin` | — (LMB on the map) | Y | Pin / unpin the open map's centre tile | `map_view.gd:152` |
 | `ui_accept` | Enter, Space | A | Activate the focused slot or button (lift / place an item) | `ui_slot.gd:300` |
 | `ui_cancel` | Escape | B | Put a carried item back; close a panel; leave slot navigation | `ui_slot.gd:300`, `ui.gd:102` |
-| `ui_up` `ui_down` `ui_left` `ui_right` | Arrow keys | Dpad | Move slot focus; page the bestiary; zoom the open map | Godot focus nav, `bestiary.gd:30`, `map_view.gd:152` |
+| `ui_up` `ui_down` `ui_left` `ui_right` | Arrow keys | Dpad | Move slot focus; page the bestiary and grimoire; zoom the open map | Godot focus nav, `bestiary.gd:30`, `grimoire.gd:33`, `map_view.gd:152` |
 
 Aim on a pad holds its last direction, and follows the run when the right stick has never been
 touched (`player.gd:146`), so casting forward while sprinting needs no second stick.
@@ -57,14 +57,14 @@ left with Start or B (`ui.gd:141`). It is narrower than it sounds:
 
 - **Casts stand down** (`player_cast_input.gd:26`), so a bumper can't fire a spell mid-sort.
 - **Movement does not.** Slot focus rides the dpad and the arrow keys, never the left stick, so
-  the mage keeps walking while the bag, map or bestiary is up. The world doesn't pause — there
-  is no pause menu by design — and freezing the player in a live fight to sort loot only gets
-  them hit. `test_pad_input.gd` asserts the dpad/stick split that makes this safe.
+  the mage keeps walking while the bag, map, bestiary or grimoire is up. The world doesn't
+  pause — there is no pause menu by design — and freezing the player in a live fight to sort
+  loot only gets them hit. `test_pad_input.gd` asserts the dpad/stick split that makes this safe.
 - **Panels read it as "a pad opened me"**: the map's stick-pan and pin reticle, the bestiary's
-  dpad paging, and the map's bare-dpad zoom all gate on it, so none of them answer to a mouse
-  session that clicked the panel open.
+  and grimoire's dpad paging, and the map's bare-dpad zoom all gate on it, so none of them
+  answer to a mouse session that clicked the panel open.
 
-**An open panel** (bestiary or map) takes the dpad and the sticks. `ui.gd:57` releases slot
+**An open panel** (bestiary, grimoire or map) takes the dpad and the sticks. `ui.gd:57` releases slot
 focus while one is up — otherwise dpad-left would walk the strip buttons underneath it — and
 restores it on close. Because nothing is focused, the button that opened the panel wears its
 focus ring painted on as a normal style (`ui.gd:70`), so a pad player can still see the HUD

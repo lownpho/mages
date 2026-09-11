@@ -20,12 +20,13 @@ func _ready() -> void:
 	# Show the value overlay only while hovering the bar.
 	_setup_bar_hover(%HealthBar, %HealthValue)
 
-	# The bestiary, the map and the controls page are the HUD-strip overlays; opening one
-	# closes the others so only ever one is up (Esc / an outside click closes whichever is
-	# open — see _unhandled_input). The strip button each one belongs to is here too: it is
-	# what wears the focus ring while its panel is up.
+	# The bestiary, the grimoire, the map and the controls page are the HUD-strip overlays;
+	# opening one closes the others so only ever one is up (Esc / an outside click closes
+	# whichever is open — see _unhandled_input). The strip button each one belongs to is here
+	# too: it is what wears the focus ring while its panel is up.
 	_panel_buttons = {
 		%BestiaryPanel: %BestiaryButton,
+		%GrimoirePanel: %GrimoireButton,
 		%MapPanel: %MapButton,
 		%ControlsPanel: %ControlsButton,
 	}
@@ -46,7 +47,7 @@ func _ready() -> void:
 
 	# Clicking a strip button grabs focus, leaving its ring stuck under the
 	# cursor — only pad navigation should keep focus visible.
-	for btn in [%BestiaryButton, %MapButton, %ControlsButton, %QuitButton]:
+	for btn in [%BestiaryButton, %GrimoireButton, %MapButton, %ControlsButton, %QuitButton]:
 		btn.pressed.connect(func() -> void:
 			if not GlobalInput.using_gamepad:
 				btn.release_focus())
@@ -90,17 +91,18 @@ func _show_panel_ring(panel: Control, on: bool) -> void:
 		btn.remove_theme_stylebox_override(&"normal")
 
 # Pad focus runs as ONE 4-wide ladder down the strip — the 4 spell slots, the 8 bag slots,
-# then the 4 strip buttons — wired explicitly because Godot's geometric neighbour search
-# wanders across the panel gaps between the containers. Both grids are authored at 4 columns,
-# matching this; the button row is the last rung. Edges point at themselves so focus parks
-# there instead of falling back to the geometric guess.
+# then the 5 strip buttons — wired explicitly because Godot's geometric neighbour search
+# wanders across the panel gaps between the containers. All three grids are authored at 4
+# columns, matching this; the buttons are the last rungs, the fifth wrapping onto a row of its
+# own. Edges point at themselves so focus parks there instead of falling back to the geometric
+# guess.
 const _NAV_COLUMNS := 4
 
 func _wire_focus_ladder() -> void:
 	var nav := []
 	for group in [%SpellSlots, %Bag]:
 		nav.append_array(group.get_children())
-	nav.append_array([%BestiaryButton, %MapButton, %ControlsButton, %QuitButton])
+	nav.append_array([%BestiaryButton, %GrimoireButton, %MapButton, %ControlsButton, %QuitButton])
 	for i in nav.size():
 		var c: Control = nav[i]
 		var col := i % _NAV_COLUMNS

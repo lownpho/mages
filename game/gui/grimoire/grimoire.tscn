@@ -1,49 +1,33 @@
-[gd_scene format=3 uid="uid://c8w66s0eu7mav"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://o8hevbpuurwc" path="res://gui/bestiary/bestiary.gd" id="1_book"]
-[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="3_ui"]
-[ext_resource type="Script" uid="uid://t5ikpl2vcl08" path="res://gui/bestiary/page_dots.gd" id="5_dots"]
+[ext_resource type="Script" path="res://gui/grimoire/grimoire.gd" id="1_book"]
+[ext_resource type="Texture2D" uid="uid://dgbnlj6st3y5h" path="res://gui/ui.png" id="2_ui"]
+[ext_resource type="Script" uid="uid://t5ikpl2vcl08" path="res://gui/bestiary/page_dots.gd" id="3_dots"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_arrowl"]
-atlas = ExtResource("3_ui")
+atlas = ExtResource("2_ui")
 region = Rect2(0, 24, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_arrowr"]
-atlas = ExtResource("3_ui")
+atlas = ExtResource("2_ui")
 region = Rect2(8, 24, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_close"]
-atlas = ExtResource("3_ui")
+atlas = ExtResource("2_ui")
 region = Rect2(24, 16, 8, 8)
 
-[node name="Bestiary" type="PanelContainer" unique_id=749306195]
+[node name="Grimoire" type="PanelContainer"]
 script = ExtResource("1_book")
 
-[node name="Margin" type="MarginContainer" parent="." unique_id=199742731]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
 theme_override_constants/margin_left = 3
 theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 
-[node name="Content" type="Control" parent="Margin" unique_id=843201975]
+[node name="Content" type="Control" parent="Margin"]
 layout_mode = 2
-
-[node name="Header" type="HBoxContainer" parent="Margin/Content" unique_id=110284554]
-layout_mode = 1
-anchors_preset = 0
-offset_top = 1.0
-theme_override_constants/separation = 4
-
-[node name="PageTitle" type="Label" parent="Margin/Content/Header" unique_id=110284551]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="BiomeCount" type="Label" parent="Margin/Content/Header" unique_id=110284552]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 4
 
 [node name="Title" type="Label" parent="Margin/Content"]
 unique_name_in_owner = true
@@ -52,10 +36,10 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_top = 1.0
 grow_horizontal = 2
-text = "BESTIARY"
+text = "GRIMOIRE"
 horizontal_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="Margin/Content" unique_id=61560357]
+[node name="CloseButton" type="TextureButton" parent="Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 1
@@ -63,11 +47,11 @@ anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -8.0
 offset_bottom = 8.0
+grow_horizontal = 0
 focus_mode = 0
 texture_normal = SubResource("AtlasTexture_close")
 
-[node name="EntriesArea" type="CenterContainer" parent="Margin/Content" unique_id=574813598]
-unique_name_in_owner = true
+[node name="EntriesArea" type="CenterContainer" parent="Margin/Content"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,15 +61,15 @@ offset_bottom = -9.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Entries" type="GridContainer" parent="Margin/Content/EntriesArea" unique_id=574813597]
+[node name="Entries" type="GridContainer" parent="Margin/Content/EntriesArea"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(222, 142)
+custom_minimum_size = Vector2(198, 118)
 layout_mode = 2
 theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
-columns = 8
+columns = 10
 
-[node name="Nav" type="HBoxContainer" parent="Margin/Content" unique_id=1889797344]
+[node name="Nav" type="HBoxContainer" parent="Margin/Content"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -99,27 +83,27 @@ grow_vertical = 0
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="PrevPage" type="TextureButton" parent="Margin/Content/Nav" unique_id=1365986408]
+[node name="PrevPage" type="TextureButton" parent="Margin/Content/Nav"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 focus_mode = 0
 texture_normal = SubResource("AtlasTexture_arrowl")
 
-[node name="PageDots" type="Control" parent="Margin/Content/Nav" unique_id=1929979395]
+[node name="PageDots" type="Control" parent="Margin/Content/Nav"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
-script = ExtResource("5_dots")
+script = ExtResource("3_dots")
 
-[node name="NextPage" type="TextureButton" parent="Margin/Content/Nav" unique_id=974206697]
+[node name="NextPage" type="TextureButton" parent="Margin/Content/Nav"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 focus_mode = 0
 texture_normal = SubResource("AtlasTexture_arrowr")
 
-[node name="TotalCount" type="Label" parent="Margin/Content" unique_id=110284553]
+[node name="TotalCount" type="Label" parent="Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 3

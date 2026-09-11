@@ -73,6 +73,7 @@ Palette.BLACK       Color(0.188235, 0.172549, 0.180392, 1)      curtains
 | `Rect2(8, 16, 8, 8)` | quit |
 | `Rect2(16, 16, 8, 8)` | map |
 | `Rect2(24, 16, 8, 8)` | close X |
+| `Rect2(40, 16, 8, 8)` | tome (grimoire) |
 | `Rect2(0, 24, 8, 8)` / `Rect2(8, 24, 8, 8)` | page arrows, left / right |
 
 **`gui/keys.png` — input prompts.** Never cut this one by hand. `gui/key_icons.gd` is a
@@ -91,13 +92,15 @@ dropdown of every atlas name. Ask for a prompt by name from a script with
 
 ## The overlay panel skeleton
 
-`bestiary.tscn`, `map_panel.tscn` and `controls.tscn` are the same shape. Copy it:
+`bestiary.tscn`, `grimoire.tscn`, `map_panel.tscn` and `controls.tscn` are the same shape. Copy it:
 
 ```
 Panel (PanelContainer)                    ← theme paints the frame; no style overrides
 └ Margin (MarginContainer, margins 3)
   └ Content (Control)                     ← the anchor frame everything else hangs off
-    ├ Header (HBox, offset_top 1, sep 4)  ← "controls - play", "bestiary 3/9"
+    ├ Title (Label, %Title, anchors_preset 10, offset_top 1, horizontal_alignment 1)
+    │                                     ← the window's name in capitals: "BESTIARY", "MAP"
+    ├ Header (HBox, offset_top 1, sep 4)  ← the page heading on the left: "play", "The Glade 3/9"
     ├ CloseButton (TextureButton)         ← anchors_preset 1, offset_left -8, offset_bottom 8,
     │                                       grow_horizontal 0, focus_mode 0, close X region
     ├ Body (…, anchors_preset 15, offset_top 9-10, offset_bottom -9/-10, grow 2/2)
@@ -118,7 +121,9 @@ Mount it in `gui/ui.tscn` as an instance under `UI`, `visible = false`, `anchors
 Two edits in `gui/ui.gd`, both one line:
 
 1. A strip button in `ui.tscn` under `Strip/VBox/BestiaryChip/Buttons`, `theme_type_variation
-   = &"IconButton"`, with its 8x8 icon.
+   = &"IconButton"`, with its 8x8 icon. `Buttons` is a 4-column grid — the strip is exactly four
+   buttons wide — so a fifth wraps onto the next row, which is also the next rung of the focus
+   ladder (see below: add it to `nav` and to `tests/test_ui_focus.gd`).
 2. A `%Panel: %Button` entry in `_panel_buttons`.
 
 That dictionary is the answer to every "which panels are there" question — opening one closes

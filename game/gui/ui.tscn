@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://c8w66s0eu7mav" path="res://gui/bestiary/bestiary.tscn" id="8_besty"]
 [ext_resource type="PackedScene" uid="uid://b4c7i8maqnjuh" path="res://gui/map/map_panel.tscn" id="9_map"]
 [ext_resource type="PackedScene" path="res://gui/controls/controls.tscn" id="10_ctrl"]
+[ext_resource type="PackedScene" path="res://gui/grimoire/grimoire.tscn" id="11_grim"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_health"]
 atlas = ExtResource("3_vuvel")
@@ -29,6 +30,10 @@ region = Rect2(40, 8, 8, 8)
 [sub_resource type="AtlasTexture" id="AtlasTexture_skull"]
 atlas = ExtResource("3_vuvel")
 region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_grimoire"]
+atlas = ExtResource("3_vuvel")
+region = Rect2(40, 16, 8, 8)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_map"]
 atlas = ExtResource("3_vuvel")
@@ -261,15 +266,23 @@ slot_texture = ExtResource("6_bagsl")
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="Buttons" type="HBoxContainer" parent="Strip/VBox/BestiaryChip" unique_id=582833632]
+[node name="Buttons" type="GridContainer" parent="Strip/VBox/BestiaryChip" unique_id=582833632]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 4
 
 [node name="BestiaryButton" type="Button" parent="Strip/VBox/BestiaryChip/Buttons" unique_id=1678627748]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"IconButton"
 icon = SubResource("AtlasTexture_skull")
+
+[node name="GrimoireButton" type="Button" parent="Strip/VBox/BestiaryChip/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"IconButton"
+icon = SubResource("AtlasTexture_grimoire")
 
 [node name="MapButton" type="Button" parent="Strip/VBox/BestiaryChip/Buttons" unique_id=359849750]
 unique_name_in_owner = true
@@ -301,6 +314,19 @@ offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="GrimoirePanel" parent="." instance=ExtResource("11_grim")]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 52.0
+offset_top = 5.0
+offset_right = -10.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="MapPanel" parent="." unique_id=1949367290 instance=ExtResource("9_map")]
 unique_name_in_owner = true
 visible = false
@@ -308,9 +334,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 52.0
-offset_top = 10.0
+offset_top = 5.0
 offset_right = -10.0
-offset_bottom = -10.0
+offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 2
 

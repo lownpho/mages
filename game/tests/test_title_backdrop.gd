@@ -20,6 +20,7 @@ func _ready() -> void:
 	var before := {
 		"save": _mtime(GameState.SAVE_PATH),
 		"bestiary": _mtime(GlobalBestiary.SAVE_PATH),
+		"grimoire": _mtime(GlobalGrimoire.SAVE_PATH),
 		"had_save": GameState.has_save(),
 		"seed": GameState.active_seed,
 	}
@@ -57,6 +58,8 @@ func _ready() -> void:
 		fails.append("user://save.cfg was written")
 	if _mtime(GlobalBestiary.SAVE_PATH) != before["bestiary"]:
 		fails.append("user://bestiary.cfg was written")
+	if _mtime(GlobalGrimoire.SAVE_PATH) != before["grimoire"]:
+		fails.append("user://grimoire.cfg was written")
 	if GameState.has_save() != before["had_save"]:
 		fails.append("changed whether a save exists")
 	if GameState.active_seed != before["seed"]:

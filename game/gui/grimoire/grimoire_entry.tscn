@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://gui/grimoire/grimoire_entry.gd" id="1_entry"]
+
+[node name="GrimoireEntry" type="PanelContainer"]
+custom_minimum_size = Vector2(18, 18)
+clip_contents = true
+script = ExtResource("1_entry")
+
+[node name="Icon" type="TextureRect" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(8, 8)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+stretch_mode = 2

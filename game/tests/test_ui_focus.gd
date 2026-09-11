@@ -1,11 +1,12 @@
 extends Node
 ## Headless check on the HUD's pad focus ladder: the strip's 4 spell slots, its 8 bag slots
-## and its 4 buttons must chain as ONE 4-wide grid so dpad navigation is deterministic instead
+## and its 5 buttons must chain as ONE 4-wide grid so dpad navigation is deterministic instead
 ## of Godot's geometric guess, with the edges parked on themselves. Run:
 ##   godot --headless --path game res://tests/test_ui_focus.tscn
 
 const UI_SCENE := preload("res://gui/ui.tscn")
 const COLUMNS := 4
+const BUTTONS := ["%BestiaryButton", "%GrimoireButton", "%MapButton", "%ControlsButton", "%QuitButton"]
 
 func _ready() -> void:
 	var fails: Array[String] = []
@@ -16,10 +17,10 @@ func _ready() -> void:
 	var nav := []
 	for group in ["%SpellSlots", "%Bag"]:
 		nav.append_array(ui.get_node(group).get_children())
-	for name_ in ["%BestiaryButton", "%MapButton", "%ControlsButton", "%QuitButton"]:
+	for name_ in BUTTONS:
 		nav.append(ui.get_node(name_))
 
-	var expected := GlobalInventory.SPELL_SLOTS + GlobalInventory.BAG_SIZE + 4
+	var expected := GlobalInventory.SPELL_SLOTS + GlobalInventory.BAG_SIZE + BUTTONS.size()
 	if nav.size() != expected:
 		fails.append("ladder is %d controls, expected %d" % [nav.size(), expected])
 

@@ -34,6 +34,10 @@ signal bestiary_entry_unlocked(enemy_id: StringName)
 # Every counted kill, the unlocking one included.
 signal bestiary_updated(enemy_id: StringName, kills: int)
 
+# Grimoire signals
+# First pickup of a spell — its grimoire entry just unlocked.
+signal grimoire_entry_learned(entry_id: StringName)
+
 # Spell signals
 # Cooldowns are keyed by the spell resource, not the slot it was cast from.
 signal spell_cooldown_started(spell: SpellResource, duration: float)

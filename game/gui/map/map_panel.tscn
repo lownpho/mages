@@ -16,11 +16,20 @@ theme_override_constants/margin_top = 3
 theme_override_constants/margin_right = 3
 theme_override_constants/margin_bottom = 3
 
-[node name="MapView" type="Control" parent="Margin" unique_id=102463417]
+[node name="Content" type="Control" parent="Margin"]
 layout_mode = 2
-script = ExtResource("2_view")
 
-[node name="CloseButton" type="TextureButton" parent="Margin/MapView" unique_id=61560356]
+[node name="Title" type="Label" parent="Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 1.0
+grow_horizontal = 2
+text = "MAP"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="TextureButton" parent="Margin/Content" unique_id=61560356]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 1
@@ -28,5 +37,16 @@ anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -8.0
 offset_bottom = 8.0
+grow_horizontal = 0
 focus_mode = 0
 texture_normal = SubResource("AtlasTexture_close")
+
+[node name="MapView" type="Control" parent="Margin/Content" unique_id=102463417]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_view")
