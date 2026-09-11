@@ -31,8 +31,8 @@ behaviours = Array[ExtResource("3_bh_base")]([SubResource("Blast_1")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 12.0
-skill_scaling = 1.0
+base_damage = 24.0
+skill_scaling = 2.0
 
 [sub_resource type="Resource" id="SinglePattern"]
 script = ExtResource("6_pattern")
@@ -50,7 +50,7 @@ damage = SubResource("ScalingProfile_bullet")
 max_shots = 1
 effect_scene = ExtResource("99_effect")
 cooldown = 2.0
-cast_time = 0.2
+cast_time = 0.5
 blurb = "I really hope they fall for it. It needs a lot of magic to cast."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 6
+skill_modifier = 10

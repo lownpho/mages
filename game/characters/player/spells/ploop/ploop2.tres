@@ -23,12 +23,11 @@ pierce = true
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("4_fp0pv")
-base_damage = 7.0
-speed_scaling = 0.75
+base_damage = 10.0
+speed_scaling = 0.5
 
 [sub_resource type="Resource" id="RingPattern"]
 script = ExtResource("6_4rogn")
-num_bullets = 8
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("7_sbd63")
