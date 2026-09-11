@@ -94,7 +94,7 @@ offset = Vector2(0, -1)
 
 [node name="Hurtbox" parent="." unique_id=1414982078 instance=ExtResource("2_hbox")]
 collision_mask = 256
-radius = 2.0
+radius = 3.0
 
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=2077332954]
 target_position = Vector2(104, 0)
@@ -112,7 +112,6 @@ max_time = 1.2
 probe_path = NodePath("../../DetectProbe")
 seen_state = "Lob"
 alert_on_hit = true
-react_min = 0.0
 react_max = 1.0
 
 [node name="Lob" type="Node" parent="FSM" unique_id=1283805056]

@@ -102,7 +102,7 @@ offset = Vector2(0, -2)
 
 [node name="Hurtbox" parent="." unique_id=1866281548 instance=ExtResource("2_hbox")]
 collision_mask = 256
-radius = 2.0
+radius = 3.0
 
 [node name="Contact" type="Area2D" parent="." unique_id=316555318]
 collision_layer = 512

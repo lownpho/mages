@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://dmz7q4wbk9htn"]
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3 uid="uid://dm07q4wblahtn"]
 
 [ext_resource type="Script" uid="uid://37ypq0lg4tq0" path="res://items/bullets/behaviours/bullet_behaviour.gd" id="1_bh_base"]
 [ext_resource type="Script" uid="uid://dhsmr73h0nn5n" path="res://characters/player/spells/bullet_spell_resource.gd" id="1_script"]

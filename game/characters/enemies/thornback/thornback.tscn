@@ -165,6 +165,7 @@ offset = Vector2(0, -2)
 
 [node name="Hurtbox" parent="." unique_id=889028279 instance=ExtResource("2_hbox")]
 collision_mask = 256
+radius = 5.0
 
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=1581901401]
 target_position = Vector2(112, 0)

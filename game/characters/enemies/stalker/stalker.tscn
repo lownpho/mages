@@ -110,7 +110,9 @@ autoplay = "idle"
 offset = Vector2(0, -6)
 
 [node name="Hurtbox" parent="." unique_id=1096060196 instance=ExtResource("2_hbox")]
+position = Vector2(0, -5)
 collision_mask = 256
+radius = 6.0
 
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=532067418]
 target_position = Vector2(40, 0)

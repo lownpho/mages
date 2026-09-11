@@ -102,7 +102,7 @@ offset = Vector2(0, -1)
 
 [node name="Hurtbox" parent="." unique_id=933255520 instance=ExtResource("2_hbox")]
 collision_mask = 256
-radius = 3.0
+radius = 5.0
 
 [node name="Caster" parent="." unique_id=324628300 instance=ExtResource("5_caster")]
 
