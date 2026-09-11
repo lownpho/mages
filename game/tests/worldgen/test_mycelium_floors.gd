@@ -66,8 +66,9 @@ func _ready() -> void:
 	get_tree().quit(0 if fails.is_empty() else 1)
 
 
-## The last floor stands the combat lab's placeholder where each boss fight will be, placed as a
-## room feature — so until the real scenes exist, the slots are walkable rather than empty.
+## The last floor stands a placeholder where each boss fight will be (the combat lab's dummy, or an
+## end-of-content sign), placed as a room feature — so until the real scenes exist, the slots are
+## walkable rather than empty.
 func _check_boss_slots(graph: BiomeGraph, cfg: GenConfig, seed_v: int, fails: Array[String]) -> void:
 	for type_id in [&"mycelium_boss", &"mycelium_mother"]:
 		var placed := 0

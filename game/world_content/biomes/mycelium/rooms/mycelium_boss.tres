@@ -5,7 +5,8 @@
 [ext_resource type="Script" uid="uid://eeh0mmh5eahl" path="res://worldgen/core/pack_member.gd" id="3_pm"]
 [ext_resource type="Script" uid="uid://db0bep0rrmqws" path="res://worldgen/generators/generator_cave.gd" id="4_gen"]
 [ext_resource type="Script" uid="uid://d0h2ehisg8bm5" path="res://worldgen/core/room_feature.gd" id="5_rf"]
-[ext_resource type="PackedScene" path="res://debug/placeholder/placeholder.tscn" id="6_dummy"]
+[ext_resource type="PackedScene" uid="uid://d1nucsign8wqk" path="res://worldgen/runtime/under_construction_sign.tscn" id="6_sign"]
+[ext_resource type="Script" uid="uid://caq63dicc4qgp" path="res://worldgen/runtime/under_construction_resource.gd" id="7_ucr"]
 
 [sub_resource type="Resource" id="pm_0_0"]
 script = ExtResource("3_pm")
@@ -18,9 +19,16 @@ script = ExtResource("2_ste")
 centred = true
 members = Array[ExtResource("3_pm")]([SubResource("pm_0_0")])
 
-[sub_resource type="Resource" id="feat_dummy"]
+[sub_resource type="Resource" id="sign_data"]
+script = ExtResource("7_ucr")
+message = "Congrats for reaching the end so far.
+Send me a picture of this
+and you'll be rewarded."
+
+[sub_resource type="Resource" id="feat_sign"]
 script = ExtResource("5_rf")
-scene = ExtResource("6_dummy")
+scene = ExtResource("6_sign")
+data = SubResource("sign_data")
 
 [sub_resource type="Resource" id="gen"]
 script = ExtResource("4_gen")
@@ -40,4 +48,4 @@ enemies = Array[ExtResource("2_ste")]([SubResource("ste_0")])
 enemy_groups_min = 1
 enemy_groups_max = 1
 scale_groups_with_size = false
-features = Array[ExtResource("5_rf")]([SubResource("feat_dummy")])
+features = Array[ExtResource("5_rf")]([SubResource("feat_sign")])
