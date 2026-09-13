@@ -10,6 +10,8 @@ var room_key := ""
 var enemy: CreatureResource
 var tile := Vector2i.ZERO
 var leader := false
+## Belongs to a Rare, Miniboss or Boss Fixed encounter, so its defeat lasts the Run.
+var fixed := false
 var filler := false
 var teaching := false
 

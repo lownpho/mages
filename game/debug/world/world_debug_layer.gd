@@ -21,6 +21,7 @@ var _panel: PanelContainer
 var _tabs: TabContainer
 var _world_page: Control
 var _map: WorldDebugMap
+var _combat: WorldDebugCombat
 var _world_overlay: WorldDebugOverlay
 var _biome_picker: OptionButton
 var _knob_box: VBoxContainer
@@ -78,15 +79,26 @@ func _input(event: InputEvent) -> void:
 		set_panel_open(not panel_open)
 		get_viewport().set_input_as_handled()
 		return
+	# Closed, the panel leaves every click to the player, who casts with them.
 	var click := event as InputEventMouseButton
-	if not panel_open or click == null or not click.pressed or click.button_index != MOUSE_BUTTON_LEFT:
+	if not panel_open or click == null or not click.pressed:
 		return
 	# The Map consumes its own clicks. The rest of the panel leaves the right-hand World visible;
-	# clicking that area teleports while paused. Combat palettes can claim this branch in ticket 07.
-	if _tabs.current_tab != 3 and click.position.x > _panel.size.x:
-		var world_point := get_viewport().get_canvas_transform().affine_inverse() * click.position
+	# clicking that area while paused places the Combat tab's selected enemy, or teleports without
+	# one. On the Combat tab the right button removes the nearest enemy.
+	if _tabs.current_tab == 3 or click.position.x <= _panel.size.x:
+		return
+	var world_point := get_viewport().get_canvas_transform().affine_inverse() * click.position
+	var on_combat := _tabs.current_tab == 2
+	if click.button_index == MOUSE_BUTTON_LEFT and on_combat and _combat.selected_enemy != &"":
+		_combat.place_selected(world_point)
+	elif click.button_index == MOUSE_BUTTON_LEFT:
 		host._teleport_to_tile(Vector2i((world_point / GameConstants.PX_PER_TILE).floor()))
-		get_viewport().set_input_as_handled()
+	elif click.button_index == MOUSE_BUTTON_RIGHT and on_combat:
+		_combat.remove_nearest(world_point)
+	else:
+		return
+	get_viewport().set_input_as_handled()
 
 
 func set_panel_open(open: bool) -> void:
@@ -137,11 +149,9 @@ func _build_ui() -> void:
 	_world_page = _page("World")
 	_build_world_page(_world_page)
 	_build_overlay_page(_page("Overlays"))
-	var combat := _page("Combat")
-	var combat_label := Label.new()
-	combat_label.text = "Encounter palette arrives in ticket 07.\n\nFly and persisted loadout are active."
-	combat_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	combat.add_child(combat_label)
+	_combat = WorldDebugCombat.new()
+	_page("Combat").add_child(_combat)
+	_combat.configure(host)
 	var map_page := _page("Map")
 	_map = WorldDebugMap.new()
 	_map.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

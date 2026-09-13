@@ -34,12 +34,42 @@ func _ready() -> void:
 		elif data.icon == null:
 			fails.append("no bestiary icon on %s" % id)
 
-	# --- page grouping is DERIVED from the room spawn tables (not a stored biome field): each
-	# enemy files onto the page whose rooms spawn it, and glade_start + glade_veggie share
-	# family "glade" so they merge into one page — as do deepwood + deepwood_mimic. The mycelium
-	# page proves the walk reaches a DUNGEON: its config hangs off a door, and its enemies live
-	# on the per-floor configs under that. Ordering is commons alpha, rares, bosses last. ---
+	# --- page grouping is DERIVED from the World content (not a stored biome field): each enemy
+	# files onto every Biome page whose shared roster, Zone rosters or Fixed encounters field it.
+	# The ported Glade, Deepwood and Mycelium keep their old pages: Glade's start/veggie and
+	# Deepwood's mimic variants are now Zones of one Biome, Mycelium is a Side biome. Ordering is
+	# commons alpha, rares, bosses last. ---
 	var pages := GlobalBestiary.pages()
+	var content := ContentLoader.load_content(GlobalBestiary.WORLD_CONTENT)
+	var biome_order: Array[StringName] = []
+	biome_order.assign(pages.map(func(p: Dictionary) -> StringName: return p["biome"]))
+	if biome_order != content.biome_ids():
+		fails.append("pages %s don't follow the Ideal path then Side biomes %s" % [biome_order, content.biome_ids()])
+	for p: Dictionary in pages:
+		var derived := {}
+		var biome: BiomeResource = content.biomes[p["biome"]]
+		var fixed: Array = [biome.boss]
+		for enemy in biome.roster:
+			derived[GlobalBestiary._id_for(enemy)] = true
+		for zone: ZoneResource in content.zones[p["biome"]].values():
+			for enemy in zone.roster:
+				derived[GlobalBestiary._id_for(enemy)] = true
+			fixed.append_array(zone.minibosses + zone.rares)
+		for encounter: FixedEncounterResource in fixed:
+			derived[GlobalBestiary._id_for(encounter.leader)] = true
+			for escort in encounter.escorts:
+				derived[GlobalBestiary._id_for(escort)] = true
+		var filed_here := {}
+		for id in p["ids"]:
+			filed_here[id] = true
+		if filed_here.keys().size() != p["ids"].size() or filed_here.keys().any(func(id) -> bool: return not derived.has(id)) \
+				or derived.keys().any(func(id) -> bool: return not filed_here.has(id)):
+			fails.append("page %s files %s, content fields %s" % [p["biome"], p["ids"], derived.keys()])
+	# Additive Zone rosters and Fixed encounters both file enemies: rosebud is only in Glade's veggie
+	# Zone, fae only leads Glade's Boss.
+	if not pages.is_empty() and not (pages[0]["ids"].has(&"rosebud") and pages[0]["ids"].has(&"fae")):
+		fails.append("Glade page misses a Zone-roster or Fixed-encounter enemy: %s" % [pages[0]["ids"]])
+	var ported := pages.filter(func(p: Dictionary) -> bool: return p["biome"] in [&"glade", &"deepwood", &"mycelium"])
 	var want_glade: Array[StringName] = [
 		&"dirt_golem", &"hopper", &"mandrake", &"rosebud", &"seedling", &"sproutling",
 		&"thornthrower", &"wasp",
@@ -60,12 +90,12 @@ func _ready() -> void:
 		&"burrower", &"deathcap", &"maulcap",
 	]
 	var want_pages := [want_glade, want_deepwood, want_mycelium]
-	if pages.size() != want_pages.size():
-		fails.append("expected %d pages, got %d: %s" % [want_pages.size(), pages.size(), str(pages)])
+	if ported.size() != want_pages.size():
+		fails.append("expected %d ported pages, got %d: %s" % [want_pages.size(), ported.size(), str(pages)])
 	else:
 		for i in want_pages.size():
-			if pages[i]["ids"] != want_pages[i]:
-				fails.append("page %d %s != %s" % [i, str(pages[i]["ids"]), str(want_pages[i])])
+			if ported[i]["ids"] != want_pages[i]:
+				fails.append("page %d %s != %s" % [i, str(ported[i]["ids"]), str(want_pages[i])])
 
 	# filed_ids: distinct enemies across all pages (the whole-game completion denominator) —
 	# a subset of the roster (unreachable enemies excluded), each counted once.
@@ -77,15 +107,14 @@ func _ready() -> void:
 		if not roster.has(id):
 			fails.append("filed id not in roster: %s" % id)
 
-	# The merged family page is labelled with the family, and titled by the one sub-biome that
-	# authors a display_name. A page with none falls back to its label capitalised.
+	# A page is labelled with its Biome id and titled with that id capitalised.
 	var page: Dictionary = pages[0]
 	if page["biome"] != &"glade":
-		fails.append("merged page label %s != glade" % page["biome"])
-	var want_titles := ["The Glade", "Deepwood", "Mycelium"]
-	for i in want_titles.size():
-		if pages[i]["title"] != want_titles[i]:
-			fails.append("page %d title '%s' != '%s'" % [i, pages[i]["title"], want_titles[i]])
+		fails.append("first page label %s != glade" % page["biome"])
+	var want_titles := ["Glade", "Deepwood", "Mycelium"]
+	for i in mini(want_titles.size(), ported.size()):
+		if ported[i]["title"] != want_titles[i]:
+			fails.append("page %d title '%s' != '%s'" % [i, ported[i]["title"], want_titles[i]])
 
 	# --- kill -> unlock flow ---
 	var unlocked: Array = []

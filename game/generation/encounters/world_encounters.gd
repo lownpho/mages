@@ -216,6 +216,7 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], candi
 		member.enemy = fields.enemy
 		member.tile = tile
 		member.leader = fields.get("leader", false)
+		member.fixed = encounter.fixed
 		member.filler = fields.get("filler", false)
 		member.teaching = fields.get("teaching", false)
 		encounter.members.append(member)

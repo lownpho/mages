@@ -55,7 +55,7 @@ func _start(new_seed: int) -> void:
 	var graphed := Time.get_ticks_msec()
 	_streamer.build_world(_graph)
 	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
-	_encounter_spawner.build_world(_encounters)
+	_encounter_spawner.build_world(_encounters, RunDefeats.new())
 	if _player == null:
 		_player = PLAYER_SCENE.instantiate()
 		_entities.add_child(_player)
@@ -107,16 +107,17 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				_start(randi())
 
 
-## Called by the integrated debug layer after it has selectively rebuilt the graph.
+## Called by the integrated debug layer after it has selectively rebuilt the graph. A new Run (a
+## reseed) starts at spawn with no defeats; a knob rebuild keeps them, as keys follow place.
 func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[StringName, bool],
-		plan_changed: bool, at_spawn: bool) -> void:
+		plan_changed: bool, new_run: bool) -> void:
 	_graph = next_graph
 	world_seed = next_graph.plan.world_seed
 	GameState.active_seed = world_seed
 	_streamer.rebuild_world(next_graph, invalidated_biomes, plan_changed)
 	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
-	_encounter_spawner.build_world(_encounters)
-	if at_spawn:
+	_encounter_spawner.build_world(_encounters, RunDefeats.new() if new_run else null)
+	if new_run:
 		_player.global_position = _streamer.spawn_position()
 	else:
 		var tile := Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor())

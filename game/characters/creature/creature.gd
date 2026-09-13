@@ -57,6 +57,9 @@ var can_act: bool = true
 ## A dash ended against a wall head-on rather than running its course — the razorback's
 ## stun window. Only the slam fires it; a dash that simply expires does not.
 signal dash_blocked
+## Health ran out and the death (after any throe) is final: drops and the Bestiary count have
+## fired. A silent removal — a despawn, a debug Clear — never emits it.
+signal died
 
 ## Live absorb effect soaking incoming damage before it reaches health — the same hook
 ## the player carries, so a shield spell is faction-agnostic like every other: a moss
@@ -373,6 +376,7 @@ func _finish_death() -> void:
 	for drop in drops:
 		if drop.roll():
 			GlobalEvent.loot_dropped.emit(drop.item, global_position)
+	died.emit()
 	queue_free()
 
 func _on_hurt(damage: int, source: Node) -> void:
