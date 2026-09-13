@@ -157,6 +157,14 @@ func is_chunk_loaded(coord: Vector2i) -> bool:
 	return _chunks.has(coord)
 
 
+func loaded_chunk_coords() -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	out.assign(_chunks.keys())
+	out.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return a.y < b.y or (a.y == b.y and a.x < b.x))
+	return out
+
+
 func chunk_of(world_position: Vector2) -> Vector2i:
 	var chunk_px := float(chunk_tiles * GameConstants.PX_PER_TILE)
 	return Vector2i(floori(world_position.x / chunk_px), floori(world_position.y / chunk_px))

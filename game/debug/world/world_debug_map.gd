@@ -6,6 +6,8 @@ extends Control
 signal teleport_requested(tile: Vector2i)
 
 var graph: WorldGraph
+## Hovering a Room builds its encounters on demand to report their count.
+var encounters: WorldEncounters
 var overlays: Dictionary = {}
 var entered_rooms: Dictionary[String, bool] = {}
 var zoom := 0.22
@@ -98,7 +100,7 @@ func _update_hover(local: Vector2) -> void:
 	else:
 		tooltip_text = "%s\n%s / %s\n%s · Challenge %d · encounters %d" % [hovered.key(),
 			hovered.plan.biome, hovered.plan.zone, hovered.role_name(), hovered.plan.challenge,
-			_encounter_count(hovered)]
+			encounters.encounter_count(hovered) if encounters != null else 0]
 
 
 func _draw() -> void:
@@ -153,7 +155,3 @@ func _points(polygon: PackedVector2Array) -> PackedVector2Array:
 	for point in polygon:
 		out.append(screen_at(point))
 	return out
-
-
-static func _encounter_count(room: GeneratedRoom) -> int:
-	return int(room.get_meta("encounter_count", 0))

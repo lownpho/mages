@@ -338,8 +338,10 @@ func _save_knobs() -> void:
 
 func _refresh_graph(reset_map := false) -> void:
 	if _world_overlay != null:
+		_world_overlay.encounters = host._encounters
 		_world_overlay.set_data(tuner.graph, overlays)
 	if _map != null:
+		_map.encounters = host._encounters
 		var should_fit := reset_map or not _map_fitted
 		_map.set_data(tuner.graph, overlays, false)
 		if should_fit:

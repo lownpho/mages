@@ -52,6 +52,29 @@ static func interiors(world_graph: WorldGraph) -> WorldInteriors:
 	return out
 
 
+## Every encounter and member, optionally requesting Rooms in another order first.
+static func encounter_world(world_graph: WorldGraph, order: Array[GeneratedRoom] = []) -> WorldEncounters:
+	var out := WorldEncounters.new(world_graph, interiors(world_graph))
+	out.generate_all(order)
+	return out
+
+
+## Stable text at the public generated-output boundary, without runtime AI or loot state.
+static func encounter_snapshot(generated: WorldEncounters) -> String:
+	var lines: Array[String] = []
+	var keys: Array[String] = []
+	keys.assign(generated.encounters.keys())
+	keys.sort()
+	for key in keys:
+		var encounter := generated.encounters[key]
+		lines.append("encounter %s room %s centre %s challenge %d fixed %s" % [key,
+				encounter.room_key, encounter.centre, encounter.challenge, encounter.fixed])
+		for member in encounter.members:
+			lines.append("  member %s %s tile %s leader %s filler %s teaching %s" % [member.key,
+					member.enemy.resource_path, member.tile, member.leader, member.filler, member.teaching])
+	return "\n".join(lines)
+
+
 ## A chunk's rendered cells as text, one entry per layer name: chunks with equal entries show the
 ## same tiles.
 static func rendered(chunk: WgChunk) -> Dictionary[String, String]:

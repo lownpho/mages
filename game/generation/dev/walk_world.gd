@@ -15,6 +15,7 @@ const FLY_SPEED := 480.0
 
 var _content: WorldContent
 var _graph: WorldGraph
+var _encounters: WorldEncounters
 var _player: CharacterBody2D
 var _flying := false
 var _debug_layer: Node = null
@@ -23,6 +24,7 @@ var _build_timings := {"plan_ms": 0.0, "graphs_ms": 0.0, "spawn_ms": 0.0, "total
 
 @onready var _streamer: ChunkStreamer = $WorldRoot/Streamer
 @onready var _entities: Node2D = $WorldRoot/Entities
+@onready var _encounter_spawner: EncounterSpawner = $EncounterSpawner
 @onready var _label: Label = $HUD/Label
 
 
@@ -52,6 +54,8 @@ func _start(new_seed: int) -> void:
 	_graph = WorldGraph.build(world_plan)
 	var graphed := Time.get_ticks_msec()
 	_streamer.build_world(_graph)
+	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
+	_encounter_spawner.build_world(_encounters)
 	if _player == null:
 		_player = PLAYER_SCENE.instantiate()
 		_entities.add_child(_player)
@@ -110,6 +114,8 @@ func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[S
 	world_seed = next_graph.plan.world_seed
 	GameState.active_seed = world_seed
 	_streamer.rebuild_world(next_graph, invalidated_biomes, plan_changed)
+	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
+	_encounter_spawner.build_world(_encounters)
 	if at_spawn:
 		_player.global_position = _streamer.spawn_position()
 	else:

@@ -13,3 +13,26 @@ extends Resource
 @export_range(0.0, 3600.0, 1.0, "or_greater", "suffix:s") var respawn_delay := 300.0
 ## Chance that a non-Teaching ordinary Room becomes a Breather.
 @export_range(0.0, 1.0, 0.01) var breather_chance := 0.0
+
+
+## The active global density step at Challenge. Challenges below the first step use that first
+## step, which is always the required zero step for valid content.
+func encounter_density(challenge: int) -> float:
+	return float(_step(encounters_per_tile, challenge, 0.0))
+
+
+func encounter_types(challenge: int) -> int:
+	return int(_step(types_per_encounter, challenge, 0))
+
+
+static func _step(steps: Dictionary, challenge: int, fallback: Variant) -> Variant:
+	var keys := steps.keys()
+	if keys.is_empty():
+		return fallback
+	keys.sort()
+	var value: Variant = steps[keys[0]]
+	for at in keys:
+		if at > challenge:
+			break
+		value = steps[at]
+	return value

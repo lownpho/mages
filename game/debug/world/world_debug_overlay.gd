@@ -9,6 +9,8 @@ const PASSAGE_COLORS := [Color.WHITE, Color(0.65, 0.7, 0.78), Color.YELLOW,
 		Color.CYAN, Color(1.0, 0.45, 0.2), Color(1.0, 0.3, 0.75)]
 
 var graph: WorldGraph
+## Labels only Rooms whose encounters streaming already built; drawing never builds an interior.
+var encounters: WorldEncounters
 var overlays: Dictionary = {}
 var entered_rooms: Dictionary[String, bool] = {}
 
@@ -85,7 +87,8 @@ func _draw() -> void:
 			if overlays.get("zones", false):
 				parts.append(String(room.plan.zone))
 			if overlays.get("roles", false):
-				parts.append("%s e%d" % [room.role_name(), int(room.get_meta("encounter_count", 0))])
+				var count := encounters.built_count(room) if encounters != null else -1
+				parts.append("%s e%s" % [room.role_name(), str(count) if count >= 0 else "?"])
 			if overlays.get("challenge", false):
 				parts.append("C%d" % room.plan.challenge)
 			draw_string(DebugState.UI_FONT, room.seed * px + Vector2(3, -3) / zoom, " · ".join(parts),
