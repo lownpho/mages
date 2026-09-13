@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Resource" path="res://characters/enemies/bloatcap/bloatcap_data.tres" id="bloatcap"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/mycelium_fountain.tscn" id="fountain"]
+[ext_resource type="Resource" path="res://characters/enemies/gapcap/gapcap_data.tres" id="gapcap"]
+[ext_resource type="Resource" path="res://characters/enemies/normiecap/normiecap_data.tres" id="normiecap"]
+[ext_resource type="Resource" path="res://world_content/biomes/mycelium/mycelium_presentation.tres" id="presentation"]
+[ext_resource type="Resource" path="res://characters/enemies/puffcap/puffcap_data.tres" id="puffcap"]
+[ext_resource type="Resource" path="res://characters/enemies/ringcap/ringcap_data.tres" id="ringcap"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/spiralcap/spiralcap_data.tres" id="spiralcap"]
+[ext_resource type="Resource" path="res://characters/enemies/sporespitter/sporespitter_data.tres" id="sporespitter"]
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("puffcap")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("puffcap"): 4
+})
+centred = true
+
+[resource]
+script = ExtResource("biome")
+exit_challenge = 12
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("puffcap"): 4,
+ExtResource("sporespitter"): 4,
+ExtResource("normiecap"): 4,
+ExtResource("spiralcap"): 4,
+ExtResource("bloatcap"): 4,
+ExtResource("ringcap"): 5,
+ExtResource("gapcap"): 5
+})
+fillers = Array[ExtResource("creature")]([ExtResource("puffcap")])
+boss = SubResource("boss")
+room_size = 36
+border_warp = 11.0
+loops = 0.35
+rockiness = 0.5
+presentation = ExtResource("presentation")
+decoration_density = 0.02
+warp_doors = 1
+breather_objects = Dictionary[PackedScene, int]({
+ExtResource("fountain"): 1
+})

@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/glade_fountain.tscn" id="fountain"]
+[ext_resource type="Resource" path="res://characters/enemies/hopper/hopper_data.tres" id="hopper"]
+[ext_resource type="Resource" path="res://characters/enemies/mandrake/mandrake_data.tres" id="mandrake"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_veggie/glade_veggie_presentation.tres" id="presentation"]
+[ext_resource type="Resource" path="res://characters/enemies/rosebud/rosebud_data.tres" id="rosebud"]
+[ext_resource type="Resource" path="res://characters/enemies/seedling/seedling_data.tres" id="seedling"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/thornmess/thornmess_data.tres" id="thornmess"]
+[ext_resource type="Resource" path="res://characters/enemies/thornthrower/thornthrower_data.tres" id="thornthrower"]
+[ext_resource type="Resource" path="res://characters/enemies/wasp/wasp_data.tres" id="wasp"]
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("thornmess")
+centred = true
+
+[resource]
+script = ExtResource("biome")
+exit_challenge = 18
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("rosebud"): 14,
+ExtResource("thornthrower"): 14,
+ExtResource("mandrake"): 15,
+ExtResource("seedling"): 15,
+ExtResource("wasp"): 16,
+ExtResource("hopper"): 17
+})
+boss = SubResource("boss")
+room_size = 39
+border_warp = 6.0
+rockiness = 0.6
+presentation = ExtResource("presentation")
+decoration_density = 0.08
+professors = 1
+warp_doors = 2
+breather_objects = Dictionary[PackedScene, int]({
+ExtResource("fountain"): 1
+})

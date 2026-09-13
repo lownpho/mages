@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="WorldResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Resource" path="res://generation/world/biomes/deepwood/biome.tres" id="deepwood"]
+[ext_resource type="Resource" path="res://generation/world/biomes/fruit/biome.tres" id="fruit"]
+[ext_resource type="Resource" path="res://generation/world/biomes/glade/biome.tres" id="glade"]
+[ext_resource type="Resource" path="res://generation/world/biomes/hell/biome.tres" id="hell"]
+[ext_resource type="Resource" path="res://generation/world/biomes/hive/biome.tres" id="hive"]
+[ext_resource type="Resource" path="res://generation/world/biomes/moon/biome.tres" id="moon"]
+[ext_resource type="Resource" path="res://generation/world/biomes/mycelium/biome.tres" id="mycelium"]
+[ext_resource type="Script" path="res://generation/content/side_biome_resource.gd" id="side_biome"]
+[ext_resource type="Resource" path="res://generation/world/biomes/wastelands/biome.tres" id="wastelands"]
+[ext_resource type="Script" path="res://generation/content/world_resource.gd" id="world"]
+
+[sub_resource type="Resource" id="side_hive"]
+script = ExtResource("side_biome")
+biome = ExtResource("hive")
+parent = ExtResource("deepwood")
+
+[sub_resource type="Resource" id="side_mycelium"]
+script = ExtResource("side_biome")
+biome = ExtResource("mycelium")
+parent = ExtResource("deepwood")
+
+[sub_resource type="Resource" id="side_moon"]
+script = ExtResource("side_biome")
+biome = ExtResource("moon")
+parent = ExtResource("wastelands")
+
+[sub_resource type="Resource" id="side_hell"]
+script = ExtResource("side_biome")
+biome = ExtResource("hell")
+parent = ExtResource("wastelands")
+
+[resource]
+script = ExtResource("world")
+ideal_path = Array[ExtResource("biome")]([ExtResource("glade"), ExtResource("deepwood"), ExtResource("wastelands"), ExtResource("fruit")])
+side_biomes = Array[ExtResource("side_biome")]([SubResource("side_hive"), SubResource("side_mycelium"), SubResource("side_moon"), SubResource("side_hell")])

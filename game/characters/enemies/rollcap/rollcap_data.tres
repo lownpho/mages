@@ -30,3 +30,4 @@ max_health = 60
 kinds = 32
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew")])
 death_spawns = Array[ExtResource("4_spawn")]([SubResource("Spawn_halves")])
+group_max = 2

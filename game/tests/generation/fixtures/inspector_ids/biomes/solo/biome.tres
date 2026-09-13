@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://c8nspctrb1ome"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_q5wso"]
+[ext_resource type="Resource" uid="uid://cspv0ip6swyd0" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="2_guue6"]
+[ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="3_ivxxy"]
+[ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="6_evpy2"]
+[ext_resource type="Resource" uid="uid://bqm7yv4x0nwdl" path="res://characters/enemies/moth/moth_data.tres" id="7_lmqo4"]
+[ext_resource type="Script" uid="uid://n62cgew2ywo2" path="res://generation/content/biome_resource.gd" id="8_8kiqc"]
+[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="9_3vqtc"]
+
+[sub_resource type="Resource" id="Resource_gcmxw"]
+script = ExtResource("3_ivxxy")
+leader = ExtResource("2_guue6")
+centred = true
+metadata/_custom_type_script = "uid://dif17xbtr55od"
+
+[sub_resource type="Resource" id="Resource_rbuvy"]
+script = ExtResource("9_3vqtc")
+text = "The king waits."
+reveals = ExtResource("2_guue6")
+metadata/_custom_type_script = "uid://clnrrbvcsksbf"
+
+[resource]
+script = ExtResource("8_8kiqc")
+exit_challenge = 4
+roster = Dictionary[ExtResource("1_q5wso"), int]({
+ExtResource("7_lmqo4"): 0
+})
+boss = SubResource("Resource_gcmxw")
+presentation = ExtResource("6_evpy2")
+signs = Array[ExtResource("9_3vqtc")]([SubResource("Resource_rbuvy")])
+metadata/_custom_type_script = "uid://n62cgew2ywo2"

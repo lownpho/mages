@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ZoneResource" format=3]
+
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/viper/viper_data.tres" id="viper"]
+[ext_resource type="Script" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="rare_viper"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("viper")
+
+[resource]
+script = ExtResource("zone")
+route_rooms = 5
+room_count = 10
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_viper")])

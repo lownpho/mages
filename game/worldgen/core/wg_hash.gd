@@ -15,6 +15,12 @@ const NS_FEATURES := 8
 const NS_DOORS := 9
 const NS_SIGNS := 10
 
+# The finite World generator's namespaces (game/generation/). Its units seed with unit_seed.
+const NS_MACRO_PATH := 101
+const NS_ZONE_ORDER := 102
+const NS_ATTACHMENTS := 103
+const NS_SET_PIECES := 104
+
 # SplitMix64 constants written as their two's-complement signed-64 values: GDScript clamps
 # any int literal above INT64_MAX, so the raw 0x9E37... hex forms would silently corrupt.
 const _GAMMA := -7046029254386353131  # 0x9E3779B97F4A7C15
@@ -48,6 +54,14 @@ static func seed_for(gen_version: int, config_hash: int, parts: Array[int]) -> i
 	for p in parts:
 		h = splitmix64(h ^ splitmix64(p))
 	return h
+
+
+## A generated unit's seed in the finite World generator, from the World seed, a namespace and the
+## unit's place-derived key ("glade", "3,2/5"). No content hash or version goes in, and no unit's
+## seed depends on another unit's draws.
+static func unit_seed(world_seed: int, namespace_id: int, key: String) -> int:
+	var h := splitmix64(splitmix64(world_seed) ^ namespace_id)
+	return splitmix64(fold_bytes(h, key.to_utf8_buffer()))
 
 
 ## The one sanctioned way to make a per-unit RNG. Godot's RandomNumberGenerator

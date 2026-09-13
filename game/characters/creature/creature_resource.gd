@@ -27,3 +27,12 @@ enum Rarity {COMMON, RARE, BOSS}
 ## into its brood, a clustercap coming apart into three turrets. Always fires; the roll is
 ## the drops' business, a split is the creature's whole point.
 @export var death_spawns: Array[DeathSpawn] = []
+
+## How this creature fills generated ordinary encounters, wherever a roster fields it. Only the
+## Entry challenge and Filler role depend on the place.
+@export_group("Encounters")
+## Each ordinary encounter spawns between group_min and group_max of it. Challenge doesn't scale it.
+@export_range(1, 20, 1, "or_greater") var group_min: int = 1
+@export_range(1, 20, 1, "or_greater") var group_max: int = 1
+## Relative chance of being drawn among an encounter's eligible types.
+@export_range(1, 100, 1, "or_greater") var weight: int = 1

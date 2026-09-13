@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/deepwood_fountain.tscn" id="fountain"]
+[ext_resource type="Resource" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="gnarlking"]
+[ext_resource type="Resource" path="res://characters/enemies/grimling/grimling_data.tres" id="grimling"]
+[ext_resource type="Resource" path="res://characters/enemies/moss_golem/moss_golem_data.tres" id="moss_golem"]
+[ext_resource type="Resource" path="res://characters/enemies/moth/moth_data.tres" id="moth"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="presentation"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/snake/snake_data.tres" id="snake"]
+[ext_resource type="Resource" path="res://characters/enemies/stalker/stalker_data.tres" id="stalker"]
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("gnarlking")
+centred = true
+
+[sub_resource type="Resource" id="sign_king"]
+script = ExtResource("sign")
+text = "All the creatures of this wood obey one king.
+Finding him means finding death."
+reveals = ExtResource("gnarlking")
+
+[sub_resource type="Resource" id="sign_mushroom_dungeon"]
+script = ExtResource("sign")
+text = "Evil mushrooms retreated in a dungeon underground.
+Watch out."
+
+[sub_resource type="Resource" id="sign_swarms"]
+script = ExtResource("sign")
+text = "Watch out. There are terrible swarms
+living beneath these woods."
+
+[sub_resource type="Resource" id="sign_feud"]
+script = ExtResource("sign")
+text = "For some reason mushrooms and insects
+hate each other."
+
+[sub_resource type="Resource" id="sign_bow"]
+script = ExtResource("sign")
+text = "All must bow to the Gnarlking."
+reveals = ExtResource("gnarlking")
+
+[resource]
+script = ExtResource("biome")
+exit_challenge = 10
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("moth"): 4,
+ExtResource("grimling"): 4,
+ExtResource("snake"): 4,
+ExtResource("stalker"): 6,
+ExtResource("moss_golem"): 6
+})
+boss = SubResource("boss")
+room_size = 24
+border_warp = 8.0
+loops = 0.1
+shortcuts = 0.15
+passage_width = 4
+rockiness = 0.7
+presentation = ExtResource("presentation")
+decoration_density = 0.04
+professors = 1
+warp_doors = 2
+signs = Array[ExtResource("sign")]([SubResource("sign_king"), SubResource("sign_mushroom_dungeon"), SubResource("sign_swarms"), SubResource("sign_feud"), SubResource("sign_bow")])
+breather_objects = Dictionary[PackedScene, int]({
+ExtResource("fountain"): 1
+})

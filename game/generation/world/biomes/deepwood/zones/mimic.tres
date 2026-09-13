@@ -1,0 +1,46 @@
+[gd_resource type="Resource" script_class="ZoneResource" format=3]
+
+[ext_resource type="Resource" path="res://characters/enemies/adder/adder_data.tres" id="adder"]
+[ext_resource type="Resource" path="res://characters/enemies/bramble_stalker/bramble_stalker_data.tres" id="bramble_stalker"]
+[ext_resource type="Resource" path="res://characters/enemies/bristlestone/bristlestone_data.tres" id="bristlestone"]
+[ext_resource type="Resource" path="res://characters/enemies/cinderstone/cinderstone_data.tres" id="cinderstone"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Resource" path="res://characters/enemies/elder_stalker/elder_stalker_data.tres" id="elder_stalker"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" path="res://characters/enemies/shade/shade_data.tres" id="shade"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/umbra/umbra_data.tres" id="umbra"]
+[ext_resource type="Script" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="rare_elder_stalker"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("elder_stalker")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("bramble_stalker"): 2
+})
+
+[sub_resource type="Resource" id="rare_umbra"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("umbra")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("shade"): 2
+})
+
+[sub_resource type="Resource" id="rare_adder"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("adder")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("cinderstone"): 2
+})
+
+[resource]
+script = ExtResource("zone")
+route_rooms = 14
+room_count = 32
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("bramble_stalker"): 5,
+ExtResource("shade"): 5,
+ExtResource("bristlestone"): 7,
+ExtResource("cinderstone"): 7
+})
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_elder_stalker"), SubResource("rare_umbra"), SubResource("rare_adder")])

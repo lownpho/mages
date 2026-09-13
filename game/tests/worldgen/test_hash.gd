@@ -97,6 +97,15 @@ func _ready() -> void:
 	if absf(rate - 0.3) > 0.02:
 		fails.append("chance rate off: %.3f" % rate)
 
+	# 6. unit_seed: the finite World generator's seed from World seed, namespace and place key.
+	var unit := WgHash.unit_seed(7, WgHash.NS_ZONE_ORDER, "glade")
+	if unit != WgHash.unit_seed(7, WgHash.NS_ZONE_ORDER, "glade"):
+		fails.append("unit_seed not deterministic")
+	for other in [WgHash.unit_seed(8, WgHash.NS_ZONE_ORDER, "glade"), WgHash.unit_seed(7, WgHash.NS_ATTACHMENTS, "glade"),
+			WgHash.unit_seed(7, WgHash.NS_ZONE_ORDER, "deepwood"), WgHash.unit_seed(7, WgHash.NS_ZONE_ORDER, "")]:
+		if other == unit:
+			fails.append("unit_seed collided across seed, namespace or key")
+
 	if fails.is_empty():
 		print("ALL PASS")
 		get_tree().quit(0)

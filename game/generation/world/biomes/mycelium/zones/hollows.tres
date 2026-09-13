@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="ZoneResource" format=3]
+
+[ext_resource type="Resource" path="res://characters/enemies/burrower/burrower_data.tres" id="burrower"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" path="res://characters/enemies/puffcap/puffcap_data.tres" id="puffcap"]
+[ext_resource type="Resource" path="res://characters/enemies/ringcap/ringcap_data.tres" id="ringcap"]
+[ext_resource type="Resource" path="res://characters/enemies/rollcap/rollcap_data.tres" id="rollcap"]
+[ext_resource type="Resource" path="res://characters/enemies/shellcap/shellcap_data.tres" id="shellcap"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Script" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="rare_burrower"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("burrower")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("ringcap"): 1,
+ExtResource("puffcap"): 4
+})
+
+[resource]
+script = ExtResource("zone")
+route_rooms = 7
+room_count = 16
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("rollcap"): 7,
+ExtResource("shellcap"): 7
+})
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_burrower")])

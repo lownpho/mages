@@ -21,3 +21,4 @@ display_name = "Thornthrower"
 icon = SubResource("AtlasTexture_icon")
 max_health = 50
 drops = Array[ExtResource("1_1p2hq")]([SubResource("Drop_1")])
+group_max = 2

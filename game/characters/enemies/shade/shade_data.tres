@@ -29,3 +29,4 @@ display_name = "Shade"
 icon = SubResource("AtlasTexture_icon")
 max_health = 70
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_blink"), SubResource("Drop_pew")])
+group_max = 2

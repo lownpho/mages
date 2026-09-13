@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="ZoneResource" format=3]
+
+[ext_resource type="Resource" path="res://characters/enemies/ash_snake/ash_snake_data.tres" id="ash_snake"]
+[ext_resource type="Resource" path="res://characters/enemies/coral_snake/coral_snake_data.tres" id="coral_snake"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" path="res://characters/enemies/great_owl/great_owl_data.tres" id="great_owl"]
+[ext_resource type="Resource" path="res://characters/enemies/grimling/grimling_data.tres" id="grimling"]
+[ext_resource type="Resource" path="res://characters/enemies/grimlord/grimlord_data.tres" id="grimlord"]
+[ext_resource type="Resource" path="res://characters/enemies/mole/mole_data.tres" id="mole"]
+[ext_resource type="Resource" path="res://characters/enemies/moon_moth/moon_moth_data.tres" id="moon_moth"]
+[ext_resource type="Resource" path="res://characters/enemies/needle_moth/needle_moth_data.tres" id="needle_moth"]
+[ext_resource type="Resource" path="res://characters/enemies/owl/owl_data.tres" id="owl"]
+[ext_resource type="Resource" path="res://characters/enemies/razorback/razorback_data.tres" id="razorback"]
+[ext_resource type="Resource" path="res://characters/enemies/shard_grimling/shard_grimling_data.tres" id="shard_grimling"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/thornback/thornback_data.tres" id="thornback"]
+[ext_resource type="Resource" path="res://characters/enemies/wisp_grimling/wisp_grimling_data.tres" id="wisp_grimling"]
+[ext_resource type="Script" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="rare_great_owl"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("great_owl")
+
+[sub_resource type="Resource" id="rare_grimlord"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("grimlord")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("grimling"): 2
+})
+
+[sub_resource type="Resource" id="rare_razorback"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("razorback")
+
+[resource]
+script = ExtResource("zone")
+route_rooms = 20
+room_count = 46
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("owl"): 4,
+ExtResource("mole"): 6,
+ExtResource("thornback"): 6,
+ExtResource("coral_snake"): 7,
+ExtResource("moon_moth"): 7,
+ExtResource("needle_moth"): 7,
+ExtResource("ash_snake"): 9,
+ExtResource("shard_grimling"): 9,
+ExtResource("wisp_grimling"): 9
+})
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_great_owl"), SubResource("rare_grimlord"), SubResource("rare_razorback")])

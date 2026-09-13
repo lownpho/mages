@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="gnarlking"]
+[ext_resource type="Resource" path="res://characters/enemies/moth/moth_data.tres" id="moth"]
+[ext_resource type="Resource" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="presentation"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("gnarlking")
+centred = true
+
+[resource]
+script = ExtResource("biome")
+exit_challenge = 4
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("moth"): 0
+})
+boss = SubResource("boss")
+presentation = ExtResource("presentation")

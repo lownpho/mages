@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ZoneResource" format=3 uid="uid://c8nspctrz0ne"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_a4q6o"]
+[ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="2_1n62g"]
+[ext_resource type="Resource" uid="uid://bqm7yv4x0nwdl" path="res://characters/enemies/moth/moth_data.tres" id="3_l7312"]
+[ext_resource type="Script" uid="uid://gcuovs25kge0" path="res://generation/content/zone_resource.gd" id="5_b6vwn"]
+[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="6_jno30"]
+[ext_resource type="Resource" path="res://characters/enemies/owl/owl_data.tres" id="11_lj6b4"]
+
+[sub_resource type="Resource" id="Resource_tscaf"]
+script = ExtResource("2_1n62g")
+leader = ExtResource("11_lj6b4")
+escorts = Dictionary[ExtResource("1_a4q6o"), int]({
+ExtResource("3_l7312"): 2
+})
+metadata/_custom_type_script = "uid://dif17xbtr55od"
+
+[resource]
+script = ExtResource("5_b6vwn")
+spawn = true
+route_rooms = 3
+room_count = 5
+rares = Array[ExtResource("2_1n62g")]([SubResource("Resource_tscaf")])
+metadata/_custom_type_script = "uid://gcuovs25kge0"

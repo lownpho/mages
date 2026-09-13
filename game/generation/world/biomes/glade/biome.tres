@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="BiomeResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Resource" path="res://characters/enemies/dirt_golem/dirt_golem_data.tres" id="dirt_golem"]
+[ext_resource type="Resource" path="res://characters/enemies/fae/fae_data.tres" id="fae"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="PackedScene" path="res://worldgen/runtime/glade_fountain.tscn" id="fountain"]
+[ext_resource type="Resource" path="res://characters/enemies/hopper/hopper_data.tres" id="hopper"]
+[ext_resource type="Resource" path="res://characters/enemies/mandrake/mandrake_data.tres" id="mandrake"]
+[ext_resource type="Resource" path="res://world_content/biomes/glade_start/glade_presentation.tres" id="presentation"]
+[ext_resource type="Resource" path="res://characters/enemies/seedling/seedling_data.tres" id="seedling"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/sproutling/sproutling_data.tres" id="sproutling"]
+[ext_resource type="Resource" path="res://characters/enemies/wasp/wasp_data.tres" id="wasp"]
+
+[sub_resource type="Resource" id="boss"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("fae")
+centred = true
+
+[sub_resource type="Resource" id="sign_memory"]
+script = ExtResource("sign")
+text = "Reading a sign can awaken your memory.
+Keep an eye on your map."
+
+[sub_resource type="Resource" id="sign_twisted"]
+script = ExtResource("sign")
+text = "Some creatures are so twisted that even reading
+about them can reveal their location."
+
+[sub_resource type="Resource" id="sign_maps"]
+script = ExtResource("sign")
+text = "Modern maps are marvelous.
+You can place dots on them as a reminder for later."
+
+[sub_resource type="Resource" id="sign_fae"]
+script = ExtResource("sign")
+text = "There is an evil Fae lurking
+around this enchanted glade."
+reveals = ExtResource("fae")
+
+[sub_resource type="Resource" id="sign_throw_away"]
+script = ExtResource("sign")
+text = "Feel free to throw away spells you don't like:
+they do not harm the environment."
+
+[sub_resource type="Resource" id="sign_rare_creatures"]
+script = ExtResource("sign")
+text = "Some creatures are rarer than others,
+but it is easier to learn spells from them."
+
+[sub_resource type="Resource" id="sign_doors"]
+script = ExtResource("sign")
+text = "Be careful with doors: they can take you
+to places you are not prepared for.
+Or just annoy you."
+
+[resource]
+script = ExtResource("biome")
+exit_challenge = 4
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("sproutling"): 0,
+ExtResource("hopper"): 0,
+ExtResource("wasp"): 1,
+ExtResource("dirt_golem"): 1,
+ExtResource("mandrake"): 2,
+ExtResource("seedling"): 2
+})
+boss = SubResource("boss")
+room_size = 51
+border_warp = 5.0
+loops = 0.6
+shortcuts = 0.35
+passage_width = 7
+rockiness = 0.35
+presentation = ExtResource("presentation")
+decoration_density = 0.05
+professors = 1
+warp_doors = 2
+signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_twisted"), SubResource("sign_maps"), SubResource("sign_fae"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_doors")])
+breather_objects = Dictionary[PackedScene, int]({
+ExtResource("fountain"): 1
+})

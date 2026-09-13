@@ -29,3 +29,5 @@ display_name = "Wisp Grimling"
 icon = SubResource("AtlasTexture_icon")
 max_health = 60
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew"), SubResource("Resource_nppsb")])
+group_min = 2
+group_max = 2

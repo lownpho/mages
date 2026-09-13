@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WorldResource" format=3 uid="uid://c8nspctrw0rld"]
+
+[ext_resource type="Script" uid="uid://n62cgew2ywo2" path="res://generation/content/biome_resource.gd" id="1_tvhph"]
+[ext_resource type="Resource" uid="uid://c8nspctrb1ome" path="res://tests/generation/fixtures/inspector_ids/biomes/solo/biome.tres" id="2_magqg"]
+[ext_resource type="Script" uid="uid://sn4mucgldp53" path="res://generation/content/world_resource.gd" id="3_3qyee"]
+[ext_resource type="Script" uid="uid://m4jf5nf2ed7e" path="res://generation/content/side_biome_resource.gd" id="4_m0wu1"]
+
+[resource]
+script = ExtResource("3_3qyee")
+ideal_path = Array[ExtResource("1_tvhph")]([ExtResource("2_magqg")])
+metadata/_custom_type_script = "uid://sn4mucgldp53"

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://generation/content/check_content.gd" id="check_content"]
+
+[node name="CheckContent" type="Node"]
+script = ExtResource("check_content")

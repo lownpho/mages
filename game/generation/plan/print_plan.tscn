@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://generation/plan/print_plan.gd" id="print_plan"]
+
+[node name="PrintPlan" type="Node"]
+script = ExtResource("print_plan")

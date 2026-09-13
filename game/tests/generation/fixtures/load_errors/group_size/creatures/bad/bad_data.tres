@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3]
+
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+
+[resource]
+script = ExtResource("creature")
+display_name = "Bad"
+group_min = 3
+group_max = 2
+weight = 0

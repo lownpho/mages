@@ -29,3 +29,5 @@ display_name = "Grimling"
 icon = SubResource("AtlasTexture_icon")
 max_health = 90
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew"), SubResource("Drop_halp")])
+group_min = 2
+group_max = 3

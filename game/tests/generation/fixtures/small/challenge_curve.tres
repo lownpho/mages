@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ChallengeCurveResource" format=3]
+
+[ext_resource type="Script" path="res://generation/content/challenge_curve_resource.gd" id="challenge_curve"]
+
+[resource]
+script = ExtResource("challenge_curve")
+encounters_per_tile = Dictionary[int, float]({
+0: 0.002,
+3: 0.003
+})
+types_per_encounter = Dictionary[int, int]({
+0: 1,
+3: 2
+})
+breather_chance = 0.2
