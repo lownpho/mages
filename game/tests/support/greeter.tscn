@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://tests/support/greeter.gd" id="greeter"]
+
+[sub_resource type="CircleShape2D" id="shape"]
+radius = 8.0
+
+[node name="Greeter" type="Area2D"]
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+script = ExtResource("greeter")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("shape")

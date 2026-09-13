@@ -6,8 +6,11 @@ extends Area2D
 ## spawned by the world generator — point it at a `target_scene`, pick a `style`
 ## for the art, and walking the player onto it switches scenes.
 ##
-## Every door in the game (dungeon entrance, dungeon floor stairs, tutorial exit)
-## is this one scene: only the exported data differs.
+## Every door in the game (dungeon entrance, dungeon floor stairs, tutorial exit, the finite
+## World's Warp doors) is this one scene: only the exported data differs.
+
+## A finite-World Warp door was walked into. Its ObjectSpawner moves `body` to `landing`.
+signal warp_entered(body: Node2D, destination_room: String, landing: Vector2i)
 
 ## Art variants packed in doors.png, one 16×16 frame each (left → right). PORTAL has no frame
 ## drawn yet and renders blank. STAIRS_UP/STAIRS_DOWN are one biome's two vertical ends, so the
@@ -34,6 +37,11 @@ const _FRAME_W := 16
 ## Stair doors ignore both of the above and move the player one dungeon floor instead: -1 up,
 ## +1 down. The dungeon scene owns the floors and answers `floor_change_requested`; 0 = not one.
 @export var floor_delta := 0
+
+## A finite-World Warp door ignores all of the above: it leads to the landing tile in its
+## destination Room, and warp_entered asks for the move. Vector2i.MAX = not one.
+var destination_room := ""
+var landing := Vector2i.MAX
 
 # Guards against firing twice while the deferred scene change is pending.
 var _used := false
@@ -63,9 +71,16 @@ func _ready() -> void:
 
 
 ## Configure this door from a DoorResource (WgEntitySpawner calls this when a room type spawns a
-## door as its feature). Untyped param so door.gd keeps no hard dependency on door_resource.gd.
+## door as its feature), or from a Warp door's generated data (ObjectSpawner): its destination
+## Room key, landing tile and the destination Biome's door art. A door keeps no Object state.
+## Untyped param so door.gd keeps no hard dependency on door_resource.gd.
 func setup(res) -> void:
 	if res == null:
+		return
+	if res is Dictionary:
+		style = res.art
+		destination_room = res.destination_room
+		landing = res.landing
 		return
 	style = res.style            # setter re-applies the art once in-tree
 	target_scene = res.target_scene
@@ -107,6 +122,11 @@ func _on_body_entered(body: Node2D) -> void:
 		_armed = false   # re-arms once the player is clear, so the stair works in both directions
 		_last_use_ms = Time.get_ticks_msec()
 		GlobalEvent.floor_change_requested.emit(floor_delta, body)
+		return
+	if landing != Vector2i.MAX:
+		_armed = false
+		_last_use_ms = Time.get_ticks_msec()
+		warp_entered.emit(body, destination_room, landing)
 		return
 	if target_slot != Vector2i.MAX:
 		_armed = false   # re-arms once the player is clear, so the door still works if they return

@@ -19,6 +19,8 @@ const _DEFAULT_MESSAGE := "The old ammargelluted lonfo is\nworking on this featu
 ## Where reading this sign marks a boss on the map: the room origin slot a SignDef's reveal resolved
 ## to (see SignLinks). Vector2i.MAX = it marks nothing.
 var reveal_slot := Vector2i.MAX
+## A finite-World Sign's Boss Room key, which reading it reveals on the Map. "" = it marks nothing.
+var reveal_key := ""
 
 @onready var _label: Label = $Label
 
@@ -33,9 +35,15 @@ func _ready() -> void:
 
 
 ## Configure from an UnderConstructionResource or a SignDef (WgEntitySpawner calls this when a room
-## spawns a sign as a feature). Untyped param to keep no hard dependency on the resource.
+## spawns a sign as a feature), or from a finite-World Sign's generated data (ObjectSpawner): its
+## text and reveal key. A Sign keeps no Object state; its reveal belongs to the Map. Untyped param
+## to keep no hard dependency on the resource.
 func setup(res) -> void:
 	if res == null:
+		return
+	if res is Dictionary:
+		message = res.text
+		reveal_key = res.reveal_key
 		return
 	if res.message != "":
 		message = res.message
@@ -47,6 +55,8 @@ func _on_body_entered(_body: Node2D) -> void:
 	_label.visible = true
 	if reveal_slot != Vector2i.MAX:
 		GlobalMap.reveal_boss(reveal_slot)
+	if reveal_key != "":
+		GlobalMap.reveal_boss_room(reveal_key)
 
 
 func _on_body_exited(_body: Node2D) -> void:

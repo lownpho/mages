@@ -1,6 +1,6 @@
 extends Node2D
 ## Development entry for the finite World before it replaces the game's generator: plans the shipped
-## World, streams its tiles around a real player and lets you walk it. Normal gameplay still runs
+## World, streams its tiles, encounters and Objects around a real player and lets you walk it. Normal gameplay still runs
 ## the existing generator. In debug builds Tab opens the integrated paused World tool; F toggles
 ## fly (fast, through walls; it may outrun streaming), and R rerolls. `shot=<png>` saves a screenshot
 ## once the spawn has streamed in and quits; `at=x,y`
@@ -25,6 +25,7 @@ var _build_timings := {"plan_ms": 0.0, "graphs_ms": 0.0, "spawn_ms": 0.0, "total
 @onready var _streamer: ChunkStreamer = $WorldRoot/Streamer
 @onready var _entities: Node2D = $WorldRoot/Entities
 @onready var _encounter_spawner: EncounterSpawner = $EncounterSpawner
+@onready var _object_spawner: ObjectSpawner = $ObjectSpawner
 @onready var _label: Label = $HUD/Label
 
 
@@ -56,6 +57,7 @@ func _start(new_seed: int) -> void:
 	_streamer.build_world(_graph)
 	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
 	_encounter_spawner.build_world(_encounters, RunDefeats.new())
+	_object_spawner.build_world(WorldObjects.new(_graph), true)
 	if _player == null:
 		_player = PLAYER_SCENE.instantiate()
 		_entities.add_child(_player)
@@ -108,7 +110,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 ## Called by the integrated debug layer after it has selectively rebuilt the graph. A new Run (a
-## reseed) starts at spawn with no defeats; a knob rebuild keeps them, as keys follow place.
+## reseed) starts at spawn with no defeats or Object state; a knob rebuild keeps them, as keys
+## follow place.
 func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[StringName, bool],
 		plan_changed: bool, new_run: bool) -> void:
 	_graph = next_graph
@@ -117,6 +120,7 @@ func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[S
 	_streamer.rebuild_world(next_graph, invalidated_biomes, plan_changed)
 	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
 	_encounter_spawner.build_world(_encounters, RunDefeats.new() if new_run else null)
+	_object_spawner.build_world(WorldObjects.new(_graph), new_run)
 	if new_run:
 		_player.global_position = _streamer.spawn_position()
 	else:

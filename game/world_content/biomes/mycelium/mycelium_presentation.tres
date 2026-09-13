@@ -13,3 +13,4 @@ wall_tileset = ExtResource("3")
 decoration_tileset = ExtResource("4_decor")
 map_floor_color = Color(0.278431, 0.176471, 0.235294, 1)
 map_wall_color = Color(0.188235, 0.172549, 0.180392, 1)
+door_style = 5

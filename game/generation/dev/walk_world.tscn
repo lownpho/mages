@@ -5,6 +5,7 @@
 [ext_resource type="FontFile" path="res://gui/m3x6.ttf" id="font"]
 [ext_resource type="PackedScene" path="res://components/damage_hints/damage_numbers.tscn" id="damage_numbers"]
 [ext_resource type="Script" path="res://generation/encounters/encounter_spawner.gd" id="encounter_spawner"]
+[ext_resource type="Script" path="res://generation/objects/object_spawner.gd" id="object_spawner"]
 
 [node name="WalkWorld" type="Node2D"]
 script = ExtResource("walk_world")
@@ -25,6 +26,11 @@ y_sort_enabled = true
 script = ExtResource("encounter_spawner")
 streamer = NodePath("../WorldRoot/Streamer")
 enemies_parent = NodePath("../WorldRoot/Entities")
+
+[node name="ObjectSpawner" type="Node" parent="." node_paths=PackedStringArray("streamer", "objects_parent")]
+script = ExtResource("object_spawner")
+streamer = NodePath("../WorldRoot/Streamer")
+objects_parent = NodePath("../WorldRoot/Entities")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 

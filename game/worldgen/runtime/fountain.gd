@@ -27,6 +27,12 @@ func _ready() -> void:
 	_cooldown.timeout.connect(_apply_style)
 
 
+## A fountain takes nothing from generated data and keeps no Object state: its cooldown lives in
+## the scene, so it resets whenever its chunk streams back in.
+func setup(_data: Dictionary) -> void:
+	pass
+
+
 func _apply_style() -> void:
 	if not is_node_ready():
 		return

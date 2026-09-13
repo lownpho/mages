@@ -13,8 +13,11 @@ extends Node
 
 signal map_changed   ## active MapState was (re)built or swapped — views re-bind on this
 signal pins_changed  ## a pin was dropped or removed, or a sign marked a boss — non-frame-driven views redraw, save persists
+signal boss_revealed(room_key: String)  ## an Object revealed a finite-World Boss Room for the first time this Run
 
 var active: MapState = null
+## Finite-World Boss Room keys revealed this Run. The Room-key Map shows and saves them.
+var revealed_boss_keys: Dictionary[String, bool] = {}
 
 var _streamer: WorldStreamer = null
 var _player: Node2D = null
@@ -74,6 +77,15 @@ func reveal_boss(origin_slot: Vector2i) -> void:
 		pins_changed.emit()
 
 
+## Reveals a planned Boss Room of the finite World before it is found. Any Object may call it;
+## Signs are the authored source. Revealing the same Room again changes nothing.
+func reveal_boss_room(room_key: String) -> void:
+	if room_key == "" or revealed_boss_keys.has(room_key):
+		return
+	revealed_boss_keys[room_key] = true
+	boss_revealed.emit(room_key)
+
+
 ## Minimal save payload for the whole map. Empty when no world is active yet.
 func to_dict() -> Dictionary:
 	return active.to_dict() if active != null else {}
@@ -90,6 +102,7 @@ func restore(dict: Dictionary) -> void:
 ## Drop all discovered map state — a fresh run starts fully fogged.
 func reset() -> void:
 	active = null
+	revealed_boss_keys.clear()
 	_pending_restore = {}
 	_last_tile = Vector2i(-1, -1)
 	set_process(false)

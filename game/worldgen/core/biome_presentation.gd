@@ -35,3 +35,6 @@ extends Resource
 @export_group("Minimap")
 @export var map_floor_color := Palette.GREY_DARK  ## minimap pixel for this biome's discovered room mass (Zughy 32)
 @export var map_wall_color := Palette.BLACK       ## minimap pixel for walls and rocks at the closest zoom (Zughy 32)
+
+@export_group("Objects")
+@export var door_style := Door.Style.WOOD         ## art of every Warp door leading into this Biome
