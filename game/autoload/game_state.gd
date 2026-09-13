@@ -46,6 +46,13 @@ var has_pending_position := false
 ## at the writers rather than at each way out.
 var sandbox := false
 
+## Debug seed and spatial-tuning edits make the live World differ from the Run identity that would
+## be written to disk. Keep that fact at the save owner rather than on a particular debug panel so
+## later autosaves cannot accidentally re-enable the Run. Normal movement, fly, teleports, item
+## changes and spawned entities never touch this flag.
+var run_save_eligible := true
+var run_save_disabled_reason := ""
+
 var _tracked_player: Node2D = null
 var _save_timer: Timer
 var _suspend_autosave := false
@@ -85,6 +92,8 @@ func has_save() -> bool:
 ## world scene loads (world.gd calls persist()); fresh_start flags that first entry so the
 ## player is handed a starter weapon and heal.
 func new_game() -> void:
+	run_save_eligible = true
+	run_save_disabled_reason = ""
 	active_seed = randi()
 	if active_seed == 0:
 		active_seed = 1  # keep 0 reserved for "unset"
@@ -106,6 +115,8 @@ func continue_game() -> bool:
 		return false
 	if int(cfg.get_value("world", "version", 1)) != SAVE_VERSION:
 		return false
+	run_save_eligible = true
+	run_save_disabled_reason = ""
 	active_seed = int(cfg.get_value("world", "seed", 0))
 	if active_seed == 0:
 		return false
@@ -177,11 +188,23 @@ func game_over() -> void:
 	SceneManager.go_to(load("res://scenes/title.tscn"))
 
 
+## Irreversible for this Run: once its authored seed or spatial inputs were edited, no later revert
+## can prove that every generated/runtime value matches the save identity again.
+func disable_run_saving(reason: String) -> void:
+	run_save_eligible = false
+	if run_save_disabled_reason.is_empty():
+		run_save_disabled_reason = reason
+
+
+func can_save_run() -> bool:
+	return not sandbox and run_save_eligible
+
+
 ## Persist the current run so "Continue" can resume it: seed, player position (if a
 ## player is being tracked), and the full inventory. Called on world entry, on every
 ## inventory change, and periodically while playing.
 func persist() -> void:
-	if sandbox:
+	if not can_save_run():
 		return
 	var cfg := ConfigFile.new()
 	cfg.set_value("world", "version", SAVE_VERSION)

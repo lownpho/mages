@@ -62,6 +62,21 @@ var _bins_by_cell: Dictionary[Vector2i, Array] = {}
 ## null, with an error, when the plan is null or a macro cell exhausts its attempts. order lists the
 ## macro cells to build first; any order gives the same graph.
 static func build(world_plan: WorldPlan, order: Array[Vector2i] = []) -> WorldGraph:
+	return _build(world_plan, order, null, {})
+
+
+## Rebuilds only macro-cell graphs belonging to `invalidated_biomes`. The World-level joins, roles
+## and sites are cheap and are joined again because they connect those independently cached cells.
+## A changed World plan cannot reuse cells: their RoomPlan references and coordinates may differ.
+static func rebuild(world_plan: WorldPlan, previous: WorldGraph,
+		invalidated_biomes: Dictionary[StringName, bool]) -> WorldGraph:
+	if previous == null or previous.plan != world_plan:
+		return build(world_plan)
+	return _build(world_plan, [], previous, invalidated_biomes)
+
+
+static func _build(world_plan: WorldPlan, order: Array[Vector2i], previous: WorldGraph,
+		invalidated_biomes: Dictionary[StringName, bool]) -> WorldGraph:
 	if world_plan == null:
 		return null
 	var graph := WorldGraph.new()
@@ -75,12 +90,21 @@ static func build(world_plan: WorldPlan, order: Array[Vector2i] = []) -> WorldGr
 		if not coords.has(coord):
 			coords.append(coord)
 	for coord in coords:
-		var cell := MacroCellGraph.build(world_plan, coord)
+		var cell: MacroCellGraph = null
+		var biome := world_plan.cells[coord].biome
+		if previous != null and not invalidated_biomes.has(biome):
+			cell = previous.cells.get(coord)
+		else:
+			cell = MacroCellGraph.build(world_plan, coord)
 		if cell == null:
 			return null
 		graph.cells[coord] = cell
 	for key in world_plan.rooms:
 		var room := graph.cells[world_plan.rooms[key].cell].room(key)
+		# Passage and site lists are World-level joins and must not survive from a reused graph.
+		room.passages.clear()
+		room.sites.clear()
+		room.teaching = null
 		room.index = graph.room_list.size()
 		graph.rooms[key] = room
 		graph.room_list.append(room)

@@ -58,6 +58,8 @@ var streaming := true:
 var last_work_usec := 0
 ## That frame's work split into replanning, freeing unloaded chunks, the queue and building ahead.
 var last_work_split := PackedInt32Array([0, 0, 0, 0])
+## Observable selective-rebuild boundary: chunks dropped by the most recent rebuild.
+var invalidated_chunks_last_rebuild: Array[Vector2i] = []
 
 var _chunks: Dictionary[Vector2i, WgChunk] = {}
 ## Chunk coord -> [ChunkTiles, WgChunk], for chunks still being built.
@@ -85,6 +87,30 @@ var _room_bounds: Array[Rect2] = []
 ## Streams a new World, dropping every chunk, job and cache of the last.
 func build_world(world_graph: WorldGraph) -> void:
 	_clear_chunks()
+	invalidated_chunks_last_rebuild.clear()
+	_install_world(world_graph)
+
+
+## Installs a rebuilt graph while retaining loaded chunks wholly outside changed Biomes. A World-plan
+## change invalidates every tile because macro-cell placement may have moved. Pending jobs always
+## go: they hold builders for the previous graph and have not produced an observable chunk yet.
+func rebuild_world(world_graph: WorldGraph, invalidated_biomes: Dictionary[StringName, bool],
+		plan_changed := false) -> void:
+	invalidated_chunks_last_rebuild.clear()
+	for coord in _jobs.keys():
+		_drop(_jobs[coord][1])
+	_jobs.clear()
+	_queue.clear()
+	for coord in _chunks.keys():
+		if plan_changed or _chunk_touches_biomes(coord, graph, world_graph, invalidated_biomes):
+			chunk_unloaded.emit(coord)
+			invalidated_chunks_last_rebuild.append(coord)
+			_retired.append(_chunks[coord])
+			_chunks.erase(coord)
+	_install_world(world_graph)
+
+
+func _install_world(world_graph: WorldGraph) -> void:
 	graph = world_graph
 	graph.prepare_bins()
 	interiors = WorldInteriors.new(graph)
@@ -101,6 +127,22 @@ func build_world(world_graph: WorldGraph) -> void:
 	var tiles := graph.plan.size * WorldPlan.CELL
 	_world_chunks = Vector2i(ceili(float(tiles.x) / chunk_tiles), ceili(float(tiles.y) / chunk_tiles))
 	_first = Vector2i(1 << 30, 1 << 30)
+
+
+func _chunk_touches_biomes(coord: Vector2i, old_graph: WorldGraph, new_graph: WorldGraph,
+		biomes: Dictionary[StringName, bool]) -> bool:
+	# Include the one-tile autotile ring. Looking through both graphs catches either side of a
+	# border that moved when border_warp changed, while chunks wholly owned by other Biomes survive.
+	var tiles := Rect2i(coord * chunk_tiles, Vector2i.ONE * chunk_tiles).grow(1)
+	for y in range(tiles.position.y, tiles.end.y):
+		for x in range(tiles.position.x, tiles.end.x):
+			var tile := Vector2i(x, y)
+			var old_room := old_graph.owner_at(tile)
+			var new_room := new_graph.owner_at(tile)
+			if (old_room != null and biomes.has(old_room.plan.biome)) or \
+					(new_room != null and biomes.has(new_room.plan.biome)):
+				return true
+	return false
 
 
 func loaded_chunks() -> int:
