@@ -20,6 +20,12 @@ const NS_MACRO_PATH := 101
 const NS_ZONE_ORDER := 102
 const NS_ATTACHMENTS := 103
 const NS_SET_PIECES := 104
+const NS_CELL_GRAPH := 105
+const NS_PORTS := 106
+const NS_PASSAGES := 107
+const NS_WARP := 108
+const NS_ROLES := 109
+const NS_SITES := 110
 
 # SplitMix64 constants written as their two's-complement signed-64 values: GDScript clamps
 # any int literal above INT64_MAX, so the raw 0x9E37... hex forms would silently corrupt.

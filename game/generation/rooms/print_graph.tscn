@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://generation/rooms/print_graph.gd" id="print_graph"]
+
+[node name="PrintGraph" type="Node"]
+script = ExtResource("print_graph")

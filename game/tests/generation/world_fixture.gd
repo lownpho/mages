@@ -39,6 +39,26 @@ func plan(world_seed: int, radii: Dictionary[StringName, int] = WorldPlan.DEFAUL
 	return WorldPlanner.plan(content, world_seed, radii)
 
 
+## Every room graph of a planned World, building its macro cells in order first when given.
+func graph(world_seed: int, radii: Dictionary[StringName, int] = WorldPlan.DEFAULT_RADII, order: Array[Vector2i] = []) -> WorldGraph:
+	return WorldGraph.build(plan(world_seed, radii), order)
+
+
+## The six spatial knobs every Biome authors.
+const KNOBS: Array[StringName] = [&"room_size", &"border_warp", &"loops", &"shortcuts", &"passage_width", &"rockiness"]
+
+
+## A knob's slider range, from BiomeResource's export hint: [minimum, maximum].
+static func knob_range(knob: StringName) -> Array:
+	for property in BiomeResource.new().get_property_list():
+		if property.name == knob:
+			var bounds: PackedStringArray = property.hint_string.split(",")
+			if property.type == TYPE_INT:
+				return [bounds[0].to_int(), bounds[1].to_int()]
+			return [bounds[0].to_float(), bounds[1].to_float()]
+	return []
+
+
 ## Sets a spatial knob on every Biome, as the debug tool's sliders do, until restore_knobs.
 func set_knob(knob: StringName, value: Variant) -> void:
 	for id in content.biomes:
@@ -80,4 +100,26 @@ static func snapshot(plan: WorldPlan) -> String:
 		var room := plan.rooms[key]
 		lines.append("room %s %s %s/%s cell %s route %d join %d challenge %d %s" % [key, room.kind_name(), room.biome, room.zone,
 				room.cell, room.route_index, room.join_index, room.challenge, room.encounter.resource_path if room.encounter else "-"])
+	return "\n".join(lines)
+
+
+## A graph's public outputs as text, one line per Room, Passage and site: graphs with equal
+## snapshots are the same World.
+static func graph_snapshot(graph: WorldGraph) -> String:
+	var lines: Array[String] = [snapshot(graph.plan)]
+	for key in graph.rooms:
+		var room := graph.rooms[key]
+		lines.append("graph room %s %s teaches %s seed %s radius %s polygon %s roster %s passages %s sites %s" % [key, room.role_name(),
+				room.teaching.resource_path if room.teaching else "-", room.seed, room.radius, room.polygon,
+				room.roster.keys().map(func(enemy: CreatureResource) -> String: return "%s:%d" % [enemy.resource_path.get_file(), room.roster[enemy]]),
+				room.passages.map(func(passage: RoomPassage) -> String: return passage.key),
+				room.sites.map(func(site: ObjectSite) -> String: return site.key)])
+	for key in graph.passages:
+		var passage := graph.passages[key]
+		lines.append("passage %s %s spot %s point %s width %d" % [key, passage.kind_name(), passage.spot, passage.point, passage.width])
+	for key in graph.sites:
+		var site := graph.sites[key]
+		lines.append("site %s %s spot %s scene %s sign %s reveals %s door %s %s %s %s" % [key, site.kind_name(), site.spot,
+				site.scene.resource_path if site.scene else "-", site.sign_resource.text.get_slice("\n", 0) if site.sign_resource else "-",
+				site.reveal_key, site.destination_biome, site.destination_room, site.landing_key, site.door_key])
 	return "\n".join(lines)

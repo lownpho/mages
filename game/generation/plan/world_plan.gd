@@ -13,9 +13,10 @@ extends RefCounted
 const CELL := 120
 ## Tiles each set piece protects around its seed, by RoomPlan kind name.
 const DEFAULT_RADII: Dictionary[StringName, int] = {&"spawn": 12, &"boss": 22, &"miniboss": 16, &"rare": 10}
-## The debug sliders' range for set-piece radii.
+## The debug sliders' range for set-piece radii: up to a disc as wide as the widest Room, so a
+## macro cell can still hold two set pieces beside its route.
 const RADIUS_MIN := 4
-const RADIUS_MAX := 40
+const RADIUS_MAX := 32
 
 const _ARROWS: Dictionary[Vector2i, String] = {Vector2i.RIGHT: ">", Vector2i.DOWN: "v", Vector2i.LEFT: "<", Vector2i.UP: "^"}
 

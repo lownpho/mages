@@ -28,8 +28,14 @@ const FOLD_BUDGET := 200
 ## How far chance loosens the fold's preference for hugging cells already placed.
 const FOLD_JITTER := 1.25
 ## Attachment positions a parent draws, keeping the first where no attachment shares a route Room
-## with a set piece and no macro cell holds more than two.
-const ATTACHMENT_DRAWS := 16
+## with a set piece, lies within ATTACHMENT_CELL_SLACK route Rooms of its cell's first or last, or
+## shares a macro cell with another; otherwise the draw with the fewest such conflicts.
+const ATTACHMENT_DRAWS := 64
+const ATTACHMENT_CELL_SLACK := 3
+## A macro cell's set pieces may claim this share of it, each a square around its protected disc.
+const SET_PIECE_SHARE := 0.5
+## How many set pieces may move to another cell before a Biome's stretch is left as it is.
+const SET_PIECE_MOVES := 8
 
 const _STEPS: Array[Vector2i] = [Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT, Vector2i.UP]
 
@@ -103,6 +109,7 @@ func _plan_biome(id: StringName) -> void:
 	for zone in biome.zones:
 		_fill_zone(biome, zone)
 	_cut_stretch(biome)
+	_separate_set_pieces(biome)
 
 
 ## Seeded, with the Spawn zone first.
@@ -187,9 +194,11 @@ func _fill_zone(biome: BiomePlan, zone: ZonePlan) -> void:
 		room.join_index = zone.route_start + (2 * n + 1) * zone.resource.route_rooms / (2 * ordinary)
 
 
-## Sizes the Biome's stretch of cells from its Rooms' footprints and cuts its route into one
-## contiguous piece per cell, of about equal footprint with their off-route Rooms. The count is
-## capped so each cell's route Rooms can still cross it: about the square root of its Rooms.
+## Sizes the Biome's stretch of cells from its Rooms' footprints, never packing them tighter than
+## their room size, and cuts its route into one contiguous piece per cell, of about equal footprint
+## with their off-route Rooms. The count is capped so each cell's route Rooms can still cross it:
+## about the square root of its Rooms. Each cell takes at least two route Rooms where the route
+## has them, so its entry and exit fall to different Rooms.
 @warning_ignore("integer_division")
 func _cut_stretch(biome: BiomePlan) -> void:
 	var route := biome.route.size()
@@ -200,7 +209,8 @@ func _cut_stretch(biome: BiomePlan) -> void:
 		var footprint := _footprint(biome.resource, room.kind)
 		weights[room.join_index] += footprint
 		area += footprint
-	var count := clampi((area + CELL_AREA / 2) / CELL_AREA, 1, maxi(1, route * route / biome.rooms.size()))
+	var count := clampi((area + CELL_AREA - 1) / CELL_AREA, 1, maxi(1, route * route / biome.rooms.size()))
+	var run := 2 if route >= 2 * count else 1
 	var stretch := PackedInt32Array()
 	stretch.resize(route)
 	var cell := 0
@@ -208,13 +218,68 @@ func _cut_stretch(biome: BiomePlan) -> void:
 	var before := 0
 	for index in route:
 		var later_cells := count - 1 - cell
-		if later_cells > 0 and index > cell_start and (before * count >= area * (cell + 1) or route - index <= later_cells):
+		if later_cells > 0 and index - cell_start >= run and (before * count >= area * (cell + 1) or route - index <= later_cells * run):
 			cell += 1
 			cell_start = index
 		stretch[index] = cell
 		before += weights[index]
 	_stretches[biome.id] = stretch
 	biome.cells.resize(count)
+
+
+## Moves set pieces out of macro cells too small for all their discs, one at a time, to the nearest
+## free route position of a cell with room, inside the window their reservation allowed: a Boss in
+## its final Zone's later half, a Miniboss in its Zone's later half, a Rare anywhere in its Zone. The
+## stretch is recut after each move, since footprints follow joins.
+func _separate_set_pieces(biome: BiomePlan) -> void:
+	var taken: Dictionary = _joined[biome.id]
+	var capacity := CELL_AREA * SET_PIECE_SHARE
+	for _move in SET_PIECE_MOVES:
+		var stretch := _stretches[biome.id]
+		var load: Dictionary[int, int] = {}
+		for room in biome.rooms:
+			if room.kind != RoomPlan.Kind.ORDINARY and room.kind != RoomPlan.Kind.SPAWN:
+				load[stretch[room.join_index]] = load.get(stretch[room.join_index], 0) + _disc_square(room)
+		var moved := false
+		for room in biome.rooms:
+			if room.kind == RoomPlan.Kind.ORDINARY or room.kind == RoomPlan.Kind.SPAWN:
+				continue
+			var cell := stretch[room.join_index]
+			if load[cell] <= capacity or load[cell] == _disc_square(room):
+				continue
+			var window := _set_piece_window(biome, room)
+			var best := -1
+			for index in range(window.x, window.y + 1):
+				if taken.has(index) or stretch[index] == cell or load.get(stretch[index], 0) + _disc_square(room) > capacity:
+					continue
+				if best < 0 or absi(index - room.join_index) < absi(best - room.join_index):
+					best = index
+			if best >= 0:
+				taken.erase(room.join_index)
+				taken[best] = true
+				room.join_index = best
+				moved = true
+				break
+		if not moved:
+			return
+		_cut_stretch(biome)
+
+
+## The square around a set piece's protected disc, with a margin for the Rooms beside it.
+func _disc_square(room: RoomPlan) -> int:
+	var side := 2 * _plan.radii[room.kind_name()] + 6
+	return side * side
+
+
+## The route positions a set piece may join, as (first, last).
+func _set_piece_window(biome: BiomePlan, room: RoomPlan) -> Vector2i:
+	var zone := biome.zone(room.zone)
+	match room.kind:
+		RoomPlan.Kind.BOSS:
+			return Vector2i(zone.route_end() - ceili(zone.resource.route_rooms / 2.0), zone.route_end() - 1)
+		RoomPlan.Kind.MINIBOSS:
+			return Vector2i(ceili((zone.route_start + zone.route_end() - 1) / 2.0), zone.route_end() - 1)
+	return Vector2i(zone.route_start, zone.route_end() - 1)
 
 
 ## Tiles a Room claims: an ordinary Room's square of room_size, or a set piece's protected disc when
@@ -261,7 +326,15 @@ func _attach_side_biomes(parent_id: StringName) -> void:
 			per_cell[stretch[position]] = per_cell.get(stretch[position], 0) + 1
 			if _joined[parent_id].has(position):
 				score += 1
-			if per_cell[stretch[position]] > 2:
+			# Near either end of its cell's route, the route has few Rooms to reach that end's port from
+			# the attachment's edge.
+			var inside := 0
+			while inside < ATTACHMENT_CELL_SLACK and position - inside - 1 >= 0 and position + inside + 1 < stretch.size() \
+					and stretch[position - inside - 1] == stretch[position] and stretch[position + inside + 1] == stretch[position]:
+				inside += 1
+			score += ATTACHMENT_CELL_SLACK - inside
+			# Two attachments beside a cell's entry and exit can leave its route no planar way through.
+			if per_cell[stretch[position]] > 1:
 				score += sides.size()
 		if best_score < 0 or score < best_score:
 			best = positions
