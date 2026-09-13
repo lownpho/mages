@@ -44,6 +44,34 @@ func graph(world_seed: int, radii: Dictionary[StringName, int] = WorldPlan.DEFAU
 	return WorldGraph.build(plan(world_seed, radii), order)
 
 
+## Every tile's owner and class for a graph, with caches large enough never to evict.
+static func interiors(world_graph: WorldGraph) -> WorldInteriors:
+	var out := WorldInteriors.new(world_graph)
+	out.block_capacity = 1 << 20
+	out.interior_capacity = 1 << 20
+	return out
+
+
+## A chunk's rendered cells as text, one entry per layer name: chunks with equal entries show the
+## same tiles.
+static func rendered(chunk: WgChunk) -> Dictionary[String, String]:
+	var out: Dictionary[String, String] = {}
+	var names: Array[String] = []
+	for child in chunk.get_children():
+		if child is TileMapLayer:
+			names.append(String(child.name))
+	names.sort()
+	for layer_name in names:
+		var layer: TileMapLayer = chunk.get_node(layer_name)
+		var rows: Array[String] = []
+		for cell in layer.get_used_cells():
+			var atlas := layer.get_cell_atlas_coords(cell)
+			rows.append("%d,%d:%d:%d,%d" % [cell.x, cell.y, layer.get_cell_source_id(cell), atlas.x, atlas.y])
+		rows.sort()
+		out[layer_name] = ";".join(rows)
+	return out
+
+
 ## The six spatial knobs every Biome authors.
 const KNOBS: Array[StringName] = [&"room_size", &"border_warp", &"loops", &"shortcuts", &"passage_width", &"rockiness"]
 

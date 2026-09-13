@@ -15,26 +15,6 @@ class_name WorldStreamer
 ## Single-threaded (WorkerThreadPool is the contingency plan).
 extends Node2D
 
-## Floor/wall/object/object_bg variant channels for the pure-hash tile pick (kept distinct so a
-## tile's wall variant never correlates with its floor variant).
-const _CH_FLOOR := 1
-const _CH_WALL := 2
-const _CH_OBJECT := 3
-const _CH_OBJECT_BG := 4
-
-## The 8 neighbours of the autotile mask, bit i = _NB[i] is same-terrain. Order (N, NE, E, SE, S,
-## SW, W, NW) pairs each offset with the TileSet peering bit it corresponds to, so masks computed
-## from the logical grid line up with masks read from the tileset's authored terrain data.
-const _NB: Array[Vector2i] = [
-	Vector2i(0, -1), Vector2i(1, -1), Vector2i(1, 0), Vector2i(1, 1),
-	Vector2i(0, 1), Vector2i(-1, 1), Vector2i(-1, 0), Vector2i(-1, -1),
-]
-const _NB_PEERING: Array[int] = [
-	TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_TOP_RIGHT_CORNER,
-	TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_RIGHT_CORNER,
-	TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_LEFT_CORNER,
-	TileSet.CELL_NEIGHBOR_LEFT_SIDE, TileSet.CELL_NEIGHBOR_TOP_LEFT_CORNER,
-]
 ## Which logical classes count as "same terrain" for each autotiled layer.
 enum _Terrain { T_FLOOR, T_WALL }
 
@@ -77,8 +57,6 @@ var _room_cache: Dictionary = {}              # Vector2i origin_slot -> RoomOutp
 var _chunks: Dictionary = {}                  # Vector2i chunk_coord -> WgChunk
 var _fallback_pres: BiomePresentation = null  # starting biome's mapping; fallback for biomes without one
 var _world_chunks := Vector2i.ZERO            # world size in chunks (finite bounds)
-var _tile_tables: Dictionary = {}             # TileSet -> weighted pick table (built once, see _tile_table)
-var _terrain_tables: Dictionary = {}          # TileSet -> { canonical mask -> pick table } (see _terrain_table)
 
 
 ## (Re)build the world for a seed and reset all caches/chunks.
@@ -244,12 +222,12 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int, covered: P
 	var pres := _presentation_for(room.biome_id)
 	var lyr := chunk.layers_for(room.biome_id, pres)
 	# Resolve the per-layer pick tables once per room (each is cached; keeps the per-cell loop lean).
-	var t_floor := _tile_table(pres.floor_tileset)
-	var t_wall := _tile_table(pres.wall_tileset)
-	var t_object := _tile_table(pres.object_tileset)
-	var t_object_bg := _tile_table(pres.object_bg_tileset)
-	var tt_floor := _terrain_table(pres.floor_tileset) if pres.floor_autotile else {}
-	var tt_wall := _terrain_table(pres.wall_tileset) if pres.wall_autotile else {}
+	var t_floor := TilePicks.table(pres.floor_tileset)
+	var t_wall := TilePicks.table(pres.wall_tileset)
+	var t_rock := TilePicks.table(pres.rock_tileset)
+	var t_decoration := TilePicks.table(pres.decoration_tileset)
+	var tt_floor := TilePicks.terrain_table(pres.floor_tileset) if pres.floor_autotile else {}
+	var tt_wall := TilePicks.terrain_table(pres.wall_tileset) if pres.wall_autotile else {}
 
 	for wy in range(ry0, ry1):
 		for wx in range(rx0, rx1):
@@ -262,14 +240,14 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int, covered: P
 			match cls:
 				RoomBuilder.WALL:
 					if tt_wall.is_empty():
-						_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
+						_place(lyr.wall, cell, wx, wy, TilePicks.CH_WALL, t_wall)
 					else:
-						_place_auto(lyr.wall, cell, wx, wy, _CH_WALL,
+						_place_auto(lyr.wall, cell, wx, wy, TilePicks.CH_WALL,
 								_mask_for(room, wx, wy, _Terrain.T_WALL), tt_wall, t_wall)
 				RoomBuilder.BLOCKER:
-					_place(lyr.object, cell, wx, wy, _CH_OBJECT, t_object)
+					_place(lyr.rock, cell, wx, wy, TilePicks.CH_ROCK, t_rock)
 				RoomBuilder.DECOR_FLOOR:
-					_place(lyr.object_bg, cell, wx, wy, _CH_OBJECT_BG, t_object_bg)
+					_place(lyr.decoration, cell, wx, wy, TilePicks.CH_DECORATION, t_decoration)
 				_:
 					pass   # FLOOR: already laid above
 
@@ -296,9 +274,9 @@ func _blit_room(chunk: WgChunk, room: RoomOutput, tx0: int, ty0: int, covered: P
 func _fill_border(chunk: WgChunk, covered: PackedByteArray, tx0: int, ty0: int) -> void:
 	var cs := config.chunk_tiles
 	var lyr := chunk.layers_for(config.starting_biome, _fallback_pres)
-	var t_floor := _tile_table(_fallback_pres.floor_tileset)
-	var t_wall := _tile_table(_fallback_pres.wall_tileset)
-	var tt_wall := _terrain_table(_fallback_pres.wall_tileset) if _fallback_pres.wall_autotile else {}
+	var t_floor := TilePicks.table(_fallback_pres.floor_tileset)
+	var t_wall := TilePicks.table(_fallback_pres.wall_tileset)
+	var tt_wall := TilePicks.terrain_table(_fallback_pres.wall_tileset) if _fallback_pres.wall_autotile else {}
 	for cy in cs:
 		for cx in cs:
 			if covered[cy * cs + cx] == 1:
@@ -307,11 +285,11 @@ func _fill_border(chunk: WgChunk, covered: PackedByteArray, tx0: int, ty0: int) 
 			var wx := tx0 + cx
 			var wy := ty0 + cy
 			# Floor beneath the wall so transparent-around-trunk wall art never shows void.
-			_place(lyr.floor, cell, wx, wy, _CH_FLOOR, t_floor)
+			_place(lyr.floor, cell, wx, wy, TilePicks.CH_FLOOR, t_floor)
 			if tt_wall.is_empty():
-				_place(lyr.wall, cell, wx, wy, _CH_WALL, t_wall)
+				_place(lyr.wall, cell, wx, wy, TilePicks.CH_WALL, t_wall)
 			else:
-				_place_auto(lyr.wall, cell, wx, wy, _CH_WALL,
+				_place_auto(lyr.wall, cell, wx, wy, TilePicks.CH_WALL,
 						_mask_world(wx, wy, _Terrain.T_WALL), tt_wall, t_wall)
 
 
@@ -397,64 +375,7 @@ func _place(layer: TileMapLayer, cell: Vector2i, wx: int, wy: int,
 	if total <= 0:
 		return   # empty/unset tileset — nothing to place
 	var source_id: int = t.source_id
-	layer.set_cell(cell, source_id, _pick_weighted(wx, wy, channel, t))
-
-
-## Per-tileset pick table, built once and cached: EVERY tile of the tileset's first source, with
-## integer cumulative weights from each tile's `probability` (— art picks read the
-## tileset, not a curated subset). Probability is scaled ×1000 (min 1 for any non-zero tile) so
-## selection stays pure-integer and cross-platform deterministic. Fields: source_id, coords
-## (Array[Vector2i]), cum (PackedInt64Array cumulative weights), total (int).
-func _tile_table(tileset: TileSet) -> Dictionary:
-	if _tile_tables.has(tileset):
-		return _tile_tables[tileset]
-	var coords: Array[Vector2i] = []
-	var cum := PackedInt64Array()
-	var acc := 0
-	var source_id := -1
-	if tileset != null and tileset.get_source_count() > 0:
-		source_id = tileset.get_source_id(0)
-		var src := tileset.get_source(source_id) as TileSetAtlasSource
-		if src != null:
-			for i in src.get_tiles_count():
-				var coord := src.get_tile_id(i)
-				var td := src.get_tile_data(coord, 0)
-				var w := 1000
-				if td != null:
-					w = maxi(1, roundi(td.probability * 1000.0))
-					if td.probability <= 0.0:
-						continue   # probability 0 → never placed
-				acc += w
-				coords.append(coord)
-				cum.append(acc)
-	var t := {"source_id": source_id, "coords": coords, "cum": cum, "total": acc}
-	_tile_tables[tileset] = t
-	return t
-
-
-## Deterministic per-tile variant pick — pure function of (world_seed, tile, channel), so a
-## rebuilt chunk is byte-identical and neighbouring chunks agree at their seam.
-## Hashes to a value in [0, total) then binary-searches the cumulative weight table.
-func _pick_weighted(wx: int, wy: int, channel: int, t: Dictionary) -> Vector2i:
-	var coords: Array[Vector2i] = t.coords
-	if coords.size() <= 1:
-		return coords[0]
-	var total: int = t.total
-	var m := WgHash.splitmix64(WgHash.splitmix64(wx) ^ WgHash.splitmix64(wy))
-	m = WgHash.splitmix64(m ^ channel)
-	var h := WgHash.splitmix64(world_seed ^ m)
-	var r := (h & 0x7fffffffffffffff) % total
-	var cum: PackedInt64Array = t.cum
-	var lo := 0
-	var hi := cum.size() - 1
-	while lo < hi:
-		@warning_ignore("integer_division")
-		var mid := (lo + hi) / 2
-		if cum[mid] <= r:
-			lo = mid + 1
-		else:
-			hi = mid
-	return coords[lo]
+	layer.set_cell(cell, source_id, TilePicks.pick(world_seed, wx, wy, channel, t))
 
 
 # --- Autotile ------------------------------------------------------------------------------------
@@ -463,9 +384,9 @@ func _pick_weighted(wx: int, wy: int, channel: int, t: Dictionary) -> Vector2i:
 func _place_floor(layer: TileMapLayer, cell: Vector2i, room: RoomOutput, wx: int, wy: int,
 		t: Dictionary, tt: Dictionary) -> void:
 	if tt.is_empty():
-		_place(layer, cell, wx, wy, _CH_FLOOR, t)
+		_place(layer, cell, wx, wy, TilePicks.CH_FLOOR, t)
 	else:
-		_place_auto(layer, cell, wx, wy, _CH_FLOOR,
+		_place_auto(layer, cell, wx, wy, TilePicks.CH_FLOOR,
 				_mask_for(room, wx, wy, _Terrain.T_FLOOR), tt, t)
 
 
@@ -479,7 +400,7 @@ func _place_auto(layer: TileMapLayer, cell: Vector2i, wx: int, wy: int, channel:
 	if t.is_empty():
 		_place(layer, cell, wx, wy, channel, fallback)
 		return
-	layer.set_cell(cell, t.source_id, _pick_weighted(wx, wy, channel, t))
+	layer.set_cell(cell, t.source_id, TilePicks.pick(world_seed, wx, wy, channel, t))
 
 
 ## 8-neighbour same-terrain mask for a tile inside `room` — neighbours still inside the room read
@@ -491,25 +412,25 @@ func _mask_for(room: RoomOutput, wx: int, wy: int, kind: int) -> int:
 	var ly := wy - room.origin_slot.y * ss
 	var m := 0
 	for i in 8:
-		var nx := lx + _NB[i].x
-		var ny := ly + _NB[i].y
+		var nx := lx + TilePicks.NEIGHBOURS[i].x
+		var ny := ly + TilePicks.NEIGHBOURS[i].y
 		var cls: int
 		if nx >= 0 and ny >= 0 and nx < room.width and ny < room.height:
 			cls = room.tile_grid[ny * room.width + nx]
 		else:
-			cls = _class_at(wx + _NB[i].x, wy + _NB[i].y)
+			cls = _class_at(wx + TilePicks.NEIGHBOURS[i].x, wy + TilePicks.NEIGHBOURS[i].y)
 		if _same_terrain(cls, kind):
 			m |= 1 << i
-	return _canonical_mask(m)
+	return TilePicks.canonical_mask(m)
 
 
 ## Mask for a tile with no room context (border fill outside the sealed world).
 func _mask_world(wx: int, wy: int, kind: int) -> int:
 	var m := 0
 	for i in 8:
-		if _same_terrain(_class_at(wx + _NB[i].x, wy + _NB[i].y), kind):
+		if _same_terrain(_class_at(wx + TilePicks.NEIGHBOURS[i].x, wy + TilePicks.NEIGHBOURS[i].y), kind):
 			m |= 1 << i
-	return _canonical_mask(m)
+	return TilePicks.canonical_mask(m)
 
 
 ## Whether a logical class continues a layer's terrain. Walls connect to walls and to the sealed
@@ -552,61 +473,6 @@ func _class_at(wx: int, wy: int) -> int:
 	var lx := wx - room.origin_slot.x * config.room_slot_tiles
 	var ly := wy - room.origin_slot.y * config.room_slot_tiles
 	return room.tile_grid[ly * room.width + lx]
-
-
-## Corner bits only matter when both adjacent sides are set (the standard 47-blob rule) — clearing
-## the meaningless ones collapses the 256 raw masks onto the ones tilesets actually author.
-static func _canonical_mask(m: int) -> int:
-	if (m & 0b0000_0101) != 0b0000_0101:
-		m &= ~0b0000_0010   # NE needs N+E
-	if (m & 0b0001_0100) != 0b0001_0100:
-		m &= ~0b0000_1000   # SE needs E+S
-	if (m & 0b0101_0000) != 0b0101_0000:
-		m &= ~0b0010_0000   # SW needs S+W
-	if (m & 0b0100_0001) != 0b0100_0001:
-		m &= ~0b1000_0000   # NW needs W+N
-	return m
-
-
-## Per-tileset autotile table, built once and cached: canonical mask -> weighted pick table over
-## the tiles of source 0 that declare that mask via terrain peering bits (standard Godot terrain
-## painting; any terrain set/index counts). Tiles with no terrain are ignored here — they stay
-## available to the scatter table. Empty dict when the tileset authors no terrain at all.
-func _terrain_table(tileset: TileSet) -> Dictionary:
-	if _terrain_tables.has(tileset):
-		return _terrain_tables[tileset]
-	var groups: Dictionary = {}   # mask -> Array of [coord, weight]
-	var source_id := -1
-	if tileset != null and tileset.get_source_count() > 0:
-		source_id = tileset.get_source_id(0)
-		var src := tileset.get_source(source_id) as TileSetAtlasSource
-		if src != null:
-			for i in src.get_tiles_count():
-				var coord := src.get_tile_id(i)
-				var td := src.get_tile_data(coord, 0)
-				if td == null or td.terrain_set < 0 or td.terrain < 0 or td.probability <= 0.0:
-					continue
-				var mask := 0
-				for b in 8:
-					if td.is_valid_terrain_peering_bit(_NB_PEERING[b]) \
-							and td.get_terrain_peering_bit(_NB_PEERING[b]) == td.terrain:
-						mask |= 1 << b
-				mask = _canonical_mask(mask)
-				if not groups.has(mask):
-					groups[mask] = []
-				groups[mask].append([coord, maxi(1, roundi(td.probability * 1000.0))])
-	var by_mask: Dictionary = {}
-	for mask in groups:
-		var coords: Array[Vector2i] = []
-		var cum := PackedInt64Array()
-		var acc := 0
-		for pair in groups[mask]:
-			acc += pair[1]
-			coords.append(pair[0])
-			cum.append(acc)
-		by_mask[mask] = {"source_id": source_id, "coords": coords, "cum": cum, "total": acc}
-	_terrain_tables[tileset] = by_mask
-	return by_mask
 
 
 ## Deterministic player spawn: the biome's `spawn_room_type` room when one is authored (a pinned,

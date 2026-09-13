@@ -115,7 +115,7 @@ in the room-type `.tres` as a sub-resource); you rarely write a new one.
 | `RoomGenArena` | Blocker ring with gaps, open center — boss/arena | `inset`, `thickness`, `gap_count`, `gap_width` |
 
 Note: a biome's *presentation* decides the art. Forest biomes (glade, deepwood) point both
-`wall_tileset` and `object_tileset` at their tree tileset, so a cave or arena there reads as
+`wall_tileset` and `rock_tileset` at their tree tileset, so a cave or arena there reads as
 trees, not rock.
 
 Independent of the generator, `footprint_blob` reshapes the whole room into an organic pocket

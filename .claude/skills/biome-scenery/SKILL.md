@@ -106,10 +106,10 @@ a `TileSet` `.tres`:
 | --- | --- | --- |
 | `floor_tileset` | FLOOR | the ground, no collision |
 | `wall_tileset` | WALL | room shells, collidable |
-| `object_tileset` | BLOCKER | scattered blockers, collidable, **Y-sorted against entities** |
-| `object_bg_tileset` | DECOR_FLOOR | flat overlay behind entities, no collision |
+| `rock_tileset` | BLOCKER | scattered blockers, collidable, **Y-sorted against entities** |
+| `decoration_tileset` | DECOR_FLOOR | flat overlay behind entities, no collision |
 
-Forest biomes point **both** `wall_tileset` and `object_tileset` at the same tree tileset, which
+Forest biomes point **both** `wall_tileset` and `rock_tileset` at the same tree tileset, which
 is why a cave or arena generator there reads as trees rather than rock.
 
 So a new prop sheet becomes either a new TileSet `.tres` beside it (copy

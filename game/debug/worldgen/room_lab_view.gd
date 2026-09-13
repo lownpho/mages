@@ -140,8 +140,8 @@ func _fill_room_tiles(holder: Node2D, out: RoomOutput, room_seed: int) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = room_seed
 	var floor_layer := _make_layer(holder, pres.floor_tileset, -2)
-	var bg_layer := _make_layer(holder, pres.object_bg_tileset, -1)
-	var object_layer := _make_layer(holder, pres.object_tileset, 0)
+	var bg_layer := _make_layer(holder, pres.decoration_tileset, -1)
+	var object_layer := _make_layer(holder, pres.rock_tileset, 0)
 	var wall_layer := _make_layer(holder, pres.wall_tileset, 1)
 
 	var floor_cells: Array[Vector2i] = []

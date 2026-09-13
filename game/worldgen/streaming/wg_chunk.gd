@@ -6,11 +6,11 @@ class_name WgChunk
 ## Layers are built in code (not a .tscn) because chunks are procedural. A chunk may overlap more
 ## than one biome, and each biome has its OWN per-class tilesets, so a single shared TileMapLayer
 ## (which holds one tile_set) cannot serve both. Instead layers are created lazily per biome via
-## layers_for(): one floor/wall/object/object_bg TileMapLayer group per biome present in the
-## chunk, each backed by that biome's tileset (skipping null slots). Biome regions never share a
-## cell, so cross-biome draw order is irrelevant; within a biome order is
-## floor < object_bg < wall/object. Wall/object layers get physics_quadrant_size == chunk_tiles
-## so the engine batches colliders.
+## layers_for(): one floor/wall/rock/decoration TileMapLayer group per biome present in the
+## chunk, each backed by that biome's tileset (skipping null slots), plus a decoration layer per
+## Zone that overrides its Biome's decoration tileset. Biome regions never share a cell, so
+## cross-biome draw order is irrelevant; within a biome order is floor < decoration < wall/rock.
+## Wall/rock layers get physics_quadrant_size == chunk_tiles so the engine batches colliders.
 extends Node2D
 
 var chunk_coord: Vector2i
@@ -19,7 +19,8 @@ var chunk_coord: Vector2i
 var spawn_data: Array = []
 
 var _quadrant: int = 16
-var _biome_layers: Dictionary = {}   # StringName biome_id -> { "floor"/"wall"/"object"/"object_bg": TileMapLayer|null }
+var _biome_layers: Dictionary = {}   # StringName biome_id -> { "floor"/"wall"/"rock"/"decoration": TileMapLayer|null }
+var _zone_layers: Dictionary = {}    # StringName "<biome>/<zone>" -> decoration TileMapLayer
 
 
 ## Z-bands: floor/object_bg sit BEHIND every entity (flat ground), trees share the entity band (0)
@@ -41,16 +42,34 @@ func setup(coord: Vector2i, origin_px: Vector2, quadrant: int) -> void:
 ## The (up to four) TileMapLayers for one biome, created + cached on first request. Each slot is a
 ## TileMapLayer or null (when the presentation leaves that layer's tileset unset).
 func layers_for(biome_id: StringName, pres: BiomePresentation) -> Dictionary:
-	if _biome_layers.has(biome_id):
-		return _biome_layers[biome_id]
-	var group := {
-		"floor": _make_layer("%s_floor" % biome_id, pres.floor_tileset, _Z_FLOOR, false),
-		"wall": _make_layer("%s_wall" % biome_id, pres.wall_tileset, _Z_OBJECT, true),
-		"object": _make_layer("%s_object" % biome_id, pres.object_tileset, _Z_OBJECT, true),
-		"object_bg": _make_layer("%s_object_bg" % biome_id, pres.object_bg_tileset, _Z_OBJECT_BG, false),
-	}
-	_biome_layers[biome_id] = group
-	return group
+	for kind: StringName in [&"floor", &"wall", &"rock", &"decoration"]:
+		layer_for(biome_id, pres, kind)
+	return _biome_layers[biome_id]
+
+
+## One of a biome's four layers (&"floor", &"wall", &"rock" or &"decoration"), created on first
+## request; null when the presentation leaves its tileset unset.
+func layer_for(biome_id: StringName, pres: BiomePresentation, kind: StringName) -> TileMapLayer:
+	var group: Dictionary = _biome_layers.get_or_add(biome_id, {})
+	if not group.has(kind):
+		match kind:
+			&"floor":
+				group[kind] = _make_layer("%s_floor" % biome_id, pres.floor_tileset, _Z_FLOOR, false)
+			&"wall":
+				group[kind] = _make_layer("%s_wall" % biome_id, pres.wall_tileset, _Z_OBJECT, true)
+			&"rock":
+				group[kind] = _make_layer("%s_rock" % biome_id, pres.rock_tileset, _Z_OBJECT, true)
+			_:
+				group[kind] = _make_layer("%s_decoration" % biome_id, pres.decoration_tileset, _Z_OBJECT_BG, false)
+	return group[kind]
+
+
+## A flat decoration layer for a Zone that overrides its Biome's decoration tileset, keyed by
+## "<biome>/<zone>"; created on first request.
+func decoration_layer(key: StringName, tileset: TileSet) -> TileMapLayer:
+	if not _zone_layers.has(key):
+		_zone_layers[key] = _make_layer("%s_decoration" % String(key).replace("/", "_"), tileset, _Z_OBJECT_BG, false)
+	return _zone_layers[key]
 
 
 ## `solid` layers (trees) collide AND Y-sort so tall props render in front/behind by base position;

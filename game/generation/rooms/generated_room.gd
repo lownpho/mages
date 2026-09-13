@@ -9,6 +9,9 @@ enum Role { TESTING, TEACHING, BREATHER, SPAWN, BOSS, MINIBOSS, RARE }
 const ROLE_NAMES: Array[StringName] = [&"testing", &"teaching", &"breather", &"spawn", &"boss", &"miniboss", &"rare"]
 
 var plan: RoomPlan
+## Its place in WorldGraph.room_list, which packed per-tile owner arrays store; -1 until the graph
+## is joined.
+var index := -1
 ## The power-diagram seed, in unwarped World tiles. An ordinary Room's Object spots default to it.
 var seed := Vector2.ZERO
 ## A set piece's protected radius in tiles; 0 for an ordinary Room.

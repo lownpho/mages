@@ -17,18 +17,46 @@ const WARP_SCALE := 48.0
 ## Past a set piece's disc, the warp regains full strength over this many tiles.
 const WARP_FALLOFF := 32.0
 const _INVERSE_STEPS := 16
+## Side of the square bins, in unwarped tiles, that list which Rooms may own a point.
+const _BIN := 8
+@warning_ignore("integer_division")
+const _BINS := WorldPlan.CELL / _BIN
 
 var plan: WorldPlan
 var cells: Dictionary[Vector2i, MacroCellGraph] = {}
 ## Every Room by key, in plan order.
 var rooms: Dictionary[String, GeneratedRoom] = {}
+## Every Room in plan order: GeneratedRoom.index indexes it.
+var room_list: Array[GeneratedRoom] = []
 ## Every Passage by key.
 var passages: Dictionary[String, RoomPassage] = {}
 ## Every Object site and landing by key.
 var sites: Dictionary[String, ObjectSite] = {}
 ## Macro cell -> the set pieces in it and its eight neighbours, for the warp's falloff.
 var _set_pieces_near: Dictionary[Vector2i, Array] = {}
-var _warp_seed := 0
+var _noise_x: FastNoiseLite
+var _noise_y: FastNoiseLite
+## The strongest border_warp of any Biome.
+var _strongest_warp := 0.0
+## warp() and owner_index_at() run once per tile while interiors stream, so they keep what they last
+## looked up: none of it changes a result.
+var _amplitude_lattice := Vector2i(1 << 30, 1 << 30)
+var _amplitude_corners := PackedFloat64Array([0.0, 0.0, 0.0, 0.0])
+var _near_coord := Vector2i(1 << 30, 1 << 30)
+## The set pieces near _near_coord: seed x, seed y and radius for each.
+var _near := PackedFloat64Array()
+var _warped_x := 0.0
+var _warped_y := 0.0
+var _bins_coord := Vector2i(1 << 30, 1 << 30)
+## The macro cell at _bins_coord: its bins, and each of its Rooms' index, seed and squared radius.
+## Empty bins where no Biome owns the cell.
+var _bins: Array[PackedInt32Array] = []
+var _bin_rooms := PackedInt32Array()
+var _bin_x := PackedFloat64Array()
+var _bin_y := PackedFloat64Array()
+var _bin_r2 := PackedFloat64Array()
+## Macro cell -> [bins, room indices, seed xs, seed ys, squared radii].
+var _bins_by_cell: Dictionary[Vector2i, Array] = {}
 
 
 ## null, with an error, when the plan is null or a macro cell exhausts its attempts. order lists the
@@ -38,7 +66,10 @@ static func build(world_plan: WorldPlan, order: Array[Vector2i] = []) -> WorldGr
 		return null
 	var graph := WorldGraph.new()
 	graph.plan = world_plan
-	graph._warp_seed = world_plan.seed_for(WgHash.NS_WARP, "border")
+	graph._noise_x = _warp_noise(world_plan.seed_for(WgHash.NS_WARP, "border/x"))
+	graph._noise_y = _warp_noise(world_plan.seed_for(WgHash.NS_WARP, "border/y"))
+	for id in world_plan.biomes:
+		graph._strongest_warp = maxf(graph._strongest_warp, world_plan.biomes[id].resource.border_warp)
 	var coords: Array[Vector2i] = order.duplicate()
 	for coord in world_plan.cells:
 		if not coords.has(coord):
@@ -49,7 +80,10 @@ static func build(world_plan: WorldPlan, order: Array[Vector2i] = []) -> WorldGr
 			return null
 		graph.cells[coord] = cell
 	for key in world_plan.rooms:
-		graph.rooms[key] = graph.cells[world_plan.rooms[key].cell].room(key)
+		var room := graph.cells[world_plan.rooms[key].cell].room(key)
+		room.index = graph.room_list.size()
+		graph.rooms[key] = room
+		graph.room_list.append(room)
 	graph._index_set_pieces()
 	for coord in world_plan.cells:
 		for passage in graph.cells[coord].passages:
@@ -69,36 +103,100 @@ static func build(world_plan: WorldPlan, order: Array[Vector2i] = []) -> WorldGr
 
 ## The Room owning a tile, or null outside every macro cell a Biome owns.
 func owner_at(tile: Vector2i) -> GeneratedRoom:
-	var point := warp(Vector2(tile) + Vector2(0.5, 0.5))
-	var cell: MacroCellGraph = cells.get(Vector2i((point / WorldPlan.CELL).floor()))
-	if cell == null:
-		return null
-	var best: GeneratedRoom
+	var index := owner_index_at(tile)
+	return room_list[index] if index >= 0 else null
+
+
+## The index in room_list of the Room owning a tile, or -1 outside every macro cell a Biome owns.
+## Streaming calls it once per tile, so it works in scalars and keeps what it last looked up.
+func owner_index_at(tile: Vector2i) -> int:
+	_warp_xy(tile.x + 0.5, tile.y + 0.5)
+	var px := _warped_x
+	var py := _warped_y
+	var cx := floori(px / WorldPlan.CELL)
+	var cy := floori(py / WorldPlan.CELL)
+	if cx != _bins_coord.x or cy != _bins_coord.y:
+		_select_bins(Vector2i(cx, cy))
+	if _bins.is_empty():
+		return -1
+	var bin: PackedInt32Array = _bins[mini(floori((py - cy * WorldPlan.CELL) / _BIN), _BINS - 1) * _BINS \
+			+ mini(floori((px - cx * WorldPlan.CELL) / _BIN), _BINS - 1)]
+	if bin.size() == 1:
+		return _bin_rooms[bin[0]]
+	var best := -1
 	var best_distance := INF
-	for room in cell.rooms:
-		var distance := point.distance_squared_to(room.seed) - room.radius * room.radius
+	for n in bin:
+		var dx := px - _bin_x[n]
+		var dy := py - _bin_y[n]
+		var distance := dx * dx + dy * dy - _bin_r2[n]
 		if distance < best_distance:
 			best_distance = distance
-			best = room
+			best = _bin_rooms[n]
 	return best
 
 
 ## Where a tile-space point falls in the unwarped power diagram.
 func warp(point: Vector2) -> Vector2:
-	var u := point.x / WorldPlan.CELL - 0.5
-	var v := point.y / WorldPlan.CELL - 0.5
+	_warp_xy(point.x, point.y)
+	return Vector2(_warped_x, _warped_y)
+
+
+## warp() in doubles, into _warped_x and _warped_y.
+func _warp_xy(px: float, py: float) -> void:
+	_warped_x = px
+	_warped_y = py
+	var u := px / WorldPlan.CELL - 0.5
+	var v := py / WorldPlan.CELL - 0.5
 	var i := floori(u)
 	var j := floori(v)
-	var top := lerpf(_cell_warp(Vector2i(i, j)), _cell_warp(Vector2i(i + 1, j)), u - i)
-	var bottom := lerpf(_cell_warp(Vector2i(i, j + 1)), _cell_warp(Vector2i(i + 1, j + 1)), u - i)
+	if i != _amplitude_lattice.x or j != _amplitude_lattice.y:
+		_amplitude_lattice = Vector2i(i, j)
+		_amplitude_corners[0] = _cell_warp(Vector2i(i, j))
+		_amplitude_corners[1] = _cell_warp(Vector2i(i + 1, j))
+		_amplitude_corners[2] = _cell_warp(Vector2i(i, j + 1))
+		_amplitude_corners[3] = _cell_warp(Vector2i(i + 1, j + 1))
+	var top := lerpf(_amplitude_corners[0], _amplitude_corners[1], u - i)
+	var bottom := lerpf(_amplitude_corners[2], _amplitude_corners[3], u - i)
 	var amplitude := lerpf(top, bottom, v - j)
 	if amplitude <= 0.0:
-		return point
-	for special: GeneratedRoom in _set_pieces_near.get(Vector2i((point / WorldPlan.CELL).floor()), []):
-		amplitude *= smoothstep(0.0, WARP_FALLOFF, point.distance_to(special.seed) - special.radius)
+		return
+	var cx := floori(px / WorldPlan.CELL)
+	var cy := floori(py / WorldPlan.CELL)
+	if cx != _near_coord.x or cy != _near_coord.y:
+		_near_coord = Vector2i(cx, cy)
+		_near.clear()
+		for special: GeneratedRoom in _set_pieces_near.get(_near_coord, []):
+			_near.append_array([special.seed.x, special.seed.y, special.radius])
+	for n in range(0, _near.size(), 3):
+		var dx := px - _near[n]
+		var dy := py - _near[n + 1]
+		amplitude *= smoothstep(0.0, WARP_FALLOFF, sqrt(dx * dx + dy * dy) - _near[n + 2])
 	if amplitude <= 0.0:
-		return point
-	return point + Vector2(_noise(point, 0), _noise(point, 1)) * amplitude
+		return
+	_warped_x = px + _noise_x.get_noise_2d(px, py) * amplitude
+	_warped_y = py + _noise_y.get_noise_2d(px, py) * amplitude
+
+
+## Builds every macro cell's ownership bins now rather than on its first tile: streaming calls this
+## behind the loading frame so no frame pays for a whole cell's bins.
+func prepare_bins() -> void:
+	for coord in cells:
+		if not _bins_by_cell.has(coord):
+			_bins_by_cell[coord] = _build_bins(cells[coord])
+
+
+## The furthest, along either axis, any tile warping onto a point of rect can have moved: noise moves
+## each axis by at most the amplitude, which interpolates between macro-cell centres and so never
+## passes the strongest cell around. Interiors size their bounds by it.
+func warp_bound(rect: Rect2i) -> float:
+	var reach := rect.grow(ceili(_strongest_warp))
+	var first := Vector2i(floori(float(reach.position.x) / WorldPlan.CELL - 0.5), floori(float(reach.position.y) / WorldPlan.CELL - 0.5))
+	var last := Vector2i(floori(float(reach.end.x) / WorldPlan.CELL - 0.5), floori(float(reach.end.y) / WorldPlan.CELL - 0.5)) + Vector2i.ONE
+	var strongest := 0.0
+	for j in range(first.y, last.y + 1):
+		for i in range(first.x, last.x + 1):
+			strongest = maxf(strongest, _cell_warp(Vector2i(i, j)))
+	return strongest
 
 
 ## The tile whose warped centre lands nearest an unwarped point.
@@ -264,20 +362,62 @@ func _cell_warp(coord: Vector2i) -> float:
 	return plan.biomes[cell.biome].resource.border_warp if cell != null else 0.0
 
 
-## Smooth value noise in [-1, 1].
-func _noise(point: Vector2, axis: int) -> float:
-	var x := point.x / WARP_SCALE
-	var y := point.y / WARP_SCALE
-	var ix := floori(x)
-	var iy := floori(y)
-	var fx := x - ix
-	var fy := y - iy
-	fx = fx * fx * (3.0 - 2.0 * fx)
-	fy = fy * fy * (3.0 - 2.0 * fy)
-	return lerpf(lerpf(_lattice(ix, iy, axis), _lattice(ix + 1, iy, axis), fx),
-			lerpf(_lattice(ix, iy + 1, axis), _lattice(ix + 1, iy + 1, axis), fx), fy)
+## Smooth value noise in [-1, 1] on a WARP_SCALE lattice.
+static func _warp_noise(unit_seed: int) -> FastNoiseLite:
+	var noise := FastNoiseLite.new()
+	noise.noise_type = FastNoiseLite.TYPE_VALUE
+	noise.fractal_type = FastNoiseLite.FRACTAL_NONE
+	noise.frequency = 1.0 / WARP_SCALE
+	noise.seed = unit_seed & 0x7fffffff
+	return noise
 
 
-func _lattice(ix: int, iy: int, axis: int) -> float:
-	var h := WgHash.splitmix64(_warp_seed ^ WgHash.splitmix64(ix * 73856093 ^ iy * 19349663 ^ axis * 83492791))
-	return float(h & 0xFFFF) / 32767.5 - 1.0
+func _select_bins(coord: Vector2i) -> void:
+	_bins_coord = coord
+	var cell: MacroCellGraph = cells.get(coord)
+	if cell == null:
+		_bins = []
+		return
+	if not _bins_by_cell.has(coord):
+		_bins_by_cell[coord] = _build_bins(cell)
+	var entry: Array = _bins_by_cell[coord]
+	_bins = entry[0]
+	_bin_rooms = entry[1]
+	_bin_x = entry[2]
+	_bin_y = entry[3]
+	_bin_r2 = entry[4]
+
+
+## For each bin of a macro cell, the indices into its Rooms whose power distance can be least
+## somewhere in the bin, in the cell's order so ties resolve as a full scan would; then the Rooms'
+## indices, seeds and squared radii.
+func _build_bins(cell: MacroCellGraph) -> Array:
+	var bins: Array[PackedInt32Array] = []
+	var indices := PackedInt32Array()
+	var xs := PackedFloat64Array()
+	var ys := PackedFloat64Array()
+	var r2s := PackedFloat64Array()
+	for room in cell.rooms:
+		indices.append(room.index)
+		xs.append(room.seed.x)
+		ys.append(room.seed.y)
+		r2s.append(room.radius * room.radius)
+	var reach := _BIN * sqrt(2.0) * 0.5
+	var origin := cell.cell.coord * WorldPlan.CELL
+	for by in _BINS:
+		for bx in _BINS:
+			var centre_x := origin.x + (bx + 0.5) * _BIN
+			var centre_y := origin.y + (by + 0.5) * _BIN
+			var lows := PackedFloat64Array()
+			var least_high := INF
+			for n in xs.size():
+				var distance := sqrt((centre_x - xs[n]) * (centre_x - xs[n]) + (centre_y - ys[n]) * (centre_y - ys[n]))
+				var near := maxf(distance - reach, 0.0)
+				lows.append(near * near - r2s[n])
+				least_high = minf(least_high, (distance + reach) * (distance + reach) - r2s[n])
+			var bin := PackedInt32Array()
+			for n in xs.size():
+				if lows[n] <= least_high + 0.01:
+					bin.append(n)
+			bins.append(bin)
+	return [bins, indices, xs, ys, r2s]

@@ -10,6 +10,6 @@ script = ExtResource("1")
 floor_tileset = ExtResource("1_ju426")
 floor_autotile = true
 wall_tileset = ExtResource("3")
-object_bg_tileset = ExtResource("4_decor")
+decoration_tileset = ExtResource("4_decor")
 map_floor_color = Color(0.278431, 0.176471, 0.235294, 1)
 map_wall_color = Color(0.188235, 0.172549, 0.180392, 1)

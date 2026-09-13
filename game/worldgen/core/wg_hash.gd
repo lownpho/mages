@@ -26,12 +26,19 @@ const NS_PASSAGES := 107
 const NS_WARP := 108
 const NS_ROLES := 109
 const NS_SITES := 110
+const NS_ROCKS := 111
+const NS_SPINE := 112
+const NS_DECORATION := 113
 
 # SplitMix64 constants written as their two's-complement signed-64 values: GDScript clamps
 # any int literal above INT64_MAX, so the raw 0x9E37... hex forms would silently corrupt.
 const _GAMMA := -7046029254386353131  # 0x9E3779B97F4A7C15
 const _MIX1 := -4658895280553007687   # 0xBF58476D1CE4E5B9
 const _MIX2 := -7723592293110705685   # 0x94D049BB133111EB
+# Masks keeping the low 64 - n bits after an arithmetic right shift by n (30, 27, 31).
+const _LOW_34 := (1 << 34) - 1
+const _LOW_37 := (1 << 37) - 1
+const _LOW_33 := (1 << 33) - 1
 
 # u32 range as int, so p=1.0 maps to a threshold (2^32) strictly above any randi() (max 2^32-1)
 # and therefore always fires; p=0.0 maps to 0 and never fires.
@@ -42,10 +49,11 @@ const _U32_RANGE := 0x100000000
 ## ints, so every right shift is masked to stay unsigned — an unmasked shift smears the sign
 ## bit and silently corrupts the hash. Multiply/add wrap naturally on 64-bit ints.
 static func splitmix64(x: int) -> int:
+	# _ushift inlined: streaming hashes every tile, and the calls cost more than the mixing.
 	x = x + _GAMMA
-	var z := (x ^ _ushift(x, 30)) * _MIX1
-	z = (z ^ _ushift(z, 27)) * _MIX2
-	return z ^ _ushift(z, 31)
+	var z := (x ^ ((x >> 30) & _LOW_34)) * _MIX1
+	z = (z ^ ((z >> 27) & _LOW_37)) * _MIX2
+	return z ^ ((z >> 31) & _LOW_33)
 
 
 ## Logical (unsigned) right shift for signed 64-bit ints.

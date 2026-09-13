@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/generation/test_world_tiles.gd" id="test_world_tiles"]
+
+[node name="TestWorldTiles" type="Node"]
+script = ExtResource("test_world_tiles")
