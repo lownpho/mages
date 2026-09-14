@@ -1241,10 +1241,10 @@
      "source": "game/characters/player/spells/oop/oop2.tres",
      "kind": "bullet",
      "cooldown": 2,
-     "cast_time": 0.2,
+     "cast_time": 0.5,
      "channeled": false,
      "grants": {
-      "skill": 6
+      "skill": 10
      },
      "shots": {
       "pattern": "SinglePattern",
@@ -1253,8 +1253,8 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 12,
-      "skill": 1,
+      "base": 24,
+      "skill": 2,
       "speed": 0,
       "defence": 0
      },
@@ -1304,14 +1304,14 @@
      },
      "shots": {
       "pattern": "RingPattern",
-      "per_shot": 8,
+      "per_shot": 6,
       "count": 3,
       "interval": 0.15
      },
      "amount": {
-      "base": 7,
+      "base": 10,
       "skill": 0,
-      "speed": 0.75,
+      "speed": 0.5,
       "defence": 0
      },
      "projectile": {
@@ -1330,7 +1330,7 @@
    "id": "whumf",
    "name": "Whumf",
    "category": "utility",
-   "description": "Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that dungeon's set — Poot and Blops are the turrets that stand in the field, and Zaap's second tier is the match.",
+   "description": "Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that Biome's set — Poot and Blops are the turrets that stand in the field, and Zaap's second tier is the match.",
    "per_tier": "",
    "kind": "effect",
    "hold": "no",
@@ -1391,7 +1391,7 @@
       "max_health": 25,
       "defence": 6
      },
-     "absorb": 0
+     "absorb": 80
     }
    ]
   },
@@ -1541,8 +1541,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -1727,8 +1726,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -1781,8 +1779,8 @@
     }
    ],
    "id": "bramble_stalker",
-   "description": "The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing\nto point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings\nof thorns off its own body. The ring means there is no safe side of it — the answer is\ndistance, not footwork — and the rings drift a little each wave, so a gap you found in the\nfirst one is somewhere else in the second. Hard to lead on the approach, trivial once you\nstop letting it arrive.\n",
-   "blurb": "The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings of thorns off its own body. The ring means there is no safe side of it — the answer is distance, not footwork — and the rings drift a little each wave, so a gap you found in the first one is somewhere else in the second. Hard to lead on the approach, trivial once you stop letting it arrive.",
+   "description": "The mimic Zone's opener, and the stalker recipe turned inside out: instead of closing\nto point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings\nof thorns off its own body. The ring means there is no safe side of it — the answer is\ndistance, not footwork — and the rings drift a little each wave, so a gap you found in the\nfirst one is somewhere else in the second. Hard to lead on the approach, trivial once you\nstop letting it arrive.\n",
+   "blurb": "The mimic Zone's opener, and the stalker recipe turned inside out: instead of closing to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings of thorns off its own body. The ring means there is no safe side of it — the answer is distance, not footwork — and the rings drift a little each wave, so a gap you found in the first one is somewhere else in the second. Hard to lead on the approach, trivial once you stop letting it arrive.",
    "art": "a leafy deepwood bush, built from the biome's own decor bush — same three greens, same sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the bramble-red thorns push out after them, one per flank as it winds up.",
    "casts": [
     "ring"
@@ -1841,9 +1839,8 @@
    "damage": "16",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -1928,9 +1925,8 @@
    "damage": "32",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -2022,9 +2018,8 @@
    "damage": "60",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -2201,8 +2196,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -2316,8 +2310,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -2376,8 +2369,8 @@
     }
    ],
    "id": "dirt_golem",
-   "description": "The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings\nbarely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You\nlearn to read an area denier that sits still and then lumbers after you, and here a misread is\ncheap. You can always outrun it, so the threat is the space it fills.\n",
-   "blurb": "The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You learn to read an area denier that sits still and then lumbers after you, and here a misread is cheap. You can always outrun it, so the threat is the space it fills.",
+   "description": "The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings\nbarely sting. It works as a low-stakes rehearsal for the heavier golems further in. You\nlearn to read an area denier that sits still and then lumbers after you, and here a misread is\ncheap. You can always outrun it, so the threat is the space it fills.\n",
+   "blurb": "The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings barely sting. It works as a low-stakes rehearsal for the heavier golems further in. You learn to read an area denier that sits still and then lumbers after you, and here a misread is cheap. You can always outrun it, so the threat is the space it fills.",
    "art": "the golem sprite in packed-earth browns with grass tufts on its shoulders.",
    "casts": [
     "ring"
@@ -2421,14 +2414,8 @@
    "damage": "16",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -2509,8 +2496,8 @@
     }
    ],
    "id": "gapcap",
-   "description": "The one thing that closes hard, and it only does it once at a time. It sprints the gap,\ndumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the\nwhole enemy is a single committed lunge you either sidestep or eat, and what you get for\nsidestepping it is a free window with the thing standing helpless in front of you. It is\nthe dungeon's answer to a player who solves every room from max range.\n\nSpores turn the free window off. Standing in a field it lunges further, fires the cone\ntwice, and recovers in about half the time — the same enemy, with the gap between its\ncommitment and its next one closed. Whether the lunge is a mistake it makes or a mistake\nyou make is decided by whose floor it is standing on.\n",
-   "blurb": "The one thing that closes hard, and it only does it once at a time. It sprints the gap, dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the whole enemy is a single committed lunge you either sidestep or eat, and what you get for sidestepping it is a free window with the thing standing helpless in front of you. It is the dungeon's answer to a player who solves every room from max range.",
+   "description": "The one thing that closes hard, and it only does it once at a time. It sprints the gap,\ndumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the\nwhole enemy is a single committed lunge you either sidestep or eat, and what you get for\nsidestepping it is a free window with the thing standing helpless in front of you. It is\nthe Mycelium's answer to a player who solves every room from max range.\n\nSpores turn the free window off. Standing in a field it lunges further, fires the cone\ntwice, and recovers in about half the time — the same enemy, with the gap between its\ncommitment and its next one closed. Whether the lunge is a mistake it makes or a mistake\nyou make is decided by whose floor it is standing on.\n",
+   "blurb": "The one thing that closes hard, and it only does it once at a time. It sprints the gap, dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the whole enemy is a single committed lunge you either sidestep or eat, and what you get for sidestepping it is a free window with the thing standing helpless in front of you. It is the Mycelium's answer to a player who solves every room from max range.",
    "art": "a squat rust-red cap on two thick stubby legs, its rim split across the front like a mouth over a pale gill band; the lunge row throws the cap out ahead of the legs and the strike row flattens the whole body into the ground before the mouth opens.",
    "casts": [
     "blam"
@@ -2555,8 +2542,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -2682,13 +2668,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
-    },
-    {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -2810,14 +2790,8 @@
    "damage": "7",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -2932,14 +2906,8 @@
    "damage": "12",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -3053,8 +3021,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -3169,8 +3136,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -3306,13 +3272,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
-    },
-    {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -3427,13 +3387,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
-    },
-    {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -3593,8 +3547,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -3717,8 +3670,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -3798,7 +3750,7 @@
     }
    ],
    "id": "normiecap",
-   "description": "A mushroom that walks up and spits at you. It notices you, it closes, it fires from about\ntwo tiles out, and if you walk away it gives up and goes back to standing there. There is\nno phase, no second idea and nothing to read — it is the body a room uses to make you\ncommit to a direction while something with an actual plan sets up behind it.\n\nIt still drinks. On coated floor the spit comes faster, harder and one shot longer, which\nis the whole point of putting the rule on the plainest thing in the dungeon: even the\nspeed bump is worse on floor you let stand, so there is no body in the Mycelium a player\ncan safely ignore the clouds around.\n",
+   "description": "A mushroom that walks up and spits at you. It notices you, it closes, it fires from about\ntwo tiles out, and if you walk away it gives up and goes back to standing there. There is\nno phase, no second idea and nothing to read — it is the body a room uses to make you\ncommit to a direction while something with an actual plan sets up behind it.\n\nIt still drinks. On coated floor the spit comes faster, harder and one shot longer, which\nis the whole point of putting the rule on the plainest thing in the Mycelium: even the\nspeed bump is worse on floor you let stand, so there is no body in the Mycelium a player\ncan safely ignore the clouds around.\n",
    "blurb": "A mushroom that walks up and spits at you. It notices you, it closes, it fires from about two tiles out, and if you walk away it gives up and goes back to standing there. There is no phase, no second idea and nothing to read — it is the body a room uses to make you commit to a direction while something with an actual plan sets up behind it.",
    "art": "the plainest mushroom that can be drawn at this size — a tan cap over a pale stem with two dark eyes under the brim, and a base that picks up when it walks. Deliberately the least memorable thing on the sheet.",
    "casts": [
@@ -3854,8 +3806,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -3956,8 +3907,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -3992,8 +3942,8 @@
     }
    ],
    "id": "puffcap",
-   "description": "The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom\ndecor with no attack and barely any detection, it inhales when something comes close and\npops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never\none cap. That is the whole encounter: walk into a field and it coats itself for good, or pick\nthem off from range and keep the floor, because shooting one dead never sets it off. Nothing\nyou carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and\nonly your own answer to light.\n",
-   "blurb": "The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom decor with no attack and barely any detection, it inhales when something comes close and pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick them off from range and keep the floor, because shooting one dead never sets it off. Nothing you carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and only your own answer to light.",
+   "description": "The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom\ndecor with no attack and barely any detection, it inhales when something comes close and\npops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never\none cap. That is the whole encounter: walk into a field and it coats itself for good, or pick\nthem off from range and keep the floor, because shooting one dead never sets it off. Nothing\nyou carry cleans the floor afterwards either — the Mycelium's spores are inert terrain, and\nonly your own answer to light.\n",
+   "blurb": "The cloud mine, and the first thing the Mycelium teaches. Rooted among the real mushroom decor with no attack and barely any detection, it inhales when something comes close and pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick them off from range and keep the floor, because shooting one dead never sets it off. Nothing you carry cleans the floor afterwards either — the Mycelium's spores are inert terrain, and only your own answer to light.",
    "art": "a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame swells it past its own width before the pop.",
    "casts": [
     "whumf"
@@ -4028,8 +3978,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -4146,8 +4095,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -4243,8 +4191,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -4341,9 +4288,8 @@
    "damage": "16",
    "biomes": [
     {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -4435,14 +4381,8 @@
    "damage": "13",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -4507,8 +4447,8 @@
     }
    ],
    "id": "shade",
-   "description": "A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a\nshort burst, then blinks somewhere else nearby and bursts again. Nothing about a single\nburst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes\nstanding still and rewards fighting it while moving to something else. It never walks —\nthe blink is its whole movement.\n",
-   "blurb": "A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a short burst, then blinks somewhere else nearby and bursts again. Nothing about a single burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes standing still and rewards fighting it while moving to something else. It never walks — the blink is its whole movement.",
+   "description": "A vanishing harasser, and the enemy that teaches the Zone's second trick: it fires a\nshort burst, then blinks somewhere else nearby and bursts again. Nothing about a single\nburst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes\nstanding still and rewards fighting it while moving to something else. It never walks —\nthe blink is its whole movement.\n",
+   "blurb": "A vanishing harasser, and the enemy that teaches the Zone's second trick: it fires a short burst, then blinks somewhere else nearby and bursts again. Nothing about a single burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes standing still and rewards fighting it while moving to something else. It never walks — the blink is its whole movement.",
    "art": "a wispy near-black silhouette with a faint violet edge and two pale eyes; a barely-there body that blinks out.",
    "casts": [
     "pew"
@@ -4557,9 +4497,8 @@
    "damage": "20",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -4686,8 +4625,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -4816,8 +4754,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -4930,13 +4867,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
-    },
-    {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -5053,8 +4984,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -5136,7 +5066,7 @@
     "pew",
     "whumf"
    ],
-   "notes": "the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they are inert terrain and nothing can light them.",
+   "notes": "the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the Mycelium's, so they are inert terrain and nothing can light them.",
    "fsm": {
     "start": "Idle",
     "transitions": [
@@ -5181,8 +5111,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -5365,8 +5294,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -5458,14 +5386,8 @@
    "damage": "8",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -5580,13 +5502,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
-    },
-    {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -5697,8 +5613,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -5804,9 +5719,8 @@
    "damage": "16",
    "biomes": [
     {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -5930,14 +5844,8 @@
    "damage": "7",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -6063,8 +5971,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -6171,9 +6078,8 @@
    "damage": "26",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -6347,8 +6253,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -6470,8 +6375,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -6680,9 +6584,8 @@
    "damage": "24-32",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -6781,8 +6684,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -6979,8 +6881,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -7139,14 +7040,8 @@
    "damage": "15-30",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -7273,8 +7168,7 @@
    "biomes": [
     {
      "id": "mycelium",
-     "name": "Mycelium floor",
-     "planned": false
+     "name": "Mycelium"
     }
    ]
   },
@@ -7405,8 +7299,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -7471,8 +7364,8 @@
     }
    ],
    "id": "umbra",
-   "description": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on\nthe far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so\nwhat changed is entirely where it fires it from. Turning to face it puts your back to\nwhatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking\nyou to make. Clear it first, or fight it with a wall behind you.\n",
-   "blurb": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so what changed is entirely where it fires it from. Turning to face it puts your back to whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking you to make. Clear it first, or fight it with a wall behind you.",
+   "description": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on\nthe far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so\nwhat changed is entirely where it fires it from. Turning to face it puts your back to\nwhatever else is in the room, which is exactly the trade the mimic Zone keeps asking\nyou to make. Clear it first, or fight it with a wall behind you.\n",
+   "blurb": "Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so what changed is entirely where it fires it from. Turning to face it puts your back to whatever else is in the room, which is exactly the trade the mimic Zone keeps asking you to make. Clear it first, or fight it with a wall behind you.",
    "art": "the shade silhouette in deeper black with a thin red edge.",
    "casts": [
     "pew"
@@ -7521,9 +7414,8 @@
    "damage": "22",
    "biomes": [
     {
-     "id": "deepwood_mimic",
-     "name": "Mimic deepwood",
-     "planned": false
+     "id": "deepwood",
+     "name": "Deepwood"
     }
    ]
   },
@@ -7621,14 +7513,8 @@
    "damage": "22",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
-    },
-    {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -7785,9 +7671,8 @@
    "damage": "11-15",
    "biomes": [
     {
-     "id": "glade_start",
-     "name": "Starting glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
    ]
   },
@@ -8116,8 +8001,7 @@
    "biomes": [
     {
      "id": "deepwood",
-     "name": "Deepwood",
-     "planned": false
+     "name": "Deepwood"
     }
    ]
   },
@@ -8352,154 +8236,32 @@
    "damage": "15-25",
    "biomes": [
     {
-     "id": "glade_veggie",
-     "name": "Veggie glade",
-     "planned": false
+     "id": "glade",
+     "name": "Glade"
     }
-   ]
-  }
- ],
- "families": [
-  {
-   "id": "glade",
-   "name": "Glade",
-   "tier_label": "T1/T2",
-   "intro": "The opening biome, where the player learns the systems and fills out a first kit. Enemy density is low, variety is high, stakes are gentle. It has two sub-biomes: the starting glade, which is pure onboarding, and the veggie glade, which brings in the plant roster and its boss.",
-   "enemies_intro": "The opening biome. It comes in two flavours: the floral **starting glade**, capped by the **fae**, and the rooted **veggie glade**, capped by the **thornmess**.",
-   "biomes": [
-    "glade_start",
-    "glade_veggie"
-   ],
-   "roster": [
-    "dirt_golem",
-    "hopper",
-    "mandrake",
-    "seedling",
-    "sproutling",
-    "wasp",
-    "mandraker",
-    "viper",
-    "fae",
-    "rosebud",
-    "thornthrower",
-    "thornmess"
-   ]
-  },
-  {
-   "id": "deepwood",
-   "name": "Deepwood",
-   "tier_label": "T3",
-   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It is the largest biome in the world — three times the footprint of either glade — and both glades gate into it. It has two sub-biomes: the animal deepwood, and the small mimic pocket hanging off its side. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.",
-   "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.",
-   "biomes": [
-    "deepwood",
-    "deepwood_mimic"
-   ],
-   "roster": [
-    "ash_snake",
-    "coral_snake",
-    "grimling",
-    "mole",
-    "moon_moth",
-    "moss_golem",
-    "moth",
-    "needle_moth",
-    "owl",
-    "shard_grimling",
-    "snake",
-    "stalker",
-    "thornback",
-    "wisp_grimling",
-    "great_owl",
-    "grimlord",
-    "razorback",
-    "gnarlking",
-    "bramble_stalker",
-    "bristlestone",
-    "cinderstone",
-    "shade",
-    "adder",
-    "elder_stalker",
-    "umbra"
-   ]
-  },
-  {
-   "id": "mycelium",
-   "name": "Mycelium",
-   "tier_label": "T3",
-   "intro": "The dungeon behind the mimic deepwood's mushroom door — eight floors down, one way through, a boss at the bottom. A floor is the smallest biome the packer will take, so the whole descent is ordinary worldgen stacked in a column. Art and rooms only so far: the floors carve but spawn nothing.",
-   "enemies_intro": "Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. None of it is placed yet — the floors carve, and every room's table is empty.",
-   "biomes": [
-    "mycelium"
-   ],
-   "roster": [
-    "bloatcap",
-    "clustercap",
-    "gapcap",
-    "mould_golem",
-    "normiecap",
-    "puffcap",
-    "ringcap",
-    "rollcap",
-    "shellcap",
-    "spiralcap",
-    "sporefly",
-    "sporespitter",
-    "burrower",
-    "deathcap",
-    "maulcap"
    ]
   }
  ],
  "biomes": [
   {
-   "id": "glade_start",
-   "source": "game/world_content/biomes/glade_start/glade_start.tres",
-   "family": "glade",
-   "size_cells": [
-    2,
-    1
+   "id": "glade",
+   "source": "game/generation/world/biomes/glade/biome.tres",
+   "name": "Glade",
+   "tier_label": "T1/T2",
+   "intro": "The opening biome, where the player learns the systems and fills out a first kit. Enemy density is low, variety is high, stakes are gentle. The starting glade is pure onboarding, and the veggie glade brings in the plant roster and its Miniboss.",
+   "enemies_intro": "The opening biome. It comes in two flavours: the floral **starting glade**, capped by the **fae**, and the rooted **veggie glade**, capped by the **thornmess**.",
+   "zones": [
+    {
+     "id": "start",
+     "name": "Starting glade",
+     "intro": "Onboarding, and the Spawn zone: the first roster enemies are taught one at a time before anything mixes."
+    },
+    {
+     "id": "veggie",
+     "name": "Veggie glade",
+     "intro": "Brings in the plant roster: thornthrower and rosebud join the Glade's own, and the thornmess waits as the Zone's Miniboss."
+    }
    ],
-   "fallback_room_type": "glade_start_open_fallback",
-   "name": "Starting glade",
-   "intro": "Onboarding: single-enemy rooms first, small mixed groups by T2, then the biome's rare and boss at T3.",
-   "roster": [
-    "dirt_golem",
-    "hopper",
-    "mandrake",
-    "seedling",
-    "sproutling",
-    "wasp",
-    "mandraker",
-    "viper",
-    "fae"
-   ],
-   "planned": false,
-   "room_ids": [
-    "glade_start_breather",
-    "glade_start_open_fallback",
-    "glade_start_spawn",
-    "glade_start_t1_blob_var",
-    "glade_start_t1_scatter_var",
-    "glade_start_t2_scatter_var",
-    "glade_start_boss",
-    "glade_start_gate_deepwood",
-    "glade_start_rare_mandraker",
-    "glade_start_rare_viper",
-    "glade_start_t3_blob_var"
-   ]
-  },
-  {
-   "id": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/glade_veggie.tres",
-   "family": "glade",
-   "size_cells": [
-    2,
-    1
-   ],
-   "fallback_room_type": "glade_veggie_open_fallback",
-   "name": "Veggie glade",
-   "intro": "Brings in the plant roster: thornthrower and rosebud both show up from T1. Groups get denser and harder than the starting glade by T2. T3 keeps the shared rare pair (1x viper, 1x mandraker) and the biome boss.",
    "roster": [
     "dirt_golem",
     "hopper",
@@ -8511,35 +8273,34 @@
     "wasp",
     "mandraker",
     "viper",
+    "fae",
     "thornmess"
-   ],
-   "planned": false,
-   "room_ids": [
-    "glade_veggie_breather",
-    "glade_veggie_open_fallback",
-    "glade_veggie_t1_blob_var",
-    "glade_veggie_t1_scatter_var",
-    "glade_veggie_t2_scatter_var",
-    "glade_veggie_boss",
-    "glade_veggie_gate_deepwood",
-    "glade_veggie_rare_mandraker",
-    "glade_veggie_rare_viper",
-    "glade_veggie_t3_blob_var"
    ]
   },
   {
    "id": "deepwood",
-   "source": "game/world_content/biomes/deepwood/deepwood.tres",
-   "family": "deepwood",
-   "size_cells": [
-    3,
-    2
-   ],
-   "fallback_room_type": "deepwood_teach_open",
+   "source": "game/generation/world/biomes/deepwood/biome.tres",
    "name": "Deepwood",
-   "intro": "The animal sub-biome, and the bulk of the forest. The rooms run a teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them.",
+   "tier_label": "T3",
+   "intro": "The second biome, tuned to pressure long-range, squishy builds and push the player into close quarters. Enemies have far more health and hit harder. It has two Zones: the animal deepwood, and the small mimic pocket. The insect one is still a proposal and stays in the ideas section below; the fungal one left the deepwood entirely and became the Mycelium, a Side biome of its own.",
+   "enemies_intro": "The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood Zone; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, introduced one mechanic at a time.",
+   "zones": [
+    {
+     "id": "main",
+     "name": "Animal deepwood",
+     "intro": "The bulk of the forest. Each of the eight mechanics is taught alone before its enemies mix, the six family variations come later, and the three rares and the gnarlking sit on top. The variations are deliberately kept apart, so seeing all three moths or all three snakes means going looking for them."
+    },
+    {
+     "id": "mimic",
+     "name": "Mimic deepwood",
+     "intro": "A small pocket of props with eyes: the bush that reveals, the harasser that blinks, then the two logs that are bombs, each taught on its own before it mixes with the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of."
+    }
+   ],
    "roster": [
     "ash_snake",
+    "bramble_stalker",
+    "bristlestone",
+    "cinderstone",
     "coral_snake",
     "grimling",
     "mole",
@@ -8548,94 +8309,29 @@
     "moth",
     "needle_moth",
     "owl",
+    "shade",
     "shard_grimling",
     "snake",
     "stalker",
     "thornback",
     "wisp_grimling",
+    "adder",
+    "elder_stalker",
     "great_owl",
     "grimlord",
     "razorback",
+    "umbra",
     "gnarlking"
-   ],
-   "planned": false,
-   "room_ids": [
-    "deepwood_teach_grimling",
-    "deepwood_teach_moth",
-    "deepwood_teach_open",
-    "deepwood_teach_owl",
-    "deepwood_teach_snake",
-    "deepwood_pair_cave",
-    "deepwood_pair_scatter",
-    "deepwood_teach_mole",
-    "deepwood_teach_moss_golem",
-    "deepwood_teach_stalker",
-    "deepwood_teach_thornback",
-    "deepwood_group_open",
-    "deepwood_group_trees",
-    "deepwood_teach_coral_snake",
-    "deepwood_teach_moon_moth",
-    "deepwood_teach_needle_moth",
-    "deepwood_boss_gnarlking",
-    "deepwood_rare_great_owl",
-    "deepwood_rare_grimlord",
-    "deepwood_rare_razorback",
-    "deepwood_swarm_trees",
-    "deepwood_teach_ash_snake",
-    "deepwood_teach_shard_grimling",
-    "deepwood_teach_wisp_grimling"
-   ]
-  },
-  {
-   "id": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/deepwood_mimic.tres",
-   "family": "deepwood",
-   "size_cells": [
-    1,
-    2
-   ],
-   "fallback_room_type": "deepwood_mimic_open",
-   "name": "Mimic deepwood",
-   "intro": "A small pocket off the side of the animal deepwood, always bordering it. Props with eyes: each of the four commons gets its own room first — the bush that reveals, the harasser that blinks, then the two logs that are bombs — and the cave rooms after that pair one of them with something from the shared pool, so the mine is never the only thing asking for your attention. Its three rares each escort the common they are a variant of. There is no boss; the deepest room is the mushroom door down into the Mycelium, which leads nowhere yet.",
-   "roster": [
-    "bramble_stalker",
-    "bristlestone",
-    "cinderstone",
-    "grimling",
-    "moss_golem",
-    "moth",
-    "shade",
-    "snake",
-    "stalker",
-    "adder",
-    "elder_stalker",
-    "umbra"
-   ],
-   "planned": false,
-   "room_ids": [
-    "deepwood_mimic_open",
-    "deepwood_mimic_teach_bramble_stalker",
-    "deepwood_mimic_teach_shade",
-    "deepwood_mimic_pair_cave",
-    "deepwood_mimic_teach_bristlestone",
-    "deepwood_mimic_teach_cinderstone",
-    "deepwood_mimic_gate_mushroom",
-    "deepwood_mimic_rare_adder",
-    "deepwood_mimic_rare_elder_stalker",
-    "deepwood_mimic_rare_umbra"
    ]
   },
   {
    "id": "mycelium",
-   "source": "game/world_content/biomes/mycelium/mycelium.tres",
-   "family": "mycelium",
-   "size_cells": [
-    2,
-    1
-   ],
-   "fallback_room_type": "mycelium_cave",
-   "name": "Mycelium floor",
-   "intro": "One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open passages, and a cave generator that carves the wall mass rather than scattering blockers. It has its own tileset and its own GenConfig; it is not in the overworld's registry yet, so nothing reaches it in a run. Each of the ten floors is its own config off the dungeon's `floor_configs`, drawing from a pool that grows as you descend: floor 1 is a primer of four bodies met one to a room, every third floor introduces nothing and only combines, and puffcaps are terrain — every room on every floor lays a field of them.",
+   "source": "game/generation/world/biomes/mycelium/biome.tres",
+   "name": "Mycelium",
+   "tier_label": "T3",
+   "intro": "The fungal Side biome hanging off the deepwood, in three Zones: clusters, hollows and sporefields. Spore clouds are the floor both sides fight over.",
+   "enemies_intro": "Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. All of it spawns, spread over the Mycelium's three Zones.",
+   "zones": [],
    "roster": [
     "bloatcap",
     "clustercap",
@@ -8652,5678 +8348,36 @@
     "burrower",
     "deathcap",
     "maulcap"
-   ],
-   "planned": false,
-   "room_ids": [
-    "mycelium_bloat",
-    "mycelium_cave",
-    "mycelium_lane",
-    "mycelium_spitter",
-    "mycelium_stair_up",
-    "mycelium_walkers",
-    "mycelium_ball",
-    "mycelium_bloat_walk",
-    "mycelium_flier",
-    "mycelium_lane_walk",
-    "mycelium_paint",
-    "mycelium_ring",
-    "mycelium_approach",
-    "mycelium_ball_field",
-    "mycelium_churn",
-    "mycelium_cluster",
-    "mycelium_exam_turrets",
-    "mycelium_flier_line",
-    "mycelium_gauntlet",
-    "mycelium_golem",
-    "mycelium_lane_paint",
-    "mycelium_lunge",
-    "mycelium_ring_line",
-    "mycelium_snipe",
-    "mycelium_two_lanes",
-    "mycelium_boss",
-    "mycelium_cluster_press",
-    "mycelium_crossfire",
-    "mycelium_deathcap_line",
-    "mycelium_exam_press",
-    "mycelium_gap_press",
-    "mycelium_golem_press",
-    "mycelium_hold",
-    "mycelium_mother",
-    "mycelium_press",
-    "mycelium_rare",
-    "mycelium_rare_burrower",
-    "mycelium_rare_deathcap",
-    "mycelium_rare_maulcap",
-    "mycelium_ring_lunge",
-    "mycelium_snipe_line",
-    "mycelium_squeeze",
-    "mycelium_stair_down"
    ]
   }
  ],
- "rooms": [
+ "starter_pool": [
   {
-   "id": "glade_start_breather",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_breather.tres",
-   "difficulty": 0,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 3,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
-   "features": [
-    "glade_fountain"
-   ],
-   "variations": [],
-   "biome_name": "Starting glade",
-   "family": "glade"
+   "item": "pew1",
+   "spell": "Pew"
   },
   {
-   "id": "glade_start_open_fallback",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_open_fallback.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 1,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
+   "item": "blam1",
+   "spell": "Blam"
   },
   {
-   "id": "glade_start_spawn",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_spawn.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [],
-   "biome_name": "Starting glade",
-   "family": "glade"
+   "item": "snipe1",
+   "spell": "Snipe"
   },
   {
-   "id": "glade_start_t1_blob_var",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_t1_blob_var.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
+   "item": "ring1",
+   "spell": "Ring"
   },
   {
-   "id": "glade_start_t1_scatter_var",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_t1_scatter_var.tres",
-   "difficulty": 1,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "glade_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
+   "item": "fireball1",
+   "spell": "Fireball"
   },
   {
-   "id": "glade_start_t2_scatter_var",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_t2_scatter_var.tres",
-   "difficulty": 2,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "glade_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "wasp",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_start_boss",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_boss.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "fae",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_start_gate_deepwood",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_gate_deepwood.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
-   "features": [
-    "door"
-   ],
-   "variations": [],
-   "biome_name": "Starting glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_start_rare_mandraker",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_rare_mandraker.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mandraker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_start_rare_viper",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_rare_viper.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "viper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_start_t3_blob_var",
-   "biome": "glade_start",
-   "source": "game/world_content/biomes/glade_start/rooms/glade_start_t3_blob_var.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Starting glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_breather",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_breather.tres",
-   "difficulty": 0,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 3,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
-   "features": [
-    "glade_fountain"
-   ],
-   "variations": [],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_open_fallback",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_open_fallback.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 1,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sproutling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_t1_blob_var",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_t1_blob_var.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_t1_scatter_var",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_t1_scatter_var.tres",
-   "difficulty": 1,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "glade_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "sproutling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "hopper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_t2_scatter_var",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_t2_scatter_var.tres",
-   "difficulty": 2,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "glade_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wasp",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_boss",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_boss.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "thornmess",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_gate_deepwood",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_gate_deepwood.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
-   "features": [
-    "door"
-   ],
-   "variations": [],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_rare_mandraker",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_rare_mandraker.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mandraker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_rare_viper",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_rare_viper.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "viper",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "glade_veggie_t3_blob_var",
-   "biome": "glade_veggie",
-   "source": "game/world_content/biomes/glade_veggie/rooms/glade_veggie_t3_blob_var.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornthrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "seedling",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "dirt_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mandrake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rosebud",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Veggie glade",
-   "family": "glade"
-  },
-  {
-   "id": "deepwood_teach_grimling",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_grimling.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_moth",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_moth.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_open",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_open.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 2,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "deepwood_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 3,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    },
-    {
-     "weight": 3,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_owl",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_owl.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_snake",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_snake.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_pair_cave",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_pair_cave.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 36,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "deepwood_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_pair_scatter",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_pair_scatter.tres",
-   "difficulty": 1,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 30,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "deepwood_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_mole",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_mole.tres",
-   "difficulty": 1,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_moss_golem",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_moss_golem.tres",
-   "difficulty": 1,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_stalker",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_stalker.tres",
-   "difficulty": 1,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_thornback",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_thornback.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_group_open",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_group_open.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 2,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [
-    "deepwood_fountain"
-   ],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moon_moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "needle_moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "coral_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_group_trees",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_group_trees.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 12,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moon_moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "needle_moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "coral_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_coral_snake",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_coral_snake.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "coral_snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_moon_moth",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_moon_moth.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "moon_moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_needle_moth",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_needle_moth.tres",
-   "difficulty": 2,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "needle_moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_boss_gnarlking",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_boss_gnarlking.tres",
-   "difficulty": 3,
-   "generator": "arena",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "gnarlking",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_rare_great_owl",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_rare_great_owl.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 1,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "great_owl",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_rare_grimlord",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_rare_grimlord.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 1,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "grimlord",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_rare_razorback",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_rare_razorback.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 1,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "razorback",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_swarm_trees",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_swarm_trees.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 30,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "needle_moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moon_moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "shard_grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "ash_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "coral_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "owl",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wisp_grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "thornback",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "wisp_grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "moon_moth",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "mole",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "shard_grimling",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "coral_snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ash_snake",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_ash_snake",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_ash_snake.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ash_snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_shard_grimling",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_shard_grimling.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shard_grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_teach_wisp_grimling",
-   "biome": "deepwood",
-   "source": "game/world_content/biomes/deepwood/rooms/deepwood_teach_wisp_grimling.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "wisp_grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_open",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_open.tres",
-   "difficulty": 0,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 2,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 3,
-     "members": [
-      {
-       "enemy": "bramble_stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 3,
-     "members": [
-      {
-       "enemy": "shade",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "cinderstone",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "bristlestone",
-       "min": 1,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    },
-    {
-     "weight": 2,
-     "members": [
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_teach_bramble_stalker",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_bramble_stalker.tres",
-   "difficulty": 0,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bramble_stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_teach_shade",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_shade.tres",
-   "difficulty": 0,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shade",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_pair_cave",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_pair_cave.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 12,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": true,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bramble_stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shade",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "cinderstone",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "snake",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bristlestone",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shade",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bramble_stalker",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "cinderstone",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bristlestone",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moth",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bramble_stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "grimling",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shade",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "moss_golem",
-       "min": 1,
-       "max": 1
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_teach_bristlestone",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_bristlestone.tres",
-   "difficulty": 1,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bristlestone",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_teach_cinderstone",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_teach_cinderstone.tres",
-   "difficulty": 1,
-   "generator": "scatter",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "cinderstone",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_gate_mushroom",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_gate_mushroom.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": true,
-   "weight": 0,
-   "min_per_biome": 3,
-   "max_per_biome": 3,
-   "groups_min": 0,
-   "groups_max": 0,
-   "scale_with_size": true,
-   "features": [
-    "door"
-   ],
-   "variations": [],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_rare_adder",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_adder.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "adder",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "cinderstone",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_rare_elder_stalker",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_elder_stalker.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "elder_stalker",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bramble_stalker",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "deepwood_mimic_rare_umbra",
-   "biome": "deepwood_mimic",
-   "source": "game/world_content/biomes/deepwood_mimic/rooms/deepwood_mimic_rare_umbra.tres",
-   "difficulty": 3,
-   "generator": "empty",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "umbra",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "shade",
-       "min": 2,
-       "max": 2
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mimic deepwood",
-   "family": "deepwood"
-  },
-  {
-   "id": "mycelium_bloat",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_bloat.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 2,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bloatcap",
-       "min": 2,
-       "max": 3
-      },
-      {
-       "enemy": "puffcap",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_cave",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_cave.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 6
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_lane",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lane.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 2,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_spitter",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_spitter.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_stair_up",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_stair_up.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [
-    "door"
-   ],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "puffcap",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_walkers",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_walkers.tres",
-   "difficulty": 0,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 2,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 2
-      },
-      {
-       "enemy": "puffcap",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_ball",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ball.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "rollcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_bloat_walk",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_bloat_walk.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_flier",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_flier.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "sporefly",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_lane_walk",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lane_walk.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_paint",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_paint.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_ring",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ring.tres",
-   "difficulty": 1,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_approach",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_approach.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mould_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_ball_field",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ball_field.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "rollcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "rollcap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_churn",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_churn.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "rollcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_cluster",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_cluster.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "clustercap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "clustercap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_exam_turrets",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_exam_turrets.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "rollcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_flier_line",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_flier_line.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "sporefly",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_gauntlet",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_gauntlet.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_golem",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_golem.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mould_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mould_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_lane_paint",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lane_paint.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_lunge",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_lunge.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 3
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_ring_line",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ring_line.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_snipe",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_snipe.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_two_lanes",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_two_lanes.tres",
-   "difficulty": 2,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 1,
-   "max_per_biome": 2,
-   "groups_min": 1,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_boss",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_boss.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [
-    "placeholder"
-   ],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "puffcap",
-       "min": 5,
-       "max": 6
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_cluster_press",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_cluster_press.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "clustercap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "mould_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_crossfire",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_crossfire.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_deathcap_line",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_deathcap_line.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_exam_press",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_exam_press.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "clustercap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_gap_press",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_gap_press.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_golem_press",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_golem_press.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mould_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_hold",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_hold.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "mould_golem",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ringcap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_mother",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_mother.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [
-    "placeholder"
-   ],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_press",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_press.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 3,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 2,
-       "max": 2
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_rare",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "burrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "deathcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "maulcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_rare_burrower",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare_burrower.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "burrower",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_rare_deathcap",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare_deathcap.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "deathcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_rare_maulcap",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_rare_maulcap.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "maulcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporefly",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_ring_lunge",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_ring_lunge.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    },
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "normiecap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_snipe_line",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_snipe_line.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "shellcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "spiralcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 4,
-       "max": 5
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_squeeze",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_squeeze.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 4,
-   "min_per_biome": 0,
-   "max_per_biome": 99,
-   "groups_min": 2,
-   "groups_max": 2,
-   "scale_with_size": false,
-   "features": [],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "gapcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "ringcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "bloatcap",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "sporespitter",
-       "min": 1,
-       "max": 1
-      },
-      {
-       "enemy": "puffcap",
-       "min": 3,
-       "max": 4
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
-  },
-  {
-   "id": "mycelium_stair_down",
-   "biome": "mycelium",
-   "source": "game/world_content/biomes/mycelium/rooms/mycelium_stair_down.tres",
-   "difficulty": 3,
-   "generator": "cave",
-   "footprint_blob": false,
-   "weight": 0,
-   "min_per_biome": 1,
-   "max_per_biome": 1,
-   "groups_min": 1,
-   "groups_max": 1,
-   "scale_with_size": false,
-   "features": [
-    "door"
-   ],
-   "variations": [
-    {
-     "weight": 1,
-     "members": [
-      {
-       "enemy": "puffcap",
-       "min": 2,
-       "max": 3
-      }
-     ]
-    }
-   ],
-   "biome_name": "Mycelium floor",
-   "family": "mycelium"
+   "item": "zaap1",
+   "spell": "Zaap"
   }
  ],
- "starter_kit": [],
+ "starter_count": 4,
  "constants": {
   "px_per_tile": 8,
   "base_stats": {

@@ -130,7 +130,7 @@ func _ready() -> void:
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
-# One body, three floors: bare, standing in the PLAYER's Whumf, and standing in the dungeon's
+# One body, three floors: bare, standing in the PLAYER's Whumf, and standing in the enemies'
 # own field. Only the last one pays. All three halves matter — a needs_cloud check that never
 # passes and one that always passes are both a creature with one attack, and one that reads the
 # floor without reading whose it is hands the player's own ammunition to the thing it was aimed
@@ -542,7 +542,7 @@ func _swells_under_damage(id: String, scene: PackedScene, plain: String, reach: 
 # eligibility every other hand-off asks, so an overkilled corpse (health below zero, outside
 # every health window) or one waiting on a cooldown simply lies there on its last frame,
 # playing dead in the literal sense. Checked on both floors, since the empowered rung is the
-# one a player standing in the dungeon's own spores actually meets.
+# one a player standing in the enemies' own spores actually meets.
 func _brood_pops(id: String, scene: PackedScene) -> int:
 	var fails := 0
 	for coated in [false, true]:
@@ -784,7 +784,7 @@ func _power(spell: SpellResource) -> int:
 
 # A coated room, laid the way a lob leaves it: patches on a grid one cloud wide, so wherever
 # the body parks inside it, it is standing in spores. `foe` picks whose floor it is — the
-# dungeon's own by default, the player's Whumf when false.
+# enemies' own by default, the player's Whumf when false.
 func _coat(center: Vector2, reach: int = 3, foe: bool = true) -> void:
 	for x in range(-reach, reach + 1):
 		for y in range(-reach, reach + 1):
@@ -822,14 +822,14 @@ func _weakness_doubles() -> int:
 	return fails
 
 # The set's two turrets, from the player's side of the same seam: planted where you aimed,
-# rooted there, and fed by YOUR spores and nothing the dungeon laid. Both halves fail silently —
-# a fed rung that never fires is a turret that looks like it works, and one the dungeon's own
+# rooted there, and fed by YOUR spores and nothing the enemies laid. Both halves fail silently —
+# a fed rung that never fires is a turret that looks like it works, and one the enemies' own
 # floor empowers hands the room's ammunition to the side it was meant to threaten.
 func _turret_reads_the_floor(id: String, spell: SummonResource, fed: String, plain: String) -> int:
 	var fails := 0
 	var at := Vector2(spell.spawn_distance, 0)  # a caster at the origin aiming right
 	var foe := _foe(at + Vector2(24, 0))
-	for leg in [["clean floor", -1, plain], ["the dungeon's spores", 1, plain],
+	for leg in [["clean floor", -1, plain], ["the enemies' spores", 1, plain],
 			["your own field", 0, fed]]:
 		if leg[1] >= 0:
 			_coat(at, 3, leg[1] == 1)

@@ -74,7 +74,7 @@ func _ready() -> void:
 		&"dirt_golem", &"hopper", &"mandrake", &"rosebud", &"seedling", &"sproutling",
 		&"thornthrower", &"wasp",
 		&"mandraker", &"viper",   # rares after the commons
-		&"fae", &"thornmess",     # bosses last (one per sub-biome)
+		&"fae", &"thornmess",     # bosses last
 	]
 	var want_deepwood: Array[StringName] = [
 		&"ash_snake", &"bramble_stalker", &"bristlestone", &"cinderstone", &"coral_snake",

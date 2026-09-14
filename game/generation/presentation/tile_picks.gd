@@ -135,11 +135,11 @@ static func tile_hash(wx: int, wy: int) -> int:
 
 ## tile_hash() in two halves, so a row's tiles share the second.
 static func row_hash(wy: int) -> int:
-	return WgHash.splitmix64(wy)
+	return WorldHash.splitmix64(wy)
 
 
 static func tile_hash_in_row(wx: int, hashed_row: int) -> int:
-	return WgHash.splitmix64(WgHash.splitmix64(wx) ^ hashed_row)
+	return WorldHash.splitmix64(WorldHash.splitmix64(wx) ^ hashed_row)
 
 
 ## pick() from a tile_hash(), for callers picking several layers of one tile.
@@ -147,7 +147,7 @@ static func pick_hashed(world_seed: int, hashed_tile: int, channel: int, t: Dict
 	var coords: Array[Vector2i] = t.coords
 	if coords.size() <= 1:
 		return coords[0]
-	return coords[index(WgHash.splitmix64(world_seed ^ WgHash.splitmix64(hashed_tile ^ channel)), t.total, t.lookup, t.cum)]
+	return coords[index(WorldHash.splitmix64(world_seed ^ WorldHash.splitmix64(hashed_tile ^ channel)), t.total, t.lookup, t.cum)]
 
 
 ## The index of the tile a pick hash selects from a table's fields: its weight's slot in [0, total),

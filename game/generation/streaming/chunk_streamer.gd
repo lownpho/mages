@@ -1,6 +1,6 @@
 class_name ChunkStreamer
 extends Node2D
-## Streams the finite World's tiles around a target: each frame it wants the chunks covering the camera's view grown by prefetch_tiles, unloads chunks
+## Streams the World's tiles around a target: each frame it wants the chunks covering the camera's view grown by prefetch_tiles, unloads chunks
 ## past a larger hysteresis margin, and skips chunks beyond the World's finite bounds and the ring
 ## of wall-art border chunks around them. The prefetch is in tiles rather than whole chunks so the
 ## lead ahead of a walking player is the same on every side without streaming more than it needs.
@@ -10,7 +10,7 @@ extends Node2D
 ## than tall, so plain distance from the target would serve the next row's centre ahead of the view's
 ## side columns. Every frame, on every platform and on the main thread, the queue's head works
 ## through its ChunkTiles (owners, Room interiors, classes, picks) until the frame's budget is spent.
-## Its WgChunk then enters the tree empty and receives one layer at a time, each built by the engine
+## Its WorldChunk then enters the tree empty and receives one layer at a time, each built by the engine
 ## at once; a layer waits for the next frame when its build would overrun this one, judged by the
 ## slowest recent layer. At most _MAX_LOADS_PER_FRAME chunks finish per frame; the budget left then
 ## goes on the next chunk's picks. Chunks are small, so no single layer build approaches the budget.
@@ -64,8 +64,8 @@ var last_work_split := PackedInt32Array([0, 0, 0, 0])
 ## Observable selective-rebuild boundary: chunks dropped by the most recent rebuild.
 var invalidated_chunks_last_rebuild: Array[Vector2i] = []
 
-var _chunks: Dictionary[Vector2i, WgChunk] = {}
-## Chunk coord -> [ChunkTiles, WgChunk], for chunks still being built.
+var _chunks: Dictionary[Vector2i, WorldChunk] = {}
+## Chunk coord -> [ChunkTiles, WorldChunk], for chunks still being built.
 var _jobs: Dictionary[Vector2i, Array] = {}
 var _queue: Array[Vector2i] = []
 var _world_chunks := Vector2i.ZERO
@@ -76,7 +76,7 @@ var _last := Vector2i(1 << 30, 1 << 30)
 var _layer_usec := 0
 ## Unloaded chunks still in the tree, freed a layer at a time, and what freeing one layer took at
 ## most lately.
-var _retired: Array[WgChunk] = []
+var _retired: Array[WorldChunk] = []
 var _retire_usec := 0
 ## A layer that waited for this frame, which goes before any other work.
 var _layer_waiting := false
@@ -184,7 +184,7 @@ func spawn_position() -> Vector2:
 
 
 ## Builds one chunk at once, outside the tree: tests compare these.
-func assemble_chunk(coord: Vector2i) -> WgChunk:
+func assemble_chunk(coord: Vector2i) -> WorldChunk:
 	var chunk := _new_chunk(coord)
 	var tiles := presentation.chunk(coord, chunk_tiles)
 	tiles.step(WorldInteriors.NO_DEADLINE)
@@ -234,7 +234,7 @@ func _update_streaming(budgeted: bool) -> void:
 	while not _retired.is_empty() and (not budgeted or calm or Time.get_ticks_usec() + _retire_usec <= deadline):
 		calm = false
 		var freeing := Time.get_ticks_usec()
-		var chunk: WgChunk = _retired[-1]
+		var chunk: WorldChunk = _retired[-1]
 		if chunk.get_child_count() > 0:
 			chunk.get_child(chunk.get_child_count() - 1).free()
 		else:
@@ -252,7 +252,7 @@ func _update_streaming(budgeted: bool) -> void:
 			_jobs[coord] = [presentation.chunk(coord, chunk_tiles), _new_chunk(coord)]
 		var job: Array = _jobs[coord]
 		var tiles: ChunkTiles = job[0]
-		var chunk: WgChunk = job[1]
+		var chunk: WorldChunk = job[1]
 		if not tiles.is_done():
 			fresh = false
 			if not tiles.step(deadline):
@@ -380,8 +380,8 @@ func _replan() -> void:
 	_plan_ahead()
 
 
-func _new_chunk(coord: Vector2i) -> WgChunk:
-	var chunk := WgChunk.new()
+func _new_chunk(coord: Vector2i) -> WorldChunk:
+	var chunk := WorldChunk.new()
 	chunk.setup(coord, Vector2(coord * chunk_tiles * GameConstants.PX_PER_TILE), chunk_tiles)
 	return chunk
 
@@ -407,7 +407,7 @@ func _exit_tree() -> void:
 
 
 ## Frees an unfinished chunk, which may already have entered the tree.
-static func _drop(chunk: WgChunk) -> void:
+static func _drop(chunk: WorldChunk) -> void:
 	if chunk.is_inside_tree():
 		chunk.queue_free()
 	else:

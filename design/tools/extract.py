@@ -2,7 +2,7 @@
 """Read the game's authored numbers out of its `.tres` / `.tscn` files.
 
 Every number in the design docs comes from here, never from the yaml: HP, drop
-chances, cast damage, spell tiers, room spawn tables, the starter kit. The yaml
+chances, cast damage, spell tiers, which Biome places each enemy, the starter pool. The yaml
 holds only what no resource can tell us — the words and the judgement calls.
 
 `build.py` imports this module; there is no intermediate file and no ordering
@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parents[2]       # repo root
 GAME = ROOT / "game"
 SPELL_DIR = GAME / "characters" / "player" / "spells"
 ENEMY_DIR = GAME / "characters" / "enemies"
-CONTENT_DIR = GAME / "world_content"
+BIOME_DIR = GAME / "generation" / "world" / "biomes"
 WORLD_SCENE = GAME / "scenes" / "world.gd"
 
 PX_PER_TILE = 8      # globals/game_constants.gd — everything authored in px converts
@@ -431,94 +431,56 @@ def enemies(d: Defaults) -> dict[str, dict]:
     return out
 
 
-# --- biomes & rooms ---------------------------------------------------------
-# The room table the design doc shows IS the shipped spawn pool: one entry per
-# weighted variation the generator may roll, each a list of {enemy, min, max}.
-# Single-type entries and mixed packs collapse to that one shape here, so no
-# consumer has to know the difference.
+# --- biomes -----------------------------------------------------------------
+# A Biome places an enemy through its roster or a Fixed encounter (Boss, Miniboss,
+# Rare: leader and escorts), and so does each of its Zones. Enemies are ids — the
+# folder their CreatureResource sits in.
 
-GENERATORS = {
-    "GeneratorScatter": "scatter",
-    "GeneratorCave": "cave",
-    "GeneratorArena": "arena",
-}
+def _fixed(encounter) -> list[str]:
+    if not encounter:
+        return []
+    return [encounter.get("leader") or ""] + list((encounter.get("escorts") or {}).keys())
 
 
-def _variation(entry, d: Defaults) -> dict:
-    members = entry.get("members") or []
-    if members:
-        picks = [
-            {
-                "enemy": str(m.get("enemy_id") or ""),
-                "min": _num(d.get(m, "count_min", 1)),
-                "max": _num(d.get(m, "count_max", 1)),
-            }
-            for m in members
-        ]
-    else:
-        picks = [{
-            "enemy": str(entry.get("enemy_id") or ""),
-            "min": _num(d.get(entry, "group_min", 1)),
-            "max": _num(d.get(entry, "group_max", 1)),
-        }]
-    return {"weight": _num(d.get(entry, "weight", 1)), "members": picks}
+def _placed(block) -> list[str]:
+    """Enemy ids a Biome or Zone places: its roster, then its Fixed encounters."""
+    paths = list((block.get("roster") or {}).keys()) + _fixed(block.get("boss"))
+    for key in ("minibosses", "rares"):
+        for encounter in block.get(key) or []:
+            paths += _fixed(encounter)
+    return [Path(p).parent.name for p in paths if p]
 
 
-def _room(path: Path, d: Defaults) -> dict:
-    r = tres.load(path)
-    gen = r.get("generator")
-    return {
-        "id": str(r.get("id") or path.stem),
-        "biome": str(r.get("biome") or ""),
-        "source": str(path.relative_to(ROOT)),
-        "difficulty": _num(d.get(r, "difficulty", 0)),
-        "generator": GENERATORS.get(getattr(gen, "script_class", ""), "empty"),
-        "footprint_blob": bool(d.get(r, "footprint_blob", False)),
-        "weight": _num(d.get(r, "weight", 1)),
-        "min_per_biome": _num(d.get(r, "min_per_biome", 0)),
-        "max_per_biome": _num(d.get(r, "max_per_biome", 99)),
-        "groups_min": _num(d.get(r, "enemy_groups_min", 0)),
-        "groups_max": _num(d.get(r, "enemy_groups_max", 0)),
-        "scale_with_size": bool(d.get(r, "scale_groups_with_size", True)),
-        "features": [
-            Path(f.get("scene") or "").stem for f in (r.get("features") or [])
-        ],
-        # Empty stays empty: a room with no pool spawns nothing, and the docs say so.
-        "variations": [_variation(e, d) for e in (r.get("enemies") or [])],
-    }
-
-
-def biomes(d: Defaults) -> dict[str, dict]:
-    """-> {biome id: def + its room types}, rooms ordered by difficulty then id."""
+def biomes() -> dict[str, dict]:
+    """-> {Biome id: its Zones and every enemy it places}, from generation/world/biomes/<id>/."""
     out: dict[str, dict] = {}
-    rooms: list[dict] = []
-    for path in sorted(CONTENT_DIR.rglob("*.tres")):
-        block = tres.load(path)
-        if block.script_class == "BiomeDef":
-            out[str(block.get("id"))] = {
-                "id": str(block.get("id")),
-                "source": str(path.relative_to(ROOT)),
-                "family": str(block.get("family") or ""),
-                "size_cells": list(block["size_cells"].args) if block.get("size_cells") else [1, 1],
-                "fallback_room_type": str(block.get("fallback_room_type") or ""),
-                "rooms": [],
-            }
-        elif block.script_class == "RoomTypeDef":
-            rooms.append(_room(path, d))
-
-    for room in sorted(rooms, key=lambda r: (r["difficulty"], r["id"])):
-        if room["biome"] in out:
-            out[room["biome"]]["rooms"].append(room)
+    for folder in sorted(BIOME_DIR.iterdir()):
+        path = folder / "biome.tres"
+        if not path.is_file():
+            continue
+        zones = [
+            {"id": z.stem, "enemies": list(dict.fromkeys(_placed(tres.load(z))))}
+            for z in sorted((folder / "zones").glob("*.tres"))
+        ]
+        placed = _placed(tres.load(path)) + [e for z in zones for e in z["enemies"]]
+        out[folder.name] = {
+            "id": folder.name,
+            "source": str(path.relative_to(ROOT)),
+            "zones": zones,
+            "enemies": list(dict.fromkeys(placed)),
+        }
     return out
 
 
-# --- the starter kit --------------------------------------------------------
+# --- the starter pool -------------------------------------------------------
 
-def starter_kit() -> list[str]:
-    """world.gd's STARTER_SPELLS -> the tier stems the player begins with."""
+def starter_pool() -> tuple[list[str], int]:
+    """world.gd's STARTER_POOL and STARTER_COUNT -> the tier stems a Run may open with, and how many."""
     text = WORLD_SCENE.read_text()
-    block = re.search(r"STARTER_SPELLS[^=]*=\s*\[(.*?)\n\]", text, re.S)
-    return re.findall(r'preload\("res://.*?/(\w+)\.tres"\)', block.group(1)) if block else []
+    block = re.search(r"STARTER_POOL[^=]*=\s*\[(.*?)\n\]", text, re.S)
+    count = re.search(r"STARTER_COUNT\s*:?=\s*(\d+)", text)
+    stems = re.findall(r'preload\("res://.*?/(\w+)\.tres"\)', block.group(1)) if block else []
+    return stems, int(count.group(1)) if count else 0
 
 
 # --- driver -----------------------------------------------------------------
@@ -526,11 +488,13 @@ def starter_kit() -> list[str]:
 def extract() -> dict:
     """Everything the game knows about itself, keyed on game ids."""
     d = Defaults(scan_script_defaults())
+    pool, count = starter_pool()
     return {
         "spells": spell_tiers(d),
         "enemies": enemies(d),
-        "biomes": biomes(d),
-        "starter_kit": starter_kit(),
+        "biomes": biomes(),
+        "starter_pool": pool,
+        "starter_count": count,
     }
 
 
@@ -548,11 +512,11 @@ def main() -> int:
 
     tiers = sum(len(v) for v in data["spells"].values())
     casts = sum(len(e["attacks"]) for e in data["enemies"].values())
-    rooms = sum(len(b["rooms"]) for b in data["biomes"].values())
+    zones = sum(len(b["zones"]) for b in data["biomes"].values())
     print(f"{len(data['spells'])} spells ({tiers} tiers), "
           f"{len(data['enemies'])} enemies ({casts} casts), "
-          f"{len(data['biomes'])} biomes ({rooms} room types)")
-    print(f"starter kit: {', '.join(data['starter_kit'])}")
+          f"{len(data['biomes'])} biomes ({zones} zones)")
+    print(f"starter pool ({data['starter_count']} of): {', '.join(data['starter_pool'])}")
     return 0
 
 

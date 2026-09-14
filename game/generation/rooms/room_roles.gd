@@ -49,7 +49,7 @@ static func breathe(graph: WorldGraph) -> void:
 	var chance := graph.plan.content.curve.breather_chance
 	for key in graph.rooms:
 		var room := graph.rooms[key]
-		if room.role == GeneratedRoom.Role.TESTING and graph.plan.rng(WgHash.NS_ROLES, "breather/" + key).randf() < chance:
+		if room.role == GeneratedRoom.Role.TESTING and graph.plan.rng(WorldHash.NS_ROLES, "breather/" + key).randf() < chance:
 			room.role = GeneratedRoom.Role.BREATHER
 
 
@@ -78,7 +78,7 @@ static func _teach_route(graph: WorldGraph, biomes: Array[BiomePlan]) -> void:
 			var enemies: Array[CreatureResource] = roster.keys()
 			enemies.sort_custom(func(a: CreatureResource, b: CreatureResource) -> bool: return a.resource_path < b.resource_path)
 			for index in range(zone.route_start, zone.route_end()):
-				var rng := plan.rng(WgHash.NS_ROLES, "teach/%s/%d" % [biome.id, index])
+				var rng := plan.rng(WorldHash.NS_ROLES, "teach/%s/%d" % [biome.id, index])
 				for enemy in enemies:
 					if not taught.has(enemy) and roster[enemy] <= biome.route[index].challenge:
 						taught[enemy] = true

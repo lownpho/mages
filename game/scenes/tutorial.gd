@@ -65,7 +65,7 @@ const DECOR_CHANCE := 0.06
 const INTRO_SIGN := """You move with W A S D or the left analog stick.
 Go in the next room to learn your first spells"""
 
-const SIGN_SCENE := preload("res://objects/sign/under_construction_sign.tscn")
+const SIGN_SCENE := preload("res://objects/sign/sign.tscn")
 
 ## The starter kit, dropped on the floor of the casting room so the player has spells in hand by
 ## the time that room's sign explains the cast buttons — a run entered from the title never
@@ -248,14 +248,14 @@ func _place_props(rooms: Array[Rect2i]) -> void:
 	for i in rooms.size():
 		if PROGRESSION[i].is_empty():
 			continue
-		var marker: UnderConstructionSign = SIGN_SCENE.instantiate()
+		var marker: Sign = SIGN_SCENE.instantiate()
 		marker.message = PROGRESSION[i]
 		marker.position = _to_px(rooms[i].get_center() + Vector2i(0, -3))
 		_signs.add_child(marker)
 
 	# Second sign in the entrance room, standing inside its own trigger radius from the spawn —
 	# so the movement prompt is already up on the first frame.
-	var intro: UnderConstructionSign = SIGN_SCENE.instantiate()
+	var intro: Sign = SIGN_SCENE.instantiate()
 	intro.message = INTRO_SIGN
 	intro.position = _to_px(rooms[0].get_center() + Vector2i(-3, 3))
 	_signs.add_child(intro)

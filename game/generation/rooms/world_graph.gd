@@ -106,8 +106,8 @@ static func _build(world_plan: WorldPlan, order: Array[Vector2i], previous: Worl
 		return null
 	var graph := WorldGraph.new()
 	graph.plan = world_plan
-	graph._noise_x = _warp_noise(world_plan.seed_for(WgHash.NS_WARP, "border/x"))
-	graph._noise_y = _warp_noise(world_plan.seed_for(WgHash.NS_WARP, "border/y"))
+	graph._noise_x = _warp_noise(world_plan.seed_for(WorldHash.NS_WARP, "border/x"))
+	graph._noise_y = _warp_noise(world_plan.seed_for(WorldHash.NS_WARP, "border/y"))
 	for id in world_plan.biomes:
 		graph._strongest_warp = maxf(graph._strongest_warp, world_plan.biomes[id].resource.border_warp)
 	var coords: Array[Vector2i] = order.duplicate()
@@ -360,7 +360,7 @@ func _maybe_shortcut(coord: Vector2i, direction: Vector2i) -> void:
 	var b := plan.cells[coord + direction]
 	if a.path_index < 0 or b.path_index < 0 or absi(a.path_index - b.path_index) <= 1:
 		return
-	var rng := plan.rng(WgHash.NS_PASSAGES, "shortcut/" + RoomPassage.pair(a.key, b.key))
+	var rng := plan.rng(WorldHash.NS_PASSAGES, "shortcut/" + RoomPassage.pair(a.key, b.key))
 	var odds := (plan.biomes[a.biome].resource.shortcuts + plan.biomes[b.biome].resource.shortcuts) / 2.0
 	if rng.randf() >= odds:
 		return

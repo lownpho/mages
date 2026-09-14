@@ -1,6 +1,6 @@
 class_name WorldPlan
 extends RefCounted
-## The complete finite World as WorldPlanner.plan planned it, before any geometry: a grid of macro
+## The complete World as WorldPlanner.plan planned it, before any geometry: a grid of macro
 ## cells holding the folded Ideal path and each Side biome's branch, every Biome's seeded Zone order
 ## and route, every Room allocated to a Zone and a macro cell with its Challenge, the set pieces'
 ## World-plan entries and the Side-biome attachments. Room graphs, interiors and tiles build on it.
@@ -39,11 +39,11 @@ var spawn: RoomPlan
 
 ## The seed of a generated unit of this World.
 func seed_for(namespace_id: int, key: String) -> int:
-	return WgHash.unit_seed(world_seed, namespace_id, key)
+	return WorldHash.unit_seed(world_seed, namespace_id, key)
 
 
 func rng(namespace_id: int, key: String) -> RandomNumberGenerator:
-	return WgHash.rng(seed_for(namespace_id, key))
+	return WorldHash.rng(seed_for(namespace_id, key))
 
 
 ## The route Room a Room joins the route at: itself for a route Room.

@@ -15,8 +15,7 @@
 <header>
   <h1 class="doc-title"><span class="m">E</span>nemy Catalogue</h1>
   <p class="doc-sub">Every built enemy, its words from <code>design/data/enemies.yaml</code> and its
-    numbers from the game's <code>.tres</code>. See also the <a href="spells.html">spells</a> and
-    the <a href="biomes.html">room tables</a>.</p>
+    numbers from the game's <code>.tres</code>. See also the <a href="spells.html">spells</a>.</p>
 </header>
 
 <div class="toolbar panel">
@@ -166,10 +165,7 @@
         el("span", "name", e.name),
         el("span", "badge rar-" + e.rarity, e.rarity)
       ].concat(e.kinds.map(function (k) { return el("span", "badge k", k); }))
-       .concat(e.biomes.map(function (b) {
-        return el("span", "badge biome" + (b.planned ? " planned" : ""),
-                  b.name + (b.planned ? " (planned)" : ""));
-      })));
+       .concat(e.biomes.map(function (b) { return el("span", "badge biome", b.name); })));
 
       var dl = el("dl", "stats");
       function stat(key, label, value) {

@@ -77,7 +77,7 @@ static func encounter_snapshot(generated: WorldEncounters) -> String:
 
 ## A chunk's rendered cells as text, one entry per layer name: chunks with equal entries show the
 ## same tiles.
-static func rendered(chunk: WgChunk) -> Dictionary[String, String]:
+static func rendered(chunk: WorldChunk) -> Dictionary[String, String]:
 	var out: Dictionary[String, String] = {}
 	var names: Array[String] = []
 	for child in chunk.get_children():

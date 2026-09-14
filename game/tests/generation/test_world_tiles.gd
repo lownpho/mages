@@ -202,7 +202,7 @@ func _test_rendering(fixture: WorldFixture) -> void:
 	_check(walls > 0, "%s: chunks around %s and %s render no walls or rocks" % [name, corner, spawn])
 	streamer.free()
 	var shuffled := coords.duplicate()
-	WorldPlanner._shuffle(shuffled, WgHash.rng(97))
+	WorldPlanner._shuffle(shuffled, WorldHash.rng(97))
 	streamer = ChunkStreamer.new()
 	streamer.build_world(fixture.graph(fixture.seeds[0]))
 	streamer.interiors.block_capacity = 3

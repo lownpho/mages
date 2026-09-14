@@ -77,8 +77,8 @@ func _zone_art(biome: BiomePlan, zone: ZonePlan) -> Art:
 	out.zone_decoration = zone.resource.decoration_tileset != null
 	out.decoration_tileset = zone.resource.decoration_tileset if out.zone_decoration else out.presentation.decoration_tileset
 	var density := zone.resource.decoration_density if zone.resource.decoration_density >= 0.0 else biome.resource.decoration_density
-	out.decoration_threshold = WgHash.threshold(density)
-	out.decoration_seed = WgHash.unit_seed(world_seed, WgHash.NS_DECORATION, out.zone_key)
+	out.decoration_threshold = WorldHash.threshold(density)
+	out.decoration_seed = WorldHash.unit_seed(world_seed, WorldHash.NS_DECORATION, out.zone_key)
 	_warm(out)
 	return out
 

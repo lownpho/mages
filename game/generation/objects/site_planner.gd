@@ -66,7 +66,7 @@ func place() -> bool:
 			if door == null:
 				continue
 			var targets := _door_targets(id)
-			door.destination_biome = targets[plan.rng(WgHash.NS_SITES, unit).randi_range(0, targets.size() - 1)]
+			door.destination_biome = targets[plan.rng(WorldHash.NS_SITES, unit).randi_range(0, targets.size() - 1)]
 			_place_landing(door, "landing/" + unit)
 	_spread()
 	if not _layout_is_valid():
@@ -94,7 +94,7 @@ func place_weighted() -> void:
 			total += weights[scene]
 		if total <= 0:
 			continue
-		var roll := plan.rng(WgHash.NS_SITES, "weighted/" + key).randi_range(1, total)
+		var roll := plan.rng(WorldHash.NS_SITES, "weighted/" + key).randi_range(1, total)
 		for scene in scenes:
 			roll -= weights[scene]
 			if roll <= 0:
@@ -148,7 +148,7 @@ func _place_landing(door: ObjectSite, unit: String) -> void:
 ## spaced site, or the one keeping the most.
 func _place(candidates: Array[GeneratedRoom], kind: ObjectSite.Kind, unit: String) -> ObjectSite:
 	var order := candidates.duplicate()
-	WorldPlanner._shuffle(order, plan.rng(WgHash.NS_SITES, unit))
+	WorldPlanner._shuffle(order, plan.rng(WorldHash.NS_SITES, unit))
 	var best: GeneratedRoom
 	var best_score := []
 	for room: GeneratedRoom in order:

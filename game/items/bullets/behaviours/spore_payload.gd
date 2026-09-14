@@ -7,7 +7,7 @@ class_name SporePayload
 ## floor is one primitive however it got there.
 ##
 ## The lob's own damage stays on its ScalingProfile (usually zero — the cloud is the point).
-## The patch's damage isn't here at all: it's the dungeon's floor, so SporeCloud holds it.
+## The patch's damage isn't here at all: it's the enemies' floor, so SporeCloud holds it.
 ## Only how long it lasts is this shot's business.
 
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")

@@ -1,6 +1,6 @@
 class_name WorldPlanner
 extends RefCounted
-## Plans the complete finite World from valid content and a World seed, before any geometry:
+## Plans the complete World from valid content and a World seed, before any geometry:
 ##
 ##   1. Each Biome orders its Zones by seed, the Spawn zone first, and lays their route Rooms end to
 ##      end; the spawn is the first. It reserves its set pieces as World-plan entries (the Boss near
@@ -119,7 +119,7 @@ func _zone_order(id: StringName) -> Array[StringName]:
 	if _content.spawn_zone.get_slice("/", 0) == id:
 		spawn = StringName(_content.spawn_zone.get_slice("/", 1))
 		order.erase(spawn)
-	_shuffle(order, _plan.rng(WgHash.NS_ZONE_ORDER, id))
+	_shuffle(order, _plan.rng(WorldHash.NS_ZONE_ORDER, id))
 	if spawn != &"":
 		order.push_front(spawn)
 	return order
@@ -151,7 +151,7 @@ func _reserve_set_pieces(biome: BiomePlan) -> void:
 		for n in minibosses.size():
 			_add_set_piece(biome, zone, RoomPlan.Kind.MINIBOSS, minibosses[n], "miniboss/%s/%s/%d" % [biome.id, zone.id, n],
 					_free_join(taken, high - n * late / minibosses.size(), low, high, true))
-		var rng := _plan.rng(WgHash.NS_SET_PIECES, "%s/%s" % [biome.id, zone.id])
+		var rng := _plan.rng(WorldHash.NS_SET_PIECES, "%s/%s" % [biome.id, zone.id])
 		var rares := zone.resource.rares
 		for n in rares.size():
 			_add_set_piece(biome, zone, RoomPlan.Kind.RARE, rares[n], "rare/%s/%s/%d" % [biome.id, zone.id, n],
@@ -302,7 +302,7 @@ func _attach_side_biomes(parent_id: StringName) -> void:
 			sides.append(side)
 	if sides.is_empty():
 		return
-	var rng := _plan.rng(WgHash.NS_ATTACHMENTS, parent_id)
+	var rng := _plan.rng(WorldHash.NS_ATTACHMENTS, parent_id)
 	_shuffle(sides, rng)
 	var parent := _plan.biomes[parent_id]
 	var stretch := _stretches[parent_id]
@@ -362,7 +362,7 @@ func _fold() -> bool:
 	var height := ceili(count * GRID_SLACK / width)
 	for _growth in FOLD_GROWTH:
 		for attempt in FOLD_ATTEMPTS:
-			if _embed(Vector2i(width, height), _plan.rng(WgHash.NS_MACRO_PATH, "%dx%d/%d" % [width, height, attempt])):
+			if _embed(Vector2i(width, height), _plan.rng(WorldHash.NS_MACRO_PATH, "%dx%d/%d" % [width, height, attempt])):
 				return true
 		width += 1
 		height += 1

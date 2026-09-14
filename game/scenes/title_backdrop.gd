@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-## The title screen's living backdrop: the real finite World, planned from a fresh seed each visit,
+## The title screen's living backdrop: the real World, planned from a fresh seed each visit,
 ## drifting slowly over the spawn Room. It stays hidden until the plan and the spawn's chunks are
 ## ready and then fades in; the menu draws its first frame before planning holds the main thread.
 ## New starts the Run in this very World by reusing `graph`.

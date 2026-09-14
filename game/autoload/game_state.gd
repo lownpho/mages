@@ -210,7 +210,7 @@ func track_player(player: Node2D) -> void:
 	_save_timer.start()
 
 
-## Called by the finite World scene so every save carries its defeats and Object states.
+## Called by the World scene so every save carries its defeats and Object states.
 func track_world(encounters: EncounterSpawner, objects: ObjectSpawner) -> void:
 	_tracked_encounters = encounters
 	_tracked_objects = objects

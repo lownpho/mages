@@ -12,7 +12,7 @@ var _fails: Array[String] = []
 
 
 func _ready() -> void:
-	var debug_state := {"world_debug": _snapshot_state("world_debug"), "combat_lab": _snapshot_state("combat_lab")}
+	var debug_state := {"world_debug": _snapshot_state("world_debug")}
 	var real_bestiary := GlobalBestiary.to_dict()
 	GlobalBestiary.restore({})
 	GameState.run_save_eligible = true

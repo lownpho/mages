@@ -1,16 +1,13 @@
 @tool
-class_name UnderConstructionSign
+class_name Sign
 extends Area2D
 
 ## A Sign. When the player walks up to it, its message floats above. A hand-placed one sets
-## `message` (the default says the area is under construction); a World Sign is set up from
-## generated data with its text and the Boss Room key reading it reveals. The art is a single blank
-## 16×16 frame for now.
+## `message` (empty by default); a World Sign is set up from generated data with its text and the
+## Boss Room key reading it reveals. The art is a single blank 16×16 frame for now.
 
-const _DEFAULT_MESSAGE := "The old ammargelluted lonfo is\nworking on this feature, be patient!"
-
-## The text shown above the sign while the player stands on it. Override per placement.
-@export_multiline var message := _DEFAULT_MESSAGE:
+## The text shown above the sign while the player stands on it. Set per placement.
+@export_multiline var message := "":
 	set(value):
 		message = value
 		if is_node_ready():

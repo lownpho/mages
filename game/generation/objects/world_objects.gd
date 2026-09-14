@@ -11,7 +11,7 @@ extends RefCounted
 ##
 ## No Professor scene exists yet, so Professor sites build nothing.
 
-const SIGN_SCENE := preload("res://objects/sign/under_construction_sign.tscn")
+const SIGN_SCENE := preload("res://objects/sign/sign.tscn")
 const DOOR_SCENE := preload("res://objects/door/door.tscn")
 
 var graph: WorldGraph

@@ -111,7 +111,7 @@ func _ordinary(room: GeneratedRoom) -> Array[GeneratedEncounter]:
 	var expected := floor.size() * curve.encounter_density(challenge)
 	var count := floori(expected)
 	var fraction := expected - count
-	if fraction > 0.0 and graph.plan.rng(WgHash.NS_ENCOUNTERS, "count/" + room.key()).randf() < fraction:
+	if fraction > 0.0 and graph.plan.rng(WorldHash.NS_ENCOUNTERS, "count/" + room.key()).randf() < fraction:
 		count += 1
 
 	var eligible: Array[CreatureResource] = []
@@ -141,7 +141,7 @@ func _ordinary(room: GeneratedRoom) -> Array[GeneratedEncounter]:
 		encounter.key = "%s/encounter/%d" % [room.key(), index]
 		encounter.room_key = room.key()
 		encounter.challenge = challenge
-		var rng := graph.plan.rng(WgHash.NS_ENCOUNTERS, encounter.key)
+		var rng := graph.plan.rng(WorldHash.NS_ENCOUNTERS, encounter.key)
 		var selected := _weighted_without_replacement(eligible, curve.encounter_types(challenge), rng)
 		var groups: Array[Dictionary] = []
 		if room.teaching != null:
@@ -153,7 +153,7 @@ func _ordinary(room: GeneratedRoom) -> Array[GeneratedEncounter]:
 		var composition: Array[Dictionary] = []
 		for group in groups:
 			var enemy: CreatureResource = group.enemy
-			var group_rng := graph.plan.rng(WgHash.NS_MEMBERS, "%s/group/%s" % [encounter.key, _enemy_id(enemy)])
+			var group_rng := graph.plan.rng(WorldHash.NS_MEMBERS, "%s/group/%s" % [encounter.key, _enemy_id(enemy)])
 			var amount := group_rng.randi_range(enemy.group_min, enemy.group_max)
 			for _member in amount:
 				composition.append(group)
@@ -192,7 +192,7 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], candi
 	if centred:
 		centre = _nearest(free, graph.tile_of(graph.rooms[encounter.room_key].seed))
 	else:
-		centre = free[graph.plan.rng(WgHash.NS_ENCOUNTERS, encounter.key + "/centre").randi_range(0, free.size() - 1)]
+		centre = free[graph.plan.rng(WorldHash.NS_ENCOUNTERS, encounter.key + "/centre").randi_range(0, free.size() - 1)]
 	encounter.centre = centre
 	var close: Array[Vector2i] = []
 	close.assign(candidates.filter(func(tile: Vector2i) -> bool:
@@ -207,7 +207,7 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], candi
 				available = close
 			if not available.is_empty():
 				var member_key := "%s/member/%d" % [encounter.key, index]
-				var rng := graph.plan.rng(WgHash.NS_MEMBERS, member_key)
+				var rng := graph.plan.rng(WorldHash.NS_MEMBERS, member_key)
 				tile = available[rng.randi_range(0, available.size() - 1)]
 		var member := EncounterMember.new()
 		member.key = "%s/member/%d" % [encounter.key, index]

@@ -2,7 +2,7 @@ extends Node
 ## The tutorial floor's one real invariant: the rooms are strung on a SINGLE path, in
 ## PROGRESSION's order. The rooms and corridors are computed, not hand-painted, so a wrong pitch
 ## or a wider corridor could quietly let two non-consecutive rooms touch — which reads as a normal
-## dungeon, just no longer a one-way tutorial.
+## maze, just no longer a one-way tutorial.
 ##
 ## Checked at the shipped table length AND at lengths that leave a short final row, since
 ## PROGRESSION is the knob meant to be edited and a partial row is the case a serpentine can get
@@ -139,7 +139,7 @@ func _restore(path: String, snap: Dictionary) -> void:
 ## line has to fit on its own.
 ##
 ## Width is simply the viewport. Height is what's left above the sign: the label's bottom sits
-## 15px above it (authored in under_construction_sign.tscn), the player can stand ~15px below it
+## 15px above it (authored in sign.tscn), the player can stand ~15px below it
 ## and still be inside its trigger radius, and the camera shows 90px above the player.
 func _signs_fit(shipped: Array[String]) -> int:
 	const VIEW := Vector2(320, 180)
@@ -150,7 +150,7 @@ func _signs_fit(shipped: Array[String]) -> int:
 	for message in messages:
 		if message.is_empty():
 			continue
-		var marker: UnderConstructionSign = TutorialScript.SIGN_SCENE.instantiate()
+		var marker: Sign = TutorialScript.SIGN_SCENE.instantiate()
 		marker.message = message
 		add_child(marker)
 		await get_tree().process_frame

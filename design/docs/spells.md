@@ -115,7 +115,7 @@ Three rules keep it from becoming a chore:
   **side tier** and on set pieces, so it is always something the player went and got, never a
   stat that quietly showed up.
 
-Kinds are also the honest read on a room: the bestiary shows them, so "this floor is all
+Kinds are also the honest read on a room: the bestiary shows them, so "this room is all
 fungal" is information you can act on before you walk in.
 
 ### Side tiers
@@ -128,7 +128,7 @@ is better except against the thing it hits.
 That makes it about the cheapest content in the game: one duplicated `.tres` with one field
 filled in, no new effect scene, no new balance pass, nothing to re-tune when the base spell
 moves — `build.py` fails the build if a side tier ever drifts from the tier it copied. Which is
-the whole reason the drop pool can be wide: a dungeon can pay out five of these without adding
+the whole reason the drop pool can be wide: a Biome can pay out five of these without adding
 five spells to the game.
 
 It also keeps **no power creep** true by construction. A side tier cannot be an upgrade,
@@ -142,7 +142,7 @@ and the slot is the price of the doubling.
 | **One weakness** | always the kind that drops it |
 | **Sits beside its tier, not above it** | a side tier of Blam II is Blam II; it does not imply a Blam III exists |
 
-The dungeons are where they come from, and they point at each other: the **Mycelium** drops
+Two Side biomes are where they come from, and they point at each other: the **Mycelium** drops
 insect side tiers, the **hive** drops fungal ones. Clear one to arm yourself for the other.
 Your own deepwood sign already says it — *"for some reason mushrooms and insects hate each
 other."* The tag system gets taught by a sign, not a tutorial.
@@ -157,14 +157,14 @@ are carrying it for the kind or the dial.
 
 ## The Mycelium set
 
-The three spells the [Mycelium](enemies.md#the-mycelium-dungeon) pays out. They are the first
+The three spells the [Mycelium](enemies.md#the-mycelium) pays out. They are the first
 **set**: each works alone, and together they are a small engine with one decision in it. All
 three ship — they are in the catalogue below, Zaap t2 detonates the field, and the same
-`needs_cloud` beat that empowers the dungeon's roster empowers your two turrets while they
+`needs_cloud` beat that empowers the Mycelium's roster empowers your two turrets while they
 stand in it.
 
 The shared piece is the **spore cloud** — a patch of floor that lingers, ticks for very little,
-and empowers whatever stands in it. The dungeon is full of them because its roster prints
+and empowers whatever stands in it. The Mycelium is full of them because its roster prints
 them; Whumf is how you print your own.
 
 The engine:
@@ -189,7 +189,7 @@ letting it detonate would make most players a detonator by accident and delete t
 before it is posed. One trigger, one spell family, learned in one room.
 
 **The turrets pay in-cloud only.** Poot's speed-up and Blops's doubling are the same rule the
-dungeon's own roster follows — one more beat, reachable only while the body stands in spores —
+Mycelium's own roster follows — one more beat, reachable only while the body stands in spores —
 so the two share a rule the player learns once. A permanent double would make the cloud a bonus
 instead of the point. Where Jimmy is a walking turret that goes where the fight is, Poot is a
 placed one that makes the fight come to it; that is the whole difference and it is enough.
@@ -431,7 +431,7 @@ Drops a mine a tile ahead of your aim — in the doorway, not under your feet. I
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 2s | 0.2s | Single | 12 + 1×skill = **37** | 0 | skill +6 |
+| T2 | 2s | 0.5s | Single | 24 + 2×skill = **74** | 0 | skill +10 |
 
 **Also:** blast 4 tiles (splash only).
 
@@ -443,13 +443,13 @@ The mine that answers a crowd instead of a target: same drop, same arming, but o
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 2s | 0.2s | Ring x8, 3 @ 0.15s | 7 + 0.75×speed = **67** | 6 | speed +8 |
+| T2 | 2s | 0.2s | Ring x6, 3 @ 0.15s | 10 + 0.5×speed = **50** | 6 | speed +8 |
 
 **Also:** pierces.
 
 ### Whumf
 
-Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that dungeon's set — Poot and Blops are the turrets that stand in the field, and Zaap's second tier is the match.
+Lays a field of spore clouds around you: a patch of floor that lingers, ticks whatever walks into it for very little, and is really there as ammunition. A hit of light anywhere in the field sets the whole connected thing off at once, for far more than the clouds would ever tick — so Zaap is the match and this is the fuse. The chain buys area rather than a bigger hit: standing in three overlapping patches costs one blast, not three. It is terrain both sides use, and the blast hunts whoever lit it, so lighting the Mycelium's own floor can never blow you up. The first piece of that Biome's set — Poot and Blops are the turrets that stand in the field, and Zaap's second tier is the match.
 
 **Scaling:** skill, speed, defence
 
@@ -466,6 +466,8 @@ On a long cooldown, raises a bubble that absorbs incoming damage and pays a slic
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
 | T1 | 3s | 1s | — | — | — | max_health +25, defence +6 |
+
+**Also:** absorbs 80.
 
 ### Heal
 
@@ -681,9 +683,9 @@ An aura that drains every enemy in range each tick and heals the caster for a fr
 | Cast time | instant |
 | Hold | channeled |
 
-**Notes:** earmarked for the **hive**, along with Vroop — life-leeching is that dungeon's
+**Notes:** earmarked for the **hive**, along with Vroop — life-leeching is that Biome's
 theme, not the Mycelium's. It was briefly a Mycelium set piece and did not belong: a drain
-beam is a chase mechanic, and nothing in a dungeon of rooted turrets chases.
+beam is a chase mechanic, and nothing in a Biome of rooted turrets chases.
 
 ### Interactions
 
@@ -695,7 +697,7 @@ spells that are not.
 
 | Combo | What happens | Why it works |
 |---|---|---|
-| **Whumf** → **Zaap** | electricity detonates a spore cloud, chaining through every adjacent one, for far more than the clouds would ever tick | the set's core, and the Mycelium's whole mechanic — the dungeon fills the room with fuses and the player brings the match |
+| **Whumf** → **Zaap** | electricity detonates a spore cloud, chaining through every adjacent one, for far more than the clouds would ever tick | the set's core, and the Mycelium's whole mechanic — the Mycelium fills the room with fuses and the player brings the match |
 | **Thwomp** → **Oop** / **Ploop** | the knockback pulse shoves enemies onto your own armed mines | you already place mines behind you and push enemies away from you; the two vectors were always pointing at each other |
 | **Vroop** → **Zaap** | the vortex clumps a pack, so the chain has somewhere to leap | Zaap is feast-or-famine on spacing, and Vroop's entire job is spacing |
 | **Vroop** → **Ring** / **Kaboom** | same clump, eaten by an area burst instead | any AoE pays off, so the vortex never feels like a one-partner spell |

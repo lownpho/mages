@@ -5,7 +5,7 @@ extends RefCounted
 ## around it when an autotiled layer's masks read that ring), the class of each tile and then every
 ## layer's picks,
 ## stopping at a deadline and resuming where it left off. apply_layer() then sets one layer's cells
-## on a WgChunk, and builds that layer at once when the chunk is in the tree, so a streamer can
+## on a WorldChunk, and builds that layer at once when the chunk is in the tree, so a streamer can
 ## spread a chunk's layers over frames.
 ##
 ## Every tile lays floor beneath it, since wall and tree art is transparent around its trunk. Walls
@@ -116,7 +116,7 @@ func is_applied() -> bool:
 
 ## Sets the next layer's cells on the chunk, building the layer at once when the chunk is in the
 ## tree; true once every layer is set. Call once step() is done.
-func apply_layer(chunk: WgChunk) -> bool:
+func apply_layer(chunk: WorldChunk) -> bool:
 	if _apply_layer < layers.size():
 		var layer := layers[_apply_layer]
 		var target := _target_layer(chunk, layer)
@@ -223,7 +223,7 @@ func _pick(deadline: int) -> bool:
 	# TilePicks.tile_hash() in parts: each column's half once.
 	var columns := PackedInt64Array()
 	for lx in rect.size.x:
-		columns.append(WgHash.splitmix64(rect.position.x + lx))
+		columns.append(WorldHash.splitmix64(rect.position.x + lx))
 	var cells := _cells
 	_cells = PackedInt32Array()
 	if cells.is_empty():
@@ -264,13 +264,13 @@ func _pick(deadline: int) -> bool:
 				else:
 					floor_lookup = PackedInt32Array()
 				decoration_threshold = art.decoration_threshold if decoration_layer != null else 0
-			var hashed := WgHash.splitmix64(columns[lx] ^ hashed_row)
+			var hashed := WorldHash.splitmix64(columns[lx] ^ hashed_row)
 			var tile_class := _classes[at]
 			var place := (ly << 8) | lx
 			if floor_code >= 0:
 				var atlas: Vector2i
 				if not floor_lookup.is_empty():
-					atlas = floor_coords[floor_lookup[(WgHash.splitmix64(world_seed ^ WgHash.splitmix64(hashed ^ TilePicks.CH_FLOOR)) & 0x7fffffffffffffff) % floor_total]]
+					atlas = floor_coords[floor_lookup[(WorldHash.splitmix64(world_seed ^ WorldHash.splitmix64(hashed ^ TilePicks.CH_FLOOR)) & 0x7fffffffffffffff) % floor_total]]
 				else:
 					atlas = _pick_from(floor_layer, world_seed, hashed, TilePicks.CH_FLOOR, _mask(at, offsets, false, false) if floor_layer.autotile else 0)
 				cells[count] = floor_code | place
@@ -331,7 +331,7 @@ static func _pick_from(layer: CellLayer, pick_seed: int, hashed: int, channel: i
 			return TilePicks.pick_hashed(pick_seed, hashed, channel, table)
 	if layer.coords.size() <= 1:
 		return layer.coords[0]
-	return layer.coords[TilePicks.index(WgHash.splitmix64(pick_seed ^ WgHash.splitmix64(hashed ^ channel)), layer.total, layer.lookup, layer.cum)]
+	return layer.coords[TilePicks.index(WorldHash.splitmix64(pick_seed ^ WorldHash.splitmix64(hashed ^ channel)), layer.total, layer.lookup, layer.cum)]
 
 
 ## The canonical 8-neighbour mask of a tile of the chunk: walls count walls and void, and rocks when
@@ -387,7 +387,7 @@ func _layer(biome: StringName, kind: StringName, zone_key: StringName, presentat
 	return _layer_by_key[key]
 
 
-static func _target_layer(chunk: WgChunk, layer: CellLayer) -> TileMapLayer:
+static func _target_layer(chunk: WorldChunk, layer: CellLayer) -> TileMapLayer:
 	if layer.zone_key != &"":
 		return chunk.decoration_layer(layer.zone_key, layer.tileset)
 	return chunk.layer_for(layer.biome, layer.presentation, layer.kind)

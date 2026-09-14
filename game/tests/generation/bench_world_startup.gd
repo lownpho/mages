@@ -11,7 +11,6 @@ extends Node
 ## Both then allow one loading frame. Timings come from the World's own build timings, which exclude
 ## the debug layer that only non-web debug builds attach. Run by hand, alone:
 ##   godot --headless --path game res://tests/generation/bench_world_startup.tscn -- [seeds]
-## Results are recorded in .scratch/worldgen-rewrite-build/issues/11-cut-over-gameplay-and-verify-performance.md.
 
 const SHIPPED := "res://generation/world/"
 const WORLD := "res://scenes/world.tscn"

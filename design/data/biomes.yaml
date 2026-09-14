@@ -1,102 +1,76 @@
 # Biome catalogue — the design's half of the source of truth.
 #
-# WORDS ONLY. Room types, their depth tier, their generator and their whole
-# enemy spawn table are read out of game/world_content/**.tres by
-# design/tools/extract.py, as is the starter kit (world.gd's STARTER_SPELLS).
-# The room tables here used to be hand-written and had already drifted from the
-# game; they are generated now, and an empty spawn table renders as empty.
+# WORDS ONLY. Which enemies a Biome places (its roster and Fixed encounters, its
+# Zones' included) is read out of game/generation/world/biomes/<id>/ by
+# design/tools/extract.py, as is the starter pool (world.gd's STARTER_POOL).
 #
-# Two levels, both keyed on the game:
-#   families : the doc PAGE — one section per BiomeDef.family (biomes with no
-#              family form their own). Purely presentational grouping.
-#   biomes   : one entry per BiomeDef, keyed on its `id` — the join key.
+# One entry per documented Biome, keyed on its folder name — the join key. Its
+# zones are optional prose, each keyed on a Zone file name in that Biome's zones/.
+# A Biome placing enemies nothing else documents must be listed, or those enemies
+# drop out of enemies.md and the build fails.
 #
-# Only SHIPPED biomes belong here. Proposals stay in the hand-written "ideas"
-# section of design/docs/biomes.md.
+# Proposals stay in the hand-written "ideas" section of design/docs/biomes.md.
 #
 # Edit here, then run:  python3 design/tools/build.py
-#
-# planned_roster is the ONE authored thing that may disagree with the game: for a
-# biome whose tables are still empty it is the intent, rendered as "planned, not
-# spawning yet". Where the game spawns anything, that IS the roster — don't
-# author one.
 
-families:
+biomes:
   - id: glade
     name: Glade
     tier_label: T1/T2
     intro: >
       The opening biome, where the player learns the systems and fills out a first kit. Enemy density
-      is low, variety is high, stakes are gentle. It has two sub-biomes: the starting glade, which
-      is pure onboarding, and the veggie glade, which brings in the plant roster and its boss.
+      is low, variety is high, stakes are gentle. The starting glade is pure onboarding, and the
+      veggie glade brings in the plant roster and its Miniboss.
     enemies_intro: >
       The opening biome. It comes in two flavours: the floral **starting glade**, capped by the
       **fae**, and the rooted **veggie glade**, capped by the **thornmess**.
+    zones:
+      - id: start
+        name: Starting glade
+        intro: >
+          Onboarding, and the Spawn zone: the first roster enemies are taught one at a time before
+          anything mixes.
+      - id: veggie
+        name: Veggie glade
+        intro: >
+          Brings in the plant roster: thornthrower and rosebud join the Glade's own, and the
+          thornmess waits as the Zone's Miniboss.
   - id: deepwood
     name: Deepwood
     tier_label: T3
     intro: >
       The second biome, tuned to pressure long-range, squishy builds and push the player into close
-      quarters. Enemies have far more health and hit harder. It is the largest biome in the world —
-      three times the footprint of either glade — and both glades gate into it. It has two sub-biomes:
-      the animal deepwood, and the small mimic pocket hanging off its side. The insect one is
-      still a proposal and stays in the ideas section below; the fungal one left the deepwood
-      entirely and became the Mycelium, the dungeon behind the mimic biome's mushroom door.
+      quarters. Enemies have far more health and hit harder. It has two Zones: the animal deepwood,
+      and the small mimic pocket. The insect one is still a proposal and stays in the ideas section
+      below; the fungal one left the deepwood entirely and became the Mycelium, a Side biome of its
+      own.
     enemies_intro: >
       The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood
-      sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**,
-      and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are
-      built to introduce it one mechanic at a time.
+      Zone; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**,
+      and the **mimic deepwood** its props with eyes. The whole roster spawns, introduced one
+      mechanic at a time.
+    zones:
+      - id: main
+        name: Animal deepwood
+        intro: >
+          The bulk of the forest. Each of the eight mechanics is taught alone before its enemies mix,
+          the six family variations come later, and the three rares and the gnarlking sit on top.
+          The variations are deliberately kept apart, so seeing all three moths or all three snakes
+          means going looking for them.
+      - id: mimic
+        name: Mimic deepwood
+        intro: >
+          A small pocket of props with eyes: the bush that reveals, the harasser that blinks, then
+          the two logs that are bombs, each taught on its own before it mixes with the shared pool,
+          so the mine is never the only thing asking for your attention. Its three rares each escort
+          the common they are a variant of.
   - id: mycelium
     name: Mycelium
     tier_label: T3
     intro: >
-      The dungeon behind the mimic deepwood's mushroom door — eight floors down, one way through,
-      a boss at the bottom. A floor is the smallest biome the packer will take, so the whole
-      descent is ordinary worldgen stacked in a column. Art and rooms only so far: the floors
-      carve but spawn nothing.
+      The fungal Side biome hanging off the deepwood, in three Zones: clusters, hollows and
+      sporefields. Spore clouds are the floor both sides fight over.
     enemies_intro: >
       Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers,
       a rot heavy and three rares. Half of them print spore clouds and the other half fight
-      harder while standing in them. None of it is placed yet — the floors carve, and every
-      room's table is empty.
-biomes:
-  - id: glade_start
-    name: Starting glade
-    intro: >
-      Onboarding: single-enemy rooms first, small mixed groups by T2, then the biome's rare and
-      boss at T3.
-  - id: glade_veggie
-    name: Veggie glade
-    intro: >
-      Brings in the plant roster: thornthrower and rosebud both show up from T1. Groups get denser
-      and harder than the starting glade by T2. T3 keeps the shared rare pair (1x viper, 1x mandraker)
-      and the biome boss.
-  - id: deepwood
-    name: Deepwood
-    intro: >
-      The animal sub-biome, and the bulk of the forest. The rooms run a
-      teach-then-test ladder: T0 meets each of the eight mechanics alone in its own room, T1 pairs
-      them off, T2 introduces the six family variations alone and re-tests the pairs, and T3 mixes
-      three kinds at a time around the three rares and the gnarlking. Every enemy has a room of its
-      own, so a run meets all eighteen — the variations are deliberately kept apart, so seeing all
-      three moths or all three snakes means going looking for them.
-  - id: deepwood_mimic
-    name: Mimic deepwood
-    intro: >
-      A small pocket off the side of the animal deepwood, always bordering it. Props with eyes:
-      each of the four commons gets its own room first — the bush that reveals, the harasser that
-      blinks, then the two logs that are bombs — and the cave rooms after that pair one of them
-      with something from the shared pool, so the mine is never the only thing asking for your
-      attention. Its three rares each escort the common they are a variant of. There is no boss;
-      the deepest room is the mushroom door down into the Mycelium, which leads nowhere yet.
-  - id: mycelium
-    name: Mycelium floor
-    intro: >
-      One floor of the dungeon: a 1x1 macro-cell of three to five rooms, doors rather than open
-      passages, and a cave generator that carves the wall mass rather than scattering blockers.
-      It has its own tileset and its own GenConfig; it is not in the overworld's registry yet,
-      so nothing reaches it in a run. Each of the ten floors is its own config off the dungeon's
-      `floor_configs`, drawing from a pool that grows as you descend: floor 1 is a primer of four
-      bodies met one to a room, every third floor introduces nothing and only combines, and
-      puffcaps are terrain — every room on every floor lays a field of them.
+      harder while standing in them. All of it spawns, spread over the Mycelium's three Zones.

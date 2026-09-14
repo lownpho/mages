@@ -1,5 +1,5 @@
 extends Node
-## Finite-World Map coverage at the public MapState boundary: Room-key discovery, lazy macro images,
+## World Map coverage at the public MapState boundary: Room-key discovery, lazy macro images,
 ## Passage stubs, derived markers/reveals/defeats, fog Pins and the two views' edge projection.
 
 const MAP_VIEW := preload("res://gui/map/map_view.gd")

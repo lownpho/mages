@@ -262,7 +262,7 @@ func _spine(deadline: int) -> bool:
 		for n in spots.size():
 			var from := Vector2(spots[n]) + Vector2(0.5, 0.5)
 			var to := Vector2(hub) + Vector2(0.5, 0.5)
-			var bend := _field.graph.plan.rng(WgHash.NS_SPINE, "%s/%s" % [room.key(), names[n]]).randf_range(-SPINE_BEND, SPINE_BEND)
+			var bend := _field.graph.plan.rng(WorldHash.NS_SPINE, "%s/%s" % [room.key(), names[n]]).randf_range(-SPINE_BEND, SPINE_BEND)
 			var middle := from.lerp(to, 0.5) + (to - from).orthogonal() * bend
 			_segments.append(PackedVector2Array([from, middle]))
 			_segments.append(PackedVector2Array([middle, to]))

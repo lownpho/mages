@@ -14,7 +14,7 @@ extends Node
 ##     lost_grace window a called member needs to reach a fight it can't see yet, and the one
 ##     group the three grimling variants share. None of it exists with fewer than several
 ##     creatures at once.
-## The animal sub-biome adds three more, all of which are silent no-ops rather than crashes
+## The animal Zone adds three more, all of which are silent no-ops rather than crashes
 ## when they break — the worst kind to ship:
 ##   - ChargeDash driving a Creature. The dash lives in the spell, not the behaviour, so a
 ##     thornback whose start_dash never fires still telegraphs, still sheds its flank bullets
@@ -24,7 +24,7 @@ extends Node
 ##     freeing that has to happen anyway once that beat hands off.
 ##   - Behaviour.damage_scale at zero — the mole underground is untouchable, not merely
 ##     armoured, and takes damage again the moment it surfaces.
-## The mimic sub-biome adds two more of the same kind:
+## The mimic Zone adds two more of the same kind:
 ##   - Blink, the one effect that MOVES its caster. A shade carries no movement behaviour at
 ##     all, so any position change is the hop — and a blink hemmed in by walls has to refuse
 ##     rather than post the shade through one.

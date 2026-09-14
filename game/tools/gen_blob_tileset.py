@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """Generate a Godot 4 TileSet .tres with terrain peering bits already filled in,
-for a 47-tile blob atlas laid out like overworld/tileset_template.png.
+for a 47-tile blob atlas laid out like generation/presentation/tileset_template.png.
 
 LAYOUT below is the single source of truth: which atlas cell = which set of
-peering bits. It was hand-tuned in overworld/tileset_template.tres and baked here.
+peering bits. It was hand-tuned in a template TileSet and baked here.
 Any real art drawn in the SAME cell order gets a correct "Match Corners and Sides"
 terrain with zero hand-painting in the editor.
 
 Usage:
     python3 tools/gen_blob_tileset.py [ART_PNG] [OUT_TRES]
-Defaults to the template png itself -> overworld/tileset_template.tres.
+Defaults to the template png itself -> generation/presentation/tileset_template.tres.
 Run from the `game/` directory (paths are res:// relative to it).
 """
 import sys, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GAME = os.path.normpath(os.path.join(HERE, ".."))
-TEMPLATE = os.path.join(GAME, "overworld", "tileset_template.png")
+TEMPLATE = os.path.join(GAME, "generation", "presentation", "tileset_template.png")
 TILE = 8                      # px per cell
 
 # property write order Godot uses (clockwise from right)
@@ -103,7 +103,7 @@ def existing_resource_uid(tres_path):
 def main():
     art = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else TEMPLATE
     out = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 else \
-        os.path.join(GAME, "overworld", "tileset_template.tres")
+        os.path.join(GAME, "generation", "presentation", "tileset_template.tres")
 
     uid = import_uid(art)
     tex_uid = f' uid="{uid}"' if uid else ""

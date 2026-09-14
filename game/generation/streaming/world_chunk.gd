@@ -1,4 +1,4 @@
-class_name WgChunk
+class_name WorldChunk
 ## One streaming chunk: a small Node2D owning its OWN TileMapLayers, filled layer by layer by
 ## ChunkStreamer. Unloading is just queue_free() — O(1), no per-cell erase storm on a giant shared
 ## layer.

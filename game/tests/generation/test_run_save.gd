@@ -1,6 +1,6 @@
 extends Node
 ## The complete Run through GameState's lifecycle, on the small fixture World entered through the
-## finite development World. A New Run is played (inventory, Map discovery, a Pin, a Boss reveal, an
+## development World. A New Run is played (inventory, Map discovery, a Pin, a Boss reveal, an
 ## ordinary death beside a hurt survivor, a Fixed defeat, a reactive Object's state, position and
 ## health), quit and continued: Continue must rebuild the same World, restore every record and the
 ## discovered Map's pixels, keep offline time from counting toward respawn and still bring the dead
@@ -22,7 +22,7 @@ var _plain: Dictionary[StringName, bool] = {}
 
 func _ready() -> void:
 	var started := Time.get_ticks_msec()
-	var debug_state := {"world_debug": _snapshot_state("world_debug"), "combat_lab": _snapshot_state("combat_lab")}
+	var debug_state := {"world_debug": _snapshot_state("world_debug")}
 	DebugState.set_value("world_debug", "fly", false)
 	var files := {GlobalBestiary.SAVE_PATH: _snapshot(GlobalBestiary.SAVE_PATH),
 			GlobalGrimoire.SAVE_PATH: _snapshot(GlobalGrimoire.SAVE_PATH)}

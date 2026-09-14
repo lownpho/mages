@@ -11,7 +11,7 @@ signal warp_entered(body: Node2D, destination_room: String, landing: Vector2i)
 
 ## Art variants packed in doors.png, one 16×16 frame each (left → right). PORTAL has no frame
 ## drawn yet and renders blank.
-enum Style { WOOD, HEDGE, CAVE, PORTAL, STAIRS_UP, MUSHROOM, STAIRS_DOWN }
+enum Style { WOOD, HEDGE, CAVE, PORTAL, MUSHROOM }
 
 const _FRAME_W := 16
 

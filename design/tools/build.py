@@ -9,7 +9,7 @@
       via extract.py                        design/docs/*.html     the browsable views
 
 One dataset, one command. `data.json` is the contract: graphs, notebooks, balance
-tools and the four HTML pages all read it and nothing re-derives a number from
+tools and the three HTML pages all read it and nothing re-derives a number from
 the yaml. Each Markdown doc keeps a hand-written preamble and an "ideas" tail;
 only the region between the GENERATED markers is machine-owned.
 
@@ -131,24 +131,11 @@ def join(design: dict, game: dict) -> dict:
             "tiers": tiers,
         })
 
-    # Which biomes actually spawn each enemy, and which merely plan to.
+    # Which Biomes place each enemy, through a roster or a Fixed encounter, Zones included.
     membership: dict[str, list[dict]] = {}
     for biome in design["biomes"]["biomes"]:
-        shipped = [
-            m["enemy"]
-            for room in game["biomes"][biome["id"]]["rooms"]
-            for var in room["variations"]
-            for m in var["members"]
-            if m["enemy"]
-        ]
-        roster = dict.fromkeys(shipped)
-        planned = not roster
-        for eid in (biome.get("planned_roster") or []) if planned else []:
-            roster[eid] = None
-        for eid in roster:
-            membership.setdefault(eid, []).append(
-                {"id": biome["id"], "name": biome["name"], "planned": planned}
-            )
+        for eid in game["biomes"][biome["id"]]["enemies"]:
+            membership.setdefault(eid, []).append({"id": biome["id"], "name": biome["name"]})
 
     enemies = []
     for e in design["enemies"]["enemies"]:
@@ -173,31 +160,20 @@ def join(design: dict, game: dict) -> dict:
     enemies.sort(key=lambda e: (RARITY_ORDER[e["rarity"]], e["id"]))
     by_enemy = {e["id"]: e for e in enemies}
 
-    biomes, rooms = [], []
+    biomes = []
     for b in design["biomes"]["biomes"]:
-        g = game["biomes"][b["id"]]
-        roster = [e["id"] for e in enemies
-                  if any(m["id"] == b["id"] for m in e["biomes"])]
         biomes.append({
-            **{k: v for k, v in g.items() if k != "rooms"},
+            "id": b["id"],
+            "source": game["biomes"][b["id"]]["source"],
             "name": b["name"],
+            "tier_label": b.get("tier_label") or "",
             "intro": _clean(b["intro"]),
-            "roster": roster,
-            "planned": bool(b.get("planned_roster")),
-            "room_ids": [r["id"] for r in g["rooms"]],
-        })
-        for room in g["rooms"]:
-            rooms.append({**room, "biome_name": b["name"], "family": g["family"] or b["id"]})
-
-    families = []
-    for f in design["biomes"]["families"]:
-        members = [b for b in biomes if (b["family"] or b["id"]) == f["id"]]
-        families.append({
-            **f,
-            "intro": _clean(f["intro"]),
-            "enemies_intro": _clean(f["enemies_intro"]),
-            "biomes": [b["id"] for b in members],
-            "roster": list(dict.fromkeys(eid for b in members for eid in b["roster"])),
+            "enemies_intro": _clean(b["enemies_intro"]),
+            "zones": [
+                {"id": z["id"], "name": z["name"], "intro": _clean(z["intro"])}
+                for z in b.get("zones") or []
+            ],
+            "roster": [e["id"] for e in enemies if any(m["id"] == b["id"] for m in e["biomes"])],
         })
 
     return {
@@ -207,14 +183,13 @@ def join(design: dict, game: dict) -> dict:
         ],
         "spells": spells,
         "enemies": enemies,
-        "families": families,
         "biomes": biomes,
-        "rooms": rooms,
-        "starter_kit": [
+        "starter_pool": [
             {"item": stem, "spell": next(
                 (s["name"] for s in spells if stem.startswith(s["id"])), stem)}
-            for stem in game["starter_kit"]
+            for stem in game["starter_pool"]
         ],
+        "starter_count": game["starter_count"],
         "constants": {"px_per_tile": PX_PER_TILE, "base_stats": BASE_STATS},
         "_by_enemy": by_enemy,       # build-time convenience, stripped before writing
     }
@@ -270,62 +245,28 @@ def validate(design: dict, game: dict) -> list[str]:
         if eid not in yaml_enemies:
             errors.append(f"{eid}/ ships a scene but is not in enemies.yaml")
 
-    yaml_biomes = {b["id"] for b in design["biomes"]["biomes"]}
-    family_ids = {f["id"] for f in design["biomes"]["families"]}
+    documented = set()
     for b in design["biomes"]["biomes"]:
         if b["id"] not in game["biomes"]:
-            errors.append(f"biomes.yaml: '{b['id']}' has no BiomeDef in world_content/")
+            errors.append(f"biomes.yaml: '{b['id']}' has no generation/world/biomes/{b['id']}/biome.tres")
             continue
-        family = game["biomes"][b["id"]]["family"] or b["id"]
-        if family not in family_ids:
-            errors.append(f"biomes.yaml: '{b['id']}' is in family '{family}', which has no entry")
-        spawns = any(m["enemy"]
-                     for r in game["biomes"][b["id"]]["rooms"]
-                     for v in r["variations"] for m in v["members"])
-        if spawns and b.get("planned_roster"):
-            errors.append(f"biomes.yaml: '{b['id']}' spawns enemies, so drop its planned_roster")
-        for eid in b.get("planned_roster") or []:
-            if eid not in yaml_enemies:
-                errors.append(f"biomes.yaml: '{b['id']}' plans unknown enemy '{eid}'")
-    for bid in game["biomes"]:
-        if bid not in yaml_biomes:
-            errors.append(f"world_content: biome '{bid}' is not in biomes.yaml")
-
+        documented.update(game["biomes"][b["id"]]["enemies"])
+        zones = {z["id"] for z in game["biomes"][b["id"]]["zones"]}
+        for z in b.get("zones") or []:
+            if z["id"] not in zones:
+                errors.append(f"biomes.yaml: '{b['id']}' has no Zone '{z['id']}'")
     for bid, b in game["biomes"].items():
-        for room in b["rooms"]:
-            pool = any(m["enemy"] for v in room["variations"] for m in v["members"])
-            if pool and room["groups_max"] == 0:
-                errors.append(f"{room['id']}: has a spawn pool but a zero group budget")
-            if room["groups_max"] and not pool:
-                errors.append(f"{room['id']}: budgets {room['groups_max']} groups from an empty pool")
-            for var in room["variations"]:
-                for m in var["members"]:
-                    if m["enemy"] and m["enemy"] not in game["enemies"]:
-                        errors.append(f"{room['id']}: spawns unknown enemy '{m['enemy']}'")
+        for eid in b["enemies"]:
+            if eid not in game["enemies"]:
+                errors.append(f"{bid}: places unknown enemy '{eid}'")
+    # enemies.md lists each enemy under the Biomes that place it, so one no documented
+    # Biome places would silently drop out of the doc.
+    for eid in sorted(yaml_enemies & game["enemies"].keys() - documented):
+        errors.append(f"enemies.yaml: '{eid}' is placed by no Biome in biomes.yaml")
     return errors
 
 
 # --- shared formatting ------------------------------------------------------
-
-def notation(variations: list[dict]) -> str:
-    """A room's spawn pool in the docs' notation: `2x hopper + 1x wasp - 3x sproutling`.
-
-    `Nx` count (a range prints `1-2x`), `+` means together in the room, `-`
-    separates the variations the generator may roll. An empty pool stays empty:
-    a room that spawns nothing says so.
-    """
-    out = []
-    for var in variations:
-        parts = []
-        for m in var["members"]:
-            if not m["enemy"]:
-                continue
-            count = f"{m['min']}" if m["min"] == m["max"] else f"{m['min']}-{m['max']}"
-            parts.append(f"{count}x {m['enemy']}")
-        if parts:
-            out.append(" + ".join(parts))
-    return " - ".join(out) if out else "*(empty)*"
-
 
 def burst(tier: dict) -> str:
     """A cast's shot pattern in one phrase."""
@@ -442,9 +383,9 @@ def _drops_text(enemy: dict) -> str:
 
 def render_enemies_md(data: dict) -> str:
     lines = [BEGIN, GEN_NOTE, ""]
-    for fam in data["families"]:
-        lines += [f"## {fam['name']}", "", fam["enemies_intro"], ""]
-        for eid in fam["roster"]:
+    for biome in data["biomes"]:
+        lines += [f"## {biome['name']}", "", biome["enemies_intro"], ""]
+        for eid in biome["roster"]:
             e = data["_by_enemy"][eid]
             suffix = "" if e["rarity"] == "common" else f" *({e['rarity']})*"
             lines += [f"### {e['name']}{suffix}", "", e["description"].rstrip("\n"), ""]
@@ -483,62 +424,28 @@ def render_enemies_md(data: dict) -> str:
 
 def render_biomes_md(data: dict) -> str:
     lines = [BEGIN, GEN_NOTE, ""]
-    kit = ", ".join(f"**{k['spell']}**" for k in data["starter_kit"])
-    lines += [f"Player spawns with: {kit}.", ""]
-    lines += [
-        "Notation: `Nx` count (a range prints `1-2x`), `+` means \"together in the room\", "
-        "`-` separates the variations the generator may roll for that room (it picks one). "
-        "Rooms are listed in placement order — depth tier, then id.",
-        "",
-    ]
-    rooms_by_biome: dict[str, list] = {}
-    for room in data["rooms"]:
-        rooms_by_biome.setdefault(room["biome"], []).append(room)
+    pool = ", ".join(f"**{k['spell']}**" for k in data["starter_pool"])
+    lines += [f"A Run opens with {data['starter_count']} of: {pool}.", ""]
 
-    for fam in data["families"]:
-        title = fam["name"] + (f" ({fam['tier_label']})" if fam["tier_label"] else "")
-        lines += [f"## {title}", "", fam["intro"], ""]
-        for bid in fam["biomes"]:
-            b = next(x for x in data["biomes"] if x["id"] == bid)
-            lines += [f"### {b['name']}", "", b["intro"], ""]
-            rows = []
-            for room in rooms_by_biome.get(bid, []):
-                quota = (
-                    f"{room['min_per_biome']}"
-                    if room["min_per_biome"] == room["max_per_biome"]
-                    else f"w{room['weight']}"
-                )
-                rows.append([
-                    f"T{room['difficulty']}",
-                    room["id"].removeprefix(f"{bid}_"),
-                    room["generator"],
-                    quota,
-                    notation(room["variations"]),
-                ])
-            lines += _table(["Tier", "Room", "Shape", "Count", "Enemy group variations"], rows)
-
-            if b["planned"]:
-                planned = ", ".join(b["roster"])
-                lines += [
-                    f"Nothing spawns here yet — every room above carries an empty table. "
-                    f"Planned roster: {planned}.",
-                    "",
-                ]
-
-            if b["roster"]:
-                lines += [f"#### {b['name']} drops", ""]
-                lines += _table(
-                    ["Enemy", "Items dropped"],
+    for b in data["biomes"]:
+        title = b["name"] + (f" ({b['tier_label']})" if b["tier_label"] else "")
+        lines += [f"## {title}", "", b["intro"], ""]
+        for z in b["zones"]:
+            lines += [f"### {z['name']}", "", z["intro"], ""]
+        if b["roster"]:
+            lines += [f"### {b['name']} drops", ""]
+            lines += _table(
+                ["Enemy", "Items dropped"],
+                [
                     [
-                        [
-                            data["_by_enemy"][eid]["name"]
-                            + ("" if data["_by_enemy"][eid]["rarity"] == "common"
-                               else f" *({data['_by_enemy'][eid]['rarity']})*"),
-                            _drops_text(data["_by_enemy"][eid]),
-                        ]
-                        for eid in b["roster"]
-                    ],
-                )
+                        data["_by_enemy"][eid]["name"]
+                        + ("" if data["_by_enemy"][eid]["rarity"] == "common"
+                           else f" *({data['_by_enemy'][eid]['rarity']})*"),
+                        _drops_text(data["_by_enemy"][eid]),
+                    ]
+                    for eid in b["roster"]
+                ],
+            )
     lines.append(END)
     return "\n".join(lines).rstrip() + "\n"
 
@@ -594,7 +501,7 @@ def build() -> tuple[dict[Path, str], list[str]]:
         enemies_md: inject(enemies_md, render_enemies_md(data)),
         biomes_md: inject(biomes_md, render_biomes_md(data)),
     }
-    for name in ("spells", "spells_balance", "enemies", "biomes"):
+    for name in ("spells", "spells_balance", "enemies"):
         outputs[DOCS / f"{name}.html"] = render_html(f"{name}.html.j2")
     return outputs, []
 

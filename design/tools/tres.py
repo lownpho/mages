@@ -132,6 +132,8 @@ def _parse_value(s: str, i: int):
                 return Ref("ext", args[0]), i
             if name == "Array" and len(args) == 1 and isinstance(args[0], list):
                 return args[0], i
+            if name == "Dictionary" and len(args) == 1 and isinstance(args[0], dict):
+                return args[0], i
             return Call(name, args), i
         return name, i
 
@@ -212,6 +214,12 @@ def _resolver(ext: dict[str, dict], raw_subs: dict[str, tuple[str, dict]]):
             return [resolve(v) for v in value]
         if isinstance(value, Call):
             return Call(value.name, [resolve(a) for a in value.args])
+        if isinstance(value, dict):
+            # Keys stay hashable: an ext ref flattens to its path, anything else is kept.
+            return {
+                (resolve(k) if isinstance(k, Ref) and k.kind == "ext" else k): resolve(v)
+                for k, v in value.items()
+            }
         if not isinstance(value, Ref):
             return value
         if value.kind == "ext":

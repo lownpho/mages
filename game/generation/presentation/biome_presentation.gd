@@ -6,7 +6,7 @@ class_name BiomePresentation
 ## ZoneResource, the decoration density).
 ##
 ## One tileset per layer, one TileMapLayer per layer, every slot OPTIONAL (null -> that layer
-## renders nothing; the finite World generator draws rocks with the wall art when rock_tileset is
+## renders nothing; the World generator draws rocks with the wall art when rock_tileset is
 ## null). Each tileset is single-source (source index 0) and carries its own art + collision;
 ## collision (wall/rock) is authored as per-tile physics polygons in the tileset, not here.
 ##

@@ -14,7 +14,7 @@ var _fails: Array[String] = []
 
 func _ready() -> void:
 	var started := Time.get_ticks_msec()
-	var debug_state := {"world_debug": _snapshot_state("world_debug"), "combat_lab": _snapshot_state("combat_lab")}
+	var debug_state := {"world_debug": _snapshot_state("world_debug")}
 	DebugState.set_value("world_debug", "fly", false)
 	GameState.save_path = SAVE
 	if FileAccess.file_exists(SAVE):

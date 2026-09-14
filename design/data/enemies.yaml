@@ -5,9 +5,9 @@
 # Nothing here restates a number: if you want to know how tough something is,
 # read the number.
 #
-# This file holds NO biome information either — which biome an enemy belongs to
-# comes from that biome's room spawn tables. An enemy in several biomes is still
-# defined once, here.
+# This file holds NO biome information either — which Biome an enemy belongs to
+# comes from the rosters and Fixed encounters under game/generation/world/biomes/.
+# An enemy in several Biomes is still defined once, here.
 #
 # Only BUILT enemies belong in this file: an enemy is here iff
 # game/characters/enemies/<id>/<id>_data.tres exists. Proposals stay in the
@@ -17,7 +17,7 @@
 #
 # Per enemy:
 #   id          : the enemy's FOLDER NAME under characters/enemies/ — the join key
-#                 to the game, the same id spawn tables and the console use.
+#                 to the game, the same id the console uses.
 #   description : literal markdown block, emitted verbatim (may carry a bullet list)
 #   art         : the "**Art:**" line — the sprite's intent. The sprite itself is
 #                 pulled off the CreatureResource icon and drawn on the card.
@@ -112,7 +112,7 @@ enemies:
   - id: dirt_golem
     description: |
       The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings
-      barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You
+      barely sting. It works as a low-stakes rehearsal for the heavier golems further in. You
       learn to read an area denier that sits still and then lumbers after you, and here a misread is
       cheap. You can always outrun it, so the threat is the space it fills.
     art: the golem sprite in packed-earth browns with grass tufts on its shoulders.
@@ -643,7 +643,7 @@ enemies:
         - {from: WindedShort, to: Summon}
   - id: bramble_stalker
     description: |
-      The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing
+      The mimic Zone's opener, and the stalker recipe turned inside out: instead of closing
       to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings
       of thorns off its own body. The ring means there is no safe side of it — the answer is
       distance, not footwork — and the rings drift a little each wave, so a gap you found in the
@@ -666,7 +666,7 @@ enemies:
         - {from: Chase, to: Disguise, when: lost}
   - id: shade
     description: |
-      A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a
+      A vanishing harasser, and the enemy that teaches the Zone's second trick: it fires a
       short burst, then blinks somewhere else nearby and bursts again. Nothing about a single
       burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes
       standing still and rewards fighting it while moving to something else. It never walks —
@@ -772,7 +772,7 @@ enemies:
       Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on
       the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so
       what changed is entirely where it fires it from. Turning to face it puts your back to
-      whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking
+      whatever else is in the room, which is exactly the trade the mimic Zone keeps asking
       you to make. Clear it first, or fight it with a wall behind you.
     art: the shade silhouette in deeper black with a thin red edge.
     casts: [pew]
@@ -793,7 +793,7 @@ enemies:
       pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never
       one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick
       them off from range and keep the floor, because shooting one dead never sets it off. Nothing
-      you carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and
+      you carry cleans the floor afterwards either — the Mycelium's spores are inert terrain, and
       only your own answer to light.
     art: a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the
       fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame
@@ -872,7 +872,7 @@ enemies:
     casts: [pew, whumf]
     notes: the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with
       a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring
-      exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they
+      exactly as the sporespitter's lob plants its own. Its spores are the Mycelium's, so they
       are inert terrain and nothing can light them.
     fsm:
       start: Idle
@@ -1034,7 +1034,7 @@ enemies:
       dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the
       whole enemy is a single committed lunge you either sidestep or eat, and what you get for
       sidestepping it is a free window with the thing standing helpless in front of you. It is
-      the dungeon's answer to a player who solves every room from max range.
+      the Mycelium's answer to a player who solves every room from max range.
 
       Spores turn the free window off. Standing in a field it lunges further, fires the cone
       twice, and recovers in about half the time — the same enemy, with the gap between its
@@ -1091,7 +1091,7 @@ enemies:
       commit to a direction while something with an actual plan sets up behind it.
 
       It still drinks. On coated floor the spit comes faster, harder and one shot longer, which
-      is the whole point of putting the rule on the plainest thing in the dungeon: even the
+      is the whole point of putting the rule on the plainest thing in the Mycelium: even the
       speed bump is worse on floor you let stand, so there is no body in the Mycelium a player
       can safely ignore the clouds around.
     art: the plainest mushroom that can be drawn at this size — a tan cap over a pale stem with

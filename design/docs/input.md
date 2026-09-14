@@ -134,13 +134,10 @@ buttons are clickable. Nothing custom.
 | F3 | Toggle the damage/DPS overlay; Backspace resets it | `debug/overlay/debug_overlay.gd:28` |
 | ` (backquote) or F10 | Toggle the debug console; Escape closes it, ↑/↓ walk its history | `debug/console/debug_console.gd:55` |
 
-`scenes/worldgen_debug.tscn` (`debug/worldgen/worldgen_debug.gd:187`) adds its own keyboard-only
-set: `1`–`4` switch view, `R` reseeds, `Enter`/`Escape` drill in and out, `[`/`]` step history,
-`C` copies the seed, `B` bookmarks it, `T` teleports, `L` and `F2` toggle the legend and stats,
-arrows move the selection in view 2, and `P`/`M`/`O`/`G`/`H`/`V` toggle per-view overlays. The
-room lab (`debug/worldgen/room_lab.gd:100`) uses `R`, `P`, `M`, `T`, `C` and Escape, plus LMB to
-pin a cell. The flycam in view 4 flies on WASD/arrows and zooms on the wheel
-(`debug/flycam/flycam.gd`).
+In non-web debug builds, Tab opens the World debug layer and pauses the World
+(`debug/world/world_debug_layer.gd:82`). While it is open, LMB on the World to the right of the
+panel teleports there, or on the Combat tab places the selected enemy; RMB on the Combat tab
+removes the nearest enemy.
 
 ## Known drift
 

@@ -54,8 +54,8 @@ var _openings: Dictionary[String, Dictionary] = {}
 
 func _init(world_graph: WorldGraph) -> void:
 	graph = world_graph
-	rock_noise = _noise(graph.plan.seed_for(WgHash.NS_ROCKS, "rocks"), _ROCK_SCALE, 2)
-	spine_noise = _noise(graph.plan.seed_for(WgHash.NS_SPINE, "width"), _SPINE_SCALE, 1)
+	rock_noise = _noise(graph.plan.seed_for(WorldHash.NS_ROCKS, "rocks"), _ROCK_SCALE, 2)
+	spine_noise = _noise(graph.plan.seed_for(WorldHash.NS_SPINE, "width"), _SPINE_SCALE, 1)
 
 
 ## The Room owning a tile, or null.

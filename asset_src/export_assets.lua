@@ -7,9 +7,9 @@
 -- Export only certain paths with the `paths` script param — a comma-separated
 -- list of path prefixes (relative to asset_src/graphics). A prefix matches a
 -- whole subtree or a single file; omit the param to export everything:
---   aseprite -b --script-param paths=worldgen --script asset_src/export_assets.lua
+--   aseprite -b --script-param paths=generation --script asset_src/export_assets.lua
 --   aseprite -b --script-param paths=characters --script asset_src/export_assets.lua
---   aseprite -b --script-param paths=characters/enemies/golem,worldgen \
+--   aseprite -b --script-param paths=characters/enemies/golem,generation \
 --     --script asset_src/export_assets.lua
 --
 -- Sheet layout: one row per animation tag, frames left to right. Untagged

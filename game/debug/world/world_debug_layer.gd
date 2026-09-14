@@ -1,10 +1,12 @@
 class_name WorldDebugLayer
 extends Node
-## The finite World's in-game debug layer. It is instantiated by the development World only in a
+## The World's in-game debug layer. It is instantiated by the development World only in a
 ## debug build; the Web preset excludes debug/* and the dev scene holds no resource dependency on
 ## this file. Tab pauses the actual World and opens compact game-pixel controls.
 
 const SECTION := "world_debug"
+## Debug loadout keys are LOADOUT_PREFIX + "spell_N" / "bag_N" under SECTION.
+const LOADOUT_PREFIX := "loadout_"
 const OVERLAY_DEFAULTS := {
 	"ideal_path": true, "roles": true, "passages": false, "zones": false,
 	"challenge": false, "macro_grid": false, "discovery": false, "outlines": true,
@@ -433,7 +435,7 @@ func _restore_loadout() -> void:
 
 
 func _restore_slot(slot: GlobalInventory.Slot, key: String) -> void:
-	var path := String(DebugState.get_value("combat_lab", key, ""))
+	var path := String(DebugState.get_value(SECTION, LOADOUT_PREFIX + key, ""))
 	if not path.is_empty() and ResourceLoader.exists(path):
 		slot.set_item(load(path))
 
@@ -446,7 +448,7 @@ func _on_slot_updated(_slot: GlobalInventory.Slot) -> void:
 
 
 func _save_slot(slot: GlobalInventory.Slot, key: String) -> void:
-	DebugState.set_value("combat_lab", key, slot.item.resource_path if slot.item != null else "")
+	DebugState.set_value(SECTION, LOADOUT_PREFIX + key, slot.item.resource_path if slot.item != null else "")
 
 
 func _knob_range(knob: StringName) -> Array:

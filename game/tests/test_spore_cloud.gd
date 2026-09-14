@@ -3,7 +3,7 @@ extends Node
 ## the field ticks, and light spends it. The one rule with teeth is that a detonation
 ## hits each victim ONCE however many clouds it is standing in — the chain buys area, not a
 ## bigger hit — and that lighting a fuse hunts the DETONATOR's enemies, so the player can
-## never blow themselves up on the dungeon's own floor.
+## never blow themselves up on the enemies' own floor.
 ##   godot --headless --path game res://tests/test_spore_cloud.tscn
 
 const WHUMF_DIR := "res://characters/player/spells/whumf/"
@@ -94,7 +94,7 @@ func _check_blast_lands_once() -> void:
 	victim.free()
 	_clear()
 
-# Detonation is the player's own kit spending the player's own spores. The dungeon's field is
+# Detonation is the player's own kit spending the player's own spores. An enemy's field is
 # inert: asked directly it refuses, and a blast in a patch touching it does not spend it
 # either — so an enemy's floor stays a hazard to cross rather than a bomb it handed you.
 func _check_an_enemy_field_is_inert() -> void:

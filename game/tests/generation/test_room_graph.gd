@@ -396,7 +396,7 @@ func _test_repeated_builds(fixture: WorldFixture) -> void:
 	_check_same(first, again, "%s seed %d built a different graph the second time" % [_name(fixture), fixture.seeds[0]])
 	var plan := fixture.plan(fixture.seeds[0])
 	var order: Array[Vector2i] = plan.cells.keys()
-	WorldPlanner._shuffle(order, WgHash.rng(424242))
+	WorldPlanner._shuffle(order, WorldHash.rng(424242))
 	order.reverse()
 	_check_same(first, WorldFixture.graph_snapshot(WorldGraph.build(plan, order)), "%s seed %d built a different graph in shuffled cell order" % [_name(fixture), fixture.seeds[0]])
 

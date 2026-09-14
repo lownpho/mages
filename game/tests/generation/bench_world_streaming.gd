@@ -8,8 +8,7 @@ extends Node
 ##   godot --headless --path game res://tests/generation/bench_world_streaming.tscn -- [seeds] [seconds per seed] [trace file]
 ## A trace file gets a line per queued chunk's state change (C), per frame (F), per change to the
 ## lookahead's Rooms (A) and per chunk seen unready (UNREADY), read from ChunkStreamer's internals, so
-## a late chunk can be followed back to what the queue was doing. Results are recorded in
-## .scratch/worldgen-rewrite-build/issues/04-walk-streamed-rendered-world.md and 11-cut-over-gameplay-and-verify-performance.md.
+## a late chunk can be followed back to what the queue was doing.
 
 const SHIPPED := "res://generation/world/"
 const THRESHOLD_USEC := 2000.0 / 3.0

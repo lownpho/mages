@@ -8,7 +8,7 @@ class_name SporeCloud
 ## Only the PLAYER'S spores are ammunition. Light sets those off (see SporeDetonator) and the
 ## blast spreads through every cloud touching them; an enemy's field is inert terrain that
 ## nothing can light. Detonation is a thing the player's own kit does with its own spores, so
-## a room the dungeon has coated is a room to cross, never a free bomb to cash in.
+## a room the Mycelium has coated is a room to cross, never a free bomb to cash in.
 
 const GROUP := "spore_clouds"
 ## The patch is 32px of art, so it covers two tiles either side of itself. Tied to the sheet
@@ -22,7 +22,7 @@ const TICK_INTERVAL := 0.5
 const WITHER_TIME := 1.2
 
 # Stamped by whoever lays the cloud, before it enters the tree. The damage defaults are the
-# DUNGEON's: every enemy spore on the floor hurts the same, whether a puffcap popped or a
+# ENEMIES': every enemy spore on the floor hurts the same, whether a puffcap popped or a
 # spitter lobbed it, so the number is authored here and nowhere else. Only the player's Whumf
 # overrides it, because only the player's spores scale with stats and only theirs can be lit.
 var lifetime: float = 12.0
@@ -77,8 +77,8 @@ static func any_covers(point: Vector2, foe_side: bool, slack: float = 0.0) -> bo
 
 ## True while `body` stands in its OWN side's spores — the empowerment query behind
 ## Behaviour.needs_cloud. Sides never mix, for the same reason detonation doesn't: the player's
-## field is ammunition they laid and paid for, and a dungeon that got stronger standing in it
-## would turn the player's own answer into the dungeon's. The side test is the one that stamps
+## field is ammunition they laid and paid for, and an enemy that got stronger standing in it
+## would turn the player's own answer into the enemy's. The side test is the one that stamps
 ## `foe` on a cloud in the first place, so a body is fed by exactly the clouds it could have
 ## laid itself.
 ##
@@ -103,7 +103,7 @@ static func light(point: Vector2, groups: Array) -> void:
 		return
 	for cloud in tree.get_nodes_in_group(GROUP):
 		# An enemy's field is skipped rather than merely refused, so light crossing the
-		# dungeon's floor on its way to yours still has a fuse to reach.
+		# enemies' floor on its way to yours still has a fuse to reach.
 		if not cloud.foe and cloud.covers(point):
 			cloud.detonate(groups)
 			return
@@ -114,8 +114,8 @@ static func light(point: Vector2, groups: Array) -> void:
 ## way to blow yourself up.
 ##
 ## An enemy's spores refuse outright, here rather than in the detonator, so no future match
-## can find a way to light them: the dungeon's floor is a hazard to walk, not ammunition it
-## hands you.
+## can find a way to light them: the enemies' floor is a hazard to walk, not ammunition they
+## hand you.
 func detonate(groups: Array) -> void:
 	if _spent or foe:
 		return
@@ -136,7 +136,7 @@ func _chain() -> Array:
 	while not queue.is_empty():
 		var cloud: SporeCloud = queue.pop_back()
 		for other in get_tree().get_nodes_in_group(GROUP):
-			# Never across sides: a blast that jumped into the dungeon's own field would
+			# Never across sides: a blast that jumped into the enemies' own field would
 			# spend it, which is the same free bomb detonate() just refused.
 			if other in found or other._spent or other.foe != foe:
 				continue

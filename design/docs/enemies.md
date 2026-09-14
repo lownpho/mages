@@ -10,7 +10,7 @@ The opening biome. It comes in two flavours: the floral **starting glade**, capp
 ### Dirt Golem
 
 The golem recipe moved into the glade and softened: just as slow, even tougher, but its rings
-barely sting. It works as a low-stakes rehearsal for the real golem at the dungeon doors. You
+barely sting. It works as a low-stakes rehearsal for the heavier golems further in. You
 learn to read an area denier that sits still and then lumbers after you, and here a misread is
 cheap. You can always outrun it, so the threat is the space it fills.
 
@@ -89,6 +89,32 @@ stateDiagram-v2
     Chase --> Idle : lost
 ```
 
+### Rosebud
+
+Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into
+a defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it
+blooms into a `RingPattern` whose aim rotates slightly each pulse, and idles again. It teaches
+you to read the telegraph instead of face-tanking.
+
+**Art:** a closed rose bud on a stem, glade greens with red petals; a petal-spread frame to bloom, a clamped-shut frame for the shell.
+
+| Stat |  |
+|---|---|
+| HP | 30 |
+| Range | detect 5 |
+| ring | **16** dmg — Ring x8, 4 @ 1s, 8 tiles range |
+| Drops | **ring t1** (10%), **nope** (10%) |
+
+**Notes:** Defensive Shell on the windup: wait out the telegraph, then burn during the bloom.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Bud : player too close / hit
+    Bud --> Bloom : windup done
+    Bloom --> Idle : ring fired
+```
+
 ### Seedling
 
 A sproutling that grew up: the same rooted plant, but instead of one lazy seed it opens into a
@@ -132,6 +158,30 @@ stateDiagram-v2
     [*] --> Idle
     Idle --> Attack : sees player
     Attack --> Idle : lost sight
+```
+
+### Thornthrower
+
+`Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing
+thorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.
+
+**Art:** an uprooted thorn-plant on root legs, muted glade green with red thorn tips; the missile is a spinning thorn.
+
+| Stat |  |
+|---|---|
+| HP | 50 |
+| Speed | 32 px/s |
+| Range | detect 8, chase 12, attack 6 |
+| thorn | **16** dmg — 1s cd, Single, 10 tiles range, homing 120° cone |
+| Drops | **snipe t1** (20%) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Wander
+    Wander --> Chase : sees player
+    Chase --> Attack : in range
+    Attack --> Chase : out of range
+    Chase --> Wander : lost
 ```
 
 ### Wasp
@@ -257,56 +307,6 @@ stateDiagram-v2
     Pattern --> Idle : lost
 ```
 
-### Rosebud
-
-Rooted like a seedling. `Idle` until you get too close or it takes a hit, then it clamps into
-a defensive bud. That bud is a brief high-defence windup that punishes spam-hitting. Then it
-blooms into a `RingPattern` whose aim rotates slightly each pulse, and idles again. It teaches
-you to read the telegraph instead of face-tanking.
-
-**Art:** a closed rose bud on a stem, glade greens with red petals; a petal-spread frame to bloom, a clamped-shut frame for the shell.
-
-| Stat |  |
-|---|---|
-| HP | 30 |
-| Range | detect 5 |
-| ring | **16** dmg — Ring x8, 4 @ 1s, 8 tiles range |
-| Drops | **ring t1** (10%), **nope** (10%) |
-
-**Notes:** Defensive Shell on the windup: wait out the telegraph, then burn during the bloom.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Bud : player too close / hit
-    Bud --> Bloom : windup done
-    Bloom --> Idle : ring fired
-```
-
-### Thornthrower
-
-`Wander` until it spots you, then `Chase` until in range, where it fires a single slow homing
-thorn that you have to keep moving to outrun. It is cheap pressure that punishes standing still.
-
-**Art:** an uprooted thorn-plant on root legs, muted glade green with red thorn tips; the missile is a spinning thorn.
-
-| Stat |  |
-|---|---|
-| HP | 50 |
-| Speed | 32 px/s |
-| Range | detect 8, chase 12, attack 6 |
-| thorn | **16** dmg — 1s cd, Single, 10 tiles range, homing 120° cone |
-| Drops | **snipe t1** (20%) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Wander
-    Wander --> Chase : sees player
-    Chase --> Attack : in range
-    Attack --> Chase : out of range
-    Chase --> Wander : lost
-```
-
 ### Thornmess *(boss)*
 
 The rooted capstone. It stays on the ground and runs a `PatternPicker`
@@ -347,7 +347,7 @@ stateDiagram-v2
 
 ## Deepwood
 
-The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood sub-biome; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, and the rooms are built to introduce it one mechanic at a time.
+The forest, T3. Eleven natives make up the shared pool meant to appear in every deepwood Zone; on top of it the **animal deepwood** adds its own beasts and the **gnarlking**, and the **mimic deepwood** its props with eyes. The whole roster spawns, introduced one mechanic at a time.
 
 ### Ash Snake
 
@@ -375,6 +375,94 @@ stateDiagram-v2
     Flee --> Volley : cornered
     Volley --> Flee : burst fired
     Flee --> Idle : lost
+```
+
+### Bramble Stalker
+
+The mimic Zone's opener, and the stalker recipe turned inside out: instead of closing
+to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings
+of thorns off its own body. The ring means there is no safe side of it — the answer is
+distance, not footwork — and the rings drift a little each wave, so a gap you found in the
+first one is somewhere else in the second. Hard to lead on the approach, trivial once you
+stop letting it arrive.
+
+**Art:** a leafy deepwood bush, built from the biome's own decor bush — same three greens, same sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the bramble-red thorns push out after them, one per flank as it winds up.
+
+| Stat |  |
+|---|---|
+| HP | 110 |
+| Speed | 40 px/s |
+| Range | detect 3, chase 12, attack 5 |
+| ring | **16** dmg — 2.2s cd, Ring x8, 2 @ 0.4s, 5 tiles range |
+| Drops | **ring t2** (6%) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Reveal : player close / hit
+    Reveal --> Chase : revealed
+    Chase --> Ring : in range
+    Ring --> Recover : rings fired
+    Recover --> Ring : still in range
+    Recover --> Chase : out of range
+    Chase --> Disguise : lost
+```
+
+### Bristlestone
+
+The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the
+same rock sitting in the same litter, and it triggers the same way — step close, or clip it
+with a shot, and the fuse runs. What comes out is the difference: instead of one big blast
+it bursts into a full ring of piercing darts that carry clean across the room and straight
+through anything in the way.
+
+Between the two of them a room of rocks stops being scenery you ignore. The blast one
+punishes standing next to it, the dart one punishes standing anywhere in line with it,
+and until one goes off you don't know which you're walking past. The tell, if you look
+for it, is a pair of dry burr spines in the moss on top.
+
+**Art:** the cinderstone's boulder, moss and all, with two pale burr spines standing out of the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.
+
+| Stat |  |
+|---|---|
+| HP | 1 |
+| Range | trigger 2 |
+| ploop | **32** dmg — Ring x6, 3 @ 0.1s, 4 tiles range |
+| Drops | **ploop t2** (4%) |
+
+**Notes:** it drops the Ploop it fires, the way the cinderstone drops its Oop. Killing it before the fuse lands does NOT set it off.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Fuse : player close / hit
+    Fuse --> [*] : burst away
+```
+
+### Cinderstone
+
+A trap with a health bar. It sits among the real rocks and litter until you step close — or
+clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with
+it. Spot the boulder that is slightly too round and spend it from range, or route around it
+and leave it armed for whatever chases you. It never moves and never fires twice; the only
+question is where you are standing when the fuse ends.
+
+**Art:** a mossy grey boulder, the same stone the deepwood scatters everywhere, with one hairline seam down its face; the seam lights amber through the fuse until the whole rock glows.
+
+| Stat |  |
+|---|---|
+| HP | 1 |
+| Range | trigger 2 |
+| oop | **60** dmg — Single, 0 tiles range, blast 5 tiles (splash only) |
+| Drops | **oop t2** (4%) |
+
+**Notes:** its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the cinderstone before the fuse lands does NOT set it off. The mother tree seeds these as mines.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Fuse : player close / hit
+    Fuse --> [*] : detonated
 ```
 
 ### Coral Snake
@@ -621,6 +709,36 @@ stateDiagram-v2
     Reposition --> Bwoom : repositioned / cornered
 ```
 
+### Shade
+
+A vanishing harasser, and the enemy that teaches the Zone's second trick: it fires a
+short burst, then blinks somewhere else nearby and bursts again. Nothing about a single
+burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes
+standing still and rewards fighting it while moving to something else. It never walks —
+the blink is its whole movement.
+
+**Art:** a wispy near-black silhouette with a faint violet edge and two pale eyes; a barely-there body that blinks out.
+
+| Stat |  |
+|---|---|
+| HP | 70 |
+| Range | detect 12 |
+| blink | 0.6s cd |
+| pew | **20** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
+| Drops | **blink t2** (8%), **pew t3** (5%) |
+
+**Notes:** the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a landing spot with a wall in the way. The player's own Blink is the same effect with its landing dial on AIM instead of a random bearing.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Volley : sees player
+    Volley --> Blink : burst done
+    Blink --> Recover : reappeared
+    Recover --> Volley : burst ready
+    Recover --> Idle : lost
+```
+
 ### Shard Grimling
 
 Grimling variant, and the pack's back line. It shares the pack, but it stops at nine tiles
@@ -772,6 +890,69 @@ stateDiagram-v2
     Chase --> Idle : lost
 ```
 
+### Adder *(rare)*
+
+Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits
+a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as
+well as ahead. Cornering it in a hallway is the natural move and precisely the mistake;
+take it in the open, where the bounces have nothing to come back off.
+
+**Art:** the snake coil in rare charcoal with amber banding.
+
+| Stat |  |
+|---|---|
+| HP | 320 |
+| Speed | 46 px/s |
+| Range | detect 12, retreat 2 |
+| zoing | **26** dmg — 1.6s cd, Shotgun x5, 12 tiles range, BounceBehaviour |
+| Drops | **zoing t2** (50%) |
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Wander
+    Idle --> Flee : sees player
+    Wander --> Flee : sees player
+    Flee --> Volley : cornered
+    Volley --> Flee : spray fired
+```
+
+### Elder Stalker *(rare)*
+
+Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone
+homing seed from across the room, blinks the moment it has fired, and greets you with a
+shotgun cone wherever it lands. The seed forces you to move; the blink means the ground you
+moved to is the wrong ground. It never chases — every reposition is a teleport — so the
+fight is about closing the gap between its cycle rather than out-running it.
+
+**Art:** a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on reveal; taller than the stalker.
+
+| Stat |  |
+|---|---|
+| HP | 260 |
+| Range | detect 22, blast 5 |
+| blast | **24** dmg — 1.6s cd, Shotgun x5, 5 tiles range |
+| blink | 0.4s cd |
+| seed | **32** dmg — 3.2s cd, Single, 20 tiles range, homing 150° cone |
+| seed_fast | **32** dmg — 2.4s cd, Single, 20 tiles range, homing 150° cone |
+| Drops | **blam t3** (30%), **blink t2** (60%), **snipe t3** (35%) |
+
+**Notes:** below a quarter health the seed's wind-up drops to near-instant — the same beat with a shorter telegraph, swapped in by health window.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Disguise
+    Disguise --> Aim : sees player
+    Aim --> SnipeFast : below 25% HP
+    Aim --> Snipe
+    Snipe --> Blink : seed away
+    SnipeFast --> Blink : seed away
+    Blink --> Blast : arrived
+    Blast --> Recover
+    Recover --> Aim : snipe ready
+    Recover --> Disguise : lost
+```
+
 ### Great Owl *(rare)*
 
 Owl variant: bigger, and its firing band is most of the map — it charges from twenty-four
@@ -873,6 +1054,36 @@ stateDiagram-v2
     Stun --> Idle : lost
 ```
 
+### Umbra *(rare)*
+
+Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on
+the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so
+what changed is entirely where it fires it from. Turning to face it puts your back to
+whatever else is in the room, which is exactly the trade the mimic Zone keeps asking
+you to make. Clear it first, or fight it with a wall behind you.
+
+**Art:** the shade silhouette in deeper black with a thin red edge.
+
+| Stat |  |
+|---|---|
+| HP | 200 |
+| Range | detect 12 |
+| blink | 0.6s cd |
+| pew | **22** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
+| Drops | **blink t2** (50%), **pew t3** (30%) |
+
+**Notes:** the same Blink cast as the shade, with the landing spot taken past the target instead of on a random bearing — the dial the player's tiers leave on AIM.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Volley : sees player
+    Volley --> Blink : burst done
+    Blink --> Recover : behind player
+    Recover --> Volley : burst ready
+    Recover --> Idle : lost
+```
+
 ### Gnarlking *(boss)*
 
 The apex of the animal deepwood, and the one boss that doesn't roll: it runs ordered `Gate`
@@ -951,220 +1162,9 @@ stateDiagram-v2
     WindedShort --> Summon
 ```
 
-### Bramble Stalker
-
-The mimic sub-biome's opener, and the stalker recipe turned inside out: instead of closing
-to point-blank and coning you, it sits as a bush, reveals, weaves in, and fires whole rings
-of thorns off its own body. The ring means there is no safe side of it — the answer is
-distance, not footwork — and the rings drift a little each wave, so a gap you found in the
-first one is somewhere else in the second. Hard to lead on the approach, trivial once you
-stop letting it arrive.
-
-**Art:** a leafy deepwood bush, built from the biome's own decor bush — same three greens, same sparse silhouette, same ground shadow, and dead still while it waits. The disguise carries no eye and no thorn at all; the amber eyes open in the leaves on reveal, and the bramble-red thorns push out after them, one per flank as it winds up.
-
-| Stat |  |
-|---|---|
-| HP | 110 |
-| Speed | 40 px/s |
-| Range | detect 3, chase 12, attack 5 |
-| ring | **16** dmg — 2.2s cd, Ring x8, 2 @ 0.4s, 5 tiles range |
-| Drops | **ring t2** (6%) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> Reveal : player close / hit
-    Reveal --> Chase : revealed
-    Chase --> Ring : in range
-    Ring --> Recover : rings fired
-    Recover --> Ring : still in range
-    Recover --> Chase : out of range
-    Chase --> Disguise : lost
-```
-
-### Bristlestone
-
-The cinderstone's sibling, and the reason you can't read a minefield at a glance. It is the
-same rock sitting in the same litter, and it triggers the same way — step close, or clip it
-with a shot, and the fuse runs. What comes out is the difference: instead of one big blast
-it bursts into a full ring of piercing darts that carry clean across the room and straight
-through anything in the way.
-
-Between the two of them a room of rocks stops being scenery you ignore. The blast one
-punishes standing next to it, the dart one punishes standing anywhere in line with it,
-and until one goes off you don't know which you're walking past. The tell, if you look
-for it, is a pair of dry burr spines in the moss on top.
-
-**Art:** the cinderstone's boulder, moss and all, with two pale burr spines standing out of the green. The fuse lights white instead of amber, and it goes off in a pale green seed-burst rather than a fireball.
-
-| Stat |  |
-|---|---|
-| HP | 1 |
-| Range | trigger 2 |
-| ploop | **32** dmg — Ring x6, 3 @ 0.1s, 4 tiles range |
-| Drops | **ploop t2** (4%) |
-
-**Notes:** it drops the Ploop it fires, the way the cinderstone drops its Oop. Killing it before the fuse lands does NOT set it off.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> Fuse : player close / hit
-    Fuse --> [*] : burst away
-```
-
-### Cinderstone
-
-A trap with a health bar. It sits among the real rocks and litter until you step close — or
-clip it with a shot — then shivers, glows, and goes up in one big blast, taking itself with
-it. Spot the boulder that is slightly too round and spend it from range, or route around it
-and leave it armed for whatever chases you. It never moves and never fires twice; the only
-question is where you are standing when the fuse ends.
-
-**Art:** a mossy grey boulder, the same stone the deepwood scatters everywhere, with one hairline seam down its face; the seam lights amber through the fuse until the whole rock glows.
-
-| Stat |  |
-|---|---|
-| HP | 1 |
-| Range | trigger 2 |
-| oop | **60** dmg — Single, 0 tiles range, blast 5 tiles (splash only) |
-| Drops | **oop t2** (4%) |
-
-**Notes:** its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the cinderstone before the fuse lands does NOT set it off. The mother tree seeds these as mines.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> Fuse : player close / hit
-    Fuse --> [*] : detonated
-```
-
-### Shade
-
-A vanishing harasser, and the enemy that teaches the sub-biome's second trick: it fires a
-short burst, then blinks somewhere else nearby and bursts again. Nothing about a single
-burst is dangerous; what it costs you is aim. Every exchange starts over, so it punishes
-standing still and rewards fighting it while moving to something else. It never walks —
-the blink is its whole movement.
-
-**Art:** a wispy near-black silhouette with a faint violet edge and two pale eyes; a barely-there body that blinks out.
-
-| Stat |  |
-|---|---|
-| HP | 70 |
-| Range | detect 12 |
-| blink | 0.6s cd |
-| pew | **20** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
-| Drops | **blink t2** (8%), **pew t3** (5%) |
-
-**Notes:** the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a landing spot with a wall in the way. The player's own Blink is the same effect with its landing dial on AIM instead of a random bearing.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Volley : sees player
-    Volley --> Blink : burst done
-    Blink --> Recover : reappeared
-    Recover --> Volley : burst ready
-    Recover --> Idle : lost
-```
-
-### Adder *(rare)*
-
-Snake variant, and a lesson about corridors. It flees like the snake, but when its back hits
-a wall the twin shot becomes a wide ricocheting spray that fills the passage behind you as
-well as ahead. Cornering it in a hallway is the natural move and precisely the mistake;
-take it in the open, where the bounces have nothing to come back off.
-
-**Art:** the snake coil in rare charcoal with amber banding.
-
-| Stat |  |
-|---|---|
-| HP | 320 |
-| Speed | 46 px/s |
-| Range | detect 12, retreat 2 |
-| zoing | **26** dmg — 1.6s cd, Shotgun x5, 12 tiles range, BounceBehaviour |
-| Drops | **zoing t2** (50%) |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Wander
-    Idle --> Flee : sees player
-    Wander --> Flee : sees player
-    Flee --> Volley : cornered
-    Volley --> Flee : spray fired
-```
-
-### Elder Stalker *(rare)*
-
-Stalker variant, and the mimic's long game: an ancient tree that snipes a slow, wide-cone
-homing seed from across the room, blinks the moment it has fired, and greets you with a
-shotgun cone wherever it lands. The seed forces you to move; the blink means the ground you
-moved to is the wrong ground. It never chases — every reposition is a teleport — so the
-fight is about closing the gap between its cycle rather than out-running it.
-
-**Art:** a gnarled dead-tree disguise, bark-grey twisted trunk, hollow amber eye-glow on reveal; taller than the stalker.
-
-| Stat |  |
-|---|---|
-| HP | 260 |
-| Range | detect 22, blast 5 |
-| blast | **24** dmg — 1.6s cd, Shotgun x5, 5 tiles range |
-| blink | 0.4s cd |
-| seed | **32** dmg — 3.2s cd, Single, 20 tiles range, homing 150° cone |
-| seed_fast | **32** dmg — 2.4s cd, Single, 20 tiles range, homing 150° cone |
-| Drops | **blam t3** (30%), **blink t2** (60%), **snipe t3** (35%) |
-
-**Notes:** below a quarter health the seed's wind-up drops to near-instant — the same beat with a shorter telegraph, swapped in by health window.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Disguise
-    Disguise --> Aim : sees player
-    Aim --> SnipeFast : below 25% HP
-    Aim --> Snipe
-    Snipe --> Blink : seed away
-    SnipeFast --> Blink : seed away
-    Blink --> Blast : arrived
-    Blast --> Recover
-    Recover --> Aim : snipe ready
-    Recover --> Disguise : lost
-```
-
-### Umbra *(rare)*
-
-Shade variant, and the reason you stop treating the blink as a retreat: every hop lands on
-the far side of you. The burst itself is the shade's — a plain Pew, one shot longer — so
-what changed is entirely where it fires it from. Turning to face it puts your back to
-whatever else is in the room, which is exactly the trade the mimic sub-biome keeps asking
-you to make. Clear it first, or fight it with a wall behind you.
-
-**Art:** the shade silhouette in deeper black with a thin red edge.
-
-| Stat |  |
-|---|---|
-| HP | 200 |
-| Range | detect 12 |
-| blink | 0.6s cd |
-| pew | **22** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
-| Drops | **blink t2** (50%), **pew t3** (30%) |
-
-**Notes:** the same Blink cast as the shade, with the landing spot taken past the target instead of on a random bearing — the dial the player's tiers leave on AIM.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Volley : sees player
-    Volley --> Blink : burst done
-    Blink --> Recover : behind player
-    Recover --> Volley : burst ready
-    Recover --> Idle : lost
-```
-
 ## Mycelium
 
-Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. None of it is placed yet — the floors carve, and every room's table is empty.
+Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. All of it spawns, spread over the Mycelium's three Zones.
 
 ### Bloatcap
 
@@ -1247,7 +1247,7 @@ The one thing that closes hard, and it only does it once at a time. It sprints t
 dumps a shotgun cone at point blank, then roots for a beat and cannot follow — so the
 whole enemy is a single committed lunge you either sidestep or eat, and what you get for
 sidestepping it is a free window with the thing standing helpless in front of you. It is
-the dungeon's answer to a player who solves every room from max range.
+the Mycelium's answer to a player who solves every room from max range.
 
 Spores turn the free window off. Standing in a field it lunges further, fires the cone
 twice, and recovers in about half the time — the same enemy, with the gap between its
@@ -1320,7 +1320,7 @@ no phase, no second idea and nothing to read — it is the body a room uses to m
 commit to a direction while something with an actual plan sets up behind it.
 
 It still drinks. On coated floor the spit comes faster, harder and one shot longer, which
-is the whole point of putting the rule on the plainest thing in the dungeon: even the
+is the whole point of putting the rule on the plainest thing in the Mycelium: even the
 speed bump is worse on floor you let stand, so there is no body in the Mycelium a player
 can safely ignore the clouds around.
 
@@ -1356,7 +1356,7 @@ decor with no attack and barely any detection, it inhales when something comes c
 pops into a spore cloud — and **a pop sets off every puffcap beside it**, so one cap is never
 one cap. That is the whole encounter: walk into a field and it coats itself for good, or pick
 them off from range and keep the floor, because shooting one dead never sets it off. Nothing
-you carry cleans the floor afterwards either — the dungeon's spores are inert terrain, and
+you carry cleans the floor afterwards either — the Mycelium's spores are inert terrain, and
 only your own answer to light.
 
 **Art:** a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame swells it past its own width before the pop.
@@ -1526,7 +1526,7 @@ problem rather than a room that fills up and stays filled.
 | dust | **28** dmg — 1.4s cd, Single, 2 @ 0.4s, 5 tiles range, SporePayload |
 | Drops | **pew t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%) |
 
-**Notes:** the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the dungeon's, so they are inert terrain and nothing can light them.
+**Notes:** the moth's scene wholesale — same weaving `approach`, same `flee` on a clock — with a `SporePayload` added to the poke's bullet, so the patch is planted by the shot expiring exactly as the sporespitter's lob plants its own. Its spores are the Mycelium's, so they are inert terrain and nothing can light them.
 
 ```mermaid
 stateDiagram-v2
@@ -1691,26 +1691,24 @@ flavours, in encounter order: the **animal deepwood** (beasts, boss **gnarlking*
 **mimic deepwood** (props that come alive, boss **mother tree**), and the **insect
 deepwood** (swarms and crawlers, boss **hive queen**).
 
-**The shared pool and the animal and mimic sub-biomes are built** — they moved up into the
-catalogue above. What remains below is the one unbuilt sub-biome, insect. Its sprites
+**The shared pool and the animal and mimic Zones are built** — they moved up into the
+catalogue above. What remains below is the one unbuilt Zone, insect. Its sprites
 exist; nothing else does.
 
-The fungal roster **left the deepwood** and became the [Mycelium](#the-mycelium-dungeon), an
-eight-floor dungeon behind the mimic biome's mushroom door. It was always the odd one out —
-a sub-biome whose whole mechanic was the floor turning against you, which a wandering
-overworld biome cannot commit to and a descent can.
+The fungal roster **left the deepwood** and became the [Mycelium](#the-mycelium), a Side
+biome of its own.
 
-Each sub-biome adds three commons, three rares (almost all cheap variants of another enemy —
-the mandraker recipe; only the drone is bespoke), and its boss: 16 per sub-biome. Every enemy
+Each Zone adds three commons, three rares (almost all cheap variants of another enemy —
+the mandraker recipe; only the drone is bespoke), and its boss: 16 per Zone. Every enemy
 carries a generic cast plus a signature and drops both. Commons drop T2, rares guarantee T3,
 bosses drop their T3 signatures — the glade's structure one tier up.
 
-The mechanics are budgeted: each sub-biome introduces at most three, and later sub-biomes
+The mechanics are budgeted: each Zone introduces at most three, and later Zones
 reuse and combine earlier ones instead of adding more.
 
 | #   | Mechanic          | Introduced by          | Reused / combined                            |
 | --- | ----------------- | ---------------------- | -------------------------------------------- |
-| 1   | prop disguise     | stalker *(shared)*     | the mimic sub-biome doubles down on it       |
+| 1   | prop disguise     | stalker *(shared)*     | the mimic Zone doubles down on it            |
 | 2   | charge-dash       | thornback              | gnarlking; mother tree's thorn rush          |
 | 3   | burrow            | mole                   | the Mycelium's rotmaw dives between patterns |
 | 4   | blink teleport    | shade                  | elder stalker; umbra                         |
@@ -1721,18 +1719,17 @@ reuse and combine earlier ones instead of adding more.
 The first five ship; the enemies that introduce them are in the catalogue above.
 
 The Mycelium's own mechanics (spore clouds, electric detonation, splitting) are budgeted in
-its own ledger — a dungeon you descend on purpose can teach from scratch, where a fourth
-overworld sub-biome could only have recombined.
+its own ledger below.
 
 Spells introduced here: Bwoom, ChargeDash, Thwomp, Halp and Zoing all ship (the animal roster
 drops them), and so do Blink and Oop (the shade and umbra carry the two Blink tiers, the
 cinderstone its own Oop), and Ploop, off the bristlestone, though the mother tree it was written
-for was cut. Halo waits on the insect sub-biome below; Whumf, Poot and Blops left with the fungal
+for was cut. Halo waits on the insect Zone below; Whumf, Poot and Blops left with the fungal
 roster and are now the Mycelium's set. Slurp and Vroop are earmarked for the hive. Reserved
 for future T3 biomes: Kaboom, Krak, Brrr, Clang, Chomp, Piercing Lights, Beep Boop, Nyoom,
 Shing, Splay, Fwoosh.
 
-**Mimic deepwood** — the sub-biome is built except for its boss, which was cut from the
+**Mimic deepwood** — the Zone is built except for its boss, which was cut from the
 game and is a proposal again.
 
 ### mother tree *(boss, mimic)*
@@ -1990,7 +1987,7 @@ stateDiagram-v2
 ### Deepwood drops
 
 Commons drop T2 — generic and signature both — rares guarantee T3, bosses drop their T3
-signatures. Between them the three sub-biomes **cover** a full tier-2 kit and seed the tier-3
+signatures. Between them the three Zones **cover** a full tier-2 kit and seed the tier-3
 one; the built rosters' drops are in the catalogue above, the insect one is what's left.
 
 | Enemy | Drops |
@@ -2003,29 +2000,22 @@ one; the built rosters' drops are in the catalogue above, the insect one is what
 | drone *(rare)* | **Halo** (t3) |
 | hive queen *(boss)* | **Bzzz** (t3) |
 
-The Mycelium's drops are in its own section — a dungeon pays out differently, and mixing the
+The Mycelium's drops are in its own section — it pays out a set, and mixing the
 two tables is how a guaranteed set reward gets mistaken for a drop chance.
 
 
-## The Mycelium *(dungeon)*
+## The Mycelium
 
-Behind the mushroom door at the bottom of the mimic deepwood — the one that already ships and
-already leads nowhere. Eight floors down, a boss at the bottom, a secret boss for much later,
-and a set of three spells. It is the game's first **dungeon** rather than a biome: you go in
-on purpose, you go one way, and the floors are rolled, so you go in more than once.
+The fungal Side biome off the deepwood: a boss, a secret boss for much later, and a set of three
+spells.
 
-**The dungeon fills the room with fuses and sells you the match.**
+**The Mycelium fills the room with fuses and sells you the match.**
 
 That is the whole design. Half the roster prints spore clouds and the other half fights
 harder while standing in them; **electricity detonates a cloud, and the blast chains through
 every cloud touching it**. Zaap is the match, a new Zaap tier drops down here, and your own
 Whumf is how you lay fuses of your own. The clouds are not a hazard you route around — they
 are the floor both sides are fighting over, and the fight is about when to spend it.
-
-The fungal roster used to be the fourth deepwood sub-biome, and moved because none of this
-fits a wandering overworld biome. A biome has to stay playable from any door in any order, so
-the strongest thing spore clouds could do there was tick for chip damage and time out. A
-dungeon can commit.
 
 ### The clouds
 
@@ -2048,7 +2038,7 @@ Three rulings hold the mechanic together:
 - **Electricity only.** Fire does not trigger clouds. Fireball is one of the run's openers, and
   a universal detonator most players already own deletes the puzzle before it is posed.
 - **Printing is not free.** A body that fills the room with spores does not also get paid for
-  standing in them. That is what stops the dungeon spiralling: the more floor the room lays
+  standing in them. That is what stops the Mycelium spiralling: the more floor the room lays
   down, the more it is arming the bodies that *don't* lay any — and you.
 
 The rule being about **casts** rather than creatures is what keeps it readable. You never have
@@ -2069,37 +2059,18 @@ what shrink the room while you do.
 
 **On clean floor the roster is deepwood-hard, and no harder.** Commons sit in the same band as
 a grimling or a snake, heavies in the thornback's; a room you have not let coat itself plays
-like the forest above it. The dungeon's whole threat budget is in the clouds, which
+like the forest above it. The Mycelium's whole threat budget is in the clouds, which
 means the player sets it: every patch you leave standing is a room that fights a tier above
 its stat block.
 
 This is why the set is three stationary things. The Mycelium is the first place in the game
 that asks you to hold a position instead of an aim.
 
-### Structure
+### Encounters
 
-A floor is **small**: three to five rooms, one path, one descent. **Eight floors**, and the
-last is the boss. Short enough to want again — the dungeon is built to be re-run, so it
-should end before it becomes an evening.
-
-Floors **roll from a depth-tiered encounter pool** rather than running a script: a couple are
-pinned, the rest are drawn. That is the existing `weight` / `min_per_biome` / `max_per_biome`
-quota machinery doing what it already does, one level up.
-
-| Depth | Draws from |
-|---|---|
-| 1–2 | one mechanic at a time: a spitter room, a puffcap minefield, a first splitter |
-| 3–5 | mixed — a turret line plus movers, splitters under covering fire, the first mould golem |
-| 6–7 | the rare, and the roster at full density |
-| 8 | rotmaw |
-
-A floor wants **at least one printer and one consumer** in every room it rolls. A room of pure
-printers coats itself and threatens nothing; a room of pure consumers never gets its floor and
-plays like a thin deepwood encounter. The pool is drawn, but that pairing is the one constraint
-on the draw.
-
-You are not meant to see all thirteen in one descent. Two runs of the same dungeon should
-disagree about what the dungeon is.
+An encounter wants **at least one printer and one consumer**. A room of pure printers coats
+itself and threatens nothing; a room of pure consumers never gets its floor and plays like a
+thin deepwood encounter.
 
 ### Drops
 
@@ -2108,12 +2079,12 @@ Every drop is derived from what the body **casts**, so the roster teaches its ow
 1. **The basic spells it casts, at T3, strong against insect.** A gapcap casts Blam and pays
    Blam; a shellcap casts Snipe and pays Snipe. See [side tiers](spells.md#side-tiers).
 2. **Whumf, unchanged**, off anything that lays clouds — the weak version of the set's first
-   piece, findable on the way down, so the dungeon tells you what it pays out before you have
+   piece, findable on the way in, so the Mycelium tells you what it pays out before you have
    beaten it.
 3. **Blops** off the **turrets**, **Poot** off anything that **casts Whumf**. The set's two
    stationary pieces come off the roster's stationary halves, so what drops teaches what the
    piece does. rotmaw then guarantees whichever piece you are still missing.
-4. **A new Zaap tier**, off the rare — the enabling item, since the dungeon's whole mechanic
+4. **A new Zaap tier**, off the rare — the enabling item, since the Mycelium's whole mechanic
    is gated on owning the detonator.
 
 The side tier is the common roll and the set piece is the rare one, so a body carrying both is
@@ -2122,7 +2093,7 @@ not a jackpot, it is one likely drop and one lottery.
 This supersedes the earlier no-power-creep rule, which paid T2 sidegrades throughout. The
 Mycelium pays a tier up because it is the hardest content in the game and because its payout
 has to arm you for the **hive**, which drops fungal side tiers and arms you to come back. Two
-dungeons pointing at each other, each easier after the other — the multiple-runs loop without a
+Side biomes pointing at each other, each easier after the other — the multiple-runs loop without a
 grind, and the deepwood signs already tell the player: *"for some reason mushrooms and insects
 hate each other."*
 
@@ -2147,7 +2118,7 @@ The rest are proposals, and only the assignment is — the mechanism is already 
 
 **Mushrooms are not plants.** Fungal is its own kind, and nothing in the base game is strong
 against it — so a player arriving from the plant-heavy glade with a plant-killing kit finds it
-does exactly nothing here. The first descent is the one fight where your tag advantages are all
+does exactly nothing here. Your first visit is the one place where your tag advantages are all
 switched off, and the way to switch one back on is to go clear the hive.
 
 Mimics (stalker, elder stalker, the logs) are **plant**: they are furniture made of wood, and a
@@ -2172,9 +2143,8 @@ both movers.
 The rares are cheap on purpose: only the **burrower** is a new idea, the heavy that redraws
 the room and drops the detonator. The **deathcap** and the **maulcap** are the shellcap and
 the gapcap with harder numbers and a recoloured sheet, so a room with one in it plays the
-shape you already know at a speed you don't. A dungeon that rolls its floors wants rares often
-enough to matter, and a rare whose whole content is a second stat block costs nothing to roll
-and still changes what a familiar encounter is worth.
+shape you already know at a speed you don't. A rare whose whole content is a second stat block
+costs nothing to author and still changes what a familiar encounter is worth.
 
 ### cindergnat *(fungal)*
 
@@ -2212,7 +2182,7 @@ stateDiagram-v2
 ### driftcap *(fungal)*
 
 Barely an enemy — a floating cap that drifts across the room ignoring walls and terrain,
-shedding clouds behind it that then **wander off on their own**. It is how the dungeon stops
+shedding clouds behind it that then **wander off on their own**. It is how the Mycelium stops
 a cleared lane from staying cleared, and it is the one thing the ground game cannot answer:
 you can pop every rooted mushroom on the floor and the air will still be filling it in.
 
@@ -2256,7 +2226,7 @@ opponent.
    place you get to stand.
 5. **Rest** — the floor of the ladder, always eligible. Your burn window.
 
-The fight's lever is the one the dungeon spent seven floors teaching, and the printer rule is
+The fight's lever is the one the rest of the Mycelium spent teaching, and the printer rule is
 what sharpens it: the arena fills with clouds the maw itself laid, and **everything that
 crosses them fights harder except the maw**. Lanes, burrow and the brood all come out
 empowered on coated floor; the spiral does not. So leaving the field standing does not feed
@@ -2299,20 +2269,20 @@ stateDiagram-v2
 
 ### the Mother *(secret boss, fungal)*
 
-A colossal rooted cap behind a hidden door on one of the floors — the thing the dungeon grew
+A colossal rooted cap in a hidden corner of the Mycelium — the thing the Biome grew
 out of, and much stronger than anything else in the game when you first find it.
 
 **It is gated by your kit, not by a key.** It is always reachable and it simply kills you
 until your kit can handle it, which means no unlock flag, no quest item, no new system: the
 fight *is* the lock. The honest gate is the loop — she is a fungal boss, so what kills
-her is the **fungal side tiers from the hive**, and the hive is the dungeon you needed the
-Mycelium's insect side tiers to clear. Beating her is the point where the two dungeons close
+her is the **fungal side tiers from the hive**, and the hive is the Biome you needed the
+Mycelium's insect side tiers to clear. Beating her is the point where the two Biomes close
 on each other.
 
 Where rotmaw moves and divides, the Mother never moves at all and never splits. She is rooted
 dead centre, she coats the arena faster than you can detonate it, and every beat is a curtain
 you read. She is a printer to the last: none of it makes her stronger, all of it makes the
-room worse. The fight is the Zaap economy from upstairs, run at a speed that punishes hoarding
+room worse. The fight is the Mycelium's Zaap economy, run at a speed that punishes hoarding
 and punishes spending.
 
 **Art:** the graveyard's `mother_cap` — an enormous pallid cap sagging over a ring of tiny
@@ -2329,7 +2299,7 @@ fruiting bodies, gills breathing. Reviving it as the secret boss is why it is no
 | Casts | Whumf, brood, *(bespoke curtain spells)* |
 | Drops | the **t3** set pieces — Whumf, Poot and Blops one tier up |
 
-**Notes:** the last thing you do, and the only fight the dungeon does not let you make easier
+**Notes:** the last thing you do, and the only fight the Mycelium does not let you make easier
 by managing the floor.
 
 ### Mycelium drops
@@ -2346,7 +2316,7 @@ is what the unbuilt ones are aimed at.
 | the Mother *(secret boss)* | secret | prints | **Whumf**, **Poot**, **Blops** (t3) |
 
 Whumf is the one drop that is not a tier up: the weak version of the set's first piece, off
-anything that lays clouds, so the dungeon shows its payout before you have earned it.
+anything that lays clouds, so the Mycelium shows its payout before you have earned it.
 
 **Art:** fifteen of the seventeen ship. Live and ready: rotmaw + rotmaw_half. Graveyard, back
 with `git mv`: spore_drone (driftcap), mother_cap (the Mother). Recolour off an existing

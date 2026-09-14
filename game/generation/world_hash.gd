@@ -1,21 +1,9 @@
-class_name WgHash
-## Deterministic hashing / seeding core for the new world generator.
+class_name WorldHash
+## Deterministic hashing / seeding core for the World generator.
 ## All static, all integer math. Every value flowing into generation RNGs comes from here.
 extends RefCounted
 
-# Namespace constants — the second element of every seed_for parts list.
-const NS_WORLD_LAYOUT := 1
-const NS_BORDER := 2
-const NS_ROOM_GRAPH := 3
-const NS_INTERIOR := 4
-const NS_POPULATION := 5
-const NS_UNIQUE := 6
-const NS_WALL_SHAPE := 7
-const NS_FEATURES := 8
-const NS_DOORS := 9
-const NS_SIGNS := 10
-
-# The finite World generator's namespaces (game/generation/). Its units seed with unit_seed.
+# Namespaces, the second argument of unit_seed: one per kind of generated unit.
 const NS_MACRO_PATH := 101
 const NS_ZONE_ORDER := 102
 const NS_ATTACHMENTS := 103
@@ -63,16 +51,7 @@ static func _ushift(x: int, n: int) -> int:
 	return (x >> n) & ((1 << (64 - n)) - 1)
 
 
-## Derive a seed from an ordered parts list. Parts[0] is always world_seed,
-## parts[1] a namespace constant. config_hash is a parameter supplied by the caller.
-static func seed_for(gen_version: int, config_hash: int, parts: Array[int]) -> int:
-	var h := splitmix64(gen_version ^ config_hash)
-	for p in parts:
-		h = splitmix64(h ^ splitmix64(p))
-	return h
-
-
-## A generated unit's seed in the finite World generator, from the World seed, a namespace and the
+## A generated unit's seed in the World generator, from the World seed, a namespace and the
 ## unit's place-derived key ("glade", "3,2/5"). No content hash or version goes in, and no unit's
 ## seed depends on another unit's draws.
 static func unit_seed(world_seed: int, namespace_id: int, key: String) -> int:
@@ -88,12 +67,6 @@ static func rng(seed_value: int) -> RandomNumberGenerator:
 	return r
 
 
-## True iff the next u32 draw is below the threshold. randi() returns an unsigned 32-bit
-## value as a non-negative int, so the plain comparison is correct.
-static func chance(p_rng: RandomNumberGenerator, threshold_u32: int) -> bool:
-	return p_rng.randi() < threshold_u32
-
-
 ## Precompute the integer threshold for a probability p in [0,1] (call at config-load time;
 ## generation loops never touch floats). Convention: threshold in [0, 2^32]; p=1.0 -> 2^32
 ## always fires, p=0.0 -> 0 never fires.
@@ -102,15 +75,9 @@ static func threshold(p: float) -> int:
 
 
 ## Fold a byte stream into an accumulator, one splitmix64 step per byte. Deterministic and
-## order-sensitive — the basis of CONFIG_HASH. Not a fast general-purpose hash,
-## but config hashing happens once at load.
+## order-sensitive — how unit_seed folds in a unit's place key. Not a fast general-purpose hash,
+## but keys are short.
 static func fold_bytes(h: int, bytes: PackedByteArray) -> int:
 	for b in bytes:
 		h = splitmix64(h ^ b)
 	return h
-
-
-## Fold any Variant by its canonical var_to_bytes() encoding. Used to hash config scalars in a
-## fixed, hand-written field order (never rely on property-list order).
-static func fold_var(h: int, value: Variant) -> int:
-	return fold_bytes(h, var_to_bytes(value))

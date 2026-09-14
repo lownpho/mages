@@ -1,6 +1,6 @@
 extends Node2D
 
-## The Run's World: plans the finite World for the Run's seed, streams its tiles, encounters and
+## The Run's World: plans the World for the Run's seed, streams its tiles, encounters and
 ## Objects around the player and keeps the Run saved through GameState. New reuses the title
 ## backdrop's plan when it has one; Continue plans the saved seed and restores the Run's records
 ## before anything streams in. In non-web debug builds Tab opens the World debug layer, which the

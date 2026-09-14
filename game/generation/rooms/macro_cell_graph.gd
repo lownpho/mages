@@ -91,7 +91,7 @@ static func build(plan: WorldPlan, coord: Vector2i) -> MacroCellGraph:
 	graph._chain_ports()
 	for attempt in ATTEMPTS:
 		graph.attempts = attempt + 1
-		if graph._attempt(plan, plan.rng(WgHash.NS_CELL_GRAPH, "%s/%d" % [graph.cell.key, attempt])):
+		if graph._attempt(plan, plan.rng(WorldHash.NS_CELL_GRAPH, "%s/%d" % [graph.cell.key, attempt])):
 			graph._connect(plan)
 			return graph
 	push_error("World seed %d: exhausted %d room-graph attempts in macro cell %s (%s, %d Rooms, %d on the route): %s" % [
@@ -113,7 +113,7 @@ func room(key: String) -> GeneratedRoom:
 static func port_point(plan: WorldPlan, coord: Vector2i, direction: Vector2i) -> Vector2:
 	var other := coord + direction
 	var edge := RoomPassage.pair("%d,%d" % [coord.x, coord.y], "%d,%d" % [other.x, other.y])
-	var along := plan.rng(WgHash.NS_PORTS, edge).randf_range(PORT_MARGIN, WorldPlan.CELL - PORT_MARGIN)
+	var along := plan.rng(WorldHash.NS_PORTS, edge).randf_range(PORT_MARGIN, WorldPlan.CELL - PORT_MARGIN)
 	var point := Vector2(coord * WorldPlan.CELL) + Vector2(HALF, HALF) + Vector2(direction) * HALF
 	if direction.x == 0:
 		point.x = coord.x * WorldPlan.CELL + along
@@ -619,7 +619,7 @@ func _connect(plan: WorldPlan) -> void:
 		var a := _by_key[pair_key.get_slice("|", 0)]
 		var b := _by_key[pair_key.get_slice("|", 1)]
 		if not a.is_isolated() and not b.is_isolated() and not _has_passage(pair_key):
-			order.append([plan.seed_for(WgHash.NS_PASSAGES, pair_key), pair_key])
+			order.append([plan.seed_for(WorldHash.NS_PASSAGES, pair_key), pair_key])
 	order.sort()
 	for entry in order:
 		var pair_key: String = entry[1]
@@ -629,7 +629,7 @@ func _connect(plan: WorldPlan) -> void:
 			_add_passage(a, b, RoomPassage.Kind.TREE, width)
 		else:
 			var odds := (plan.biomes[a.plan.biome].resource.loops + plan.biomes[b.plan.biome].resource.loops) / 2.0
-			if plan.rng(WgHash.NS_PASSAGES, "loop/" + pair_key).randf() < odds:
+			if plan.rng(WorldHash.NS_PASSAGES, "loop/" + pair_key).randf() < odds:
 				_add_passage(a, b, RoomPassage.Kind.LOOP, width)
 	for special in rooms:
 		if not special.is_isolated():
@@ -644,7 +644,7 @@ func _connect(plan: WorldPlan) -> void:
 			if not other.is_ordinary():
 				continue
 			var away := absi(other.plan.route_index - special.plan.join_index) if other.plan.is_on_route() else 1 << 20
-			var score := [away, plan.seed_for(WgHash.NS_PASSAGES, pair_key)]
+			var score := [away, plan.seed_for(WorldHash.NS_PASSAGES, pair_key)]
 			if best == null or score < best_score:
 				best = other
 				best_score = score
