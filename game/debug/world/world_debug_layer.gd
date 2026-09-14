@@ -47,6 +47,9 @@ func configure(world_host: Node2D) -> void:
 	_world_overlay.visible = false
 	host.add_child(_world_overlay)
 	_refresh_graph(true)
+	if GlobalMap.active != null and GlobalMap.active.is_finite_world():
+		set_entered_rooms(GlobalMap.active.entered_rooms)
+	GlobalMap.discovery_changed.connect(set_entered_rooms)
 	_set_fly(bool(DebugState.get_value(SECTION, "fly", false)))
 	_restore_loadout()
 	GlobalEvent.slot_updated.connect(_on_slot_updated)
@@ -359,11 +362,11 @@ func _refresh_graph(reset_map := false) -> void:
 		_map_fitted = true
 
 
-## Ticket 09 supplies entered Room keys here; until then the discovery overlay deliberately has an
-## empty set while every graph remains visible on the debug Map.
 func set_entered_rooms(entered: Dictionary[String, bool]) -> void:
-	_world_overlay.set_entered_rooms(entered)
-	_map.set_entered_rooms(entered)
+	if _world_overlay != null:
+		_world_overlay.set_entered_rooms(entered)
+	if _map != null:
+		_map.set_entered_rooms(entered)
 
 
 func _on_tab_changed(tab: int) -> void:

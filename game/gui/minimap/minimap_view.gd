@@ -17,6 +17,9 @@ const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
+const COLOR_DOOR := Palette.BLUE
+const COLOR_SIGN := Palette.GREEN
+const COLOR_NPC := Palette.PURPLE
 const COLOR_PIN := Palette.ORANGE
 const PIN_PX := 2  ## pin marker size in widget pixels
 
@@ -118,16 +121,20 @@ func _draw() -> void:
 	var center := _player.global_position / GameConstants.PX_PER_TILE   # in tiles
 	var region := Rect2(center - size * tpp * 0.5, size * tpp)          # visible world tiles
 
-	_draw_layer(_state.floor_texture, region, tpp, 1)
-	_draw_layer(_state.wall_texture_for(tpp), region, tpp, tpp)
+	for image in _state.images_in(region, tpp):
+		_draw_layer(image.floor_texture, region, tpp, 1, image.world_rect)
+		_draw_layer(image.wall_texture, region, tpp, image.texel_tiles, image.world_rect)
 
 	for m in _state.markers:
-		if m["kind"] == MapState.MARKER_BOSS:
-			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_BOSS, 2)
-		elif m["kind"] == MapState.MARKER_FOUNTAIN:
-			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_FOUNTAIN, 1)
-		else:
-			_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, COLOR_FEATURE, 1)
+		var color := COLOR_FEATURE
+		match m["kind"]:
+			MapState.MARKER_BOSS: color = COLOR_BOSS
+			MapState.MARKER_FOUNTAIN: color = COLOR_FOUNTAIN
+			MapState.MARKER_DOOR: color = COLOR_DOOR
+			MapState.MARKER_SIGN: color = COLOR_SIGN
+			MapState.MARKER_NPC: color = COLOR_NPC
+		_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, color,
+				2 if m["kind"] == MapState.MARKER_BOSS else 1, m.get("project", false))
 	if tpp <= ENEMIES_MAX_TPP:
 		for e in get_tree().get_nodes_in_group("enemies"):
 			var et: Vector2 = e.global_position / GameConstants.PX_PER_TILE
@@ -143,19 +150,28 @@ func _draw() -> void:
 ## Blit the part of a world texture visible through `region` (in tiles) onto the widget,
 ## clamped to the world so out-of-bounds sampling never smears edge pixels. `texel_tiles` is
 ## how many world tiles one texel spans (1 for full-res images, tpp for wall level images).
-func _draw_layer(tex: ImageTexture, region: Rect2, tpp: int, texel_tiles: int) -> void:
-	var vis := region.intersection(Rect2(Vector2.ZERO, Vector2(_state.world_tiles)))
+func _draw_layer(tex: ImageTexture, region: Rect2, tpp: int, texel_tiles: int,
+		world_rect: Rect2i) -> void:
+	var vis := region.intersection(Rect2(world_rect))
 	if not vis.has_area():
 		return
 	draw_texture_rect_region(tex, Rect2((vis.position - region.position) / tpp, vis.size / tpp),
-			Rect2(vis.position / texel_tiles, vis.size / texel_tiles))
+			Rect2((vis.position - Vector2(world_rect.position)) / texel_tiles,
+			vis.size / texel_tiles))
 
 
-func _draw_marker(tile_pos: Vector2, region: Rect2, tpp: int, color: Color, px: int) -> void:
+func _draw_marker(tile_pos: Vector2, region: Rect2, tpp: int, color: Color, px: int,
+		to_border := false) -> void:
 	var local := (tile_pos - region.position) / tpp
 	if local.x < 0.0 or local.y < 0.0 or local.x >= size.x or local.y >= size.y:
+		if not to_border:
+			return
+		local = _project_to_border(local)
+		var edge_origin := (local - Vector2.ONE * px * 0.5).floor()
+		edge_origin = edge_origin.clamp(Vector2.ZERO, size - Vector2.ONE * px)
+		draw_rect(Rect2(edge_origin, Vector2.ONE * px), color)
 		return
-	draw_rect(Rect2(local.floor(), Vector2(px, px)), color)
+	draw_rect(Rect2(local.floor(), Vector2.ONE * px), color)
 
 
 ## Pins never fog out: an in-view pin draws at its spot; an out-of-view one is projected onto the

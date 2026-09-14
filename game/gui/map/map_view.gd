@@ -16,6 +16,9 @@ const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
+const COLOR_DOOR := Palette.BLUE
+const COLOR_SIGN := Palette.GREEN
+const COLOR_NPC := Palette.PURPLE
 const COLOR_PIN := Palette.ORANGE
 
 const PIN_PX := 3
@@ -242,16 +245,21 @@ func _draw() -> void:
 		_fit()
 	var region := Rect2(_cam - size * _tpp * 0.5, size * _tpp)
 
-	_draw_layer(_state.floor_texture, region, 1)
 	var wl := _nearest_wall_level(_tpp)
-	_draw_layer(_state.wall_texture_for(wl), region, wl)
+	for image in _state.images_in(region, wl):
+		_draw_layer(image.floor_texture, region, 1, image.world_rect)
+		_draw_layer(image.wall_texture, region, image.texel_tiles, image.world_rect)
 
 	for m in _state.markers:
 		var c := COLOR_FEATURE
 		match m["kind"]:
 			MapState.MARKER_BOSS: c = COLOR_BOSS
 			MapState.MARKER_FOUNTAIN: c = COLOR_FOUNTAIN
-		_dot(Vector2(m["tile"]) + Vector2(0.5, 0.5), MARKER_PX, c, false)
+			MapState.MARKER_DOOR: c = COLOR_DOOR
+			MapState.MARKER_SIGN: c = COLOR_SIGN
+			MapState.MARKER_NPC: c = COLOR_NPC
+		_dot(Vector2(m["tile"]) + Vector2(0.5, 0.5), MARKER_PX, c,
+				m.get("project", false))
 	for e in get_tree().get_nodes_in_group("enemies"):
 		var et: Vector2 = e.global_position / GameConstants.PX_PER_TILE
 		if _state.is_tile_discovered(Vector2i(et.floor())):
@@ -284,16 +292,18 @@ func _draw_reticle() -> void:
 ## Blit the world-texture slice visible through `region` (in tiles), clamped to the world so
 ## out-of-bounds sampling never smears edges. `texel_tiles` is how many world tiles one texel of
 ## `tex` spans (1 for the full-res floor, the wall level for a downsampled wall image).
-func _draw_layer(tex: ImageTexture, region: Rect2, texel_tiles: int) -> void:
+func _draw_layer(tex: ImageTexture, region: Rect2, texel_tiles: int, world_rect: Rect2i) -> void:
 	if tex == null:
 		return
-	var vis := region.intersection(Rect2(Vector2.ZERO, Vector2(_state.world_tiles)))
+	var vis := region.intersection(Rect2(world_rect))
 	if not vis.has_area():
 		return
 	# Floor the on-screen destination onto whole pixels (an odd panel size puts the view centre on
 	# a half-pixel); the scale is already exact from the ladder, so this keeps the blit crisp.
 	var dst := Rect2(((vis.position - region.position) / _tpp).floor(), (vis.size / _tpp).ceil())
-	draw_texture_rect_region(tex, dst, Rect2(vis.position / texel_tiles, vis.size / texel_tiles))
+	draw_texture_rect_region(tex, dst,
+			Rect2((vis.position - Vector2(world_rect.position)) / texel_tiles,
+			vis.size / texel_tiles))
 
 
 ## Largest authored wall zoom level not finer than the current zoom, so walls stay legible as they

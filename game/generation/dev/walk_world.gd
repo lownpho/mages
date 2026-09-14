@@ -68,6 +68,7 @@ func _start(new_seed: int) -> void:
 		_player.global_position = (Vector2(at[0].to_int(), at[1].to_int()) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 	_streamer.target = _player
 	_streamer.prepare()
+	GlobalMap.rebuild_finite(_streamer, _encounter_spawner.defeats.defeated)
 	var finished := Time.get_ticks_msec()
 	_build_timings = {"plan_ms": planned - started, "graphs_ms": graphed - planned,
 			"spawn_ms": finished - graphed, "total_ms": finished - started}
@@ -128,6 +129,7 @@ func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[S
 		_player.global_position = (Vector2(_nearest_floor(tile)) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 	_streamer.target = _player
 	_streamer.prepare()
+	GlobalMap.rebuild_finite(_streamer, _encounter_spawner.defeats.defeated, not new_run)
 
 
 ## Teleports to the requested tile when it is floor, otherwise to its nearest floor. Preparing the

@@ -14,6 +14,7 @@ extends Node
 signal map_changed   ## active MapState was (re)built or swapped — views re-bind on this
 signal pins_changed  ## a pin was dropped or removed, or a sign marked a boss — non-frame-driven views redraw, save persists
 signal boss_revealed(room_key: String)  ## an Object revealed a finite-World Boss Room for the first time this Run
+signal discovery_changed(entered_rooms: Dictionary) ## a finite-World Room was entered
 
 var active: MapState = null
 ## Finite-World Boss Room keys revealed this Run. The Room-key Map shows and saves them.
@@ -48,6 +49,28 @@ func rebuild(streamer: WorldStreamer) -> void:
 	map_changed.emit()
 
 
+## Point the Map at the finite generator while both generators coexist. preserve_records is used by
+## a debug knob rebuild: Room/Object keys follow place, so the same records remain meaningful.
+func rebuild_finite(streamer: ChunkStreamer, defeated_keys: Dictionary = {},
+		preserve_records := false) -> void:
+	var records := active.to_dict() if preserve_records and active != null \
+			and active.is_finite_world() else _pending_restore
+	_streamer = null
+	active = MapState.new()
+	active.setup_finite(streamer.graph, streamer.interiors, defeated_keys)
+	if not records.is_empty():
+		active.restore(records)
+	_pending_restore = {}
+	# A Sign can reveal through the global contract before the Map is built.
+	for room_key in revealed_boss_keys:
+		active.reveal_boss_room(room_key)
+	_player = get_tree().get_first_node_in_group("player")
+	_last_tile = Vector2i(-1, -1)
+	set_process(true)
+	map_changed.emit()
+	discovery_changed.emit(active.entered_rooms)
+
+
 ## Fog-of-war discovery is model logic, so it lives here (not in the minimap widget) — the map
 ## keeps filling in even while the minimap is hidden or the full map is open.
 func _process(_dt: float) -> void:
@@ -56,7 +79,16 @@ func _process(_dt: float) -> void:
 	var tile := Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor())
 	if tile != _last_tile:
 		_last_tile = tile
-		active.discover_at(tile)
+		discover_at(tile)
+
+
+## Public entry seam used by Warp arrivals as well as walking.
+func discover_at(tile: Vector2i) -> bool:
+	if active == null or not active.discover_at(tile):
+		return false
+	if active.is_finite_world():
+		discovery_changed.emit(active.entered_rooms)
+	return true
 
 
 ## Toggle a pin at a world tile: remove one already within `remove_radius_tiles`, else drop a new
@@ -82,8 +114,11 @@ func reveal_boss(origin_slot: Vector2i) -> void:
 func reveal_boss_room(room_key: String) -> void:
 	if room_key == "" or revealed_boss_keys.has(room_key):
 		return
+	if active != null and active.is_finite_world() and not active.reveal_boss_room(room_key):
+		return
 	revealed_boss_keys[room_key] = true
 	boss_revealed.emit(room_key)
+	pins_changed.emit()
 
 
 ## Minimal save payload for the whole map. Empty when no world is active yet.
@@ -97,6 +132,9 @@ func to_dict() -> Dictionary:
 ## and applies this then.
 func restore(dict: Dictionary) -> void:
 	_pending_restore = dict
+	revealed_boss_keys.clear()
+	for room_key in dict.get("revealed_bosses", []):
+		revealed_boss_keys[String(room_key)] = true
 
 
 ## Drop all discovered map state — a fresh run starts fully fogged.

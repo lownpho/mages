@@ -115,6 +115,9 @@ func _warp(body: Node2D, destination_room: String, landing: Vector2i) -> void:
 	if not is_instance_valid(body):
 		return
 	body.global_position = (Vector2(landing) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+	# Arrival is itself entry; record it synchronously instead of waiting for GlobalMap's next
+	# movement poll (which also makes a paused/debug-driven Warp discover the destination).
+	GlobalMap.discover_at(landing)
 	if streamer != null and streamer.graph != null and streamer.target != null:
 		streamer.prepare()
 	warped.emit(body, destination_room)
