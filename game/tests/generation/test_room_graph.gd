@@ -9,8 +9,8 @@ extends Node
 ##   godot --headless --path game res://tests/generation/test_room_graph.tscn
 
 const VARIATION_SEEDS := 12
-## Signs, Professors, Warp doors and landings stay at least two room sizes apart.
-const SITE_SPACING := 1.0
+## The share of two room sizes Signs, Professors, Warp doors and landings keep apart.
+const SITE_SPACING := SitePlanner.MIN_SPACING
 ## Samples per ring of a protected disc.
 const DISC_SAMPLES := 16
 

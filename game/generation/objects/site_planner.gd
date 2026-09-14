@@ -8,7 +8,8 @@ extends RefCounted
 ## landing in an ordinary Room there that isn't a Breather; landings leave roles alone and may share
 ## a Room. Every choice takes the first candidate in seeded order at least two room sizes from the
 ## sites placed so far, or the farthest when none is. A spreading pass then moves each site still
-## short of two room sizes to the candidate Room that keeps it farthest from the rest. Signs reveal
+## short of two room sizes to the candidate Room that keeps it farthest from the rest. The layout
+## stands when every pair keeps MIN_SPACING of two room sizes. Signs reveal
 ## the nearest planned Boss their enemy leads. Chance Breathers left without sites draw one Object by
 ## weight from their Biome's and Zone's choices, or stay empty when they have none.
 ##
@@ -17,6 +18,9 @@ extends RefCounted
 
 ## Tiles between two sites sharing a Room.
 const SHARED_ROOM_GAP := 6.0
+## The least share of two room sizes every pair of spaced sites must keep. Placement still aims for
+## the full two room sizes; near misses are accepted rather than failing the World.
+const MIN_SPACING := 0.8
 ## Passes of the spreading step.
 const SPREAD_PASSES := 4
 ## Only inverse-warp the most promising sampled points; ranking all of them in unwarped space is
@@ -313,7 +317,7 @@ func _spot_is_free(room: GeneratedRoom, spot: Vector2i, moving: ObjectSite) -> b
 func _layout_is_valid() -> bool:
 	for site in _spaced:
 		var room := graph.rooms[site.room_key]
-		if _ratio(site, site.spot, room) < 1.0:
+		if _ratio(site, site.spot, room) < MIN_SPACING:
 			return false
 		for other in room.sites:
 			if other != site and other.spot == site.spot:

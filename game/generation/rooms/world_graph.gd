@@ -16,6 +16,8 @@ extends RefCounted
 const WARP_SCALE := 48.0
 ## Past a set piece's disc, the warp regains full strength over this many tiles.
 const WARP_FALLOFF := 32.0
+## Seeds generate() tries in all before giving up.
+const SEED_ATTEMPTS := 32
 const _INVERSE_STEPS := 16
 ## Side of the square bins, in unwarped tiles, that list which Rooms may own a point.
 const _BIN := 8
@@ -63,6 +65,29 @@ var _bins_by_cell: Dictionary[Vector2i, Array] = {}
 ## macro cells to build first; any order gives the same graph.
 static func build(world_plan: WorldPlan, order: Array[Vector2i] = []) -> WorldGraph:
 	return _build(world_plan, order, null, {})
+
+
+## The World for a seed or, when that seed builds none, for the first seed that does in a fixed
+## sequence rolled from it: one seed always reaches the same World, and its plan.world_seed names
+## the seed that built. first_plan is the seed's plan when the caller already made it. null, with an
+## error, only when the content has problems or every attempt fails.
+static func generate(content: WorldContent, world_seed: int, first_plan: WorldPlan = null) -> WorldGraph:
+	if not content.is_valid():
+		push_error("can't generate a World from content with problems:\n" + content.report())
+		return null
+	var rng := RandomNumberGenerator.new()
+	rng.seed = world_seed
+	var attempt_seed := world_seed
+	for attempt in SEED_ATTEMPTS:
+		var world_plan := first_plan if attempt == 0 and first_plan != null else WorldPlanner.plan(content, attempt_seed)
+		var graph := build(world_plan)
+		if graph != null:
+			if attempt > 0:
+				push_warning("World seed %d built no World; seed %d did" % [world_seed, attempt_seed])
+			return graph
+		attempt_seed = maxi(rng.randi(), 1)
+	push_error("World seed %d: none of %d seeds built a World" % [world_seed, SEED_ATTEMPTS])
+	return null
 
 
 ## Rebuilds only macro-cell graphs belonging to `invalidated_biomes`. The World-level joins, roles
