@@ -2,7 +2,7 @@ class_name WorldDebugMap
 extends Control
 ## Complete graph map: independent of streaming and fog. Wheel zooms around the cursor, middle/right
 ## drag pans, hover reports the Room, and left click teleports to clear floor there. The tiles layer
-## builds the walls and rocks of Rooms in view a frame budget at a time, from its own interiors so it
+## builds the walls and rocks of every Room in view at once, from its own interiors so it
 ## never evicts what streaming built, and keeps each Room's baked texture until the graph changes.
 
 signal teleport_requested(tile: Vector2i)
@@ -27,8 +27,6 @@ const LIVE_LAYERS := ["player", "enemies", "chunks", "follow"]
 ## The tiles layer's colours, walls then rocks.
 const TILE_NAMES: Array[StringName] = [&"wall", &"rock"]
 const TILE_COLORS: Array[Color] = [Palette.SILVER, Palette.APRICOT]
-## Time a frame may spend building interiors for the tiles layer.
-const TILE_BUDGET_USEC := 6000
 
 var graph: WorldGraph
 ## Hovering a Room builds its encounters on demand to report their count.
@@ -70,7 +68,7 @@ func _process(_delta: float) -> void:
 	if overlays.get("follow", false) and is_instance_valid(player):
 		pan = player.global_position / GameConstants.PX_PER_TILE
 	if overlays.get("tiles", false):
-		build_tiles(Time.get_ticks_usec() + TILE_BUDGET_USEC)
+		build_tiles(WorldInteriors.NO_DEADLINE)
 	if LIVE_LAYERS.any(func(key: String) -> bool: return overlays.get(key, false)):
 		queue_redraw()
 

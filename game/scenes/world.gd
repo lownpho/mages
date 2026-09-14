@@ -24,12 +24,11 @@ const STARTER_POOL: Array[Resource] = [
 const STARTER_COUNT := 4
 
 ## How long Continue builds the discovered Rooms' interiors nearest the player behind the loading
-## frame: what the 2 s web startup budget leaves after planning and the spawn's chunks, a third of it
-## on desktop. The rest fill in as Map views draw them.
-const CONTINUE_INTERIORS_WEB_USEC := 450_000
-const CONTINUE_INTERIORS_DESKTOP_USEC := 150_000
+## frame: what the 2 s startup budget leaves after planning and the spawn's chunks. The rest fill in
+## as Map views draw them.
+const CONTINUE_INTERIORS_USEC := 450_000
 
-const FLY_SPEED := 480.0
+const FLY_SPEED := 240.0
 ## Camera zoom bounds while flying; the wheel halves or doubles it between them.
 const FLY_ZOOM_MIN := 0.25
 const FLY_ZOOM_MAX := 2.0
@@ -132,7 +131,7 @@ func _start(new_seed: int, planned: WorldGraph) -> void:
 	var streamed := Time.get_ticks_msec()
 	GlobalMap.rebuild(_streamer, _encounter_spawner.defeats.defeated)
 	GlobalMap.active.prepare_discovered(Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor()),
-			CONTINUE_INTERIORS_WEB_USEC if OS.has_feature("web") else CONTINUE_INTERIORS_DESKTOP_USEC)
+			CONTINUE_INTERIORS_USEC)
 	var mapped := Time.get_ticks_msec()
 	# Entering the World commits the Run to the save and arms autosave.
 	GameState.track_player(_player)

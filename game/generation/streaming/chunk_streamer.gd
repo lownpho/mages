@@ -23,11 +23,17 @@ extends Node2D
 signal chunk_loaded(coord: Vector2i)
 signal chunk_unloaded(coord: Vector2i)
 
-## Streaming work per frame, in usec, stopping short of the 2 ms web budget by the most one step of
-## work can run past its deadline. Desktop gets a third, matching the bench's headless threshold, as
-## desktop runs the same work about three times faster.
-const WEB_BUDGET_USEC := 1350
-const DESKTOP_BUDGET_USEC := 450
+## Streaming runs after every other _process and takes what the frame leaves before the display's next
+## refresh: the refresh interval, less the frame's work so far, less what drawing took lately, less
+## _MARGIN_USEC for a step running past its deadline and the work queued after _process. It never gets
+## less than MIN_BUDGET_USEC, the 2 ms budget short of the most one step runs past its deadline, so
+## chunks keep coming in frames already full, nor more than MAX_BUDGET_USEC.
+const MIN_BUDGET_USEC := 1350
+const MAX_BUDGET_USEC := 8000
+const _MARGIN_USEC := 1500
+## Recent gaps between frames kept; their lower quartile is the refresh interval, which neither a few
+## frames starting early nor dropped frames move.
+const _INTERVAL_FRAMES := 64
 const _MAX_LOADS_PER_FRAME := 1   ## smooth bursts; remaining chunks enter the tree next frame
 const _UNLOAD_MARGIN := 2         ## chunks; unload radius = load radius + this (hysteresis)
 ## Chunks of wall art streamed just outside the World so its edge never shows void.
@@ -49,7 +55,8 @@ var target: Node2D = null
 var graph: WorldGraph = null
 var interiors: WorldInteriors = null
 var presentation: WorldPresentation = null
-var frame_budget_usec := WEB_BUDGET_USEC if OS.has_feature("web") else DESKTOP_BUDGET_USEC
+## The budget streaming had in the last frame, in usec.
+var frame_budget_usec := MIN_BUDGET_USEC
 
 ## Pause or resume the per-frame loop; loaded chunks stay.
 var streaming := true:
@@ -89,6 +96,25 @@ var _wanted: Array[GeneratedRoom] = []
 var _room_bounds: Array[Rect2] = []
 ## The view around the target, without the prefetch, in tiles.
 var _view := Rect2()
+## When this frame's first physics step or process began, in usec; 0 once streaming has run.
+var _frame_started := 0
+var _last_frame_started := 0
+## The last _INTERVAL_FRAMES gaps between frames' starts, in usec, written around from _gap_next.
+var _frame_gaps := PackedInt32Array()
+var _gap_next := 0
+## A decaying maximum of the CPU time drawing a frame took, in usec.
+var _draw_usec := 0
+
+
+func _init() -> void:
+	# After every other _process, so the frame's work so far is known.
+	process_priority = 1000
+
+
+func _ready() -> void:
+	get_tree().physics_frame.connect(_on_frame_step)
+	get_tree().process_frame.connect(_on_frame_step)
+	RenderingServer.viewport_set_measure_render_time(get_viewport().get_viewport_rid(), true)
 
 
 ## Streams a new World, dropping every chunk, job and cache of the last.
@@ -206,7 +232,36 @@ func clear_caches() -> void:
 
 func _process(_delta: float) -> void:
 	if streaming and graph != null and target != null:
+		frame_budget_usec = _frame_budget()
 		_update_streaming(true)
+	_frame_started = 0
+
+
+func _on_frame_step() -> void:
+	if _frame_started != 0:
+		return
+	_frame_started = Time.get_ticks_usec()
+	if _last_frame_started != 0:
+		var gap := _frame_started - _last_frame_started
+		if _frame_gaps.size() < _INTERVAL_FRAMES:
+			_frame_gaps.append(gap)
+		else:
+			_frame_gaps[_gap_next] = gap
+			_gap_next = (_gap_next + 1) % _INTERVAL_FRAMES
+	_last_frame_started = _frame_started
+
+
+## What this frame leaves streaming before the next refresh, in usec.
+func _frame_budget() -> int:
+	var rid := get_viewport().get_viewport_rid()
+	var drawing := RenderingServer.viewport_get_measured_render_time_cpu(rid) + RenderingServer.get_frame_setup_time_cpu()
+	_draw_usec = maxi(_draw_usec - (_draw_usec >> 4), int(drawing * 1000.0))
+	if _frame_gaps.is_empty() or _frame_started == 0:
+		return MIN_BUDGET_USEC
+	var gaps := _frame_gaps.duplicate()
+	gaps.sort()
+	var left := gaps[gaps.size() >> 2] - (Time.get_ticks_usec() - _frame_started) - _draw_usec - _MARGIN_USEC
+	return clampi(left, MIN_BUDGET_USEC, MAX_BUDGET_USEC)
 
 
 func _update_streaming(budgeted: bool) -> void:

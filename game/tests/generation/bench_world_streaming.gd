@@ -1,17 +1,19 @@
 extends Node
 ## Streaming benchmark, outside the test suite: walks a target at the player's walking speed along
-## the shipped World's Ideal path, one simulated 60 fps frame per engine frame, with ChunkStreamer
-## following it under a 320x180 camera. It records the streaming work in every frame and whether any
-## chunk overlapping the view wasn't loaded yet. It fails when a frame's work passes the headless
-## desktop threshold, a third of the 2 ms web budget, or a chunk came into view unready. Run by hand,
-## alone:
-##   godot --headless --path game res://tests/generation/bench_world_streaming.tscn -- [seeds] [seconds per seed] [trace file]
+## the shipped World's Ideal path, one frame per real 60 fps frame, with ChunkStreamer following it
+## under a 320x180 camera. A load in ms stands in for the rest of the game: busy work at the start of
+## each frame's _process. It records each frame's work, from its start to the end of its last
+## _process, the streaming work and budget in it, and whether any chunk overlapping the view wasn't
+## loaded yet. It fails when a frame's work passes a 60 fps frame, or a chunk came into view unready.
+## Run by hand, alone:
+##   godot --headless --path game res://tests/generation/bench_world_streaming.tscn -- [seeds] [seconds per seed] [load ms] [trace file]
 ## A trace file gets a line per queued chunk's state change (C), per frame (F), per change to the
 ## lookahead's Rooms (A) and per chunk seen unready (UNREADY), read from ChunkStreamer's internals, so
 ## a late chunk can be followed back to what the queue was doing.
 
 const SHIPPED := "res://generation/world/"
-const THRESHOLD_USEC := 2000.0 / 3.0
+## A frame whose work passes this is dropped.
+const THRESHOLD_USEC := 1000000.0 / 60.0
 ## The player's base_speed, in pixels per second.
 const WALK_SPEED := 80.0
 const FRAME := 1.0 / 60.0
@@ -27,6 +29,13 @@ var _waypoints: Array[Vector2] = []
 var _next_waypoint := 0
 var _frame := 0
 var _work: Array[int] = []
+var _budgets: Array[int] = []
+var _frame_work: Array[int] = []
+var _load_usec := 0
+## When this frame's first physics step or process began, 0 once the frame's last _process ran, and
+## the last frame's work.
+var _frame_start := 0
+var _last_frame_work := 0
 ## Per frame, whether a chunk entered the tree.
 var _entered: Array[bool] = []
 var _unready: Dictionary[String, bool] = {}
@@ -47,12 +56,22 @@ func _ready() -> void:
 		_seeds = args[0].to_int()
 	if args.size() > 1 and args[1].is_valid_float():
 		_seconds = args[1].to_float()
-	if args.size() > 2:
-		_trace = FileAccess.open(args[2], FileAccess.WRITE)
-	# A headless run can't draw, so it sleeps between frames unless told not to.
-	Engine.max_fps = 0
+	for arg in args.slice(2):
+		if arg.is_valid_float():
+			_load_usec = int(arg.to_float() * 1000.0)
+		else:
+			_trace = FileAccess.open(arg, FileAccess.WRITE)
+	# A headless run can't draw, so it sleeps between frames unless told not to; frames keep to 60 fps.
+	Engine.max_fps = 60
 	OS.low_processor_usage_mode = false
 	OS.low_processor_usage_mode_sleep_usec = 0
+	get_tree().physics_frame.connect(_on_frame_step)
+	get_tree().process_frame.connect(_on_frame_step)
+	var frame_end := _FrameEnd.new()
+	frame_end.ended = func() -> void:
+		_last_frame_work = Time.get_ticks_usec() - _frame_start
+		_frame_start = 0
+	add_child(frame_end)
 	# The game's 320x180 view, whatever size the headless window reports.
 	get_window().size = Vector2i(1920, 1080)
 	process_priority = -100
@@ -61,9 +80,14 @@ func _ready() -> void:
 		print(_content.report())
 		get_tree().quit(1)
 		return
-	print("Streaming bench: %s, %d seeds, %.0f s walked each at %.0f px/s, Godot %s headless" % [SHIPPED, _seeds, _seconds,
-			WALK_SPEED, Engine.get_version_info().string])
+	print("Streaming bench: %s, %d seeds, %.0f s walked each at %.0f px/s, %.1f ms load, Godot %s headless" % [SHIPPED, _seeds,
+			_seconds, WALK_SPEED, _load_usec / 1000.0, Engine.get_version_info().string])
 	_start_seed()
+
+
+func _on_frame_step() -> void:
+	if _frame_start == 0:
+		_frame_start = Time.get_ticks_usec()
 
 
 func _start_seed() -> void:
@@ -104,12 +128,16 @@ func _start_seed() -> void:
 func _process(_delta: float) -> void:
 	if _streamer == null or _streamer.graph == null:
 		return
-	if _frame > 0:
+	# The frame after a seed's prepare() runs the physics steps it held up, which aren't streaming's.
+	if _frame > 1:
 		_work.append(_streamer.last_work_usec)
-		if _streamer.last_work_usec > THRESHOLD_USEC and _over_shown < 12:
+		_budgets.append(_streamer.frame_budget_usec)
+		_frame_work.append(_last_frame_work)
+		if _last_frame_work > THRESHOLD_USEC and _over_shown < 12:
 			_over_shown += 1
-			print("    frame %d over: %.3f ms = replan %d + free %d + queue %d + ahead %d usec" % ([_frame - 1,
-					_streamer.last_work_usec / 1000.0] + Array(_streamer.last_work_split)))
+			print("    frame %d over: %.3f ms, streaming %.3f ms of a %.3f ms budget = replan %d + free %d + queue %d + ahead %d usec" % (
+					[_frame - 1, _last_frame_work / 1000.0, _streamer.last_work_usec / 1000.0, _streamer.frame_budget_usec / 1000.0]
+					+ Array(_streamer.last_work_split)))
 		_entered.append(_loads != _loads_seen)
 		_check_view()
 		if _trace != null:
@@ -137,6 +165,8 @@ func _process(_delta: float) -> void:
 		else:
 			_target.global_position = _target.global_position.move_toward(to, step)
 			step = 0.0
+	while Time.get_ticks_usec() < _frame_start + _load_usec:
+		pass
 
 
 ## Every chunk overlapping the view around the target must be loaded.
@@ -234,16 +264,22 @@ func _tiles_state_of(coord: Vector2i) -> String:
 func _finish() -> void:
 	var sorted := _work.duplicate()
 	sorted.sort()
-	var over := sorted.filter(func(usec: int) -> bool: return usec > THRESHOLD_USEC).size()
+	var frames := _frame_work.duplicate()
+	frames.sort()
+	var budgets := _budgets.duplicate()
+	budgets.sort()
+	var over := frames.filter(func(usec: int) -> bool: return usec > THRESHOLD_USEC).size()
 	var over_entering := 0
-	for n in _work.size():
-		if _work[n] > THRESHOLD_USEC and _entered[n]:
+	for n in _frame_work.size():
+		if _frame_work[n] > THRESHOLD_USEC and _entered[n]:
 			over_entering += 1
 	var busy := sorted.filter(func(usec: int) -> bool: return usec > 0).size()
 	print("  %d frames, %.0f tiles walked, %d chunks loaded while walking, %d frames with work" % [_work.size(),
 			_walked / GameConstants.PX_PER_TILE, _loads, busy])
-	print("  work per frame: median %.3f ms, p95 %.3f ms, p99 %.3f ms, max %.3f ms (threshold %.3f ms)" % [
-			_at(sorted, 0.5), _at(sorted, 0.95), _at(sorted, 0.99), sorted[-1] / 1000.0, THRESHOLD_USEC / 1000.0])
+	print("  streaming per frame: median %.3f ms, p95 %.3f ms, p99 %.3f ms, max %.3f ms; budget min %.3f ms, median %.3f ms" % [
+			_at(sorted, 0.5), _at(sorted, 0.95), _at(sorted, 0.99), sorted[-1] / 1000.0, budgets[0] / 1000.0, _at(budgets, 0.5)])
+	print("  frame work: median %.3f ms, p99 %.3f ms, max %.3f ms (threshold %.3f ms)" % [_at(frames, 0.5), _at(frames, 0.99),
+			frames[-1] / 1000.0, THRESHOLD_USEC / 1000.0])
 	print("  frames over the threshold: %d (%d entering a chunk); chunks in view before they were ready: %d %s" % [over, over_entering,
 			_unready.size(), _unready.keys().slice(0, 5)])
 	var passed := over == 0 and _unready.is_empty() and not _work.is_empty()
@@ -257,3 +293,16 @@ static func _at(sorted: Array[int], share: float) -> float:
 
 static func _pixels(tile: Vector2i) -> Vector2:
 	return (Vector2(tile) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+
+
+## Runs after every other _process, ChunkStreamer's included, to end the frame's work.
+class _FrameEnd:
+	extends Node
+
+	var ended: Callable
+
+	func _init() -> void:
+		process_priority = 1 << 20
+
+	func _process(_delta: float) -> void:
+		ended.call()
