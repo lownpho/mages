@@ -294,6 +294,8 @@ func _test_decoration_independence(fixture: WorldFixture) -> void:
 
 
 func _test_development_runtime() -> void:
+	# Entering the World saves the Run; keep that off the player's save.
+	GameState.save_path = "user://test_encounters_save.cfg"
 	var world: Node = load("res://generation/dev/walk_world.tscn").instantiate()
 	world.world_seed = 7
 	add_child(world)
@@ -323,6 +325,7 @@ func _test_development_runtime() -> void:
 				"debug Map hover doesn't report %s's encounter count: %s" % [far.key(), layer._map.tooltip_text])
 	world.queue_free()
 	await get_tree().process_frame
+	DirAccess.remove_absolute(GameState.save_path)
 
 
 static func _room_snapshot(room_encounters: Array[GeneratedEncounter]) -> String:

@@ -34,7 +34,7 @@ var _was_paused := false
 var _map_fitted := false
 
 
-func configure(world_host: Node2D) -> void:
+func configure(world_host: Node2D, restore_loadout := true) -> void:
 	host = world_host
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	tuner.setup(host._content, host.world_seed, host._graph.plan, host._graph)
@@ -51,7 +51,8 @@ func configure(world_host: Node2D) -> void:
 		set_entered_rooms(GlobalMap.active.entered_rooms)
 	GlobalMap.discovery_changed.connect(set_entered_rooms)
 	_set_fly(bool(DebugState.get_value(SECTION, "fly", false)))
-	_restore_loadout()
+	if restore_loadout:
+		_restore_loadout()
 	GlobalEvent.slot_updated.connect(_on_slot_updated)
 
 

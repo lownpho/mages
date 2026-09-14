@@ -8,9 +8,12 @@ var _fails: Array[String] = []
 
 func _ready() -> void:
 	var started := Time.get_ticks_msec()
+	# Entering the World saves the Run; keep that off the player's save.
+	GameState.save_path = "user://test_world_debug_save.cfg"
 	_test_pending_revert_and_invalidation()
 	_test_save_roundtrip_before_rebuild()
 	await _test_integrated_controls()
+	DirAccess.remove_absolute(GameState.save_path)
 	print("world debug tests took %.1f s" % ((Time.get_ticks_msec() - started) / 1000.0))
 	if _fails.is_empty():
 		print("ALL PASS")

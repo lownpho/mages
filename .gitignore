@@ -1,6 +1,8 @@
 # Godot 4+ specific ignores
 .godot/
-addons/
+**/addons/*
+# Our own export plugin, unlike installed addons, is part of the project.
+!**/addons/app_version/
 /android/
 /build/
 

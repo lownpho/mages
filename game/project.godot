@@ -60,7 +60,7 @@ project/assembly_name="yarpg"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/app_version/plugin.cfg")
 
 [global_group]
 

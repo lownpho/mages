@@ -317,6 +317,16 @@ func macro_image(coord: Vector2i) -> MacroImage:
 	return cell
 
 
+## Builds what the discovered macro cells' images need, every entered Room's interior and the
+## outgoing stubs, so a Continue pays for it at startup rather than on the first Map draw.
+func prepare_discovered() -> void:
+	if graph == null:
+		return
+	for key in entered_rooms:
+		interiors.interior(graph.rooms[key])
+	_ensure_stubs()
+
+
 func built_macro_cells() -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
 	out.assign(_macro_images.keys())

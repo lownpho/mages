@@ -6,12 +6,17 @@ extends Node2D
 ## once the spawn has streamed in and quits; `at=x,y`
 ## starts at a tile instead of the spawn. Run:
 ##   godot --path game res://generation/dev/walk_world.tscn -- [seed=123] [at=40,20] [shot=/tmp/world.png]
+##
+## It is a Run like the normal World: entering it saves through GameState, and after
+## GameState.continue_game() it rebuilds the saved seed and restores the player, Map, defeats and
+## Object states before anything streams in.
 
-const CONTENT := "res://generation/world/"
 const PLAYER_SCENE := preload("res://characters/player/player.tscn")
 const FLY_SPEED := 480.0
 
 @export var world_seed := 0
+## The World content to plan. Tests walk the small fixture World.
+@export_dir var content_root := "res://generation/world/"
 
 var _content: WorldContent
 var _graph: WorldGraph
@@ -30,12 +35,18 @@ var _build_timings := {"plan_ms": 0.0, "graphs_ms": 0.0, "spawn_ms": 0.0, "total
 
 
 func _ready() -> void:
-	_content = ContentLoader.load_content(CONTENT)
+	_content = ContentLoader.load_content(content_root)
 	if not _content.is_valid():
 		push_error("World content has problems:\n" + _content.report())
 		return
+	var continuing := GameState.continuing_run()
 	var chosen := DebugState.cli_arg("seed")
-	_start(chosen.to_int() if chosen.is_valid_int() else world_seed if world_seed != 0 else randi())
+	if continuing:
+		_start(GameState.active_seed)
+	elif chosen.is_valid_int():
+		_start(chosen.to_int())
+	else:
+		_start(GameState.active_seed if GameState.active_seed != 0 else world_seed if world_seed != 0 else randi())
 	# Keep this a dynamic dependency: the Web export excludes debug/*, and the development entry can
 	# still be parsed/exported without pulling debug code into the package.
 	if OS.is_debug_build() and not OS.has_feature("web"):
@@ -43,9 +54,12 @@ func _ready() -> void:
 		if debug_script != null:
 			_debug_layer = debug_script.new()
 			add_child(_debug_layer)
-			_debug_layer.configure(self)
+			# A Continue'd Run keeps its own inventory rather than the debug loadout.
+			_debug_layer.configure(self, not continuing)
 
 
+## Builds the World for a seed. When a Continue is pending its records go in before anything
+## streams: defeats and Object states before their chunks spawn, the player at the saved spot.
 func _start(new_seed: int) -> void:
 	world_seed = new_seed
 	GameState.active_seed = new_seed
@@ -56,19 +70,37 @@ func _start(new_seed: int) -> void:
 	var graphed := Time.get_ticks_msec()
 	_streamer.build_world(_graph)
 	_encounters = WorldEncounters.new(_graph, _streamer.interiors)
-	_encounter_spawner.build_world(_encounters, RunDefeats.new())
-	_object_spawner.build_world(WorldObjects.new(_graph), true)
+	_encounter_spawner.build_world(_encounters, GameState.take_run_defeats())
+	_object_spawner.restore_states(GameState.take_object_states())
+	_object_spawner.build_world(WorldObjects.new(_graph))
 	if _player == null:
 		_player = PLAYER_SCENE.instantiate()
 		_entities.add_child(_player)
 		_player_collision_mask = _player.collision_mask
 	_player.global_position = _streamer.spawn_position()
+	if GameState.has_pending_position:
+		# Same-version development saves may predate a content edit, so a spot now in rock snaps to floor.
+		_player.global_position = GameState.pending_player_position
+		var saved_tile := Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor())
+		if _streamer.interiors.class_at(saved_tile) != WorldInteriors.FLOOR:
+			_player.global_position = (Vector2(_nearest_floor(saved_tile)) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+		GameState.has_pending_position = false
+	if GameState.pending_player_health > 0:
+		_player.health = mini(GameState.pending_player_health, _player.max_health)
+		GameState.pending_player_health = 0
+		GlobalEvent.player_health_changed.emit(_player.health)
 	var at := DebugState.cli_arg("at").split(",")
 	if at.size() == 2 and at[0].is_valid_int() and at[1].is_valid_int():
 		_player.global_position = (Vector2(at[0].to_int(), at[1].to_int()) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 	_streamer.target = _player
 	_streamer.prepare()
 	GlobalMap.rebuild_finite(_streamer, _encounter_spawner.defeats.defeated)
+	# A Continue pays for the discovered Rooms' interiors here, behind the loading frame.
+	GlobalMap.active.prepare_discovered()
+	# Entering the World commits the Run to the save and arms autosave.
+	GameState.track_player(_player)
+	GameState.track_world(_encounter_spawner, _object_spawner)
+	GameState.persist()
 	var finished := Time.get_ticks_msec()
 	_build_timings = {"plan_ms": planned - started, "graphs_ms": graphed - planned,
 			"spawn_ms": finished - graphed, "total_ms": finished - started}
@@ -107,6 +139,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			if _debug_layer != null:
 				_debug_layer._reseed(randi())
 			else:
+				GlobalMap.reset()
 				_start(randi())
 
 

@@ -61,7 +61,7 @@ func _gather_owned_icons() -> Array[Texture2D]:
 	if not GameState.has_save():
 		return icons
 	var cfg := ConfigFile.new()
-	if cfg.load(GameState.SAVE_PATH) != OK:
+	if cfg.load(GameState.save_path) != OK:
 		return icons
 	var keys: Array[String] = []
 	for i in range(GlobalInventory.SPELL_SLOTS):

@@ -62,8 +62,8 @@ func _writes_nothing() -> int:
 
 	# A run worth protecting: a save Continue would offer.
 	var planted := ConfigFile.new()
-	planted.set_value("world", "version", GameState.SAVE_VERSION)
-	planted.set_value("world", "seed", 4242)
+	planted.set_value("run", "version", GameState.app_version())
+	planted.set_value("run", "seed", 4242)
 	planted.save(GameState.SAVE_PATH)
 	var planted_bytes := FileAccess.get_file_as_bytes(GameState.SAVE_PATH)
 	fails += _expect("planted save is Continue-able", GameState.has_save())

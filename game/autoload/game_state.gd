@@ -1,30 +1,29 @@
 extends Node
 
-## Minimal run persistence: the title screen picks a world seed here, every scene
-## reads it back, and it survives between launches so "Continue" can resume the same
-## world. A world is a pure function of its seed (see worldgen), so the seed alone
-## restores the map; player position and inventory are saved alongside it so Continue
-## resumes where the player left off, not just the map they were in.
+## Run persistence: the title screen picks a world seed here, every scene reads it back, and the
+## Run survives between launches so "Continue" can resume the same World. The World is a pure
+## function of its seed within one version, so the save holds only what play changed: the seed,
+## play time, the player's position and health, the inventory, the Map's records, the Run's defeats
+## and the Objects' state. Everything generated is rebuilt from the seed on Continue, and every
+## other bit of player or runtime state (cooldowns, buffs, a hurt enemy, AI and loot rolls) starts
+## afresh. Death deletes the Run; the Bestiary and Grimoire keep their own files.
 
 const SAVE_PATH := "user://save.cfg"
 
-## Bumped when the save shape changes incompatibly (v1: the spell row plus a bag, in
-## place of the three switchable spell lines and their slot_* keys). An older save simply
-## reads as "nothing to continue" rather than being migrated — better than loading a run
-## back with an empty inventory because its keys no longer mean anything.
-const SAVE_VERSION := 1
-
-## The world is a pure function of (seed, gen_version, CONFIG_HASH); the same seed lays out
-## a different map once the generation code or config changes. We stamp the save with the
-## current world signature so Continue can tell whether a stored player position still lands
-## where it did — a mismatch means the layout moved under it, so the position is discarded
-## and the run respawns at the deterministic spawn instead of inside what is now a wall.
-const CONFIG_PATH := "res://world_content/gen_config.tres"
+## Written into every export by addons/app_version: the application version a save is stamped with.
+## A save from any other version reads as "nothing to continue" rather than being migrated, since its
+## seed would generate a different World. Runs from the editor have no such file and share "dev", so
+## development saves of an older shape load as best they can.
+const APP_VERSION_FILE := "res://app_version.txt"
+const DEV_VERSION := "dev"
 
 ## How often to resave the player's position while playing. Inventory changes persist
 ## immediately (they're user-driven and rare); position drifts every frame, so it's
 ## only snapshotted periodically instead of on every movement.
 const POSITION_SAVE_INTERVAL := 4.0
+
+## Where the Run is written. Tests point it elsewhere so they never touch a player's save.
+var save_path := SAVE_PATH
 
 ## The seed for this session's world. 0 = nothing chosen yet (editor-launched a game
 ## scene directly), so scenes fall back to their own default.
@@ -34,10 +33,12 @@ var active_seed := 0
 ## next to the player exactly once. Runtime-only (never saved); Continue leaves it false.
 var fresh_start := false
 
-## Position loaded from a Continue'd save, for world.gd to place the player at instead
-## of the deterministic spawn point. Only meaningful when set by continue_game().
+## Position and health loaded from a Continue'd save, for the World scene to place the player with
+## instead of the spawn and full health. Only meaningful when set by continue_game(); health 0 means
+## none was saved.
 var pending_player_position: Vector2 = Vector2.ZERO
 var has_pending_position := false
+var pending_player_health := 0
 
 ## True while a scene that is NOT a run is live — the tutorial. Everything that would touch the
 ## player's saved run checks it: the save file here, and the bestiary in its own autoload.
@@ -54,8 +55,14 @@ var run_save_eligible := true
 var run_save_disabled_reason := ""
 
 var _tracked_player: Node2D = null
+var _tracked_encounters: EncounterSpawner = null
+var _tracked_objects: ObjectSpawner = null
 var _save_timer: Timer
 var _suspend_autosave := false
+## A Continue'd Run's defeats (with its play time) and Object states, held from continue_game()
+## until the World scene rebuilding the saved seed takes them. Null when no Continue is pending.
+var _pending_defeats: RunDefeats = null
+var _pending_object_states: Dictionary = {}
 
 
 func _ready() -> void:
@@ -78,14 +85,17 @@ func _ready() -> void:
 			persist())
 
 
+## The version this build stamps saves with: the export's stamp, or DEV_VERSION outside an export.
+static func app_version() -> String:
+	if not FileAccess.file_exists(APP_VERSION_FILE):
+		return DEV_VERSION
+	var stamped := FileAccess.get_file_as_string(APP_VERSION_FILE).strip_edges()
+	return stamped if not stamped.is_empty() else DEV_VERSION
+
+
+## Whether there is a Run this version can Continue. A save from another version is invisible.
 func has_save() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
-		return false
-	# A save from an older shape is invisible: Continue never offers it.
-	var cfg := ConfigFile.new()
-	if cfg.load(SAVE_PATH) != OK:
-		return false
-	return int(cfg.get_value("world", "version", 1)) == SAVE_VERSION
+	return _load_save() != null
 
 
 ## Roll a fresh world in memory and start it in the glade. The save is written once the
@@ -98,7 +108,7 @@ func new_game() -> void:
 	if active_seed == 0:
 		active_seed = 1  # keep 0 reserved for "unset"
 	fresh_start = true
-	has_pending_position = false
+	_clear_pending()
 	# Fresh run: nothing carries over. The bestiary (its own autoload) is intentionally
 	# left alone so kill discoveries persist across runs.
 	GlobalMap.reset()
@@ -107,37 +117,55 @@ func new_game() -> void:
 	_suspend_autosave = false
 
 
-## Load the saved seed, position, and inventory into the session. Returns false if
-## there is nothing to continue.
+## Load the saved Run into the session, for the World scene to rebuild. Returns false if there is
+## nothing to continue.
 func continue_game() -> bool:
-	var cfg := ConfigFile.new()
-	if cfg.load(SAVE_PATH) != OK:
-		return false
-	if int(cfg.get_value("world", "version", 1)) != SAVE_VERSION:
+	var cfg := _load_save()
+	if cfg == null:
 		return false
 	run_save_eligible = true
 	run_save_disabled_reason = ""
-	active_seed = int(cfg.get_value("world", "seed", 0))
-	if active_seed == 0:
-		return false
+	fresh_start = false
+	_clear_pending()
+	active_seed = int(cfg.get_value("run", "seed", 0))
+	# A missing key (a position-less save) must NOT fall back to Vector2.ZERO — that drops the
+	# player at the world origin — so only a stored position is pending; otherwise the spawn.
+	has_pending_position = cfg.has_section_key("player", "position")
 	pending_player_position = cfg.get_value("player", "position", Vector2.ZERO)
-	# Only resume at the stored position when it's actually present AND was saved under the
-	# current world layout. A missing key (a position-less save) must NOT fall back to the
-	# Vector2.ZERO default — that drops the player at the world origin — and a stale signature
-	# means the same seed now lays out a different map. Either way, defer to the deterministic
-	# spawn (see world.gd, which also snaps a surviving position onto floor as a further guard).
-	var signature_ok: bool = cfg.get_value("world", "signature", "") == _world_signature()
-	has_pending_position = signature_ok and cfg.has_section_key("player", "position")
-	# The discovered map is slot coords into the layout, so it only means anything under the same
-	# signature; a diverged layout starts fully fogged rather than revealing the wrong rooms.
-	# GlobalMap stashes this until world_ready builds the state (Continue runs before the world).
-	if signature_ok:
-		GlobalMap.restore(cfg.get_value("map", "state", {}))
-	else:
-		GlobalMap.reset()
+	pending_player_health = int(cfg.get_value("player", "health", 0))
+	# The Map's records are Room keys and tiles of the same seed's World. GlobalMap stashes them
+	# until the World scene builds the Map (Continue runs on the title, before the World exists).
+	GlobalMap.restore(cfg.get_value("map", "state", {}))
+	_pending_defeats = RunDefeats.new()
+	_pending_defeats.play_time = float(cfg.get_value("run", "play_time", 0.0))
+	for key in cfg.get_value("defeats", "defeated", []):
+		_pending_defeats.defeated[String(key)] = true
+	var deaths: Dictionary = cfg.get_value("defeats", "deaths", {})
+	for key in deaths:
+		_pending_defeats.deaths[String(key)] = float(deaths[key])
+	_pending_object_states = cfg.get_value("objects", "states", {})
 	_load_inventory(cfg)
 	return true
 
+
+## True from continue_game() until the World scene takes the saved Run's records.
+func continuing_run() -> bool:
+	return _pending_defeats != null
+
+
+## The Run's defeats for the World being built: the Continue'd Run's, with its play time, else a
+## new Run's empty record. Offline time never counts, as play time resumes where it was saved.
+func take_run_defeats() -> RunDefeats:
+	var out := _pending_defeats if _pending_defeats != null else RunDefeats.new()
+	_pending_defeats = null
+	return out
+
+
+## The Continue'd Run's non-empty Object states, else none.
+func take_object_states() -> Dictionary:
+	var out := _pending_object_states
+	_pending_object_states = {}
+	return out
 
 
 ## Periodic position autosave. Once the run is left (Quit to title frees the world, so the
@@ -158,6 +186,12 @@ func track_player(player: Node2D) -> void:
 	_save_timer.start()
 
 
+## Called by the finite World scene so every save carries its defeats and Object states.
+func track_world(encounters: EncounterSpawner, objects: ObjectSpawner) -> void:
+	_tracked_encounters = encounters
+	_tracked_objects = objects
+
+
 ## True while a live run is in progress (a player is placed in the world). Loadout
 ## edits at the title — the Continue restore, new_game's reset — happen outside it.
 func in_run() -> bool:
@@ -169,12 +203,14 @@ func clear_save() -> void:
 	if sandbox:
 		return
 	active_seed = 0
-	has_pending_position = false
+	_clear_pending()
 	_tracked_player = null
+	_tracked_encounters = null
+	_tracked_objects = null
 	GlobalMap.reset()
 	_save_timer.stop()
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(SAVE_PATH)
+	if FileAccess.file_exists(save_path):
+		DirAccess.remove_absolute(save_path)
 
 
 ## The run ended (the player died): wipe the run — save and inventory — and return to
@@ -200,32 +236,50 @@ func can_save_run() -> bool:
 	return not sandbox and run_save_eligible
 
 
-## Persist the current run so "Continue" can resume it: seed, player position (if a
-## player is being tracked), and the full inventory. Called on world entry, on every
-## inventory change, and periodically while playing.
+## Persist the current run so "Continue" can resume it. Called on world entry, on every inventory
+## or Pin change, periodically while playing and on Quit. Every write passes through here, so a
+## sandbox or a debug-edited World writes nothing.
 func persist() -> void:
 	if not can_save_run():
 		return
 	var cfg := ConfigFile.new()
-	cfg.set_value("world", "version", SAVE_VERSION)
-	cfg.set_value("world", "seed", active_seed)
-	cfg.set_value("world", "signature", _world_signature())
+	cfg.set_value("run", "version", app_version())
+	cfg.set_value("run", "seed", active_seed)
 	cfg.set_value("map", "state", GlobalMap.to_dict())
 	if is_instance_valid(_tracked_player):
 		cfg.set_value("player", "position", _tracked_player.global_position)
+		cfg.set_value("player", "health", int(_tracked_player.get("health")))
+	if is_instance_valid(_tracked_encounters):
+		var defeats := _tracked_encounters.defeats
+		cfg.set_value("run", "play_time", defeats.play_time)
+		var defeated: Array[String] = []
+		defeated.assign(defeats.defeated.keys())
+		defeated.sort()
+		cfg.set_value("defeats", "defeated", defeated)
+		cfg.set_value("defeats", "deaths", defeats.deaths.duplicate())
+	if is_instance_valid(_tracked_objects):
+		cfg.set_value("objects", "states", _tracked_objects.saved_states())
 	_save_inventory(cfg)
-	cfg.save(SAVE_PATH)
+	cfg.save(save_path)
 
 
-## "gen_version:config_hash" for the authored world config — the identity of the current
-## map generator. Loading the resource is cheap (Godot caches it; the streamer loads the
-## same instance) and read-only. Empty string if the config can't be loaded, which simply
-## never matches a stored signature, so the position guard fails safe to a fresh spawn.
-func _world_signature() -> String:
-	var config: GenConfig = load(CONFIG_PATH)
-	if config == null:
-		return ""
-	return "%d:%d" % [config.gen_version, config.compute_hash()]
+## The save file when this version can Continue it, else null.
+func _load_save() -> ConfigFile:
+	if not FileAccess.file_exists(save_path):
+		return null
+	var cfg := ConfigFile.new()
+	if cfg.load(save_path) != OK:
+		return null
+	if String(cfg.get_value("run", "version", "")) != app_version() or int(cfg.get_value("run", "seed", 0)) == 0:
+		return null
+	return cfg
+
+
+func _clear_pending() -> void:
+	has_pending_position = false
+	pending_player_health = 0
+	_pending_defeats = null
+	_pending_object_states = {}
 
 
 func _save_inventory(cfg: ConfigFile) -> void:

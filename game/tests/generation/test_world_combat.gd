@@ -17,6 +17,8 @@ func _ready() -> void:
 	GlobalBestiary.restore({})
 	GameState.run_save_eligible = true
 	GameState.run_save_disabled_reason = ""
+	# Entering the World saves the Run; keep that off the player's save.
+	GameState.save_path = "user://test_world_combat_save.cfg"
 	var world: Node2D = load("res://generation/dev/walk_world.tscn").instantiate()
 	world.world_seed = 7
 	add_child(world)
@@ -36,6 +38,7 @@ func _ready() -> void:
 		_restore_state(section, debug_state[section])
 	GlobalBestiary.restore(real_bestiary)
 	GlobalBestiary._save()
+	DirAccess.remove_absolute(GameState.save_path)
 	if _fails.is_empty():
 		print("ALL PASS")
 		get_tree().quit(0)
