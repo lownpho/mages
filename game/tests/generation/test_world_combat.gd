@@ -19,7 +19,7 @@ func _ready() -> void:
 	GameState.run_save_disabled_reason = ""
 	# Entering the World saves the Run; keep that off the player's save.
 	GameState.save_path = "user://test_world_combat_save.cfg"
-	var world: Node2D = load("res://generation/dev/walk_world.tscn").instantiate()
+	var world: Node2D = load("res://scenes/world.tscn").instantiate()
 	world.world_seed = 7
 	add_child(world)
 	await get_tree().process_frame

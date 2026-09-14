@@ -1,7 +1,8 @@
 extends CanvasLayer
 ## Quake-style debug console, autoloaded in debug builds (self-frees in release exports).
 ## Toggle with ` (backtick) or F10. Works in any scene — the running game, the combat lab,
-## the worldgen debug views. Type `help` for the command list.
+## the worldgen debug views. Type `help` for the command list. Moving around the World, seeds
+## and loadouts belong to the World debug layer (Tab) instead.
 ##
 ## The console adapts to the window's content scaling: in the game (320x180 canvas_items
 ## stretch) it draws in game pixels; in the debug tools (scaling disabled) it scales itself
@@ -18,7 +19,8 @@ var _history: PackedStringArray = []
 var _history_pos := -1
 var _god := false
 var _show_states := false
-var _streamer: WorldStreamer = null
+## A reload that would discard unsaved knob edits waits for a second `reload` in a row.
+var _reload_armed := false
 
 
 func _ready() -> void:
@@ -31,7 +33,6 @@ func _ready() -> void:
 	# scenes: debug/* is excluded from exports, and a scene referencing an excluded
 	# resource fails to load entirely.
 	add_child(preload("res://debug/overlay/debug_overlay.tscn").instantiate())
-	GlobalEvent.world_ready.connect(func(s: WorldStreamer) -> void: _streamer = s)
 	_build_ui()
 	visible = false
 
@@ -125,15 +126,12 @@ func _run(line: String) -> void:
 	var parts := line.split(" ", false)
 	var cmd := parts[0].to_lower()
 	var args := parts.slice(1)
+	if cmd != "reload":
+		_reload_armed = false
 	match cmd:
 		"help":
 			_say("give/equip <item>  spawn <enemy> [n]  killall  clearenemies")
-			_say("tp <x> <y>  pos  god [on|off]  heal  seed [n]  reload  fps  states")
-			_say("warp <biome>  kit <biome>   (e.g. `kit glade` then `warp deepwood`)")
-		"warp":
-			_cmd_warp(args)
-		"kit":
-			_cmd_kit(args)
+			_say("god [on|off]  reload  fps  states   (Tab: World debug layer)")
 		"give":
 			_cmd_give(args, false)
 		"equip":
@@ -144,16 +142,8 @@ func _run(line: String) -> void:
 			_cmd_killall(true)
 		"clearenemies":
 			_cmd_killall(false)
-		"tp":
-			_cmd_tp(args)
-		"pos":
-			_cmd_pos()
 		"god":
 			_cmd_god(args)
-		"heal":
-			_cmd_heal()
-		"seed":
-			_cmd_seed(args)
 		"reload":
 			_cmd_reload()
 		"fps":
@@ -233,78 +223,6 @@ func _cmd_killall(kill: bool) -> void:
 	_say("%s %d enemies" % ["killed" if kill else "cleared", n])
 
 
-func _cmd_tp(args: PackedStringArray) -> void:
-	if args.size() < 2:
-		_say("usage: tp <tile x> <tile y>")
-		return
-	var p := _player()
-	if p == null:
-		_say("no player in scene")
-		return
-	p.global_position = (Vector2(args[0].to_int(), args[1].to_int()) + Vector2(0.5, 0.5)) \
-			* GameConstants.PX_PER_TILE
-	_say("teleported to tile %s,%s" % [args[0], args[1]])
-
-
-## Drop the player at another biome's spawn room, so content that sits several biomes in
-## can be playtested straight away. Streaming follows the player, so no walking needed.
-func _cmd_warp(args: PackedStringArray) -> void:
-	var p := _player()
-	if args.is_empty() or p == null or _streamer == null:
-		_say("usage: warp <biome id> — in a streamed world")
-		return
-	if _streamer.world_spec.placement_for(StringName(args[0])) == null:
-		_say("biome '%s' is not in this world" % args[0])
-		return
-	p.global_position = _streamer.find_spawn_position(StringName(args[0]))
-	p.grant_spawn_grace()
-	_say("warped to %s" % args[0])
-
-
-## Hand over everything a biome's enemies drop — highest tier per spell — so the biome after
-## it can be playtested without farming it first. Takes a bestiary page label (the biome id,
-## or its family where sub-biomes merge): `kit glade` is the whole glade reward pool.
-func _cmd_kit(args: PackedStringArray) -> void:
-	if args.is_empty():
-		_say("usage: kit <biome or family> — e.g. kit glade")
-		return
-	var best: Dictionary = {}   # spell family -> the highest tier of it that drops here
-	for page in GlobalBestiary.pages():
-		if String(page["biome"]) != args[0]:
-			continue
-		for id in page["ids"]:
-			for drop in GlobalBestiary.load_data(id).drops:
-				if drop.item == null:
-					continue
-				var fam := GlobalInventory.spell_family(drop.item)
-				var have: ItemResource = best.get(fam)
-				if have == null or have.resource_path < drop.item.resource_path:
-					best[fam] = drop.item
-	if best.is_empty():
-		_say("nothing drops in '%s'" % args[0])
-		return
-	# One tier per spell already, so can_equip has nothing to say.
-	var slots: Array = GlobalInventory.all_slots()
-	var families := best.keys()
-	families.sort()
-	var n := 0
-	for fam in families:
-		for slot in slots:
-			if slot.item == null and slot.set_item(best[fam]):
-				n += 1
-				break
-	_say("granted %d/%d %s spells" % [n, families.size(), args[0]])
-
-
-func _cmd_pos() -> void:
-	var p := _player()
-	if p == null:
-		_say("no player in scene")
-		return
-	var t: Vector2 = (p.global_position / GameConstants.PX_PER_TILE).floor()
-	_say("tile %d,%d   px %.0f,%.0f" % [int(t.x), int(t.y), p.global_position.x, p.global_position.y])
-
-
 func _cmd_god(args: PackedStringArray) -> void:
 	var p := _player()
 	if p == null or not p.has_method("grant_spawn_grace"):
@@ -313,24 +231,6 @@ func _cmd_god(args: PackedStringArray) -> void:
 	_god = args[0] == "on" if not args.is_empty() else not _god
 	p.grant_spawn_grace(1e9 if _god else 0.0)
 	_say("god %s" % ("on" if _god else "off"))
-
-
-func _cmd_heal() -> void:
-	var p := _player()
-	if p == null:
-		_say("no player in scene")
-		return
-	p.health = p.max_health
-	GlobalEvent.player_health_changed.emit(p.health)
-	_say("healed to %d" % p.health)
-
-
-func _cmd_seed(args: PackedStringArray) -> void:
-	if args.is_empty():
-		_say("active seed: %d" % GameState.active_seed)
-		return
-	GameState.active_seed = args[0].to_int()
-	_say("active seed set to %d (applies on next world load)" % GameState.active_seed)
 
 
 ## Live FSM state name floating over every enemy's head. Labels are parented to the
@@ -364,5 +264,26 @@ func _process(_delta: float) -> void:
 		lbl.text = e.fsm.current_state.name if e.fsm.current_state else "-"
 
 
+## Rereads slotted items and, in a World, its content, rebuilding the World at its seed. Unsaved
+## knob edits in the debug layer would be lost, so the first reload names their Biomes and a second
+## one in a row goes ahead.
 func _cmd_reload() -> void:
 	_say("reloaded %d slotted items from disk" % DebugContent.reload_slotted_items())
+	var world_debug := _world_debug_layer()
+	if world_debug == null:
+		_reload_armed = false
+		return
+	var unsaved: Array[StringName] = world_debug.tuner.unsaved_biomes()
+	if not unsaved.is_empty() and not _reload_armed:
+		_reload_armed = true
+		_say("unsaved knob edits in %s would be lost — reload again to discard them"
+				% ", ".join(unsaved.map(func(id: StringName) -> String: return String(id))))
+		return
+	_reload_armed = false
+	_say(world_debug.reload_content())
+
+
+func _world_debug_layer() -> Node:
+	var scene := get_tree().current_scene
+	var found: Node = scene.get("_debug_layer") if scene != null else null
+	return found if found != null and found.has_method("reload_content") else null

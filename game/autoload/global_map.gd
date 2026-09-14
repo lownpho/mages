@@ -21,6 +21,8 @@ var active: MapState = null
 var revealed_boss_keys: Dictionary[String, bool] = {}
 
 var _streamer: WorldStreamer = null
+## The finite World's streamer, which builds the interiors Map views drew without.
+var _chunk_streamer: ChunkStreamer = null
 var _player: Node2D = null
 var _last_tile := Vector2i(-1, -1)
 ## Discovered slots stashed by restore() before the world exists (Continue loads the save on the
@@ -56,6 +58,7 @@ func rebuild_finite(streamer: ChunkStreamer, defeated_keys: Dictionary = {},
 	var records := active.to_dict() if preserve_records and active != null \
 			and active.is_finite_world() else _pending_restore
 	_streamer = null
+	_chunk_streamer = streamer
 	active = MapState.new()
 	active.setup_finite(streamer.graph, streamer.interiors, defeated_keys)
 	if not records.is_empty():
@@ -74,6 +77,8 @@ func rebuild_finite(streamer: ChunkStreamer, defeated_keys: Dictionary = {},
 ## Fog-of-war discovery is model logic, so it lives here (not in the minimap widget) — the map
 ## keeps filling in even while the minimap is hidden or the full map is open.
 func _process(_dt: float) -> void:
+	if active != null and not active.wanted_interiors.is_empty() and is_instance_valid(_chunk_streamer):
+		_chunk_streamer.request_interiors(active.take_wanted_interiors())
 	if _player == null or not is_instance_valid(_player):
 		return
 	var tile := Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor())
@@ -140,6 +145,7 @@ func restore(dict: Dictionary) -> void:
 ## Drop all discovered map state — a fresh run starts fully fogged.
 func reset() -> void:
 	active = null
+	_chunk_streamer = null
 	revealed_boss_keys.clear()
 	_pending_restore = {}
 	_last_tile = Vector2i(-1, -1)

@@ -1,7 +1,13 @@
 class_name MapState
 extends RefCounted
 ## The Run's Map. The finite World records entered Room keys and renders one lazy image per macro
-## cell; the old generator adapter below remains until gameplay cuts over in ticket 11.
+## cell; the old generator adapter below remains until ticket 12 removes the old generator.
+##
+## A macro cell's image paints each entered Room from its interior's classes, with the stubs of its
+## Passages that lead into fog. A view never waits on an interior: a Room whose interior isn't built
+## yet stays out of the image, joins wanted_interiors for streaming to build with spare frame budget,
+## and appears on a later draw. Entering a Room redraws only the cells it and its Passage openings
+## reach.
 
 enum {
 	MARKER_BOSS,
@@ -14,7 +20,7 @@ enum {
 
 const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
 
-## Legacy room ids/scenes, kept only while the normal game still uses WorldStreamer.
+## Legacy room ids/scenes, kept only while the old generator exists.
 const BOSS_TYPES: Array[StringName] = [
 	&"glade_start_boss", &"glade_veggie_boss", &"deepwood_boss_gnarlking", &"mycelium_boss",
 ]
@@ -35,6 +41,8 @@ class MacroImage:
 	var floor_texture: ImageTexture
 	var wall_texture: ImageTexture
 	var wall_levels: Dictionary = {}
+	## Entered Rooms left out until their interior is built.
+	var pending: Array[GeneratedRoom] = []
 
 
 var world_seed := 0
@@ -46,8 +54,11 @@ var entered_rooms: Dictionary[String, bool] = {}
 var revealed_bosses: Dictionary[String, bool] = {}
 var pins: Array = [] # Vector2i World tiles; fog is deliberately allowed.
 var defeated_keys: Dictionary = {} # shared RunDefeats.defeated dictionary when running
+## Entered Rooms a view drew without their interiors, in request order. GlobalMap hands them to
+## streaming; take_wanted_interiors() empties it.
+var wanted_interiors: Array[GeneratedRoom] = []
 
-## Legacy save records retained until ticket 11 removes WorldStreamer.
+## Legacy save records retained until ticket 12 removes WorldStreamer.
 var discovered: Dictionary = {}
 var revealed: Array = []
 
@@ -66,8 +77,7 @@ var _wall_img: Image = null
 var _wall_levels: Dictionary = {}
 
 var _macro_images: Dictionary[Vector2i, MacroImage] = {}
-var _stub_tiles: Dictionary[Vector2i, String] = {}
-var _stubs_dirty := true
+var _wanted: Dictionary[int, bool] = {}
 var _scene_marker_kinds: Dictionary = {}
 var _macro_builds := 0
 
@@ -77,7 +87,7 @@ var markers: Array:
 		return _finite_markers() if graph != null else _legacy_markers
 
 
-## Legacy setup used by the normal game until cutover.
+## Legacy setup used by the old generator's scenes.
 func setup(streamer: WorldStreamer, zoom_levels: Array[int]) -> void:
 	_streamer = streamer
 	graph = null
@@ -128,8 +138,8 @@ func _clear_records() -> void:
 	pins.clear()
 	revealed.clear()
 	_boss_marked.clear()
-	_stub_tiles.clear()
-	_stubs_dirty = true
+	wanted_interiors.clear()
+	_wanted.clear()
 
 
 func is_finite_world() -> bool:
@@ -189,16 +199,18 @@ func _mark_legacy_boss(origin_slot: Vector2i, world_tile: Vector2i) -> bool:
 	return true
 
 
-## Enter the Room owning world_tile. For the finite World this records only its key; painting is
-## deferred until images_in()/macro_image() is called by a view.
+## Enter the Room owning world_tile. For the finite World this records only its key and forgets the
+## images it changes; painting is deferred until images_in()/macro_image() is called by a view.
 func discover_at(world_tile: Vector2i) -> bool:
 	if graph != null:
 		var room := graph.owner_at(world_tile)
 		if room == null or entered_rooms.has(room.key()):
 			return false
 		entered_rooms[room.key()] = true
-		_macro_images.clear()
-		_stubs_dirty = true
+		var reach := _room_reach(room)
+		for coord in _macro_images.keys():
+			if _macro_images[coord].rect.intersects(reach):
+				_macro_images.erase(coord)
 		return true
 	if _streamer == null:
 		return false
@@ -226,13 +238,7 @@ func discovered_bounds() -> Rect2i:
 		var room: GeneratedRoom = graph.rooms.get(key)
 		if room == null or room.polygon.is_empty():
 			continue
-		var low := Vector2(INF, INF)
-		var high := -low
-		for point in room.polygon:
-			low = low.min(point)
-			high = high.max(point)
-		var raw := Rect2i(Vector2i(low.floor()), Vector2i((high - low).ceil()) + Vector2i.ONE)
-		var bounds := raw.grow(ceili(graph.warp_bound(raw)) + 2)
+		var bounds := _room_rect(room)
 		out = bounds if first else out.merge(bounds)
 		first = false
 	return out
@@ -251,7 +257,7 @@ func is_tile_discovered(world_tile: Vector2i) -> bool:
 
 ## Build and return each macro-cell image intersecting region. Each item has world_rect,
 ## floor_texture, wall_texture and texel_tiles, which lets both views blit finite and legacy Maps
-## through one drawing path.
+## through one drawing path. Finite images never build interiors here: see wanted_interiors.
 func images_in(region: Rect2, wall_tpp: int) -> Array:
 	if graph == null:
 		if floor_texture == null:
@@ -269,47 +275,35 @@ func images_in(region: Rect2, wall_tpp: int) -> Array:
 			var coord := Vector2i(x, y)
 			if not graph.plan.cells.has(coord):
 				continue
-			var cell := macro_image(coord)
+			var cell := macro_image(coord, false)
 			out.append({"world_rect": cell.rect, "floor_texture": cell.floor_texture,
 					"wall_texture": _macro_wall_texture(cell, wall_tpp), "texel_tiles": wall_tpp})
 	return out
 
 
-## Public visual-check seam: a cell is absent until requested and built exactly once per discovery
-## revision. The Image fields let tests inspect semantic pixels without depending on rendering.
-func macro_image(coord: Vector2i) -> MacroImage:
+## Public visual-check seam: a cell is absent until requested and built once per change to what it
+## shows. With build_interiors it builds every entered Room's interior it needs at once; without, a
+## Room whose interior isn't cached is left out and added on a later request once it is.
+func macro_image(coord: Vector2i, build_interiors := true) -> MacroImage:
 	if graph == null or not graph.plan.cells.has(coord):
 		return null
-	if _macro_images.has(coord):
-		return _macro_images[coord]
-	_ensure_stubs()
-	var cell := MacroImage.new()
+	var cell: MacroImage = _macro_images.get(coord)
+	if cell != null:
+		if not cell.pending.is_empty():
+			_finish_pending(cell, build_interiors)
+		return cell
+	cell = MacroImage.new()
 	cell.coord = coord
 	cell.rect = Rect2i(coord * WorldPlan.CELL, Vector2i.ONE * WorldPlan.CELL)
 	cell.floor_image = Image.create_empty(WorldPlan.CELL, WorldPlan.CELL, false, Image.FORMAT_RGBA8)
 	cell.wall_image = Image.create_empty(WorldPlan.CELL, WorldPlan.CELL, false, Image.FORMAT_RGBA8)
-	var room_interiors: Dictionary[int, RoomInterior] = {}
-	for ly in WorldPlan.CELL:
-		for lx in WorldPlan.CELL:
-			var tile := cell.rect.position + Vector2i(lx, ly)
-			var room := graph.owner_at(tile)
-			var entered := room != null and entered_rooms.has(room.key())
-			var stub_room: GeneratedRoom = graph.rooms.get(_stub_tiles.get(tile, ""))
-			if not entered and stub_room == null:
-				continue
-			# A stub borrows the entered side's presentation, so it gives direction without leaking
-			# the fogged destination's Biome colour.
-			var color_room: GeneratedRoom = room if entered else stub_room
-			var presentation := _finite_presentation(color_room)
-			if presentation == null:
-				continue
-			cell.floor_image.set_pixel(lx, ly, presentation.map_floor_color)
-			if entered:
-				if not room_interiors.has(room.index):
-					room_interiors[room.index] = interiors.interior(room)
-				var cls := room_interiors[room.index].class_at(tile)
-				if cls == WorldInteriors.WALL or cls == WorldInteriors.ROCK:
-					cell.wall_image.set_pixel(lx, ly, presentation.map_wall_color)
+	for room in _entered_rooms_reaching(cell.rect):
+		var interior := interiors.interior(room) if build_interiors else interiors.cached(room)
+		if interior != null:
+			_paint_room(cell, interior)
+		else:
+			cell.pending.append(room)
+			_want(room)
 	cell.floor_texture = ImageTexture.create_from_image(cell.floor_image)
 	cell.wall_texture = ImageTexture.create_from_image(cell.wall_image)
 	_macro_images[coord] = cell
@@ -317,14 +311,31 @@ func macro_image(coord: Vector2i) -> MacroImage:
 	return cell
 
 
-## Builds what the discovered macro cells' images need, every entered Room's interior and the
-## outgoing stubs, so a Continue pays for it at startup rather than on the first Map draw.
-func prepare_discovered() -> void:
+## Builds what a Continue shows first within budget_usec: entered Rooms' interiors, nearest the
+## player's tile first. Rooms left over are built as the Map asks for them.
+func prepare_discovered(near_tile: Vector2i, budget_usec: int) -> void:
 	if graph == null:
 		return
+	var deadline := Time.get_ticks_usec() + budget_usec
+	var keys := PackedInt64Array()
 	for key in entered_rooms:
-		interiors.interior(graph.rooms[key])
-	_ensure_stubs()
+		var room: GeneratedRoom = graph.rooms[key]
+		keys.append((int(room.seed.distance_squared_to(near_tile)) << 20) | room.index)
+	keys.sort()
+	for sort_key in keys:
+		if Time.get_ticks_usec() >= deadline:
+			break
+		var build := interiors.building(graph.room_list[sort_key & 0xFFFFF])
+		if build.step(deadline):
+			interiors.finish(build)
+
+
+## The entered Rooms views drew without interiors since the last call, for streaming to build.
+func take_wanted_interiors() -> Array[GeneratedRoom]:
+	var out := wanted_interiors
+	wanted_interiors = []
+	_wanted.clear()
+	return out
 
 
 func built_macro_cells() -> Array[Vector2i]:
@@ -337,20 +348,95 @@ func macro_build_count() -> int:
 	return _macro_builds
 
 
-func _ensure_stubs() -> void:
-	if not _stubs_dirty:
+func _want(room: GeneratedRoom) -> void:
+	if not _wanted.has(room.index):
+		_wanted[room.index] = true
+		wanted_interiors.append(room)
+
+
+func _finish_pending(cell: MacroImage, build_interiors: bool) -> void:
+	var waiting: Array[GeneratedRoom] = []
+	for room in cell.pending:
+		var interior := interiors.interior(room) if build_interiors else interiors.cached(room)
+		if interior != null:
+			_paint_room(cell, interior)
+		else:
+			waiting.append(room)
+			_want(room)
+	if waiting.size() == cell.pending.size():
 		return
-	_stub_tiles.clear()
-	for key in entered_rooms:
-		var room: GeneratedRoom = graph.rooms.get(key)
-		if room == null:
+	cell.pending = waiting
+	cell.floor_texture.update(cell.floor_image)
+	cell.wall_texture.update(cell.wall_image)
+	cell.wall_levels.clear()
+
+
+## Entered Rooms whose tiles or Passage openings reach a cell. A Room belongs to one macro cell but
+## its warped border may reach into the neighbours.
+func _entered_rooms_reaching(rect: Rect2i) -> Array[GeneratedRoom]:
+	var out: Array[GeneratedRoom] = []
+	var coord := rect.position / WorldPlan.CELL
+	for y in range(coord.y - 1, coord.y + 2):
+		for x in range(coord.x - 1, coord.x + 2):
+			var macro: MacroCellGraph = graph.cells.get(Vector2i(x, y))
+			if macro == null:
+				continue
+			for room in macro.rooms:
+				if entered_rooms.has(room.key()) and _room_reach(room).intersects(rect):
+					out.append(room)
+	return out
+
+
+## Paints a Room's floor, walls and rocks, then the stubs its Passage openings put in fogged Rooms.
+## The interior built those openings already, so the stubs cost only their tiles.
+func _paint_room(cell: MacroImage, interior: RoomInterior) -> void:
+	var room := interior.room
+	var presentation := _finite_presentation(room)
+	if presentation == null:
+		return
+	var floor_color := presentation.map_floor_color
+	var wall_color := presentation.map_wall_color
+	var area := interior.rect.intersection(cell.rect)
+	var classes := interior.classes
+	var width := interior.rect.size.x
+	for y in range(area.position.y, area.end.y):
+		var row := (y - interior.rect.position.y) * width - interior.rect.position.x
+		var ly := y - cell.rect.position.y
+		for x in range(area.position.x, area.end.x):
+			var cls := classes[row + x]
+			if cls == RoomInterior.OUTSIDE:
+				continue
+			cell.floor_image.set_pixel(x - cell.rect.position.x, ly, floor_color)
+			if cls != RoomInterior.FLOOR:
+				cell.wall_image.set_pixel(x - cell.rect.position.x, ly, wall_color)
+	for passage in room.passages:
+		if not WorldInteriors.opening_bounds(passage).intersects(cell.rect):
 			continue
-		for passage in room.passages:
-			for tile: Vector2i in interiors.opening(passage):
-				var owner := graph.owner_at(tile)
-				if owner != null and owner.key() != room.key() and not entered_rooms.has(owner.key()):
-					_stub_tiles[tile] = room.key()
-	_stubs_dirty = false
+		for tile: Vector2i in interiors.opening(passage):
+			if not cell.rect.has_point(tile):
+				continue
+			var owner := interiors.owner_at(tile)
+			if owner != null and owner != room and not entered_rooms.has(owner.key()):
+				cell.floor_image.set_pixelv(tile - cell.rect.position, floor_color)
+
+
+## Everything a Room can own, as RoomInterior bounds it.
+func _room_rect(room: GeneratedRoom) -> Rect2i:
+	var low := Vector2(INF, INF)
+	var high := -low
+	for point in room.polygon:
+		low = low.min(point)
+		high = high.max(point)
+	var raw := Rect2i(Vector2i(low.floor()), Vector2i((high - low).ceil()) + Vector2i.ONE)
+	return raw.grow(ceili(graph.warp_bound(raw)) + 2)
+
+
+## A Room's bounds with its Passage openings, which reach into the neighbours.
+func _room_reach(room: GeneratedRoom) -> Rect2i:
+	var reach := _room_rect(room)
+	for passage in room.passages:
+		reach = reach.merge(WorldInteriors.opening_bounds(passage))
+	return reach
 
 
 func _macro_wall_texture(cell: MacroImage, tpp: int) -> ImageTexture:
@@ -360,21 +446,24 @@ func _macro_wall_texture(cell: MacroImage, tpp: int) -> ImageTexture:
 		return cell.wall_levels[tpp]
 	var size := Vector2i(_ceil_div(cell.rect.size.x, tpp), _ceil_div(cell.rect.size.y, tpp))
 	var image := Image.create_empty(size.x, size.y, false, Image.FORMAT_RGBA8)
+	var floors := cell.floor_image.get_data()
+	var walls := cell.wall_image.get_data()
+	var width := cell.rect.size.x
 	for by in size.y:
 		for bx in size.x:
 			var known := 0
-			var walls := 0
-			var wall_color := Color.TRANSPARENT
+			var wall_count := 0
+			var wall_at := -1
 			for y in range(by * tpp, mini((by + 1) * tpp, cell.rect.size.y)):
-				for x in range(bx * tpp, mini((bx + 1) * tpp, cell.rect.size.x)):
-					if cell.floor_image.get_pixel(x, y).a > 0.0:
+				for x in range(bx * tpp, mini((bx + 1) * tpp, width)):
+					var alpha := (y * width + x) * 4 + 3
+					if floors[alpha] > 0:
 						known += 1
-						var color := cell.wall_image.get_pixel(x, y)
-						if color.a > 0.0:
-							walls += 1
-							wall_color = color
-			if known > 0 and walls * 2 >= known:
-				image.set_pixel(bx, by, wall_color)
+						if walls[alpha] > 0:
+							wall_count += 1
+							wall_at = alpha - 3
+			if known > 0 and wall_count * 2 >= known:
+				image.set_pixel(bx, by, Color8(walls[wall_at], walls[wall_at + 1], walls[wall_at + 2], walls[wall_at + 3]))
 	var texture := ImageTexture.create_from_image(image)
 	cell.wall_levels[tpp] = texture
 	return texture
@@ -443,7 +532,6 @@ func restore(dict: Dictionary) -> void:
 		for key in dict.get("revealed_bosses", []):
 			reveal_boss_room(String(key))
 		_macro_images.clear()
-		_stubs_dirty = true
 		return
 	var ss: int = _streamer.config.room_slot_tiles
 	for slot in dict.get("discovered", []):

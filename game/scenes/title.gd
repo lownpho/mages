@@ -1,9 +1,10 @@
 extends Control
 
-## The startup screen. New (roll a fresh world and start in the glade with starter gear),
-## Continue (resume the saved seed), Tutorial and Quit. New/Continue open the streamed world;
-## Continue is disabled until a save exists. Tutorial opens the hand-laid floor instead, which
-## rolls its own run only if the player walks out its exit.
+## The startup screen. New (start a Run in the World the backdrop shows, with starter gear),
+## Continue (resume the saved Run), Tutorial and Quit. New/Continue open the World; Continue is
+## disabled until this version has a save to resume. Tutorial opens the hand-laid floor instead,
+## which starts its own Run only if the player walks out its exit. A `-- seed=123` launch skips the
+## title once and starts a new Run at that seed.
 
 @export var new_game_scene: PackedScene
 @export var continue_scene: PackedScene
@@ -15,6 +16,7 @@ extends Control
 @onready var _quit_btn: Button = %QuitButton
 @onready var _bg: ColorRect = $Bg
 @onready var _title_label: Label = $TitleLabel
+@onready var _backdrop: CanvasLayer = $TitleBackdrop
 
 # Not opaque any more: the generated backdrop lives on a canvas layer behind this, and Bg is the
 # scrim that keeps grey-on-green menu text readable over whatever the generator rolled.
@@ -26,6 +28,12 @@ var _icon_popup: PanelContainer = null
 
 
 func _ready() -> void:
+	var cli_seed := GameState.take_cli_seed()
+	if cli_seed != 0:
+		GameState.new_game(cli_seed)
+		SceneManager.go_to(new_game_scene)
+		return
+
 	_bg.color = COLOR_BG
 	_title_label.add_theme_color_override("font_color", COLOR_TITLE)
 
@@ -107,8 +115,9 @@ func _hide_icon_popup() -> void:
 		_icon_popup = null
 
 
+## New starts in the backdrop's World when it has finished planning; before that the World plans its own.
 func _on_new() -> void:
-	GameState.new_game()
+	GameState.new_game(0, _backdrop.graph)
 	SceneManager.go_to(new_game_scene)
 
 

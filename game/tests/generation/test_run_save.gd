@@ -67,7 +67,7 @@ func _check(condition: bool, message: String) -> void:
 
 ## Enters the development World on the small fixture, as the title's New or Continue would.
 func _enter() -> Node2D:
-	var world: Node2D = load("res://generation/dev/walk_world.tscn").instantiate()
+	var world: Node2D = load("res://scenes/world.tscn").instantiate()
 	world.content_root = WorldFixture.SMALL
 	add_child(world)
 	await get_tree().process_frame

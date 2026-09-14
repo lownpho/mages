@@ -63,6 +63,9 @@ var _suspend_autosave := false
 ## until the World scene rebuilding the saved seed takes them. Null when no Continue is pending.
 var _pending_defeats: RunDefeats = null
 var _pending_object_states: Dictionary = {}
+## The World New was started in, already planned by the title backdrop, until world.gd takes it.
+var _planned_world: WorldGraph = null
+var _cli_seed_taken := false
 
 
 func _ready() -> void:
@@ -98,17 +101,19 @@ func has_save() -> bool:
 	return _load_save() != null
 
 
-## Roll a fresh world in memory and start it in the glade. The save is written once the
-## world scene loads (world.gd calls persist()); fresh_start flags that first entry so the
-## player is handed a starter weapon and heal.
-func new_game() -> void:
+## Start a fresh Run in memory: in an already planned World when given one (the title backdrop's),
+## else at world_seed, else at a rolled seed. The save is written once the World scene loads
+## (world.gd calls persist()); fresh_start flags that first entry so the player is handed a
+## starter hand.
+func new_game(world_seed := 0, planned: WorldGraph = null) -> void:
 	run_save_eligible = true
 	run_save_disabled_reason = ""
-	active_seed = randi()
-	if active_seed == 0:
-		active_seed = 1  # keep 0 reserved for "unset"
 	fresh_start = true
 	_clear_pending()
+	if planned != null:
+		world_seed = planned.plan.world_seed
+		_planned_world = planned
+	active_seed = world_seed if world_seed != 0 else maxi(randi(), 1)  # keep 0 reserved for "unset"
 	# Fresh run: nothing carries over. The bestiary (its own autoload) is intentionally
 	# left alone so kill discoveries persist across runs.
 	GlobalMap.reset()
@@ -166,6 +171,25 @@ func take_object_states() -> Dictionary:
 	var out := _pending_object_states
 	_pending_object_states = {}
 	return out
+
+
+## The already planned World new_game() was given, once; null when the World must plan its own.
+func take_planned_world() -> WorldGraph:
+	var out := _planned_world
+	_planned_world = null
+	return out
+
+
+## A seed given on the command line (`-- seed=123`), once per launch so returning to the title
+## doesn't start another Run; 0 when none was given or it was already taken.
+func take_cli_seed() -> int:
+	if _cli_seed_taken:
+		return 0
+	_cli_seed_taken = true
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("seed=") and arg.trim_prefix("seed=").is_valid_int():
+			return arg.trim_prefix("seed=").to_int()
+	return 0
 
 
 ## Periodic position autosave. Once the run is left (Quit to title frees the world, so the
@@ -280,6 +304,7 @@ func _clear_pending() -> void:
 	pending_player_health = 0
 	_pending_defeats = null
 	_pending_object_states = {}
+	_planned_world = null
 
 
 func _save_inventory(cfg: ConfigFile) -> void:

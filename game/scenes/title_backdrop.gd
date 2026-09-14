@@ -1,20 +1,28 @@
 extends CanvasLayer
 
-## The title screen's living backdrop: a real world, built by the real generator from a fresh seed
-## each visit, drifting slowly over the room the player would spawn into.
+## The title screen's living backdrop: the real finite World, planned from a fresh seed each visit,
+## drifting slowly over the spawn Room. It stays hidden until the plan and the spawn's chunks are
+## ready and then fades in; the menu draws its first frame before planning holds the main thread.
+## New starts the Run in this very World by reusing `graph`.
 ##
-## Deliberately INERT. What turns a generated world into a *run* is world.gd, not the streamer: it
-## emits world_ready and calls GameState.persist(). Neither happens here. There is no
-## EntitySpawner either, so nothing spawns, nothing fights, and no save file is touched. The
-## seed is local — GameState.active_seed
-## still belongs to the run, so what you see here is never the world New or Continue gives you.
+## Deliberately INERT. What turns a World into a Run is world.gd: its spawners, GlobalMap and
+## GameState's saves. None of them are here, so nothing spawns, nothing fights and no save file is
+## touched. The seed is local; GameState.active_seed belongs to the Run until New takes this plan.
 
-## Radius of the drift, in px. Small on purpose: it has to stay inside the spawn room rather than
-## wander into the void past the world's finite edge.
+## The World is planned and fading in.
+signal planned
+
+const CONTENT := "res://generation/world/"
+## Radius of the drift, in px. Small on purpose: it has to stay inside the spawn Room.
 const DRIFT_RADIUS := 32.0
 const DRIFT_SECONDS := 60.0  ## one circuit; slow enough to read as ambient rather than as motion
+const FADE_SECONDS := 0.5
 
-@onready var _streamer: WorldStreamer = %Streamer
+## The planned World, for New to reuse; null until planned.
+var graph: WorldGraph = null
+
+@onready var _world: Node2D = $World
+@onready var _streamer: ChunkStreamer = %Streamer
 @onready var _eye: Node2D = %Eye
 
 var _center := Vector2.ZERO
@@ -22,10 +30,31 @@ var _elapsed := 0.0
 
 
 func _ready() -> void:
-	_streamer.build_world(randi())
-	_center = _streamer.find_spawn_position()
+	_world.modulate.a = 0.0
+	set_process(false)
+	# Next frame, once the menu has drawn. The connection goes with this node if the title is left first.
+	get_tree().process_frame.connect(_plan, CONNECT_ONE_SHOT)
+
+
+func _plan() -> void:
+	# The title was left before its first frame (New pressed at once, or a `-- seed=` launch).
+	if not is_inside_tree():
+		return
+	var content := ContentLoader.load_content(CONTENT)
+	if not content.is_valid():
+		push_error("World content has problems:\n" + content.report())
+		return
+	graph = WorldGraph.generate(content, maxi(randi(), 1))
+	if graph == null:
+		return
+	_streamer.build_world(graph)
+	_center = _streamer.spawn_position()
 	_streamer.target = _eye
 	_drift(0.0)
+	_streamer.prepare()
+	set_process(true)
+	create_tween().tween_property(_world, "modulate:a", 1.0, FADE_SECONDS)
+	planned.emit()
 
 
 func _process(delta: float) -> void:

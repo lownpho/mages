@@ -342,6 +342,30 @@ func _reseed(seed_value: int) -> void:
 	_refresh_controls()
 
 
+## Rereads the World content from disk and rebuilds the World at its seed, keeping the Run's records
+## as keys follow place. Pending and unsaved knob and radius edits are discarded; the console warns
+## first. Returns what happened, for the console.
+func reload_content() -> String:
+	var content := ContentLoader.load_content(host.content_root, true)
+	if not content.is_valid():
+		return "World content has problems; kept the current World:\n" + content.report()
+	var next_plan := WorldPlanner.plan(content, host.world_seed)
+	var next_graph := WorldGraph.build(next_plan)
+	if next_graph == null:
+		return "reloaded content built no World; kept the current one"
+	host._content = content
+	tuner.setup(content, host.world_seed, next_plan, next_graph)
+	if not content_has_biome(selected_biome):
+		selected_biome = &""
+	var every_biome: Dictionary[StringName, bool] = {}
+	for biome_id in content.biome_ids():
+		every_biome[biome_id] = true
+	host._apply_debug_graph(next_graph, every_biome, true, false)
+	_refresh_graph()
+	_refresh_controls()
+	return "reloaded World content and rebuilt seed %d" % host.world_seed
+
+
 func _save_knobs() -> void:
 	var errors := tuner.save_changed()
 	_refresh_controls()

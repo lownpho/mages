@@ -88,12 +88,13 @@ func _test_console() -> void:
 	if console == null:
 		return
 	# Commands that need no player must not error and must answer something.
-	for cmd in ["help", "fps", "seed", "unknowncmd"]:
+	for cmd in ["help", "fps", "unknowncmd"]:
 		console._run(cmd)
 	_check(not console._lines.is_empty(), "console produced output")
-	console._run("seed 424242")
-	_check(GameState.active_seed == 424242, "console seed command sets GameState")
-	GameState.active_seed = 0
+	# Movement, seeds and loadouts moved to the World debug layer.
+	for cmd in ["warp", "tp", "pos", "heal", "seed", "kit"]:
+		console._run(cmd)
+		_check(String(console._lines[-1]).begins_with("unknown command"), "console still answers %s" % cmd)
 
 
 func _test_combat_lab() -> void:

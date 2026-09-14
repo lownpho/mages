@@ -174,7 +174,7 @@ func _test_integrated_controls() -> void:
 	var previous_state := _snapshot_state("world_debug")
 	GameState.run_save_eligible = true
 	GameState.run_save_disabled_reason = ""
-	var world: Node2D = load("res://generation/dev/walk_world.tscn").instantiate()
+	var world: Node2D = load("res://scenes/world.tscn").instantiate()
 	world.world_seed = 7
 	add_child(world)
 	await get_tree().process_frame

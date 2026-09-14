@@ -25,6 +25,8 @@ const CURVE_FILE := "challenge_curve.tres"
 const BIOME_FILE := "biome.tres"
 
 var _content := WorldContent.new()
+## Load files from disk again rather than from the resource cache.
+var _reread := false
 ## File path -> its text layout, for line numbers.
 var _indexes: Dictionary[String, TresIndex] = {}
 var _reported: Dictionary[String, bool] = {}
@@ -35,8 +37,11 @@ var _zone_files: Dictionary[StringName, int] = {}
 var _missing_reference := RegEx.create_from_string("referenced non-existent resource at: (.+?)\\.?$")
 
 
-static func load_content(root: String) -> WorldContent:
+## reread loads the content files again from disk instead of reusing cached resources, as the
+## debug reload does after they were edited.
+static func load_content(root: String, reread := false) -> WorldContent:
 	var loader := ContentLoader.new()
+	loader._reread = reread
 	loader._run(root)
 	return loader._content
 
@@ -124,7 +129,8 @@ func _load(path: String, type: Script) -> Resource:
 		_add(path, 0, "missing: expected a %s" % type.get_global_name())
 		_incomplete = true
 		return null
-	var resource := ResourceLoader.load(path)
+	var resource := ResourceLoader.load(path, "",
+			ResourceLoader.CACHE_MODE_REPLACE if _reread else ResourceLoader.CACHE_MODE_REUSE)
 	_index(path)
 	if resource == null:
 		_incomplete = true

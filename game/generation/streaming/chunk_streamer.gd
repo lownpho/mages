@@ -80,6 +80,8 @@ var _layer_waiting := false
 ## Rooms whose interiors are built ahead, nearest the target first, and the next to look at.
 var _ahead: Array[GeneratedRoom] = []
 var _ahead_next := 0
+## Rooms request_interiors() asked for, built after the lookahead.
+var _wanted: Array[GeneratedRoom] = []
 ## Each Room's unwarped cell bounds, grown by the most the warp moves a tile, by room index.
 var _room_bounds: Array[Rect2] = []
 
@@ -114,6 +116,7 @@ func _install_world(world_graph: WorldGraph) -> void:
 	graph = world_graph
 	graph.prepare_bins()
 	interiors = WorldInteriors.new(graph)
+	_wanted.clear()
 	_room_bounds.clear()
 	for room in graph.room_list:
 		var low := Vector2(INF, INF)
@@ -208,6 +211,9 @@ func _update_streaming(budgeted: bool) -> void:
 	var camera := get_viewport().get_camera_2d() if is_inside_tree() else null
 	if camera != null and camera.zoom.x > 0.0 and camera.zoom.y > 0.0:
 		half += get_viewport_rect().size * 0.5 / camera.zoom
+	elif is_inside_tree():
+		# No camera, as behind the title: the view is the viewport at 1:1 around the target.
+		half += get_viewport_rect().size * 0.5
 	var first := chunk_of(target.global_position - half)
 	var last := chunk_of(target.global_position + half)
 	var calm := true
@@ -280,6 +286,20 @@ func _build_ahead(deadline: int) -> void:
 				return
 			interiors.finish(build)
 		_ahead_next += 1
+	while not _wanted.is_empty() and Time.get_ticks_usec() < deadline:
+		var wanted := interiors.building(_wanted[0])
+		if not wanted.is_done() and not wanted.step(deadline):
+			return
+		interiors.finish(wanted)
+		_wanted.pop_front()
+
+
+## Queues Rooms whose interiors something off the streaming path wants, such as the Map, for the
+## budget the queue and the lookahead leave over. Earlier requests go first.
+func request_interiors(rooms: Array[GeneratedRoom]) -> void:
+	for room in rooms:
+		if not _wanted.has(room):
+			_wanted.append(room)
 
 
 ## The Rooms whose unwarped cells, grown by the warp, reach the lookahead around the target.

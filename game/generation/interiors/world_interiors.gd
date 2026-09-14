@@ -103,6 +103,11 @@ func interior(room: GeneratedRoom) -> RoomInterior:
 	return finish(build)
 
 
+## A Room's finished interior when it is cached, else null. Builds nothing.
+func cached(room: GeneratedRoom) -> RoomInterior:
+	return _interiors.get(room.index)
+
+
 ## A Room's interior, finished or not: step() it, then hand it to finish().
 func building(room: GeneratedRoom) -> RoomInterior:
 	var cached: RoomInterior = _interiors.get(room.index)
