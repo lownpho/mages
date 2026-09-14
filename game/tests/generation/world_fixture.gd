@@ -95,8 +95,9 @@ static func rendered(chunk: WorldChunk) -> Dictionary[String, String]:
 	return out
 
 
-## The six spatial knobs every Biome authors.
-const KNOBS: Array[StringName] = [&"room_size", &"border_warp", &"loops", &"shortcuts", &"passage_width", &"rockiness"]
+## The eight spatial knobs every Biome authors.
+const KNOBS: Array[StringName] = [&"room_size", &"border_warp", &"loops", &"shortcuts", &"passage_width", &"rockiness",
+		&"wall_depth", &"wall_variation"]
 
 
 ## A knob's slider range, from BiomeResource's export hint: [minimum, maximum].

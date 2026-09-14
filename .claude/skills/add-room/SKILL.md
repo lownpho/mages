@@ -1,6 +1,6 @@
 ---
 name: add-room
-description: Author the World's Rooms through its content model — Zone Room quotas, set pieces (Boss, Miniboss and Rare rooms), the six Room-shaping knobs, Breather Objects and Signs. Use when the user wants to add a boss/miniboss/rare room, add or resize a Zone, change how many Rooms a Biome has, make Rooms bigger/rockier/loopier/more connected, put fountains or other Objects in Breathers, or add a Sign. NOT for new enemy scenes (add-enemy) or retuning enemy numbers and rosters (rebalance-enemies).
+description: Author the World's Rooms through its content model — Zone Room quotas, set pieces (Boss, Miniboss and Rare rooms), the eight Room-shaping knobs, Breather Objects and Signs. Use when the user wants to add a boss/miniboss/rare room, add or resize a Zone, change how many Rooms a Biome has, make Rooms bigger/rockier/loopier/more connected, make the walls (tree lines) between Rooms thicker or more varied, put fountains or other Objects in Breathers, or add a Sign. NOT for new enemy scenes (add-enemy) or retuning enemy numbers and rosters (rebalance-enemies).
 ---
 
 # Authoring Rooms
@@ -23,7 +23,7 @@ up as soon as it exists.
 | --- | --- |
 | `world.tres` (`WorldResource`) | topology: the `ideal_path` order and each Side biome with its parent |
 | `challenge_curve.tres` | global encounter density and types per Challenge step, `teach_dip`, `respawn_delay`, `breather_chance` |
-| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster and Fillers, the one `boss`, the six shape knobs, `presentation`, decoration density, Professor and Warp-door counts, Signs, Breather Objects |
+| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster and Fillers, the one `boss`, the eight shape knobs, `presentation`, decoration density, Professor and Warp-door counts, Signs, Breather Objects |
 | `biomes/<biome>/zones/<zone>.tres` (`ZoneResource`) | `route_rooms` and `room_count`, additive roster and Fillers, `minibosses`, `rares`, decoration override, Signs, Breather Objects |
 | `biomes/<biome>/art/` | the Biome's presentation and tilesets (see `biome-scenery`) |
 
@@ -69,7 +69,7 @@ quota it can't fit.
 
 ### Room shape
 
-The Biome's six knobs (Zones inherit them). Ranges are the debug sliders':
+The Biome's eight knobs (Zones inherit them). Ranges are the debug sliders':
 
 | Knob | Range | Effect |
 | --- | --- | --- |
@@ -79,6 +79,8 @@ The Biome's six knobs (Zones inherit them). Ranges are the debug sliders':
 | `shortcuts` | 0–0.8 | chance of a shortcut where route stretches fold alongside one another |
 | `passage_width` | 2–12 | Passage width in tiles |
 | `rockiness` | 0–1 | density of interior rocks |
+| `wall_depth` | 1–6 | depth of the wall on each side of a Room border, in tiles |
+| `wall_variation` | 0–4 | how far `wall_depth` wanders along a border, in tiles either way |
 
 Tune them live (below) and let **Save** write them back, rather than guessing numbers in text.
 
@@ -120,7 +122,7 @@ godot --path game res://scenes/world.tscn -- seed=123
 Entering the World writes the Run save, so this replaces a saved Run. **Tab** pauses and opens the
 debug panel; clicking the World to its right teleports there.
 
-- **World:** seed and Reroll, the Biome picker, its six knobs and the four set-piece radii (↶
+- **World:** seed and Reroll, the Biome picker, its eight knobs and the four set-piece radii (↶
   reverts to the authored value), derived Room totals, **Rebuild** (applies pending edits: changed
   Biomes' Rooms only, radius edits replan the World), **Save** (writes changed knobs into
   `biome.tres`) and Fly.

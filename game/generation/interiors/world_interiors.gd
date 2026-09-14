@@ -25,6 +25,7 @@ const NO_DEADLINE := 1 << 62
 
 const _ROCK_SCALE := 6.0
 const _SPINE_SCALE := 5.0
+const _WALL_SCALE := 7.0
 
 
 class OwnerBlock:
@@ -40,6 +41,7 @@ var interior_capacity := 160
 ## Noise keyed by the World seed alone and sampled by tile.
 var rock_noise: FastNoiseLite
 var spine_noise: FastNoiseLite
+var wall_noise: FastNoiseLite
 
 ## Blocks are evicted oldest first, in the order _block_order holds from _block_head.
 var _blocks: Dictionary[Vector2i, OwnerBlock] = {}
@@ -56,6 +58,7 @@ func _init(world_graph: WorldGraph) -> void:
 	graph = world_graph
 	rock_noise = _noise(graph.plan.seed_for(WorldHash.NS_ROCKS, "rocks"), _ROCK_SCALE, 2)
 	spine_noise = _noise(graph.plan.seed_for(WorldHash.NS_SPINE, "width"), _SPINE_SCALE, 1)
+	wall_noise = _noise(graph.plan.seed_for(WorldHash.NS_ROCKS, "walls"), _WALL_SCALE, 2)
 
 
 ## The Room owning a tile, or null.

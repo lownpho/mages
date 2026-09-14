@@ -8,12 +8,14 @@ extends RefCounted
 ##   2. Each Passage's opening clears those walls on both of its sides.
 ##   3. A spine joins every Passage and Object spot to the Room's centre; tiles near it, and a clear
 ##      disc around each spot and the centre, never take rocks.
-##   4. Noise rocks cover the rest at the Room's rockiness (30% of it in set pieces).
-##   5. The repair clears the fewest rocks joining the centre to every tile where a Passage's
-##      opening meets the other Room, and to each spot. Only when rocks alone can't join them does
-##      it also clear walls, and then only walls facing no Room or a Room later in the World's room
-##      list, so two Rooms never both clear the two sides of one wall.
-##   6. Floor those joins don't reach fills with rock.
+##   4. Walls deepen inward to the Biome's wall_depth, wandering by its wall_variation, on floor
+##      rocks may cover outside a corridor as wide as each Passage's opening.
+##   5. Noise rocks cover the rest at the Room's rockiness (30% of it in set pieces).
+##   6. The repair clears the fewest rocks and deepened walls joining the centre to every tile where
+##      a Passage's opening meets the other Room, and to each spot. Only when those alone can't
+##      join them does it also clear border walls, and then only walls facing no Room or a Room
+##      later in the World's room list, so two Rooms never both clear the two sides of one wall.
+##   7. Floor those joins don't reach fills with rock.
 ##
 ## It reads only the room graph and ownership, with noise keyed by the World seed and tile, so it
 ## is the same whichever Rooms were built first. step() does the work in slices that stop at a
@@ -34,8 +36,11 @@ const SPINE_BEND := 0.2
 const ROCK_SPREAD := 1.1
 ## Tiles checked between deadline checks.
 const _STEP_TILES := 64
+## Chamfer distance steps to another owner, straight and diagonal, per tile.
+const _CHAMFER := 5
+const _CHAMFER_DIAGONAL := 7
 
-enum _Phase { OWNERS, COPY, SHELL, OPENINGS, SPINE, ROCKS, COSTS, CONNECT, CARVE, MARKS, FLOOD, POCKETS, DONE }
+enum _Phase { OWNERS, COPY, SHELL, OPENINGS, SPINE, WALLS, ROCKS, COSTS, CONNECT, CARVE, MARKS, FLOOD, POCKETS, DONE }
 
 const _FAR := 1 << 30
 const _BLOCKED := 255
@@ -74,6 +79,8 @@ var _deque := PackedInt32Array()
 var _head := 0
 var _tail := 0
 var _through_walls := false
+## Whether the walls phase deepened any wall.
+var _deepened := false
 
 
 func _init(field: WorldInteriors, generated: GeneratedRoom) -> void:
@@ -116,6 +123,8 @@ func step(deadline: int) -> bool:
 				finished = _open(deadline)
 			_Phase.SPINE:
 				finished = _spine(deadline)
+			_Phase.WALLS:
+				finished = _deepen(deadline)
 			_Phase.ROCKS:
 				finished = _rocks(deadline)
 			_Phase.COSTS:
@@ -287,6 +296,82 @@ func _spine(deadline: int) -> bool:
 	return true
 
 
+## Chamfer distance to another owner, a forward then a backward pass over the rows: floor rocks may
+## cover within the wall depth turns WALL as the backward pass settles each row. First keeps the
+## deepening off a corridor along each Passage's spine, as wide as its opening, past the deepest wall.
+func _deepen(deadline: int) -> bool:
+	var biome := _field.graph.plan.content.biomes[room.plan.biome]
+	var deepest := biome.wall_depth + biome.wall_variation
+	if deepest <= 1.0:
+		return true
+	var height := rect.size.y
+	if _cursor == 0:
+		while _stamp < room.passages.size():
+			var radius := maxf(room.passages[_stamp].width * 0.5, 1.0) + 0.5
+			var length := deepest + radius
+			var travelled := 0.0
+			for segment in [_segments[2 * _stamp], _segments[2 * _stamp + 1]]:
+				var span: float = segment[0].distance_to(segment[1])
+				var steps := maxi(1, ceili(span))
+				for n in steps + 1:
+					if travelled + span * n / steps > length:
+						break
+					_keep_off(segment[0].lerp(segment[1], float(n) / steps), radius)
+				travelled += span
+			_stamp += 1
+			if Time.get_ticks_usec() >= deadline:
+				return false
+		_stamp = 0
+		_dist.resize(classes.size())
+		_cursor = 1
+	var dist := _dist
+	_dist = PackedInt32Array()
+	var width := _width
+	var reach := ceili(deepest * _CHAMFER)
+	while _cursor <= 2 * height:
+		if _cursor <= height:
+			var y := _cursor - 1
+			var row := y * width
+			for x in width:
+				var index := row + x
+				if classes[index] == OUTSIDE:
+					dist[index] = 0
+					continue
+				var best := (dist[index - 1] if x > 0 else 0) + _CHAMFER
+				if y > 0:
+					best = mini(best, dist[index - width] + _CHAMFER)
+					best = mini(best, (dist[index - width - 1] if x > 0 else 0) + _CHAMFER_DIAGONAL)
+					best = mini(best, (dist[index - width + 1] if x < width - 1 else 0) + _CHAMFER_DIAGONAL)
+				dist[index] = mini(best, _CHAMFER) if y == 0 else best
+		else:
+			var y := 2 * height - _cursor
+			var row := y * width
+			for x in range(width - 1, -1, -1):
+				var index := row + x
+				var tile_class := classes[index]
+				if tile_class == OUTSIDE:
+					continue
+				var best := mini(dist[index], (dist[index + 1] if x < width - 1 else 0) + _CHAMFER)
+				if y < height - 1:
+					best = mini(best, dist[index + width] + _CHAMFER)
+					best = mini(best, (dist[index + width - 1] if x > 0 else 0) + _CHAMFER_DIAGONAL)
+					best = mini(best, (dist[index + width + 1] if x < width - 1 else 0) + _CHAMFER_DIAGONAL)
+				else:
+					best = mini(best, _CHAMFER)
+				dist[index] = best
+				if tile_class != FLOOR or _keep[index] == 1 or best > reach:
+					continue
+				var wander := biome.wall_variation * _field.wall_noise.get_noise_2d(rect.position.x + x, rect.position.y + y)
+				if best <= maxf(1.0, biome.wall_depth + wander) * _CHAMFER:
+					classes[index] = WALL
+					_deepened = true
+		_cursor += 1
+		if Time.get_ticks_usec() >= deadline:
+			break
+	_dist = dist if _cursor <= 2 * height else PackedInt32Array()
+	return _cursor > 2 * height
+
+
 func _rocks(deadline: int) -> bool:
 	var rockiness := room.rockiness(_field.graph.plan.content)
 	if rockiness <= 0.0:
@@ -305,8 +390,8 @@ func _rocks(deadline: int) -> bool:
 	return _cursor >= rect.size.y
 
 
-## What entering each tile costs the repair: floor nothing, rock one, walls it may clear one on the
-## second pass; _BLOCKED where it can't pass.
+## What entering each tile costs the repair: floor nothing, rock and deepened walls one, border
+## walls it may clear one on the second pass; _BLOCKED where it can't pass.
 func _find_costs(deadline: int) -> bool:
 	if _source < 0:
 		return true
@@ -320,7 +405,7 @@ func _find_costs(deadline: int) -> bool:
 				_costs[index] = 0
 			elif tile_class == ROCK:
 				_costs[index] = 1
-			elif tile_class == WALL and _through_walls and _clearable(index):
+			elif tile_class == WALL and (_deepened and _inner(index) or _through_walls and _clearable(index)):
 				_costs[index] = 1
 			else:
 				_costs[index] = _BLOCKED
@@ -535,6 +620,14 @@ func _clearable(index: int) -> bool:
 		if neighbour != room.index and neighbour >= 0 and neighbour < room.index:
 			return false
 	return true
+
+
+## A tile whose four neighbours this Room owns: a WALL there is a deepened one.
+func _inner(index: int) -> bool:
+	var stride := _width + 2
+	var at := (floori(float(index) / _width) + 1) * stride + index % _width + 1
+	var own := room.index
+	return _owners[at - 1] == own and _owners[at + 1] == own and _owners[at - stride] == own and _owners[at + stride] == own
 
 
 func _index(tile: Vector2i) -> int:

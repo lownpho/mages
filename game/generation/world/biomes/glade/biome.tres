@@ -68,12 +68,14 @@ ExtResource("mandrake"): 2,
 ExtResource("seedling"): 2
 })
 boss = SubResource("boss")
-room_size = 51
+room_size = 36
 border_warp = 5.0
 loops = 0.6
 shortcuts = 0.35
 passage_width = 7
-rockiness = 0.35
+rockiness = 0.65
+wall_depth = 2.0
+wall_variation = 2.0
 presentation = ExtResource("presentation")
 decoration_density = 0.05
 professors = 1

@@ -12,7 +12,7 @@ extends Resource
 @export var fillers: Array[CreatureResource] = []
 @export var boss: FixedEncounterResource
 
-## The six spatial knobs. Zones inherit them. The ranges are the debug sliders' ranges.
+## The eight spatial knobs. Zones inherit them. The ranges are the debug sliders' ranges.
 @export_group("Shape")
 ## Typical Room diameter in tiles.
 @export_range(16, 64, 1) var room_size := 32
@@ -26,6 +26,10 @@ extends Resource
 @export_range(2, 12, 1) var passage_width := 5
 ## Density of interior rocks.
 @export_range(0.0, 1.0, 0.05) var rockiness := 0.4
+## How deep the wall on each side of a Room border is, in tiles.
+@export_range(1.0, 6.0, 0.5) var wall_depth := 1.0
+## How far wall_depth wanders along a border, in tiles either way; it never drops below one.
+@export_range(0.0, 4.0, 0.5) var wall_variation := 0.0
 
 @export_group("Presentation")
 ## Floor, wall, rock and decoration art, and minimap colours.

@@ -6,6 +6,7 @@ extends RefCounted
 
 const KNOBS: Array[StringName] = [
 	&"room_size", &"border_warp", &"loops", &"shortcuts", &"passage_width", &"rockiness",
+	&"wall_depth", &"wall_variation",
 ]
 const RADII: Array[StringName] = [&"spawn", &"boss", &"miniboss", &"rare"]
 
@@ -171,7 +172,7 @@ func reseed(seed_value: int) -> WorldGraph:
 	return graph
 
 
-## Writes the six Biome knobs exactly as the controls show them, without changing what the live
+## Writes the eight Biome knobs exactly as the controls show them, without changing what the live
 ## graph uses. Radius and Challenge controls are intentionally not authored here.
 func save_changed() -> Dictionary[StringName, Error]:
 	var errors: Dictionary[StringName, Error] = {}
