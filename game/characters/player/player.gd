@@ -37,6 +37,8 @@ var damage_absorber: Node2D = null
 ## any buff effect reuses it by handing over a modifier-carrying resource.
 var active_buffs: Array = []
 var can_act: bool = true
+## Debug Fly: while above 0 the player walks at this speed instead of its own.
+var fly_speed := 0.0
 # ChargeDash: while Time.get_ticks_msec() < _dash_until_ms the player is driven
 # by _dash_velocity, overriding FSM movement (see start_dash).
 var _dash_velocity: Vector2 = Vector2.ZERO
@@ -169,8 +171,8 @@ func _on_idle_physics_update(_delta: float) -> void:
 		fsm.transition_to("Move")
 		return
 
-	velocity.x = move_toward(velocity.x, 0, speed)
-	velocity.y = move_toward(velocity.y, 0, speed)
+	velocity.x = move_toward(velocity.x, 0, _move_speed())
+	velocity.y = move_toward(velocity.y, 0, _move_speed())
 	move_and_slide()
 
 func _on_move_physics_update(_delta: float) -> void:
@@ -184,8 +186,12 @@ func _on_move_physics_update(_delta: float) -> void:
 
 	if direction.x != 0:
 		animated_sprite.flip_h = direction.x < 0
-	velocity = direction * speed
+	velocity = direction * _move_speed()
 	move_and_slide()
+
+# Stopping sheds a whole move's speed a frame, so neither walking nor Fly drifts to a halt.
+func _move_speed() -> float:
+	return fly_speed if fly_speed > 0.0 else float(speed)
 
 # Spells with a cast time root the player here; SpellCaster drives the
 # transition in and back out when the cast resolves.

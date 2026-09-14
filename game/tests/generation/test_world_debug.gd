@@ -179,7 +179,8 @@ func _test_integrated_controls() -> void:
 	add_child(world)
 	await get_tree().process_frame
 	var layer: WorldDebugLayer = world._debug_layer
-	_check(layer != null and layer._tabs.get_tab_count() == 4, "integrated panel has four tabs")
+	_check(layer != null and layer._tabs.get_tab_count() == 2 and layer._side_tabs.get_tab_count() == 2,
+			"integrated panel has Map and Combat tabs, the Map switching Layers and Knobs")
 	if layer == null:
 		world.queue_free()
 		return
@@ -198,7 +199,16 @@ func _test_integrated_controls() -> void:
 			and StringName(DebugState.get_value("world_debug", "biome", "")) == picked
 			and DebugState.get_value("world_debug", "overlay_zones", null) == layer.overlays.zones,
 			"tab, selected Biome and overlays persisted")
-	layer._tabs.current_tab = 0
+	layer.set_overlay("biomes", true)
+	_check(layer._legends["biomes"].visible
+			and layer._legends["biomes"].get_child(0).get_child_count() == layer.tuner.content.biome_ids().size(),
+			"the Biomes overlay keys every Biome")
+	layer._tabs.current_tab = WorldDebugLayer.TAB_MAP
+	layer.set_overlay("follow", true)
+	layer._map._process(0.0)
+	_check(layer._map.pan == world._player.global_position / GameConstants.PX_PER_TILE,
+			"Follow Player centres the debug Map on the player")
+	layer.set_overlay("follow", false)
 	layer._set_fly(true)
 	_check(world._flying and world._streamer.target == world._player and not world._player.is_in_group("player"),
 			"fly passes physics, drives streaming and is not an enemy target")
@@ -218,6 +228,24 @@ func _test_integrated_controls() -> void:
 	_check(DebugState.get_value("world_debug", "fly", false), "fly state persisted")
 	layer.set_panel_open(false)
 	_check(not get_tree().paused, "closing the panel resumed the World")
+	# Fly walks the player itself, faster than on foot, and the wheel zooms its camera until it lands.
+	var player: CharacterBody2D = world._player
+	var from := player.global_position
+	Input.action_press("right")
+	for _frame in 6:
+		await get_tree().physics_frame
+	Input.action_release("right")
+	_check(player.global_position.x - from.x > player.speed * 6.0 / Engine.physics_ticks_per_second,
+			"fly moved the player faster than walking (%.1f px)" % (player.global_position.x - from.x))
+	_check(player.animated_sprite.animation == &"run", "the flying player plays its run")
+	var wheel := InputEventMouseButton.new()
+	wheel.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	wheel.pressed = true
+	world._unhandled_input(wheel)
+	var camera: Camera2D = player.get_node("Camera2D")
+	_check(camera.zoom == Vector2.ONE * 0.5, "the wheel zoomed the flying camera out")
+	layer._set_fly(false)
+	_check(camera.zoom == Vector2.ONE and player.is_in_group("player"), "landing reset the zoom and the target group")
 	world.queue_free()
 	await get_tree().process_frame
 	_restore_state("world_debug", previous_state)

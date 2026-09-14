@@ -6,7 +6,7 @@ extends Node
 ## touches Run-save eligibility. Run:
 ##   godot --headless --path game res://tests/generation/test_world_combat.tscn
 
-const COMBAT_TAB := 2
+const COMBAT_TAB := WorldDebugLayer.TAB_COMBAT
 
 var _fails: Array[String] = []
 
@@ -74,7 +74,8 @@ func _placed(world: Node2D) -> Array[Node]:
 
 func _test_clicks(world: Node2D, layer: WorldDebugLayer) -> void:
 	var combat := layer._combat
-	var at := Vector2(layer._panel.size.x + 60, 90)
+	# The strip of World right of the centred pane.
+	var at := Vector2(layer.get_viewport().get_visible_rect().size.x - 12, 90)
 	# Closed, the panel leaves clicks to the player's casting.
 	var start: Vector2 = world._player.global_position
 	_click(layer, MOUSE_BUTTON_LEFT, at)
@@ -92,7 +93,7 @@ func _test_clicks(world: Node2D, layer: WorldDebugLayer) -> void:
 	var enemy_id: StringName = GlobalBestiary.pages()[0]["ids"][0]
 	combat.select_enemy(enemy_id)
 	var player_at: Vector2 = world._player.global_position
-	at += Vector2(20, 10)
+	at += Vector2(6, 10)
 	_click(layer, MOUSE_BUTTON_LEFT, at)
 	var placed := _placed(world)
 	_check(placed.size() == 1 and placed[0].scene_file_path.get_file() == "%s.tscn" % enemy_id,

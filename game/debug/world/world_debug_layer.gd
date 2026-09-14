@@ -7,10 +7,26 @@ extends Node
 const SECTION := "world_debug"
 ## Debug loadout keys are LOADOUT_PREFIX + "spell_N" / "bag_N" under SECTION.
 const LOADOUT_PREFIX := "loadout_"
+const TAB_MAP := 0
+const TAB_COMBAT := 1
+## The Map tab's side column switches between the overlay toggles and the World knobs.
+const SIDE_LAYERS := 0
+const SIDE_KNOBS := 1
+## The panel draws at this fraction of game pixels so it covers less of the World; the pixel font
+## stays crisp at the integer window scales a desktop debug build runs at.
+const UI_SCALE := 0.5
+## Width of the Map's side column, in panel pixels.
+const SIDE_WIDTH := 174.0
+## Game pixels between the panel and each viewport edge: the Bestiary's size, centred.
+const PANEL_MARGIN := Vector2(31, 5)
 const OVERLAY_DEFAULTS := {
-	"ideal_path": true, "roles": true, "passages": false, "zones": false,
+	"ideal_path": true, "roles": true, "passages": false, "biomes": false, "zones": false,
 	"challenge": false, "macro_grid": false, "discovery": false, "outlines": true,
+	"player": true, "markers": false, "enemies": false, "chunks": false, "follow": false,
 }
+## Layers only the debug Map draws, as the minimap would; the World shows these things itself.
+const MAP_ONLY := ["player", "markers", "enemies", "chunks", "follow"]
+const OVERLAY_NAMES := {"chunks": "Loaded Chunks", "follow": "Follow Player"}
 
 var host: Node2D
 var tuner := WorldTuner.new()
@@ -21,6 +37,7 @@ var panel_open := false
 var _canvas: CanvasLayer
 var _panel: PanelContainer
 var _tabs: TabContainer
+var _side_tabs: TabContainer
 var _world_page: Control
 var _map: WorldDebugMap
 var _combat: WorldDebugCombat
@@ -32,6 +49,8 @@ var _status: Label
 var _location: Label
 var _controls: Dictionary[String, SpinBox] = {}
 var _labels: Dictionary[String, Label] = {}
+## Colour keys under the overlay toggles that have one, shown while their overlay is on.
+var _legends: Dictionary[String, Control] = {}
 var _was_paused := false
 var _map_fitted := false
 
@@ -74,9 +93,9 @@ func _process(_delta: float) -> void:
 	var tile := Vector2i((host._player.global_position / GameConstants.PX_PER_TILE).floor())
 	var room: GeneratedRoom = host._streamer.interiors.owner_at(tile)
 	if room == null:
-		_location.text = "tile %d,%d · outside the World" % [tile.x, tile.y]
+		_location.text = "tile %d,%d  outside the World" % [tile.x, tile.y]
 	else:
-		_location.text = "%s/%s · %s · C%d · tile %d,%d" % [room.plan.biome, room.plan.zone,
+		_location.text = "%s/%s  %s  C%d  tile %d,%d" % [room.plan.biome, room.plan.zone,
 				room.role_name(), room.plan.challenge, tile.x, tile.y]
 	if not panel_open and selected_biome == &"" and room != null:
 		select_biome(room.plan.biome)
@@ -93,13 +112,14 @@ func _input(event: InputEvent) -> void:
 	var click := event as InputEventMouseButton
 	if not panel_open or click == null or not click.pressed:
 		return
-	# The Map consumes its own clicks. The rest of the panel leaves the right-hand World visible;
-	# clicking that area while paused places the Combat tab's selected enemy, or teleports without
-	# one. On the Combat tab the right button removes the nearest enemy.
-	if _tabs.current_tab == 3 or click.position.x <= _panel.size.x:
+	# The Map consumes its own clicks. The Combat pane leaves the World visible around it; clicking
+	# there while paused places the Combat tab's selected enemy, or teleports without one. On the
+	# Combat tab the right button removes the nearest enemy.
+	if _tabs.current_tab == TAB_MAP \
+			or Rect2(_panel.position * UI_SCALE, _panel.size * UI_SCALE).has_point(click.position):
 		return
 	var world_point := get_viewport().get_canvas_transform().affine_inverse() * click.position
-	var on_combat := _tabs.current_tab == 2
+	var on_combat := _tabs.current_tab == TAB_COMBAT
 	if click.button_index == MOUSE_BUTTON_LEFT and on_combat and _combat.selected_enemy != &"":
 		_combat.place_selected(world_point)
 	elif click.button_index == MOUSE_BUTTON_LEFT:
@@ -146,40 +166,60 @@ func _default_to_current_biome() -> void:
 func _build_ui() -> void:
 	_canvas = CanvasLayer.new()
 	_canvas.layer = 900
+	_canvas.scale = Vector2.ONE * UI_SCALE
 	add_child(_canvas)
 	_panel = PanelContainer.new()
 	_panel.visible = false
-	_panel.offset_right = 174
-	_panel.offset_bottom = 180
 	_panel.theme = DebugUi.theme()
 	_canvas.add_child(_panel)
 	_tabs = TabContainer.new()
 	_tabs.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_panel.add_child(_tabs)
-	_world_page = _page("World")
+	# What the Map shows and the knobs that reshape it share a column beside it.
+	var map_row := HBoxContainer.new()
+	_page("Map").add_child(map_row)
+	var side := VBoxContainer.new()
+	side.custom_minimum_size.x = SIDE_WIDTH
+	map_row.add_child(side)
+	# Fly sits above both switches, so it is one click away whichever is open.
+	var fly := CheckBox.new()
+	fly.text = "Fly"
+	fly.button_pressed = host._flying
+	fly.toggled.connect(_set_fly)
+	side.add_child(fly)
+	_side_tabs = TabContainer.new()
+	_side_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	side.add_child(_side_tabs)
+	_build_overlay_toggles(_page("Layers", _side_tabs))
+	_world_page = _page("Knobs", _side_tabs)
 	_build_world_page(_world_page)
-	_build_overlay_page(_page("Overlays"))
+	_side_tabs.current_tab = clampi(int(DebugState.get_value(SECTION, "side_tab", SIDE_LAYERS)), SIDE_LAYERS, SIDE_KNOBS)
+	_side_tabs.tab_changed.connect(func(tab: int) -> void: DebugState.set_value(SECTION, "side_tab", tab))
+	_map = WorldDebugMap.new()
+	_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_map.player = host._player
+	_map.streamer = host._streamer
+	_map.teleport_requested.connect(func(tile: Vector2i) -> void: host._teleport_to_tile(tile))
+	map_row.add_child(_map)
 	_combat = WorldDebugCombat.new()
 	_page("Combat").add_child(_combat)
 	_combat.configure(host)
-	var map_page := _page("Map")
-	_map = WorldDebugMap.new()
-	_map.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_map.teleport_requested.connect(func(tile: Vector2i) -> void: host._teleport_to_tile(tile))
-	map_page.add_child(_map)
-	_tabs.current_tab = clampi(int(DebugState.get_value(SECTION, "tab", 0)), 0, 3)
+	_tabs.current_tab = clampi(int(DebugState.get_value(SECTION, "tab", TAB_MAP)), TAB_MAP, TAB_COMBAT)
 	_tabs.tab_changed.connect(_on_tab_changed)
 	_on_tab_changed(_tabs.current_tab)
+	_layout_panel()
+	get_viewport().size_changed.connect(_layout_panel)
 
 
-func _page(title: String) -> MarginContainer:
+## A page of the panel's tabs, or of the given TabContainer.
+func _page(title: String, tabs: TabContainer = null) -> MarginContainer:
 	var page := MarginContainer.new()
 	page.name = title
 	page.add_theme_constant_override("margin_left", 2)
 	page.add_theme_constant_override("margin_right", 2)
 	page.add_theme_constant_override("margin_top", 2)
 	page.add_theme_constant_override("margin_bottom", 2)
-	_tabs.add_child(page)
+	(tabs if tabs != null else _tabs).add_child(page)
 	return page
 
 
@@ -219,17 +259,15 @@ func _build_world_page(page: Control) -> void:
 	box.add_child(actions)
 	_button(actions, "Rebuild", _rebuild)
 	_button(actions, "Save", _save_knobs)
-	var fly := CheckBox.new()
-	fly.text = "Fly"
-	fly.button_pressed = host._flying
-	fly.toggled.connect(_set_fly)
-	actions.add_child(fly)
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(_status)
 	_location = Label.new()
 	_location.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(_location)
+	# A Biome restored from an earlier session still needs its knob rows built.
+	if selected_biome != &"":
+		select_biome(selected_biome)
 	_default_to_current_biome()
 	if selected_biome == &"":
 		select_biome(tuner.content.biome_ids()[0])
@@ -279,21 +317,67 @@ func _add_value_row(biome_id: StringName, key: StringName, value: Variant, limit
 	_labels[id] = label
 
 
-func _build_overlay_page(page: Control) -> void:
+func _build_overlay_toggles(page: Control) -> void:
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	page.add_child(scroll)
 	var box := VBoxContainer.new()
-	box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	page.add_child(box)
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(box)
 	for key in OVERLAY_DEFAULTS:
+		if key == MAP_ONLY[0]:
+			var header := Label.new()
+			header.text = "Map only"
+			header.modulate = Color(0.7, 0.75, 0.82)
+			box.add_child(header)
 		var check := CheckBox.new()
-		check.text = String(key).replace("_", " ").capitalize()
+		check.text = OVERLAY_NAMES.get(key, String(key).replace("_", " ").capitalize())
 		check.button_pressed = overlays[key]
 		check.toggled.connect(func(on: bool) -> void:
 			set_overlay(key, on))
 		box.add_child(check)
-	var hint := Label.new()
-	hint.text = "World/map share these layers.\nPassages: route white · tree grey · loop yellow · shortcut cyan · set piece orange · attachment pink.\nRoles: test grey · teach blue · breather green · spawn white · boss red · miniboss orange · rare purple.\nMap: wheel zoom · middle/right pan · click teleport"
-	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(hint)
+		if key in ["roles", "passages", "biomes", "markers"]:
+			var indent := MarginContainer.new()
+			indent.add_theme_constant_override("margin_left", 9)
+			indent.add_child(HFlowContainer.new())
+			box.add_child(indent)
+			_legends[key] = indent
+	var controls := Label.new()
+	controls.text = "Map: wheel zooms, right-drag pans, click teleports.\nFly: wheel zooms."
+	controls.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	controls.modulate = Color(0.7, 0.75, 0.82)
+	box.add_child(controls)
+
+
+## Each legend names its overlay's colours in those colours.
+func _refresh_legends() -> void:
+	for key in _legends:
+		_legends[key].visible = overlays[key]
+		var flow := _legends[key].get_child(0)
+		for child in flow.get_children():
+			flow.remove_child(child)
+			child.queue_free()
+		var names: Array = []
+		var colors: Array = []
+		match key:
+			"roles":
+				names = GeneratedRoom.ROLE_NAMES
+				colors = WorldDebugOverlay.ROLE_COLORS
+			"passages":
+				names = RoomPassage.KIND_NAMES
+				colors = WorldDebugOverlay.PASSAGE_COLORS
+			"markers":
+				names = WorldDebugMap.MARKER_NAMES
+				colors = WorldDebugMap.MARKER_COLORS
+			"biomes":
+				var hues := WorldDebugOverlay.biome_colors(tuner.content, 1.0)
+				names = hues.keys()
+				colors = hues.values()
+		for i in names.size():
+			var label := Label.new()
+			label.text = String(names[i]).replace("_", " ")
+			label.modulate = colors[i]
+			flow.add_child(label)
 
 
 func set_overlay(key: String, on: bool) -> void:
@@ -318,10 +402,10 @@ func _refresh_controls() -> void:
 	var zones: Array[String] = []
 	for zone in tuner.zone_totals(selected_biome):
 		zones.append("%s %d/%d" % [zone.id, zone.route_rooms, zone.rooms])
-	_totals.text = "%s: %d Zones · route %d · Rooms %d\n%s\nWorld Rooms %d" % [selected_biome,
+	_totals.text = "%s: %d Zones, route %d, Rooms %d\n%s\nWorld Rooms %d" % [selected_biome,
 			total.zones, total.route_rooms, total.rooms, ", ".join(zones), tuner.content.world_room_count()]
-	_status.text = "%s%s" % ["pending changes · " if tuner.has_pending() else "",
-			"plan %.1f ms · graphs %.1f ms · spawn %.1f ms · stream %.2f ms" % [tuner.timings.plan_ms,
+	_status.text = "%s%s" % ["pending changes, " if tuner.has_pending() else "",
+			"plan %.1f ms, graphs %.1f ms, spawn %.1f ms, stream %.2f ms" % [tuner.timings.plan_ms,
 			tuner.timings.graphs_ms, tuner.timings.get("spawn_ms", 0.0), host._streamer.last_work_usec / 1000.0]]
 
 
@@ -381,6 +465,7 @@ func _save_knobs() -> void:
 
 
 func _refresh_graph(reset_map := false) -> void:
+	_refresh_legends()
 	if _world_overlay != null:
 		_world_overlay.encounters = host._encounters
 		_world_overlay.set_data(tuner.graph, overlays)
@@ -401,11 +486,16 @@ func set_entered_rooms(entered: Dictionary[String, bool]) -> void:
 
 
 func _on_tab_changed(tab: int) -> void:
-	# Map gets the whole 320x180 game-pixel viewport; other tabs leave the World clickable.
-	_panel.offset_right = 320 if tab == 3 else 174
 	DebugState.set_value(SECTION, "tab", tab)
-	if tab == 3 and _map != null:
+	if tab == TAB_MAP and _map != null:
 		_map.call_deferred("fit_world")
+
+
+## Both panes take the Bestiary's screen space, centred, with the World showing around them.
+func _layout_panel() -> void:
+	var view := get_viewport().get_visible_rect().size
+	_panel.position = PANEL_MARGIN / UI_SCALE
+	_panel.size = (view - PANEL_MARGIN * 2.0) / UI_SCALE
 
 
 func _set_fly(on: bool) -> void:

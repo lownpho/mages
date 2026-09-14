@@ -63,8 +63,8 @@ func select_enemy(id: StringName) -> void:
 func _highlight() -> void:
 	for enemy_id in _enemy_buttons:
 		_enemy_buttons[enemy_id].modulate = Color(1.0, 0.9, 0.3) if enemy_id == selected_enemy else Color.WHITE
-	_selection_label.text = "click places %s · RMB removes" % selected_enemy if selected_enemy != &"" \
-			else "click teleports · RMB removes"
+	_selection_label.text = "click places %s, RMB removes" % selected_enemy if selected_enemy != &"" \
+			else "click teleports, RMB removes"
 
 
 func place_selected(world_position: Vector2) -> Node2D:
@@ -172,7 +172,7 @@ func _build_enemy_palette(box: VBoxContainer) -> void:
 	_group_picker.item_selected.connect(_show_group)
 	box.add_child(_group_picker)
 	_enemy_grid = GridContainer.new()
-	_enemy_grid.columns = 2
+	_enemy_grid.columns = 4
 	box.add_child(_enemy_grid)
 	_show_group(0)
 
@@ -199,11 +199,11 @@ func _build_item_palette(box: VBoxContainer) -> void:
 	var items := DebugContent.scan_items()
 	for category in items:
 		var header := Label.new()
-		header.text = "%s: LMB equip · RMB drop" % category
+		header.text = "%s: LMB equip, RMB drop" % category
 		header.modulate = Color(0.7, 0.85, 1.0)
 		box.add_child(header)
 		var grid := GridContainer.new()
-		grid.columns = 9
+		grid.columns = 18
 		box.add_child(grid)
 		for entry in items[category]:
 			var item: ItemResource = entry.item

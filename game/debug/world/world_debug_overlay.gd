@@ -37,7 +37,8 @@ func _draw() -> void:
 	var px := float(GameConstants.PX_PER_TILE)
 	var camera := get_viewport().get_camera_2d()
 	var width := 1.5 / camera.zoom.x if camera != null else 1.5
-	if overlays.get("zones", false) or overlays.get("challenge", false):
+	if overlays.get("biomes", false) or overlays.get("zones", false) or overlays.get("challenge", false):
+		var hues := biome_colors(graph.plan.content, 0.14)
 		for room in graph.room_list:
 			var color := Color.TRANSPARENT
 			if overlays.get("challenge", false):
@@ -45,6 +46,8 @@ func _draw() -> void:
 				color = Color.from_hsv(0.33 - 0.33 * room.plan.challenge / high, 0.8, 0.85, 0.16)
 			elif overlays.get("zones", false):
 				color = _key_color("%s/%s" % [room.plan.biome, room.plan.zone], 0.14)
+			else:
+				color = hues[room.plan.biome]
 			draw_colored_polygon(_scaled(room.polygon, px), color)
 	if overlays.get("discovery", false):
 		for room in graph.room_list:
@@ -79,11 +82,14 @@ func _draw() -> void:
 	if overlays.get("roles", false):
 		for room in graph.room_list:
 			draw_circle(room.seed * px, maxf(2.0, 2.5 / (camera.zoom.x if camera != null else 1.0)), ROLE_COLORS[room.role])
-	if overlays.get("roles", false) or overlays.get("zones", false) or overlays.get("challenge", false):
+	if overlays.get("roles", false) or overlays.get("biomes", false) or overlays.get("zones", false) \
+			or overlays.get("challenge", false):
 		var zoom := camera.zoom.x if camera != null else 1.0
 		var font_size := maxi(2, roundi(DebugState.UI_FONT_SIZE / zoom))
 		for room in graph.room_list:
 			var parts: Array[String] = []
+			if overlays.get("biomes", false):
+				parts.append(String(room.plan.biome))
 			if overlays.get("zones", false):
 				parts.append(String(room.plan.zone))
 			if overlays.get("roles", false):
@@ -91,7 +97,8 @@ func _draw() -> void:
 				parts.append("%s e%s" % [room.role_name(), str(count) if count >= 0 else "?"])
 			if overlays.get("challenge", false):
 				parts.append("C%d" % room.plan.challenge)
-			draw_string(DebugState.UI_FONT, room.seed * px + Vector2(3, -3) / zoom, " · ".join(parts),
+			# The pixel font has no middle dot.
+			draw_string(DebugState.UI_FONT, room.seed * px + Vector2(3, -3) / zoom, "  ".join(parts),
 					HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 0.85))
 
 
@@ -100,6 +107,15 @@ static func _scaled(points: PackedVector2Array, factor: float) -> PackedVector2A
 	for point in points:
 		out.append(point * factor)
 	return out
+
+
+## Evenly spaced hues, one per Biome in content order, so no two Biomes share a colour.
+static func biome_colors(content: WorldContent, alpha: float) -> Dictionary[StringName, Color]:
+	var ids := content.biome_ids()
+	var colors: Dictionary[StringName, Color] = {}
+	for i in ids.size():
+		colors[ids[i]] = Color.from_hsv(float(i) / ids.size(), 0.6, 0.9, alpha)
+	return colors
 
 
 static func _key_color(key: String, alpha: float) -> Color:

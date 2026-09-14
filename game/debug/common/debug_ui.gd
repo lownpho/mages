@@ -30,6 +30,21 @@ static func theme() -> Theme:
 	for state in ["normal", "hover", "pressed", "hover_pressed", "disabled"]:
 		t.set_stylebox(state, "CheckBox", _sb_pad(2))
 	t.set_stylebox("focus", "CheckBox", StyleBoxEmpty.new())
+	# Godot's default icons are 16px beside an 8px font. A CheckBox reserves room for its largest
+	# icon, radio ones included.
+	for state in ["", "_disabled"]:
+		for kind in ["", "radio_"]:
+			t.set_icon(kind + "unchecked" + state, "CheckBox", _box_icon(dark, edge))
+			t.set_icon(kind + "checked" + state, "CheckBox", _box_icon(Color(0.6, 0.72, 0.88), edge))
+	t.set_constant("h_separation", "CheckBox", 2)
+	var arrow := Color(0.75, 0.8, 0.88)
+	var up := PackedStringArray(["..#..", ".###.", "#####"])
+	var down := PackedStringArray(["#####", ".###.", "..#.."])
+	t.set_icon("arrow", "OptionButton", _pattern_icon(down, arrow))
+	t.set_icon("updown", "SpinBox", _pattern_icon(up + PackedStringArray(["....."]) + down, arrow))
+	for state in ["", "_hover", "_pressed", "_disabled"]:
+		t.set_icon("up" + state, "SpinBox", _pattern_icon(up, arrow))
+		t.set_icon("down" + state, "SpinBox", _pattern_icon(down, arrow))
 
 	t.set_stylebox("tab_selected", "TabContainer", _sb(lit, edge))
 	t.set_stylebox("tab_unselected", "TabContainer", _sb(dark, edge))
@@ -51,6 +66,25 @@ static func _sb(bg: Color, border: Color) -> StyleBoxFlat:
 	s.content_margin_top = 1
 	s.content_margin_bottom = 1
 	return s
+
+
+## A 7px check box: a 1px border around a dark well holding a 3px square of the given colour.
+static func _box_icon(mark: Color, border: Color) -> ImageTexture:
+	var image := Image.create_empty(7, 7, false, Image.FORMAT_RGBA8)
+	image.fill(border)
+	image.fill_rect(Rect2i(1, 1, 5, 5), Color(0.10, 0.11, 0.14))
+	image.fill_rect(Rect2i(2, 2, 3, 3), mark)
+	return ImageTexture.create_from_image(image)
+
+
+## A small icon drawn from rows of text: "#" is a pixel of the colour, anything else transparent.
+static func _pattern_icon(rows: PackedStringArray, color: Color) -> ImageTexture:
+	var image := Image.create_empty(rows[0].length(), rows.size(), false, Image.FORMAT_RGBA8)
+	for y in rows.size():
+		for x in rows[y].length():
+			if rows[y][x] == "#":
+				image.set_pixel(x, y, color)
+	return ImageTexture.create_from_image(image)
 
 
 static func _sb_pad(px: int) -> StyleBoxEmpty:

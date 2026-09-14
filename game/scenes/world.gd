@@ -30,6 +30,9 @@ const CONTINUE_INTERIORS_WEB_USEC := 450_000
 const CONTINUE_INTERIORS_DESKTOP_USEC := 150_000
 
 const FLY_SPEED := 480.0
+## Camera zoom bounds while flying; the wheel halves or doubles it between them.
+const FLY_ZOOM_MIN := 0.25
+const FLY_ZOOM_MAX := 2.0
 
 ## Used when a World is launched without a Run seed (straight from the editor); 0 rolls one.
 @export var world_seed := 0
@@ -41,6 +44,7 @@ var _graph: WorldGraph
 var _encounters: WorldEncounters
 var _flying := false
 var _debug_layer: Node = null
+var _player_collision_layer := 1
 var _player_collision_mask := 1
 var _build_timings := {"plan_ms": 0.0, "graphs_ms": 0.0, "spawn_ms": 0.0, "total_ms": 0.0}
 
@@ -54,6 +58,7 @@ var _build_timings := {"plan_ms": 0.0, "graphs_ms": 0.0, "spawn_ms": 0.0, "total
 
 
 func _ready() -> void:
+	_player_collision_layer = _player.collision_layer
 	_player_collision_mask = _player.collision_mask
 	var continuing := GameState.continuing_run()
 	var fresh := GameState.fresh_start
@@ -142,10 +147,15 @@ func _start(new_seed: int, planned: WorldGraph) -> void:
 			mapped - streamed, finished - mapped, " (plan reused)" if planned != null else ""])
 
 
-func _process(delta: float) -> void:
-	if _flying:
-		var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-		_player.global_position += direction * FLY_SPEED * delta
+func _unhandled_input(event: InputEvent) -> void:
+	var wheel := event as InputEventMouseButton
+	if not _flying or wheel == null or not wheel.pressed \
+			or wheel.button_index not in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		return
+	var camera: Camera2D = _player.get_node("Camera2D")
+	var factor := 2.0 if wheel.button_index == MOUSE_BUTTON_WHEEL_UP else 0.5
+	camera.zoom = Vector2.ONE * clampf(camera.zoom.x * factor, FLY_ZOOM_MIN, FLY_ZOOM_MAX)
+	get_viewport().set_input_as_handled()
 
 
 ## Called by the debug layer after it has selectively rebuilt the graph. A new Run (a reseed) starts
@@ -167,7 +177,11 @@ func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[S
 		_player.global_position = (Vector2(_nearest_floor(tile)) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 	_streamer.target = _player
 	_streamer.prepare()
+	# The Map and its views find the player by its group, which Fly leaves.
+	_player.add_to_group("player")
 	GlobalMap.rebuild(_streamer, _encounter_spawner.defeats.defeated, not new_run)
+	if _flying:
+		_player.remove_from_group("player")
 
 
 ## Teleports to the requested tile when it is floor, otherwise to its nearest floor. Preparing the
@@ -194,12 +208,19 @@ func _nearest_floor(origin: Vector2i) -> Vector2i:
 	return Vector2i((_streamer.spawn_position() / GameConstants.PX_PER_TILE).floor())
 
 
-## Fly is the real player with physics and casting suspended. Streaming still follows its position;
-## removing its target group makes current/future enemy acquisition ignore it.
+## Fly is the real player walking itself at FLY_SPEED, so it animates, discovers and streams the World
+## as on foot. Out of every collision layer and mask it passes walls, Pickups, Warps and Objects; its
+## hurtbox and casting are suspended, and removing its target group makes current/future enemy
+## acquisition ignore it. The wheel zooms its camera, back to 1:1 on landing.
 func _set_flying(on: bool) -> void:
 	_flying = on
-	_player.process_mode = Node.PROCESS_MODE_DISABLED if on else Node.PROCESS_MODE_INHERIT
+	_player.fly_speed = FLY_SPEED if on else 0.0
+	_player.collision_layer = 0 if on else _player_collision_layer
 	_player.collision_mask = 0 if on else _player_collision_mask
+	for part in ["Hurtbox", "SpellCaster", "PlayerCastInput"]:
+		_player.get_node(part).process_mode = Node.PROCESS_MODE_DISABLED if on else Node.PROCESS_MODE_INHERIT
+	if not on:
+		(_player.get_node("Camera2D") as Camera2D).zoom = Vector2.ONE
 	if on:
 		_player.remove_from_group("player")
 	elif not _player.is_in_group("player"):
