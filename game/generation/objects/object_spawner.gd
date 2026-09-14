@@ -7,9 +7,9 @@ extends Node
 ##
 ## Objects own small state dictionaries keyed by their generated place: data.state is the Object's
 ## entry in states, which outlives the scene, so whatever a reactive NPC writes there is restored on
-## its next setup, after its chunk reloads or a rebuild. Fountains, Signs and Warp doors write
-## nothing: a fountain's cooldown resets when its chunk reloads, and a Sign's reveal belongs to the
-## Map.
+## its next setup, after its chunk reloads or a rebuild. Fountains, Signs, Professors and Warp doors
+## write nothing: a fountain's cooldown resets when its chunk reloads, and a Sign's reveal belongs to
+## the Map.
 ##
 ## A Warp door's traveller lands on the door's landing tile, keeping its facing, and the streamer
 ## loads the destination at once, as it does for a teleport.

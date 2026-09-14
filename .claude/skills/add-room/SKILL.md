@@ -89,8 +89,8 @@ Tune them live (below) and let **Save** write them back, rather than guessing nu
   generated data through `setup(data: Dictionary)`.
 - `signs`: `text`, plus `reveals` (an enemy data sheet) when reading it should reveal the nearest
   Boss that enemy leads. Each Sign stands exactly once.
-- `professors` and `warp_doors` counts on the Biome. No Professor scene exists yet, so Professor
-  sites place nothing.
+- `professors` and `warp_doors` counts on the Biome. Professors are a placeholder for now
+  (`game/objects/professor/`): a note that the Professor is away, with no reward.
 
 ### Which enemies a Room fights
 

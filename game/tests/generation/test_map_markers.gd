@@ -124,17 +124,23 @@ func _test_markers(graph: WorldGraph) -> void:
 	for room in graph.room_list:
 		_check(boss_rooms.has(room.key()) == (room.role == GeneratedRoom.Role.BOSS),
 				"only Boss Rooms have Boss markers after discovery (%s)" % room.key())
+	var professors := 0
 	for key in graph.sites:
 		var site: ObjectSite = graph.sites[key]
 		if site.kind == ObjectSite.Kind.LANDING:
 			_check(not by_object.has(key), "landing %s has no marker" % key)
 			continue
+		if site.kind == ObjectSite.Kind.PROFESSOR:
+			professors += 1
+			_check(by_object.has(key) and by_object[key].kind == MapState.MARKER_NPC,
+					"Professor %s is marked as an NPC" % key)
 		_check(by_object.has(key), "%s Object %s has a marker" % [site.kind_name(), key])
 		if not by_object.has(key):
 			continue
 		var want := _expected_kind(site)
 		_check(by_object[key].kind == want, "%s marker kind is %d, want %d" % [key,
 				by_object[key].kind, want])
+	_check(professors > 0, "the fixture plans a Professor")
 
 	# Mutating the real Object state owner cannot affect a graph-derived marker.
 	var before := state.markers.duplicate(true)

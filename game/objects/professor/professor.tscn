@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://objects/professor/professor.gd" id="1_professor"]
+[ext_resource type="Texture2D" uid="uid://b6f8woc2sylt2" path="res://characters/player/player.png" id="2_art"]
+[ext_resource type="FontFile" uid="uid://kkmwqdvog3u7" path="res://gui/m3x6.ttf" id="3_font"]
+[ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="4_theme"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_professor"]
+radius = 16.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_professor"]
+line_spacing = 0.0
+
+[node name="Professor" type="Area2D"]
+collision_layer = 0
+collision_mask = 16
+monitorable = false
+script = ExtResource("1_professor")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.6, 0.85, 0.75, 1)
+texture = ExtResource("2_art")
+offset = Vector2(0, -4)
+region_enabled = true
+region_rect = Rect2(16, 16, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -6)
+shape = SubResource("CircleShape2D_professor")
+
+[node name="Label" type="Label" parent="."]
+z_index = 100
+z_as_relative = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -70.0
+offset_top = -41.0
+offset_right = 71.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_theme")
+theme_override_fonts/font = ExtResource("3_font")
+text = "The Professor is out studying.
+Come back later."
+label_settings = SubResource("LabelSettings_professor")
+horizontal_alignment = 1
+vertical_alignment = 1

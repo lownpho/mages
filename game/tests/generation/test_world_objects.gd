@@ -7,10 +7,11 @@ extends Node
 ## permitted Biome's ordinary non-Breather Room wearing its door art, the same on a second build.
 ##
 ## In a streamed rig with the real player on the small fixture: every planned Object stands once at
-## its spot, a Sign reveals its Boss on the Map, every landing is clear floor away from encounters,
-## a Warp door carries the player to its landing keeping its facing and streams the destination in,
-## a fountain's cooldown resets on reload, and a reactive NPC's state survives unloading and a
-## restore but not a new Run, while fountains, Signs and doors keep none. Run:
+## its spot, a Sign reveals its Boss on the Map, every Professor shows its note, every landing is
+## clear floor away from encounters, a Warp door carries the player to its landing keeping its
+## facing and streams the destination in, a fountain's cooldown resets on reload, and a reactive
+## NPC's state survives unloading and a restore but not a new Run, while fountains, Signs,
+## Professors and doors keep none. Run:
 ##   godot --headless --path game res://tests/generation/test_world_objects.tscn
 
 const GREETER := "res://tests/support/greeter.tscn"
@@ -85,6 +86,8 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictiona
 				else:
 					_check(boss != null and boss.role == GeneratedRoom.Role.BOSS and boss.plan.encounter.leader == reveals,
 							"%s: Sign %s reveals %s, not a Boss led by %s" % [label, key, data.reveal_key, reveals.resource_path])
+			ObjectSite.Kind.PROFESSOR:
+				_check(objects.scene_for(site) == WorldObjects.PROFESSOR_SCENE, "%s: Professor %s doesn't use the Professor scene" % [label, key])
 			ObjectSite.Kind.DOOR:
 				_check(objects.scene_for(site) == WorldObjects.DOOR_SCENE, "%s: door %s doesn't use the door scene" % [label, key])
 				var destination: GeneratedRoom = graph.rooms.get(data.destination_room)
@@ -152,6 +155,7 @@ func _test_runtime(graph: WorldGraph) -> void:
 	var rig := _rig(graph)
 	await _test_instances(rig)
 	await _test_sign(rig)
+	await _test_professors(rig)
 	await _test_landings(rig)
 	await _test_warp(rig)
 	await _test_fountain(rig)
@@ -246,8 +250,7 @@ func _test_instances(rig: Dictionary) -> void:
 	var objects: WorldObjects = rig.objects.world_objects
 	var planned: Array[String] = []
 	for key in graph.sites:
-		# No Professor scene exists yet, so Professor sites build nothing.
-		if graph.sites[key].is_object() and graph.sites[key].kind != ObjectSite.Kind.PROFESSOR:
+		if graph.sites[key].is_object():
 			planned.append(key)
 			_check(objects.scene_for(graph.sites[key]) != null, "Object %s has no scene" % key)
 	planned.sort()
@@ -295,6 +298,28 @@ func _test_sign(rig: Dictionary) -> void:
 	_check(GlobalMap.revealed_boss_keys.size() == 1 and GlobalMap.revealed_boss_keys.has(site.reveal_key)
 			and rig.graph.rooms[site.reveal_key].role == GeneratedRoom.Role.BOSS,
 			"reading Sign %s reveals %s, want only its Boss %s" % [site.key, GlobalMap.revealed_boss_keys.keys(), site.reveal_key])
+
+
+## Every planned Professor stands once as a Professor and shows its note when walked up to, keeping
+## no state.
+func _test_professors(rig: Dictionary) -> void:
+	var keys: Array[String] = []
+	for key in rig.graph.sites:
+		if rig.graph.sites[key].kind == ObjectSite.Kind.PROFESSOR:
+			keys.append(key)
+	keys.sort()
+	_check(not keys.is_empty(), "the fixture plans a Professor")
+	for key in keys:
+		var site: ObjectSite = rig.graph.sites[key]
+		var professor := await _approach(rig, site)
+		_check(professor is Professor, "Professor %s stands once as a Professor" % key)
+		if not professor is Professor:
+			continue
+		_check(not professor.get_node("Label").visible, "Professor %s shows its note before anyone walks up" % key)
+		await _enter(rig, professor)
+		_check(professor.get_node("Label").visible, "walking up to Professor %s shows its note" % key)
+		_check(rig.objects.states.get(key, {}).is_empty(), "Professor %s wrote state %s" % [key, rig.objects.states.get(key)])
+	_check(rig.objects.saved_states().is_empty(), "Professors saved state %s" % rig.objects.saved_states())
 
 
 ## Every landing is clear ordinary floor with its destination's encounters kept away.
