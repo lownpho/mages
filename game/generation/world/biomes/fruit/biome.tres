@@ -33,7 +33,7 @@ ExtResource("hopper"): 17
 boss = SubResource("boss")
 room_size = 39
 border_warp = 6.0
-rockiness = 0.6
+rockiness = 0.02
 presentation = ExtResource("presentation")
 decoration_density = 0.08
 professors = 1

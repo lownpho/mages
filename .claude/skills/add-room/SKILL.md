@@ -78,7 +78,7 @@ The Biome's eight knobs (Zones inherit them). Ranges are the debug sliders':
 | `loops` | 0–1 | chance of a loop Passage between neighbouring ordinary Rooms |
 | `shortcuts` | 0–0.8 | chance of a shortcut where route stretches fold alongside one another |
 | `passage_width` | 2–12 | Passage width in tiles |
-| `rockiness` | 0–1 | density of interior rocks |
+| `rockiness` | 0–0.6 | share of the open floor that turns to rock (0.1 is light, 0.3 dense) |
 | `wall_depth` | 1–6 | depth of the wall on each side of a Room border, in tiles |
 | `wall_variation` | 0–4 | how far `wall_depth` wanders along a border, in tiles either way |
 

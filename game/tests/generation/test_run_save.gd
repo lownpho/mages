@@ -327,7 +327,7 @@ func _test_save_restrictions(world: Node2D) -> void:
 	saved = FileAccess.get_file_as_bytes(SAVE)
 	var biome: StringName = layer.tuner.content.biome_ids()[0]
 	var rockiness: float = layer.tuner.pending[biome][&"rockiness"]
-	layer.tuner.set_knob(biome, &"rockiness", 0.9 if rockiness != 0.9 else 0.8)
+	layer.tuner.set_knob(biome, &"rockiness", 0.3 if rockiness != 0.3 else 0.2)
 	GlobalInventory.bag_slots.at(0).set_item(load(OTHER_SPELL))
 	GlobalMap.toggle_pin(Vector2i(-5, -5), 0)
 	GameState.persist()

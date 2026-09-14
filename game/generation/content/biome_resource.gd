@@ -24,8 +24,8 @@ extends Resource
 @export_range(0.0, 0.8, 0.05) var shortcuts := 0.2
 ## Passage width in tiles.
 @export_range(2, 12, 1) var passage_width := 5
-## Density of interior rocks.
-@export_range(0.0, 1.0, 0.05) var rockiness := 0.4
+## Share of the floor rocks may cover that turns to rock.
+@export_range(0.0, 0.6, 0.01) var rockiness := 0.05
 ## How deep the wall on each side of a Room border is, in tiles.
 @export_range(1.0, 6.0, 0.5) var wall_depth := 1.0
 ## How far wall_depth wanders along a border, in tiles either way; it never drops below one.

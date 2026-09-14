@@ -38,7 +38,7 @@ func _test_pending_revert_and_invalidation() -> void:
 	tuner.setup(fixture.content, fixture.seeds[0], plan, graph)
 	var biome := &"hollow"
 	var original: float = tuner.pending[biome][&"rockiness"]
-	var changed := 0.85 if original != 0.85 else 0.8
+	var changed := 0.3 if original != 0.3 else 0.25
 	tuner.set_knob(biome, &"rockiness", changed)
 	_check(tuner.is_pending(biome, &"rockiness"), "knob edit is pending")
 	_check(fixture.content.biomes[biome].rockiness == original, "pending edit did not mutate live content")
@@ -156,7 +156,7 @@ func _test_save_roundtrip_before_rebuild() -> void:
 	var tuner := WorldTuner.new()
 	tuner.setup(fixture.content, fixture.seeds[0], plan, graph)
 	var applied: float = copy.rockiness
-	var changed := 0.9 if applied != 0.9 else 0.8
+	var changed := 0.3 if applied != 0.3 else 0.2
 	tuner.set_knob(biome, &"rockiness", changed)
 	var errors := tuner.save_changed()
 	var loaded := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE) as BiomeResource

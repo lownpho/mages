@@ -36,6 +36,7 @@ func _ready() -> void:
 	_test_rendering(small)
 	_test_rendering(shipped)
 	_test_decoration(small)
+	_test_rock_share(small)
 	print("world tiles tests took %.1f s" % ((Time.get_ticks_msec() - started) / 1000.0))
 	if _fails.is_empty():
 		print("ALL PASS")
@@ -50,6 +51,19 @@ func _ready() -> void:
 func _check(condition: bool, message: String) -> void:
 	if not condition:
 		_fails.append(message)
+
+
+## A rockiness is the share of tiles the rock noise passes its threshold on.
+func _test_rock_share(fixture: WorldFixture) -> void:
+	var noise := WorldFixture.interiors(fixture.graph(fixture.seeds[0])).rock_noise
+	var values := PackedFloat32Array()
+	for y in 400:
+		for x in 400:
+			values.append(noise.get_noise_2d(x, y))
+	values.sort()
+	for share: float in [0.02, 0.1, 0.3, 0.6]:
+		var covered := float(values.size() - values.bsearch(WorldInteriors.rock_threshold(share), false)) / values.size()
+		_check(absf(covered - share) <= maxf(0.01, share * 0.15), "rockiness %.2f covers %.3f of tiles" % [share, covered])
 
 
 func _check_interiors(graph: WorldGraph, label: String) -> void:

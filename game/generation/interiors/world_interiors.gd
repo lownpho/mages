@@ -26,6 +26,17 @@ const NO_DEADLINE := 1 << 62
 const _ROCK_SCALE := 6.0
 const _SPINE_SCALE := 5.0
 const _WALL_SCALE := 7.0
+## How far above its median rock_noise passes on share k / 100 of tiles, k = 0..50, measured over
+## millions of tiles. The noise is symmetric about 0 and bunched near it (it never passes 0.6), so
+## a threshold of 1 - rockiness left rockiness below 0.5 rockless.
+const _ROCK_QUANTILES: PackedFloat32Array = [
+	0.000, 0.005, 0.010, 0.014, 0.019, 0.024, 0.029, 0.033, 0.038, 0.043,
+	0.048, 0.053, 0.058, 0.062, 0.067, 0.072, 0.077, 0.082, 0.088, 0.093,
+	0.098, 0.103, 0.109, 0.114, 0.119, 0.125, 0.131, 0.136, 0.142, 0.148,
+	0.154, 0.161, 0.167, 0.174, 0.180, 0.187, 0.195, 0.202, 0.210, 0.219,
+	0.227, 0.237, 0.247, 0.258, 0.270, 0.283, 0.298, 0.317, 0.340, 0.374,
+	0.600,
+]
 
 
 class OwnerBlock:
@@ -229,6 +240,14 @@ func opening(passage: RoomPassage) -> Dictionary:
 static func opening_bounds(passage: RoomPassage) -> Rect2i:
 	var reach := ceili(_opening_radius(passage) + OPENING_GROWTH) + 1
 	return Rect2i(passage.spot - Vector2i.ONE * reach, Vector2i.ONE * (2 * reach + 1))
+
+
+## The rock_noise value that a share of the World's tiles pass, 0 to 1.
+static func rock_threshold(share: float) -> float:
+	var offset := (0.5 - clampf(share, 0.0, 1.0)) * 100.0
+	var at := absf(offset)
+	var k := mini(floori(at), 49)
+	return signf(offset) * lerpf(_ROCK_QUANTILES[k], _ROCK_QUANTILES[k + 1], at - k)
 
 
 static func _opening_radius(passage: RoomPassage) -> float:

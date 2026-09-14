@@ -10,7 +10,7 @@ extends RefCounted
 ##      disc around each spot and the centre, never take rocks.
 ##   4. Walls deepen inward to the Biome's wall_depth, wandering by its wall_variation, on floor
 ##      rocks may cover outside a corridor as wide as each Passage's opening.
-##   5. Noise rocks cover the rest at the Room's rockiness (30% of it in set pieces).
+##   5. Noise rocks cover the Room's rockiness share of the rest (30% of it in set pieces).
 ##   6. The repair clears the fewest rocks and deepened walls joining the centre to every tile where
 ##      a Passage's opening meets the other Room, and to each spot. Only when those alone can't
 ##      join them does it also clear border walls, and then only walls facing no Room or a Room
@@ -32,8 +32,6 @@ const SPINE_MIN := 1.5
 const SPINE_MAX := 3.0
 ## How far a spine segment's middle may bend sideways, as a share of its length.
 const SPINE_BEND := 0.2
-## Floor turns to rock where the rock noise passes 1 - ROCK_SPREAD * rockiness: none at 0.
-const ROCK_SPREAD := 1.1
 ## Tiles checked between deadline checks.
 const _STEP_TILES := 64
 ## Chamfer distance steps to another owner, straight and diagonal, per tile.
@@ -376,7 +374,7 @@ func _rocks(deadline: int) -> bool:
 	var rockiness := room.rockiness(_field.graph.plan.content)
 	if rockiness <= 0.0:
 		return true
-	var threshold := 1.0 - ROCK_SPREAD * rockiness
+	var threshold := WorldInteriors.rock_threshold(rockiness)
 	var noise := _field.rock_noise
 	while _cursor < rect.size.y:
 		var row := _cursor * _width
