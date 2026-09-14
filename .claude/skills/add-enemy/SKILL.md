@@ -1,6 +1,6 @@
 ---
 name: add-enemy
-description: Add a new enemy, monster, creature or boss to the game — composing its scene from the shared behaviour library, its bespoke cast spells and its CreatureResource. Covers the behaviour exports, the two dispatchers, pack aggro, telegraphs, spawn-table placement and the Godot gotchas.
+description: Add a new enemy, monster, creature or boss to the game — composing its scene from the shared behaviour library, its bespoke cast spells and its CreatureResource. Covers the behaviour exports, the two dispatchers, pack aggro, telegraphs, roster placement and the Godot gotchas.
 ---
 
 # Adding a new enemy
@@ -224,14 +224,18 @@ one), and tear down in `exit()` what `enter()` started. Use `creature.look_for_t
      (`NodePath("../../DetectProbe")`), `caster_path`/`spell`, destination strings, dials.
    - Per `Cast`/`Charge`: decide `telegraph_color` per *Telegraph flashes*.
 
-6. **Place it.** Enemies are **streamed by worldgen**, not placed by hand — `world.tscn`'s
-   `Enemies` node is an empty runtime container. A room type owns its own pool: add a
-   `SpawnTableEntry` (or a `PackMember` inside one, for a mixed pack) to the `enemies` array of a
-   `RoomTypeDef` under `world_content/biomes/<b>/rooms/<b>_<name>.tres`, and check that room's
-   `enemy_groups_min/max` budget is non-zero. See the `add-room` skill. An enemy may legitimately
-   ship unspawned. Spawn tables **are** folded into `CONFIG_HASH`, so editing one re-rolls saved
-   seeds by itself — that is expected and needs no `gen_version` bump (that dial is for algorithm
-   changes the hash can't see).
+6. **Place it.** Enemies are **streamed by the World generator**, not placed by hand —
+   `world.tscn`'s `EncounterSpawner` adds them under `WorldRoot/Entities` as their chunks stream
+   in. Put the enemy's `<id>_data.tres` on
+   a **roster** with its Entry challenge: `roster` in a Biome's
+   `game/generation/world/biomes/<b>/biome.tres` (shared by its Zones) or in one Zone's
+   `zones/<zone>.tres`, and in `fillers` too if it should join every ordinary encounter once
+   eligible. Each rostered enemy gets a Teaching room on every route that reaches its Entry
+   challenge. A Rare, Miniboss or Boss instead leads a Fixed encounter (`rares`/`minibosses` on a
+   Zone, `boss` on a Biome). How many come per encounter and how often it's drawn are `group_min`,
+   `group_max` and `weight` on the `CreatureResource` itself. The `add-room` skill covers the
+   content model, its authoring rules and the check command. An enemy may legitimately ship
+   unrostered.
 
 7. **Document it — mandatory.** Add the id to `design/data/enemies.yaml` (`id`, `description`,
    `art`, `casts`, optional `notes`, `fsm` transitions) and rebuild. **Never write a number
@@ -274,10 +278,11 @@ godot --headless --path game res://tests/test_enemy_scenes.tscn
 Instantiates every enemy, checks it carries a `CreatureResource` with hp + icon, and that every
 `*_state` export resolves to a real sibling — the typo in a rarely-rolled boss beat that would
 otherwise stay invisible until mid-fight. Then `test_behaviours`, `test_creature_caster` and
-`test_any_caster`, plus `tests/worldgen/test_population` if you touched a spawn table.
+`test_any_caster`, plus `tests/generation/test_content.tscn` and `test_encounters.tscn` if you
+touched a roster.
 
-Finally drive it live in the combat lab (`debug/combat_lab/combat_lab.tscn`) — it discovers new
-enemies from disk automatically; **Tab** opens the panel and LMB places the selected enemy, or
-`spawn <id> [n]` in the console (`` ` ``). **Never boot `world.tscn` headless** — it persists and
-clobbers the player's save; use the worldgen debug tool
-(`debug/worldgen/worldgen_debug.tscn`, view **4** + **P**) to fight it in a real room instead.
+Finally fight it in the real World: `godot --path game res://scenes/world.tscn` (append
+`-- seed=<n>` for a fixed World). Entering the World writes the Run save, so this replaces a
+saved Run. **Tab** pauses and opens the debug panel; on its **Combat** tab pick the enemy (new
+enemies are discovered from disk) and left-click the World to place it, right-click removes one.
+Or `spawn <id> [n]` in the console (`` ` ``).

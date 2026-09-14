@@ -4,7 +4,7 @@ extends Node
 ## the cooldown runs. Run:
 ##   godot --headless --path game res://tests/test_fountain.tscn
 
-const FOUNTAIN := preload("res://worldgen/runtime/fountain.tscn")
+const FOUNTAIN := preload("res://objects/fountain/fountain.tscn")
 
 
 class FakePlayer:

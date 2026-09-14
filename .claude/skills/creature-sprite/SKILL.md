@@ -28,7 +28,7 @@ This skill rides on two others — read them first, don't duplicate them:
   `inspect_sheet.py`, `animation.py`, `validate.py`) — do not hand-roll them.
 - **`add-enemy`** — turning the finished sheet into a working enemy: the composed-from-the-
   behaviour-library scene, the `CreatureResource`, the cast `.tres`, `.png.import`, uids,
-  spawn-table placement.
+  roster placement.
 
 This skill is the middle layer: **what a creature should look like, and which frames it needs so
 its beats can play them.**
@@ -188,7 +188,7 @@ pixels versus frame 0.
 5. **Wire it** — hand off to **`add-enemy`** for the `.tscn` (the `SpriteFrames` sub-resource,
    one entry per tag), the `CreatureResource` (health/rarity/kinds/drops, and the `icon`
    AtlasTexture pointing at the **idle frame at native size**), the cast `.tres`, the
-   `.png.import` and the spawn-table placement. Set each firing beat's `attack_anim` if it isn't
+   `.png.import` and the roster placement. Set each firing beat's `attack_anim` if it isn't
    the default `"attack"`.
 6. **Write the Art: line** into `design/data/enemies.yaml` alongside the rest of the enemy's
    entry, then rebuild:
@@ -203,6 +203,6 @@ For the assembled enemy, `godot --headless --path game res://tests/test_enemy_sc
 confirms every scene loads with an icon and hp. Note two silent failures it can't catch: an
 animation tag that doesn't match a beat's `play()` string leaves the creature **frozen** rather
 than erroring, and a zero-output headless timeout is a **GDScript parse error**, not slowness.
-Then look at it moving in the combat lab (`debug/combat_lab/combat_lab.tscn`, **Tab**, place it,
-watch every beat fire) — and at its portrait in the bestiary, which is where the idle frame gets
+Then look at it moving in the World (`godot --path game res://scenes/world.tscn`, which writes the
+Run save; **Tab**, Combat tab, click to place it, watch every beat fire) — and at its portrait in the bestiary, which is where the idle frame gets
 judged.

@@ -47,7 +47,7 @@ func configure(world_host: Node2D, restore_loadout := true) -> void:
 	_world_overlay.visible = false
 	host.add_child(_world_overlay)
 	_refresh_graph(true)
-	if GlobalMap.active != null and GlobalMap.active.is_finite_world():
+	if GlobalMap.active != null:
 		set_entered_rooms(GlobalMap.active.entered_rooms)
 	GlobalMap.discovery_changed.connect(set_entered_rooms)
 	_set_fly(bool(DebugState.get_value(SECTION, "fly", false)))

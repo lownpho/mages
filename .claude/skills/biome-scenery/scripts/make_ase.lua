@@ -5,7 +5,7 @@
 --
 --   aseprite -b \
 --     --script-param sheet=/tmp/sheet.png \
---     --script-param out=asset_src/graphics/worldgen/content/biomes/<biome>/<biome>_<prop>.ase \
+--     --script-param out=asset_src/graphics/generation/world/biomes/<biome>/art/<biome>_<prop>.ase \
 --     --script .claude/skills/biome-scenery/scripts/make_ase.lua
 local sheet = app.params["sheet"]
 local out = app.params["out"]

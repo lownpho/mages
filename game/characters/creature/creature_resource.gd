@@ -12,7 +12,7 @@ class_name CreatureResource
 @export var icon: Texture2D
 ## Bestiary ordering within a biome: commons first (alphabetical), rares after, boss last.
 ## Which biome page(s) an enemy is filed under is NOT stored here — it's derived from where
-## the enemy actually spawns (the room spawn tables), so it can never drift from reality and
+## the enemy actually spawns (Biome and Zone rosters and Fixed encounters), so it can never drift from reality and
 ## a shared enemy files onto every biome it appears in. See GlobalBestiary._build_groups.
 enum Rarity {COMMON, RARE, BOSS}
 @export var rarity: Rarity = Rarity.COMMON

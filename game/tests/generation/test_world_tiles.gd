@@ -237,7 +237,7 @@ func _test_decoration(fixture: WorldFixture) -> void:
 	var authored_tileset := zone.decoration_tileset
 	var authored_density := zone.decoration_density
 	fixture.set_knob(&"decoration_density", 0.6)
-	zone.decoration_tileset = load("res://world_content/biomes/glade_veggie/glade_veggie_decor_tileset.tres")
+	zone.decoration_tileset = load("res://generation/world/biomes/glade/art/glade_veggie_decor_tileset.tres")
 	zone.decoration_density = 0.9
 	graph = fixture.graph(world_seed)
 	_check(WorldFixture.graph_snapshot(graph) == snapshot, "decoration edits changed the room graph")

@@ -125,7 +125,7 @@ func _start(new_seed: int, planned: WorldGraph) -> void:
 	var streaming := Time.get_ticks_msec()
 	_streamer.prepare()
 	var streamed := Time.get_ticks_msec()
-	GlobalMap.rebuild_finite(_streamer, _encounter_spawner.defeats.defeated)
+	GlobalMap.rebuild(_streamer, _encounter_spawner.defeats.defeated)
 	GlobalMap.active.prepare_discovered(Vector2i((_player.global_position / GameConstants.PX_PER_TILE).floor()),
 			CONTINUE_INTERIORS_WEB_USEC if OS.has_feature("web") else CONTINUE_INTERIORS_DESKTOP_USEC)
 	var mapped := Time.get_ticks_msec()
@@ -167,7 +167,7 @@ func _apply_debug_graph(next_graph: WorldGraph, invalidated_biomes: Dictionary[S
 		_player.global_position = (Vector2(_nearest_floor(tile)) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 	_streamer.target = _player
 	_streamer.prepare()
-	GlobalMap.rebuild_finite(_streamer, _encounter_spawner.defeats.defeated, not new_run)
+	GlobalMap.rebuild(_streamer, _encounter_spawner.defeats.defeated, not new_run)
 
 
 ## Teleports to the requested tile when it is floor, otherwise to its nearest floor. Preparing the

@@ -42,20 +42,6 @@ signal grimoire_entry_learned(entry_id: StringName)
 # Cooldowns are keyed by the spell resource, not the slot it was cast from.
 signal spell_cooldown_started(spell: SpellResource, duration: float)
 
-# World signals
-# Emitted by world.gd once the overworld is built and the player is placed; carries the
-# streamer so listeners (minimap) can read the deterministic room caches.
-signal world_ready(streamer: WorldStreamer)
-# A two-way warp door was walked into. world.gd owns the streamer and the player, so it does the
-# moving: `body` lands beside the door in `target_slot`'s room, on the far side of it relative to
-# `heading` (the cardinal it walked in on), so it comes out the other end still walking away.
-signal warp_requested(target_slot: Vector2i, body: Node2D, heading: Vector2i)
-
-# A stair door was walked into: move the player one dungeon floor (delta -1 up, +1 down). The
-# dungeon scene owns the floors and answers this; walking off either end of the ladder leaves
-# for the overworld.
-signal floor_change_requested(delta: int, body: Node2D)
-
 # Debug signals
 # Emitted by every Hurtbox on a successful hit. victim is the character struck,
 # source is the bullet/damage area. The debug overlay tallies these.

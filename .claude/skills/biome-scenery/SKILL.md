@@ -90,27 +90,31 @@ Frame size is the *prop* box; the sheet is several variants laid out left→righ
 Source `.ase` and shipped `.png` mirror each other under the biome's `art/` folder:
 
 ```
-asset_src/graphics/world_content/biomes/<biome>/art/<biome>_<prop>.ase
-game/world_content/biomes/<biome>/art/<biome>_<prop>.png
+asset_src/graphics/generation/world/biomes/<biome>/art/<biome>_<prop>.ase
+game/generation/world/biomes/<biome>/art/<biome>_<prop>.png
 ```
 
-Shipped biomes: `glade` (shared art), `glade_start`, `glade_veggie`, `deepwood`,
-`deepwood_mimic`, `mycelium`. `design/docs/biomes.md` is the generated catalogue of what each one
-currently contains.
+Biomes with their own art: `glade` (its veggie Zone's tilesets live there too), `deepwood` and
+`mycelium`. The placeholder Biomes (`wastelands`, `fruit`, `hive`, `moon`, `hell`) borrow one of
+those presentations from their `biome.tres`.
 
-**A sheet is not content until it is a TileSet.** The streamer draws four logical tile classes
-through `BiomePresentation` (`game/worldgen/core/biome_presentation.gd`), and each slot points at
+**A sheet is not content until it is a TileSet.** The streamer draws the semantic tile classes
+through the Biome's `BiomePresentation` (`art/<biome>_presentation.tres`, referenced by
+`biome.tres`; script `game/generation/presentation/biome_presentation.gd`), and each slot points at
 a `TileSet` `.tres`:
 
 | Slot | Logical class | What it is |
 | --- | --- | --- |
-| `floor_tileset` | FLOOR | the ground, no collision |
-| `wall_tileset` | WALL | room shells, collidable |
-| `rock_tileset` | BLOCKER | scattered blockers, collidable, **Y-sorted against entities** |
-| `decoration_tileset` | DECOR_FLOOR | flat overlay behind entities, no collision |
+| `floor_tileset` | floor | the ground, no collision |
+| `wall_tileset` | wall | Room shells, collidable |
+| `rock_tileset` | rock | interior rocks, collidable, **Y-sorted against entities** |
+| `decoration_tileset` | decoration | flat overlay on floor tiles behind entities, no collision; the Biome's `decoration_density` sets how many |
+
+A Zone may override only the decoration: `decoration_tileset` and `decoration_density` on its
+`zones/<zone>.tres`.
 
 Forest biomes point **both** `wall_tileset` and `rock_tileset` at the same tree tileset, which
-is why a cave or arena generator there reads as trees rather than rock.
+is why Room walls and interior rocks there read as trees rather than rock.
 
 So a new prop sheet becomes either a new TileSet `.tres` beside it (copy
 `deepwood_trees.tres`) or extra tiles in an existing one. The shape of a tree entry:
@@ -129,8 +133,8 @@ world tile, so it is deterministic and stable across chunks). A rare variant get
 probability; the common one gets the rest. Collision is authored as per-tile physics polygons in
 the TileSet, never in code.
 
-Presentation is deliberately **not** folded into `CONFIG_HASH` — art can change freely without
-re-rolling anyone's saved world.
+Generation never reads presentation — no geometry, encounter or RNG draw depends on it — so art
+can change freely without changing any seed's World.
 
 ---
 
@@ -141,7 +145,7 @@ re-rolling anyone's saved world.
 2. **Sample the biome** (rules 1 & 7). Export the biome's existing tileset art and read its
    colors:
    ```bash
-   aseprite -b asset_src/graphics/world_content/biomes/<biome>/art/<biome>_tileset.ase \
+   aseprite -b asset_src/graphics/generation/world/biomes/<biome>/art/<biome>_tileset.ase \
      --sheet /tmp/floor.png --sheet-type horizontal
    python3 .claude/skills/biome-scenery/scripts/preview.py --colors /tmp/floor.png
    ```
@@ -169,13 +173,13 @@ re-rolling anyone's saved world.
 6. **Build the `.ase` and ship** (single-canvas, like the other biome sheets):
    ```bash
    aseprite -b --script-param sheet=/tmp/sheet.png \
-     --script-param out=asset_src/graphics/world_content/biomes/<biome>/art/<biome>_<prop>.ase \
+     --script-param out=asset_src/graphics/generation/world/biomes/<biome>/art/<biome>_<prop>.ase \
      --script .claude/skills/biome-scenery/scripts/make_ase.lua
-   cp /tmp/sheet.png game/world_content/biomes/<biome>/art/<biome>_<prop>.png
+   cp /tmp/sheet.png game/generation/world/biomes/<biome>/art/<biome>_<prop>.png
    ```
    Do **not** run the full `asset_src/export_assets.lua` just for one prop — it re-exports every
    in-progress asset in the repo. (If you want to scope it rather than skip it,
-   `--script-param paths=world_content/biomes/<biome>` limits it to that subtree.) Copying the
+   `--script-param paths=generation/world/biomes/<biome>` limits it to that subtree.) Copying the
    single shipped PNG is bit-identical to what the pipeline emits; prove it with the round-trip
    check below.
 
@@ -200,9 +204,8 @@ re-rolling anyone's saved world.
 - The **pixel-art** skill — the style doctrine these rules implement, the grid format,
   `render_grid`, `inspect_sheet.py`, the validator, the render→view→critique→iterate loop, and
   `scripts/verify_export.sh` for proving the export round-trip.
-- `game/worldgen/core/biome_presentation.gd` — the authoritative doc comment on how logical tile
-  classes become art, autotiling vs weighted scatter, and why presentation isn't hashed.
+- `game/generation/presentation/biome_presentation.gd` — the authoritative doc comment on how
+  semantic tile classes become art, autotiling vs weighted scatter, and why generation never reads
+  presentation.
 - `asset_src/export_assets.lua` — the real export pipeline (`asset_src/graphics/<path>/x.ase` →
   `game/<path>/x.png`), including the `paths=` scoping param.
-- `design/docs/biomes.md` — the generated catalogue of every biome and its rooms. Rebuild with
-  `design/tools/.venv/bin/python design/tools/build.py`.

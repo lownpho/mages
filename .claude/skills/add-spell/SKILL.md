@@ -245,7 +245,8 @@ A generic machinery extension (a `SpellCaster` or caster hook) must be tested th
 caster scene**, run as a *scene* (`godot --headless --path game res://tests/x.tscn`), not
 `godot -s` — `-s` loads before the autoloads (`GlobalInventory`, `GlobalEvent`) register.
 
-Then feel it: the combat lab (`godot --path game res://debug/combat_lab/combat_lab.tscn`) —
-**Tab** for the panel, LMB on an item icon equips it, **F3** shows dealt/taken tallies, and
-"Reload .tres" re-reads every slotted item from disk so you can tune numbers in a text editor
-without restarting. Sprites, timing juice and palette can only be judged there.
+Then feel it in the World (`godot --path game res://scenes/world.tscn`, which writes the Run
+save): **Tab** pauses and opens the debug panel, whose Combat tab equips items and places enemies
+to cast at, **F3** shows dealt/taken tallies, and the console's `reload` (`` ` ``) re-reads every
+slotted item from disk so you can tune numbers in a text editor without restarting. Sprites,
+timing juice and palette can only be judged there.

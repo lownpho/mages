@@ -1,8 +1,6 @@
 extends Node
-## Headless smoke test for the debug tooling: the content scanners the combat lab /
-## console palettes are generated from, DebugState persistence, the console command
-## dispatcher, and end-to-end drives of the combat lab (spawn/freeze/kill/equip) and the
-## worldgen debug tool (drill-down, streaming, drop-in player, seed history). Run as a
+## Headless smoke test for the debug tooling: the content scanners the console and the World debug
+## layer's Combat tab read, DebugState persistence and the console command dispatcher. Run as a
 ## scene (autoloads):
 ##   godot --headless --path game res://tests/debug/test_debug_tools.tscn
 
@@ -12,12 +10,9 @@ var _failures := 0
 func _ready() -> void:
 	_test_scan_items()
 	_test_scan_enemies()
-	_test_enemy_groups()
 	_test_find_item()
 	_test_debug_state()
 	_test_console()
-	await _test_combat_lab()
-	await _test_worldgen_debug()
 	if _failures == 0:
 		print("ALL PASS")
 	else:
@@ -45,26 +40,9 @@ func _test_scan_items() -> void:
 func _test_scan_enemies() -> void:
 	var ids := DebugContent.scan_enemy_ids()
 	_check(not ids.is_empty(), "scan_enemy_ids found enemies")
-	_check(&"wolf" in ids, "wolf is in the roster")
-	_check(DebugContent.enemy_scene(&"wolf") != null, "wolf scene loads")
+	_check(&"sproutling" in ids, "sproutling is in the roster")
+	_check(DebugContent.enemy_scene(&"sproutling") != null, "sproutling scene loads")
 	_check(DebugContent.enemy_scene(&"no_such_enemy") == null, "unknown enemy is null")
-
-
-## The biome tabs in the combat lab's brush palette: every enemy lands in exactly one group,
-## so the tabs together still show the whole roster.
-func _test_enemy_groups() -> void:
-	var groups := DebugContent.scan_enemy_groups()
-	_check(not groups.is_empty(), "scan_enemy_groups found groups")
-	var seen: Dictionary = {}
-	for g in groups:
-		_check(String(g["label"]) != "", "group has a label")
-		_check(not g["ids"].is_empty(), "group %s is non-empty" % g["label"])
-		for id in g["ids"]:
-			_check(not seen.has(id), "%s is in one group only" % id)
-			seen[id] = true
-	for eid in DebugContent.scan_enemy_ids():
-		if eid != &"placeholder":
-			_check(seen.has(eid), "%s is grouped" % eid)
 
 
 func _test_find_item() -> void:
@@ -95,137 +73,3 @@ func _test_console() -> void:
 	for cmd in ["warp", "tp", "pos", "heal", "seed", "kit"]:
 		console._run(cmd)
 		_check(String(console._lines[-1]).begins_with("unknown command"), "console still answers %s" % cmd)
-
-
-func _test_combat_lab() -> void:
-	# The lab persists its loadout into the same user://debug_state.cfg the developer's own
-	# lab session uses — snapshot it so the test doesn't wipe their kit.
-	var stored := _snapshot_lab_loadout()
-	var lab: Node2D = load("res://debug/combat_lab/combat_lab.tscn").instantiate()
-	add_child(lab)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	_check(lab._panel != null, "lab panel built")
-	_check(lab._floor.get_used_cells().size() > 0, "lab floor generated")
-	lab._brush = &"sproutling"
-	lab._spawn_brush(Vector2(100, 0))
-	await get_tree().process_frame
-	_check(lab._enemies.get_child_count() == 1, "brush spawned a sproutling")
-	lab._set_frozen(lab._enemies.get_child(0), true)
-	lab._kill_all(false)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	_check(lab._enemies.get_child_count() == 0, "clear despawned everything")
-	lab._brush = lab.DUMMY_ID
-	lab._spawn_brush(Vector2(0, 50))
-	await get_tree().process_frame
-	_check(lab._enemies.get_child_count() == 1 and "max_health" in lab._enemies.get_child(0),
-			"dummy spawned with health dial")
-	# Spells that reach their victims by capability rather than by collision (Thwomp's
-	# pulse, a spore cloud's tick) look up `hurtbox` on what they find in the target group.
-	# A dummy with only a $Hurtbox node answers null and eats nothing — and the lab then
-	# lies about the very spells it exists to tune.
-	var dummy: Node = lab._enemies.get_child(0)
-	_check(dummy.is_in_group("enemies") and dummy.get("hurtbox") != null,
-			"dummy answers the hurtbox capability contract")
-	_check(lab._walls.tile_set.get_physics_layers_count() > 0,
-			"wall tileset carries collision (bullets/chasers see it)")
-	lab._walls.clear()
-	lab._wall_brush_size = 1
-	lab._preset_box()
-	_check(lab._walls.get_cell_source_id(Vector2i(0, -lab.ARENA_HALF_TILES.y)) != -1
-			and lab._walls.get_cell_source_id(Vector2i.ZERO) == -1,
-			"box preset walls the perimeter and leaves the interior open")
-	var walled: int = lab._walls.get_used_cells().size()
-	lab._paint_walls(Vector2(5, 5) * GameConstants.PX_PER_TILE, true)
-	_check(lab._walls.get_used_cells().size() == walled + 1, "wall brush painted one cell")
-	lab._paint_walls(Vector2(5, 5) * GameConstants.PX_PER_TILE, false)
-	_check(lab._walls.get_used_cells().size() == walled, "wall brush erased the cell")
-	lab._set_wall(Vector2i.ZERO, true)
-	_check(lab._walls.get_cell_source_id(Vector2i.ZERO) == -1,
-			"wall brush refuses to brick in the player")
-	lab._walls.clear()
-	lab._save_walls()
-
-	var pew := DebugContent.find_item("pew1")
-	lab._equip_item(pew)
-	var slotted := false
-	for slot in GlobalInventory.all_slots():
-		if slot.item == pew:
-			slotted = true
-	_check(slotted, "palette click equipped the spell")
-	var persisted := false
-	for key in _lab_slot_keys():
-		if DebugState.get_value("combat_lab", key, "") == pew.resource_path:
-			persisted = true
-	_check(persisted, "equipping wrote the loadout to DebugState")
-	GlobalInventory.reset()
-	lab.queue_free()
-	await get_tree().process_frame
-	_restore_lab_loadout(stored)
-
-
-## Every DebugState key the lab stores one slot under, spell row then bag.
-static func _lab_slot_keys() -> Array[String]:
-	var keys: Array[String] = []
-	for i in GlobalInventory.SPELL_SLOTS:
-		keys.append("spell_%d" % i)
-	for i in GlobalInventory.BAG_SIZE:
-		keys.append("bag_%d" % i)
-	return keys
-
-
-## The lab state this test perturbs — the loadout slots ("spell_N"/"bag_N") and the
-## painted arena ("walls") — as key -> value.
-func _snapshot_lab_loadout() -> Dictionary:
-	var out: Dictionary = {}
-	for key in DebugState.keys("combat_lab"):
-		if _is_lab_session_key(key):
-			out[key] = DebugState.get_value("combat_lab", key)
-	return out
-
-
-func _restore_lab_loadout(stored: Dictionary) -> void:
-	for key in DebugState.keys("combat_lab"):
-		if _is_lab_session_key(key) and not stored.has(key):
-			DebugState.erase("combat_lab", key)
-	for key in stored:
-		DebugState.set_value("combat_lab", key, stored[key])
-
-
-static func _is_lab_session_key(key: String) -> bool:
-	return key.begins_with("spell_") or key.begins_with("bag_") or key == "walls"
-
-
-func _test_worldgen_debug() -> void:
-	var wg: Node2D = load("res://debug/worldgen/worldgen_debug.tscn").instantiate()
-	add_child(wg)
-	await get_tree().process_frame
-	wg._apply_seed(777)
-	_check(wg.spec != null, "layout built for seed 777")
-	wg._select_biome(Vector2i.ZERO)
-	wg._switch_view(2)
-	_check(wg.current_view == 2, "biome view active")
-	wg._drill_in()
-	_check(wg.current_view == 3, "drill entered room view")
-	_check(wg._room_view._out != null, "room view holds a real RoomOutput")
-	wg._teleport_to_selection()
-	_check(wg.current_view == 4, "teleport landed in fly view")
-	for _i in 5:
-		await get_tree().process_frame
-	_check(wg._streamer.loaded_chunks() > 0, "fly view streamed chunks")
-	wg._toggle_drop_in()
-	_check(wg._player != null, "drop-in player spawned")
-	_check(wg._player.debug_never_die, "drop-in player cannot wipe the save")
-	await get_tree().process_frame
-	wg._toggle_drop_in()
-	_check(wg._player == null, "drop-in player returned to the fly cam")
-	wg._drill_out()
-	_check(wg.current_view == 3, "esc backed out to room view")
-	wg._apply_seed(888)
-	wg._history_step(-1)
-	_check(wg.world_seed == 777, "seed history steps back")
-	wg._history_step(1)
-	_check(wg.world_seed == 888, "seed history steps forward")
-	wg.queue_free()
-	await get_tree().process_frame

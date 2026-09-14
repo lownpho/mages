@@ -1,24 +1,15 @@
 class_name DebugState
-## Shared persistence + CLI deep-links for the debug tools (worldgen debug, room lab,
-## combat lab, console). State lives in user://debug_state.cfg so an F5 restart resumes
-## where the last session left off; CLI user args (after "--") override the stored state
-## so an exact tool state is reproducible from a shell command, e.g.:
-##   godot --path game res://debug/worldgen/worldgen_debug.tscn -- seed=123 view=4 pos=40,20
+## Shared persistence for the debug tools (the World debug layer, console). State lives in
+## user://debug_state.cfg so an F5 restart resumes where the last session left off.
 extends RefCounted
 
 const PATH := "user://debug_state.cfg"
 
-## Debug scenes render in native window pixels (the game's 320x180 stretch is unusable for a
-## dense tool UI), upscaled by this much so the 8px pixel font reads like it does in the combat
-## lab. Views lay out in logical (pre-scale) px and label themselves with the same font, so map
-## text matches the Control chrome around it.
-const UI_SCALE := 3.0
+## The pixel font debug overlays label themselves with, at its native size.
 const UI_FONT := preload("res://gui/m3x6.ttf")
 const UI_FONT_SIZE := 8
 
 static var _cfg: ConfigFile = null
-static var _cli: Dictionary = {}
-static var _cli_parsed := false
 
 
 static func _file() -> ConfigFile:
@@ -53,30 +44,3 @@ static func keys(section: String) -> PackedStringArray:
 	if not f.has_section(section):
 		return PackedStringArray()
 	return f.get_section_keys(section)
-
-
-## CLI user args (everything after "--"), parsed as key=value pairs; "--key=value" also
-## accepted. Returns "" when absent.
-static func cli_arg(key: String) -> String:
-	if not _cli_parsed:
-		_cli_parsed = true
-		for a in OS.get_cmdline_user_args():
-			var arg: String = a.trim_prefix("--")
-			var eq := arg.find("=")
-			if eq > 0:
-				_cli[arg.substr(0, eq)] = arg.substr(eq + 1)
-	return _cli.get(key, "")
-
-
-static func cli_int(key: String, default: int) -> int:
-	var v := cli_arg(key)
-	return v.to_int() if v != "" else default
-
-
-## "x,y" CLI arg as a Vector2i, or `default` when absent/malformed.
-static func cli_vec2i(key: String, default: Vector2i) -> Vector2i:
-	var v := cli_arg(key)
-	var parts := v.split(",")
-	if parts.size() != 2:
-		return default
-	return Vector2i(parts[0].to_int(), parts[1].to_int())

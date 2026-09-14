@@ -1,12 +1,9 @@
 extends CanvasLayer
 ## Quake-style debug console, autoloaded in debug builds (self-frees in release exports).
-## Toggle with ` (backtick) or F10. Works in any scene — the running game, the combat lab,
-## the worldgen debug views. Type `help` for the command list. Moving around the World, seeds
-## and loadouts belong to the World debug layer (Tab) instead.
+## Toggle with ` (backtick) or F10. Works in any scene. Type `help` for the command list. Moving
+## around the World, seeds and loadouts belong to the World debug layer (Tab) instead.
 ##
-## The console adapts to the window's content scaling: in the game (320x180 canvas_items
-## stretch) it draws in game pixels; in the debug tools (scaling disabled) it scales itself
-## up so the pixel font stays readable at native resolution.
+## The console draws in the window's logical pixels, so the game's 320x180 stretch sizes it.
 
 const LOG_LINES := 10
 const STATE_LABEL_GROUP := "debug_state_label"
@@ -154,8 +151,7 @@ func _run(line: String) -> void:
 			_say("unknown command '%s' — try help" % cmd)
 
 
-## The live player: the "player" group member that actually has stats (the worldgen debug
-## flycam also sits in that group so streaming follows it, but it has no health).
+## The live player: the "player" group member that actually has stats.
 func _player() -> Node:
 	for node in get_tree().get_nodes_in_group("player"):
 		if "health" in node:

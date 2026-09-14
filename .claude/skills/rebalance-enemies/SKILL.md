@@ -1,6 +1,6 @@
 ---
 name: rebalance-enemies
-description: Retune existing enemy numbers — HP, cast damage, movement speed, drop chances/items, or spawn frequency — without rebuilding anything. Use when the user asks to buff/nerf an enemy or a biome's roster, adjust drop rates or drop-table contents, make enemies "more/less trivial," or fix loot that's "too scarce"/"never drops." Not for adding a new enemy (see add-enemy) or new room/spawn types (see add-room).
+description: Retune existing enemy numbers — HP, cast damage, movement speed, drop chances/items, or spawn frequency — without rebuilding anything. Use when the user asks to buff/nerf an enemy or a biome's roster, adjust drop rates or drop-table contents, make enemies "more/less trivial," or fix loot that's "too scarce"/"never drops." Not for adding a new enemy (see add-enemy) or changing Rooms, Zones or set pieces (see add-room).
 ---
 
 # Rebalancing enemies
@@ -21,8 +21,9 @@ For enemy `<id>` under `game/characters/enemies/<id>/`:
 | Projectile reach & pace | the same file's inline `BulletResource` | `range_tiles`, `speed_tiles` (**tiles**, not px) |
 | Movement speed | `<id>.tscn` — on the behaviour node, not the resource | `speed` on the Approach/Wander/Flee beat (a creature can move at different speeds per state, which is why it isn't on `CreatureResource`) |
 | Drop table | `<id>_data.tres` | `drops = Array[...]([...])` — `LootDrop` sub-resources, each `{item: ExtResource, chance: float}` |
-| Spawn frequency | the **room type's** `.tres` (`game/world_content/biomes/<biome>/rooms/<room>.tres`, `RoomTypeDef`), in its `enemies` array: a `SpawnTableEntry`'s `weight` (relative pick odds in that room's pool) and `group_min`/`group_max` | not on the enemy itself |
-| How often that *room* appears | the same `RoomTypeDef` | `weight`, `min_per_biome`, `max_per_biome`, `difficulty` |
+| Encounter group size & draw odds | `<id>_data.tres` (Encounters group) | `group_min`/`group_max` (how many per encounter), `weight` (relative odds among an encounter's eligible types) |
+| Where and from when it spawns | the roster that lists it: `game/generation/world/biomes/<biome>/biome.tres` or `zones/<zone>.tres` | its Entry challenge in `roster`; membership in `fillers` |
+| Encounter density everywhere | `game/generation/world/challenge_curve.tres` | `encounters_per_tile`, `types_per_encounter` — global, never per enemy |
 
 **Damage is on the cast, never on the bullet.** `BulletResource` deliberately carries no damage
 so the same projectile shape hits for one number in the player's hands and another in an
@@ -38,10 +39,10 @@ enemy `drops` don't use it.) When an enemy "never drops anything," the fix is ei
 per-item chances or noting it's rarely killed, not switching to a weighted pick.
 
 **Frequency confounds drop rate.** An enemy's *felt* drop rate is `chance × how often you kill
-it`, and kill rate is set by two things that both live outside the enemy: which rooms list it in
-their `enemies` pool (and at what `weight`/`group_max`), and how often those rooms are placed
-(the `RoomTypeDef`'s own `weight`/`min_per_biome`/`difficulty`). Before concluding an item is
-"too rare," check whether the enemy carrying it is just rarely spawned. A report of "X never
+it`, and kill rate is set by which rosters list it and from what Entry challenge, its own
+`weight`/`group_max`, and the curve's density. A Rare, Miniboss or Boss appears once per World in
+its Fixed encounter. Before concluding an item is "too rare," check whether the enemy carrying it
+is just rarely spawned. A report of "X never
 drops" is a spawn-frequency question as often as a chance question. Don't change spawn weights
 unless the user asks specifically — a rate complaint is usually about `chance`.
 
@@ -74,13 +75,10 @@ unless the user asks specifically — a rate complaint is usually about `chance`
    (Use that venv python — the system `python3` has no PyYAML/Jinja2.) Only touch
    `design/data/enemies.yaml` if the *words* changed — a rebalance big enough that the enemy's
    description now lies. The yaml holds no numbers by design.
-6. **No `gen_version` bump.** That dial (`world_content/gen_config.tres`) means "the generator
-   *algorithm* changed" — bump it only for code the hash can't see. Every piece of authored
-   world data, spawn tables included, is already folded into `CONFIG_HASH` by
-   `GenConfig.compute_hash()`, so a data edit re-rolls saved seeds on its own. HP, cast damage
-   and loot chances aren't hashed at all and don't touch a saved seed's geography; editing a
-   `SpawnTableEntry` or a `RoomTypeDef` quota does change the world, automatically, with no bump
-   needed.
+6. **Check roster edits.** HP, cast damage and loot never reach generation. A roster, Filler or
+   `group_min`/`group_max`/`weight` edit changes the encounters every seed generates, which is
+   expected; run the content check afterwards:
+   `godot --headless --path game res://generation/content/check_content.tscn` (exit 0 = clean).
 
 ## Drop assignment (when redistributing a roster's loot)
 
@@ -109,9 +107,9 @@ full coverage, than spreading three copies thin at low chance.
 
 ## Don't
 
-- Don't touch spawn `weight`/`group_min`/`group_max`, or a `RoomTypeDef`'s placement quota,
-  unless asked — that's a population-density decision, separate from loot balance, and it
-  re-rolls every saved world through `CONFIG_HASH`.
+- Don't touch `weight`/`group_min`/`group_max`, Entry challenges or the curve unless asked —
+  that's a population-density decision, separate from loot balance, and it changes every seed's
+  encounters.
 - Don't rewrite a `_data.tres` or a cast `.tres` from scratch with `Write` when an `Edit` on the
   one changed line will do — these files carry `uid`s and `ExtResource` ids that are easy to
   typo when retyped wholesale.
@@ -123,6 +121,7 @@ full coverage, than spreading three copies thin at low chance.
 ## Validate
 
 `design/tools/.venv/bin/python design/tools/build.py --check` proves the docs and the game still
-agree. For anything you want to *feel*, the combat lab
-(`godot --path game res://debug/combat_lab/combat_lab.tscn`) has a "Reload .tres" button that
-re-reads every slotted item from disk — tune numbers in the editor and click it, no restart.
+agree. For anything you want to *feel*, run the World (`godot --path game res://scenes/world.tscn`;
+it writes the Run save): **Tab** opens the debug panel, whose Combat tab places enemies and equips
+items, and the console's `reload` (`` ` ``) re-reads every slotted item and the World content from
+disk — tune numbers in a text editor and reload, no restart.

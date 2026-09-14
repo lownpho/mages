@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ZoneResource" format=3]
 
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
-[ext_resource type="TileSet" path="res://world_content/biomes/glade_veggie/glade_veggie_decor_tileset.tres" id="decoration_tileset"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/glade/art/glade_veggie_decor_tileset.tres" id="decoration_tileset"]
 [ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="Resource" path="res://characters/enemies/rosebud/rosebud_data.tres" id="rosebud"]
 [ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]

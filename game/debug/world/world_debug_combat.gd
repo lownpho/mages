@@ -44,7 +44,7 @@ func set_god(on: bool) -> void:
 		host._player.grant_spawn_grace(1e9 if on else 0.0)
 
 
-## Stat overrides ride the player's buff pipeline, like the combat lab's.
+## Stat overrides ride the player's buff pipeline.
 func set_stats(skill: int, speed: int, defence: int) -> void:
 	_cheat_buff.skill_modifier = skill
 	_cheat_buff.speed_modifier = speed

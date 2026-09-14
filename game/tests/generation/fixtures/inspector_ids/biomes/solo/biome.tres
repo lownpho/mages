@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_q5wso"]
 [ext_resource type="Resource" uid="uid://cspv0ip6swyd0" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="2_guue6"]
 [ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="3_ivxxy"]
-[ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="6_evpy2"]
+[ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://generation/world/biomes/deepwood/art/deepwood_presentation.tres" id="6_evpy2"]
 [ext_resource type="Resource" uid="uid://bqm7yv4x0nwdl" path="res://characters/enemies/moth/moth_data.tres" id="7_lmqo4"]
 [ext_resource type="Script" uid="uid://n62cgew2ywo2" path="res://generation/content/biome_resource.gd" id="8_8kiqc"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="9_3vqtc"]

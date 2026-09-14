@@ -29,7 +29,7 @@ func _ready() -> void:
 
 func _state(graph: WorldGraph, defeated: Dictionary = {}) -> MapState:
 	var state := MapState.new()
-	state.setup_finite(graph, WorldFixture.interiors(graph), defeated)
+	state.setup(graph,WorldFixture.interiors(graph), defeated)
 	return state
 
 

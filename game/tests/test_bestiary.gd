@@ -1,6 +1,6 @@
 extends Node
-## Headless bestiary smoke test: roster derivation, spawn-table-derived page grouping (biomes
-## sharing a BiomeDef.family merge into one page, every page in the book from the start), the
+## Headless bestiary smoke test: roster derivation, content-derived page grouping (one page per
+## Biome, filed from its rosters and Fixed encounters, every page in the book from the start), the
 ## kill→unlock flow through GlobalEvent.creature_died, summon exclusion, and the to_dict/restore
 ## save shape. Run:
 ##   godot --headless --path game res://tests/test_bestiary.tscn

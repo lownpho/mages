@@ -67,8 +67,8 @@ func _ready() -> void:
 	if learned_events != [&"pew3_insect"]:
 		fails.append("learned emitted %s, want [pew3_insect] exactly once" % str(learned_events))
 
-	# An enemy's bespoke cast is a SpellResource too, but no entry; a pathless spell (console,
-	# combat lab) is nothing at all.
+	# An enemy's bespoke cast is a SpellResource too, but no entry; a pathless spell (a debug
+	# tool's) is nothing at all.
 	for item: ItemResource in [load("res://characters/enemies/wasp/wasp_spell.tres"), SpellResource.new()]:
 		slot.item = item
 		GlobalEvent.item_picked_up.emit(slot)

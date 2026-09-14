@@ -6,9 +6,6 @@ extends Control
 ## from the pin button on the HUD strip; Esc / clicking outside closes it (ui.gd, same as the
 ## bestiary). Re-fits to the discovered world each time it opens, so it always frames what the
 ## player has seen so far.
-##
-## When dungeon floors arrive this becomes the paged "book": one MapState per space, this view
-## renders GlobalMap's active one and page controls swap spaces. Today there is a single space.
 
 const COLOR_BG := Palette.BLACK
 const COLOR_PLAYER := Palette.WHITE

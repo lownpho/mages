@@ -6,7 +6,7 @@
 [ext_resource type="Resource" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="gnarlking"]
 [ext_resource type="Resource" path="res://characters/enemies/moth/moth_data.tres" id="moth"]
 [ext_resource type="Resource" path="res://characters/enemies/moth/moth_data.tres" id="moth_again"]
-[ext_resource type="Resource" path="res://world_content/biomes/deepwood/deepwood_presentation.tres" id="presentation"]
+[ext_resource type="Resource" path="res://generation/world/biomes/deepwood/art/deepwood_presentation.tres" id="presentation"]
 [ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
 
 [sub_resource type="Resource" id="boss"]

@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://bkg6pxrhomx2x"]
 
 [ext_resource type="Script" uid="uid://8adv04v4iykp" path="res://scenes/tutorial.gd" id="1_tut"]
-[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://world_content/biomes/glade_start/glade_floor_tileset.tres" id="2_floor"]
-[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://world_content/biomes/glade_start/glade_decor_tileset.tres" id="3_decor"]
-[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://world_content/biomes/glade/art/glade_trees.tres" id="4_trees"]
+[ext_resource type="TileSet" uid="uid://dkqvr34u7gybx" path="res://generation/world/biomes/glade/art/glade_floor_tileset.tres" id="2_floor"]
+[ext_resource type="TileSet" uid="uid://dj6jdkhn5padu" path="res://generation/world/biomes/glade/art/glade_decor_tileset.tres" id="3_decor"]
+[ext_resource type="TileSet" uid="uid://5mhmowl26emi" path="res://generation/world/biomes/glade/art/glade_trees.tres" id="4_trees"]
 [ext_resource type="PackedScene" uid="uid://b01pqypkc7tru" path="res://gui/ui.tscn" id="5_ui"]
 [ext_resource type="PackedScene" uid="uid://dn3kf6w8p1q0m" path="res://components/damage_hints/damage_numbers.tscn" id="6_dmgnum"]
 [ext_resource type="PackedScene" uid="uid://cqjpouw1xepax" path="res://characters/player/player.tscn" id="7_player"]
-[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://worldgen/runtime/door.tscn" id="8_door"]
+[ext_resource type="PackedScene" uid="uid://dxm4tlavqp2el" path="res://objects/door/door.tscn" id="8_door"]
 [ext_resource type="PackedScene" uid="uid://csw2alambl3eb" path="res://scenes/world.tscn" id="9_world"]
 
 [node name="Tutorial" type="Node2D" unique_id=1442309371]

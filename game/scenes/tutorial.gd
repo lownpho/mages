@@ -7,9 +7,8 @@ extends Node2D
 ## player walks into, so the array reads top to bottom the way the tutorial plays. Reorder it to
 ## reorder the tutorial; add an entry and the floor grows a room to hold it.
 ##
-## Deliberately save-free: no WorldStreamer, no EntitySpawner, and it never emits
-## GlobalEvent.world_ready or calls GameState.persist(). Only walking out the exit commits to
-## a run.
+## Deliberately save-free: no ChunkStreamer, no spawners, no Map, and it never calls
+## GameState.persist(). Only walking out the exit commits to a run.
 ##
 ## Layout is data, tiles are painted from the glade tilesets' own tiles, so there is no
 ## hand-painted tilemap in the scene file to keep in sync with the room list.
@@ -66,7 +65,7 @@ const DECOR_CHANCE := 0.06
 const INTRO_SIGN := """You move with W A S D or the left analog stick.
 Go in the next room to learn your first spells"""
 
-const SIGN_SCENE := preload("res://worldgen/runtime/under_construction_sign.tscn")
+const SIGN_SCENE := preload("res://objects/sign/under_construction_sign.tscn")
 
 ## The starter kit, dropped on the floor of the casting room so the player has spells in hand by
 ## the time that room's sign explains the cast buttons — a run entered from the title never
@@ -82,7 +81,7 @@ const FIRST_FIGHT := preload("res://characters/enemies/sproutling/sproutling.tsc
 const FIRST_FIGHT_ROOM := 7
 
 ## The heal, one room past the fight — the player arrives having just spent health on it.
-const FOUNTAIN := preload("res://worldgen/runtime/glade_fountain.tscn")
+const FOUNTAIN := preload("res://objects/fountain/glade_fountain.tscn")
 const FOUNTAIN_ROOM := 8
 
 @onready var _floor: TileMapLayer = $Floor

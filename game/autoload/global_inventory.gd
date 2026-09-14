@@ -108,7 +108,7 @@ func spell_family(item: ItemResource) -> String:
 # one-tier-per-spell rule, which binds the spell row only — the bag will hold any pile of
 # duplicates. `source` is the slot the item is leaving, excluded from the scan: since a
 # duplicate copy is the very same .tres, matching on the resource is no longer enough to
-# tell a move from a second copy. Bypassed on purpose by the console, the combat lab and
+# tell a move from a second copy. Bypassed on purpose by the debug tools and
 # save loading — this is the player-facing restriction only.
 func can_equip(item: ItemResource, target: Slot, source: Slot = null) -> bool:
 	if not target.can_place_item(item):
@@ -133,7 +133,7 @@ func first_slot_for(item: ItemResource) -> Slot:
 	return null
 
 # First empty slot anywhere, spell row before bag, ignoring the one-tier-per-spell rule —
-# the debug path (console `give`, the combat lab palette), which is not bound by a
+# the debug path (console `give`, the World debug layer's Combat tab), which is not bound by a
 # player-facing restriction.
 func add_at_first_empty(item: ItemResource) -> Slot:
 	var slot := spell_slots.add_at_first_empty(item)

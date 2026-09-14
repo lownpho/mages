@@ -11,8 +11,8 @@ extends RefCounted
 ##
 ## No Professor scene exists yet, so Professor sites build nothing.
 
-const SIGN_SCENE := preload("res://worldgen/runtime/under_construction_sign.tscn")
-const DOOR_SCENE := preload("res://worldgen/runtime/door.tscn")
+const SIGN_SCENE := preload("res://objects/sign/under_construction_sign.tscn")
+const DOOR_SCENE := preload("res://objects/door/door.tscn")
 
 var graph: WorldGraph
 ## Chunk size -> chunk coord -> the Objects standing in it, in key order.

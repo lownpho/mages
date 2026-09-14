@@ -1,7 +1,6 @@
 class_name ChunkStreamer
 extends Node2D
-## Streams the finite World's tiles around a target, as WorldStreamer does for the old generator:
-## each frame it wants the chunks covering the camera's view grown by prefetch_tiles, unloads chunks
+## Streams the finite World's tiles around a target: each frame it wants the chunks covering the camera's view grown by prefetch_tiles, unloads chunks
 ## past a larger hysteresis margin, and skips chunks beyond the World's finite bounds and the ring
 ## of wall-art border chunks around them. The prefetch is in tiles rather than whole chunks so the
 ## lead ahead of a walking player is the same on every side without streaming more than it needs.

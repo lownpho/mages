@@ -1,223 +1,148 @@
 ---
 name: add-room
-description: Add a new room type to the procedural world generator, or change how rooms are shaped/placed. Use when the user wants to create/add a room, room type, boss room, arena, shop, shrine, or "guaranteed" room in a biome; wants a room to always appear (once or N times); wants to control where on the difficulty ramp it lands; wants to pick/tune the generator that carves a room's interior (scatter, cave, arena) or make it an organic blob pocket; or wants to wire enemies/features into a room. Covers RoomTypeDef, the three generators, footprint_blob, quotas and the difficulty ramp, spawn tables, features, registration in gen_config, and the CONFIG_HASH/gen_version rule. NOT for adding whole biomes (that's a bigger job) or new enemy scenes (use add-enemy).
+description: Author the World's Rooms through its content model — Zone Room quotas, set pieces (Boss, Miniboss and Rare rooms), the six Room-shaping knobs, Breather Objects and Signs. Use when the user wants to add a boss/miniboss/rare room, add or resize a Zone, change how many Rooms a Biome has, make Rooms bigger/rockier/loopier/more connected, put fountains or other Objects in Breathers, or add a Sign. NOT for new enemy scenes (add-enemy) or retuning enemy numbers and rosters (rebalance-enemies).
 ---
 
-# Adding a room to the world generator
+# Authoring Rooms
 
-Rooms are **data**, not code. A room type is one `RoomTypeDef` `.tres` that is the **complete,
-hand-authored room**: which biome owns it, where on the difficulty ramp it sits, how rare it is,
-which generator carves its interior, its own enemy pool and budget, and any features standing in
-it. Adding a room is almost always: make one `.tres`, register it in `gen_config.tres`. You only
-write code for a genuinely new *generator algorithm*.
+Rooms are **generated**, never authored one by one. You edit the World's content model — flat
+`.tres` under `game/generation/world/` — and the generator plans every Room from it at Run start.
+Every request lands as one of the recipes below, followed by the content check.
 
-The architecture source of truth is the doc comments in `game/worldgen/core/room_type_def.gd`
-and `game/worldgen/layers/room_graph.gd` — the latter documents the exact RNG order and the
-placement passes. `design/docs/biomes.md` is the generated catalogue of what currently exists
-(every room, its shape, its count and its rolled enemy groups), extracted from the `.tres` files
-themselves, so it is never stale.
+Before writing any content `.tres`, read `docs/agents/content-authoring.md`: the saver's order,
+the typed-collection script lines and the sub-resource ids every file needs. `docs/` is gitignored,
+so in a worktree read it from the main checkout. The domain words (Zone, Set-piece room, Breather,
+Teaching room, Fixed encounter, …) are defined in `CONTEXT.md`.
 
-## The one rule you cannot skip
+## The content model
 
-**Register it or it doesn't exist.** Everything is stitched together by
-`game/world_content/gen_config.tres`. A room type that isn't in its `room_types` array is
-invisible to the generator. (There is a second world: `world_content/mycelium_gen_config.tres`,
-with per-floor configs under `world_content/mycelium_floors/` — a mycelium room registers there
-instead.)
+Folder and file names are the ids; nothing registers content by hand, so a new Zone file is picked
+up as soon as it exists.
 
-**There is no "remember to bump the version" rule for data.** `GenConfig.compute_hash()` folds
-every world-affecting authored field — room types, their generators, their spawn tables, biomes,
-adjacency — into `CONFIG_HASH`, which is mixed into every seed. So adding or editing a room type
-*already* re-rolls saved worlds, loudly and by construction. `gen_version` is the manual dial for
-what the hash **cannot** see: a change to generator or layout **code**. Bump it then, not for
-`.tres` edits.
+| File | Owns |
+| --- | --- |
+| `world.tres` (`WorldResource`) | topology: the `ideal_path` order and each Side biome with its parent |
+| `challenge_curve.tres` | global encounter density and types per Challenge step, `teach_dip`, `respawn_delay`, `breather_chance` |
+| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster and Fillers, the one `boss`, the six shape knobs, `presentation`, decoration density, Professor and Warp-door counts, Signs, Breather Objects |
+| `biomes/<biome>/zones/<zone>.tres` (`ZoneResource`) | `route_rooms` and `room_count`, additive roster and Fillers, `minibosses`, `rares`, decoration override, Signs, Breather Objects |
+| `biomes/<biome>/art/` | the Biome's presentation and tilesets (see `biome-scenery`) |
 
-## Where things live
+The resource classes and their doc comments are in `game/generation/content/`. A new Biome also
+needs a `world.tres` entry, a Boss and art — a bigger job than a Room.
 
-| What | Path |
-|---|---|
-| Master config | `game/world_content/gen_config.tres` (and `mycelium_gen_config.tres`) |
-| Room types | `game/world_content/biomes/<biome>/rooms/<biome>_<name>.tres` |
-| Feature data (door configs, etc.) | next to the biome that uses it, e.g. `biomes/glade/cave_door.tres` |
-| Biome definitions | `game/world_content/biomes/<id>/<id>.tres` |
-| Generator scripts (code) | `game/worldgen/generators/` |
-| Enemy scenes (for spawn tables) | `game/characters/enemies/<id>/` |
+## How Rooms come out of it
 
-Every room type belongs to **exactly one biome**, named by its own `biome` field. There is no
-per-biome room table to add a row to — the room type declares its own membership, quota and
-weight. (The one exception is a `WORLD`-unique type, which leaves `biome` empty.)
+- A Biome's Zone order is seeded; the single Spawn zone (`spawn = true`, in the first Ideal-path
+  Biome) always comes first. Each Zone keeps its quotas wherever it lands.
+- `route_rooms` Rooms lie on the Ideal path (or the Side route). `room_count` is every Room the
+  Zone owns, route Rooms included.
+- Roles fill the quota: a Teaching room for each enemy at its first eligible route position, the
+  set pieces (the Biome's Boss in its last Zone, the Zone's Minibosses and Rares), then Testing
+  rooms. A non-Teaching ordinary Room becomes a Breather with the curve's `breather_chance`, and
+  every Object site forces one.
+- Set-piece rooms are spacious, off-route, have exactly one Passage and never hold Objects. The
+  Boss sits near the end of its Ideal path or Side route, Minibosses late in their Zone, and Rares
+  move with the seed.
 
-## RoomTypeDef fields
+## Recipes
 
-| Field | Meaning |
-|---|---|
-| `id` | Unique `&"name"`. Convention: `<biome>_<name>`. |
-| `biome` | The one biome that hosts it. `&""` only for `WORLD`-unique types. |
-| `generator` | A generator Resource, embedded as a sub-resource (see below). `null` = empty room, just floor. |
-| `unique_scope` | `NONE` for everything except `WORLD` = **exactly one in the whole world**, pinned as a 1×1 leaf at world layout. |
-| `unique_allowed_biomes` | `WORLD` only: which biomes may host it. Ignored for `NONE`. |
-| `min_size_slots` / `max_size_slots` | Size window in slots, `Vector2i`. A room fits if `(w,h)` **or** `(h,w)` lies within it per axis, so orientation doesn't matter. Quota placements get a leaf of exactly `min_size_slots` carved for them by construction. |
-| `difficulty` | 0–3. **This is placement, not tuning.** The biome's entrance-depth range splits into quarters; difficulty ≥ 2 lands as far from the entrance as the geometry allows, ≤ 1 as near. 0 = spawn-adjacent breather, 3 = the boss's quarter. |
-| `footprint_blob` | Interior becomes an organic pocket carved from solid mass; corridors tunnel in. |
-| `weight` | Relative odds in the weighted fill. **`0` = quota-only** — the room appears exactly as often as `min_per_biome` says and never rolls up as filler. |
-| `min_per_biome` | Guaranteed placements, carved and assigned before any fill. `min == max` pins an exact count. |
-| `max_per_biome` | Fill weight drops to 0 once this many are placed. |
-| `enemies` | This room's own weighted `SpawnTableEntry` pool. `[]` = never spawns anything. |
-| `enemy_groups_min` / `max` | Population budget. `0/0` = safe room. |
-| `scale_groups_with_size` | Multiply the budget by the room's slot area. Turn **off** for exactly-one encounters (boss, rare, shrine) so a big leaf doesn't duplicate the set-piece. |
-| `features` | `Array[RoomFeature]` — specific scenes (doors, altars, portals) placed on the finished room. Deliberately **not** hashed. |
+### A Boss, Miniboss or Rare room
 
-## How a room type gets into the world
-
-`RoomGraph.build()` carves the biome with a demand-carving guillotine BSP — correct by
-construction, no retries — then assigns types in three passes:
-
-1. **World-unique pins** (`unique_scope = WORLD`), stamped with no RNG.
-2. **Quota minimums**, in descending difficulty (so the boss picks before lesser set-pieces).
-   Each takes the free room whose depth **tier** is nearest its authored `difficulty`, among
-   those fitting its size window.
-3. **Weighted fill** over what's left, sampling among the types whose size window fits *and*
-   whose difficulty matches the room's tier, falling through to lower tiers, and finally to the
-   biome's `fallback_room_type` when nothing fits.
-
-So one row's worth of policy is just three fields on the type itself:
-
-- **Filler (maybe none):** `min_per_biome 0`, a `weight`, a sensible `max_per_biome`.
-- **Exactly one (boss/gate/rare):** `min 1, max 1, weight 0`.
-- **At least one, possibly more:** `min 1`, a `weight`, a higher `max`.
-
-In the debug biome view, quota-guaranteed types outline cyan and world-uniques gold.
-
-### Recipe: a room that always appears once in one biome (a glade boss)
-
-Copy `world_content/biomes/glade_start/rooms/glade_start_boss.tres` — it is exactly this shape:
+Add a Fixed encounter sub-resource — `boss` on the Biome (exactly one, required), or an entry in a
+Zone's `minibosses` or `rares`:
 
 ```
-id = &"glade_start_boss"        biome = &"glade_start"
-min_size_slots = Vector2i(2, 2) difficulty = 3
-weight = 0  min_per_biome = 1   max_per_biome = 1
-enemies = [ SpawnTableEntry with members = [PackMember{enemy_id = &"fae"}], pack_spread = 2.0 ]
-enemy_groups_min = 1  enemy_groups_max = 1  scale_groups_with_size = false
+[sub_resource type="Resource" id="miniboss_thornmess"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("thornmess")
+centred = true
 ```
 
-Then add it to `gen_config.tres` → `room_types`. That's the whole job. `glade_start_gate_deepwood`
-is the same with a `generator`, `footprint_blob = true` and a door `RoomFeature`.
+`leader` is an enemy's `<id>_data.tres`; `escorts` maps more data sheets to counts. The Zone's
+`room_count` must still fit the new set piece.
 
-## Generators
+### More or fewer Rooms
 
-The generator carves the interior. Three exist — **reuse one with different numbers** (embed it
-in the room-type `.tres` as a sub-resource); you rarely write a new one.
+Set `route_rooms` and `room_count` on the Zone. `room_count` has to hold the route Rooms plus the
+reserved roles (a Teaching room per newly eligible enemy, the set pieces); the check reports a Zone
+quota it can't fit.
 
-| Generator | Makes | Key `@export`s |
+### Room shape
+
+The Biome's six knobs (Zones inherit them). Ranges are the debug sliders':
+
+| Knob | Range | Effect |
 | --- | --- | --- |
-| `RoomGenScatter` | Scattered blockers / clumps (rocks, trees) | `count_per_slot`, `min_spacing`, `clump_min`/`clump_max` |
-| `RoomGenCave` | Organic cave (cellular automata) | `fill_prob`, `iterations`, `write_blockers` (emit BLOCKER/trees instead of WALL) |
-| `RoomGenArena` | Blocker ring with gaps, open center — boss/arena | `inset`, `thickness`, `gap_count`, `gap_width` |
+| `room_size` | 16–64 | typical Room diameter in tiles |
+| `border_warp` | 0–12 | how far Room borders wander |
+| `loops` | 0–1 | chance of a loop Passage between neighbouring ordinary Rooms |
+| `shortcuts` | 0–0.8 | chance of a shortcut where route stretches fold alongside one another |
+| `passage_width` | 2–12 | Passage width in tiles |
+| `rockiness` | 0–1 | density of interior rocks |
 
-Note: a biome's *presentation* decides the art. Forest biomes (glade, deepwood) point both
-`wall_tileset` and `rock_tileset` at their tree tileset, so a cave or arena there reads as
-trees, not rock.
+Tune them live (below) and let **Save** write them back, rather than guessing numbers in text.
 
-Independent of the generator, `footprint_blob` reshapes the whole room into an organic pocket
-(solid mass outside a noise-warped radius, corridors tunnelling in) — combine it with a generator
-for the interior, or use it alone.
+### Objects, Signs, Professors, Warp doors
 
-### Writing a new generator (only if the three can't make the shape)
+- `breather_objects`: scene → weight, added across the Biome and its Zone; a Breather draws one or
+  stays empty. Fountains are `game/objects/fountain/*_fountain.tscn`. An Object scene takes its
+  generated data through `setup(data: Dictionary)`.
+- `signs`: `text`, plus `reveals` (an enemy data sheet) when reading it should reveal the nearest
+  Boss that enemy leads. Each Sign stands exactly once.
+- `professors` and `warp_doors` counts on the Biome. No Professor scene exists yet, so Professor
+  sites place nothing.
 
-1. Create `generators/generator_<name>.gd extends RoomGenBase`; copy `generator_scatter.gd`.
-   Implement `run(grid, protected, w, h, rng, spec)` (write tiles) and `hash_fold(h)` (list every
-   `@export`, starting with `h = super.hash_fold(h)` — the base folds the class name, so two
-   generators with identical fields still hash apart).
-2. **Rules `run()` must obey** (or you break connectivity / determinism):
-   - Write only `RoomBuilder.FLOOR / WALL / BLOCKER / DECOR_FLOOR`. Index is `y * w + x`.
-   - **Never touch a tile where `protected[idx] == 1`** — those are the corridors and openings
-     that keep the room reachable.
-   - **Only use the passed `rng`.** Never `randi()`/`randf()`. For probabilities use
-     `WgHash.threshold(p)` compared against `rng.randi()` (see `generator_cave.gd`).
-   - Every tunable is an `@export` and appears in `hash_fold`.
-3. Set it as a room type's `generator`. **This is code, so bump `gen_version`.** Rebuild the
-   class cache (see gotchas).
+### Which enemies a Room fights
 
-## Room size (there is no merge chance)
+Not authored per Room: rosters, Entry challenges, Fillers and the curve decide it — see `add-enemy`
+and `rebalance-enemies`.
 
-Room size comes from the BSP, not from a merge roll. `GenConfig.bsp_max_leaf_slots`
-(default 3×3) caps a room; `bsp_stop_chance` is the per-rect probability that a rect already
-within that cap stops splitting — raise it for bigger rooms, lower it for more, smaller ones.
-`BiomeDef.bsp_stop_chance` overrides it per biome (`-1` = inherit). Quota rooms don't roll at
-all: their leaf is carved to exactly `min_size_slots` before random subdivision starts.
+### The interior algorithm
 
-## Enemies & features in the room
+Every Biome shares one interior algorithm (`game/generation/interiors/`); there are no per-Room
+generators. Changing it is code: every Passage and Object spot must stay reachable, which
+`test_world_tiles` checks at each knob extreme.
 
-- **Random adds** are the room type's own `enemies` array — a weighted list of `SpawnTableEntry`
-  (`enemy_id`, `weight`, `group_min`/`group_max`, `pack_spread`). An entry with a non-empty
-  `members` array is a **mixed pack** instead: each `PackMember` brings its own
-  `count_min`/`count_max` around a shared centre. `enemy_groups_min`/`max` controls *how much*,
-  the pool controls *which*. Enemy ids are folder names under `game/characters/enemies/`.
-- **A specific, guaranteed thing** (a boss door, an altar, a portal) is a `RoomFeature` in
-  `features`: a `scene`, an optional `data` Resource applied through the instance's
-  `setup(data)`, a `placement` (`CENTER` / `RANDOM_REACHABLE` / `NEAR_WALL`) and a count range.
-  Use this for set-pieces rather than hoping the random table rolls one. Features are not hashed
-  and draw from the `NS_FEATURES` stream, so swapping them never re-rolls a saved world and can
-  never shift enemy identity.
+## Check every edit
 
-## Procedure
-
-1. Decide the policy: filler (`min 0` + weight), exactly one (`min 1, max 1, weight 0`), at least
-   one (`min 1` + weight). Only a one-per-world room uses `unique_scope = WORLD` instead.
-2. Copy the closest existing room from `world_content/biomes/<b>/rooms/` — `*_breather` (safe),
-   `*_t1_scatter_var` (filler with a pool), `*_boss` (pinned set-piece), `*_gate_*` (blob + door
-   feature), `*_rare_*` (single rare). Set `id`, `biome`, generator + numbers, the size window,
-   `difficulty`, the quota triple, the enemy pool and budget, any features.
-3. Give the `.tres` a **new uid** in its header.
-4. Register it in `gen_config.tres` → `room_types` (or `mycelium_gen_config.tres`).
-5. Only if you wrote new code: bump `gen_version` and rebuild the class cache.
-6. Rebuild the design docs: `design/tools/.venv/bin/python design/tools/build.py`
-   (the system `python3` has no PyYAML/Jinja2). `design/docs/biomes.md` will grow the new room's
-   row automatically — never hand-edit inside the `GENERATED CATALOGUE` markers.
-
-## Godot gotchas
-
-- **uids.** Every `.tres`/`.gd` has a `uid://…`. When you copy a file, give it a **new** uid
-  (header line for resources, `.gd.uid` sidecar for scripts). Opening the project in Godot
-  regenerates missing ones; references fall back to `path=`, so a bad uid self-heals on import.
-- **After adding a script with a `class_name`**, rebuild the class cache once or Godot reports
-  "Could not find type": `godot --headless --editor --quit --path game`.
-- **Close the Godot editor before any headless run** — an open editor holds the asset-import lock
-  and headless hangs forever.
-- **Zero-output headless timeout = a GDScript parse error**, not slowness (warnings are errors,
-  incl. unused params/loop vars — underscore-prefix them).
-- **The live editor re-saves from memory.** If a `.tres` is open in Godot while you edit it on
-  disk, the next editor save clobbers your change — reload the resource first.
-
-## Validate
-
-See it live in the worldgen debug tool — the fastest loop by far:
-
-```bash
-godot --path game res://debug/worldgen/worldgen_debug.tscn
+```sh
+godot --headless --path game res://generation/content/check_content.tscn
 ```
 
-Four views over one world state, drilling down: **1** world (biome grid) → **2** biome (room
-graph and type layout) → **3** room (the real `RoomOutput`: tiles, **P** protected, **M**
-reachability, spawns) → **4** fly (free camera over the live streamed world with real enemies).
-**Enter** drills in, **Esc** backs out, **T** teleports to the selection. **R** rerolls the seed,
-`[` / `]` walk history, **B** bookmarks one. In fly view, **P** drops a real invulnerable player
-in so you can walk and fight the actual room, and **O** shows room bounds and tags. It deep-links
-from the CLI too:
+It exits 0 when the World loads clean; otherwise it prints one `path:line: problem` per problem.
 
-```bash
-godot --path game res://debug/worldgen/worldgen_debug.tscn -- seed=123 view=2
-godot --path game res://debug/worldgen/worldgen_debug.tscn -- config=mycelium
+## See it live
+
+```sh
+godot --path game res://scenes/world.tscn -- seed=123
 ```
 
-Then the headless layer tests (editor closed), each printing `ALL PASS` / `FAILED: <n>`:
+Entering the World writes the Run save, so this replaces a saved Run. **Tab** pauses and opens the
+debug panel; clicking the World to its right teleports there.
 
-```bash
-godot --headless --path game res://tests/worldgen/test_room_graph.tscn   # carving, quotas, tiers
-godot --headless --path game res://tests/worldgen/test_config.tscn       # registration + hash diet
-godot --headless --path game res://tests/worldgen/test_generators.tscn
-godot --headless --path game res://tests/worldgen/test_population.tscn   # if you touched enemies
+- **World:** seed and Reroll, the Biome picker, its six knobs and the four set-piece radii (↶
+  reverts to the authored value), derived Room totals, **Rebuild** (applies pending edits: changed
+  Biomes' Rooms only, radius edits replan the World), **Save** (writes changed knobs into
+  `biome.tres`) and Fly.
+- **Overlays:** Ideal path, roles, Passages, Zones, Challenge, macro grid, discovery, outlines.
+- **Map:** the whole World's graph — wheel zoom, middle/right drag pan, click to teleport.
+
+After editing `.tres` by hand, the console's (`` ` ``) `reload` rereads the content and rebuilds at
+the same seed; with unsaved knob edits it warns first and discards them on a second `reload`.
+
+## Tests
+
+Each prints `ALL PASS` or `FAILED: <n>`. A GDScript parse error hangs headless Godot, so wrap each
+run in `timeout -s KILL 300`:
+
+```sh
+godot --headless --path game res://tests/generation/test_content.tscn       # load pass, saver order
+godot --headless --path game res://tests/generation/test_world_plan.tscn    # Zone order, quotas, set pieces, Challenge
+godot --headless --path game res://tests/generation/test_room_graph.tscn    # reachability, roles, isolation, knob sweep
+godot --headless --path game res://tests/generation/test_world_tiles.tscn   # interiors and tiles at knob extremes
+godot --headless --path game res://tests/generation/test_encounters.tscn    # rosters, Teaching rooms, Fixed encounters
+godot --headless --path game res://tests/generation/test_world_objects.tscn # Object sites, Signs, Warp doors
 ```
 
-`test_config` is the one that catches a room type you forgot to register, or a hashed field that
-shouldn't be. **Never boot `world.tscn` headless** — it persists and clobbers the player's save.
+`test_content` also saves the shipped World in place and fails on any file a save would rewrite,
+then restores the text.
