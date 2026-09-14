@@ -15,7 +15,8 @@ var _fails: Array[String] = []
 func _ready() -> void:
 	var started := Time.get_ticks_msec()
 	var debug_state := {"world_debug": _snapshot_state("world_debug")}
-	DebugState.set_value("world_debug", "fly", false)
+	# Fly left on by a debug session must not carry into a Run.
+	DebugState.set_value("world_debug", "fly", true)
 	GameState.save_path = SAVE
 	if FileAccess.file_exists(SAVE):
 		DirAccess.remove_absolute(SAVE)
@@ -83,6 +84,8 @@ func _test_new_quit_continue() -> void:
 		return
 	_check(world._graph == backdrop_graph and GameState.active_seed == backdrop_graph.plan.world_seed,
 			"New reused the backdrop's seed and plan")
+	_check(not world._flying and world._player.process_mode == Node.PROCESS_MODE_INHERIT,
+			"New starts on foot despite a stored debug Fly")
 	var graph_text := WorldFixture.graph_snapshot(world._graph)
 	_check(world._streamer.loaded_chunks() > 0, "the spawn's chunks streamed in")
 	_check(GlobalMap.active != null and GlobalMap.active.graph == world._graph
@@ -130,6 +133,7 @@ func _test_new_quit_continue() -> void:
 		return
 	_check(world._graph != second_backdrop_graph and world._graph.plan.world_seed == backdrop_graph.plan.world_seed,
 			"Continue planned the saved seed rather than the backdrop's")
+	_check(not world._flying, "Continue starts on foot despite a stored debug Fly")
 	_check(WorldFixture.graph_snapshot(world._graph) == graph_text, "Continue planned the same World")
 	var restored: Array = GlobalMap.active.entered_rooms.keys()
 	restored.sort()

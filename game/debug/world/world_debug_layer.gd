@@ -36,12 +36,17 @@ var _was_paused := false
 var _map_fitted := false
 
 
-func configure(world_host: Node2D, restore_loadout := true) -> void:
+## A World launched outside a Run restores the debug loadout and Fly; a Run (New or Continue) keeps its
+## own inventory and starts on foot, whatever an earlier debug session left stored.
+func configure(world_host: Node2D, outside_run := true) -> void:
 	host = world_host
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	tuner.setup(host._content, host.world_seed, host._graph.plan, host._graph)
 	tuner.timings = host._build_timings.duplicate()
 	_restore_state()
+	# Before the UI, so the Fly checkbox starts in the restored state.
+	if outside_run:
+		_set_fly(bool(DebugState.get_value(SECTION, "fly", false)))
 	_build_ui()
 	_world_overlay = WorldDebugOverlay.new()
 	_world_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -52,8 +57,7 @@ func configure(world_host: Node2D, restore_loadout := true) -> void:
 	if GlobalMap.active != null:
 		set_entered_rooms(GlobalMap.active.entered_rooms)
 	GlobalMap.discovery_changed.connect(set_entered_rooms)
-	_set_fly(bool(DebugState.get_value(SECTION, "fly", false)))
-	if restore_loadout:
+	if outside_run:
 		_restore_loadout()
 	GlobalEvent.slot_updated.connect(_on_slot_updated)
 
@@ -424,7 +428,6 @@ func _save_state() -> void:
 	if _tabs != null:
 		DebugState.set_value(SECTION, "tab", _tabs.current_tab)
 	DebugState.set_value(SECTION, "biome", String(selected_biome))
-	DebugState.set_value(SECTION, "fly", host != null and host._flying)
 
 
 func _restore_loadout() -> void:

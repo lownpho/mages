@@ -81,7 +81,7 @@ func _ready() -> void:
 		if debug_script != null:
 			_debug_layer = debug_script.new()
 			add_child(_debug_layer)
-			# A Run's inventory is its own; only a World launched outside one gets the debug loadout.
+			# A Run's inventory is its own; only a World launched outside one gets the debug loadout and Fly.
 			_debug_layer.configure(self, not continuing and not fresh)
 
 
