@@ -1,7 +1,9 @@
 class_name WorldDebugMap
 extends Control
-## Complete graph map: independent of tiles, streaming and fog. Wheel zooms around the cursor,
-## middle/right drag pans, hover reports the Room, and left click teleports to clear floor there.
+## Complete graph map: independent of streaming and fog. Wheel zooms around the cursor, middle/right
+## drag pans, hover reports the Room, and left click teleports to clear floor there. The tiles layer
+## builds the walls and rocks of Rooms in view a frame budget at a time, from its own interiors so it
+## never evicts what streaming built, and keeps each Room's baked texture until the graph changes.
 
 signal teleport_requested(tile: Vector2i)
 
@@ -22,6 +24,11 @@ const ENEMY_MIN := 1.0
 const ENEMY_MAX := 3.0
 ## Layers that change while the Map is open, so it redraws every frame they are on.
 const LIVE_LAYERS := ["player", "enemies", "chunks", "follow"]
+## The tiles layer's colours, walls then rocks.
+const TILE_NAMES: Array[StringName] = [&"wall", &"rock"]
+const TILE_COLORS: Array[Color] = [Palette.SILVER, Palette.APRICOT]
+## Time a frame may spend building interiors for the tiles layer.
+const TILE_BUDGET_USEC := 6000
 
 var graph: WorldGraph
 ## Hovering a Room builds its encounters on demand to report their count.
@@ -36,11 +43,18 @@ var player: Node2D
 var streamer: ChunkStreamer
 var _dragging := false
 var _last_mouse := Vector2.ZERO
+var _interiors: WorldInteriors
+## Room index -> its walls and rocks, and the World tiles the texture covers.
+var _tile_textures: Dictionary[int, ImageTexture] = {}
+var _tile_rects: Dictionary[int, Rect2i] = {}
+## Every Room's bounds by index, worked out once per graph.
+var _room_rects: Array[Rect2] = []
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	clip_contents = true
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	gui_input.connect(_on_gui_input)
 	# The panel resizes the Map a layout pass after opening its tab; frame the World in its real size.
 	resized.connect(fit_world)
@@ -55,11 +69,18 @@ func _process(_delta: float) -> void:
 		return
 	if overlays.get("follow", false) and is_instance_valid(player):
 		pan = player.global_position / GameConstants.PX_PER_TILE
+	if overlays.get("tiles", false):
+		build_tiles(Time.get_ticks_usec() + TILE_BUDGET_USEC)
 	if LIVE_LAYERS.any(func(key: String) -> bool: return overlays.get(key, false)):
 		queue_redraw()
 
 
 func set_data(world_graph: WorldGraph, enabled: Dictionary, reset_view := false) -> void:
+	if world_graph != graph:
+		_interiors = null
+		_tile_textures.clear()
+		_tile_rects.clear()
+		_room_rects.clear()
 	graph = world_graph
 	overlays = enabled
 	if reset_view and graph != null:
@@ -87,6 +108,35 @@ func tile_at(local: Vector2) -> Vector2:
 
 func screen_at(tile: Vector2) -> Vector2:
 	return (tile - pan) * zoom + size * 0.5
+
+
+## Builds and bakes the walls and rocks of the Rooms in view, nearest the view's centre first, until
+## the deadline in usec; true once every Room in view is baked.
+func build_tiles(deadline: int) -> bool:
+	if graph == null:
+		return true
+	if _interiors == null:
+		_interiors = WorldInteriors.new(graph)
+	if _room_rects.is_empty():
+		for room in graph.room_list:
+			_room_rects.append(Rect2(_room_rect(room)))
+	var view := _view()
+	var keys := PackedInt64Array()
+	for room in graph.room_list:
+		if not _tile_textures.has(room.index) and _room_rects[room.index].intersects(view):
+			keys.append((int(room.seed.distance_squared_to(pan)) << 20) | room.index)
+	keys.sort()
+	for sort_key in keys:
+		var build := _interiors.building(graph.room_list[sort_key & 0xFFFFF])
+		if not build.step(deadline):
+			return false
+		_bake(_interiors.finish(build))
+		queue_redraw()
+	return true
+
+
+func has_tiles(room: GeneratedRoom) -> bool:
+	return _tile_textures.has(room.index)
 
 
 func _on_gui_input(event: InputEvent) -> void:
@@ -154,7 +204,15 @@ func _draw() -> void:
 		if overlays.get("discovery", false):
 			fill = fill.lightened(0.25) if entered_rooms.has(room.key()) else fill.darkened(0.55)
 		draw_colored_polygon(points, fill)
-		if overlays.get("outlines", true):
+	if overlays.get("tiles", false):
+		var view := _view()
+		for index in _tile_textures:
+			var rect := Rect2(_tile_rects[index])
+			if rect.intersects(view):
+				draw_texture_rect(_tile_textures[index], Rect2(screen_at(rect.position), rect.size * zoom), false)
+	if overlays.get("outlines", true):
+		for room in graph.room_list:
+			var points := _points(room.polygon)
 			points.append(points[0])
 			draw_polyline(points, Color(0.75, 0.8, 0.88, 0.65), 1.0)
 	if overlays.get("macro_grid", false):
@@ -220,6 +278,47 @@ func _draw() -> void:
 func _draw_marker(tile: Vector2i, kind: int, side: float) -> void:
 	var centre := screen_at(Vector2(tile) + Vector2(0.5, 0.5))
 	draw_rect(Rect2(centre - Vector2.ONE * side * 0.5, Vector2.ONE * side), MARKER_COLORS[kind])
+
+
+## Paints a finished interior's walls and rocks into a texture; floor stays clear.
+func _bake(interior: RoomInterior) -> void:
+	var classes := interior.classes
+	var data := PackedByteArray()
+	data.resize(classes.size() * 4)
+	var wall := TILE_COLORS[0]
+	var rock := TILE_COLORS[1]
+	for index in classes.size():
+		var colour: Color
+		if classes[index] == RoomInterior.WALL:
+			colour = wall
+		elif classes[index] == RoomInterior.ROCK:
+			colour = rock
+		else:
+			continue
+		var at := index * 4
+		data[at] = colour.r8
+		data[at + 1] = colour.g8
+		data[at + 2] = colour.b8
+		data[at + 3] = 255
+	var image := Image.create_from_data(interior.rect.size.x, interior.rect.size.y, false, Image.FORMAT_RGBA8, data)
+	_tile_textures[interior.room.index] = ImageTexture.create_from_image(image)
+	_tile_rects[interior.room.index] = interior.rect
+
+
+## The World tiles the Map shows.
+func _view() -> Rect2:
+	return Rect2(tile_at(Vector2.ZERO), size / zoom)
+
+
+## Everything a Room can own, as RoomInterior bounds it.
+func _room_rect(room: GeneratedRoom) -> Rect2i:
+	var low := Vector2(INF, INF)
+	var high := -low
+	for point in room.polygon:
+		low = low.min(point)
+		high = high.max(point)
+	var bounds := Rect2i(Vector2i(low.floor()), Vector2i((high - low).ceil()) + Vector2i.ONE)
+	return bounds.grow(ceili(graph.warp_bound(bounds)) + 2)
 
 
 func _points(polygon: PackedVector2Array) -> PackedVector2Array:

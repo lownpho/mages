@@ -22,11 +22,11 @@ const PANEL_MARGIN := Vector2(31, 5)
 const OVERLAY_DEFAULTS := {
 	"ideal_path": true, "roles": true, "passages": false, "biomes": false, "zones": false,
 	"challenge": false, "macro_grid": false, "discovery": false, "outlines": true,
-	"player": true, "markers": false, "enemies": false, "chunks": false, "follow": false,
+	"tiles": false, "player": true, "markers": false, "enemies": false, "chunks": false, "follow": false,
 }
 ## Layers only the debug Map draws, as the minimap would; the World shows these things itself.
-const MAP_ONLY := ["player", "markers", "enemies", "chunks", "follow"]
-const OVERLAY_NAMES := {"chunks": "Loaded Chunks", "follow": "Follow Player"}
+const MAP_ONLY := ["tiles", "player", "markers", "enemies", "chunks", "follow"]
+const OVERLAY_NAMES := {"tiles": "Walls and Rocks", "chunks": "Loaded Chunks", "follow": "Follow Player"}
 
 var host: Node2D
 var tuner := WorldTuner.new()
@@ -336,7 +336,7 @@ func _build_overlay_toggles(page: Control) -> void:
 		check.toggled.connect(func(on: bool) -> void:
 			set_overlay(key, on))
 		box.add_child(check)
-		if key in ["roles", "passages", "biomes", "markers"]:
+		if key in ["roles", "passages", "biomes", "tiles", "markers"]:
 			var indent := MarginContainer.new()
 			indent.add_theme_constant_override("margin_left", 9)
 			indent.add_child(HFlowContainer.new())
@@ -366,6 +366,9 @@ func _refresh_legends() -> void:
 			"passages":
 				names = RoomPassage.KIND_NAMES
 				colors = WorldDebugOverlay.PASSAGE_COLORS
+			"tiles":
+				names = WorldDebugMap.TILE_NAMES
+				colors = WorldDebugMap.TILE_COLORS
 			"markers":
 				names = WorldDebugMap.MARKER_NAMES
 				colors = WorldDebugMap.MARKER_COLORS

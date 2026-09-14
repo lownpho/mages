@@ -209,6 +209,13 @@ func _test_integrated_controls() -> void:
 	_check(layer._map.pan == world._player.global_position / GameConstants.PX_PER_TILE,
 			"Follow Player centres the debug Map on the player")
 	layer.set_overlay("follow", false)
+	layer._map.zoom = 3.0
+	layer.set_overlay("tiles", true)
+	var baked := layer._map.build_tiles(WorldInteriors.NO_DEADLINE)
+	var under_player: GeneratedRoom = world._graph.owner_at(Vector2i(layer._map.pan.floor()))
+	_check(baked and under_player != null and layer._map.has_tiles(under_player) and layer._legends["tiles"].visible,
+			"Walls and Rocks bakes every Room in the debug Map's view")
+	layer.set_overlay("tiles", false)
 	layer._set_fly(true)
 	_check(world._flying and world._streamer.target == world._player and not world._player.is_in_group("player"),
 			"fly passes physics, drives streaming and is not an enemy target")
