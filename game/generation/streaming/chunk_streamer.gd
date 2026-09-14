@@ -5,16 +5,19 @@ extends Node2D
 ## of wall-art border chunks around them. The prefetch is in tiles rather than whole chunks so the
 ## lead ahead of a walking player is the same on every side without streaming more than it needs.
 ##
-## Missing chunks wait in one queue, nearest the target first. Every frame, on every platform and on
-## the main thread, the queue's head works through its ChunkTiles (owners, Room interiors, classes,
-## picks) until the frame's budget is spent. Its WgChunk then enters the tree empty and receives one
-## layer at a time, each built by the engine at once; a layer waits for the next frame when its build
-## would overrun this one, judged by the slowest recent layer. At most _MAX_LOADS_PER_FRAME chunks
-## finish per frame; the budget left then goes on the next chunk's picks. Chunks are small, so no
-## single layer build approaches the budget. Budget an empty queue leaves over builds the interiors
-## of Rooms ahead of the target, nearest first, so a chunk rarely waits on a whole Room. Unloaded
-## chunks are freed inside the budget too,
-## one at a time, before anything else. Interiors and owners stay cached in WorldInteriors, so an
+## Missing chunks wait in one queue, in rings outward from the view: those overlapping it first, then
+## by how many tiles they lie beyond it, nearest the target first within a ring. The view is wider
+## than tall, so plain distance from the target would serve the next row's centre ahead of the view's
+## side columns. Every frame, on every platform and on the main thread, the queue's head works
+## through its ChunkTiles (owners, Room interiors, classes, picks) until the frame's budget is spent.
+## Its WgChunk then enters the tree empty and receives one layer at a time, each built by the engine
+## at once; a layer waits for the next frame when its build would overrun this one, judged by the
+## slowest recent layer. At most _MAX_LOADS_PER_FRAME chunks finish per frame; the budget left then
+## goes on the next chunk's picks. Chunks are small, so no single layer build approaches the budget.
+## Budget an empty queue leaves over builds the interiors of Rooms ahead of the target, those whose
+## bounds lie nearest the view first, so a chunk rarely waits on a whole Room: a large one takes about
+## as long as walking the prefetch. Unloaded chunks are freed inside the budget too, one at a time,
+## before anything else. Interiors and owners stay cached in WorldInteriors, so an
 ## unloaded chunk streams back in with the same tiles.
 
 signal chunk_loaded(coord: Vector2i)
@@ -30,8 +33,9 @@ const _UNLOAD_MARGIN := 2         ## chunks; unload radius = load radius + this 
 ## Chunks of wall art streamed just outside the World so its edge never shows void.
 const _BORDER_CHUNKS := 4
 ## Building ahead is optional, so it stops starting interior steps this long before the frame's
-## deadline, the most one such step takes, and never runs past it.
-const _AHEAD_MARGIN_USEC := 250
+## deadline: about the 99th percentile of how far one step runs past a deadline headless (the
+## slowest runs to ~0.7 ms), leaving the lookahead most of an idle frame.
+const _AHEAD_MARGIN_USEC := 150
 
 @export var chunk_tiles := 8
 ## Tiles streamed beyond each side of the camera's view: at walking speed (10 tiles a second) about
@@ -83,6 +87,8 @@ var _ahead_next := 0
 var _wanted: Array[GeneratedRoom] = []
 ## Each Room's unwarped cell bounds, grown by the most the warp moves a tile, by room index.
 var _room_bounds: Array[Rect2] = []
+## The view around the target, without the prefetch, in tiles.
+var _view := Rect2()
 
 
 ## Streams a new World, dropping every chunk, job and cache of the last.
@@ -213,6 +219,8 @@ func _update_streaming(budgeted: bool) -> void:
 	elif is_inside_tree():
 		# No camera, as behind the title: the view is the viewport at 1:1 around the target.
 		half += get_viewport_rect().size * 0.5
+	var view_half := half - Vector2.ONE * prefetch_tiles * GameConstants.PX_PER_TILE
+	_view = Rect2((target.global_position - view_half) / GameConstants.PX_PER_TILE, view_half * 2.0 / GameConstants.PX_PER_TILE)
 	var first := chunk_of(target.global_position - half)
 	var last := chunk_of(target.global_position + half)
 	var calm := true
@@ -293,6 +301,13 @@ func _build_ahead(deadline: int) -> void:
 		_wanted.pop_front()
 
 
+## Tiles between a rect of tiles and the view around the target on the farther axis; 0 when they
+## overlap.
+func _view_gap(tiles: Rect2) -> int:
+	return int(maxf(maxf(tiles.position.x - _view.end.x, _view.position.x - tiles.end.x),
+			maxf(maxf(tiles.position.y - _view.end.y, _view.position.y - tiles.end.y), 0.0)))
+
+
 ## Queues Rooms whose interiors something off the streaming path wants, such as the Map, for the
 ## budget the queue and the lookahead leave over. Earlier requests go first.
 func request_interiors(rooms: Array[GeneratedRoom]) -> void:
@@ -320,10 +335,11 @@ func _plan_ahead() -> void:
 			for room in cell.rooms:
 				if _room_bounds[room.index].intersects(area):
 					_ahead.append(room)
-	# Nearest first, by a native sort of squared distance above each Room's place in the list.
+	# Nearest the view first, by a native sort of the tiles between its bounds and the view, then its
+	# seed's squared distance to the target, above each Room's place in the list.
 	var keys := PackedInt64Array()
 	for n in _ahead.size():
-		keys.append((int(_ahead[n].seed.distance_squared_to(centre)) << 20) | n)
+		keys.append((_view_gap(_room_bounds[_ahead[n].index]) << 40) | (int(_ahead[n].seed.distance_squared_to(centre)) << 20) | n)
 	keys.sort()
 	var nearest: Array[GeneratedRoom] = []
 	for key in keys:
@@ -331,8 +347,8 @@ func _plan_ahead() -> void:
 	_ahead = nearest
 
 
-## Rebuilds the queue for the wanted chunks, nearest the target first, and unloads what fell past the
-## hysteresis margin.
+## Rebuilds the queue for the wanted chunks, in rings outward from the view, and unloads what fell past
+## the hysteresis margin.
 func _replan() -> void:
 	var keep := Rect2i(_first, _last - _first + Vector2i.ONE).grow(_UNLOAD_MARGIN)
 	for coord in _chunks.keys():
@@ -340,15 +356,16 @@ func _replan() -> void:
 			chunk_unloaded.emit(coord)
 			_retired.append(_chunks[coord])
 			_chunks.erase(coord)
-	# Nearest the target first, earlier rows then columns on ties: the distance in 1/256ths of a
-	# chunk squared above each chunk's place in row order, sorted natively.
+	# By ring, then nearest the target, then earlier rows and columns: the tiles beyond the view above
+	# the distance in 1/256ths of a chunk squared above each chunk's place in row order, sorted natively.
 	var centre := target.global_position / float(chunk_tiles * GameConstants.PX_PER_TILE) - Vector2(0.5, 0.5)
 	var wanted: Array[Vector2i] = []
 	var keys := PackedInt64Array()
 	for y in range(maxi(_first.y, -_BORDER_CHUNKS), mini(_last.y, _world_chunks.y + _BORDER_CHUNKS - 1) + 1):
 		for x in range(maxi(_first.x, -_BORDER_CHUNKS), mini(_last.x, _world_chunks.x + _BORDER_CHUNKS - 1) + 1):
 			if not _chunks.has(Vector2i(x, y)):
-				keys.append((int(centre.distance_squared_to(Vector2(x, y)) * 256.0) << 20) | wanted.size())
+				var ring := _view_gap(Rect2(Vector2(x, y) * chunk_tiles, Vector2.ONE * chunk_tiles))
+				keys.append((ring << 40) | (int(centre.distance_squared_to(Vector2(x, y)) * 256.0) << 20) | wanted.size())
 				wanted.append(Vector2i(x, y))
 	keys.sort()
 	_queue.clear()

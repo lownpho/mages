@@ -5,8 +5,11 @@ extends Node
 ## chunk overlapping the view wasn't loaded yet. It fails when a frame's work passes the headless
 ## desktop threshold, a third of the 2 ms web budget, or a chunk came into view unready. Run by hand,
 ## alone:
-##   godot --headless --path game res://tests/generation/bench_world_streaming.tscn -- [seeds] [seconds per seed]
-## Results are recorded in .scratch/worldgen-rewrite-build/issues/04-walk-streamed-rendered-world.md.
+##   godot --headless --path game res://tests/generation/bench_world_streaming.tscn -- [seeds] [seconds per seed] [trace file]
+## A trace file gets a line per queued chunk's state change (C), per frame (F), per change to the
+## lookahead's Rooms (A) and per chunk seen unready (UNREADY), read from ChunkStreamer's internals, so
+## a late chunk can be followed back to what the queue was doing. Results are recorded in
+## .scratch/worldgen-rewrite-build/issues/04-walk-streamed-rendered-world.md and 11-cut-over-gameplay-and-verify-performance.md.
 
 const SHIPPED := "res://generation/world/"
 const THRESHOLD_USEC := 2000.0 / 3.0
@@ -32,6 +35,11 @@ var _loads := 0
 var _over_shown := 0
 var _loads_seen := 0
 var _walked := 0.0
+## Tracing, when a third argument names a file: each queued chunk's state changes and each frame's
+## streaming state, for explaining chunks that came into view unready.
+var _trace: FileAccess = null
+var _states: Dictionary[Vector2i, String] = {}
+var _ahead_line := ""
 
 
 func _ready() -> void:
@@ -40,6 +48,8 @@ func _ready() -> void:
 		_seeds = args[0].to_int()
 	if args.size() > 1 and args[1].is_valid_float():
 		_seconds = args[1].to_float()
+	if args.size() > 2:
+		_trace = FileAccess.open(args[2], FileAccess.WRITE)
 	# A headless run can't draw, so it sleeps between frames unless told not to.
 	Engine.max_fps = 0
 	OS.low_processor_usage_mode = false
@@ -87,6 +97,9 @@ func _start_seed() -> void:
 	print("  seed %d: viewport %s, %d chunks prepared at the spawn in %.0f ms" % [world_seed, get_viewport().get_visible_rect().size,
 			_streamer.loaded_chunks(), (Time.get_ticks_usec() - started) / 1000.0])
 	_streamer.chunk_loaded.connect(func(_coord: Vector2i) -> void: _loads += 1)
+	_states.clear()
+	if _trace != null:
+		_trace.store_line("SEED %d %d" % [_seed_index, world_seed])
 
 
 func _process(_delta: float) -> void:
@@ -100,6 +113,8 @@ func _process(_delta: float) -> void:
 					_streamer.last_work_usec / 1000.0] + Array(_streamer.last_work_split)))
 		_entered.append(_loads != _loads_seen)
 		_check_view()
+		if _trace != null:
+			_trace_frame()
 	_loads_seen = _loads
 	_frame += 1
 	if _frame > int(_seconds / FRAME) or _next_waypoint >= _waypoints.size():
@@ -134,9 +149,87 @@ func _check_view() -> void:
 			var key := "%d:%d,%d" % [_seed_index, x, y]
 			if not _streamer.is_chunk_loaded(Vector2i(x, y)) and not _unready.has(key):
 				_unready[key] = true
+				if _trace != null:
+					_trace.store_line("UNREADY %s f%d %s rooms %s" % [key, _frame, _tiles_state_of(Vector2i(x, y)), _rooms_of(Vector2i(x, y))])
 				if _unready.size() <= 8:
 					print("    frame %d: chunk %d,%d in view unready at tile %s, %d queued, %d loaded" % [_frame, x, y,
 							Vector2i((_target.global_position / GameConstants.PX_PER_TILE).floor()), _streamer.queued_chunks(), _streamer.loaded_chunks()])
+
+
+func _trace_frame() -> void:
+	var queue: Array[Vector2i] = _streamer._queue
+	var tile := _target.global_position / GameConstants.PX_PER_TILE
+	var at: Dictionary[Vector2i, int] = {}
+	for i in queue.size():
+		at[queue[i]] = i
+		var state := _tiles_state_of(queue[i])
+		if _states.get(queue[i], "") != state:
+			_states[queue[i]] = state
+			_trace.store_line("C %d:%d,%d f%d q#%d/%d tile %.1f,%.1f %s" % [_seed_index, queue[i].x, queue[i].y, _frame - 1, i,
+					queue.size(), tile.x, tile.y, state])
+	for coord in _states.keys():
+		if not at.has(coord):
+			_trace.store_line("C %d:%d,%d f%d %s tile %.1f,%.1f gap %.1f" % [_seed_index, coord.x, coord.y, _frame - 1,
+					"loaded" if _streamer.is_chunk_loaded(coord) else "dropped", tile.x, tile.y, _view_gap(coord)])
+			_states.erase(coord)
+	var ahead := PackedStringArray()
+	for n in _streamer._ahead.size():
+		var room: GeneratedRoom = _streamer._ahead[n]
+		var built := _streamer.interiors.cached(room) != null
+		var build: RoomInterior = _streamer.interiors._building.get(room.index)
+		ahead.append("r%d:%s:g%d" % [room.index, "built" if built else (RoomInterior._Phase.keys()[build._phase] if build != null else "-"),
+				_streamer._view_gap(_streamer._room_bounds[room.index])])
+	var line := " ".join(ahead)
+	if line != _ahead_line:
+		_ahead_line = line
+		_trace.store_line("A %d f%d next %d %s" % [_seed_index, _frame - 1, _streamer._ahead_next, line])
+	var head := "-"
+	if not queue.is_empty():
+		head = "%d,%d %s" % [queue[0].x, queue[0].y, _tiles_state_of(queue[0])]
+	_trace.store_line("F %d f%d tile %.1f,%.1f q %d work %d split %s wait %s layer %d ahead %d/%d head %s" % [_seed_index, _frame - 1,
+			tile.x, tile.y, queue.size(), _streamer.last_work_usec, _streamer.last_work_split, _streamer._layer_waiting,
+			_streamer._layer_usec, _streamer._ahead_next, _streamer._ahead.size(), head])
+
+
+## Tiles between a chunk and the view around the target on the farther axis; 0 when they overlap.
+func _view_gap(coord: Vector2i) -> float:
+	var chunk := Rect2(Vector2(coord * _streamer.chunk_tiles * GameConstants.PX_PER_TILE), Vector2.ONE * _streamer.chunk_tiles * GameConstants.PX_PER_TILE)
+	var view := Rect2(_target.global_position - VIEW * 0.5, VIEW)
+	var gap := Vector2(maxf(0.0, maxf(chunk.position.x - view.end.x, view.position.x - chunk.end.x)),
+			maxf(0.0, maxf(chunk.position.y - view.end.y, view.position.y - chunk.end.y)))
+	return maxf(gap.x, gap.y) / GameConstants.PX_PER_TILE
+
+
+## The Rooms owning a chunk's tiles and its ring, with their interiors' sizes and whether cached.
+func _rooms_of(coord: Vector2i) -> String:
+	var seen: Dictionary[int, bool] = {}
+	var rect := Rect2i(coord * _streamer.chunk_tiles, Vector2i.ONE * _streamer.chunk_tiles).grow(1)
+	for y in range(rect.position.y, rect.end.y):
+		for x in range(rect.position.x, rect.end.x):
+			seen[_streamer.graph.owner_index_at(Vector2i(x, y))] = true
+	var out := PackedStringArray()
+	for index in seen:
+		if index >= 0:
+			var room := _streamer.graph.room_list[index]
+			out.append("r%d%s" % [index, "" if _streamer.interiors.cached(room) == null else "(cached)"])
+	return ",".join(out)
+
+
+func _tiles_state_of(coord: Vector2i) -> String:
+	if _streamer.is_chunk_loaded(coord):
+		return "loaded"
+	if not _streamer._jobs.has(coord):
+		return "waiting"
+	var tiles: ChunkTiles = _streamer._jobs[coord][0]
+	var phase: String = ChunkTiles._Phase.keys()[tiles._phase]
+	if tiles._phase == ChunkTiles._Phase.INTERIORS:
+		var rooms := PackedStringArray()
+		for build: RoomInterior in tiles._pending:
+			rooms.append("r%d:%s:%dx%d" % [build.room.index, RoomInterior._Phase.keys()[build._phase], build.rect.size.x, build.rect.size.y])
+		phase += " " + ",".join(rooms)
+	elif tiles._phase == ChunkTiles._Phase.DONE:
+		phase += " layers %d/%d in_tree %s" % [tiles._apply_layer, tiles.layers.size(), _streamer._jobs[coord][1].is_inside_tree()]
+	return phase
 
 
 func _finish() -> void:
