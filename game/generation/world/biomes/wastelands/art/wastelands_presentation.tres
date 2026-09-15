@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BiomePresentation" format=3]
+
+[ext_resource type="Script" path="res://generation/presentation/biome_presentation.gd" id="1"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/wastelands/art/wastelands_floor_tileset.tres" id="floor"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/wastelands/art/wastelands_walls_tileset.tres" id="wall"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/wastelands/art/wastelands_compact_rocks_tileset.tres" id="rock"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/wastelands/art/wastelands_decor_tileset.tres" id="decor"]
+
+[resource]
+script = ExtResource("1")
+floor_tileset = ExtResource("floor")
+wall_tileset = ExtResource("wall")
+wall_autotile = true
+rock_tileset = ExtResource("rock")
+decoration_tileset = ExtResource("decor")
+map_floor_color = Color(0.7490196, 0.4745098, 0.34509805, 1)
+map_wall_color = Color(0.47843137, 0.26666668, 0.2901961, 1)
+door_style = 4
