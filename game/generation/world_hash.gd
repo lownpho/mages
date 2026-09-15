@@ -19,6 +19,7 @@ const NS_SPINE := 112
 const NS_DECORATION := 113
 const NS_ENCOUNTERS := 114
 const NS_MEMBERS := 115
+const NS_LATTICE := 116
 
 # SplitMix64 constants written as their two's-complement signed-64 values: GDScript clamps
 # any int literal above INT64_MAX, so the raw 0x9E37... hex forms would silently corrupt.

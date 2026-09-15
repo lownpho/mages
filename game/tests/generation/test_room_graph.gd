@@ -74,9 +74,9 @@ func _check_rooms(graph: WorldGraph, label: String) -> void:
 		if room == null or room.plan != plan.rooms[key]:
 			_fails.append("%s: planned Room %s has no generated Room" % [label, key])
 			continue
-		_check(room.polygon.size() >= 3 and Rect2(plan.cells[room.plan.cell].rect()).has_point(room.seed) and Geometry2D.is_point_in_polygon(room.seed, room.polygon),
+		_check(room.polygon.size() >= 3 and plan.lattice.cell_at(room.seed.x, room.seed.y) == room.plan.cell and Geometry2D.is_point_in_polygon(room.seed, room.polygon),
 				"%s: %s (%s) has no shape around its seed %s in macro cell %s: %d corners" % [label, key, room.role_name(), room.seed,
-				plan.cells[room.plan.cell].rect(), room.polygon.size()])
+				room.plan.cell, room.polygon.size()])
 		var kind_roles := {RoomPlan.Kind.SPAWN: GeneratedRoom.Role.SPAWN, RoomPlan.Kind.BOSS: GeneratedRoom.Role.BOSS,
 				RoomPlan.Kind.MINIBOSS: GeneratedRoom.Role.MINIBOSS, RoomPlan.Kind.RARE: GeneratedRoom.Role.RARE}
 		if room.is_set_piece():

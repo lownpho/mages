@@ -55,8 +55,9 @@ func _draw() -> void:
 			draw_colored_polygon(_scaled(room.polygon, px), color)
 	if overlays.get("macro_grid", false):
 		for coord in graph.plan.cells:
-			draw_rect(Rect2(Vector2(coord * WorldPlan.CELL) * px, Vector2.ONE * WorldPlan.CELL * px),
-					Color(0.45, 0.75, 1.0, 0.55), false, width)
+			var outline := _scaled(graph.plan.lattice.outline(coord), px)
+			outline.append(outline[0])
+			draw_polyline(outline, Color(0.45, 0.75, 1.0, 0.55), width)
 		var folded := PackedVector2Array()
 		for coord in graph.plan.path:
 			folded.append((Vector2(coord * WorldPlan.CELL) + Vector2.ONE * WorldPlan.CELL * 0.5) * px)

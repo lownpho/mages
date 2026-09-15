@@ -215,8 +215,9 @@ func _draw() -> void:
 			draw_polyline(points, Color(0.75, 0.8, 0.88, 0.65), 1.0)
 	if overlays.get("macro_grid", false):
 		for coord in graph.plan.cells:
-			var rect := Rect2(screen_at(Vector2(coord * WorldPlan.CELL)), Vector2.ONE * WorldPlan.CELL * zoom)
-			draw_rect(rect, Color(0.45, 0.75, 1.0, 0.6), false, 1.0)
+			var outline := _points(graph.plan.lattice.outline(coord))
+			outline.append(outline[0])
+			draw_polyline(outline, Color(0.45, 0.75, 1.0, 0.6), 1.0)
 		var folded := PackedVector2Array()
 		for coord in graph.plan.path:
 			folded.append(screen_at(Vector2(coord * WorldPlan.CELL) + Vector2.ONE * WorldPlan.CELL * 0.5))

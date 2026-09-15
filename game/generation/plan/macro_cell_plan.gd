@@ -1,8 +1,8 @@
 class_name MacroCellPlan
 extends RefCounted
-## One macro cell of the World plan, WorldPlan.CELL tiles square. It belongs to one Biome and holds a
-## contiguous piece of its route with the off-route Rooms joining it. Grid cells no Biome owns lie
-## outside the World's walkable space.
+## One macro cell of the World plan: a WorldPlan.CELL grid square whose true shape is MacroLattice's.
+## It belongs to one Biome and holds a contiguous piece of its route with the off-route Rooms joining
+## it. Grid cells no Biome owns lie outside the World's walkable space.
 
 var coord := Vector2i.ZERO
 ## "<x>,<y>", which its ordinary Rooms' keys extend.
@@ -20,6 +20,6 @@ var exit := Vector2i.ZERO
 var rooms: Array[RoomPlan] = []
 
 
-## Its tiles.
+## Its grid square. Its outline strays up to MacroLattice.reach tiles past it.
 func rect() -> Rect2i:
 	return Rect2i(coord * WorldPlan.CELL, Vector2i.ONE * WorldPlan.CELL)

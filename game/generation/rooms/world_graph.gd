@@ -7,7 +7,9 @@ extends RefCounted
 ## Ownership is a warped power diagram. warp() displaces a tile by value noise whose strength is each
 ## macro cell's Biome border_warp, interpolated between cell centres and fading to nothing over a set
 ## piece's protected disc; owner_at() gives the one Room owning the displaced point, so every wall is
-## a single ownership change. Positions in Rooms and Passages are unwarped; spots are tiles.
+## a single ownership change. The displaced point's macro cell is the one whose MacroLattice outline
+## holds it, so cell borders follow the lattice's irregular cells. Positions in Rooms and Passages are unwarped; spots
+## are tiles.
 ##
 ## Cells build in any order and every choice draws from a seed keyed by its place, so one plan always
 ## gives the same graph.
@@ -19,8 +21,9 @@ const WARP_FALLOFF := 32.0
 ## Seeds generate() tries in all before giving up.
 const SEED_ATTEMPTS := 32
 const _INVERSE_STEPS := 16
-## Side of the square bins, in unwarped tiles, that list which Rooms may own a point.
-const _BIN := 8
+## Side of the square bins, in unwarped tiles, that list which Rooms may own a point: MacroLattice's
+## bins, so a bin knows which macro cells can hold its points.
+const _BIN := MacroLattice._BIN
 @warning_ignore("integer_division")
 const _BINS := WorldPlan.CELL / _BIN
 
@@ -34,7 +37,8 @@ var room_list: Array[GeneratedRoom] = []
 var passages: Dictionary[String, RoomPassage] = {}
 ## Every Object site and landing by key.
 var sites: Dictionary[String, ObjectSite] = {}
-## Macro cell -> the set pieces in it and its eight neighbours, for the warp's falloff.
+## Grid square, one past the World on every side since outer outlines bend beyond it -> the set pieces
+## in it and its eight neighbours, for the warp's falloff.
 var _set_pieces_near: Dictionary[Vector2i, Array] = {}
 var _noise_x: FastNoiseLite
 var _noise_y: FastNoiseLite
@@ -50,15 +54,20 @@ var _near := PackedFloat64Array()
 var _warped_x := 0.0
 var _warped_y := 0.0
 var _bins_coord := Vector2i(1 << 30, 1 << 30)
-## The macro cell at _bins_coord: its bins, and each of its Rooms' index, seed and squared radius.
-## Empty bins where no Biome owns the cell.
+## The grid square at _bins_coord, as _build_bins() lays it out: each bin's Room slots and, where
+## several macro cells can hold its points, those cells; each slot's Room index, seed, squared radius
+## and cell; each cell's centre. No bins where no cell a Biome owns reaches the square.
 var _bins: Array[PackedInt32Array] = []
+var _bin_cells: Array[PackedInt32Array] = []
 var _bin_rooms := PackedInt32Array()
 var _bin_x := PackedFloat64Array()
 var _bin_y := PackedFloat64Array()
 var _bin_r2 := PackedFloat64Array()
-## Macro cell -> [bins, room indices, seed xs, seed ys, squared radii].
-var _bins_by_cell: Dictionary[Vector2i, Array] = {}
+var _slot_cells := PackedInt32Array()
+var _cell_x := PackedFloat64Array()
+var _cell_y := PackedFloat64Array()
+## Grid square -> _build_bins().
+var _bins_by_square: Dictionary[Vector2i, Array] = {}
 
 
 ## null, with an error, when the plan is null or a macro cell exhausts its attempts. order lists the
@@ -162,19 +171,39 @@ func owner_index_at(tile: Vector2i) -> int:
 	_warp_xy(tile.x + 0.5, tile.y + 0.5)
 	var px := _warped_x
 	var py := _warped_y
-	var cx := floori(px / WorldPlan.CELL)
-	var cy := floori(py / WorldPlan.CELL)
-	if cx != _bins_coord.x or cy != _bins_coord.y:
-		_select_bins(Vector2i(cx, cy))
+	var column := floori(px / WorldPlan.CELL)
+	var row := floori(py / WorldPlan.CELL)
+	if column != _bins_coord.x or row != _bins_coord.y:
+		_select_bins(Vector2i(column, row))
 	if _bins.is_empty():
 		return -1
-	var bin: PackedInt32Array = _bins[mini(floori((py - cy * WorldPlan.CELL) / _BIN), _BINS - 1) * _BINS \
-			+ mini(floori((px - cx * WorldPlan.CELL) / _BIN), _BINS - 1)]
-	if bin.size() == 1:
-		return _bin_rooms[bin[0]]
+	var index := mini(floori((py - row * WorldPlan.CELL) / _BIN), _BINS - 1) * _BINS \
+			+ mini(floori((px - column * WorldPlan.CELL) / _BIN), _BINS - 1)
+	var bin: PackedInt32Array = _bins[index]
+	var holders: PackedInt32Array = _bin_cells[index]
+	if holders.is_empty():
+		if bin.size() == 1:
+			return _bin_rooms[bin[0]]
+		return _nearest_room(bin, px, py, -1)
+	# Several macro cells can hold a point of this bin: the one MacroLattice.cell_at() would pick.
+	var holder := -1
+	var least := INF
+	for id in holders:
+		var distance := (px - _cell_x[id]) * (px - _cell_x[id]) + (py - _cell_y[id]) * (py - _cell_y[id])
+		if distance < least:
+			least = distance
+			holder = id
+	return _nearest_room(bin, px, py, holder)
+
+
+## The Room index with the least power distance among a bin's slots, only the holder cell's when it's
+## given; -1 when none.
+func _nearest_room(bin: PackedInt32Array, px: float, py: float, holder: int) -> int:
 	var best := -1
 	var best_distance := INF
 	for n in bin:
+		if holder >= 0 and _slot_cells[n] != holder:
+			continue
 		var dx := px - _bin_x[n]
 		var dy := py - _bin_y[n]
 		var distance := dx * dx + dy * dy - _bin_r2[n]
@@ -226,12 +255,13 @@ func _warp_xy(px: float, py: float) -> void:
 	_warped_y = py + _noise_y.get_noise_2d(px, py) * amplitude
 
 
-## Builds every macro cell's ownership bins now rather than on its first tile: streaming calls this
-## behind the loading frame so no frame pays for a whole cell's bins.
+## Builds the ownership bins of every grid square the World's cells can reach now rather than on its
+## first tile: streaming calls this behind the loading frame so no frame pays for a square's bins.
 func prepare_bins() -> void:
-	for coord in cells:
-		if not _bins_by_cell.has(coord):
-			_bins_by_cell[coord] = _build_bins(cells[coord])
+	for y in range(-1, plan.size.y + 1):
+		for x in range(-1, plan.size.x + 1):
+			if not _bins_by_square.has(Vector2i(x, y)):
+				_bins_by_square[Vector2i(x, y)] = _build_bins(Vector2i(x, y))
 
 
 ## The furthest, along either axis, any tile warping onto a point of rect can have moved: noise moves
@@ -369,11 +399,11 @@ func _maybe_shortcut(coord: Vector2i, direction: Vector2i) -> void:
 	for room_a in cells[a.coord].rooms:
 		if not room_a.is_ordinary():
 			continue
-		var span_a := MacroCellGraph.exposure(room_a, a.coord, direction)
+		var span_a := MacroCellGraph.exposure(plan, room_a, a.coord, direction)
 		for room_b in cells[b.coord].rooms:
 			if not room_b.is_ordinary():
 				continue
-			var span_b := MacroCellGraph.exposure(room_b, b.coord, -direction)
+			var span_b := MacroCellGraph.exposure(plan, room_b, b.coord, -direction)
 			var from := maxf(span_a.x, span_b.x)
 			var to := minf(span_a.y, span_b.y)
 			if to - from >= width + 2 * MacroCellGraph.BORDER_SLACK:
@@ -387,23 +417,21 @@ func _maybe_shortcut(coord: Vector2i, direction: Vector2i) -> void:
 	passage.b = passage.key.get_slice("|", 1)
 	passage.kind = RoomPassage.Kind.SHORTCUT
 	passage.width = width
-	passage.point = Vector2(b.coord * WorldPlan.CELL)
-	if direction == Vector2i.RIGHT:
-		passage.point.y = choice[2]
-	else:
-		passage.point.x = choice[2]
+	passage.point = plan.lattice.point_along(a.coord, direction, choice[2])
 	_link(passage)
 
 
 func _index_set_pieces() -> void:
-	for coord in plan.cells:
-		var near: Array[GeneratedRoom] = []
-		for dy in range(-1, 2):
-			for dx in range(-1, 2):
-				var cell: MacroCellGraph = cells.get(coord + Vector2i(dx, dy))
-				if cell != null:
-					near.append_array(cell.rooms.filter(func(room: GeneratedRoom) -> bool: return room.is_set_piece()))
-		_set_pieces_near[coord] = near
+	for y in range(-1, plan.size.y + 1):
+		for x in range(-1, plan.size.x + 1):
+			var coord := Vector2i(x, y)
+			var near: Array[GeneratedRoom] = []
+			for dy in range(-1, 2):
+				for dx in range(-1, 2):
+					var cell: MacroCellGraph = cells.get(coord + Vector2i(dx, dy))
+					if cell != null:
+						near.append_array(cell.rooms.filter(func(room: GeneratedRoom) -> bool: return room.is_set_piece()))
+			_set_pieces_near[coord] = near
 
 
 func _cell_warp(coord: Vector2i) -> float:
@@ -421,52 +449,85 @@ static func _warp_noise(unit_seed: int) -> FastNoiseLite:
 	return noise
 
 
-func _select_bins(coord: Vector2i) -> void:
-	_bins_coord = coord
-	var cell: MacroCellGraph = cells.get(coord)
-	if cell == null:
+func _select_bins(square: Vector2i) -> void:
+	_bins_coord = square
+	if not _bins_by_square.has(square):
+		_bins_by_square[square] = _build_bins(square)
+	var entry: Array = _bins_by_square[square]
+	if entry.is_empty():
 		_bins = []
 		return
-	if not _bins_by_cell.has(coord):
-		_bins_by_cell[coord] = _build_bins(cell)
-	var entry: Array = _bins_by_cell[coord]
 	_bins = entry[0]
-	_bin_rooms = entry[1]
-	_bin_x = entry[2]
-	_bin_y = entry[3]
-	_bin_r2 = entry[4]
+	_bin_cells = entry[1]
+	_bin_rooms = entry[2]
+	_bin_x = entry[3]
+	_bin_y = entry[4]
+	_bin_r2 = entry[5]
+	_slot_cells = entry[6]
+	_cell_x = entry[7]
+	_cell_y = entry[8]
 
 
-## For each bin of a macro cell, the indices into its Rooms whose power distance can be least
-## somewhere in the bin, in the cell's order so ties resolve as a full scan would; then the Rooms'
-## indices, seeds and squared radii.
-func _build_bins(cell: MacroCellGraph) -> Array:
-	var bins: Array[PackedInt32Array] = []
+## A grid square's ownership bins over MacroLattice's: for each bin, the slots of the Rooms whose power
+## distance can be least somewhere in the bin within each macro cell that can hold a point of it, cell
+## by cell in the lattice's order and Rooms in plan order, so ties resolve as full scans would; and
+## those cells when there are several. Then each slot's Room index, seed, squared radius and cell, and
+## the nine cells' centres. Empty when none of the nine cells around the square is a Biome's.
+func _build_bins(square: Vector2i) -> Array:
+	var cell_xs := PackedFloat64Array()
+	var cell_ys := PackedFloat64Array()
+	var cell_slots: Array[PackedInt32Array] = []
 	var indices := PackedInt32Array()
 	var xs := PackedFloat64Array()
 	var ys := PackedFloat64Array()
 	var r2s := PackedFloat64Array()
-	for room in cell.rooms:
-		indices.append(room.index)
-		xs.append(room.seed.x)
-		ys.append(room.seed.y)
-		r2s.append(room.radius * room.radius)
+	var slot_cells := PackedInt32Array()
+	for j in range(square.y - 1, square.y + 2):
+		for i in range(square.x - 1, square.x + 2):
+			var coord := Vector2i(i, j)
+			var id := cell_xs.size()
+			var centre := plan.lattice.centre(coord)
+			cell_xs.append(centre.x)
+			cell_ys.append(centre.y)
+			var slots := PackedInt32Array()
+			var cell: MacroCellGraph = cells.get(coord)
+			if cell != null:
+				for room in cell.rooms:
+					slots.append(indices.size())
+					indices.append(room.index)
+					xs.append(room.seed.x)
+					ys.append(room.seed.y)
+					r2s.append(room.radius * room.radius)
+					slot_cells.append(id)
+			cell_slots.append(slots)
+	if indices.is_empty():
+		return []
+	var lattice_bins := plan.lattice.square_bins(square)
 	var reach := _BIN * sqrt(2.0) * 0.5
-	var origin := cell.cell.coord * WorldPlan.CELL
+	var bins: Array[PackedInt32Array] = []
+	var bin_cells: Array[PackedInt32Array] = []
 	for by in _BINS:
 		for bx in _BINS:
-			var centre_x := origin.x + (bx + 0.5) * _BIN
-			var centre_y := origin.y + (by + 0.5) * _BIN
-			var lows := PackedFloat64Array()
-			var least_high := INF
-			for n in xs.size():
-				var distance := sqrt((centre_x - xs[n]) * (centre_x - xs[n]) + (centre_y - ys[n]) * (centre_y - ys[n]))
-				var near := maxf(distance - reach, 0.0)
-				lows.append(near * near - r2s[n])
-				least_high = minf(least_high, (distance + reach) * (distance + reach) - r2s[n])
+			var centre_x := square.x * WorldPlan.CELL + (bx + 0.5) * _BIN
+			var centre_y := square.y * WorldPlan.CELL + (by + 0.5) * _BIN
+			var pairs := lattice_bins[by * _BINS + bx]
+			var holders := PackedInt32Array()
 			var bin := PackedInt32Array()
-			for n in xs.size():
-				if lows[n] <= least_high + 0.01:
-					bin.append(n)
+			for p in range(0, pairs.size(), 2):
+				# The nine cells were numbered row by row from the square's upper-left neighbour.
+				var id := (pairs[p + 1] - square.y + 1) * 3 + pairs[p] - square.x + 1
+				holders.append(id)
+				var slots := cell_slots[id]
+				var lows := PackedFloat64Array()
+				var least_high := INF
+				for n in slots:
+					var distance := sqrt((centre_x - xs[n]) * (centre_x - xs[n]) + (centre_y - ys[n]) * (centre_y - ys[n]))
+					var near := maxf(distance - reach, 0.0)
+					lows.append(near * near - r2s[n])
+					least_high = minf(least_high, (distance + reach) * (distance + reach) - r2s[n])
+				for k in slots.size():
+					if lows[k] <= least_high + 0.01:
+						bin.append(slots[k])
 			bins.append(bin)
-	return [bins, indices, xs, ys, r2s]
+			bin_cells.append(holders if holders.size() > 1 else PackedInt32Array())
+	return [bins, bin_cells, indices, xs, ys, r2s, slot_cells, cell_xs, cell_ys]

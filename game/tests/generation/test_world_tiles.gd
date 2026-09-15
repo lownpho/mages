@@ -15,8 +15,9 @@ extends Node
 
 ## Tiles within this distance of an Object spot or landing hold no rock.
 const CLEAR_RADIUS := 2.0
-## Tiles of the reachability grid past each side of the macro grid.
-const GRID_MARGIN := 32
+## Tiles of the reachability grid past each side of the macro grid, where MacroLattice's outer cells
+## stray and the warp reaches further.
+const GRID_MARGIN := 64
 const _FLOOR := WorldInteriors.FLOOR
 const _ROCK := WorldInteriors.ROCK
 const _SIDES: Array[Vector2i] = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]

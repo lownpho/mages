@@ -96,15 +96,7 @@ func _stream_across_biome_edge(graph: WorldGraph, changed_biome: StringName) -> 
 	var camera := Camera2D.new()
 	camera.process_callback = Camera2D.CAMERA2D_PROCESS_PHYSICS
 	target.add_child(camera)
-	var edge := Vector2(edge_cell * WorldPlan.CELL) + Vector2.ONE * WorldPlan.CELL * 0.5
-	if direction.x > 0:
-		edge.x = (edge_cell.x + 1) * WorldPlan.CELL
-	elif direction.x < 0:
-		edge.x = edge_cell.x * WorldPlan.CELL
-	elif direction.y > 0:
-		edge.y = (edge_cell.y + 1) * WorldPlan.CELL
-	else:
-		edge.y = edge_cell.y * WorldPlan.CELL
+	var edge := graph.plan.lattice.edge_point(edge_cell, direction, 0.5)
 	target.position = edge * GameConstants.PX_PER_TILE
 	streamer.build_world(graph)
 	streamer.target = target

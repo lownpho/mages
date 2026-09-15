@@ -11,7 +11,7 @@ extends RefCounted
 ##   3. Each Ideal-path parent attaches its Side biomes at seeded interior route Rooms, apart from one
 ##      another and from its entrance and exit.
 ##   4. The Ideal path's cells fold through a grid, each Side biome's cells branching off its
-##      attachment's cell.
+##      attachment's cell, and each cell takes its irregular outline (MacroLattice).
 ##   5. Challenge rises along each route; off-route Rooms take their join's.
 ##
 ## Each step draws from its own RNG, seeded from the World seed, a namespace and a place key, so no
@@ -72,6 +72,7 @@ static func plan(content: WorldContent, world_seed: int, radii: Dictionary[Strin
 	if not planner._fold():
 		return null
 	planner._place()
+	planner._plan.lattice = MacroLattice.new(planner._plan)
 	planner._rise()
 	return planner._plan
 
@@ -267,7 +268,12 @@ func _separate_set_pieces(biome: BiomePlan) -> void:
 
 ## The square around a set piece's protected disc, with a margin for the Rooms beside it.
 func _disc_square(room: RoomPlan) -> int:
-	var side := 2 * _plan.radii[room.kind_name()] + 6
+	return disc_square(_plan.radii[room.kind_name()])
+
+
+## The square around a protected disc of that radius, with a margin for the Rooms beside it.
+static func disc_square(radius: int) -> int:
+	var side := 2 * radius + 6
 	return side * side
 
 

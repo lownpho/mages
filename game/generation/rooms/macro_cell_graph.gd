@@ -3,7 +3,8 @@ extends RefCounted
 ## The room graph inside one planned macro cell: every Room's seed and power-diagram cell, and the
 ## Passages between its own Rooms. It reads only the World plan, so cells build in any order.
 ##
-## Each attempt partitions the cell before deciding which Room is which:
+## The cell is its MacroLattice outline, a convex polygon. Each attempt partitions it before deciding
+## which Room is which:
 ##   1. Set pieces reserve their protected discs against edges no route crosses.
 ##   2. Each Room leaving the cell by a port takes a seed just inside it; a Room with several ports
 ##      takes a weighted seed whose disc reaches them all.
@@ -40,6 +41,12 @@ const BRIDGE_REACH := 0.8
 ## Rooms a route search may try before the attempt gives up: a fresh partition is cheaper than an
 ## exhaustive search of a poor one.
 const PATH_BUDGET := 1500
+## Tiles a seed keeps inside the outline along each axis, and the steps toward the cell's centre that
+## bring a seed that far in.
+const SEED_INSET := 2.0
+const PULL_STEPS := 32
+## Tiles at a time a set piece's disc moves in from a slanted edge until it fits.
+const PROTECTED_STEP := 1.5
 
 
 ## A route or attachment Passage leaving the cell: the Room it leaves from, which edge, and the span
@@ -51,12 +58,17 @@ class Port:
 	## On the edge, unwarped. Both cells sharing the edge derive the same point.
 	var point := Vector2.ZERO
 	var width := 2
+	## Unit vectors along the edge and into the cell.
+	var tangent := Vector2.ZERO
+	var inward := Vector2.ZERO
 
 	func half_span() -> float:
 		return ceili(width / 2.0) + BORDER_SLACK
 
 
 var cell: MacroCellPlan
+## The cell's outline, clockwise.
+var outline := PackedVector2Array()
 var rooms: Array[GeneratedRoom] = []
 var ports: Array[Port] = []
 ## The Passages between this cell's own Rooms. WorldGraph adds those crossing its edges.
@@ -76,12 +88,34 @@ var _corridors: Array[Array] = []
 var _guards: Array[Array] = []
 ## Why each attempt before the kept one failed: reason -> attempts.
 var failures: Dictionary[String, int] = {}
+var _lattice: MacroLattice
+## The outline's bounding box.
+var _bounds := Rect2()
+## Each outline side's unit normal into the cell and its offset along that normal.
+var _side_normals := PackedVector2Array()
+var _side_offsets := PackedFloat64Array()
 
 
 ## null, with an error, when every attempt fails.
 static func build(plan: WorldPlan, coord: Vector2i) -> MacroCellGraph:
 	var graph := MacroCellGraph.new()
 	graph.cell = plan.cells[coord]
+	graph._lattice = plan.lattice
+	graph.outline = plan.lattice.outline(coord)
+	graph._bounds = Rect2(graph.outline[0], Vector2.ZERO)
+	for point in graph.outline:
+		graph._bounds = graph._bounds.expand(point)
+	var inner := plan.lattice.centre(coord)
+	for n in graph.outline.size():
+		var from := graph.outline[n]
+		var to := graph.outline[(n + 1) % graph.outline.size()]
+		if from.distance_squared_to(to) < 0.0001:
+			continue
+		var normal := (to - from).orthogonal().normalized()
+		if normal.dot(inner - from) < 0.0:
+			normal = -normal
+		graph._side_normals.append(normal)
+		graph._side_offsets.append(normal.dot(from))
 	for room_plan in graph.cell.rooms:
 		var room := GeneratedRoom.new()
 		room.plan = room_plan
@@ -114,12 +148,7 @@ static func port_point(plan: WorldPlan, coord: Vector2i, direction: Vector2i) ->
 	var other := coord + direction
 	var edge := RoomPassage.pair("%d,%d" % [coord.x, coord.y], "%d,%d" % [other.x, other.y])
 	var along := plan.rng(WorldHash.NS_PORTS, edge).randf_range(PORT_MARGIN, WorldPlan.CELL - PORT_MARGIN)
-	var point := Vector2(coord * WorldPlan.CELL) + Vector2(HALF, HALF) + Vector2(direction) * HALF
-	if direction.x == 0:
-		point.x = coord.x * WorldPlan.CELL + along
-	else:
-		point.y = coord.y * WorldPlan.CELL + along
-	return point
+	return plan.lattice.edge_point(coord, direction, along / WorldPlan.CELL)
 
 
 ## A Passage's width between two cells' Biomes: the mean of their passage widths.
@@ -127,15 +156,13 @@ static func edge_width(plan: WorldPlan, a: Vector2i, b: Vector2i) -> int:
 	return roundi((plan.biomes[plan.cells[a].biome].resource.passage_width + plan.biomes[plan.cells[b].biome].resource.passage_width) / 2.0)
 
 
-## The span of the edge toward direction that a Room's polygon covers, as (from, to) along the edge;
-## (INF, -INF) when the Room doesn't reach that edge.
-static func exposure(room: GeneratedRoom, coord: Vector2i, direction: Vector2i) -> Vector2:
-	var vertical := direction.x != 0
-	var line := Vector2(coord * WorldPlan.CELL) + Vector2(HALF, HALF) + Vector2(direction) * HALF
+## The span of the edge toward direction that a Room's polygon covers, as (from, to) in tiles along
+## the edge from its first end; (INF, -INF) when the Room doesn't reach it.
+static func exposure(plan: WorldPlan, room: GeneratedRoom, coord: Vector2i, direction: Vector2i) -> Vector2:
 	var span := Vector2(INF, -INF)
 	for point in room.polygon:
-		if absf((point.x - line.x) if vertical else (point.y - line.y)) < 0.01:
-			var along := point.y if vertical else point.x
+		if plan.lattice.on_edge(coord, direction, point):
+			var along := plan.lattice.along_edge(coord, direction, point)
 			span = Vector2(minf(span.x, along), maxf(span.y, along))
 	return span
 
@@ -159,6 +186,8 @@ func _add_port(plan: WorldPlan, owner: GeneratedRoom, direction: Vector2i, kind:
 	port.kind = kind
 	port.point = port_point(plan, cell.coord, direction)
 	port.width = edge_width(plan, cell.coord, cell.coord + direction)
+	port.tangent = plan.lattice.edge_tangent(cell.coord, direction)
+	port.inward = plan.lattice.inward(cell.coord, direction)
 	ports.append(port)
 
 
@@ -187,7 +216,6 @@ func _room_ports(owner: GeneratedRoom) -> Array[Port]:
 func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 	_shapes.clear()
 	_port_depth = clampf(WorldPlan.CELL / sqrt(float(rooms.size())) * 0.75, PORT_INSET + 4.0, PORT_DEPTH_MAX)
-	var origin := Vector2(cell.coord * WorldPlan.CELL)
 	# 1. Set pieces, against edges no route crosses, those facing no other macro cell first.
 	var ranked: Array[Array] = []
 	for direction in DIRECTIONS:
@@ -201,7 +229,7 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 	for room_now in rooms:
 		if room_now.is_set_piece():
 			room_now.radius = plan.radii[room_now.plan.kind_name()]
-			if not _place_protected(room_now, ranked, origin, rng):
+			if not _place_protected(room_now, ranked, rng):
 				return _fail("set piece placement")
 			_shapes.append(room_now)
 	# 2. Port Rooms.
@@ -218,12 +246,11 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 			var sideways := rng.randf_range(-reach, reach)
 			var sum := Vector2.ZERO
 			for port in room_ports:
-				sum += port.point - Vector2(port.direction) * depth
+				sum += port.point + port.inward * depth
 			room_now.seed = sum / room_ports.size()
 			if room_ports.size() == 1:
-				room_now.seed += Vector2(absi(room_ports[0].direction.y), absi(room_ports[0].direction.x)) * sideways
-			# A seed outside its macro cell would lie outside its own clipped cell.
-			room_now.seed = room_now.seed.clamp(origin + Vector2.ONE * 2, origin + Vector2.ONE * (WorldPlan.CELL - 2))
+				room_now.seed += room_ports[0].tangent * sideways
+			room_now.seed = _pull_inside(room_now.seed)
 			if _shapes.all(func(other: GeneratedRoom) -> bool:
 				return room_now.seed.distance_to(other.seed) >= other.radius + 3.0 \
 						and not room_ports.any(func(port: Port) -> bool: return _takes_port(port, other.seed, other.radius))):
@@ -244,13 +271,13 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 	# 3. The rest of the quota, anonymous until the route is found.
 	var candidates: Array[Vector2] = []
 	var step := clampf(plan.biomes[cell.biome].resource.room_size * 0.4, 6, 16)
-	var y := step * 0.5
-	while y < WorldPlan.CELL:
-		var x := step * 0.5
-		while x < WorldPlan.CELL:
-			var candidate := (origin + Vector2(x, y) + Vector2(rng.randf_range(-0.3, 0.3), rng.randf_range(-0.3, 0.3)) * step).clamp(
-					origin + Vector2.ONE * 2, origin + Vector2.ONE * (WorldPlan.CELL - 2))
-			if not ports.any(func(port: Port) -> bool: return _takes_port(port, candidate, 0.0)) and not _guarded(null, candidate, 0.0):
+	var y := _bounds.position.y + step * 0.5
+	while y < _bounds.end.y:
+		var x := _bounds.position.x + step * 0.5
+		while x < _bounds.end.x:
+			var candidate := Vector2(x, y) + Vector2(rng.randf_range(-0.3, 0.3), rng.randf_range(-0.3, 0.3)) * step
+			if _inside(candidate, SEED_INSET) and not ports.any(func(port: Port) -> bool: return _takes_port(port, candidate, 0.0)) \
+					and not _guarded(null, candidate, 0.0):
 				candidates.append(candidate)
 			x += step
 		y += step
@@ -276,14 +303,14 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 		for n in candidates.size():
 			clearances[n] = minf(clearances[n], candidates[n].distance_to(shape.seed))
 		clearances[best] = -INF
-	PowerCells.polygons(_shapes, Rect2(cell.rect()))
+	PowerCells.polygons(_shapes, outline)
 	# Partition checks that hold whichever Room is which.
 	for shape in _shapes:
 		if shape.polygon.size() < 3:
 			return _fail("empty Room")
 	for port in ports:
-		var span := exposure(port.room, cell.coord, port.direction)
-		var along := port.point.y if port.direction.x != 0 else port.point.x
+		var span := exposure(plan, port.room, cell.coord, port.direction)
+		var along := plan.lattice.along_edge(cell.coord, port.direction, port.point)
 		if span.x > along - port.half_span() or span.y < along + port.half_span():
 			return _fail("port uncovered")
 	var slack := plan.biomes[cell.biome].resource.passage_width + BORDER_SLACK
@@ -310,27 +337,31 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 	return true
 
 
-## Against the best-ranked edges, or behind its own port for a spawn the route leaves at once.
+## Against the best-ranked edges, or behind its own port for a spawn the route leaves at once: as near
+## the edge as the whole disc fits inside the outline, which a slanted or bowed edge pushes further in.
 @warning_ignore("integer_division")
-func _place_protected(special: GeneratedRoom, ranked: Array[Array], origin: Vector2, rng: RandomNumberGenerator) -> bool:
+func _place_protected(special: GeneratedRoom, ranked: Array[Array], rng: RandomNumberGenerator) -> bool:
 	var margin := minf(special.radius + 1.0, HALF)
 	var own := _room_ports(special)
 	for trial in 32:
+		var anchor := Vector2.ZERO
+		var inward := Vector2.ZERO
 		if not own.is_empty():
-			var sum := Vector2.ZERO
 			for port in own:
-				sum += port.point - Vector2(port.direction) * margin
-			special.seed = sum / own.size()
+				anchor += port.point / own.size()
+				inward += port.inward / own.size()
 		else:
 			var direction: Vector2i = ranked[mini(trial / 8, ranked.size() - 1)][2]
 			var along := rng.randf_range(margin, WorldPlan.CELL - margin)
-			var local := Vector2(HALF, HALF) + Vector2(direction) * (HALF - margin)
-			if direction.x == 0:
-				local.x = along
-			else:
-				local.y = along
-			special.seed = origin + local
-		var clear := _shapes.all(func(other: GeneratedRoom) -> bool:
+			anchor = _lattice.edge_point(cell.coord, direction, along / WorldPlan.CELL)
+			inward = _lattice.inward(cell.coord, direction)
+		var depth := margin
+		special.seed = anchor + inward * depth
+		while not _disc_inside(special) and depth < HALF and inward != Vector2.ZERO:
+			depth += PROTECTED_STEP
+			special.seed = anchor + inward * depth
+		var inside := _disc_inside(special)
+		var clear := inside and _shapes.all(func(other: GeneratedRoom) -> bool:
 			return special.seed.distance_to(other.seed) > special.radius + other.radius + 3.0)
 		clear = clear and ports.all(func(port: Port) -> bool:
 			return port.room == special or special.seed.distance_to(port.point) > special.radius + port.half_span() + PORT_INSET + 2.0)
@@ -375,7 +406,7 @@ func _bridge_route(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 					var between := path[previous + t]
 					between.radius = 0.0
 					between.seed = start.lerp(end, float(t) / gap) + bow * sin(PI * t / gap) + Vector2(rng.randf_range(-2, 2), rng.randf_range(-2, 2))
-					between.seed = between.seed.clamp(Vector2(cell.coord * WorldPlan.CELL) + Vector2.ONE * 2, Vector2(cell.coord * WorldPlan.CELL) + Vector2.ONE * (WorldPlan.CELL - 2))
+					between.seed = _pull_inside(between.seed)
 					if _shapes.any(func(other: GeneratedRoom) -> bool: return between.seed.distance_to(other.seed) < other.radius + 3.0):
 						return _fail("bridge crowded")
 					_shapes.append(between)
@@ -416,9 +447,8 @@ func _guarded(shape: GeneratedRoom, seed_point: Vector2, weight: float) -> bool:
 
 ## Whether a seed of that weight would take any point of the port's span from the port's Room.
 func _takes_port(port: Port, seed_point: Vector2, weight: float) -> bool:
-	var along := Vector2(absi(port.direction.y), absi(port.direction.x))
 	for t: float in [-1.0, 0.0, 1.0]:
-		var q: Vector2 = port.point + along * port.half_span() * t
+		var q: Vector2 = port.point + port.tangent * port.half_span() * t
 		var own: float = q.distance_squared_to(port.room.seed) - port.room.radius * port.room.radius
 		if q.distance_squared_to(seed_point) - weight * weight <= own + PORT_GUARD:
 			return true
@@ -682,6 +712,30 @@ static func _find(union: Dictionary[String, String], key: String) -> String:
 		union[key] = union[union[key]]
 		key = union[key]
 	return key
+
+
+## Whether a point lies in this macro cell at least inset tiles from every side of its convex outline.
+func _inside(point: Vector2, inset: float) -> bool:
+	for n in _side_normals.size():
+		if _side_normals[n].dot(point) - _side_offsets[n] < inset:
+			return false
+	return true
+
+
+## The point, or the first place SEED_INSET inside the outline on its way to the cell's centre: a seed
+## outside its macro cell would lie outside its own clipped cell.
+func _pull_inside(point: Vector2) -> Vector2:
+	var centre := _lattice.centre(cell.coord)
+	for _step in PULL_STEPS:
+		if _inside(point, SEED_INSET):
+			return point
+		point = point.move_toward(centre, SEED_INSET)
+	return point
+
+
+## Whether a protected disc, with a tile to spare, lies wholly inside the outline.
+func _disc_inside(special: GeneratedRoom) -> bool:
+	return _inside(special.seed, special.radius + 1.0)
 
 
 func _fail(reason: String) -> bool:

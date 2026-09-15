@@ -9,7 +9,7 @@ extends RefCounted
 ## ("boss/glade"). The same content, radii and seed plan the same World within one version on one
 ## platform.
 
-## A macro cell's side in tiles.
+## A macro cell's grid square side in tiles; MacroLattice gives its true shape.
 const CELL := 120
 ## Tiles each set piece protects around its seed, by RoomPlan kind name.
 const DEFAULT_RADII: Dictionary[StringName, int] = {&"spawn": 12, &"boss": 22, &"miniboss": 16, &"rare": 10}
@@ -35,6 +35,8 @@ var biomes: Dictionary[StringName, BiomePlan] = {}
 ## Every Room by key.
 var rooms: Dictionary[String, RoomPlan] = {}
 var spawn: RoomPlan
+## The macro cells' irregular outlines, once the cells are placed.
+var lattice: MacroLattice
 
 
 ## The seed of a generated unit of this World.

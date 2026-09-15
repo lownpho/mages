@@ -5,10 +5,10 @@ extends RefCounted
 ## all other seeds and the macro cell; no triangulation or approximate adjacency is required.
 
 
-static func polygons(rooms: Array[GeneratedRoom], rect: Rect2) -> void:
+## Each Room's power cell within the macro cell's convex outline.
+static func polygons(rooms: Array[GeneratedRoom], outline: PackedVector2Array) -> void:
 	for room in rooms:
-		var poly := PackedVector2Array([rect.position, Vector2(rect.end.x, rect.position.y), rect.end,
-				Vector2(rect.position.x, rect.end.y)])
+		var poly := outline
 		var reach := _reach(poly, room.seed)
 		for other in rooms:
 			if other == room:
