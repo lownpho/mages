@@ -229,8 +229,9 @@ one), and tear down in `exit()` what `enter()` started. Use `creature.look_for_t
    in. Put the enemy's `<id>_data.tres` on
    a **roster** with its Entry challenge: `roster` in a Biome's
    `game/generation/world/biomes/<b>/biome.tres` (shared by its Zones) or in one Zone's
-   `zones/<zone>.tres`, and in `fillers` too if it should join every ordinary encounter once
-   eligible. Each rostered enemy gets a Teaching room on every route that reaches its Entry
+   `zones/<zone>.tres`. A stationary mine that belongs to the Room rather than to a fight is a
+   Hazard: set `hazards_per_tile` on its `CreatureResource` and it scatters over Testing and
+   Teaching rooms instead of joining encounters. Each rostered non-Hazard enemy gets a Teaching room on every route that reaches its Entry
    challenge. A Rare, Miniboss or Boss instead leads a Fixed encounter (`rares`/`minibosses` on a
    Zone, `boss` on a Biome). How many come per encounter and how often it's drawn are `group_min`,
    `group_max` and `weight` on the `CreatureResource` itself. The `add-room` skill covers the

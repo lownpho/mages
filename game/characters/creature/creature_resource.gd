@@ -28,11 +28,18 @@ enum Rarity {COMMON, RARE, BOSS}
 ## the drops' business, a split is the creature's whole point.
 @export var death_spawns: Array[DeathSpawn] = []
 
-## How this creature fills generated ordinary encounters, wherever a roster fields it. Only the
-## Entry challenge and Filler role depend on the place.
+## How this creature fills generated ordinary Rooms, wherever a roster fields it. Only the Entry
+## challenge depends on the place.
 @export_group("Encounters")
 ## Each ordinary encounter spawns between group_min and group_max of it. Challenge doesn't scale it.
 @export_range(1, 20, 1, "or_greater") var group_min: int = 1
 @export_range(1, 20, 1, "or_greater") var group_max: int = 1
 ## Relative chance of being drawn among an encounter's eligible types.
 @export_range(1, 100, 1, "or_greater") var weight: int = 1
+## Above 0 it is a Hazard: never drawn into an encounter or taught, but spread over every Testing
+## and Teaching room's floor at this many per walkable tile once eligible. Challenge doesn't scale it.
+@export_range(0.0, 0.25, 0.0005, "or_greater") var hazards_per_tile: float = 0.0
+
+
+func is_hazard() -> bool:
+	return hazards_per_tile > 0.0

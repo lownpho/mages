@@ -21,7 +21,6 @@ roster = Dictionary[ExtResource("creature"), int]({
 ExtResource("puffcap"): 4,
 ExtResource("sporespitter"): 5
 })
-fillers = Array[ExtResource("creature")]([ExtResource("puffcap")])
 boss = SubResource("boss")
 room_size = 36
 border_warp = 11.0

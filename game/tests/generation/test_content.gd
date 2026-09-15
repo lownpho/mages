@@ -49,10 +49,6 @@ const LOAD_ERRORS := {
 	],
 	"duplicate_shared_enemy": [["biomes/solo/zones/start.tres", 15, "moth is already on the Biome's shared roster"]],
 	"duplicate_roster_key": [["biomes/solo/biome.tres", 22, "roster lists moth_data.tres twice"]],
-	"filler_not_on_roster": [
-		["biomes/solo/biome.tres", 23, "Filler owl is not on this Biome's own roster"],
-		["biomes/solo/zones/start.tres", 14, "Filler moth is not on this Zone's own roster"],
-	],
 	"reveal_not_boss": [["biomes/solo/biome.tres", 20, "a Sign reveals viper, which leads no Biome's Boss"]],
 	"quota_capacity": [["biomes/solo/zones/start.tres", 22, "room_count 4 cannot hold 3 route Rooms, 2 Rares and the Boss (needs 6)"]],
 	"attachment_infeasible": [["world.tres", 23, "'solo' has 7 route Rooms, too few to attach 2 Side biomes 3 apart and 2 from either end (needs 8)"]],

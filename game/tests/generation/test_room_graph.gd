@@ -230,10 +230,10 @@ func _check_passage_spots(graph: WorldGraph, label: String) -> void:
 		_check(beside, "%s: %s Passage %s opens at %s, owned by %s" % [label, passage.kind_name(), key, passage.spot, owner.key() if owner else "nothing"])
 
 
-## Each route teaches every enemy its Zones field once, Fillers included, in a Room fielding it at a
+## Each route teaches every enemy its Zones field once, Hazards excepted, in a Room fielding it at a
 ## Challenge its effective Entry challenge has reached, never before its first eligible route
-## position, and in the order those positions come. Zones' lowest-entry enemies are eligible from
-## their first Room.
+## position, and in the order those positions come. Zones' lowest-entry non-Hazard enemies, and
+## Hazards entering no later, are eligible from their first Room.
 func _check_teaching(graph: WorldGraph, label: String) -> void:
 	var plan := graph.plan
 	var routes: Array[Array] = [plan.content.ideal_path.map(func(id: StringName) -> BiomePlan: return plan.biomes[id])]
@@ -247,10 +247,11 @@ func _check_teaching(graph: WorldGraph, label: String) -> void:
 			_check(roster.size() == authored.size() and authored.keys().all(func(enemy: CreatureResource) -> bool: return roster.has(enemy)),
 					"%s: %s/%s's roster isn't its Biome's and Zone's" % [label, biome_id, zone.id])
 			if not authored.is_empty():
-				var lowest: int = authored.values().min()
+				var fighters := authored.keys().filter(func(enemy: CreatureResource) -> bool: return not enemy.is_hazard())
+				var lowest: int = (fighters if not fighters.is_empty() else authored.keys()).map(func(enemy: CreatureResource) -> int: return authored[enemy]).min()
 				var first := plan.biomes[biome_id].route[zone.route_start].challenge
 				for enemy: CreatureResource in authored:
-					if authored[enemy] == lowest:
+					if authored[enemy] <= lowest:
 						_check(roster[enemy] <= first, "%s: lowest-entry %s isn't eligible from %s/%s's first Room" % [label, enemy.resource_path.get_file(), biome_id, zone.id])
 	for biomes: Array in routes:
 		var first_eligible: Dictionary[CreatureResource, int] = {}
@@ -261,7 +262,7 @@ func _check_teaching(graph: WorldGraph, label: String) -> void:
 			for index in biome.route.size():
 				var roster := graph.rooms[biome.route[index].key].roster
 				for enemy in roster:
-					if not first_eligible.has(enemy) and roster[enemy] <= biome.route[index].challenge:
+					if not first_eligible.has(enemy) and not enemy.is_hazard() and roster[enemy] <= biome.route[index].challenge:
 						first_eligible[enemy] = offset + index
 			offset += biome.route.size()
 		var taught: Dictionary[CreatureResource, GeneratedRoom] = {}

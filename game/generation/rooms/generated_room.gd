@@ -24,10 +24,9 @@ var teaching: CreatureResource
 var passages: Array[RoomPassage] = []
 var sites: Array[ObjectSite] = []
 ## Enemy -> effective Entry challenge where this Room stands: its Biome's roster plus its Zone's,
-## with the Zone's lowest-entry enemies eligible from the Zone's first Room. Shared by the Zone.
+## with the Zone's lowest-entry non-Hazard enemies, and Hazards entering no later, eligible from the
+## Zone's first Room. Shared by the Zone.
 var roster: Dictionary[CreatureResource, int] = {}
-## The roster's Fillers.
-var fillers: Array[CreatureResource] = []
 
 
 func key() -> String:

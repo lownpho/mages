@@ -23,8 +23,8 @@ up as soon as it exists.
 | --- | --- |
 | `world.tres` (`WorldResource`) | topology: the `ideal_path` order and each Side biome with its parent |
 | `challenge_curve.tres` | global encounter density and types per Challenge step, `teach_dip`, `respawn_delay`, `breather_chance` |
-| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster and Fillers, the one `boss`, the eight shape knobs, `presentation`, decoration density, Professor and Warp-door counts, Signs, Breather Objects |
-| `biomes/<biome>/zones/<zone>.tres` (`ZoneResource`) | `route_rooms` and `room_count`, additive roster and Fillers, `minibosses`, `rares`, decoration override, Signs, Breather Objects |
+| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster, the one `boss`, the eight shape knobs, `presentation`, decoration density, Professor and Warp-door counts, Signs, Breather Objects |
+| `biomes/<biome>/zones/<zone>.tres` (`ZoneResource`) | `route_rooms` and `room_count`, additive roster, `minibosses`, `rares`, decoration override, Signs, Breather Objects |
 | `biomes/<biome>/art/` | the Biome's presentation and tilesets (see `biome-scenery`) |
 
 The resource classes and their doc comments are in `game/generation/content/`. A new Biome also
@@ -96,7 +96,7 @@ Tune them live (below) and let **Save** write them back, rather than guessing nu
 
 ### Which enemies a Room fights
 
-Not authored per Room: rosters, Entry challenges, Fillers and the curve decide it — see `add-enemy`
+Not authored per Room: rosters, Entry challenges, Hazards and the curve decide it — see `add-enemy`
 and `rebalance-enemies`.
 
 ### The interior algorithm

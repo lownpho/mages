@@ -15,7 +15,7 @@ extends RefCounted
 ##   - parse errors and missing references, as the engine reports them while loading;
 ##   - properties a section sets that its script doesn't declare, which a load drops silently;
 ##   - numbers outside their property's export range;
-##   - model rules: topology, the Spawn zone, Bosses, Entry challenges, Fillers, Sign reveals, Zone
+##   - model rules: topology, the Spawn zone, Bosses, Entry challenges, Sign reveals, Zone
 ##     quotas and Side-biome attachments.
 ## A model rule is skipped when a file it reads failed to load, so a broken file doesn't bury the
 ## report under problems it caused.
@@ -335,7 +335,6 @@ func _check_biome(id: StringName) -> void:
 ## low < 0 skips Entry challenge ranges, for a Biome the topology doesn't place.
 func _check_roster(owner: Resource, shared: Dictionary, low: int, high: int) -> void:
 	var roster: Dictionary = owner.get("roster")
-	var kind := "Zone" if owner is ZoneResource else "Biome"
 	for enemy: CreatureResource in roster:
 		if enemy == null:
 			_error_at(owner, "roster", "a roster entry names no enemy")
@@ -346,15 +345,6 @@ func _check_roster(owner: Resource, shared: Dictionary, low: int, high: int) -> 
 		if low >= 0 and (entry < low or entry > high):
 			_error_at(owner, "roster", "%s enters at Challenge %d, outside the Biome's %d to %d" % [_name(enemy), entry, low, high], enemy)
 	_check_duplicate_keys(owner, "roster")
-	var seen: Dictionary[CreatureResource, bool] = {}
-	for enemy: CreatureResource in owner.get("fillers"):
-		if enemy == null:
-			_error_at(owner, "fillers", "fillers has an empty entry")
-		elif seen.has(enemy):
-			_error_at(owner, "fillers", "%s is a Filler twice" % _name(enemy))
-		elif not roster.has(enemy):
-			_error_at(owner, "fillers", "Filler %s is not on this %s's own roster" % [_name(enemy), kind])
-		seen[enemy] = true
 
 
 func _check_encounter(encounter: FixedEncounterResource, role: String) -> void:
@@ -477,8 +467,6 @@ func _creatures() -> Array[CreatureResource]:
 	var encounters: Array[FixedEncounterResource] = []
 	for owner in _owners():
 		for enemy: CreatureResource in owner.get("roster"):
-			add.call(enemy)
-		for enemy: CreatureResource in owner.get("fillers"):
 			add.call(enemy)
 		for sign_resource: SignResource in owner.get("signs"):
 			if sign_resource != null:

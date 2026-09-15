@@ -1,10 +1,12 @@
 class_name EncounterMember
 extends RefCounted
 ## One generated enemy at a World tile. Its key follows its place through Room, encounter and
-## member, and is the persistence identity ticket 07 consumes. Runtime summons and death splits do
-## not pass through this type and therefore receive no generated key.
+## member (or Room, Hazard enemy and index), and is the persistence identity ticket 07 consumes.
+## Runtime summons and death splits do not pass through this type and therefore receive no
+## generated key.
 
 var key := ""
+## Empty for a Hazard, which belongs to its Room rather than to an encounter.
 var encounter_key := ""
 var room_key := ""
 var enemy: CreatureResource
@@ -12,7 +14,7 @@ var tile := Vector2i.ZERO
 var leader := false
 ## Belongs to a Rare, Miniboss or Boss Fixed encounter, so its defeat lasts the Run.
 var fixed := false
-var filler := false
+var hazard := false
 var teaching := false
 
 

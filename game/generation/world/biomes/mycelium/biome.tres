@@ -34,7 +34,6 @@ ExtResource("bloatcap"): 4,
 ExtResource("ringcap"): 5,
 ExtResource("gapcap"): 5
 })
-fillers = Array[ExtResource("creature")]([ExtResource("puffcap")])
 boss = SubResource("boss")
 room_size = 36
 border_warp = 11.0

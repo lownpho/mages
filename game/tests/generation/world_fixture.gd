@@ -70,8 +70,14 @@ static func encounter_snapshot(generated: WorldEncounters) -> String:
 		lines.append("encounter %s room %s centre %s challenge %d fixed %s" % [key,
 				encounter.room_key, encounter.centre, encounter.challenge, encounter.fixed])
 		for member in encounter.members:
-			lines.append("  member %s %s tile %s leader %s filler %s teaching %s" % [member.key,
-					member.enemy.resource_path, member.tile, member.leader, member.filler, member.teaching])
+			lines.append("  member %s %s tile %s leader %s teaching %s" % [member.key,
+					member.enemy.resource_path, member.tile, member.leader, member.teaching])
+	var hazard_keys: Array[String] = []
+	hazard_keys.assign(generated.members.keys().filter(func(key: String) -> bool: return generated.members[key].hazard))
+	hazard_keys.sort()
+	for key in hazard_keys:
+		var member := generated.members[key]
+		lines.append("hazard %s room %s %s tile %s" % [key, member.room_key, member.enemy.resource_path, member.tile])
 	return "\n".join(lines)
 
 

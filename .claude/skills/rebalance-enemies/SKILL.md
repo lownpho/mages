@@ -22,7 +22,8 @@ For enemy `<id>` under `game/characters/enemies/<id>/`:
 | Movement speed | `<id>.tscn` — on the behaviour node, not the resource | `speed` on the Approach/Wander/Flee beat (a creature can move at different speeds per state, which is why it isn't on `CreatureResource`) |
 | Drop table | `<id>_data.tres` | `drops = Array[...]([...])` — `LootDrop` sub-resources, each `{item: ExtResource, chance: float}` |
 | Encounter group size & draw odds | `<id>_data.tres` (Encounters group) | `group_min`/`group_max` (how many per encounter), `weight` (relative odds among an encounter's eligible types) |
-| Where and from when it spawns | the roster that lists it: `game/generation/world/biomes/<biome>/biome.tres` or `zones/<zone>.tres` | its Entry challenge in `roster`; membership in `fillers` |
+| Hazard spread (mines) | `<id>_data.tres` (Encounters group) | `hazards_per_tile` — above 0 the enemy is a Hazard: never in an encounter or taught, scattered over every Testing and Teaching room at that many per floor tile, untouched by Challenge |
+| Where and from when it spawns | the roster that lists it: `game/generation/world/biomes/<biome>/biome.tres` or `zones/<zone>.tres` | its Entry challenge in `roster` |
 | Encounter density everywhere | `game/generation/world/challenge_curve.tres` | `encounters_per_tile`, `types_per_encounter` — global, never per enemy |
 
 **Damage is on the cast, never on the bullet.** `BulletResource` deliberately carries no damage
@@ -75,8 +76,8 @@ unless the user asks specifically — a rate complaint is usually about `chance`
    (Use that venv python — the system `python3` has no PyYAML/Jinja2.) Only touch
    `design/data/enemies.yaml` if the *words* changed — a rebalance big enough that the enemy's
    description now lies. The yaml holds no numbers by design.
-6. **Check roster edits.** HP, cast damage and loot never reach generation. A roster, Filler or
-   `group_min`/`group_max`/`weight` edit changes the encounters every seed generates, which is
+6. **Check roster edits.** HP, cast damage and loot never reach generation. A roster,
+   `group_min`/`group_max`/`weight` or `hazards_per_tile` edit changes the encounters every seed generates, which is
    expected; run the content check afterwards:
    `godot --headless --path game res://generation/content/check_content.tscn` (exit 0 = clean).
 

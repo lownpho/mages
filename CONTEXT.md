@@ -46,10 +46,11 @@ An integer describing expected encounter difficulty at a place in the World.
 The lowest Challenge at which an enemy becomes eligible for ordinary encounters in a roster.
 
 **Roster**:
-The enemies eligible for generated encounters in a Biome or Zone, together with their Entry challenges and optional Filler roles.
+The enemies eligible for generated encounters and Hazards in a Biome or Zone, together with their Entry challenges.
 
-**Filler**:
-A roster enemy added to every ordinary encounter once eligible without counting as one of its selected enemy types.
+**Hazard**:
+A stationary roster enemy, such as a mine, spread on its own across a Room's floor instead of joining an Encounter.
+_Avoid_: Filler, mine, trap
 
 **Encounter**:
 A generated group of enemies met as one fight.
@@ -58,7 +59,7 @@ A generated group of enemies met as one fight.
 An authored leader and escorts belonging to a Rare, Miniboss, or Boss.
 
 **Teaching room**:
-A Room that introduces a newly eligible enemy in every encounter while dipping the other encounter content below the local Challenge.
+A Room that introduces a newly eligible enemy in every encounter while dipping the other encounter content below the local Challenge. Hazards are never introduced this way.
 
 **Testing room**:
 An ordinary combat Room populated from its roster at the local Challenge.

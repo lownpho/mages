@@ -11,8 +11,6 @@ extends Resource
 @export_range(1, 500, 1, "or_greater") var room_count := 0
 ## Enemy -> Entry challenge, added to the Biome's roster. May not repeat a Biome roster enemy.
 @export var roster: Dictionary[CreatureResource, int] = {}
-## Enemies of this Zone's own roster that join every ordinary encounter once eligible.
-@export var fillers: Array[CreatureResource] = []
 @export var minibosses: Array[FixedEncounterResource] = []
 @export var rares: Array[FixedEncounterResource] = []
 

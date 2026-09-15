@@ -3,7 +3,7 @@ extends RefCounted
 ## Rosters, Teaching rooms and chance Breathers for a WorldGraph. Set pieces keep the roles their
 ## World-plan entries give them; every other Room starts as a Testing room.
 ##
-## Each route teaches every enemy of its rosters once, Fillers included: the Ideal path as one route,
+## Each route teaches every enemy of its rosters once, Hazards excepted: the Ideal path as one route,
 ## each Side route on its own. An enemy is introduced at the first route position whose Zone fields
 ## it at a Challenge its effective Entry challenge has reached; introductions at one position go in
 ## Entry-challenge order, shuffled where Entry challenges tie. Each takes the first free ordinary Room
@@ -18,19 +18,17 @@ static func assign_rosters(graph: WorldGraph) -> void:
 		for zone in biome.zones:
 			var roster: Dictionary[CreatureResource, int] = biome.resource.roster.duplicate()
 			roster.merge(zone.resource.roster)
-			var fillers: Array[CreatureResource] = biome.resource.fillers.duplicate()
-			fillers.append_array(zone.resource.fillers)
 			if not roster.is_empty():
-				# The Zone's lowest-entry enemies are eligible from its first Room.
-				var lowest: int = roster.values().min()
+				# The Zone's lowest-entry non-Hazard enemies are eligible from its first Room, with any
+				# Hazard entering no later, so none of its Rooms holds Hazards alone.
+				var lowest := _lowest_entry(roster)
 				var first := biome.route[zone.route_start].challenge
 				for enemy in roster:
-					if roster[enemy] == lowest:
-						roster[enemy] = mini(lowest, first)
+					if roster[enemy] <= lowest:
+						roster[enemy] = mini(roster[enemy], first)
 			for room_plan in zone.rooms:
 				var room := graph.rooms[room_plan.key]
 				room.roster = roster
-				room.fillers = fillers
 				room.role = _set_piece_role(room_plan.kind)
 
 
@@ -51,6 +49,14 @@ static func breathe(graph: WorldGraph) -> void:
 		var room := graph.rooms[key]
 		if room.role == GeneratedRoom.Role.TESTING and graph.plan.rng(WorldHash.NS_ROLES, "breather/" + key).randf() < chance:
 			room.role = GeneratedRoom.Role.BREATHER
+
+
+## The lowest Entry challenge among a roster's non-Hazard enemies, or among all of them when every
+## one is a Hazard.
+static func _lowest_entry(roster: Dictionary[CreatureResource, int]) -> int:
+	var fighters := roster.keys().filter(func(enemy: CreatureResource) -> bool: return not enemy.is_hazard())
+	var enemies := fighters if not fighters.is_empty() else roster.keys()
+	return enemies.map(func(enemy: CreatureResource) -> int: return roster[enemy]).min()
 
 
 static func _set_piece_role(kind: RoomPlan.Kind) -> GeneratedRoom.Role:
@@ -75,7 +81,8 @@ static func _teach_route(graph: WorldGraph, biomes: Array[BiomePlan]) -> void:
 	for biome in biomes:
 		for zone in biome.zones:
 			var roster := graph.rooms[zone.rooms[0].key].roster
-			var enemies: Array[CreatureResource] = roster.keys()
+			var enemies: Array[CreatureResource] = []
+			enemies.assign(roster.keys().filter(func(enemy: CreatureResource) -> bool: return not enemy.is_hazard()))
 			enemies.sort_custom(func(a: CreatureResource, b: CreatureResource) -> bool: return a.resource_path < b.resource_path)
 			for index in range(zone.route_start, zone.route_end()):
 				var rng := plan.rng(WorldHash.NS_ROLES, "teach/%s/%d" % [biome.id, index])

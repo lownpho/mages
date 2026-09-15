@@ -322,7 +322,7 @@ func _test_professors(rig: Dictionary) -> void:
 	_check(rig.objects.saved_states().is_empty(), "Professors saved state %s" % rig.objects.saved_states())
 
 
-## Every landing is clear ordinary floor with its destination's encounters kept away.
+## Every landing is clear ordinary floor with its destination's encounters and Hazards kept away.
 func _test_landings(rig: Dictionary) -> void:
 	var graph: WorldGraph = rig.graph
 	for key in graph.sites:
@@ -330,10 +330,13 @@ func _test_landings(rig: Dictionary) -> void:
 		if landing.kind != ObjectSite.Kind.LANDING:
 			continue
 		_check(rig.streamer.interiors.class_at(landing.spot) == WorldInteriors.FLOOR, "landing %s isn't floor" % key)
-		for encounter: GeneratedEncounter in rig.encounters.for_room(graph.rooms[landing.room_key]):
-			for member in encounter.members:
-				_check(Vector2(member.tile).distance_to(Vector2(landing.spot)) >= WorldEncounters.LANDING_CLEARANCE,
-						"member %s stands %.1f tiles from landing %s" % [member.key, Vector2(member.tile).distance_to(Vector2(landing.spot)), key])
+		var room: GeneratedRoom = graph.rooms[landing.room_key]
+		var enemies: Array[EncounterMember] = rig.encounters.hazards_for_room(room)
+		for encounter: GeneratedEncounter in rig.encounters.for_room(room):
+			enemies.append_array(encounter.members)
+		for member in enemies:
+			_check(Vector2(member.tile).distance_to(Vector2(landing.spot)) >= WorldEncounters.LANDING_CLEARANCE,
+					"member %s stands %.1f tiles from landing %s" % [member.key, Vector2(member.tile).distance_to(Vector2(landing.spot)), key])
 
 
 func _test_warp(rig: Dictionary) -> void:

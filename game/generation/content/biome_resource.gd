@@ -8,8 +8,6 @@ extends Resource
 @export_range(0, 50, 1, "or_greater") var exit_challenge := 0
 ## Enemy -> Entry challenge, shared by every Zone.
 @export var roster: Dictionary[CreatureResource, int] = {}
-## Roster enemies that join every ordinary encounter once eligible.
-@export var fillers: Array[CreatureResource] = []
 @export var boss: FixedEncounterResource
 
 ## The eight spatial knobs. Zones inherit them. The ranges are the debug sliders' ranges.

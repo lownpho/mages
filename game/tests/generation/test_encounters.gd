@@ -1,9 +1,10 @@
 extends Node
 ## Encounters at the generated-output boundary, on the shipped World at three seeds and the small
-## fixture: eligibility, weighted distinct-type limits, group ranges, Fillers, walkable-area counts,
-## Teaching dips and once-per-route introductions, Fixed membership and placement, clearances,
-## repeated/shuffled build order and decoration independence; then live spawning in the development
-## World and its debug counts. Run:
+## fixture: eligibility, weighted distinct-type limits, group ranges, walkable-area counts, Teaching
+## dips and once-per-route introductions, Fixed membership and placement, Hazard eligibility and
+## density, clearances, loose packs, untouching enemies and spread centres, repeated/shuffled build
+## order and decoration independence; then live spawning in the development World and its debug
+## counts. Run:
 ##   godot --headless --path game res://tests/generation/test_encounters.tscn
 
 var _fails: Array[String] = []
@@ -18,6 +19,7 @@ func _ready() -> void:
 		for world_seed in fixture.seeds:
 			_check_world(fixture.graph(world_seed), "%s seed %d" % ["shipped" if fixture == shipped else "small", world_seed])
 	_test_order_independence(small)
+	_test_centre_spread(shipped)
 	_test_weights(small)
 	_test_fixed_dictionary_order()
 	_test_fixed_ignores_density(small)
@@ -51,6 +53,8 @@ func _check_world(graph: WorldGraph, label: String) -> void:
 				"%s: %s exposes its encounter count" % [label, room.key()])
 		if room.role == GeneratedRoom.Role.TEACHING:
 			_check(not room_encounters.is_empty(), "%s: Teaching room %s has no encounter" % [label, room.key()])
+		_check_hazards(graph, generated, room, label)
+		_check_apart(generated, room, label)
 		if room.role in [GeneratedRoom.Role.SPAWN, GeneratedRoom.Role.BREATHER]:
 			_check(room_encounters.is_empty(), "%s: %s %s has encounters" % [label, room.role_name(), room.key()])
 			continue
@@ -85,7 +89,7 @@ func _check_introductions(graph: WorldGraph, generated: WorldEncounters, label: 
 			for route_room in biome.route:
 				var roster := graph.rooms[route_room.key].roster
 				for enemy in roster:
-					if roster[enemy] <= route_room.challenge:
+					if roster[enemy] <= route_room.challenge and not enemy.is_hazard():
 						fielded[enemy] = true
 			for room_plan in biome.rooms:
 				var room := graph.rooms[room_plan.key]
@@ -105,32 +109,27 @@ func _check_ordinary(graph: WorldGraph, room: GeneratedRoom, encounter: Generate
 		challenge: int, label: String) -> void:
 	var counts := encounter.enemy_counts()
 	var selected: Dictionary[CreatureResource, bool] = {}
+	var spread := WorldEncounters.PACK_SPREAD * sqrt(encounter.members.size()) * WorldEncounters.PACK_STRETCH
 	for member in encounter.members:
 		_check(member.key.begins_with(encounter.key + "/member/") and member.encounter_key == encounter.key,
 				"%s: member key does not follow encounter %s" % [label, encounter.key])
 		_check(graph.owner_at(member.tile) == room and graph.plan != null,
 				"%s: %s member lies outside %s" % [label, member.key, room.key()])
-		_check(Vector2(member.tile).distance_to(Vector2(encounter.centre)) <= WorldEncounters.MEMBER_SPREAD,
+		_check(Vector2(member.tile).distance_to(Vector2(encounter.centre)) <= spread,
 				"%s: %s lies outside encounter spread" % [label, member.key])
+		_check(not member.hazard, "%s: encounter member %s is marked as a Hazard" % [label, member.key])
 		if member.teaching:
 			_check(member.enemy == room.teaching, "%s: wrong Teaching member in %s" % [label, room.key()])
-		elif member.filler:
-			_check(room.fillers.has(member.enemy), "%s: non-Filler marked as Filler" % label)
 		else:
 			selected[member.enemy] = true
 	for enemy in selected:
-		_check(room.roster.has(enemy) and room.roster[enemy] <= challenge and not room.fillers.has(enemy),
+		_check(room.roster.has(enemy) and room.roster[enemy] <= challenge and not enemy.is_hazard(),
 				"%s: ineligible selected type %s in %s" % [label, enemy.resource_path, room.key()])
 	_check(selected.size() <= graph.plan.content.curve.encounter_types(challenge),
 			"%s: %s exceeds its distinct-type limit" % [label, encounter.key])
 	for enemy in counts:
 		_check(counts[enemy] >= enemy.group_min and counts[enemy] <= enemy.group_max,
 				"%s: %s group of %d is outside %d-%d" % [label, enemy.resource_path, counts[enemy], enemy.group_min, enemy.group_max])
-	for filler in room.fillers:
-		if room.roster[filler] <= challenge and filler != room.teaching:
-			_check(counts.has(filler) and encounter.members.any(func(member: EncounterMember) -> bool:
-				return member.enemy == filler and member.filler),
-					"%s: eligible Filler missing from %s" % [label, encounter.key])
 	if room.teaching != null:
 		_check(encounter.challenge == maxi(0, room.plan.challenge - graph.plan.content.curve.teach_dip),
 				"%s: %s did not use the Teaching dip" % [label, room.key()])
@@ -142,6 +141,82 @@ func _check_ordinary(graph: WorldGraph, room: GeneratedRoom, encounter: Generate
 		for member in encounter.members:
 			_check(Vector2(member.tile).distance_to(Vector2(site.spot)) >= clearance,
 					"%s: %s violates site clearance at %s" % [label, member.key, site.key])
+
+
+## Hazards stand only in Testing and Teaching rooms, at the Room's own undipped Challenge and their
+## seeded density, clear of Object sites, keyed by Room and enemy, and belong to no encounter.
+func _check_hazards(graph: WorldGraph, generated: WorldEncounters, room: GeneratedRoom, label: String) -> void:
+	var hazards := generated.hazards_for_room(room)
+	if room.role not in [GeneratedRoom.Role.TESTING, GeneratedRoom.Role.TEACHING]:
+		_check(hazards.is_empty(), "%s: %s %s has Hazards" % [label, room.role_name(), room.key()])
+		return
+	var counts: Dictionary[CreatureResource, int] = {}
+	for member in hazards:
+		_check(member.hazard and member.enemy.is_hazard() and member.encounter_key == ""
+				and member.key.begins_with("%s/hazard/%s/" % [room.key(), member.enemy_id()])
+				and generated.members.get(member.key) == member,
+				"%s: %s isn't a Hazard of %s" % [label, member.key, room.key()])
+		_check(room.roster.has(member.enemy) and room.roster[member.enemy] <= room.plan.challenge,
+				"%s: ineligible Hazard %s" % [label, member.key])
+		_check(graph.owner_at(member.tile) == room, "%s: Hazard %s lies outside %s" % [label, member.key, room.key()])
+		counts[member.enemy] = counts.get(member.enemy, 0) + 1
+		for site in room.sites:
+			var clearance := WorldEncounters.LANDING_CLEARANCE if site.kind == ObjectSite.Kind.LANDING else WorldEncounters.OBJECT_CLEARANCE
+			_check(Vector2(member.tile).distance_to(Vector2(site.spot)) >= clearance,
+					"%s: Hazard %s violates site clearance at %s" % [label, member.key, site.key])
+	var floor_size := generated.walkable_tiles(room).size()
+	for enemy in room.roster:
+		if not enemy.is_hazard() or room.roster[enemy] > room.plan.challenge:
+			continue
+		var expected := floor_size * enemy.hazards_per_tile
+		_check(counts.get(enemy, 0) in [floori(expected), ceili(expected)],
+				"%s: %s holds %d %s, not seeded rounding of %.2f" % [label, room.key(), counts.get(enemy, 0),
+				enemy.resource_path.get_file(), expected])
+
+
+## No two generated enemies of a Room share or touch a tile.
+func _check_apart(generated: WorldEncounters, room: GeneratedRoom, label: String) -> void:
+	var enemies := generated.hazards_for_room(room)
+	for encounter in generated.for_room(room):
+		enemies.append_array(encounter.members)
+	for a in enemies.size():
+		for b in range(a + 1, enemies.size()):
+			var gap := (enemies[a].tile - enemies[b].tile).abs()
+			_check(maxi(gap.x, gap.y) >= 2, "%s: %s touches %s" % [label, enemies[a].key, enemies[b].key])
+
+
+## Ordinary encounter centres spread over their Rooms: their nearest-centre distances clearly beat
+## the same number of centres dropped on random floor tiles.
+func _test_centre_spread(fixture: WorldFixture) -> void:
+	var generated := WorldFixture.encounter_world(fixture.graph(fixture.seeds[0]))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var spread := 0.0
+	var random := 0.0
+	for room in generated.graph.room_list:
+		var room_encounters := generated.for_room(room)
+		if room.role != GeneratedRoom.Role.TESTING or room_encounters.size() < 2:
+			continue
+		var floor := generated.walkable_tiles(room)
+		var dropped: Array[Vector2i] = []
+		for _encounter in room_encounters:
+			dropped.append(floor[rng.randi_range(0, floor.size() - 1)])
+		spread += _mean_nearest(room_encounters.map(func(encounter: GeneratedEncounter) -> Vector2i: return encounter.centre))
+		random += _mean_nearest(dropped)
+	_check(random > 0.0, "shipped World has Testing rooms with several encounters")
+	print("encounter centres: mean nearest %.1f, random floor %.1f" % [spread, random])
+	_check(spread > random * 1.25, "encounter centres don't spread (%.1f vs random %.1f)" % [spread, random])
+
+
+static func _mean_nearest(points: Array) -> float:
+	var total := 0.0
+	for a in points.size():
+		var nearest := INF
+		for b in points.size():
+			if a != b:
+				nearest = minf(nearest, Vector2(points[a]).distance_to(Vector2(points[b])))
+		total += nearest
+	return total / points.size()
 
 
 func _check_fixed(graph: WorldGraph, _generated: WorldEncounters, room: GeneratedRoom,
@@ -191,7 +266,7 @@ func _test_weights(fixture: WorldFixture) -> void:
 		if candidate.role != GeneratedRoom.Role.TESTING or candidate.plan.challenge >= 3:
 			continue
 		var eligible := candidate.roster.keys().filter(func(enemy: CreatureResource) -> bool:
-			return candidate.roster[enemy] <= candidate.plan.challenge and not candidate.fillers.has(enemy))
+			return candidate.roster[enemy] <= candidate.plan.challenge and not enemy.is_hazard())
 		if eligible.size() >= 2:
 			room = candidate
 			break
@@ -200,7 +275,7 @@ func _test_weights(fixture: WorldFixture) -> void:
 		return
 	var choices: Array[CreatureResource] = []
 	choices.assign(room.roster.keys().filter(func(enemy: CreatureResource) -> bool:
-		return room.roster[enemy] <= room.plan.challenge and not room.fillers.has(enemy)))
+		return room.roster[enemy] <= room.plan.challenge and not enemy.is_hazard()))
 	choices.sort_custom(func(a: CreatureResource, b: CreatureResource) -> bool: return a.resource_path < b.resource_path)
 	var heavy := choices[0]
 	var light := choices[1]
@@ -315,7 +390,7 @@ func _test_development_runtime() -> void:
 	var layer: Node = world._debug_layer
 	_check(layer != null, "development World has its debug layer")
 	if layer != null:
-		var room: GeneratedRoom = world._graph.rooms[keys[0].get_slice("/encounter/", 0)] if not keys.is_empty() else null
+		var room: GeneratedRoom = world._graph.rooms[world._encounters.members[keys[0]].room_key] if not keys.is_empty() else null
 		_check(room != null and layer._world_overlay.encounters.built_count(room) == world._encounters.for_room(room).size(),
 				"World overlay doesn't report a streamed Room's encounter count")
 		var far: GeneratedRoom = world._graph.room_list[-1]
