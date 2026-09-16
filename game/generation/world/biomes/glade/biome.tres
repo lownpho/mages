@@ -1,18 +1,18 @@
-[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://t7445u80kj5a"]
+[gd_resource type="Resource" script_class="BiomeResource" format=3]
 
-[ext_resource type="Resource" uid="uid://thrnmssdata1" path="res://characters/enemies/thornmess/thornmess_data.tres" id="2_rpto3"]
-[ext_resource type="Script" uid="uid://n62cgew2ywo2" path="res://generation/content/biome_resource.gd" id="biome"]
-[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
-[ext_resource type="Resource" uid="uid://bomg127lnuwmk" path="res://characters/enemies/dirt_golem/dirt_golem_data.tres" id="dirt_golem"]
-[ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" path="res://characters/enemies/thornmess/thornmess_data.tres" id="2_rpto3"]
+[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Resource" path="res://characters/enemies/dirt_golem/dirt_golem_data.tres" id="dirt_golem"]
+[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="PackedScene" path="res://objects/fountain/glade_fountain.tscn" id="fountain"]
-[ext_resource type="Resource" uid="uid://crjcsdiinr8r5" path="res://characters/enemies/hopper/hopper_data.tres" id="hopper"]
-[ext_resource type="Resource" uid="uid://dvpax5yu11cfw" path="res://characters/enemies/mandrake/mandrake_data.tres" id="mandrake"]
-[ext_resource type="Resource" uid="uid://c2xb6qd7ustlb" path="res://generation/world/biomes/glade/art/glade_presentation.tres" id="presentation"]
-[ext_resource type="Resource" uid="uid://cthbdvqh3esdr" path="res://characters/enemies/seedling/seedling_data.tres" id="seedling"]
-[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
-[ext_resource type="Resource" uid="uid://plioyxy4mhka" path="res://characters/enemies/sproutling/sproutling_data.tres" id="sproutling"]
-[ext_resource type="Resource" uid="uid://p5m3264e3n3h" path="res://characters/enemies/wasp/wasp_data.tres" id="wasp"]
+[ext_resource type="Resource" path="res://characters/enemies/hopper/hopper_data.tres" id="hopper"]
+[ext_resource type="Resource" path="res://characters/enemies/mandrake/mandrake_data.tres" id="mandrake"]
+[ext_resource type="Resource" path="res://generation/world/biomes/glade/art/glade_presentation.tres" id="presentation"]
+[ext_resource type="Resource" path="res://characters/enemies/seedling/seedling_data.tres" id="seedling"]
+[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" path="res://characters/enemies/sproutling/sproutling_data.tres" id="sproutling"]
+[ext_resource type="Resource" path="res://characters/enemies/wasp/wasp_data.tres" id="wasp"]
 
 [sub_resource type="Resource" id="boss"]
 script = ExtResource("fixed_encounter")
@@ -72,7 +72,7 @@ room_size = 30
 border_warp = 9.0
 loops = 0.6
 shortcuts = 0.35
-passage_width = 7
+passage_width = 10
 rockiness = 0.1
 wall_depth = 3.0
 wall_variation = 4.0

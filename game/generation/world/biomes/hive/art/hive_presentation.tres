@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BiomePresentation" format=3]
+
+[ext_resource type="Script" path="res://generation/presentation/biome_presentation.gd" id="presentation"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/hive/art/hive_floor_tileset.tres" id="floor"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/hive/art/hive_walls_tileset.tres" id="walls"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/hive/art/hive_rocks_tileset.tres" id="rocks"]
+[ext_resource type="TileSet" path="res://generation/world/biomes/hive/art/hive_decor_tileset.tres" id="decor"]
+
+[resource]
+script = ExtResource("presentation")
+floor_tileset = ExtResource("floor")
+wall_tileset = ExtResource("walls")
+rock_tileset = ExtResource("rocks")
+decoration_tileset = ExtResource("decor")
+map_floor_color = Color(0.235294, 0.349020, 0.337255, 1)
+map_wall_color = Color(0.956863, 0.705882, 0.105882, 1)
+door_style = 2
