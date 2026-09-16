@@ -55,12 +55,14 @@ ExtResource("stalker"): 6,
 ExtResource("moss_golem"): 6
 })
 boss = SubResource("boss")
-room_size = 24
-border_warp = 8.0
+room_size = 26
+border_warp = 12.0
 loops = 0.1
 shortcuts = 0.15
-passage_width = 4
-rockiness = 0.1
+passage_width = 3
+rockiness = 0.2
+wall_depth = 6.0
+wall_variation = 4.0
 presentation = ExtResource("presentation")
 decoration_density = 0.04
 professors = 1
