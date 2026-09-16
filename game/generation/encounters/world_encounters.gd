@@ -10,8 +10,9 @@ extends RefCounted
 ## A pack's members lie within this many tiles of its centre per square root of its size, which
 ## leaves room for a free tile between neighbours.
 const PACK_SPREAD := 1.6
-## When walls or other enemies fill a pack's disc, its members may reach this many times as far.
-const PACK_STRETCH := 2.0
+## When walls or other enemies fill a pack's disc, its members may reach this many times as far. Wall
+## clearance leaves a crowded Room fewer tiles to spread over, so the reach has to allow for it.
+const PACK_STRETCH := 3.0
 ## Random free tiles tried as each ordinary encounter's centre. The one farthest from the Room's
 ## earlier centres wins, so encounters spread over the Room instead of landing on each other.
 const CENTRE_TRIES := 8
@@ -21,6 +22,14 @@ const FREE_TRIES := 16
 ## room so the player never lands directly inside an encounter.
 const OBJECT_CLEARANCE := RoomInterior.SITE_CLEAR
 const LANDING_CLEARANCE := 6.0
+## Enemies keep this far, in tiles, from anything that isn't their own Room's floor, so they stand
+## inside the Room instead of embedded in its walls, its rocks or a Passage's mouth.
+const WALL_CLEARANCE := 3.0
+## A Room whose clearance leaves it less than this share of its floor relaxes the clearance by a
+## step, down to the least one, rather than crowd its enemies into the few tiles that pass.
+const CLEARANCE_SHARE := 0.5
+const CLEARANCE_STEP := 0.5
+const CLEARANCE_MIN := 1.5
 const NO_TILE := Vector2i(-1073741824, -1073741824)
 
 var graph: WorldGraph
@@ -79,6 +88,17 @@ class Placement:
 				if x * x + y * y <= radius * radius and is_free(tile):
 					near.append(tile)
 		return near[rng.randi_range(0, near.size() - 1)] if not near.is_empty() else NO_TILE
+
+	## How many free tiles lie within radius of centre.
+	func free_count(centre: Vector2i, radius: float) -> int:
+		var reach := ceili(radius)
+		var count := 0
+		for y in range(-reach, reach + 1):
+			for x in range(-reach, reach + 1):
+				if x * x + y * y <= radius * radius and is_free(centre + Vector2i(x, y)):
+					count += 1
+		return count
+
 
 	## The nearest tile passing accept, NO_TILE when none does.
 	func nearest(point: Vector2i, accept: Callable) -> Vector2i:
@@ -303,10 +323,10 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], place
 		centres: Array[Vector2i], centred: bool) -> void:
 	if composition.is_empty() or placement.tiles.is_empty():
 		return
-	var centre := _centre(encounter, placement, centres, centred)
+	var radius := PACK_SPREAD * sqrt(composition.size())
+	var centre := _centre(encounter, placement, centres, centred, radius, composition.size())
 	encounter.centre = centre
 	centres.append(centre)
-	var radius := PACK_SPREAD * sqrt(composition.size())
 	for index in composition.size():
 		var fields: Dictionary = composition[index]
 		var member_key := "%s/member/%d" % [encounter.key, index]
@@ -316,6 +336,8 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], place
 			tile = placement.free_near(centre, radius, rng)
 			if tile == NO_TILE:
 				tile = placement.free_near(centre, radius * PACK_STRETCH, rng)
+			if tile == NO_TILE:
+				tile = placement.nearest(centre, placement.is_free)
 			if tile == NO_TILE:
 				tile = placement.nearest(centre, func(candidate: Vector2i) -> bool: return not placement.is_taken(candidate))
 			if tile == NO_TILE:
@@ -336,7 +358,8 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], place
 ## A centred encounter takes the free tile nearest the Room's seed. Otherwise the farthest from the
 ## Room's earlier centres among a few random free tiles. Crowded Rooms fall back to untaken tiles,
 ## then to any tile.
-func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array[Vector2i], centred: bool) -> Vector2i:
+func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array[Vector2i], centred: bool,
+		radius: float, needed: int) -> Vector2i:
 	if centred:
 		var seed_tile := graph.tile_of(graph.rooms[encounter.room_key].seed_point)
 		for accept: Callable in [placement.is_free, func(tile: Vector2i) -> bool: return not placement.is_taken(tile),
@@ -347,6 +370,7 @@ func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array
 	var rng := graph.plan.rng(WorldHash.NS_ENCOUNTERS, encounter.key + "/centre")
 	var best := NO_TILE
 	var best_distance := -1
+	var best_fits := false
 	for _try in CENTRE_TRIES:
 		var tile := placement.random_free(rng)
 		if tile == NO_TILE:
@@ -354,7 +378,11 @@ func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array
 		var distance := 1 << 30
 		for other in centres:
 			distance = mini(distance, tile.distance_squared_to(other))
-		if distance > best_distance:
+		# A centre with room for the whole pack beats one that would push its members out past the
+		# Room's open floor; between two of a kind, the farthest from the earlier centres wins.
+		var fits := placement.free_count(tile, radius) >= needed
+		if best == NO_TILE or (fits and not best_fits) or (fits == best_fits and distance > best_distance):
+			best_fits = fits
 			best_distance = distance
 			best = tile
 	if best != NO_TILE:
@@ -365,7 +393,9 @@ func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array
 
 
 func _placement_candidates(room: GeneratedRoom, floor_tiles: Array[Vector2i]) -> Array[Vector2i]:
-	var out: Array[Vector2i] = []
+	var interior := interiors.interior(room)
+	var off_sites: Array[Vector2i] = []
+	var reaches := PackedInt32Array()
 	for tile in floor_tiles:
 		var clear := true
 		for site in room.sites:
@@ -373,11 +403,56 @@ func _placement_candidates(room: GeneratedRoom, floor_tiles: Array[Vector2i]) ->
 			if Vector2(tile).distance_squared_to(Vector2(site.spot)) < distance * distance:
 				clear = false
 				break
-		if clear:
-			out.append(tile)
-	# Content composition is stronger than a clearance preference. This fallback is only reachable
-	# for a pathologically tiny authored Room, and remains deterministic.
-	return out if not out.is_empty() else floor_tiles
+		if not clear:
+			continue
+		off_sites.append(tile)
+		reaches.append(_wall_reach(interior, tile))
+	# Content composition is stronger than a clearance preference, so a Room too narrow or too rocky
+	# to leave CLEARANCE_SHARE of its floor clear relaxes the clearance a step at a time. Failing
+	# that it keeps whatever the least clearance leaves it, which is still off the walls, and only a
+	# Room with no such tile at all places its enemies anywhere on its floor. Every step stays
+	# deterministic.
+	var clearance := WALL_CLEARANCE
+	var relaxed: Array[Vector2i] = []
+	while clearance >= CLEARANCE_MIN:
+		var out: Array[Vector2i] = []
+		for index in off_sites.size():
+			if reaches[index] > clearance * clearance:
+				out.append(off_sites[index])
+		if not out.is_empty():
+			if out.size() >= off_sites.size() * CLEARANCE_SHARE:
+				return _with_hub(room, off_sites, out)
+			relaxed = out
+		clearance -= CLEARANCE_STEP
+	if not relaxed.is_empty():
+		return _with_hub(room, off_sites, relaxed)
+	return off_sites if not off_sites.is_empty() else floor_tiles
+
+
+## Keeps the Room's centre placeable when it clears the Object sites: its own clear disc is smaller
+## than WALL_CLEARANCE, so a strict clearance would otherwise push a centred set piece's leader off
+## the seed tile it is authored on.
+func _with_hub(room: GeneratedRoom, off_sites: Array[Vector2i], pool: Array[Vector2i]) -> Array[Vector2i]:
+	var hub := graph.tile_of(room.seed_point)
+	if off_sites.has(hub) and not pool.has(hub):
+		pool.append(hub)
+	return pool
+
+
+## The squared distance from a tile to the nearest tile within WALL_CLEARANCE that is not this same
+## Room's floor, or just past that reach when they all are. Another Room's tiles read as OUTSIDE
+## here, so a Passage's mouth is no more placeable than a wall.
+func _wall_reach(interior: RoomInterior, tile: Vector2i) -> int:
+	var reach := ceili(WALL_CLEARANCE)
+	var nearest := reach * reach + 1
+	for y in range(-reach, reach + 1):
+		for x in range(-reach, reach + 1):
+			var distance := x * x + y * y
+			if distance >= nearest:
+				continue
+			if interior.class_at(tile + Vector2i(x, y)) != WorldInteriors.FLOOR:
+				nearest = distance
+	return nearest
 
 
 static func _weighted_without_replacement(eligible: Array[CreatureResource], wanted: int,

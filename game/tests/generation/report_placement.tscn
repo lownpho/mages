@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tests/generation/report_placement.gd" id="1_report"]
+
+[node name="ReportPlacement" type="Node"]
+script = ExtResource("1_report")
