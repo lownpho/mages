@@ -45,20 +45,23 @@ func _ready() -> void:
 	spells.at(0).set_item(blam2)
 
 	# A slot dropped onto itself must not re-emit (it double-fired the analytics track).
-	var emits := 0
-	var counter := func(_s: GlobalInventory.Slot) -> void: emits += 1
+	var emits := [0]
+	var counter := func(_s: GlobalInventory.Slot) -> void: emits[0] += 1
 	GlobalEvent.equipment_changed.connect(counter)
+	spells.at(0).set_item(blam1)
+	_check(emits[0] == 1, "equipment edits reach the signal counter")
+	emits[0] = 0
 	GlobalInventory.swap_items(spells.at(0), spells.at(0))
 	GlobalEvent.equipment_changed.disconnect(counter)
-	_check(emits == 0, "self-swap emitted equipment_changed %d times" % emits)
+	_check(emits[0] == 0, "self-swap emitted equipment_changed %d times" % emits[0])
 
 	# Only the spell row is equipment: a bag edit must not claim the mage's stats changed.
-	emits = 0
+	emits[0] = 0
 	GlobalEvent.equipment_changed.connect(counter)
 	bag.at(0).set_item(pew1)
 	bag.at(0).clear_item()
 	GlobalEvent.equipment_changed.disconnect(counter)
-	_check(emits == 0, "a bag edit emitted equipment_changed %d times" % emits)
+	_check(emits[0] == 0, "a bag edit emitted equipment_changed %d times" % emits[0])
 
 	for slot in GlobalInventory.all_slots():
 		slot.clear_item()

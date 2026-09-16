@@ -96,7 +96,7 @@ func _check_interiors(graph: WorldGraph, label: String) -> void:
 	for key in graph.passages:
 		_check_passage(field, graph.passages[key], label)
 	_check(crossings > 0, "%s: no Passage crosses a macro-cell edge on tiles" % label)
-	var spawn := graph.tile_of(graph.rooms[graph.plan.spawn.key].seed) - bounds.position
+	var spawn := graph.tile_of(graph.rooms[graph.plan.spawn.key].seed_point) - bounds.position
 	if grid[spawn.y * size.x + spawn.x] != 1:
 		_fails.append("%s: the spawn %s isn't floor" % [label, spawn + bounds.position])
 		return
@@ -138,13 +138,13 @@ func _check_room(field: WorldInteriors, room: GeneratedRoom, interior: RoomInter
 				var neighbour := tile + side
 				if interior.class_at(neighbour) != RoomInterior.OUTSIDE:
 					continue
-				var owner := field.owner_at(neighbour)
-				if owner == null or field.class_at(neighbour) != _FLOOR:
+				var tile_owner := field.owner_at(neighbour)
+				if tile_owner == null or field.class_at(neighbour) != _FLOOR:
 					continue
-				if not graph.passages.has(RoomPassage.pair(room.key(), owner.key())):
-					_fails.append("%s: %s's floor at %s meets floor of %s, with no Passage between them" % [label, room.key(), tile, owner.key()])
+				if not graph.passages.has(RoomPassage.pair(room.key(), tile_owner.key())):
+					_fails.append("%s: %s's floor at %s meets floor of %s, with no Passage between them" % [label, room.key(), tile, tile_owner.key()])
 					return -1
-				if owner.plan.cell != room.plan.cell:
+				if tile_owner.plan.cell != room.plan.cell:
 					crossings += 1
 	for site in room.sites:
 		var reach := ceili(CLEAR_RADIUS)
@@ -192,7 +192,7 @@ func _test_sweep(fixture: WorldFixture) -> void:
 ## Chunks built in row order, then in shuffled order with caches that hold almost nothing, then
 ## again after dropping the caches, render the same cells.
 func _test_rendering(fixture: WorldFixture) -> void:
-	var name := fixture.content.root.trim_suffix("/").get_file()
+	var fixture_name := fixture.content.root.trim_suffix("/").get_file()
 	var graph := fixture.graph(fixture.seeds[0])
 	var streamer := ChunkStreamer.new()
 	streamer.build_world(graph)
@@ -214,7 +214,7 @@ func _test_rendering(fixture: WorldFixture) -> void:
 			if layer_name.ends_with("_wall") or layer_name.ends_with("_rock"):
 				walls += expected[coord][layer_name].count(";") + 1
 		chunk.free()
-	_check(walls > 0, "%s: chunks around %s and %s render no walls or rocks" % [name, corner, spawn])
+	_check(walls > 0, "%s: chunks around %s and %s render no walls or rocks" % [fixture_name, corner, spawn])
 	streamer.free()
 	var shuffled := coords.duplicate()
 	WorldPlanner._shuffle(shuffled, WorldHash.rng(97))
@@ -224,12 +224,12 @@ func _test_rendering(fixture: WorldFixture) -> void:
 	streamer.interiors.interior_capacity = 1
 	for coord: Vector2i in shuffled:
 		var chunk := streamer.assemble_chunk(coord)
-		_check(WorldFixture.rendered(chunk) == expected[coord], "%s: chunk %s renders differently built in shuffled order with evicting caches" % [name, coord])
+		_check(WorldFixture.rendered(chunk) == expected[coord], "%s: chunk %s renders differently built in shuffled order with evicting caches" % [fixture_name, coord])
 		chunk.free()
 	for coord: Vector2i in [shuffled[0], shuffled[-1]]:
 		streamer.clear_caches()
 		var chunk := streamer.assemble_chunk(coord)
-		_check(WorldFixture.rendered(chunk) == expected[coord], "%s: chunk %s renders differently after its caches were dropped" % [name, coord])
+		_check(WorldFixture.rendered(chunk) == expected[coord], "%s: chunk %s renders differently after its caches were dropped" % [fixture_name, coord])
 		chunk.free()
 	streamer.free()
 
@@ -270,14 +270,14 @@ func _test_decoration(fixture: WorldFixture) -> void:
 			for cell: String in after[coord][layer_name].split(";", false):
 				var local := cell.get_slice(":", 0).split(",")
 				var tile := coord * streamer.chunk_tiles + Vector2i(local[0].to_int(), local[1].to_int())
-				var owner := streamer.interiors.owner_at(tile)
+				var tile_owner := streamer.interiors.owner_at(tile)
 				decorated += 1
-				if streamer.interiors.class_at(tile) != _FLOOR or owner == null:
+				if streamer.interiors.class_at(tile) != _FLOOR or tile_owner == null:
 					_fails.append("decoration on %s at %s, which isn't floor" % [layer_name, tile])
 					break
-				var in_zone := owner.plan.biome == &"forest" and owner.plan.zone == zone_id
-				if (layer_name == zone_layer) != in_zone or (not in_zone and layer_name != "%s_decoration" % owner.plan.biome):
-					_fails.append("decoration of %s at %s, owned by %s/%s" % [layer_name, tile, owner.plan.biome, owner.plan.zone])
+				var in_zone := tile_owner.plan.biome == &"forest" and tile_owner.plan.zone == zone_id
+				if (layer_name == zone_layer) != in_zone or (not in_zone and layer_name != "%s_decoration" % tile_owner.plan.biome):
+					_fails.append("decoration of %s at %s, owned by %s/%s" % [layer_name, tile, tile_owner.plan.biome, tile_owner.plan.zone])
 					break
 	_check(after.values().any(func(layers: Dictionary) -> bool: return layers.has(zone_layer)), "the Zone's own decoration tileset shows nowhere near its Rooms")
 	_check(decorated > 0, "raised decoration density placed no decoration")

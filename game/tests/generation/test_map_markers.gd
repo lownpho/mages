@@ -36,7 +36,7 @@ func _state(graph: WorldGraph, defeated: Dictionary = {}) -> MapState:
 func _test_discovery_images_and_stubs(graph: WorldGraph) -> void:
 	var state := _state(graph)
 	var room := graph.rooms[graph.plan.spawn.key]
-	var entry := graph.tile_of(room.seed)
+	var entry := graph.tile_of(room.seed_point)
 	_check(state.macro_build_count() == 0 and state.built_macro_cells().is_empty(),
 			"setup builds no Map images")
 	_check(state.discover_at(entry), "entering a Room discovers it")
@@ -47,7 +47,7 @@ func _test_discovery_images_and_stubs(graph: WorldGraph) -> void:
 	_check(another != Vector2i.MAX and state.is_tile_discovered(another),
 			"another tile of the entered Room is discovered")
 	var neighbour: GeneratedRoom = graph.rooms[room.passages[0].other(room.key())]
-	_check(not state.is_tile_discovered(graph.tile_of(neighbour.seed)),
+	_check(not state.is_tile_discovered(graph.tile_of(neighbour.seed_point)),
 			"an adjacent Room remains fogged")
 
 	var cell_coord := Vector2i(floori(float(entry.x) / WorldPlan.CELL),
@@ -98,7 +98,7 @@ func _test_shortcut_stub() -> void:
 			continue
 		var state := _state(graph)
 		var room: GeneratedRoom = graph.rooms[passage.a]
-		state.discover_at(graph.tile_of(room.seed))
+		state.discover_at(graph.tile_of(room.seed_point))
 		var stub := _stub_for_passage(state, room, passage)
 		_check(stub != Vector2i.MAX, "%s Passage has a fog-side stub" % passage.kind_name())
 		if stub != Vector2i.MAX:
@@ -112,7 +112,7 @@ func _test_shortcut_stub() -> void:
 func _test_markers(graph: WorldGraph) -> void:
 	var state := _state(graph)
 	for room in graph.room_list:
-		state.discover_at(graph.tile_of(room.seed))
+		state.discover_at(graph.tile_of(room.seed_point))
 	var by_object: Dictionary[String, Dictionary] = {}
 	var boss_rooms: Dictionary[String, bool] = {}
 	for marker in state.markers:
@@ -164,7 +164,7 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 	var defeated: Dictionary[String, bool] = {}
 	var state := _state(graph, defeated)
 	_check(state.reveal_boss_room(boss.key()), "an Object can reveal a Boss Room key")
-	_check(not state.is_tile_discovered(graph.tile_of(boss.seed)), "revealing a Boss leaves its Room fogged")
+	_check(not state.is_tile_discovered(graph.tile_of(boss.seed_point)), "revealing a Boss leaves its Room fogged")
 	var markers := state.markers
 	_check(markers.size() == 1 and markers[0].kind == MapState.MARKER_BOSS
 			and markers[0].project, "an undiscovered revealed Boss is marked for edge projection")
@@ -176,7 +176,7 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 		if room != boss:
 			fog_room = room
 			break
-	var pin := graph.tile_of(fog_room.seed)
+	var pin := graph.tile_of(fog_room.seed_point)
 	state.add_pin(pin)
 	_check(state.pins == [pin] and not state.is_tile_discovered(pin), "a Pin may be placed in fog")
 	var saved := state.to_dict()
@@ -221,16 +221,16 @@ func _test_warp_arrival(graph: WorldGraph) -> void:
 func _test_projection() -> void:
 	var full: Control = MAP_VIEW.new()
 	full.size = Vector2(100, 60)
-	var mini: Control = MINIMAP_VIEW.new()
-	mini.size = Vector2(30, 30)
+	var minimap: Control = MINIMAP_VIEW.new()
+	minimap.size = Vector2(30, 30)
 	var full_edge: Vector2 = full._project_to_border(Vector2(180, -40))
-	var mini_edge: Vector2 = mini._project_to_border(Vector2(-20, 50))
+	var mini_edge: Vector2 = minimap._project_to_border(Vector2(-20, 50))
 	_check(is_equal_approx(full_edge.x, full.size.x) or is_equal_approx(full_edge.y, 0.0),
 			"full Map projects an off-screen reveal to its edge")
-	_check(is_equal_approx(mini_edge.x, 0.0) or is_equal_approx(mini_edge.y, mini.size.y),
+	_check(is_equal_approx(mini_edge.x, 0.0) or is_equal_approx(mini_edge.y, minimap.size.y),
 			"minimap projects an off-screen reveal to its edge")
 	full.free()
-	mini.free()
+	minimap.free()
 
 
 func _outgoing_stub(state: MapState, room: GeneratedRoom) -> Vector2i:
@@ -243,8 +243,8 @@ func _outgoing_stub(state: MapState, room: GeneratedRoom) -> Vector2i:
 
 func _stub_for_passage(state: MapState, room: GeneratedRoom, passage: RoomPassage) -> Vector2i:
 	for tile: Vector2i in state.interiors.opening(passage):
-		var owner := state.graph.owner_at(tile)
-		if owner != null and owner.key() != room.key():
+		var tile_owner := state.graph.owner_at(tile)
+		if tile_owner != null and tile_owner.key() != room.key():
 			return tile
 	return Vector2i.MAX
 
@@ -266,7 +266,7 @@ func _check_semantic_overlay(state: MapState, room: GeneratedRoom, wanted_class:
 						floori(float(tile.y) / WorldPlan.CELL))
 				if not state.graph.plan.cells.has(coord):
 					continue
-				state.discover_at(state.graph.tile_of(candidate.seed))
+				state.discover_at(state.graph.tile_of(candidate.seed_point))
 				var image := state.macro_image(coord)
 				_check(image.wall_image.get_pixelv(tile - image.rect.position).a > 0.0,
 						"discovered %s is present in the wall overlay" % label)

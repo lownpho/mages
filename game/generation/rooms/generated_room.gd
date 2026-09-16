@@ -13,7 +13,7 @@ var plan: RoomPlan
 ## is joined.
 var index := -1
 ## The power-diagram seed, in unwarped World tiles. An ordinary Room's Object spots default to it.
-var seed := Vector2.ZERO
+var seed_point := Vector2.ZERO
 ## A set piece's protected radius in tiles; 0 for an ordinary Room.
 var radius := 0.0
 ## Its cell of the power diagram, clipped to its macro cell, in unwarped World tiles.

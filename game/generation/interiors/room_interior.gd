@@ -249,7 +249,7 @@ func _open(deadline: int) -> bool:
 func _spine(deadline: int) -> bool:
 	if not _spine_planned:
 		_spine_planned = true
-		var hub := _field.graph.tile_of(room.seed)
+		var hub := _field.graph.tile_of(room.seed_point)
 		var spots: Array[Vector2i] = []
 		var names: Array[String] = []
 		for passage in room.passages:

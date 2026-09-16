@@ -104,7 +104,7 @@ static func _teach_route(graph: WorldGraph, biomes: Array[BiomePlan]) -> void:
 
 
 static func _teaching_room(graph: WorldGraph, biome: BiomePlan, index: int, enemy: CreatureResource) -> GeneratedRoom:
-	var best: GeneratedRoom
+	var best: GeneratedRoom = null
 	var best_score := []
 	for room_plan in biome.rooms:
 		var room := graph.rooms[room_plan.key]

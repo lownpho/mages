@@ -9,21 +9,21 @@ extends RefCounted
 static func polygons(rooms: Array[GeneratedRoom], outline: PackedVector2Array) -> void:
 	for room in rooms:
 		var poly := outline
-		var reach := _reach(poly, room.seed)
+		var reach := _reach(poly, room.seed_point)
 		for other in rooms:
 			if other == room:
 				continue
-			var normal := other.seed - room.seed
+			var normal := other.seed_point - room.seed_point
 			var distance := normal.length()
 			# A bisector beyond every vertex can't cut the polygon.
 			if distance > 0.0 and (distance * distance + room.radius * room.radius - other.radius * other.radius) / (2.0 * distance) >= reach:
 				continue
-			var limit := (other.seed.length_squared() - room.seed.length_squared()
+			var limit := (other.seed_point.length_squared() - room.seed_point.length_squared()
 					+ room.radius * room.radius - other.radius * other.radius) * 0.5
 			poly = clip(poly, normal, limit)
 			if poly.is_empty():
 				break
-			reach = _reach(poly, room.seed)
+			reach = _reach(poly, room.seed_point)
 		room.polygon = poly
 
 
@@ -53,8 +53,8 @@ static func clip(poly: PackedVector2Array, normal: Vector2, limit: float) -> Pac
 
 
 static func border(a: GeneratedRoom, b: GeneratedRoom) -> PackedVector2Array:
-	var normal := b.seed - a.seed
-	var limit := (b.seed.length_squared() - a.seed.length_squared() + a.radius * a.radius - b.radius * b.radius) * 0.5
+	var normal := b.seed_point - a.seed_point
+	var limit := (b.seed_point.length_squared() - a.seed_point.length_squared() + a.radius * a.radius - b.radius * b.radius) * 0.5
 	var points := PackedVector2Array()
 	for p in a.polygon:
 		if absf(p.dot(normal) - limit) < 0.02:

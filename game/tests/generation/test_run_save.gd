@@ -85,9 +85,9 @@ func _reload(world: Node2D, tile: Vector2i) -> void:
 	var graph: WorldGraph = world._graph
 	var far := graph.room_list[0]
 	for room in graph.room_list:
-		if graph.tile_of(room.seed).distance_squared_to(tile) > graph.tile_of(far.seed).distance_squared_to(tile):
+		if graph.tile_of(room.seed_point).distance_squared_to(tile) > graph.tile_of(far.seed_point).distance_squared_to(tile):
 			far = room
-	await _visit(world, graph.tile_of(far.seed))
+	await _visit(world, graph.tile_of(far.seed_point))
 	var streamer: ChunkStreamer = world._streamer
 	_check(not streamer.is_chunk_loaded(streamer.chunk_of(Vector2(tile * GameConstants.PX_PER_TILE))),
 			"moving away unloaded the chunk at %s" % tile)
@@ -304,7 +304,7 @@ func _test_quit_and_continue() -> Node2D:
 
 func _test_save_restrictions(world: Node2D) -> void:
 	var saved := FileAccess.get_file_as_bytes(SAVE)
-	await _visit(world, world._graph.tile_of(world._graph.room_list[0].seed))
+	await _visit(world, world._graph.tile_of(world._graph.room_list[0].seed_point))
 	GlobalInventory.bag_slots.at(0).set_item(load(SPELL))
 	_check(GameState.run_save_eligible and FileAccess.get_file_as_bytes(SAVE) != saved,
 			"movement and an item change still save the Run")
@@ -341,10 +341,10 @@ func _test_save_restrictions(world: Node2D) -> void:
 
 func _test_version_mismatch() -> void:
 	var cfg := ConfigFile.new()
-	_check(cfg.load(SAVE) == OK and cfg.get_value("run", "version", "") == GameState.app_version(),
+	_check(cfg.load(SAVE) == OK and cfg.get_value("run", "version", "") == preload("res://autoload/game_state.gd").app_version(),
 			"the save carries this build's version")
 	var bytes := FileAccess.get_file_as_bytes(SAVE)
-	cfg.set_value("run", "version", GameState.app_version() + "-other")
+	cfg.set_value("run", "version", preload("res://autoload/game_state.gd").app_version() + "-other")
 	cfg.save(SAVE)
 	_check(not GameState.has_save() and not GameState.continue_game() and not GameState.continuing_run(),
 			"a save from another version isn't offered to Continue")

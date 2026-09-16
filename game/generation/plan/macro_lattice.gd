@@ -210,7 +210,7 @@ func _build_bins(column: int, row: int) -> Array[PackedInt32Array]:
 			var at := centre(Vector2i(i, j))
 			xs.append(at.x)
 			ys.append(at.y)
-	var reach := _BIN * sqrt(2.0) * 0.5
+	var bin_reach := _BIN * sqrt(2.0) * 0.5
 	var bins: Array[PackedInt32Array] = []
 	var lows := PackedFloat64Array()
 	lows.resize(candidates.size())
@@ -221,9 +221,9 @@ func _build_bins(column: int, row: int) -> Array[PackedInt32Array]:
 			var least_high := INF
 			for n in candidates.size():
 				var distance := sqrt((xs[n] - middle_x) * (xs[n] - middle_x) + (ys[n] - middle_y) * (ys[n] - middle_y))
-				var near := maxf(distance - reach, 0.0)
+				var near := maxf(distance - bin_reach, 0.0)
 				lows[n] = near * near
-				least_high = minf(least_high, (distance + reach) * (distance + reach))
+				least_high = minf(least_high, (distance + bin_reach) * (distance + bin_reach))
 			var bin := PackedInt32Array()
 			for n in candidates.size():
 				if lows[n] <= least_high + 0.01:

@@ -117,10 +117,10 @@ static func build(plan: WorldPlan, coord: Vector2i) -> MacroCellGraph:
 		graph._side_normals.append(normal)
 		graph._side_offsets.append(normal.dot(from))
 	for room_plan in graph.cell.rooms:
-		var room := GeneratedRoom.new()
-		room.plan = room_plan
-		graph.rooms.append(room)
-		graph._by_key[room_plan.key] = room
+		var generated_room := GeneratedRoom.new()
+		generated_room.plan = room_plan
+		graph.rooms.append(generated_room)
+		graph._by_key[room_plan.key] = generated_room
 	graph._add_ports(plan)
 	graph._chain_ports()
 	for attempt in ATTEMPTS:
@@ -135,7 +135,7 @@ static func build(plan: WorldPlan, coord: Vector2i) -> MacroCellGraph:
 
 ## The route Rooms in route order.
 func route() -> Array[GeneratedRoom]:
-	return rooms.filter(func(room: GeneratedRoom) -> bool: return room.plan.is_on_route())
+	return rooms.filter(func(generated_room: GeneratedRoom) -> bool: return generated_room.plan.is_on_route())
 
 
 func room(key: String) -> GeneratedRoom:
@@ -158,9 +158,9 @@ static func edge_width(plan: WorldPlan, a: Vector2i, b: Vector2i) -> int:
 
 ## The span of the edge toward direction that a Room's polygon covers, as (from, to) in tiles along
 ## the edge from its first end; (INF, -INF) when the Room doesn't reach it.
-static func exposure(plan: WorldPlan, room: GeneratedRoom, coord: Vector2i, direction: Vector2i) -> Vector2:
+static func exposure(plan: WorldPlan, generated_room: GeneratedRoom, coord: Vector2i, direction: Vector2i) -> Vector2:
 	var span := Vector2(INF, -INF)
-	for point in room.polygon:
+	for point in generated_room.polygon:
 		if plan.lattice.on_edge(coord, direction, point):
 			var along := plan.lattice.along_edge(coord, direction, point)
 			span = Vector2(minf(span.x, along), maxf(span.y, along))
@@ -203,8 +203,8 @@ func _chain_ports() -> void:
 
 func _clear_of_corridors(special: GeneratedRoom) -> bool:
 	for corridor in _corridors:
-		var closest := Geometry2D.get_closest_point_to_segment(special.seed, corridor[0], corridor[1])
-		if special.seed.distance_to(closest) < special.radius + corridor[2]:
+		var closest := Geometry2D.get_closest_point_to_segment(special.seed_point, corridor[0], corridor[1])
+		if special.seed_point.distance_to(closest) < special.radius + corridor[2]:
 			return false
 	return true
 
@@ -247,13 +247,13 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 			var sum := Vector2.ZERO
 			for port in room_ports:
 				sum += port.point + port.inward * depth
-			room_now.seed = sum / room_ports.size()
+			room_now.seed_point = sum / room_ports.size()
 			if room_ports.size() == 1:
-				room_now.seed += room_ports[0].tangent * sideways
-			room_now.seed = _pull_inside(room_now.seed)
+				room_now.seed_point += room_ports[0].tangent * sideways
+			room_now.seed_point = _pull_inside(room_now.seed_point)
 			if _shapes.all(func(other: GeneratedRoom) -> bool:
-				return room_now.seed.distance_to(other.seed) >= other.radius + 3.0 \
-						and not room_ports.any(func(port: Port) -> bool: return _takes_port(port, other.seed, other.radius))):
+				return room_now.seed_point.distance_to(other.seed_point) >= other.radius + 3.0 \
+						and not room_ports.any(func(port: Port) -> bool: return _takes_port(port, other.seed_point, other.radius))):
 				placed = true
 				break
 		if not placed:
@@ -264,9 +264,9 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 	var fixed := _shapes.size()
 	for n in fixed:
 		for port in ports:
-			if port.room != _shapes[n] and _takes_port(port, _shapes[n].seed, _shapes[n].radius):
+			if port.room != _shapes[n] and _takes_port(port, _shapes[n].seed_point, _shapes[n].radius):
 				return _fail("port taken")
-		if _guarded(_shapes[n], _shapes[n].seed, _shapes[n].radius):
+		if _guarded(_shapes[n], _shapes[n].seed_point, _shapes[n].radius):
 			return _fail("corridor blocked")
 	# 3. The rest of the quota, anonymous until the route is found.
 	var candidates: Array[Vector2] = []
@@ -286,7 +286,7 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 	for n in candidates.size():
 		var clearance := INF
 		for other in _shapes:
-			clearance = minf(clearance, candidates[n].distance_to(other.seed) - other.radius)
+			clearance = minf(clearance, candidates[n].distance_to(other.seed_point) - other.radius)
 		clearances[n] = clearance
 	for _n in rooms.size() - fixed:
 		var best := -1
@@ -298,10 +298,10 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 		if best < 0 or best_clearance < 3:
 			return _fail("no clearance for ordinary seeds")
 		var shape := GeneratedRoom.new()
-		shape.seed = candidates[best]
+		shape.seed_point = candidates[best]
 		_shapes.append(shape)
 		for n in candidates.size():
-			clearances[n] = minf(clearances[n], candidates[n].distance_to(shape.seed))
+			clearances[n] = minf(clearances[n], candidates[n].distance_to(shape.seed_point))
 		clearances[best] = -INF
 	PowerCells.polygons(_shapes, outline)
 	# Partition checks that hold whichever Room is which.
@@ -339,7 +339,6 @@ func _attempt(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 
 ## Against the best-ranked edges, or behind its own port for a spawn the route leaves at once: as near
 ## the edge as the whole disc fits inside the outline, which a slanted or bowed edge pushes further in.
-@warning_ignore("integer_division")
 func _place_protected(special: GeneratedRoom, ranked: Array[Array], rng: RandomNumberGenerator) -> bool:
 	var margin := minf(special.radius + 1.0, HALF)
 	var own := _room_ports(special)
@@ -351,20 +350,21 @@ func _place_protected(special: GeneratedRoom, ranked: Array[Array], rng: RandomN
 				anchor += port.point / own.size()
 				inward += port.inward / own.size()
 		else:
+			@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 			var direction: Vector2i = ranked[mini(trial / 8, ranked.size() - 1)][2]
 			var along := rng.randf_range(margin, WorldPlan.CELL - margin)
 			anchor = _lattice.edge_point(cell.coord, direction, along / WorldPlan.CELL)
 			inward = _lattice.inward(cell.coord, direction)
 		var depth := margin
-		special.seed = anchor + inward * depth
+		special.seed_point = anchor + inward * depth
 		while not _disc_inside(special) and depth < HALF and inward != Vector2.ZERO:
 			depth += PROTECTED_STEP
-			special.seed = anchor + inward * depth
+			special.seed_point = anchor + inward * depth
 		var inside := _disc_inside(special)
 		var clear := inside and _shapes.all(func(other: GeneratedRoom) -> bool:
-			return special.seed.distance_to(other.seed) > special.radius + other.radius + 3.0)
+			return special.seed_point.distance_to(other.seed_point) > special.radius + other.radius + 3.0)
 		clear = clear and ports.all(func(port: Port) -> bool:
-			return port.room == special or special.seed.distance_to(port.point) > special.radius + port.half_span() + PORT_INSET + 2.0)
+			return port.room == special or special.seed_point.distance_to(port.point) > special.radius + port.half_span() + PORT_INSET + 2.0)
 		if clear and trial < CORRIDOR_TRIALS and own.is_empty():
 			clear = _clear_of_corridors(special)
 		if clear:
@@ -391,23 +391,23 @@ func _bridge_route(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 			var a := path[previous]
 			var b := path[step]
 			# Consecutive port Rooms far apart meet halfway: each moves toward the other.
-			if gap == 1 and a.is_ordinary() and b.is_ordinary() and a.seed.distance_to(b.seed) > spacing * BRIDGE_REACH:
-				var pull := (a.seed.distance_to(b.seed) - spacing * BRIDGE_REACH) * 0.5 / a.seed.distance_to(b.seed)
-				var from := a.seed
-				a.seed = a.seed.lerp(b.seed, pull)
-				b.seed = b.seed.lerp(from, pull)
-			var toward := (b.seed - a.seed).normalized()
-			var start := a.seed + toward * a.radius
-			var end := b.seed - toward * b.radius
+			if gap == 1 and a.is_ordinary() and b.is_ordinary() and a.seed_point.distance_to(b.seed_point) > spacing * BRIDGE_REACH:
+				var pull := (a.seed_point.distance_to(b.seed_point) - spacing * BRIDGE_REACH) * 0.5 / a.seed_point.distance_to(b.seed_point)
+				var from := a.seed_point
+				a.seed_point = a.seed_point.lerp(b.seed_point, pull)
+				b.seed_point = b.seed_point.lerp(from, pull)
+			var toward := (b.seed_point - a.seed_point).normalized()
+			var start := a.seed_point + toward * a.radius
+			var end := b.seed_point - toward * b.radius
 			if gap == 1 or start.distance_to(end) > gap * spacing * BRIDGE_REACH:
 				# Bowed to a random side, so the Rooms left to either side of the chain vary by attempt.
 				var bow := toward.orthogonal() * rng.randf_range(-1.5, 1.5) * spacing
 				for t in range(1, gap):
 					var between := path[previous + t]
 					between.radius = 0.0
-					between.seed = start.lerp(end, float(t) / gap) + bow * sin(PI * t / gap) + Vector2(rng.randf_range(-2, 2), rng.randf_range(-2, 2))
-					between.seed = _pull_inside(between.seed)
-					if _shapes.any(func(other: GeneratedRoom) -> bool: return between.seed.distance_to(other.seed) < other.radius + 3.0):
+					between.seed_point = start.lerp(end, float(t) / gap) + bow * sin(PI * t / gap) + Vector2(rng.randf_range(-2, 2), rng.randf_range(-2, 2))
+					between.seed_point = _pull_inside(between.seed_point)
+					if _shapes.any(func(other: GeneratedRoom) -> bool: return between.seed_point.distance_to(other.seed_point) < other.radius + 3.0):
 						return _fail("bridge crowded")
 					_shapes.append(between)
 				for t in gap:
@@ -420,14 +420,14 @@ func _bridge_route(plan: WorldPlan, rng: RandomNumberGenerator) -> bool:
 ## How much closer another seed is than a half's owner varies linearly along the half, so guarding
 ## each half's ends guards all of it.
 func _guard_pair(a: GeneratedRoom, b: GeneratedRoom, half: float) -> void:
-	var delta := b.seed - a.seed
+	var delta := b.seed_point - a.seed_point
 	var length := delta.length()
 	if length < 0.01:
 		return
-	var middle := a.seed + delta * clampf((length * length + a.radius * a.radius - b.radius * b.radius) / (2.0 * length * length), 0.0, 1.0)
-	_guards.append([a.seed, a, b])
+	var middle := a.seed_point + delta * clampf((length * length + a.radius * a.radius - b.radius * b.radius) / (2.0 * length * length), 0.0, 1.0)
+	_guards.append([a.seed_point, a, b])
 	_guards.append([middle, a, b])
-	_guards.append([b.seed, b, a])
+	_guards.append([b.seed_point, b, a])
 	var across := delta.orthogonal() / length
 	for t: float in [-1.0, 1.0]:
 		_guards.append([middle + across * half * t, a, b])
@@ -440,7 +440,7 @@ func _guarded(shape: GeneratedRoom, seed_point: Vector2, weight: float) -> bool:
 		if shape == owner or shape == guard[2]:
 			continue
 		var point: Vector2 = guard[0]
-		if point.distance_squared_to(seed_point) - weight * weight <= point.distance_squared_to(owner.seed) - owner.radius * owner.radius + PORT_GUARD:
+		if point.distance_squared_to(seed_point) - weight * weight <= point.distance_squared_to(owner.seed_point) - owner.radius * owner.radius + PORT_GUARD:
 			return true
 	return false
 
@@ -449,7 +449,7 @@ func _guarded(shape: GeneratedRoom, seed_point: Vector2, weight: float) -> bool:
 func _takes_port(port: Port, seed_point: Vector2, weight: float) -> bool:
 	for t: float in [-1.0, 0.0, 1.0]:
 		var q: Vector2 = port.point + port.tangent * port.half_span() * t
-		var own: float = q.distance_squared_to(port.room.seed) - port.room.radius * port.room.radius
+		var own: float = q.distance_squared_to(port.room.seed_point) - port.room.radius * port.room.radius
 		if q.distance_squared_to(seed_point) - weight * weight <= own + PORT_GUARD:
 			return true
 	return false
@@ -584,12 +584,12 @@ func _assign(path: PackedInt32Array, fixed: int) -> void:
 			if owners.has(index):
 				continue
 			if best < 0 or distance[index] < distance[best] or (distance[index] == distance[best]
-					and _shapes[index].seed.distance_squared_to(_shapes[join].seed) < _shapes[best].seed.distance_squared_to(_shapes[join].seed)):
+					and _shapes[index].seed_point.distance_squared_to(_shapes[join].seed_point) < _shapes[best].seed_point.distance_squared_to(_shapes[join].seed_point)):
 				best = index
 		owners[best] = room_now
 	for index in range(fixed, _shapes.size()):
 		var owner := owners[index]
-		owner.seed = _shapes[index].seed
+		owner.seed_point = _shapes[index].seed_point
 		owner.radius = 0.0
 		owner.polygon = _shapes[index].polygon
 		_shapes[index] = owner
@@ -664,7 +664,7 @@ func _connect(plan: WorldPlan) -> void:
 	for special in rooms:
 		if not special.is_isolated():
 			continue
-		var best: GeneratedRoom
+		var best: GeneratedRoom = null
 		var best_score := []
 		for pair_key in borders:
 			var ends := pair_key.split("|")
@@ -735,7 +735,7 @@ func _pull_inside(point: Vector2) -> Vector2:
 
 ## Whether a protected disc, with a tile to spare, lies wholly inside the outline.
 func _disc_inside(special: GeneratedRoom) -> bool:
-	return _inside(special.seed, special.radius + 1.0)
+	return _inside(special.seed_point, special.radius + 1.0)
 
 
 func _fail(reason: String) -> bool:

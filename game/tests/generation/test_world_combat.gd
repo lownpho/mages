@@ -26,7 +26,7 @@ func _ready() -> void:
 	var layer: WorldDebugLayer = world._debug_layer
 	_check(layer != null and layer._combat != null, "the debug layer has a Combat tab")
 	if layer != null and layer._combat != null:
-		await _test_clicks(world, layer)
+		_test_clicks(world, layer)
 		_test_items_and_cheats(world, layer._combat)
 		await _test_kill_and_clear(world, layer._combat)
 		_check(GameState.run_save_eligible, "Combat actions disabled Run saving")

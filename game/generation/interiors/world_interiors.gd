@@ -107,11 +107,11 @@ func class_at(tile: Vector2i) -> int:
 
 ## A Room's finished interior, built at once when it isn't cached.
 func interior(room: GeneratedRoom) -> RoomInterior:
-	var cached: RoomInterior = _interiors.get(room.index)
-	if cached != null:
+	var cached_interior: RoomInterior = _interiors.get(room.index)
+	if cached_interior != null:
 		_interiors.erase(room.index)
-		_interiors[room.index] = cached
-		return cached
+		_interiors[room.index] = cached_interior
+		return cached_interior
 	var build := building(room)
 	build.step(NO_DEADLINE)
 	return finish(build)
@@ -124,9 +124,9 @@ func cached(room: GeneratedRoom) -> RoomInterior:
 
 ## A Room's interior, finished or not: step() it, then hand it to finish().
 func building(room: GeneratedRoom) -> RoomInterior:
-	var cached: RoomInterior = _interiors.get(room.index)
-	if cached != null:
-		return cached
+	var cached_interior: RoomInterior = _interiors.get(room.index)
+	if cached_interior != null:
+		return cached_interior
 	var build: RoomInterior = _building.get(room.index)
 	if build == null:
 		build = RoomInterior.new(self, room)

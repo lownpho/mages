@@ -206,7 +206,7 @@ func chunk_of(world_position: Vector2) -> Vector2i:
 
 ## The spawn Room's centre, which its interior keeps clear, in world pixels.
 func spawn_position() -> Vector2:
-	return (Vector2(graph.tile_of(graph.rooms[graph.plan.spawn.key].seed)) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+	return (Vector2(graph.tile_of(graph.rooms[graph.plan.spawn.key].seed_point)) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
 
 
 ## Builds one chunk at once, outside the tree: tests compare these.
@@ -394,7 +394,7 @@ func _plan_ahead() -> void:
 	# seed's squared distance to the target, above each Room's place in the list.
 	var keys := PackedInt64Array()
 	for n in _ahead.size():
-		keys.append((_view_gap(_room_bounds[_ahead[n].index]) << 40) | (int(_ahead[n].seed.distance_squared_to(centre)) << 20) | n)
+		keys.append((_view_gap(_room_bounds[_ahead[n].index]) << 40) | (int(_ahead[n].seed_point.distance_squared_to(centre)) << 20) | n)
 	keys.sort()
 	var nearest: Array[GeneratedRoom] = []
 	for key in keys:

@@ -197,10 +197,10 @@ func _test_centre_spread(fixture: WorldFixture) -> void:
 		var room_encounters := generated.for_room(room)
 		if room.role != GeneratedRoom.Role.TESTING or room_encounters.size() < 2:
 			continue
-		var floor := generated.walkable_tiles(room)
+		var floor_tiles := generated.walkable_tiles(room)
 		var dropped: Array[Vector2i] = []
 		for _encounter in room_encounters:
-			dropped.append(floor[rng.randi_range(0, floor.size() - 1)])
+			dropped.append(floor_tiles[rng.randi_range(0, floor_tiles.size() - 1)])
 		spread += _mean_nearest(room_encounters.map(func(encounter: GeneratedEncounter) -> Vector2i: return encounter.centre))
 		random += _mean_nearest(dropped)
 	_check(random > 0.0, "shipped World has Testing rooms with several encounters")
@@ -235,7 +235,7 @@ func _check_fixed(graph: WorldGraph, _generated: WorldEncounters, room: Generate
 			and encounter.members[0].enemy == authored.leader,
 			"%s: Fixed leader is not explicit in %s" % [label, room.key()])
 	if authored.centred:
-		_check(encounter.members[0].tile == graph.tile_of(room.seed),
+		_check(encounter.members[0].tile == graph.tile_of(room.seed_point),
 				"%s: centred leader in %s is not on the Room centre" % [label, room.key()])
 
 
@@ -395,7 +395,7 @@ func _test_development_runtime() -> void:
 				"World overlay doesn't report a streamed Room's encounter count")
 		var far: GeneratedRoom = world._graph.room_list[-1]
 		layer._map.hovered = null
-		layer._map._update_hover(layer._map.screen_at(far.seed))
+		layer._map._update_hover(layer._map.screen_at(far.seed_point))
 		_check(layer._map.hovered == far and layer._map.tooltip_text.ends_with("encounters %d" % world._encounters.encounter_count(far)),
 				"debug Map hover doesn't report %s's encounter count: %s" % [far.key(), layer._map.tooltip_text])
 	world.queue_free()

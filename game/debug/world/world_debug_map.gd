@@ -122,7 +122,7 @@ func build_tiles(deadline: int) -> bool:
 	var keys := PackedInt64Array()
 	for room in graph.room_list:
 		if not _tile_textures.has(room.index) and _room_rects[room.index].intersects(view):
-			keys.append((int(room.seed.distance_squared_to(pan)) << 20) | room.index)
+			keys.append((int(room.seed_point.distance_squared_to(pan)) << 20) | room.index)
 	keys.sort()
 	for sort_key in keys:
 		var build := _interiors.building(graph.room_list[sort_key & 0xFFFFF])
@@ -226,18 +226,18 @@ func _draw() -> void:
 	if overlays.get("ideal_path", false):
 		var route := PackedVector2Array()
 		for room_plan in graph.plan.ideal_route():
-			route.append(screen_at(graph.rooms[room_plan.key].seed))
+			route.append(screen_at(graph.rooms[room_plan.key].seed_point))
 		if route.size() > 1:
 			draw_polyline(route, Color(1.0, 0.3, 0.75), 2.0)
 	if overlays.get("passages", false):
 		for passage in graph.passages.values():
-			draw_line(screen_at(graph.rooms[passage.a].seed), screen_at(graph.rooms[passage.b].seed),
+			draw_line(screen_at(graph.rooms[passage.a].seed_point), screen_at(graph.rooms[passage.b].seed_point),
 					WorldDebugOverlay.PASSAGE_COLORS[passage.kind], 1.5)
 	if overlays.get("roles", false):
 		# Dots grow with zoom, so a fitted World of hundreds of Rooms isn't buried under them.
 		var radius := clampf(zoom * ROLE_DOT_TILES, ROLE_DOT_MIN, ROLE_DOT_MAX)
 		for room in graph.room_list:
-			draw_circle(screen_at(room.seed), radius, WorldDebugOverlay.ROLE_COLORS[room.role])
+			draw_circle(screen_at(room.seed_point), radius, WorldDebugOverlay.ROLE_COLORS[room.role])
 	if overlays.get("chunks", false) and streamer != null:
 		var chunk := Vector2.ONE * streamer.chunk_tiles
 		for coord in streamer.loaded_chunk_coords():
@@ -247,7 +247,7 @@ func _draw() -> void:
 		var side := clampf(zoom * MARKER_TILES, MARKER_MIN, MARKER_MAX)
 		for room in graph.room_list:
 			if room.role == GeneratedRoom.Role.BOSS:
-				_draw_marker(graph.tile_of(room.seed), MapState.MARKER_BOSS, side * 1.5)
+				_draw_marker(graph.tile_of(room.seed_point), MapState.MARKER_BOSS, side * 1.5)
 			for site in room.sites:
 				var kind: int = GlobalMap.active._marker_kind(site)
 				if kind >= 0:

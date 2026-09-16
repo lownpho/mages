@@ -268,13 +268,13 @@ func _pick(deadline: int) -> bool:
 			var tile_class := _classes[at]
 			var place := (ly << 8) | lx
 			if floor_code >= 0:
-				var atlas: Vector2i
+				var floor_atlas: Vector2i
 				if not floor_lookup.is_empty():
-					atlas = floor_coords[floor_lookup[(WorldHash.splitmix64(world_seed ^ WorldHash.splitmix64(hashed ^ TilePicks.CH_FLOOR)) & 0x7fffffffffffffff) % floor_total]]
+					floor_atlas = floor_coords[floor_lookup[(WorldHash.splitmix64(world_seed ^ WorldHash.splitmix64(hashed ^ TilePicks.CH_FLOOR)) & 0x7fffffffffffffff) % floor_total]]
 				else:
-					atlas = _pick_from(floor_layer, world_seed, hashed, TilePicks.CH_FLOOR, _mask(at, offsets, false, false) if floor_layer.autotile else 0)
+					floor_atlas = _pick_from(floor_layer, world_seed, hashed, TilePicks.CH_FLOOR, _mask(at, offsets, false, false) if floor_layer.autotile else 0)
 				cells[count] = floor_code | place
-				cells[count + 1] = (atlas.y << 16) | atlas.x
+				cells[count + 1] = (floor_atlas.y << 16) | floor_atlas.x
 				count += 2
 			var layer: CellLayer = null
 			var atlas := Vector2i.ZERO

@@ -108,7 +108,7 @@ func _start_seed() -> void:
 	var route := graph.plan.ideal_route()
 	for n in route.size():
 		var room := graph.rooms[route[n].key]
-		_waypoints.append(_pixels(graph.tile_of(room.seed)))
+		_waypoints.append(_pixels(graph.tile_of(room.seed_point)))
 		if n + 1 < route.size():
 			_waypoints.append(_pixels(graph.passages[RoomPassage.pair(route[n].key, route[n + 1].key)].spot))
 	_target.global_position = _waypoints[0]

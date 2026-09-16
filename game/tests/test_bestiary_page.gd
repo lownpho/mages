@@ -88,6 +88,7 @@ func _ready() -> void:
 		# Card positions are the grid's own space, so the corner is (0, 0) here; where that
 		# corner lands on the panel is the block-position check above.
 		for c in mini(cards.size(), grid.columns + 1):
+			@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 			var want := Vector2(
 					(c % grid.columns) * (CELL.x + grid.get_theme_constant(&"h_separation")),
 					(c / grid.columns) * (CELL.y + grid.get_theme_constant(&"v_separation")))

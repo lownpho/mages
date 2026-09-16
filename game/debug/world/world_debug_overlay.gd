@@ -66,13 +66,13 @@ func _draw() -> void:
 	if overlays.get("ideal_path", false):
 		var route := PackedVector2Array()
 		for room_plan in graph.plan.ideal_route():
-			route.append(graph.rooms[room_plan.key].seed * px)
+			route.append(graph.rooms[room_plan.key].seed_point * px)
 		if route.size() > 1:
 			draw_polyline(route, Color(1.0, 0.3, 0.75, 0.9), width * 2.0)
 	if overlays.get("passages", false):
 		for passage in graph.passages.values():
-			var a := graph.rooms[passage.a].seed * px
-			var b := graph.rooms[passage.b].seed * px
+			var a := graph.rooms[passage.a].seed_point * px
+			var b := graph.rooms[passage.b].seed_point * px
 			draw_line(a, b, PASSAGE_COLORS[passage.kind], width * 1.5)
 			draw_circle(Vector2(passage.spot) * px, maxf(width * 2.0, 2.0), PASSAGE_COLORS[passage.kind])
 	if overlays.get("outlines", false):
@@ -82,7 +82,7 @@ func _draw() -> void:
 			draw_polyline(polygon, Color(1, 1, 1, 0.55), width)
 	if overlays.get("roles", false):
 		for room in graph.room_list:
-			draw_circle(room.seed * px, maxf(2.0, 2.5 / (camera.zoom.x if camera != null else 1.0)), ROLE_COLORS[room.role])
+			draw_circle(room.seed_point * px, maxf(2.0, 2.5 / (camera.zoom.x if camera != null else 1.0)), ROLE_COLORS[room.role])
 	if overlays.get("roles", false) or overlays.get("biomes", false) or overlays.get("zones", false) \
 			or overlays.get("challenge", false):
 		var zoom := camera.zoom.x if camera != null else 1.0
@@ -99,7 +99,7 @@ func _draw() -> void:
 			if overlays.get("challenge", false):
 				parts.append("C%d" % room.plan.challenge)
 			# The pixel font has no middle dot.
-			draw_string(DebugState.UI_FONT, room.seed * px + Vector2(3, -3) / zoom, "  ".join(parts),
+			draw_string(DebugState.UI_FONT, room.seed_point * px + Vector2(3, -3) / zoom, "  ".join(parts),
 					HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 0.85))
 
 

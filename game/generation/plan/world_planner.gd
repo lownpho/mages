@@ -136,7 +136,6 @@ func _add_room(biome: BiomePlan, zone: ZonePlan, kind: RoomPlan.Kind) -> RoomPla
 	return room
 
 
-@warning_ignore("integer_division")
 func _reserve_set_pieces(biome: BiomePlan) -> void:
 	var taken: Dictionary = _joined[biome.id]
 	var final := biome.zones[-1]
@@ -150,6 +149,7 @@ func _reserve_set_pieces(biome: BiomePlan) -> void:
 		# Late: spread over the Zone's later half, the first at its end.
 		var late := ceili(zone.resource.route_rooms / 2.0)
 		for n in minibosses.size():
+			@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 			_add_set_piece(biome, zone, RoomPlan.Kind.MINIBOSS, minibosses[n], "miniboss/%s/%s/%d" % [biome.id, zone.id, n],
 					_free_join(taken, high - n * late / minibosses.size(), low, high, true))
 		var rng := _plan.rng(WorldHash.NS_SET_PIECES, "%s/%s" % [biome.id, zone.id])
@@ -187,11 +187,11 @@ func _free_join(taken: Dictionary, preferred: int, low: int, high: int, late: bo
 
 
 ## Fills the rest of the Zone's room_count with ordinary off-route Rooms joining its route evenly.
-@warning_ignore("integer_division")
 func _fill_zone(biome: BiomePlan, zone: ZonePlan) -> void:
 	var ordinary := zone.resource.room_count - zone.rooms.size()
 	for n in ordinary:
 		var room := _add_room(biome, zone, RoomPlan.Kind.ORDINARY)
+		@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 		room.join_index = zone.route_start + (2 * n + 1) * zone.resource.route_rooms / (2 * ordinary)
 
 
@@ -200,7 +200,6 @@ func _fill_zone(biome: BiomePlan, zone: ZonePlan) -> void:
 ## with their off-route Rooms. The count is capped so each cell's route Rooms can still cross it:
 ## about the square root of its Rooms. Each cell takes at least two route Rooms where the route
 ## has them, so its entry and exit fall to different Rooms.
-@warning_ignore("integer_division")
 func _cut_stretch(biome: BiomePlan) -> void:
 	var route := biome.route.size()
 	var weights := PackedInt64Array()
@@ -210,6 +209,7 @@ func _cut_stretch(biome: BiomePlan) -> void:
 		var footprint := _footprint(biome.resource, room.kind)
 		weights[room.join_index] += footprint
 		area += footprint
+	@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 	var count := clampi((area + CELL_AREA - 1) / CELL_AREA, 1, maxi(1, route * route / biome.rooms.size()))
 	var run := 2 if route >= 2 * count else 1
 	var stretch := PackedInt32Array()
@@ -237,21 +237,21 @@ func _separate_set_pieces(biome: BiomePlan) -> void:
 	var capacity := CELL_AREA * SET_PIECE_SHARE
 	for _move in SET_PIECE_MOVES:
 		var stretch := _stretches[biome.id]
-		var load: Dictionary[int, int] = {}
+		var cell_load: Dictionary[int, int] = {}
 		for room in biome.rooms:
 			if room.kind != RoomPlan.Kind.ORDINARY and room.kind != RoomPlan.Kind.SPAWN:
-				load[stretch[room.join_index]] = load.get(stretch[room.join_index], 0) + _disc_square(room)
+				cell_load[stretch[room.join_index]] = cell_load.get(stretch[room.join_index], 0) + _disc_square(room)
 		var moved := false
 		for room in biome.rooms:
 			if room.kind == RoomPlan.Kind.ORDINARY or room.kind == RoomPlan.Kind.SPAWN:
 				continue
 			var cell := stretch[room.join_index]
-			if load[cell] <= capacity or load[cell] == _disc_square(room):
+			if cell_load[cell] <= capacity or cell_load[cell] == _disc_square(room):
 				continue
 			var window := _set_piece_window(biome, room)
 			var best := -1
 			for index in range(window.x, window.y + 1):
-				if taken.has(index) or stretch[index] == cell or load.get(stretch[index], 0) + _disc_square(room) > capacity:
+				if taken.has(index) or stretch[index] == cell or cell_load.get(stretch[index], 0) + _disc_square(room) > capacity:
 					continue
 				if best < 0 or absi(index - room.join_index) < absi(best - room.join_index):
 					best = index
@@ -511,12 +511,12 @@ func _rise() -> void:
 
 
 ## Rounds a straight rise from entry at the first route Room to the Biome's exit at the last.
-@warning_ignore("integer_division")
 func _rise_route(biome: BiomePlan, entry: int) -> void:
 	biome.entry_challenge = entry
 	var last := biome.route.size() - 1
 	var climb := biome.resource.exit_challenge - entry
 	for room in biome.route:
+		@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 		room.challenge = entry if last == 0 else entry + (2 * climb * room.route_index + last) / (2 * last)
 	for room in biome.rooms:
 		room.challenge = biome.route[room.join_index].challenge

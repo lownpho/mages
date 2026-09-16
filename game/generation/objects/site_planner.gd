@@ -271,7 +271,7 @@ func _site_key(room: GeneratedRoom, kind: ObjectSite.Kind) -> String:
 
 func _seed_spot(room: GeneratedRoom) -> Vector2i:
 	if not _seed_spots.has(room):
-		_seed_spots[room] = graph.tile_of(room.seed)
+		_seed_spots[room] = graph.tile_of(room.seed_point)
 	return _seed_spots[room]
 
 
@@ -283,14 +283,14 @@ func _best_spot(room: GeneratedRoom, moving: ObjectSite) -> Array:
 	var best_ratio := _ratio(moving, best, room) if _spot_is_free(room, best, moving) else -INF
 	if best_ratio >= 1.0:
 		return [best, best_ratio]
-	var points: Array[Vector2] = [room.seed]
+	var points: Array[Vector2] = [room.seed_point]
 	for corner in room.polygon:
 		for amount: float in [0.35, 0.5, 0.65]:
-			points.append(room.seed.lerp(corner, amount))
+			points.append(room.seed_point.lerp(corner, amount))
 	for n in room.polygon.size():
 		var middle := room.polygon[n].lerp(room.polygon[(n + 1) % room.polygon.size()], 0.5)
 		for amount: float in [0.35, 0.5, 0.65]:
-			points.append(room.seed.lerp(middle, amount))
+			points.append(room.seed_point.lerp(middle, amount))
 	var ranked: Array[Array] = []
 	for point in points:
 		ranked.append([_ratio(moving, point, room), point])
@@ -328,11 +328,11 @@ func _layout_is_valid() -> bool:
 ## The Room's seed, or when sites already stand there, the first point halfway to one of its corners
 ## that the Room owns and that keeps clear of them.
 func _free_spot(room: GeneratedRoom) -> Vector2i:
-	var points: Array[Vector2] = [room.seed]
+	var points: Array[Vector2] = [room.seed_point]
 	for corner in room.polygon:
-		points.append(room.seed.lerp(corner, 0.5))
+		points.append(room.seed_point.lerp(corner, 0.5))
 	for point in points:
-		var spot := _seed_spot(room) if point == room.seed else graph.tile_of(point)
+		var spot := _seed_spot(room) if point == room.seed_point else graph.tile_of(point)
 		if graph.owner_at(spot) != room:
 			continue
 		if room.sites.all(func(site: ObjectSite) -> bool: return Vector2(site.spot).distance_to(Vector2(spot)) >= SHARED_ROOM_GAP):
@@ -362,7 +362,7 @@ func _nearest_boss(sign_site: ObjectSite) -> String:
 		var boss := plan.biomes[id].boss
 		if sign_site.sign_resource.reveals == null or boss.encounter.leader != sign_site.sign_resource.reveals:
 			continue
-		var distance := Vector2(sign_site.spot).distance_to(graph.rooms[boss.key].seed)
+		var distance := Vector2(sign_site.spot).distance_to(graph.rooms[boss.key].seed_point)
 		if distance < best_distance:
 			best_distance = distance
 			best = boss.key

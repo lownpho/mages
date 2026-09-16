@@ -79,6 +79,7 @@ func _ready() -> void:
 			# --- fixed cells, filled row-major from the block's corner ---
 			if card.size != CELL:
 				fails.append("page %d: the %s card is %s, not the fixed %s" % [i, card.id, card.size, CELL])
+			@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 			var want := Vector2((c % grid.columns) * (CELL.x + h_sep), (c / grid.columns) * (CELL.y + v_sep))
 			if card.position != want:
 				fails.append("page %d: card %d sits at %s, want %s" % [i, c, card.position, want])

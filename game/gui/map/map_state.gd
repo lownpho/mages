@@ -208,7 +208,7 @@ func prepare_discovered(near_tile: Vector2i, budget_usec: int) -> void:
 	var keys := PackedInt64Array()
 	for key in entered_rooms:
 		var room: GeneratedRoom = graph.rooms[key]
-		keys.append((int(room.seed.distance_squared_to(near_tile)) << 20) | room.index)
+		keys.append((int(room.seed_point.distance_squared_to(near_tile)) << 20) | room.index)
 	keys.sort()
 	for sort_key in keys:
 		if Time.get_ticks_usec() >= deadline:
@@ -263,6 +263,7 @@ func _finish_pending(cell: MacroImage, build_interiors: bool) -> void:
 ## its warped border may reach into the neighbours.
 func _entered_rooms_reaching(rect: Rect2i) -> Array[GeneratedRoom]:
 	var out: Array[GeneratedRoom] = []
+	@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 	var coord := rect.position / WorldPlan.CELL
 	for y in range(coord.y - 1, coord.y + 2):
 		for x in range(coord.x - 1, coord.x + 2):
@@ -364,7 +365,7 @@ func _markers() -> Array:
 		var entered := entered_rooms.has(key)
 		if room.role == GeneratedRoom.Role.BOSS and (entered or revealed_bosses.has(key)) \
 				and not _boss_defeated(key):
-			out.append({"tile": graph.tile_of(room.seed), "kind": MARKER_BOSS, "room_key": key,
+			out.append({"tile": graph.tile_of(room.seed_point), "kind": MARKER_BOSS, "room_key": key,
 					"project": revealed_bosses.has(key) and not entered})
 		if not entered:
 			continue

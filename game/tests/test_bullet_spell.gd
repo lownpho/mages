@@ -51,7 +51,7 @@ func _ready() -> void:
 	await _test_channel_cancels_burst()
 	await _test_burst_rotation()
 	await _test_homing_lock()
-	await _test_nope_leech()
+	_test_nope_leech()
 
 	# Leave no equipment behind for a later scene run in the same session.
 	for slot in GlobalInventory.all_slots():

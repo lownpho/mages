@@ -137,7 +137,7 @@ func _load(path: String, type: Script) -> Resource:
 		return null
 	if not is_instance_of(resource, type):
 		var script := resource.get_script() as Script
-		var actual: String = script.get_global_name() if script != null else resource.get_class()
+		var actual: String = String(script.get_global_name()) if script != null else resource.get_class()
 		_error_at(resource, "script", "is a %s, not a %s" % [actual, type.get_global_name()])
 		_incomplete = true
 		return null

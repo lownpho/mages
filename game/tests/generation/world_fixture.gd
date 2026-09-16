@@ -143,19 +143,19 @@ static func radii_at(radius: int) -> Dictionary[StringName, int]:
 
 ## A plan's public outputs as text, one line per cell, Biome and Room: plans with equal snapshots
 ## are the same World.
-static func snapshot(plan: WorldPlan) -> String:
-	var lines: Array[String] = ["size %s path %s radii %s" % [plan.size, plan.path, plan.radii]]
-	for coord in plan.cells:
-		var cell := plan.cells[coord]
+static func snapshot(world_plan: WorldPlan) -> String:
+	var lines: Array[String] = ["size %s path %s radii %s" % [world_plan.size, world_plan.path, world_plan.radii]]
+	for coord in world_plan.cells:
+		var cell := world_plan.cells[coord]
 		lines.append("cell %s %s #%d path %d in %s out %s rooms %s" % [cell.key, cell.biome, cell.stretch_index, cell.path_index,
 				cell.entry, cell.exit, cell.rooms.map(func(room: RoomPlan) -> String: return room.key)])
-	for id in plan.biomes:
-		var biome := plan.biomes[id]
+	for id in world_plan.biomes:
+		var biome := world_plan.biomes[id]
 		lines.append("biome %s zones %s cells %s entry %d attachment %s" % [id,
 				biome.zones.map(func(zone: ZonePlan) -> String: return "%s@%d" % [zone.id, zone.route_start]),
 				biome.cells, biome.entry_challenge, biome.attachment.key if biome.attachment else "-"])
-	for key in plan.rooms:
-		var room := plan.rooms[key]
+	for key in world_plan.rooms:
+		var room := world_plan.rooms[key]
 		lines.append("room %s %s %s/%s cell %s route %d join %d challenge %d %s" % [key, room.kind_name(), room.biome, room.zone,
 				room.cell, room.route_index, room.join_index, room.challenge, room.encounter.resource_path if room.encounter else "-"])
 	return "\n".join(lines)
@@ -163,20 +163,20 @@ static func snapshot(plan: WorldPlan) -> String:
 
 ## A graph's public outputs as text, one line per Room, Passage and site: graphs with equal
 ## snapshots are the same World.
-static func graph_snapshot(graph: WorldGraph) -> String:
-	var lines: Array[String] = [snapshot(graph.plan)]
-	for key in graph.rooms:
-		var room := graph.rooms[key]
+static func graph_snapshot(world_graph: WorldGraph) -> String:
+	var lines: Array[String] = [snapshot(world_graph.plan)]
+	for key in world_graph.rooms:
+		var room := world_graph.rooms[key]
 		lines.append("graph room %s %s teaches %s seed %s radius %s polygon %s roster %s passages %s sites %s" % [key, room.role_name(),
-				room.teaching.resource_path if room.teaching else "-", room.seed, room.radius, room.polygon,
+				room.teaching.resource_path if room.teaching else "-", room.seed_point, room.radius, room.polygon,
 				room.roster.keys().map(func(enemy: CreatureResource) -> String: return "%s:%d" % [enemy.resource_path.get_file(), room.roster[enemy]]),
 				room.passages.map(func(passage: RoomPassage) -> String: return passage.key),
 				room.sites.map(func(site: ObjectSite) -> String: return site.key)])
-	for key in graph.passages:
-		var passage := graph.passages[key]
+	for key in world_graph.passages:
+		var passage := world_graph.passages[key]
 		lines.append("passage %s %s spot %s point %s width %d" % [key, passage.kind_name(), passage.spot, passage.point, passage.width])
-	for key in graph.sites:
-		var site := graph.sites[key]
+	for key in world_graph.sites:
+		var site := world_graph.sites[key]
 		lines.append("site %s %s spot %s scene %s sign %s reveals %s door %s %s %s %s" % [key, site.kind_name(), site.spot,
 				site.scene.resource_path if site.scene else "-", site.sign_resource.text.get_slice("\n", 0) if site.sign_resource else "-",
 				site.reveal_key, site.destination_biome, site.destination_room, site.landing_key, site.door_key])

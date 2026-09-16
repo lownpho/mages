@@ -74,8 +74,8 @@ func _check_rooms(graph: WorldGraph, label: String) -> void:
 		if room == null or room.plan != plan.rooms[key]:
 			_fails.append("%s: planned Room %s has no generated Room" % [label, key])
 			continue
-		_check(room.polygon.size() >= 3 and plan.lattice.cell_at(room.seed.x, room.seed.y) == room.plan.cell and Geometry2D.is_point_in_polygon(room.seed, room.polygon),
-				"%s: %s (%s) has no shape around its seed %s in macro cell %s: %d corners" % [label, key, room.role_name(), room.seed,
+		_check(room.polygon.size() >= 3 and plan.lattice.cell_at(room.seed_point.x, room.seed_point.y) == room.plan.cell and Geometry2D.is_point_in_polygon(room.seed_point, room.polygon),
+				"%s: %s (%s) has no shape around its seed %s in macro cell %s: %d corners" % [label, key, room.role_name(), room.seed_point,
 				room.plan.cell, room.polygon.size()])
 		var kind_roles := {RoomPlan.Kind.SPAWN: GeneratedRoom.Role.SPAWN, RoomPlan.Kind.BOSS: GeneratedRoom.Role.BOSS,
 				RoomPlan.Kind.MINIBOSS: GeneratedRoom.Role.MINIBOSS, RoomPlan.Kind.RARE: GeneratedRoom.Role.RARE}
@@ -196,17 +196,17 @@ func _check_isolation(graph: WorldGraph, label: String) -> void:
 func _check_discs(graph: WorldGraph, label: String) -> void:
 	for key in graph.rooms:
 		var room := graph.rooms[key]
-		_check(graph.owner_at(graph.tile_of(room.seed)) == room, "%s: %s doesn't own its seed's tile" % [label, key])
+		_check(graph.owner_at(graph.tile_of(room.seed_point)) == room, "%s: %s doesn't own its seed's tile" % [label, key])
 		if not room.is_set_piece():
 			continue
 		for ring: float in [0.0, room.radius * 0.5, room.radius - 1.0]:
 			for n in DISC_SAMPLES:
-				var tile := Vector2i((room.seed + Vector2.from_angle(TAU * n / DISC_SAMPLES) * ring - Vector2(0.5, 0.5)).round())
-				if Vector2(tile).distance_to(room.seed - Vector2(0.5, 0.5)) > room.radius - 0.75:
+				var tile := Vector2i((room.seed_point + Vector2.from_angle(TAU * n / DISC_SAMPLES) * ring - Vector2(0.5, 0.5)).round())
+				if Vector2(tile).distance_to(room.seed_point - Vector2(0.5, 0.5)) > room.radius - 0.75:
 					continue
-				var owner := graph.owner_at(tile)
-				if owner != room:
-					_fails.append("%s: tile %s in %s's radius %s belongs to %s" % [label, tile, key, room.radius, owner.key() if owner else "nothing"])
+				var tile_owner := graph.owner_at(tile)
+				if tile_owner != room:
+					_fails.append("%s: tile %s in %s's radius %s belongs to %s" % [label, tile, key, room.radius, tile_owner.key() if tile_owner else "nothing"])
 					return
 
 
@@ -214,10 +214,10 @@ func _check_discs(graph: WorldGraph, label: String) -> void:
 func _check_passage_spots(graph: WorldGraph, label: String) -> void:
 	for key in graph.passages:
 		var passage := graph.passages[key]
-		var owner := graph.owner_at(passage.spot)
-		var other := passage.b if owner != null and owner.key() == passage.a else passage.a
+		var tile_owner := graph.owner_at(passage.spot)
+		var other := passage.b if tile_owner != null and tile_owner.key() == passage.a else passage.a
 		var beside := false
-		if owner != null and (owner.key() == passage.a or owner.key() == passage.b):
+		if tile_owner != null and (tile_owner.key() == passage.a or tile_owner.key() == passage.b):
 			var reach := passage.width
 			for dy in range(-reach, reach + 1):
 				for dx in range(-reach, reach + 1):
@@ -227,7 +227,7 @@ func _check_passage_spots(graph: WorldGraph, label: String) -> void:
 						break
 				if beside:
 					break
-		_check(beside, "%s: %s Passage %s opens at %s, owned by %s" % [label, passage.kind_name(), key, passage.spot, owner.key() if owner else "nothing"])
+		_check(beside, "%s: %s Passage %s opens at %s, owned by %s" % [label, passage.kind_name(), key, passage.spot, tile_owner.key() if tile_owner else "nothing"])
 
 
 ## Each route teaches every enemy its Zones field once, Hazards excepted, in a Room fielding it at a
@@ -339,7 +339,7 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 			var bosses := plan.biomes.values().map(func(other: BiomePlan) -> RoomPlan: return other.boss).filter(func(boss: RoomPlan) -> bool:
 				return boss.encounter.leader == sign_resource.reveals)
 			bosses.sort_custom(func(a: RoomPlan, b: RoomPlan) -> bool:
-				return Vector2(sign_site.spot).distance_to(graph.rooms[a.key].seed) < Vector2(sign_site.spot).distance_to(graph.rooms[b.key].seed))
+				return Vector2(sign_site.spot).distance_to(graph.rooms[a.key].seed_point) < Vector2(sign_site.spot).distance_to(graph.rooms[b.key].seed_point))
 			if sign_resource.reveals == null:
 				_check(sign_site.reveal_key == "", "%s: Sign %s reveals %s though it names no enemy" % [label, sign_site.key, sign_site.reveal_key])
 			else:

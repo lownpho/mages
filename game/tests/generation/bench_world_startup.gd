@@ -95,5 +95,6 @@ func _loading_frame() -> float:
 static func _stats(samples: Array[float]) -> String:
 	var sorted := samples.duplicate()
 	sorted.sort()
+	@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 	return "median %6.0f ms  p95 %6.0f ms  max %6.0f ms" % [sorted[sorted.size() / 2],
 			sorted[mini(sorted.size() - 1, int(sorted.size() * 0.95))], sorted[-1]]

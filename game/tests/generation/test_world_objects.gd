@@ -156,7 +156,7 @@ func _test_runtime(graph: WorldGraph) -> void:
 	await _test_instances(rig)
 	await _test_sign(rig)
 	await _test_professors(rig)
-	await _test_landings(rig)
+	_test_landings(rig)
 	await _test_warp(rig)
 	await _test_fountain(rig)
 	await _test_state(rig)

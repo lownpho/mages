@@ -523,6 +523,7 @@ func _swells_under_damage(id: String, scene: PackedScene, plain: String, reach: 
 	var got := await _await_beat(body, beats)
 	var fails := _expect("%s at full health walks as %s, not %s" % [id, got, plain],
 		got == plain)
+	@warning_ignore("integer_division") # Whole counts and grid indices intentionally truncate.
 	body.hurtbox.hurt.emit(body.max_health / 2 + 1, null)
 	got = await _await_beat(body, ["Swell"], 8000)
 	fails += _expect("%s under half health settled in %s instead of swelling" % [id, got],

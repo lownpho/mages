@@ -49,14 +49,14 @@ func _check_state_names(id: String, node: Node) -> int:
 		for prop in state.get_property_list():
 			if not (prop.usage & PROPERTY_USAGE_SCRIPT_VARIABLE):
 				continue
-			var name: String = prop.name
+			var property_name: String = prop.name
 			var targets: Array = []
-			if prop.type == TYPE_STRING and name.ends_with("_state"):
-				targets = [state.get(name)]
-			elif prop.type == TYPE_ARRAY and (name == "states" or name == "phase_states"):
-				targets = state.get(name)
+			if prop.type == TYPE_STRING and property_name.ends_with("_state"):
+				targets = [state.get(property_name)]
+			elif prop.type == TYPE_ARRAY and (property_name == "states" or property_name == "phase_states"):
+				targets = state.get(property_name)
 			for target in targets:
 				if target != "" and not fsm.states.has(target):
-					print("  FAIL: %s/%s.%s -> unknown state '%s'" % [id, state.name, name, target])
+					print("  FAIL: %s/%s.%s -> unknown state '%s'" % [id, state.name, property_name, target])
 					fails += 1
 	return fails

@@ -184,10 +184,10 @@ func _build(room: GeneratedRoom) -> void:
 		GeneratedRoom.Role.BOSS, GeneratedRoom.Role.MINIBOSS, GeneratedRoom.Role.RARE:
 			out.append(_fixed(room))
 		_:
-			var floor := walkable_tiles(room)
-			var placement := Placement.new(_placement_candidates(room, floor))
-			out = _ordinary(room, floor.size(), placement)
-			room_hazards = _hazards(room, floor.size(), placement)
+			var floor_tiles := walkable_tiles(room)
+			var placement := Placement.new(_placement_candidates(room, floor_tiles))
+			out = _ordinary(room, floor_tiles.size(), placement)
+			room_hazards = _hazards(room, floor_tiles.size(), placement)
 	_by_room[room.key()] = out
 	_hazards_by_room[room.key()] = room_hazards
 	for encounter in out:
@@ -338,7 +338,7 @@ func _place(encounter: GeneratedEncounter, composition: Array[Dictionary], place
 ## then to any tile.
 func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array[Vector2i], centred: bool) -> Vector2i:
 	if centred:
-		var seed_tile := graph.tile_of(graph.rooms[encounter.room_key].seed)
+		var seed_tile := graph.tile_of(graph.rooms[encounter.room_key].seed_point)
 		for accept: Callable in [placement.is_free, func(tile: Vector2i) -> bool: return not placement.is_taken(tile),
 				func(_tile: Vector2i) -> bool: return true]:
 			var tile := placement.nearest(seed_tile, accept)
@@ -364,9 +364,9 @@ func _centre(encounter: GeneratedEncounter, placement: Placement, centres: Array
 	return pool[rng.randi_range(0, pool.size() - 1)]
 
 
-func _placement_candidates(room: GeneratedRoom, floor: Array[Vector2i]) -> Array[Vector2i]:
+func _placement_candidates(room: GeneratedRoom, floor_tiles: Array[Vector2i]) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
-	for tile in floor:
+	for tile in floor_tiles:
 		var clear := true
 		for site in room.sites:
 			var distance := LANDING_CLEARANCE if site.kind == ObjectSite.Kind.LANDING else OBJECT_CLEARANCE
@@ -377,7 +377,7 @@ func _placement_candidates(room: GeneratedRoom, floor: Array[Vector2i]) -> Array
 			out.append(tile)
 	# Content composition is stronger than a clearance preference. This fallback is only reachable
 	# for a pathologically tiny authored Room, and remains deterministic.
-	return out if not out.is_empty() else floor
+	return out if not out.is_empty() else floor_tiles
 
 
 static func _weighted_without_replacement(eligible: Array[CreatureResource], wanted: int,

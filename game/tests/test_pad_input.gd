@@ -145,13 +145,13 @@ func _press(event: InputEvent, action: StringName) -> bool:
 	GlobalInput._input(event)
 	return GlobalInput.fresh_press(event, action)
 
-func _button(index: int) -> InputEventJoypadButton:
+func _button(index: JoyButton) -> InputEventJoypadButton:
 	var e := InputEventJoypadButton.new()
 	e.button_index = index
 	e.pressed = true
 	return e
 
-func _motion(axis: int, value: float) -> InputEventJoypadMotion:
+func _motion(axis: JoyAxis, value: float) -> InputEventJoypadMotion:
 	var e := InputEventJoypadMotion.new()
 	e.axis = axis
 	e.axis_value = value

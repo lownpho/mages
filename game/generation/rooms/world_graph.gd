@@ -244,7 +244,7 @@ func _warp_xy(px: float, py: float) -> void:
 		_near_coord = Vector2i(cx, cy)
 		_near.clear()
 		for special: GeneratedRoom in _set_pieces_near.get(_near_coord, []):
-			_near.append_array([special.seed.x, special.seed.y, special.radius])
+			_near.append_array([special.seed_point.x, special.seed_point.y, special.radius])
 	for n in range(0, _near.size(), 3):
 		var dx := px - _near[n]
 		var dy := py - _near[n + 1]
@@ -331,7 +331,7 @@ func describe() -> String:
 			for passage in room.passages:
 				links.append("%s %s" % [passage.kind_name(), passage.other(room.key())])
 			lines.append("  %-26s %-9s %-10s C%-3d route %-3d seed %s%s -> %s" % [room.key(), room.role_name(), room.plan.zone,
-					room.plan.challenge, room.plan.route_index, room.seed.round(),
+					room.plan.challenge, room.plan.route_index, room.seed_point.round(),
 					" teaches %s" % room.teaching.resource_path.get_file().get_basename() if room.teaching else "", ", ".join(links)])
 			for site in room.sites:
 				lines.append("    %s at %s%s" % [site.key, site.spot, _site_detail(site)])
@@ -495,8 +495,8 @@ func _build_bins(square: Vector2i) -> Array:
 				for room in cell.rooms:
 					slots.append(indices.size())
 					indices.append(room.index)
-					xs.append(room.seed.x)
-					ys.append(room.seed.y)
+					xs.append(room.seed_point.x)
+					ys.append(room.seed_point.y)
 					r2s.append(room.radius * room.radius)
 					slot_cells.append(id)
 			cell_slots.append(slots)

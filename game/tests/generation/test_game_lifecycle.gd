@@ -106,7 +106,7 @@ func _test_new_quit_continue() -> void:
 			object_room = room
 	world._set_flying(true)
 	for room in [encounter_room, object_room]:
-		world._teleport_to_tile(world._graph.tile_of(room.seed))
+		world._teleport_to_tile(world._graph.tile_of(room.seed_point))
 		await get_tree().process_frame
 	_check(not world._encounter_spawner.live_members().is_empty(), "encounters streamed in around the player")
 	_check(not world._object_spawner.live_objects().is_empty(), "Objects streamed in around the player")
@@ -146,7 +146,7 @@ func _test_new_quit_continue() -> void:
 	if layer == null:
 		return
 	var saved := FileAccess.get_file_as_bytes(SAVE)
-	world._teleport_to_tile(world._graph.tile_of(encounter_room.seed))
+	world._teleport_to_tile(world._graph.tile_of(encounter_room.seed_point))
 	GameState.persist()
 	_check(FileAccess.get_file_as_bytes(SAVE) != saved, "movement still saves the Run")
 	saved = FileAccess.get_file_as_bytes(SAVE)

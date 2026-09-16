@@ -80,9 +80,9 @@ func _check(res: Resource, label: String, caster: Node2D) -> int:
 		checked += 1
 		# Each spell owns its bullet outright: a standalone resource_path would mean two
 		# spells share one instance, so retuning an enemy would silently retune a tier.
-		var owner: String = res.bullet.resource_path
-		if not owner.is_empty() and not owner.contains("::"):
-			_fails.append("%s shares an external bullet (%s)" % [label, owner])
+		var bullet_path: String = res.bullet.resource_path
+		if not bullet_path.is_empty() and not bullet_path.contains("::"):
+			_fails.append("%s shares an external bullet (%s)" % [label, bullet_path])
 		if res.damage == null:
 			_fails.append("%s has no damage" % label)
 		else:

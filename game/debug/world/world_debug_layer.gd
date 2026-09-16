@@ -556,7 +556,9 @@ func _knob_range(knob: StringName) -> Array:
 
 
 func _coerce_knob(knob: StringName, value: float) -> Variant:
-	return int(value) if knob in [&"room_size", &"passage_width"] else value
+	if knob in [&"room_size", &"passage_width"]:
+		return int(value)
+	return value
 
 
 func _button(parent: Control, title: String, callback: Callable) -> Button:

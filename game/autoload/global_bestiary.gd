@@ -178,8 +178,8 @@ func _build_groups() -> void:
 		# The id capitalised reads right for a Biome whose id is its name ("deepwood" -> "Deepwood").
 		_group_titles.append(String(biome_id).capitalize())
 
-func _file_biome_enemies(roster: Array, fixed: Array, out: Dictionary[CreatureResource, bool]) -> void:
-	for enemy: CreatureResource in roster:
+func _file_biome_enemies(biome_roster: Array, fixed: Array, out: Dictionary[CreatureResource, bool]) -> void:
+	for enemy: CreatureResource in biome_roster:
 		out[enemy] = true
 	for encounter: FixedEncounterResource in fixed:
 		if encounter == null:
