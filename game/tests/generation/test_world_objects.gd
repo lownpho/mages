@@ -80,12 +80,13 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictiona
 				_check(objects.scene_for(site) == WorldObjects.SIGN_SCENE and data.text == site.sign_resource.text,
 						"%s: Sign %s isn't set up with its text" % [label, key])
 				var reveals := site.sign_resource.reveals
-				var boss: GeneratedRoom = graph.rooms.get(data.reveal_key)
+				var revealed: GeneratedRoom = graph.rooms.get(data.reveal_key)
 				if reveals == null:
 					_check(data.reveal_key == "", "%s: Sign %s reveals %s though it names no enemy" % [label, key, data.reveal_key])
 				else:
-					_check(boss != null and boss.role == GeneratedRoom.Role.BOSS and boss.plan.encounter.leader == reveals,
-							"%s: Sign %s reveals %s, not a Boss led by %s" % [label, key, data.reveal_key, reveals.resource_path])
+					_check(revealed != null and revealed.role in [GeneratedRoom.Role.BOSS, GeneratedRoom.Role.MINIBOSS] \
+							and revealed.plan.encounter.leader == reveals,
+							"%s: Sign %s reveals %s, not a Boss or Miniboss led by %s" % [label, key, data.reveal_key, reveals.resource_path])
 			ObjectSite.Kind.PROFESSOR:
 				_check(objects.scene_for(site) == WorldObjects.PROFESSOR_SCENE, "%s: Professor %s doesn't use the Professor scene" % [label, key])
 			ObjectSite.Kind.DOOR:
@@ -151,7 +152,7 @@ static func _first(graph: WorldGraph, kind: ObjectSite.Kind) -> ObjectSite:
 
 
 func _test_runtime(graph: WorldGraph) -> void:
-	GlobalMap.revealed_boss_keys.clear()
+	GlobalMap.revealed_room_keys.clear()
 	var rig := _rig(graph)
 	await _test_instances(rig)
 	await _test_sign(rig)
@@ -162,7 +163,7 @@ func _test_runtime(graph: WorldGraph) -> void:
 	await _test_state(rig)
 	rig.viewport.queue_free()
 	await get_tree().process_frame
-	GlobalMap.revealed_boss_keys.clear()
+	GlobalMap.revealed_room_keys.clear()
 
 
 ## A one-pixel viewport around the real player, whose own camera the streamer follows.
@@ -290,14 +291,14 @@ func _test_sign(rig: Dictionary) -> void:
 	if site == null:
 		return
 	var sign_node := await _approach(rig, site)
-	_check(sign_node != null and GlobalMap.revealed_boss_keys.is_empty(), "Sign %s stands and nothing is revealed before reading" % site.key)
+	_check(sign_node != null and GlobalMap.revealed_room_keys.is_empty(), "Sign %s stands and nothing is revealed before reading" % site.key)
 	if sign_node == null:
 		return
 	await _enter(rig, sign_node)
 	_check(sign_node.get_node("Label").visible, "reading Sign %s shows its text" % site.key)
-	_check(GlobalMap.revealed_boss_keys.size() == 1 and GlobalMap.revealed_boss_keys.has(site.reveal_key)
-			and rig.graph.rooms[site.reveal_key].role == GeneratedRoom.Role.BOSS,
-			"reading Sign %s reveals %s, want only its Boss %s" % [site.key, GlobalMap.revealed_boss_keys.keys(), site.reveal_key])
+	_check(GlobalMap.revealed_room_keys.size() == 1 and GlobalMap.revealed_room_keys.has(site.reveal_key)
+			and rig.graph.rooms[site.reveal_key].role in [GeneratedRoom.Role.BOSS, GeneratedRoom.Role.MINIBOSS],
+			"reading Sign %s reveals %s, want only its set piece %s" % [site.key, GlobalMap.revealed_room_keys.keys(), site.reveal_key])
 
 
 ## Every planned Professor stands once as a Professor and shows its note when walked up to, keeping

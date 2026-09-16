@@ -336,15 +336,18 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 			var room := graph.rooms[sign_site.room_key]
 			_check(room.plan.biome == id and (biome.resource.signs.has(sign_resource) or biome.zone(room.plan.zone).resource.signs.has(sign_resource)),
 					"%s: Sign %s stands outside the Biome or Zone authoring it" % [label, sign_site.key])
-			var bosses := plan.biomes.values().map(func(other: BiomePlan) -> RoomPlan: return other.boss).filter(func(boss: RoomPlan) -> bool:
-				return boss.encounter.leader == sign_resource.reveals)
-			bosses.sort_custom(func(a: RoomPlan, b: RoomPlan) -> bool:
+			var led := plan.set_pieces().filter(func(piece: RoomPlan) -> bool:
+				return (piece.kind == RoomPlan.Kind.BOSS or piece.kind == RoomPlan.Kind.MINIBOSS) \
+						and piece.encounter.leader == sign_resource.reveals)
+			led.sort_custom(func(a: RoomPlan, b: RoomPlan) -> bool:
 				return Vector2(sign_site.spot).distance_to(graph.rooms[a.key].seed_point) < Vector2(sign_site.spot).distance_to(graph.rooms[b.key].seed_point))
 			if sign_resource.reveals == null:
 				_check(sign_site.reveal_key == "", "%s: Sign %s reveals %s though it names no enemy" % [label, sign_site.key, sign_site.reveal_key])
 			else:
-				_check(not bosses.is_empty() and sign_site.reveal_key == bosses[0].key and graph.rooms[sign_site.reveal_key].role == GeneratedRoom.Role.BOSS,
-						"%s: Sign %s reveals %s, not the nearest Boss its enemy leads" % [label, sign_site.key, sign_site.reveal_key])
+				var revealed: GeneratedRoom = graph.rooms.get(sign_site.reveal_key)
+				_check(not led.is_empty() and sign_site.reveal_key == led[0].key and revealed != null \
+						and revealed.role in [GeneratedRoom.Role.BOSS, GeneratedRoom.Role.MINIBOSS],
+						"%s: Sign %s reveals %s, not the nearest Boss or Miniboss its enemy leads" % [label, sign_site.key, sign_site.reveal_key])
 	var total_signs := 0
 	for id in plan.biomes:
 		total_signs += plan.biomes[id].resource.signs.size()

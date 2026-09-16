@@ -1,11 +1,18 @@
-[gd_resource type="Resource" script_class="ZoneResource" format=3]
+[gd_resource type="Resource" script_class="ZoneResource" format=3 uid="uid://gv255uiq7a4g"]
 
-[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
-[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
-[ext_resource type="Resource" path="res://characters/enemies/mandraker/mandraker_data.tres" id="mandraker"]
-[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
-[ext_resource type="Resource" path="res://characters/enemies/viper/viper_data.tres" id="viper"]
-[ext_resource type="Script" path="res://generation/content/zone_resource.gd" id="zone"]
+[ext_resource type="Resource" uid="uid://cuqnush86i5lt" path="res://characters/enemies/fae/fae_data.tres" id="3_xx5dj"]
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" uid="uid://mdrkrdata001" path="res://characters/enemies/mandraker/mandraker_data.tres" id="mandraker"]
+[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" uid="uid://pbgstoikp5ux" path="res://characters/enemies/viper/viper_data.tres" id="viper"]
+[ext_resource type="Script" uid="uid://gcuovs25kge0" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="Resource_yylga"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("3_xx5dj")
+centred = true
+metadata/_custom_type_script = "uid://dif17xbtr55od"
 
 [sub_resource type="Resource" id="rare_mandraker"]
 script = ExtResource("fixed_encounter")
@@ -19,4 +26,5 @@ leader = ExtResource("viper")
 script = ExtResource("zone")
 route_rooms = 9
 room_count = 19
+minibosses = Array[ExtResource("fixed_encounter")]([SubResource("Resource_yylga")])
 rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_mandraker"), SubResource("rare_viper")])

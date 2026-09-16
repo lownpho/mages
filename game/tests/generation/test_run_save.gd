@@ -127,7 +127,7 @@ func _inventory_paths() -> Array[String]:
 func _map_view(map: MapState) -> Dictionary:
 	var entered: Array = map.entered_rooms.keys()
 	entered.sort()
-	var revealed: Array = map.revealed_bosses.keys()
+	var revealed: Array = map.revealed_rooms.keys()
 	revealed.sort()
 	var images := {}
 	var bounds := map.discovered_bounds()
@@ -235,7 +235,7 @@ func _test_quit_and_continue() -> Node2D:
 			revealed_boss = room.key()
 			break
 	_check(revealed_boss != "", "fixture has an undiscovered Boss to reveal")
-	GlobalMap.reveal_boss_room(revealed_boss)
+	GlobalMap.reveal_room(revealed_boss)
 	GlobalMap.toggle_pin(Vector2i(-3, -3), 0)
 
 	# Where the player stands, hurt, as the Run is quit.

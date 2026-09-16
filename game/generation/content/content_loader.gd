@@ -423,16 +423,22 @@ func _check_spawn_zone() -> void:
 			_error_at(zone, "spawn", "%d Zones are the Spawn zone (%s); keep exactly one" % [spawns.size(), ", ".join(spawns)])
 
 
-## A Sign reveals the nearest Boss its enemy leads, so that enemy must lead some Biome's Boss.
+## A Sign reveals the nearest Boss or Miniboss its enemy leads, so that enemy must lead one of them.
 func _check_reveals() -> void:
-	var boss_leaders: Dictionary[String, bool] = {}
+	var leaders: Dictionary[String, bool] = {}
+	var encounters: Array[FixedEncounterResource] = []
 	for biome in _content.biomes.values():
-		if biome.boss != null and biome.boss.leader != null:
-			boss_leaders[biome.boss.leader.resource_path] = true
+		encounters.append(biome.boss)
+	for zones: Dictionary in _content.zones.values():
+		for zone: ZoneResource in zones.values():
+			encounters.append_array(zone.minibosses)
+	for encounter in encounters:
+		if encounter != null and encounter.leader != null:
+			leaders[encounter.leader.resource_path] = true
 	for owner in _owners():
 		for sign_resource: SignResource in owner.get("signs"):
-			if sign_resource != null and sign_resource.reveals != null and not boss_leaders.has(sign_resource.reveals.resource_path):
-				_error_at(sign_resource, "reveals", "a Sign reveals %s, which leads no Biome's Boss" % _name(sign_resource.reveals))
+			if sign_resource != null and sign_resource.reveals != null and not leaders.has(sign_resource.reveals.resource_path):
+				_error_at(sign_resource, "reveals", "a Sign reveals %s, which leads no Boss or Miniboss" % _name(sign_resource.reveals))
 
 
 ## Each parent needs distinct route Rooms for its Side biomes, spaced apart and away from its ends.

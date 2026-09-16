@@ -18,7 +18,7 @@ var spot := Vector2i.ZERO
 ## A WEIGHTED Object's scene.
 var scene: PackedScene
 var sign_resource: SignResource
-## The Boss room a Sign reveals: the nearest planned Boss its enemy leads.
+## The Room a Sign reveals: the nearest planned Boss or Miniboss its enemy leads.
 var reveal_key := ""
 ## A Warp door's destination Biome, Room and the landing site there.
 var destination_biome := &""

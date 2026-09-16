@@ -13,8 +13,8 @@ const ROLE_DOT_MIN := 1.25
 const ROLE_DOT_MAX := 4.0
 ## Minimap marker colours, by MapState marker kind, with pins last.
 const MARKER_NAMES: Array[StringName] = [&"boss", &"fountain", &"door", &"sign", &"npc", &"pin"]
-const MARKER_COLORS: Array[Color] = [Palette.YELLOW, Palette.PINK, Palette.BLUE, Palette.GREEN,
-		Palette.PURPLE, Palette.ORANGE]
+const MARKER_COLORS: Array[Color] = [Palette.YELLOW, Palette.YELLOW, Palette.PINK, Palette.BLUE,
+		Palette.GREEN, Palette.PURPLE, Palette.ORANGE]
 ## A marker's side and an enemy dot's radius in tiles, kept between these many map pixels.
 const MARKER_TILES := 3.0
 const MARKER_MIN := 2.0
@@ -248,6 +248,8 @@ func _draw() -> void:
 		for room in graph.room_list:
 			if room.role == GeneratedRoom.Role.BOSS:
 				_draw_marker(graph.tile_of(room.seed_point), MapState.MARKER_BOSS, side * 1.5)
+			elif room.role == GeneratedRoom.Role.MINIBOSS:
+				_draw_marker(graph.tile_of(room.seed_point), MapState.MARKER_MINIBOSS, side)
 			for site in room.sites:
 				var kind: int = GlobalMap.active._marker_kind(site)
 				if kind >= 0:

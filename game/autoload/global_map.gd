@@ -2,17 +2,17 @@ extends Node
 
 ## The Run's Map, shared by the strip minimap and the full-screen map and persisted in the save.
 ## Owns the active MapState, drives discovery from the player's position each frame, and rebuilds
-## it from the World's graph plus the saved Room keys, Pins and revealed Bosses — so the whole Map
+## it from the World's graph plus the saved Room keys, Pins and revealed Rooms — so the whole Map
 ## is restored from a tiny payload (see GameState).
 
 signal map_changed   ## active MapState was (re)built — views re-bind on this
-signal pins_changed  ## a pin was dropped or removed, or an Object revealed a Boss — non-frame-driven views redraw, save persists
-signal boss_revealed(room_key: String)  ## an Object revealed a Boss Room for the first time this Run
+signal pins_changed  ## a pin was dropped or removed, or an Object revealed a set piece — non-frame-driven views redraw, save persists
+signal room_revealed(room_key: String)  ## an Object revealed a Boss or Miniboss Room for the first time this Run
 signal discovery_changed(entered_rooms: Dictionary) ## a Room was entered
 
 var active: MapState = null
-## Boss Room keys revealed this Run. The Map shows and saves them.
-var revealed_boss_keys: Dictionary[String, bool] = {}
+## Boss and Miniboss Room keys revealed this Run. The Map shows and saves them.
+var revealed_room_keys: Dictionary[String, bool] = {}
 
 ## The World's streamer, which builds the interiors Map views drew without.
 var _chunk_streamer: ChunkStreamer = null
@@ -40,8 +40,8 @@ func rebuild(streamer: ChunkStreamer, defeated_keys: Dictionary = {},
 		active.restore(records)
 	_pending_restore = {}
 	# A Sign can reveal through the global contract before the Map is built.
-	for room_key in revealed_boss_keys:
-		active.reveal_boss_room(room_key)
+	for room_key in revealed_room_keys:
+		active.reveal_room(room_key)
 	_player = get_tree().get_first_node_in_group("player")
 	_last_tile = Vector2i(-1, -1)
 	set_process(true)
@@ -80,16 +80,16 @@ func toggle_pin(world_tile: Vector2i, remove_radius_tiles: int) -> void:
 	pins_changed.emit()
 
 
-## Reveals a planned Boss Room before it is found. Any Object may call it; Signs are the authored
-## source. Revealing the same Room again changes nothing, so walking past the same Sign again
-## doesn't rewrite the save.
-func reveal_boss_room(room_key: String) -> void:
-	if room_key == "" or revealed_boss_keys.has(room_key):
+## Reveals a planned Boss or Miniboss Room before it is found. Any Object may call it; Signs are the
+## authored source. Revealing the same Room again changes nothing, so walking past the same Sign
+## again doesn't rewrite the save.
+func reveal_room(room_key: String) -> void:
+	if room_key == "" or revealed_room_keys.has(room_key):
 		return
-	if active != null and not active.reveal_boss_room(room_key):
+	if active != null and not active.reveal_room(room_key):
 		return
-	revealed_boss_keys[room_key] = true
-	boss_revealed.emit(room_key)
+	revealed_room_keys[room_key] = true
+	room_revealed.emit(room_key)
 	pins_changed.emit()
 
 
@@ -103,16 +103,16 @@ func to_dict() -> Dictionary:
 ## Run belongs to a freed World), so we only stash; rebuild() applies it.
 func restore(dict: Dictionary) -> void:
 	_pending_restore = dict
-	revealed_boss_keys.clear()
-	for room_key in dict.get("revealed_bosses", []):
-		revealed_boss_keys[String(room_key)] = true
+	revealed_room_keys.clear()
+	for room_key in dict.get("revealed_rooms", []):
+		revealed_room_keys[String(room_key)] = true
 
 
 ## Drop all discovered map state — a fresh run starts fully fogged.
 func reset() -> void:
 	active = null
 	_chunk_streamer = null
-	revealed_boss_keys.clear()
+	revealed_room_keys.clear()
 	_pending_restore = {}
 	_last_tile = Vector2i(-1, -1)
 	set_process(false)

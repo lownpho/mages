@@ -10,6 +10,7 @@ extends RefCounted
 
 enum {
 	MARKER_BOSS,
+	MARKER_MINIBOSS,
 	MARKER_FOUNTAIN,
 	MARKER_DOOR,
 	MARKER_SIGN,
@@ -38,7 +39,7 @@ var world_tiles := Vector2i.ZERO
 ## Save records. Values are sets so membership is constant-time and debug overlays can consume the
 ## dictionaries directly.
 var entered_rooms: Dictionary[String, bool] = {}
-var revealed_bosses: Dictionary[String, bool] = {}
+var revealed_rooms: Dictionary[String, bool] = {}
 var pins: Array = [] # Vector2i World tiles; fog is deliberately allowed.
 var defeated_keys: Dictionary = {} # shared RunDefeats.defeated dictionary when running
 ## Entered Rooms a view drew without their interiors, in request order. GlobalMap hands them to
@@ -53,7 +54,8 @@ var _wanted: Dictionary[int, bool] = {}
 var _scene_marker_kinds: Dictionary = {}
 var _macro_builds := 0
 
-## Derived every time so a Boss marker disappears as soon as its leader key enters RunDefeats.
+## Derived every time so a Boss or Miniboss marker disappears as soon as its leader key enters
+## RunDefeats.
 var markers: Array:
 	get:
 		return _markers() if graph != null else []
@@ -72,7 +74,7 @@ func setup(world_graph: WorldGraph, world_interiors: WorldInteriors, defeated: D
 	_macro_builds = 0
 	_scene_marker_kinds.clear()
 	entered_rooms.clear()
-	revealed_bosses.clear()
+	revealed_rooms.clear()
 	pins.clear()
 	wanted_interiors.clear()
 	_wanted.clear()
@@ -97,15 +99,15 @@ func remove_pin_near(world_tile: Vector2i, radius_tiles: int) -> bool:
 	return false
 
 
-## Boss reveal by stable Room key. A discovered Boss and a revealed Boss derive the same marker, so
-## repeated reveal/discovery never creates duplicates.
-func reveal_boss_room(room_key: String) -> bool:
+## Boss or Miniboss reveal by stable Room key. A discovered set piece and a revealed one derive the
+## same marker, so repeated reveal/discovery never creates duplicates.
+func reveal_room(room_key: String) -> bool:
 	if graph == null:
 		return false
 	var room: GeneratedRoom = graph.rooms.get(room_key)
-	if room == null or room.role != GeneratedRoom.Role.BOSS or revealed_bosses.has(room_key):
+	if room == null or not _marked_role(room) or revealed_rooms.has(room_key):
 		return false
-	revealed_bosses[room_key] = true
+	revealed_rooms[room_key] = true
 	return true
 
 
@@ -363,10 +365,10 @@ func _markers() -> Array:
 	for room in graph.room_list:
 		var key := room.key()
 		var entered := entered_rooms.has(key)
-		if room.role == GeneratedRoom.Role.BOSS and (entered or revealed_bosses.has(key)) \
-				and not _boss_defeated(key):
-			out.append({"tile": graph.tile_of(room.seed_point), "kind": MARKER_BOSS, "room_key": key,
-					"project": revealed_bosses.has(key) and not entered})
+		if _marked_role(room) and (entered or revealed_rooms.has(key)) and not _leader_defeated(key):
+			out.append({"tile": graph.tile_of(room.seed_point),
+					"kind": MARKER_BOSS if room.role == GeneratedRoom.Role.BOSS else MARKER_MINIBOSS,
+					"room_key": key, "project": revealed_rooms.has(key) and not entered})
 		if not entered:
 			continue
 		for site in room.sites:
@@ -398,13 +400,18 @@ func _marker_kind(site: ObjectSite) -> int:
 	return -1
 
 
-func _boss_defeated(room_key: String) -> bool:
+## The set-piece Rooms that carry a marker of their own: a Sign may reveal either.
+func _marked_role(room: GeneratedRoom) -> bool:
+	return room.role == GeneratedRoom.Role.BOSS or room.role == GeneratedRoom.Role.MINIBOSS
+
+
+func _leader_defeated(room_key: String) -> bool:
 	return defeated_keys.has(room_key) or defeated_keys.has(room_key + "/encounter/0/member/0")
 
 
 func to_dict() -> Dictionary:
 	return {"world_seed": world_seed, "entered_rooms": entered_rooms.keys(), "pins": pins,
-			"revealed_bosses": revealed_bosses.keys()}
+			"revealed_rooms": revealed_rooms.keys()}
 
 
 func restore(dict: Dictionary) -> void:
@@ -416,8 +423,8 @@ func restore(dict: Dictionary) -> void:
 	pins.clear()
 	for pin in dict.get("pins", []):
 		pins.append(pin)
-	for key in dict.get("revealed_bosses", []):
-		reveal_boss_room(String(key))
+	for key in dict.get("revealed_rooms", []):
+		reveal_room(String(key))
 	_macro_images.clear()
 
 

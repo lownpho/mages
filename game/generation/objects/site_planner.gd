@@ -10,7 +10,7 @@ extends RefCounted
 ## sites placed so far, or the farthest when none is. A spreading pass then moves each site still
 ## short of two room sizes to the candidate Room that keeps it farthest from the rest. The layout
 ## stands when every pair keeps MIN_SPACING of two room sizes. Signs reveal
-## the nearest planned Boss their enemy leads. Chance Breathers left without sites draw one Object by
+## the nearest planned Boss or Miniboss their enemy leads. Chance Breathers left without sites draw one Object by
 ## weight from their Biome's and Zone's choices, or stay empty when they have none.
 ##
 ## Spots default to the Room's seed. When that would break spacing, placement searches deterministic
@@ -74,7 +74,7 @@ func place() -> bool:
 		return false
 	for site in _spaced:
 		if site.kind == ObjectSite.Kind.SIGN:
-			site.reveal_key = _nearest_boss(site)
+			site.reveal_key = _nearest_reveal(site)
 	return true
 
 
@@ -354,16 +354,20 @@ func _door_targets(id: StringName) -> Array[StringName]:
 	return out
 
 
-## The planned Boss nearest the Sign whose leader is the enemy it reveals; "" when it names none.
-func _nearest_boss(sign_site: ObjectSite) -> String:
+## The planned Boss or Miniboss nearest the Sign whose leader is the enemy it reveals; "" when it
+## names none.
+func _nearest_reveal(sign_site: ObjectSite) -> String:
+	if sign_site.sign_resource.reveals == null:
+		return ""
 	var best := ""
 	var best_distance := INF
-	for id in plan.biomes:
-		var boss := plan.biomes[id].boss
-		if sign_site.sign_resource.reveals == null or boss.encounter.leader != sign_site.sign_resource.reveals:
+	for room_plan in plan.set_pieces():
+		if room_plan.kind != RoomPlan.Kind.BOSS and room_plan.kind != RoomPlan.Kind.MINIBOSS:
 			continue
-		var distance := Vector2(sign_site.spot).distance_to(graph.rooms[boss.key].seed_point)
+		if room_plan.encounter.leader != sign_site.sign_resource.reveals:
+			continue
+		var distance := Vector2(sign_site.spot).distance_to(graph.rooms[room_plan.key].seed_point)
 		if distance < best_distance:
 			best_distance = distance
-			best = boss.key
+			best = room_plan.key
 	return best

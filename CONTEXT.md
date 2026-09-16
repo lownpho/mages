@@ -85,7 +85,7 @@ A Biome's authored optional Fixed encounter in a Set-piece room near the end of 
 An interactive or reactive world entity placed in a Breather, except where its kind defines another location.
 
 **Sign**:
-An Object with authored text, placed once, that may reveal a Boss on the Map.
+An Object with authored text, placed once, that may reveal a Boss or Miniboss on the Map.
 
 **Professor**:
 An interactive Object that decides at runtime whether the player's bestiary progress earns an item.

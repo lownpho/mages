@@ -114,16 +114,21 @@ func _test_markers(graph: WorldGraph) -> void:
 	for room in graph.room_list:
 		state.discover_at(graph.tile_of(room.seed_point))
 	var by_object: Dictionary[String, Dictionary] = {}
-	var boss_rooms: Dictionary[String, bool] = {}
+	var set_pieces: Dictionary[String, int] = {}
 	for marker in state.markers:
-		if marker.kind == MapState.MARKER_BOSS:
-			boss_rooms[marker.room_key] = true
+		if marker.kind == MapState.MARKER_BOSS or marker.kind == MapState.MARKER_MINIBOSS:
+			set_pieces[marker.room_key] = marker.kind
 		elif marker.has("object_key"):
 			by_object[marker.object_key] = marker
 
 	for room in graph.room_list:
-		_check(boss_rooms.has(room.key()) == (room.role == GeneratedRoom.Role.BOSS),
-				"only Boss Rooms have Boss markers after discovery (%s)" % room.key())
+		var want := -1
+		if room.role == GeneratedRoom.Role.BOSS:
+			want = MapState.MARKER_BOSS
+		elif room.role == GeneratedRoom.Role.MINIBOSS:
+			want = MapState.MARKER_MINIBOSS
+		_check(set_pieces.get(room.key(), -1) == want,
+				"only Boss and Miniboss Rooms are marked after discovery, each by its own kind (%s)" % room.key())
 	var professors := 0
 	for key in graph.sites:
 		var site: ObjectSite = graph.sites[key]
@@ -163,11 +168,26 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 		return
 	var defeated: Dictionary[String, bool] = {}
 	var state := _state(graph, defeated)
-	_check(state.reveal_boss_room(boss.key()), "an Object can reveal a Boss Room key")
+	_check(state.reveal_room(boss.key()), "an Object can reveal a Boss Room key")
 	_check(not state.is_tile_discovered(graph.tile_of(boss.seed_point)), "revealing a Boss leaves its Room fogged")
 	var markers := state.markers
 	_check(markers.size() == 1 and markers[0].kind == MapState.MARKER_BOSS
 			and markers[0].project, "an undiscovered revealed Boss is marked for edge projection")
+
+	# A Sign may point at a Miniboss just as well, which marks it by its own kind.
+	var miniboss: GeneratedRoom = null
+	for room in graph.room_list:
+		if room.role == GeneratedRoom.Role.MINIBOSS:
+			miniboss = room
+			break
+	_check(miniboss != null, "fixture has a Miniboss")
+	if miniboss != null:
+		_check(state.reveal_room(miniboss.key()), "an Object can reveal a Miniboss Room key")
+		var revealed: Array = state.markers.filter(func(marker: Dictionary) -> bool: return marker.room_key == miniboss.key())
+		_check(revealed.size() == 1 and revealed[0].kind == MapState.MARKER_MINIBOSS and revealed[0].project,
+				"an undiscovered revealed Miniboss is marked for edge projection as a Miniboss")
+		state.revealed_rooms.erase(miniboss.key())
+
 	defeated[boss.key() + "/encounter/0/member/0"] = true
 	_check(state.markers.is_empty(), "defeating the Boss leader removes its marker")
 
@@ -180,20 +200,20 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 	state.add_pin(pin)
 	_check(state.pins == [pin] and not state.is_tile_discovered(pin), "a Pin may be placed in fog")
 	var saved := state.to_dict()
-	_check(saved.has("entered_rooms") and saved.has("pins") and saved.has("revealed_bosses")
+	_check(saved.has("entered_rooms") and saved.has("pins") and saved.has("revealed_rooms")
 			and not saved.has("markers"), "save exposes records, not generated marker lists")
 	var restored := _state(graph, defeated)
 	restored.restore(saved)
-	_check(restored.pins == [pin] and restored.revealed_bosses.has(boss.key()),
-			"Pins and revealed Boss keys restore")
+	_check(restored.pins == [pin] and restored.revealed_rooms.has(boss.key()),
+			"Pins and revealed set-piece keys restore")
 	defeated.clear()
 	_check(restored.markers.size() == 1, "restored markers reconstruct from records and defeat keys")
 
 	var global_state := _state(graph)
 	GlobalMap.active = global_state
-	GlobalMap.revealed_boss_keys.clear()
-	GlobalMap.reveal_boss_room(boss.key())
-	_check(global_state.revealed_bosses.has(boss.key()),
+	GlobalMap.revealed_room_keys.clear()
+	GlobalMap.reveal_room(boss.key())
+	_check(global_state.revealed_rooms.has(boss.key()),
 			"the Object-facing GlobalMap reveal reaches the active MapState")
 	GlobalMap.reset()
 

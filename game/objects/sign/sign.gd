@@ -4,7 +4,7 @@ extends Area2D
 
 ## A Sign. When the player walks up to it, its message floats above. A hand-placed one sets
 ## `message` (empty by default); a World Sign is set up from generated data with its text and the
-## Boss Room key reading it reveals. The art is a single blank 16×16 frame for now.
+## Boss or Miniboss Room key reading it reveals. The art is a single blank 16×16 frame for now.
 
 ## The text shown above the sign while the player stands on it. Set per placement.
 @export_multiline var message := "":
@@ -13,7 +13,7 @@ extends Area2D
 		if is_node_ready():
 			$Label.text = value
 
-## The Boss Room key reading this Sign reveals on the Map. "" = it marks nothing.
+## The Boss or Miniboss Room key reading this Sign reveals on the Map. "" = it marks nothing.
 var reveal_key := ""
 
 @onready var _label: Label = $Label
@@ -38,7 +38,7 @@ func setup(data: Dictionary) -> void:
 func _on_body_entered(_body: Node2D) -> void:
 	_label.visible = true
 	if reveal_key != "":
-		GlobalMap.reveal_boss_room(reveal_key)
+		GlobalMap.reveal_room(reveal_key)
 
 
 func _on_body_exited(_body: Node2D) -> void:

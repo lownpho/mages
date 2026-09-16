@@ -129,6 +129,7 @@ func _draw() -> void:
 		var color := COLOR_FEATURE
 		match m["kind"]:
 			MapState.MARKER_BOSS: color = COLOR_BOSS
+			MapState.MARKER_MINIBOSS: color = COLOR_BOSS   # smaller than a Boss, below
 			MapState.MARKER_FOUNTAIN: color = COLOR_FOUNTAIN
 			MapState.MARKER_DOOR: color = COLOR_DOOR
 			MapState.MARKER_SIGN: color = COLOR_SIGN

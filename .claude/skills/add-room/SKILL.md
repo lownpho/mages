@@ -90,7 +90,7 @@ Tune them live (below) and let **Save** write them back, rather than guessing nu
   stays empty. Fountains are `game/objects/fountain/*_fountain.tscn`. An Object scene takes its
   generated data through `setup(data: Dictionary)`.
 - `signs`: `text`, plus `reveals` (an enemy data sheet) when reading it should reveal the nearest
-  Boss that enemy leads. Each Sign stands exactly once.
+  Boss or Miniboss that enemy leads. Each Sign stands exactly once.
 - `professors` and `warp_doors` counts on the Biome. Professors are a placeholder for now
   (`game/objects/professor/`): a note that the Professor is away, with no reward.
 

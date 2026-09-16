@@ -251,11 +251,14 @@ func _draw() -> void:
 		var c := COLOR_FEATURE
 		match m["kind"]:
 			MapState.MARKER_BOSS: c = COLOR_BOSS
+			MapState.MARKER_MINIBOSS: c = COLOR_BOSS
 			MapState.MARKER_FOUNTAIN: c = COLOR_FOUNTAIN
 			MapState.MARKER_DOOR: c = COLOR_DOOR
 			MapState.MARKER_SIGN: c = COLOR_SIGN
 			MapState.MARKER_NPC: c = COLOR_NPC
-		_dot(Vector2(m["tile"]) + Vector2(0.5, 0.5), MARKER_PX, c,
+		# A Miniboss wears the Boss colour a pixel smaller, so the two read apart at a glance.
+		_dot(Vector2(m["tile"]) + Vector2(0.5, 0.5),
+				MARKER_PX - 1 if m["kind"] == MapState.MARKER_MINIBOSS else MARKER_PX, c,
 				m.get("project", false))
 	for e in get_tree().get_nodes_in_group("enemies"):
 		var et: Vector2 = e.global_position / GameConstants.PX_PER_TILE
