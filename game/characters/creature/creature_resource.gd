@@ -22,6 +22,7 @@ enum Rarity {COMMON, RARE, BOSS}
 ## creatures carry one; two only where it's obvious (the moss golem is stone AND plant).
 @export_flags("Insect:4", "Fungal:32") var kinds: int = 0
 ## Each entry is rolled independently on death, so a creature can drop several items at once.
+## A Professor's gift is drawn from the pool these make up across a Biome (see SitePlanner).
 @export var drops: Array[LootDrop] = []
 ## Bodies left behind on death, spawned on the same path as the drops — a bloatcap bursting
 ## into its brood, a clustercap coming apart into three turrets. Always fires; the roll is
@@ -43,3 +44,9 @@ enum Rarity {COMMON, RARE, BOSS}
 
 func is_hazard() -> bool:
 	return hazards_per_tile > 0.0
+
+
+## The id the Bestiary and the World file this creature under: its folder name under
+## characters/enemies/. A summon's injected stats carry no resource_path, so they yield &"".
+func enemy_id() -> StringName:
+	return &"" if resource_path.is_empty() else StringName(resource_path.get_base_dir().get_file())

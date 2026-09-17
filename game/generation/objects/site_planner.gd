@@ -6,12 +6,17 @@ extends RefCounted
 ## places its Professor and Warp-door counts. Those Rooms must not teach and become Breathers. Each
 ## door picks a seeded target Biome (an adjacent Ideal-path Biome, or a Side biome's parent) and a
 ## landing in an ordinary Room there that isn't a Breather; landings leave roles alone and may share
-## a Room. Every choice takes the first candidate in seeded order at least two room sizes from the
-## sites placed so far, or the farthest when none is. A spreading pass then moves each site still
-## short of two room sizes to the candidate Room that keeps it farthest from the rest. The layout
-## stands when every pair keeps MIN_SPACING of two room sizes. Signs reveal
-## the nearest planned Boss or Miniboss their enemy leads. Chance Breathers left without sites draw one Object by
-## weight from their Biome's and Zone's choices, or stay empty when they have none.
+## a Room. Each Professor takes a seeded kind and looks one Biome onward (the next on the Ideal path,
+## or the one after its parent for a Side biome, and nothing when that is sealed or the path ends):
+## a portal Professor takes a landing there, exactly as a door does, and an item Professor draws its
+## gift from that Biome's drop pool.
+##
+## Every choice takes the first candidate in seeded order at least two room sizes from the sites
+## placed so far, or the farthest when none is. A spreading pass then moves each site still short of
+## two room sizes to the candidate Room that keeps it farthest from the rest. The layout stands when
+## every pair keeps MIN_SPACING of two room sizes. Signs reveal the nearest planned Boss or Miniboss
+## their enemy leads. Chance Breathers left without sites draw one Object by weight from their
+## Biome's and Zone's choices, or stay empty when they have none.
 ##
 ## Spots default to the Room's seed. When that would break spacing, placement searches deterministic
 ## interior points toward the Room's corners and edges; sites sharing a Room keep separate spots.
@@ -33,7 +38,7 @@ var plan: WorldPlan
 var _spaced: Array[ObjectSite] = []
 ## Site -> the Rooms it may stand in.
 var _candidates: Dictionary[ObjectSite, Array] = {}
-## Door -> its landing.
+## Warp door or portal Professor -> its landing.
 var _landings: Dictionary[ObjectSite, ObjectSite] = {}
 ## The Breathers the chance picked before any site forced one.
 var _chance: Dictionary[GeneratedRoom, bool] = {}
@@ -59,7 +64,19 @@ func place() -> bool:
 			for n in zone.resource.signs.size():
 				_place_sign(biome, zone, zone.resource.signs[n], "sign/%s/%s/%d" % [id, zone.id, n])
 		for n in biome.resource.professors:
-			_place_forced(biome, null, ObjectSite.Kind.PROFESSOR, "professor/%s/%d" % [id, n])
+			var unit := "professor/%s/%d" % [id, n]
+			var professor := _place_forced(biome, null, ObjectSite.Kind.PROFESSOR, unit)
+			if professor == null:
+				continue
+			professor.opens_portal = plan.rng(WorldHash.NS_SITES, unit + "/kind").randi() % 2 == 0
+			professor.destination_biome = _next_biome(id)
+			if professor.destination_biome == &"":
+				continue
+			if professor.opens_portal:
+				_place_landing(professor, "landing/" + unit)
+			else:
+				professor.reward_item = _reward_item(professor.destination_biome,
+						plan.rng(WorldHash.NS_SITES, unit + "/gift"))
 		for n in biome.resource.warp_doors:
 			var targets := _door_targets(id)
 			if targets.is_empty():
@@ -132,6 +149,33 @@ func _place_forced(biome: BiomePlan, zone: ZonePlan, kind: ObjectSite.Kind, unit
 	return site
 
 
+## The Biome a Professor looks onward to: the next on the Ideal path, or for a Side biome, the one
+## after its parent. &"" where the Ideal path ends or the way onward is sealed, which leaves the
+## Professor with nothing to give.
+func _next_biome(id: StringName) -> StringName:
+	var path := plan.content.ideal_path
+	var index := path.find(plan.content.parents.get(id, id))
+	if index < 0 or index + 1 >= path.size():
+		return &""
+	var next := path[index + 1]
+	return &"" if plan.biomes[next].resource.sealed else next
+
+
+## One of the items the Biome's enemies drop, drawn evenly among the distinct ones so a rare drop
+## makes as likely a gift as a common one. Null when nothing filed there drops anything.
+func _reward_item(biome_id: StringName, rng: RandomNumberGenerator) -> ItemResource:
+	var items: Array[ItemResource] = []
+	for creature in plan.content.biome_enemies(biome_id):
+		for drop in creature.drops:
+			if drop.item != null and not items.has(drop.item):
+				items.append(drop.item)
+	if items.is_empty():
+		return null
+	items.sort_custom(func(a: ItemResource, b: ItemResource) -> bool: return a.resource_path < b.resource_path)
+	return items[rng.randi_range(0, items.size() - 1)]
+
+
+## A Warp door's or portal Professor's landing.
 func _place_landing(door: ObjectSite, unit: String) -> void:
 	var candidates: Array[GeneratedRoom] = []
 	for room_plan in plan.biomes[door.destination_biome].rooms:

@@ -3,15 +3,17 @@ extends Node
 ##
 ## On the shipped World at its three seeds and on the small fixture: generated setup data for every
 ## Object, authored Sign, Professor and Warp-door counts, Objects only in Breathers and never in set
-## pieces or the spawn, Signs revealing only the Boss their enemy leads, and Warp doors leading to a
-## permitted Biome's ordinary non-Breather Room wearing its door art, the same on a second build.
+## pieces or the spawn, Signs revealing only the Boss their enemy leads, Professors reading their own
+## Biome's Bestiary page and pointing one Biome onward, and Warp doors leading to a permitted Biome's
+## ordinary non-Breather Room wearing its door art, the same on a second build.
 ##
 ## In a streamed rig with the real player on the small fixture: every planned Object stands once at
-## its spot, a Sign reveals its Boss on the Map, every Professor shows its note, every landing is
-## clear floor away from encounters, a Warp door carries the player to its landing keeping its
-## facing and streams the destination in, a fountain's cooldown resets on reload, and a reactive
-## NPC's state survives unloading and a restore but not a new Run, while fountains, Signs,
-## Professors and doors keep none. Run:
+## its spot, a Sign reveals its Boss on the Map, a Professor shows its note and gives nothing on an
+## unfinished page but pays out once on a finished one — a portal beside it or its gift on the
+## ground, both surviving its chunk reloading — every landing is clear floor away from encounters, a
+## Warp door carries the player to its landing keeping its facing and streams the destination in, a
+## fountain's cooldown resets on reload, and a reactive NPC's state survives unloading and a restore
+## but not a new Run, while fountains, Signs and doors keep none. Run:
 ##   godot --headless --path game res://tests/generation/test_world_objects.tscn
 
 const GREETER := "res://tests/support/greeter.tscn"
@@ -89,6 +91,32 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictiona
 							"%s: Sign %s reveals %s, not a Boss or Miniboss led by %s" % [label, key, data.reveal_key, reveals.resource_path])
 			ObjectSite.Kind.PROFESSOR:
 				_check(objects.scene_for(site) == WorldObjects.PROFESSOR_SCENE, "%s: Professor %s doesn't use the Professor scene" % [label, key])
+				# A sealed placeholder Biome fields no enemies yet, so its page is empty and a Professor
+				# standing there has nothing to measure; every Biome with a roster reads its own.
+				_check(data.biome == room.plan.biome and data.page == objects.page_ids(room.plan.biome),
+						"%s: Professor %s reads %s's page %s, not its own Biome's" % [label, key, data.biome, data.page])
+				var onward := _onward(content, room.plan.biome)
+				_check(data.next_biome == onward, "%s: Professor %s looks at %s, not %s" % [label, key, data.next_biome, onward])
+				if onward == &"":
+					_check(data.reward_item == null and data.destination_room == "",
+							"%s: Professor %s earns %s though nothing lies onward" % [label, key, data.reward_item])
+				elif data.opens_portal:
+					_check(data.reward_item == null, "%s: portal Professor %s also gives %s" % [label, key, data.reward_item])
+					var arrival: GeneratedRoom = graph.rooms.get(data.destination_room)
+					if arrival == null:
+						_fails.append("%s: Professor %s's portal leads to no Room (%s)" % [label, key, data.destination_room])
+						continue
+					_check(arrival.plan.biome == onward and arrival.is_ordinary() and arrival.role != GeneratedRoom.Role.BREATHER,
+							"%s: Professor %s's portal lands in %s, a %s Room" % [label, key, arrival.plan.biome, arrival.role_name()])
+					_check(graph.owner_at(data.landing) == arrival,
+							"%s: Professor %s's landing %s is outside %s" % [label, key, data.landing, arrival.key()])
+					_check(data.art == content.biomes[onward].presentation.door_style,
+							"%s: Professor %s's portal doesn't wear %s's door art" % [label, key, onward])
+				else:
+					var pool := _drop_pool(content, onward)
+					_check(data.destination_room == "", "%s: item Professor %s also opens a portal to %s" % [label, key, data.destination_room])
+					_check(pool.is_empty() or pool.has(data.reward_item),
+							"%s: Professor %s gives %s, which nothing in %s drops" % [label, key, data.reward_item, onward])
 			ObjectSite.Kind.DOOR:
 				_check(objects.scene_for(site) == WorldObjects.DOOR_SCENE, "%s: door %s doesn't use the door scene" % [label, key])
 				var destination: GeneratedRoom = graph.rooms.get(data.destination_room)
@@ -127,6 +155,27 @@ static func _setup_snapshot(graph: WorldGraph) -> String:
 		var scene := objects.scene_for(graph.sites[key])
 		lines.append("%s %s %s" % [graph.sites[key].spot, scene.resource_path if scene else "-", objects.setup_data(graph.sites[key])])
 	return "\n".join(lines)
+
+
+## The Biome a Professor standing in `biome_id` looks onward to, by the same rule the planner uses:
+## the next on the Ideal path, or the one after a Side biome's parent, and nothing when the path ends
+## or the way onward is sealed.
+static func _onward(content: WorldContent, biome_id: StringName) -> StringName:
+	var path := content.ideal_path
+	var index := path.find(content.parents.get(biome_id, biome_id))
+	if index < 0 or index + 1 >= path.size():
+		return &""
+	return &"" if content.biomes[path[index + 1]].sealed else path[index + 1]
+
+
+## Every item the enemies filed onto a Biome's page drop.
+static func _drop_pool(content: WorldContent, biome_id: StringName) -> Array[ItemResource]:
+	var out: Array[ItemResource] = []
+	for creature: CreatureResource in content.biome_enemies(biome_id):
+		for drop: LootDrop in creature.drops:
+			if drop.item != null and not out.has(drop.item):
+				out.append(drop.item)
+	return out
 
 
 ## The first weighted Object, in key order, whose scene path contains the text.
@@ -301,8 +350,10 @@ func _test_sign(rig: Dictionary) -> void:
 			"reading Sign %s reveals %s, want only its set piece %s" % [site.key, GlobalMap.revealed_room_keys.keys(), site.reveal_key])
 
 
-## Every planned Professor stands once as a Professor and shows its note when walked up to, keeping
-## no state.
+## Every planned Professor stands once, shows its note when walked up to and gives nothing while the
+## page it reads is unfinished. Then the pages are filled in and each Professor with something to
+## give is driven as both kinds — the seed settles on one, so the other is set up by hand on the same
+## site rather than left to chance.
 func _test_professors(rig: Dictionary) -> void:
 	var keys: Array[String] = []
 	for key in rig.graph.sites:
@@ -310,6 +361,9 @@ func _test_professors(rig: Dictionary) -> void:
 			keys.append(key)
 	keys.sort()
 	_check(not keys.is_empty(), "the fixture plans a Professor")
+	var saved := GlobalBestiary.to_dict()
+	GlobalBestiary.restore({"kills": {}})
+	var giving: Array[String] = []
 	for key in keys:
 		var site: ObjectSite = rig.graph.sites[key]
 		var professor := await _approach(rig, site)
@@ -319,8 +373,98 @@ func _test_professors(rig: Dictionary) -> void:
 		_check(not professor.get_node("Label").visible, "Professor %s shows its note before anyone walks up" % key)
 		await _enter(rig, professor)
 		_check(professor.get_node("Label").visible, "walking up to Professor %s shows its note" % key)
-		_check(rig.objects.states.get(key, {}).is_empty(), "Professor %s wrote state %s" % [key, rig.objects.states.get(key)])
-	_check(rig.objects.saved_states().is_empty(), "Professors saved state %s" % rig.objects.saved_states())
+		_check(rig.objects.states.get(key, {}).is_empty(), "Professor %s gave on an unfinished page: %s" % [key, rig.objects.states.get(key)])
+		_check(_portal_of(professor) == null, "Professor %s opened a portal on an unfinished page" % key)
+		if site.destination_biome != &"":
+			giving.append(key)
+	_check(not giving.is_empty(), "the fixture plans a Professor with a Biome onward")
+	var kills: Dictionary = {}
+	for key in giving:
+		for id: StringName in rig.objects.world_objects.setup_data(rig.graph.sites[key]).page:
+			kills[id] = 1
+	GlobalBestiary.restore({"kills": kills})
+	for key in giving:
+		for opens_portal in [true, false]:
+			await _test_professor_gift(rig, key, opens_portal)
+	GlobalBestiary.restore(saved)
+	# Hand the tests that follow a Run whose Object state is empty again.
+	rig.objects.build_world(WorldObjects.new(rig.graph), true)
+
+
+## Drives one Professor as one of the two kinds, on a page the Bestiary has just finished: it pays
+## out once, the payout stands when its chunk reloads, and a second visit adds nothing.
+func _test_professor_gift(rig: Dictionary, key: String, opens_portal: bool) -> void:
+	var site: ObjectSite = rig.graph.sites[key]
+	site.opens_portal = opens_portal
+	if opens_portal:
+		if site.landing_key == "":
+			var landing: ObjectSite = _landing_in(rig.graph, site.destination_biome)
+			if landing == null:
+				_fails.append("the fixture has no landing in %s to drive %s's portal" % [site.destination_biome, key])
+				return
+			site.landing_key = landing.key
+			site.destination_room = landing.room_key
+		site.reward_item = null
+	else:
+		site.destination_room = ""
+		site.landing_key = ""
+		if site.reward_item == null:
+			var pool: Array[ItemResource] = _drop_pool(rig.graph.plan.content, site.destination_biome)
+			if pool.is_empty():
+				_fails.append("nothing in %s drops, so %s has no gift to give" % [site.destination_biome, key])
+				return
+			site.reward_item = pool[0]
+	rig.objects.build_world(WorldObjects.new(rig.graph), true)
+	var data: Dictionary = rig.objects.world_objects.setup_data(site)
+	var label := "%s Professor %s" % ["portal" if opens_portal else "item", key]
+	var gifts: Array[ItemResource] = []
+	var collect := func(item: ItemResource, _at: Vector2) -> void: gifts.append(item)
+	GlobalEvent.loot_dropped.connect(collect)
+	var professor := await _approach(rig, site)
+	if professor == null:
+		_fails.append("%s doesn't stand" % label)
+		GlobalEvent.loot_dropped.disconnect(collect)
+		return
+	await _enter(rig, professor)
+	_check(rig.objects.states.get(key, {}).get("given", false), "%s gave nothing on a finished page" % label)
+	if opens_portal:
+		var portal: Door = _portal_of(professor)
+		_check(portal != null and portal.destination_room == data.destination_room and portal.landing == data.landing,
+				"%s's portal leads to %s, want %s" % [label, portal.destination_room if portal else "nowhere", data.destination_room])
+		_check(gifts.is_empty(), "%s also dropped %s" % [label, gifts])
+	else:
+		_check(_portal_of(professor) == null, "%s also opened a portal" % label)
+		_check(gifts.size() == 1 and gifts[0] == data.reward_item, "%s dropped %s, want its gift %s" % [label, gifts, data.reward_item])
+	gifts.clear()
+	await _approach(rig, site)
+	await _enter(rig, professor)
+	_check(gifts.is_empty(), "%s gave %s again on a second visit" % [label, gifts])
+	await _reload(rig, site)
+	var rebuilt := _live_with(rig, key)
+	_check(rebuilt.size() == 1 and rig.objects.states[key].get("given", false), "%s forgot it had given when its chunk reloaded" % label)
+	if opens_portal and rebuilt.size() == 1:
+		_check(_portal_of(rebuilt[0]) != null, "%s's portal didn't come back with its chunk" % label)
+	GlobalEvent.loot_dropped.disconnect(collect)
+
+
+## The portal a Professor has opened, or null while it hasn't.
+static func _portal_of(professor: Node) -> Door:
+	for child in professor.get_children():
+		if child is Door:
+			return child
+	return null
+
+
+## Any planned landing in a Biome, for driving a portal the seed didn't plan one for.
+static func _landing_in(graph: WorldGraph, biome_id: StringName) -> ObjectSite:
+	var keys: Array[String] = []
+	keys.assign(graph.sites.keys())
+	keys.sort()
+	for key in keys:
+		var site := graph.sites[key]
+		if site.kind == ObjectSite.Kind.LANDING and graph.rooms[site.room_key].plan.biome == biome_id:
+			return site
+	return null
 
 
 ## Every landing is clear ordinary floor with its destination's encounters and Hazards kept away.

@@ -205,6 +205,4 @@ func _on_creature_died(data: CreatureResource, _position: Vector2) -> void:
 # "res://characters/enemies/owl/owl_data.tres" -> &"owl". A summon's injected stats
 # have no resource_path, so they yield &"" and are ignored.
 func _id_for(data: CreatureResource) -> StringName:
-	if data == null or data.resource_path.is_empty():
-		return &""
-	return StringName(data.resource_path.get_base_dir().get_file())
+	return &"" if data == null else data.enemy_id()

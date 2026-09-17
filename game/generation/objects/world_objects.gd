@@ -7,7 +7,10 @@ extends RefCounted
 ##
 ## Setup data always holds the Object's "key" (its site key, derived from its place), "kind" and
 ## "room_key". A Sign adds "text" and "reveal_key"; a Warp door adds "destination_room", "landing"
-## (a tile) and "art" (a Door.Style). ObjectSpawner adds the Object's own "state".
+## (a tile) and "art" (a Door.Style). A Professor adds "biome" and "page" (the enemy ids on the
+## Bestiary page it reads), "next_biome" (&"" when nothing lies onward), "opens_portal" and, by that
+## kind, either "reward_item" or a portal's "destination_room", "landing" and "art". ObjectSpawner
+## adds the Object's own "state".
 
 const SIGN_SCENE := preload("res://objects/sign/sign.tscn")
 const PROFESSOR_SCENE := preload("res://objects/professor/professor.tscn")
@@ -60,9 +63,38 @@ func setup_data(site: ObjectSite) -> Dictionary:
 		ObjectSite.Kind.SIGN:
 			data.text = site.sign_resource.text
 			data.reveal_key = site.reveal_key
+		ObjectSite.Kind.PROFESSOR:
+			var biome_id: StringName = graph.rooms[site.room_key].plan.biome
+			data.biome = biome_id
+			data.page = page_ids(biome_id)
+			data.next_biome = site.destination_biome
+			data.opens_portal = site.opens_portal
+			data.reward_item = site.reward_item
+			data.destination_room = site.destination_room
+			data.landing = graph.sites[site.landing_key].spot if graph.sites.has(site.landing_key) else Vector2i.MAX
+			data.art = _door_art(site.destination_biome)
 		ObjectSite.Kind.DOOR:
-			var presentation := graph.plan.content.biomes[site.destination_biome].presentation
 			data.destination_room = site.destination_room
 			data.landing = graph.sites[site.landing_key].spot
-			data.art = presentation.door_style if presentation != null else Door.Style.WOOD
+			data.art = _door_art(site.destination_biome)
 	return data
+
+
+## The art every way into a Biome wears, a Warp door's and a Professor's portal's alike. Door.Style
+## has a PORTAL frame reserved, but none is drawn yet, so a portal wears its destination's door too.
+func _door_art(biome_id: StringName) -> Door.Style:
+	var biome: BiomeResource = graph.plan.content.biomes.get(biome_id)
+	var presentation := biome.presentation if biome != null else null
+	return presentation.door_style if presentation != null else Door.Style.WOOD
+
+
+## The enemy ids on a Biome's Bestiary page, sorted — what a Professor standing in that Biome counts
+## its visitor's kills against.
+func page_ids(biome_id: StringName) -> Array[StringName]:
+	var out: Array[StringName] = []
+	for creature in graph.plan.content.biome_enemies(biome_id):
+		var id := creature.enemy_id()
+		if id != &"" and not out.has(id):
+			out.append(id)
+	out.sort()
+	return out

@@ -88,7 +88,17 @@ An interactive or reactive world entity placed in a Breather, except where its k
 An Object with authored text, placed once, that may reveal a Boss or Miniboss on the Map.
 
 **Professor**:
-An interactive Object that decides at runtime whether the player's bestiary progress earns an item.
+An interactive Object that reads the Bestiary page of the Biome it stands in and pays out when that
+page is complete. A portal Professor opens a Portal onward; an item Professor gives up one of the
+things that drop there. It pays out once a Run, and says what it sees either way.
+
+**Portal**:
+The way onward a portal Professor opens beside itself, leading into the Biome onward exactly as a
+Warp door leads into its destination.
+
+**Biome onward**:
+The Biome a Professor's reward points at: the next on the Ideal path, or for a Side biome, the one
+after its parent. A sealed Biome is none, and a Professor with none gives nothing.
 
 **Warp door**:
 A seeded one-way Object that skips to the previous or next Ideal-path Biome, or from a Side biome back to its parent. It stands in a Breather and lands at a cleared spot in an ordinary Room rather than requiring another Warp door.

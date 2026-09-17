@@ -91,8 +91,13 @@ Tune them live (below) and let **Save** write them back, rather than guessing nu
   generated data through `setup(data: Dictionary)`.
 - `signs`: `text`, plus `reveals` (an enemy data sheet) when reading it should reveal the nearest
   Boss or Miniboss that enemy leads. Each Sign stands exactly once.
-- `professors` and `warp_doors` counts on the Biome. Professors are a placeholder for now
-  (`game/objects/professor/`): a note that the Professor is away, with no reward.
+- `professors` and `warp_doors` counts on the Biome. A Professor (`game/objects/professor/`) reads
+  the Bestiary page of its own Biome and pays out once a Run when that page is complete. Its kind is
+  seeded per site, not authored: half open a portal into the **Biome onward** (the next on the Ideal
+  path, or the one after a Side biome's parent), half give up one of the items that drop there. A
+  sealed Biome onward, or the end of the Ideal path, leaves the Professor with nothing to give — it
+  still stands and says so. What it says lives on `professor.tscn` as `{biome}`/`{next}`/`{seen}`/
+  `{total}` templates, not in the script.
 
 ### Which enemies a Room fights
 

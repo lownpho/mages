@@ -1,9 +1,9 @@
 class_name ObjectSite
 extends RefCounted
-## A fixed spot the room graph plans for an Object or a Warp-door landing, consumed by interiors,
-## Object setup and the Map. Signs, Professors and Warp doors force their Rooms to be Breathers; a
-## WEIGHTED Object is a chance Breather's draw. Landings are clear spots, not Objects, and leave their
-## Rooms' roles alone.
+## A fixed spot the room graph plans for an Object or a landing, consumed by interiors, Object setup
+## and the Map. Signs, Professors and Warp doors force their Rooms to be Breathers; a WEIGHTED Object
+## is a chance Breather's draw. Landings are clear spots, not Objects, and leave their Rooms' roles
+## alone — a Warp door owns one, and so does a Professor whose gift is a portal onward.
 
 enum Kind { SIGN, PROFESSOR, DOOR, LANDING, WEIGHTED }
 
@@ -20,11 +20,19 @@ var scene: PackedScene
 var sign_resource: SignResource
 ## The Room a Sign reveals: the nearest planned Boss or Miniboss its enemy leads.
 var reveal_key := ""
-## A Warp door's destination Biome, Room and the landing site there.
+## A Professor's kind: a portal Professor opens a way into the Biome onward, an item Professor gives
+## up one of the things that drop there. Seeded per site.
+var opens_portal := false
+## An item Professor's gift, drawn once from the Biome onward's drop pool. Null when that Biome
+## drops nothing, or when this is a portal Professor or another kind of site.
+var reward_item: ItemResource
+## A Warp door's destination Biome, Room and the landing site there. A portal Professor fills the
+## same three in, so its portal leads like any Warp door; destination_biome alone is also the Biome
+## an item Professor's gift comes from, and is &"" when nothing lies onward.
 var destination_biome := &""
 var destination_room := ""
 var landing_key := ""
-## A landing's door.
+## A landing's Warp door or portal Professor.
 var door_key := ""
 
 
