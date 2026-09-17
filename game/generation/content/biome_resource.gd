@@ -8,7 +8,10 @@ extends Resource
 @export_range(0, 50, 1, "or_greater") var exit_challenge := 0
 ## Enemy -> Entry challenge, shared by every Zone.
 @export var roster: Dictionary[CreatureResource, int] = {}
+## Optional; omit for a Biome without a Boss encounter.
 @export var boss: FixedEncounterResource
+## Keep this Biome generated, but close its borders and disable Warp doors to and from it.
+@export var sealed := false
 
 ## The eight spatial knobs. Zones inherit them. The ranges are the debug sliders' ranges.
 @export_group("Shape")

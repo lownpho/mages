@@ -160,11 +160,14 @@ func _check_set_pieces(plan: WorldPlan, label: String) -> void:
 		var biome := plan.biomes[id]
 		var bosses := biome.rooms.filter(func(room: RoomPlan) -> bool: return room.kind == RoomPlan.Kind.BOSS)
 		var final := biome.zones[-1]
-		_check(bosses.size() == 1 and bosses[0] == biome.boss, "%s: %s has %d Bosses" % [label, id, bosses.size()])
-		_check(biome.boss.zone == final.id and biome.boss.encounter == biome.resource.boss and biome.boss.key == "boss/%s" % id,
-				"%s: %s's Boss %s is in Zone %s, not its final Zone %s" % [label, id, biome.boss.key, biome.boss.zone, final.id])
-		_check(biome.boss.join_index >= final.route_end() - ceili(final.resource.route_rooms / 2.0),
-				"%s: %s's Boss joins route %d, not near its end %d" % [label, id, biome.boss.join_index, biome.route.size() - 1])
+		if biome.resource.boss == null:
+			_check(bosses.is_empty() and biome.boss == null, "%s: %s should have no Boss" % [label, id])
+		else:
+			_check(bosses.size() == 1 and bosses[0] == biome.boss, "%s: %s has %d Bosses" % [label, id, bosses.size()])
+			_check(biome.boss.zone == final.id and biome.boss.encounter == biome.resource.boss and biome.boss.key == "boss/%s" % id,
+					"%s: %s's Boss %s is in Zone %s, not its final Zone %s" % [label, id, biome.boss.key, biome.boss.zone, final.id])
+			_check(biome.boss.join_index >= final.route_end() - ceili(final.resource.route_rooms / 2.0),
+					"%s: %s's Boss joins route %d, not near its end %d" % [label, id, biome.boss.join_index, biome.route.size() - 1])
 		for zone in biome.zones:
 			for entry: Array in [[RoomPlan.Kind.MINIBOSS, zone.resource.minibosses], [RoomPlan.Kind.RARE, zone.resource.rares]]:
 				var authored: Array = entry[1]

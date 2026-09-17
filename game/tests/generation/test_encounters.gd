@@ -61,6 +61,9 @@ func _check_world(graph: WorldGraph, label: String) -> void:
 		if room.is_set_piece():
 			_check_fixed(graph, generated, room, room_encounters, label)
 			continue
+		if room.roster.is_empty():
+			_check(room_encounters.is_empty(), "%s: empty-roster room %s has encounters" % [label, room.key()])
+			continue
 		var challenge := room.plan.challenge - curve.teach_dip if room.teaching != null else room.plan.challenge
 		challenge = maxi(0, challenge)
 		var expected := generated.walkable_tiles(room).size() * curve.encounter_density(challenge)

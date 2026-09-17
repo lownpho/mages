@@ -140,8 +140,9 @@ func _reserve_set_pieces(biome: BiomePlan) -> void:
 	var taken: Dictionary = _joined[biome.id]
 	var final := biome.zones[-1]
 	var end := biome.route.size() - 1
-	biome.boss = _add_set_piece(biome, final, RoomPlan.Kind.BOSS, biome.resource.boss, "boss/%s" % biome.id,
-			_free_join(taken, end, final.route_start, end, true))
+	if biome.resource.boss != null:
+		biome.boss = _add_set_piece(biome, final, RoomPlan.Kind.BOSS, biome.resource.boss, "boss/%s" % biome.id,
+				_free_join(taken, end, final.route_start, end, true))
 	for zone in biome.zones:
 		var low := zone.route_start
 		var high := zone.route_end() - 1

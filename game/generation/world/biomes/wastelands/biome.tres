@@ -1,36 +1,15 @@
 [gd_resource type="Resource" script_class="BiomeResource" format=3]
 
-[ext_resource type="Resource" path="res://characters/enemies/ash_snake/ash_snake_data.tres" id="ash_snake"]
 [ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
-[ext_resource type="Resource" path="res://characters/enemies/bristlestone/bristlestone_data.tres" id="bristlestone"]
-[ext_resource type="Resource" path="res://characters/enemies/cinderstone/cinderstone_data.tres" id="cinderstone"]
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
-[ext_resource type="Resource" path="res://characters/enemies/dirt_golem/dirt_golem_data.tres" id="dirt_golem"]
-[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="PackedScene" path="res://objects/fountain/mycelium_fountain.tscn" id="fountain"]
-[ext_resource type="Resource" path="res://characters/enemies/mole/mole_data.tres" id="mole"]
-[ext_resource type="Resource" path="res://characters/enemies/moss_golem/moss_golem_data.tres" id="moss_golem"]
 [ext_resource type="Resource" path="res://generation/world/biomes/wastelands/art/wastelands_presentation.tres" id="presentation"]
 [ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
-[ext_resource type="Resource" path="res://characters/enemies/thornmess/thornmess_data.tres" id="thornmess"]
-
-[sub_resource type="Resource" id="boss"]
-script = ExtResource("fixed_encounter")
-leader = ExtResource("thornmess")
-centred = true
 
 [resource]
 script = ExtResource("biome")
 exit_challenge = 14
-roster = Dictionary[ExtResource("creature"), int]({
-ExtResource("cinderstone"): 10,
-ExtResource("bristlestone"): 10,
-ExtResource("dirt_golem"): 11,
-ExtResource("mole"): 11,
-ExtResource("ash_snake"): 12,
-ExtResource("moss_golem"): 13
-})
-boss = SubResource("boss")
+sealed = true
 room_size = 45
 border_warp = 12.0
 loops = 0.5

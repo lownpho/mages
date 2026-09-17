@@ -20,9 +20,9 @@ const AWAY_TILES := 100
 ## Where the player waits before walking into an Object, clear of its trigger.
 const BESIDE := Vector2i(5, 0)
 ## Every Warp door's permitted destination Biomes.
-const SHIPPED_TARGETS := {&"glade": [&"deepwood"], &"deepwood": [&"glade", &"wastelands"],
-		&"wastelands": [&"deepwood", &"fruit"], &"fruit": [&"wastelands"], &"hive": [&"deepwood"],
-		&"mycelium": [&"deepwood"], &"moon": [&"wastelands"], &"hell": [&"wastelands"]}
+const SHIPPED_TARGETS := {&"glade": [&"deepwood"], &"deepwood": [&"glade"],
+		&"wastelands": [], &"fruit": [], &"hive": [],
+		&"mycelium": [&"deepwood"], &"moon": [], &"hell": []}
 const SMALL_TARGETS := {&"meadow": [&"forest"], &"forest": [&"meadow"], &"burrow": [&"forest"],
 		&"hollow": [&"forest"]}
 
@@ -109,7 +109,7 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictiona
 		var signs := biome.signs.size()
 		for zone in graph.plan.biomes[id].zones:
 			signs += zone.resource.signs.size()
-		for pair: Array in [["sign", signs], ["professor", biome.professors], ["door", biome.warp_doors]]:
+		for pair: Array in [["sign", signs], ["professor", biome.professors], ["door", 0 if targets[id].is_empty() else biome.warp_doors]]:
 			var count: int = placed.get("%s/%s" % [id, pair[0]], 0)
 			_check(count == pair[1], "%s: %s holds %d %ss, authored %d" % [label, id, count, pair[0], pair[1]])
 	_check(graph.rooms[graph.plan.spawn.key].sites.is_empty(), "%s: the spawn holds sites" % label)

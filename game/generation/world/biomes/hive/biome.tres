@@ -2,33 +2,14 @@
 
 [ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
 [ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
-[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="PackedScene" path="res://objects/fountain/deepwood_fountain.tscn" id="fountain"]
-[ext_resource type="Resource" path="res://characters/enemies/moon_moth/moon_moth_data.tres" id="moon_moth"]
-[ext_resource type="Resource" path="res://characters/enemies/moth/moth_data.tres" id="moth"]
-[ext_resource type="Resource" path="res://characters/enemies/needle_moth/needle_moth_data.tres" id="needle_moth"]
 [ext_resource type="Resource" path="res://generation/world/biomes/hive/art/hive_presentation.tres" id="presentation"]
 [ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
-[ext_resource type="Resource" path="res://characters/enemies/sporefly/sporefly_data.tres" id="sporefly"]
-[ext_resource type="Resource" path="res://characters/enemies/thornmess/thornmess_data.tres" id="thornmess"]
-[ext_resource type="Resource" path="res://characters/enemies/wasp/wasp_data.tres" id="wasp"]
-
-[sub_resource type="Resource" id="boss"]
-script = ExtResource("fixed_encounter")
-leader = ExtResource("thornmess")
-centred = true
 
 [resource]
 script = ExtResource("biome")
 exit_challenge = 12
-roster = Dictionary[ExtResource("creature"), int]({
-ExtResource("wasp"): 4,
-ExtResource("moth"): 5,
-ExtResource("needle_moth"): 6,
-ExtResource("moon_moth"): 8,
-ExtResource("sporefly"): 9
-})
-boss = SubResource("boss")
+sealed = true
 room_size = 30
 border_warp = 0.0
 loops = 0.2

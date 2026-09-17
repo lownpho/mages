@@ -306,9 +306,7 @@ func _check_biome(id: StringName) -> void:
 	_check_roster(biome, {}, low, biome.exit_challenge)
 	if biome.presentation == null:
 		_error_at(biome, "presentation", "Biome '%s' has no presentation" % id)
-	if biome.boss == null:
-		_error_at(biome, "boss", "Biome '%s' has no Boss" % id)
-	else:
+	if biome.boss != null:
 		_check_encounter(biome.boss, "the Boss")
 	_check_objects(biome)
 	var zones: Dictionary = _content.zones[id]
@@ -328,7 +326,7 @@ func _check_biome(id: StringName) -> void:
 		if zone.spawn and placed and _content.ideal_path.find(id) != 0:
 			_error_at(zone, "spawn", "the Spawn zone must belong to the Ideal path's first Biome, not '%s'" % id)
 		if all_zones_loaded:
-			_check_capacity(zone, zones.size())
+			_check_capacity(zone, zones.size(), biome.boss != null)
 
 
 ## An owner is a Biome or a Zone. A Zone adds to its Biome's shared roster and may not repeat it.
@@ -391,8 +389,8 @@ func _check_duplicate_keys(resource: Resource, property: String) -> void:
 
 ## room_count must hold the route Rooms and every set piece the Zone may need. Seeded ordering can
 ## place any Zone but the Spawn zone last in its Biome, where it also holds the Biome's Boss.
-func _check_capacity(zone: ZoneResource, biome_zones: int) -> void:
-	var may_hold_boss := not zone.spawn or biome_zones == 1
+func _check_capacity(zone: ZoneResource, biome_zones: int, has_boss: bool) -> void:
+	var may_hold_boss := has_boss and (not zone.spawn or biome_zones == 1)
 	var needed := zone.route_rooms + zone.minibosses.size() + zone.rares.size() + (1 if may_hold_boss else 0)
 	if zone.room_count >= needed:
 		return

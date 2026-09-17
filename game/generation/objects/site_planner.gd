@@ -61,11 +61,13 @@ func place() -> bool:
 		for n in biome.resource.professors:
 			_place_forced(biome, null, ObjectSite.Kind.PROFESSOR, "professor/%s/%d" % [id, n])
 		for n in biome.resource.warp_doors:
+			var targets := _door_targets(id)
+			if targets.is_empty():
+				continue
 			var unit := "door/%s/%d" % [id, n]
 			var door := _place_forced(biome, null, ObjectSite.Kind.DOOR, unit)
 			if door == null:
 				continue
-			var targets := _door_targets(id)
 			door.destination_biome = targets[plan.rng(WorldHash.NS_SITES, unit).randi_range(0, targets.size() - 1)]
 			_place_landing(door, "landing/" + unit)
 	_spread()
@@ -341,15 +343,21 @@ func _free_spot(room: GeneratedRoom) -> Vector2i:
 
 
 ## Glade -> Deepwood; an inner Ideal-path Biome -> either neighbour; a Side biome -> its parent.
+## Sealed Biomes neither send nor receive Warp doors.
 func _door_targets(id: StringName) -> Array[StringName]:
+	if plan.biomes[id].resource.sealed:
+		return []
 	if plan.content.parents.has(id):
-		return [plan.content.parents[id]]
+		var parent := plan.content.parents[id]
+		if plan.biomes[parent].resource.sealed:
+			return []
+		return [parent]
 	var path := plan.content.ideal_path
 	var index := path.find(id)
 	var out: Array[StringName] = []
-	if index > 0:
+	if index > 0 and not plan.biomes[path[index - 1]].resource.sealed:
 		out.append(path[index - 1])
-	if index < path.size() - 1:
+	if index < path.size() - 1 and not plan.biomes[path[index + 1]].resource.sealed:
 		out.append(path[index + 1])
 	return out
 

@@ -350,6 +350,10 @@ func _site_detail(site: ObjectSite) -> String:
 
 
 func _link(passage: RoomPassage) -> void:
+	var a := rooms[passage.a].plan.biome
+	var b := rooms[passage.b].plan.biome
+	if a != b and (plan.biomes[a].resource.sealed or plan.biomes[b].resource.sealed):
+		return
 	passages[passage.key] = passage
 	rooms[passage.a].passages.append(passage)
 	rooms[passage.b].passages.append(passage)

@@ -1,5 +1,5 @@
 extends Node
-## Headless tests for the room graphs, through WorldGraph's public output: every Room reachable from
+## Headless tests for the room graphs, through WorldGraph's public output: every unsealed Room reachable from
 ## the spawn; exact Zone quotas and roles; route Passages inside and between macro cells; sealed Side
 ## biomes; isolated set pieces owning their protected discs; shortcuts; Passage spots on their
 ## borders; Teaching rooms; planned Object sites, reveals, doors and landings with their spacing;
@@ -116,7 +116,9 @@ func _check_reachable(graph: WorldGraph, label: String) -> void:
 				reached[other] = true
 				queue.append(other)
 		next += 1
-	var stranded := graph.rooms.keys().filter(func(key: String) -> bool: return not reached.has(key))
+	for key in reached:
+		_check(not graph.plan.biomes[graph.rooms[key].plan.biome].resource.sealed, "%s: sealed Room %s is reachable" % [label, key])
+	var stranded := graph.rooms.keys().filter(func(key: String) -> bool: return not graph.plan.biomes[graph.rooms[key].plan.biome].resource.sealed and not reached.has(key))
 	_check(stranded.is_empty(), "%s: %d Rooms unreachable from the spawn, e.g. %s" % [label, stranded.size(), stranded.slice(0, 3)])
 
 
@@ -128,6 +130,11 @@ func _check_route(graph: WorldGraph, label: String) -> void:
 	var ideal := plan.ideal_route()
 	for n in range(1, ideal.size()):
 		var passage: RoomPassage = graph.passages.get(RoomPassage.pair(ideal[n - 1].key, ideal[n].key))
+		var a := plan.biomes[ideal[n - 1].biome]
+		var b := plan.biomes[ideal[n].biome]
+		if a != b and (a.resource.sealed or b.resource.sealed):
+			_check(passage == null, "%s: sealed border has a route Passage" % label)
+			continue
 		_check(passage != null and passage.kind == RoomPassage.Kind.ROUTE, "%s: Ideal-path route Rooms %s and %s share no route Passage" % [label, ideal[n - 1].key, ideal[n].key])
 	var edges := {}
 	for key in graph.passages:
@@ -169,7 +176,7 @@ func _check_route(graph: WorldGraph, label: String) -> void:
 			_check(passage != null and passage.kind == RoomPassage.Kind.ROUTE, "%s: %s's route breaks between %s and %s" % [label, side, biome.route[n - 1].key, biome.route[n].key])
 		var ways_in := graph.passages.values().filter(func(passage: RoomPassage) -> bool:
 			return (graph.rooms[passage.a].plan.biome == side) != (graph.rooms[passage.b].plan.biome == side))
-		_check(ways_in.size() == 1, "%s: Side biome %s has %d Passages out" % [label, side, ways_in.size()])
+		_check(ways_in.size() == (0 if biome.resource.sealed or plan.biomes[biome.parent].resource.sealed else 1), "%s: Side biome %s has %d Passages out" % [label, side, ways_in.size()])
 
 
 ## Bosses, Minibosses and Rares have exactly one Passage, to an ordinary Room of their macro cell.
@@ -322,7 +329,7 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 		var biome := plan.biomes[id]
 		for kind: ObjectSite.Kind in [ObjectSite.Kind.PROFESSOR, ObjectSite.Kind.DOOR]:
 			var placed: Array = by_kind.get(kind, []).filter(func(site: ObjectSite) -> bool: return graph.rooms[site.room_key].plan.biome == id)
-			var authored := biome.resource.professors if kind == ObjectSite.Kind.PROFESSOR else biome.resource.warp_doors
+			var authored := biome.resource.professors if kind == ObjectSite.Kind.PROFESSOR else (0 if biome.resource.sealed else biome.resource.warp_doors)
 			_check(placed.size() == authored, "%s: %s has %d %ss, authored %d" % [label, id, placed.size(), ObjectSite.KIND_NAMES[kind], authored])
 		var signs: Array = biome.resource.signs.duplicate()
 		for zone in biome.zones:
@@ -357,6 +364,7 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 	var doors: Array = by_kind.get(ObjectSite.Kind.DOOR, [])
 	_check(by_kind.get(ObjectSite.Kind.LANDING, []).size() == doors.size(), "%s: %d landings for %d doors" % [label, by_kind.get(ObjectSite.Kind.LANDING, []).size(), doors.size()])
 	for door: ObjectSite in doors:
+		_check(not plan.biomes[door.destination_biome].resource.sealed, "%s: door %s leads to a sealed Biome" % [label, door.key])
 		var from := graph.rooms[door.room_key].plan.biome
 		var allowed: Array[StringName] = []
 		if content.parents.has(from):

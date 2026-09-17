@@ -6,7 +6,6 @@ extends Node
 
 const SHIPPED := "res://generation/world/"
 const FIXTURES := "res://tests/generation/fixtures/"
-const THORNMESS := "res://characters/enemies/thornmess/thornmess_data.tres"
 
 ## Fixture under load_errors/ -> exactly the problems it reports, as [file relative to the fixture,
 ## line, text the message contains]. Line 0 means the problem has no line: a missing file.
@@ -41,7 +40,7 @@ const LOAD_ERRORS := {
 		["biomes/solo/zones/also.tres", 10, "2 Zones are the Spawn zone (solo/also, solo/start)"],
 		["biomes/solo/zones/start.tres", 10, "2 Zones are the Spawn zone (solo/also, solo/start)"],
 	],
-	"no_boss": [["biomes/solo/biome.tres", 9, "Biome 'solo' has no Boss"]],
+	"no_boss": [],
 	"leaderless_encounter": [["biomes/solo/zones/start.tres", 9, "a Rare has no leader"]],
 	"entry_out_of_range": [
 		["biomes/deep/biome.tres", 20, "snake enters at Challenge 2, outside the Biome's 4 to 8"],
@@ -112,7 +111,7 @@ func _test_shipped_world() -> void:
 	for placeholder: StringName in [&"wastelands", &"fruit", &"hive", &"moon", &"hell"]:
 		var biome := content.biomes.get(placeholder) as BiomeResource
 		_check(biome != null and content.zone_count(placeholder) == 1, "placeholder %s should have one Zone" % placeholder)
-		_check(biome != null and biome.boss.leader.resource_path == THORNMESS, "placeholder %s's Boss should be thornmess" % placeholder)
+		_check(biome != null and biome.boss == null and biome.roster.is_empty(), "placeholder %s should have no enemies" % placeholder)
 	# Group size and weight default to 1-1 and 1 where an enemy doesn't author them.
 	var owl: CreatureResource = load("res://characters/enemies/owl/owl_data.tres")
 	var moth: CreatureResource = load("res://characters/enemies/moth/moth_data.tres")
