@@ -25,6 +25,6 @@ leader = ExtResource("viper")
 [resource]
 script = ExtResource("zone")
 route_rooms = 9
-room_count = 19
+room_count = 24
 minibosses = Array[ExtResource("fixed_encounter")]([SubResource("Resource_yylga")])
 rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_mandraker"), SubResource("rare_viper")])

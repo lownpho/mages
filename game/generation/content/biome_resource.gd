@@ -18,7 +18,7 @@ extends Resource
 ## Typical Room diameter in tiles.
 @export_range(16, 64, 1) var room_size := 32
 ## How far Room borders wander, in tiles.
-@export_range(0.0, 12.0, 0.5) var border_warp := 4.0
+@export_range(0.0, 24.0, 0.5) var border_warp := 4.0
 ## Chance of a loop Passage between neighbouring ordinary Rooms.
 @export_range(0.0, 1.0, 0.05) var loops := 0.3
 ## Chance of a shortcut where route stretches fold alongside one another.

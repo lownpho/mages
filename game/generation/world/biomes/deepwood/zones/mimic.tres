@@ -1,16 +1,17 @@
-[gd_resource type="Resource" script_class="ZoneResource" format=3]
+[gd_resource type="Resource" script_class="ZoneResource" format=3 uid="uid://d25hw5ig65tld"]
 
-[ext_resource type="Resource" path="res://characters/enemies/adder/adder_data.tres" id="adder"]
-[ext_resource type="Resource" path="res://characters/enemies/bramble_stalker/bramble_stalker_data.tres" id="bramble_stalker"]
-[ext_resource type="Resource" path="res://characters/enemies/bristlestone/bristlestone_data.tres" id="bristlestone"]
-[ext_resource type="Resource" path="res://characters/enemies/cinderstone/cinderstone_data.tres" id="cinderstone"]
-[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
-[ext_resource type="Resource" path="res://characters/enemies/elder_stalker/elder_stalker_data.tres" id="elder_stalker"]
-[ext_resource type="Script" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
-[ext_resource type="Resource" path="res://characters/enemies/shade/shade_data.tres" id="shade"]
-[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
-[ext_resource type="Resource" path="res://characters/enemies/umbra/umbra_data.tres" id="umbra"]
-[ext_resource type="Script" path="res://generation/content/zone_resource.gd" id="zone"]
+[ext_resource type="Resource" uid="uid://kd5wcg8tiqp0" path="res://characters/enemies/adder/adder_data.tres" id="adder"]
+[ext_resource type="Resource" uid="uid://bxrgj8gnw6xhf" path="res://characters/enemies/bramble_stalker/bramble_stalker_data.tres" id="bramble_stalker"]
+[ext_resource type="Resource" uid="uid://cburrw00ddata" path="res://characters/enemies/bristlestone/bristlestone_data.tres" id="bristlestone"]
+[ext_resource type="Resource" uid="uid://hc24pay2yl40" path="res://characters/enemies/cinderstone/cinderstone_data.tres" id="cinderstone"]
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Resource" uid="uid://dr8b2c0mqhvve" path="res://characters/enemies/elder_stalker/elder_stalker_data.tres" id="elder_stalker"]
+[ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" uid="uid://cv7p6bgvawwaa" path="res://characters/enemies/grimlord/grimlord_data.tres" id="grimlord"]
+[ext_resource type="Resource" uid="uid://beuu464rwm8t" path="res://characters/enemies/shade/shade_data.tres" id="shade"]
+[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" uid="uid://cgi5h6ag4qr5p" path="res://characters/enemies/umbra/umbra_data.tres" id="umbra"]
+[ext_resource type="Script" uid="uid://gcuovs25kge0" path="res://generation/content/zone_resource.gd" id="zone"]
 
 [sub_resource type="Resource" id="rare_elder_stalker"]
 script = ExtResource("fixed_encounter")
@@ -33,14 +34,18 @@ escorts = Dictionary[ExtResource("creature"), int]({
 ExtResource("cinderstone"): 2
 })
 
+[sub_resource type="Resource" id="rare_grimlord"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("grimlord")
+
 [resource]
 script = ExtResource("zone")
-route_rooms = 14
-room_count = 32
+route_rooms = 16
+room_count = 40
 roster = Dictionary[ExtResource("creature"), int]({
 ExtResource("bramble_stalker"): 5,
 ExtResource("shade"): 5,
 ExtResource("bristlestone"): 7,
 ExtResource("cinderstone"): 7
 })
-rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_elder_stalker"), SubResource("rare_umbra"), SubResource("rare_adder")])
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_elder_stalker"), SubResource("rare_umbra"), SubResource("rare_adder"), SubResource("rare_grimlord")])

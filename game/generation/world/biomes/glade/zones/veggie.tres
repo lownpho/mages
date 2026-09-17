@@ -3,18 +3,31 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
 [ext_resource type="TileSet" uid="uid://dailhk5fdosey" path="res://generation/world/biomes/glade/art/glade_veggie_decor_tileset.tres" id="decoration_tileset"]
 [ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" uid="uid://dvpax5yu11cfw" path="res://characters/enemies/mandrake/mandrake_data.tres" id="mandrake"]
 [ext_resource type="Resource" uid="uid://371d6i7w0y33" path="res://characters/enemies/rosebud/rosebud_data.tres" id="rosebud"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
 [ext_resource type="Resource" uid="uid://d3heauqgsoev8" path="res://characters/enemies/thornthrower/thornthrower_data.tres" id="thornthrower"]
+[ext_resource type="Resource" uid="uid://pbgstoikp5ux" path="res://characters/enemies/viper/viper_data.tres" id="viper"]
 [ext_resource type="Script" uid="uid://gcuovs25kge0" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="rare_mandrake"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("mandrake")
+centred = true
+
+[sub_resource type="Resource" id="rare_viper"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("viper")
+centred = true
 
 [resource]
 script = ExtResource("zone")
-route_rooms = 9
-room_count = 19
+route_rooms = 6
+room_count = 18
 roster = Dictionary[ExtResource("creature"), int]({
 ExtResource("thornthrower"): 1,
 ExtResource("rosebud"): 1
 })
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_mandrake"), SubResource("rare_viper")])
 decoration_tileset = ExtResource("decoration_tileset")
 decoration_density = 0.08
