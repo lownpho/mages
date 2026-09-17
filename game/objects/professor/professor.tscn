@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://objects/professor/professor.gd" id="1_professor"]
-[ext_resource type="Texture2D" uid="uid://b6f8woc2sylt2" path="res://characters/player/player.png" id="2_art"]
+[ext_resource type="Texture2D" path="res://objects/professor/professor.png" id="2_art"]
 [ext_resource type="FontFile" uid="uid://kkmwqdvog3u7" path="res://gui/m3x6.ttf" id="3_font"]
 [ext_resource type="Theme" uid="uid://b1ys22w5kvbpd" path="res://gui/theme.tres" id="4_theme"]
 
@@ -10,6 +10,28 @@ radius = 16.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_professor"]
 line_spacing = 0.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle0"]
+atlas = ExtResource("2_art")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle1"]
+atlas = ExtResource("2_art")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_professor"]
+animations = [{
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle1")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}]
 
 [node name="Professor" type="Area2D"]
 collision_layer = 0
@@ -28,11 +50,10 @@ spent_line = "I have nothing more for you."
 portal_tint = Color(0.6, 0.75, 1, 1)
 item_tint = Color(1, 0.85, 0.55, 1)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_art")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 offset = Vector2(0, -4)
-region_enabled = true
-region_rect = Rect2(16, 16, 16, 16)
+sprite_frames = SubResource("SpriteFrames_professor")
+animation = &"idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -6)

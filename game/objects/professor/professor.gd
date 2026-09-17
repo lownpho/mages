@@ -13,7 +13,8 @@ extends Area2D
 ## twice. Which page it reads, which Biome lies onward and what that earns are all generated
 ## (SitePlanner); the wording and the tints are the scene's.
 ##
-## The art is a tinted player frame for now, one tint per kind.
+## The art is one sprite tinted per kind, so which of the two a visitor is walking up to reads off
+## the Professor themselves before a word of the note is up: cool for a portal, warm for an item.
 
 ## Relayed from the portal this Professor opens, so ObjectSpawner carries the traveller through it.
 signal warp_entered(body: Node2D, destination_room: String, landing: Vector2i)
@@ -51,12 +52,13 @@ var _state: Dictionary = {}
 var _portal: Door
 
 @onready var _label: Label = $Label
-@onready var _sprite: Sprite2D = $Sprite2D
+@onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 
 func _ready() -> void:
 	_label.visible = false
 	_sprite.modulate = portal_tint if _opens_portal() else item_tint
+	_sprite.play(&"idle")
 	if Engine.is_editor_hint():
 		return
 	body_entered.connect(_on_body_entered)
