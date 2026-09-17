@@ -1,20 +1,18 @@
 class_name WorldObjects
 extends RefCounted
 ## Every planned Object of a WorldGraph as the game receives it: its scene, the chunk it stands in
-## and the data its setup(data) takes. Signs share one scene, Professors another and Warp doors a
-## third, each door wearing its destination Biome's door art; a weighted Object brings the scene its
-## Breather drew. Landings are clear spots, not Objects, and build nothing.
+## and the data its setup(data) takes. Signs share one scene and Professors another; a weighted
+## Object brings the scene its Breather drew. Landings are clear spots, not Objects, and build
+## nothing.
 ##
 ## Setup data always holds the Object's "key" (its site key, derived from its place), "kind" and
-## "room_key". A Sign adds "text" and "reveal_key"; a Warp door adds "destination_room", "landing"
-## (a tile) and "art" (a Door.Style). A Professor adds "biome" and "page" (the enemy ids on the
-## Bestiary page it reads), "next_biome" (&"" when nothing lies onward), "opens_portal" and, by that
-## kind, either "reward_item" or a portal's "destination_room", "landing" and "art". ObjectSpawner
-## adds the Object's own "state".
+## "room_key". A Sign adds "text" and "reveal_key". A Professor adds "biome" and "page" (the enemy
+## ids on the Bestiary page it reads), "next_biome" (&"" when nothing lies onward), "opens_portal"
+## and, by that kind, either "reward_item" or a portal's "destination_room", "landing" (a tile) and
+## "art" (a Door.Style). ObjectSpawner adds the Object's own "state".
 
 const SIGN_SCENE := preload("res://objects/sign/sign.tscn")
 const PROFESSOR_SCENE := preload("res://objects/professor/professor.tscn")
-const DOOR_SCENE := preload("res://objects/door/door.tscn")
 
 var graph: WorldGraph
 ## Chunk size -> chunk coord -> the Objects standing in it, in key order.
@@ -50,8 +48,6 @@ func scene_for(site: ObjectSite) -> PackedScene:
 			return SIGN_SCENE
 		ObjectSite.Kind.PROFESSOR:
 			return PROFESSOR_SCENE
-		ObjectSite.Kind.DOOR:
-			return DOOR_SCENE
 		ObjectSite.Kind.WEIGHTED:
 			return site.scene
 	return null
@@ -72,17 +68,13 @@ func setup_data(site: ObjectSite) -> Dictionary:
 			data.reward_item = site.reward_item
 			data.destination_room = site.destination_room
 			data.landing = graph.sites[site.landing_key].spot if graph.sites.has(site.landing_key) else Vector2i.MAX
-			data.art = _door_art(site.destination_biome)
-		ObjectSite.Kind.DOOR:
-			data.destination_room = site.destination_room
-			data.landing = graph.sites[site.landing_key].spot
-			data.art = _door_art(site.destination_biome)
+			data.art = _portal_art(site.destination_biome)
 	return data
 
 
-## The art every way into a Biome wears, a Warp door's and a Professor's portal's alike. Door.Style
-## has a PORTAL frame reserved, but none is drawn yet, so a portal wears its destination's door too.
-func _door_art(biome_id: StringName) -> Door.Style:
+## The art a Professor's portal into a Biome wears. Door.Style has a PORTAL frame reserved, but none
+## is drawn yet, so a portal wears that Biome's door instead.
+func _portal_art(biome_id: StringName) -> Door.Style:
 	var biome: BiomeResource = graph.plan.content.biomes.get(biome_id)
 	var presentation := biome.presentation if biome != null else null
 	return presentation.door_style if presentation != null else Door.Style.WOOD

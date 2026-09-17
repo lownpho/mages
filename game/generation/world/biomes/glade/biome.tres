@@ -50,11 +50,10 @@ script = ExtResource("sign")
 text = "Some creatures are rarer than others,
 but it is easier to learn spells from them."
 
-[sub_resource type="Resource" id="sign_doors"]
+[sub_resource type="Resource" id="sign_portals"]
 script = ExtResource("sign")
-text = "Be careful with doors: they can take you
-to places you are not prepared for.
-Or just annoy you."
+text = "A portal is a gift, not a mercy: it opens
+onto somewhere you may not be ready for."
 
 [resource]
 script = ExtResource("biome")
@@ -79,8 +78,7 @@ wall_variation = 4.0
 presentation = ExtResource("presentation")
 decoration_density = 0.05
 professors = 1
-warp_doors = 2
-signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_twisted"), SubResource("sign_maps"), SubResource("sign_fae"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_doors")])
+signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_twisted"), SubResource("sign_maps"), SubResource("sign_fae"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_portals")])
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

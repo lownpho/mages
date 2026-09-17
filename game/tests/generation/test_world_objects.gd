@@ -1,19 +1,19 @@
 extends Node
-## Objects and Warp doors at the generated-output and spawner/runtime boundaries.
+## Objects and Portals at the generated-output and spawner/runtime boundaries.
 ##
 ## On the shipped World at its three seeds and on the small fixture: generated setup data for every
-## Object, authored Sign, Professor and Warp-door counts, Objects only in Breathers and never in set
-## pieces or the spawn, Signs revealing only the Boss their enemy leads, Professors reading their own
-## Biome's Bestiary page and pointing one Biome onward, and Warp doors leading to a permitted Biome's
-## ordinary non-Breather Room wearing its door art, the same on a second build.
+## Object, authored Sign and Professor counts, Objects only in Breathers and never in set pieces or
+## the spawn, Signs revealing only the Boss their enemy leads, Professors reading their own Biome's
+## Bestiary page and pointing one Biome onward, with a portal leading to that Biome's ordinary
+## non-Breather Room wearing its door art, the same on a second build.
 ##
 ## In a streamed rig with the real player on the small fixture: every planned Object stands once at
 ## its spot, a Sign reveals its Boss on the Map, a Professor shows its note and gives nothing on an
 ## unfinished page but pays out once on a finished one — a portal beside it or its gift on the
 ## ground, both surviving its chunk reloading — every landing is clear floor away from encounters, a
-## Warp door carries the player to its landing keeping its facing and streams the destination in, a
+## Portal carries the player to its landing keeping its facing and streams the destination in, a
 ## fountain's cooldown resets on reload, and a reactive NPC's state survives unloading and a restore
-## but not a new Run, while fountains, Signs and doors keep none. Run:
+## but not a new Run, while fountains, Signs and Portals keep none. Run:
 ##   godot --headless --path game res://tests/generation/test_world_objects.tscn
 
 const GREETER := "res://tests/support/greeter.tscn"
@@ -21,24 +21,17 @@ const GREETER := "res://tests/support/greeter.tscn"
 const AWAY_TILES := 100
 ## Where the player waits before walking into an Object, clear of its trigger.
 const BESIDE := Vector2i(5, 0)
-## Every Warp door's permitted destination Biomes.
-const SHIPPED_TARGETS := {&"glade": [&"deepwood"], &"deepwood": [&"glade"],
-		&"wastelands": [], &"fruit": [], &"hive": [],
-		&"mycelium": [&"deepwood"], &"moon": [], &"hell": []}
-const SMALL_TARGETS := {&"meadow": [&"forest"], &"forest": [&"meadow"], &"burrow": [&"forest"],
-		&"hollow": [&"forest"]}
-
 var _fails: Array[String] = []
 
 
 func _ready() -> void:
 	var shipped := WorldFixture.shipped()
 	for world_seed in shipped.seeds:
-		_check_setup_data(shipped, world_seed, SHIPPED_TARGETS, "shipped %d" % world_seed)
+		_check_setup_data(shipped, world_seed, "shipped %d" % world_seed)
 	var small := WorldFixture.small()
 	var chosen: WorldGraph = null
 	for world_seed in small.seeds:
-		var graph := _check_setup_data(small, world_seed, SMALL_TARGETS, "small %d" % world_seed)
+		var graph := _check_setup_data(small, world_seed, "small %d" % world_seed)
 		if chosen == null and _weighted(graph, GREETER) != null and _weighted(graph, "fountain") != null:
 			chosen = graph
 	_check(chosen != null, "some small fixture seed holds both a greeter and a fountain")
@@ -59,7 +52,7 @@ func _check(condition: bool, message: String) -> void:
 		_fails.append(message)
 
 
-func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictionary, label: String) -> WorldGraph:
+func _check_setup_data(fixture: WorldFixture, world_seed: int, label: String) -> WorldGraph:
 	var graph := fixture.graph(world_seed)
 	var objects := WorldObjects.new(graph)
 	var content := graph.plan.content
@@ -117,19 +110,6 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictiona
 					_check(data.destination_room == "", "%s: item Professor %s also opens a portal to %s" % [label, key, data.destination_room])
 					_check(pool.is_empty() or pool.has(data.reward_item),
 							"%s: Professor %s gives %s, which nothing in %s drops" % [label, key, data.reward_item, onward])
-			ObjectSite.Kind.DOOR:
-				_check(objects.scene_for(site) == WorldObjects.DOOR_SCENE, "%s: door %s doesn't use the door scene" % [label, key])
-				var destination: GeneratedRoom = graph.rooms.get(data.destination_room)
-				if destination == null:
-					_fails.append("%s: door %s leads to no Room (%s)" % [label, key, data.destination_room])
-					continue
-				_check((targets[room.plan.biome] as Array).has(destination.plan.biome),
-						"%s: door %s from %s leads to %s" % [label, key, room.plan.biome, destination.plan.biome])
-				_check(destination.is_ordinary() and destination.role != GeneratedRoom.Role.BREATHER,
-						"%s: door %s lands in a %s Room" % [label, key, destination.role_name()])
-				_check(graph.owner_at(data.landing) == destination, "%s: door %s's landing %s is outside %s" % [label, key, data.landing, destination.key()])
-				_check(data.art == content.biomes[destination.plan.biome].presentation.door_style,
-						"%s: door %s doesn't wear %s's art" % [label, key, destination.plan.biome])
 			ObjectSite.Kind.WEIGHTED:
 				_check(site.scene != null and objects.scene_for(site) == site.scene, "%s: weighted Object %s builds another scene" % [label, key])
 	for id in content.biomes:
@@ -137,7 +117,7 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, targets: Dictiona
 		var signs := biome.signs.size()
 		for zone in graph.plan.biomes[id].zones:
 			signs += zone.resource.signs.size()
-		for pair: Array in [["sign", signs], ["professor", biome.professors], ["door", 0 if targets[id].is_empty() else biome.warp_doors]]:
+		for pair: Array in [["sign", signs], ["professor", biome.professors]]:
 			var count: int = placed.get("%s/%s" % [id, pair[0]], 0)
 			_check(count == pair[1], "%s: %s holds %d %ss, authored %d" % [label, id, count, pair[0], pair[1]])
 	_check(graph.rooms[graph.plan.spawn.key].sites.is_empty(), "%s: the spawn holds sites" % label)
@@ -262,7 +242,7 @@ func _visit(rig: Dictionary, tile: Vector2i) -> void:
 	await get_tree().process_frame
 
 
-## Waits beside a site, clear of its trigger, long enough for a door to arm.
+## Waits beside a site, clear of its trigger, long enough for a Door to arm.
 func _approach(rig: Dictionary, site: ObjectSite) -> Node2D:
 	_ghost(rig, true)
 	await _visit(rig, site.spot + BESIDE)
@@ -484,37 +464,77 @@ func _test_landings(rig: Dictionary) -> void:
 					"member %s stands %.1f tiles from landing %s" % [member.key, Vector2(member.tile).distance_to(Vector2(landing.spot)), key])
 
 
+## Earns a Professor's portal on a finished page, then walks into it: the traveller lands on its
+## landing tile facing the way they came, with the destination streamed in and its encounter clear.
 func _test_warp(rig: Dictionary) -> void:
-	var door := _first(rig.graph, ObjectSite.Kind.DOOR)
-	_check(door != null, "the fixture has a Warp door")
-	if door == null:
+	var site := _portal_site(rig.graph)
+	_check(site != null, "the fixture plans a Professor with somewhere to land")
+	if site == null:
 		return
-	var landing: Vector2i = rig.graph.sites[door.landing_key].spot
-	var door_node := await _approach(rig, door)
-	_check(door_node != null, "door %s stands" % door.key)
-	if door_node == null:
+	var saved := GlobalBestiary.to_dict()
+	var kills: Dictionary = {}
+	for id: StringName in rig.objects.world_objects.setup_data(site).page:
+		kills[id] = 1
+	GlobalBestiary.restore({"kills": kills})
+	rig.objects.build_world(WorldObjects.new(rig.graph), true)
+	var landing: Vector2i = rig.graph.sites[site.landing_key].spot
+	var professor := await _approach(rig, site)
+	if professor == null:
+		_fails.append("Professor %s doesn't stand" % site.key)
+		GlobalBestiary.restore(saved)
+		return
+	await _enter(rig, professor)
+	var portal := _portal_of(professor)
+	_check(portal != null, "Professor %s opened no portal on a finished page" % site.key)
+	if portal == null:
+		GlobalBestiary.restore(saved)
 		return
 	var arrivals: Array[Array] = []
 	rig.objects.warped.connect(func(body: Node2D, room_key: String) -> void: arrivals.append([body, room_key]))
 	rig.player.animated_sprite.flip_h = true
-	await _enter(rig, door_node)
+	await _enter(rig, portal)
 	for _frame in 20:
 		if not arrivals.is_empty():
 			break
 		await get_tree().physics_frame
-	_check(arrivals.size() == 1 and arrivals[0][0] == rig.player and arrivals[0][1] == door.destination_room,
-			"walking into door %s warps the player once to %s: %s" % [door.key, door.destination_room, arrivals])
+	_check(arrivals.size() == 1 and arrivals[0][0] == rig.player and arrivals[0][1] == site.destination_room,
+			"walking into %s's portal warps the player once to %s: %s" % [site.key, site.destination_room, arrivals])
 	var tile := Vector2i((rig.player.global_position / GameConstants.PX_PER_TILE).floor())
-	_check(tile == landing, "door %s put the player at %s, not its landing %s" % [door.key, tile, landing])
+	_check(tile == landing, "%s's portal put the player at %s, not its landing %s" % [site.key, tile, landing])
 	var room: GeneratedRoom = rig.streamer.interiors.owner_at(tile)
-	_check(room != null and room.key() == door.destination_room and room.is_ordinary() and room.role != GeneratedRoom.Role.BREATHER,
-			"door %s landed in %s" % [door.key, room.key() if room else "no Room"])
-	_check(rig.streamer.interiors.class_at(tile) == WorldInteriors.FLOOR, "door %s landed off floor" % door.key)
-	_check(rig.player.animated_sprite.flip_h, "warping through %s turned the player around" % door.key)
+	_check(room != null and room.key() == site.destination_room and room.is_ordinary() and room.role != GeneratedRoom.Role.BREATHER,
+			"%s's portal landed in %s" % [site.key, room.key() if room else "no Room"])
+	_check(rig.streamer.interiors.class_at(tile) == WorldInteriors.FLOOR, "%s's portal landed off floor" % site.key)
+	_check(rig.player.animated_sprite.flip_h, "warping through %s's portal turned the player around" % site.key)
 	_check(rig.streamer.is_chunk_loaded(rig.streamer.chunk_of(rig.player.global_position)), "the landing streamed in with the arrival")
 	for enemy in rig.enemies.live_members():
 		_check(enemy.global_position.distance_to(rig.player.global_position) > 4 * GameConstants.PX_PER_TILE,
 				"%s waits within four tiles of the arrival" % enemy.get_meta("generated_key"))
+	GlobalBestiary.restore(saved)
+	# Hand the tests that follow a Run whose Object state is empty again.
+	rig.objects.build_world(WorldObjects.new(rig.graph), true)
+
+
+## The first Professor the seed gave a portal with a landing, driven as one when the seed made it an
+## item Professor instead.
+func _portal_site(graph: WorldGraph) -> ObjectSite:
+	var keys: Array[String] = []
+	keys.assign(graph.sites.keys())
+	keys.sort()
+	for key in keys:
+		var site: ObjectSite = graph.sites[key]
+		if site.kind != ObjectSite.Kind.PROFESSOR or site.destination_biome == &"":
+			continue
+		if site.landing_key == "":
+			var landing := _landing_in(graph, site.destination_biome)
+			if landing == null:
+				continue
+			site.landing_key = landing.key
+			site.destination_room = landing.room_key
+		site.opens_portal = true
+		site.reward_item = null
+		return site
+	return null
 
 
 func _test_fountain(rig: Dictionary) -> void:
@@ -534,7 +554,7 @@ func _test_fountain(rig: Dictionary) -> void:
 			"fountain %s's cooldown resets when its chunk reloads" % site.key)
 
 
-## Runs last: the Sign, door and fountain above were all used and must have left no state.
+## Runs last: the Sign, portal and fountain above were all used and must have left no state.
 func _test_state(rig: Dictionary) -> void:
 	var site := _weighted(rig.graph, GREETER)
 	var spawner: ObjectSpawner = rig.objects

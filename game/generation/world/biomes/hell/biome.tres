@@ -18,7 +18,6 @@ passage_width = 4
 rockiness = 0.02
 presentation = ExtResource("presentation")
 decoration_density = 0.02
-warp_doors = 1
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

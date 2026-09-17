@@ -93,15 +93,12 @@ page is complete. A portal Professor opens a Portal onward; an item Professor gi
 things that drop there. It pays out once a Run, and says what it sees either way.
 
 **Portal**:
-The way onward a portal Professor opens beside itself, leading into the Biome onward exactly as a
-Warp door leads into its destination.
+The way onward a portal Professor opens beside itself. Walking in lands the traveller at a cleared
+spot in an ordinary Room of the Biome onward.
 
 **Biome onward**:
 The Biome a Professor's reward points at: the next on the Ideal path, or for a Side biome, the one
 after its parent. A sealed Biome is none, and a Professor with none gives nothing.
-
-**Warp door**:
-A seeded one-way Object that skips to the previous or next Ideal-path Biome, or from a Side biome back to its parent. It stands in a Breather and lands at a cleared spot in an ordinary Room rather than requiring another Warp door.
 
 **Map**:
 The persistent record of discovered Rooms, Pins, and revealed places in the World.

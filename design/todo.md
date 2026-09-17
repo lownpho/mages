@@ -14,7 +14,6 @@ remove cooldown creep
 controls recap page
 spell rebalance (think about sets)
 spell blurbs
-make doors move you to a random (but fixed place in adjacent biomes)
 fix tutorial scene: mechanics are simpler
 bosses can be killed multiple times
 bosses heal up after some inactivity
@@ -113,7 +112,7 @@ new spells:
 - Modern maps are marvelous. You can place dots on them as a reminder for later.
 - Feel free to throw away spells you don't like: they do not harm the environment.
 - Some creatures are rarer than other but it is easier to learn spells from them.
-- Be careful with doors: they can take you to places you are not prepared for.
+- A portal is a gift, not a mercy: it opens onto somewhere you may not be ready for.
 
 ## deepwood
 

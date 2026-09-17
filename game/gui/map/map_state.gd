@@ -12,7 +12,6 @@ enum {
 	MARKER_BOSS,
 	MARKER_MINIBOSS,
 	MARKER_FOUNTAIN,
-	MARKER_DOOR,
 	MARKER_SIGN,
 	MARKER_NPC,
 }
@@ -385,8 +384,6 @@ func _marker_kind(site: ObjectSite) -> int:
 			return MARKER_SIGN
 		ObjectSite.Kind.PROFESSOR:
 			return MARKER_NPC
-		ObjectSite.Kind.DOOR:
-			return MARKER_DOOR
 		ObjectSite.Kind.LANDING:
 			return -1
 		ObjectSite.Kind.WEIGHTED:

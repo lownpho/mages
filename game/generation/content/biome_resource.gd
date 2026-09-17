@@ -10,7 +10,7 @@ extends Resource
 @export var roster: Dictionary[CreatureResource, int] = {}
 ## Optional; omit for a Biome without a Boss encounter.
 @export var boss: FixedEncounterResource
-## Keep this Biome generated, but close its borders and disable Warp doors to and from it.
+## Keep this Biome generated, but close its borders, so nothing leads in or out of it.
 @export var sealed := false
 
 ## The eight spatial knobs. Zones inherit them. The ranges are the debug sliders' ranges.
@@ -40,7 +40,6 @@ extends Resource
 
 @export_group("Objects")
 @export_range(0, 10, 1, "or_greater") var professors := 0
-@export_range(0, 10, 1, "or_greater") var warp_doors := 0
 @export var signs: Array[SignResource] = []
 ## Scene -> weight for Breather Objects, added to each Zone's own.
 @export var breather_objects: Dictionary[PackedScene, int] = {}

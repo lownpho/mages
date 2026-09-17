@@ -20,7 +20,6 @@ wall_variation = 4.0
 presentation = ExtResource("presentation")
 decoration_density = 0.02
 professors = 1
-warp_doors = 2
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

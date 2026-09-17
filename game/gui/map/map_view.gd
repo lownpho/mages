@@ -13,7 +13,6 @@ const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
-const COLOR_DOOR := Palette.BLUE
 const COLOR_SIGN := Palette.GREEN
 const COLOR_NPC := Palette.PURPLE
 const COLOR_PIN := Palette.ORANGE
@@ -253,7 +252,6 @@ func _draw() -> void:
 			MapState.MARKER_BOSS: c = COLOR_BOSS
 			MapState.MARKER_MINIBOSS: c = COLOR_BOSS
 			MapState.MARKER_FOUNTAIN: c = COLOR_FOUNTAIN
-			MapState.MARKER_DOOR: c = COLOR_DOOR
 			MapState.MARKER_SIGN: c = COLOR_SIGN
 			MapState.MARKER_NPC: c = COLOR_NPC
 		# A Miniboss wears the Boss colour a pixel smaller, so the two read apart at a glance.

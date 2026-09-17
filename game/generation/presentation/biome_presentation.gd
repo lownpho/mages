@@ -37,4 +37,4 @@ extends Resource
 @export var map_wall_color := Palette.BLACK       ## minimap pixel for walls and rocks at the closest zoom (Zughy 32)
 
 @export_group("Objects")
-@export var door_style := Door.Style.WOOD         ## art of every Warp door leading into this Biome
+@export var door_style := Door.Style.WOOD         ## art of every Portal leading into this Biome

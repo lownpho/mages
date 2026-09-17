@@ -342,8 +342,10 @@ func _site_detail(site: ObjectSite) -> String:
 	match site.kind:
 		ObjectSite.Kind.SIGN:
 			return " reveals " + site.reveal_key
-		ObjectSite.Kind.DOOR:
-			return " to %s %s" % [site.destination_biome, site.landing_key]
+		ObjectSite.Kind.PROFESSOR:
+			if site.destination_biome == &"":
+				return " nothing onward"
+			return " portal to %s %s" % [site.destination_biome, site.landing_key] if site.opens_portal else " gift from " + site.destination_biome
 		ObjectSite.Kind.WEIGHTED:
 			return " " + site.scene.resource_path.get_file()
 	return ""

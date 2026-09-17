@@ -3,13 +3,11 @@ extends RefCounted
 ## Plans a WorldGraph's Object sites once Teaching rooms and chance Breathers are known.
 ##
 ## Every authored Sign stands once, in its Biome, or in its Zone when a Zone authors it; each Biome
-## places its Professor and Warp-door counts. Those Rooms must not teach and become Breathers. Each
-## door picks a seeded target Biome (an adjacent Ideal-path Biome, or a Side biome's parent) and a
-## landing in an ordinary Room there that isn't a Breather; landings leave roles alone and may share
-## a Room. Each Professor takes a seeded kind and looks one Biome onward (the next on the Ideal path,
-## or the one after its parent for a Side biome, and nothing when that is sealed or the path ends):
-## a portal Professor takes a landing there, exactly as a door does, and an item Professor draws its
-## gift from that Biome's drop pool.
+## places its Professor count. Those Rooms must not teach and become Breathers. Each Professor takes
+## a seeded kind and looks one Biome onward (the next on the Ideal path, or the one after its parent
+## for a Side biome, and nothing when that is sealed or the path ends): a portal Professor takes a
+## landing in an ordinary Room there that isn't a Breather, and an item Professor draws its gift from
+## that Biome's drop pool. Landings leave roles alone and may share a Room.
 ##
 ## Every choice takes the first candidate in seeded order at least two room sizes from the sites
 ## placed so far, or the farthest when none is. A spreading pass then moves each site still short of
@@ -34,11 +32,11 @@ const SPOT_FINALISTS := 2
 
 var graph: WorldGraph
 var plan: WorldPlan
-## Signs, Professors, doors and landings, as they are placed.
+## Signs, Professors and landings, as they are placed.
 var _spaced: Array[ObjectSite] = []
 ## Site -> the Rooms it may stand in.
 var _candidates: Dictionary[ObjectSite, Array] = {}
-## Warp door or portal Professor -> its landing.
+## Portal Professor -> its landing.
 var _landings: Dictionary[ObjectSite, ObjectSite] = {}
 ## The Breathers the chance picked before any site forced one.
 var _chance: Dictionary[GeneratedRoom, bool] = {}
@@ -53,7 +51,7 @@ func _init(world_graph: WorldGraph) -> void:
 			_chance[graph.rooms[key]] = true
 
 
-## Signs, Professors and Warp doors with their landings, spread apart, with Sign reveals. False means
+## Signs and Professors with their portals' landings, spread apart, with Sign reveals. False means
 ## deterministic candidates were exhausted, which is a generation bug rather than a partial graph.
 func place() -> bool:
 	for id in plan.content.biome_ids():
@@ -77,16 +75,6 @@ func place() -> bool:
 			else:
 				professor.reward_item = _reward_item(professor.destination_biome,
 						plan.rng(WorldHash.NS_SITES, unit + "/gift"))
-		for n in biome.resource.warp_doors:
-			var targets := _door_targets(id)
-			if targets.is_empty():
-				continue
-			var unit := "door/%s/%d" % [id, n]
-			var door := _place_forced(biome, null, ObjectSite.Kind.DOOR, unit)
-			if door == null:
-				continue
-			door.destination_biome = targets[plan.rng(WorldHash.NS_SITES, unit).randi_range(0, targets.size() - 1)]
-			_place_landing(door, "landing/" + unit)
 	_spread()
 	if not _layout_is_valid():
 		push_error("World seed %d: Object-site placement exhausted before every site was spaced" % plan.world_seed)
@@ -175,19 +163,19 @@ func _reward_item(biome_id: StringName, rng: RandomNumberGenerator) -> ItemResou
 	return items[rng.randi_range(0, items.size() - 1)]
 
 
-## A Warp door's or portal Professor's landing.
-func _place_landing(door: ObjectSite, unit: String) -> void:
+## A portal Professor's landing.
+func _place_landing(portal: ObjectSite, unit: String) -> void:
 	var candidates: Array[GeneratedRoom] = []
-	for room_plan in plan.biomes[door.destination_biome].rooms:
+	for room_plan in plan.biomes[portal.destination_biome].rooms:
 		var room := graph.rooms[room_plan.key]
 		if room.is_ordinary():
 			candidates.append(room)
 	var landing := _place(candidates, ObjectSite.Kind.LANDING, unit)
 	if landing == null:
-		push_error("World seed %d: door %s has no Room to land in %s" % [plan.world_seed, door.key, door.destination_biome])
+		push_error("World seed %d: %s has no Room to land in %s" % [plan.world_seed, portal.key, portal.destination_biome])
 		return
-	_landings[door] = landing
-	_link(door)
+	_landings[portal] = landing
+	_link(portal)
 
 
 ## The first candidate in seeded order that may hold the site and keeps two room sizes from every
@@ -217,8 +205,8 @@ func _place(candidates: Array[GeneratedRoom], kind: ObjectSite.Kind, unit: Strin
 	return site
 
 
-## Signs, Professors and doors need a Room that is no landing's; landings a Room that no forced site
-## made a Breather and the chance didn't either.
+## Signs and Professors need a Room that is no landing's; landings a Room that no forced site made a
+## Breather and the chance didn't either.
 func _can_hold(kind: ObjectSite.Kind, room: GeneratedRoom, moving: ObjectSite) -> bool:
 	if kind == ObjectSite.Kind.LANDING:
 		return room.role != GeneratedRoom.Role.BREATHER
@@ -284,16 +272,16 @@ func _move(site: ObjectSite, room: GeneratedRoom) -> void:
 		room.role = GeneratedRoom.Role.BREATHER
 		var forced := old.sites.any(func(other: ObjectSite) -> bool: return other.kind != ObjectSite.Kind.LANDING)
 		old.role = GeneratedRoom.Role.BREATHER if forced or _chance.has(old) else GeneratedRoom.Role.TESTING
-	for door in _landings:
-		if door == site or _landings[door] == site:
-			_link(door)
+	for portal in _landings:
+		if portal == site or _landings[portal] == site:
+			_link(portal)
 
 
-func _link(door: ObjectSite) -> void:
-	var landing := _landings[door]
-	landing.door_key = door.key
-	door.destination_room = landing.room_key
-	door.landing_key = landing.key
+func _link(portal: ObjectSite) -> void:
+	var landing := _landings[portal]
+	landing.portal_key = portal.key
+	portal.destination_room = landing.room_key
+	portal.landing_key = landing.key
 
 
 func _add_site(room: GeneratedRoom, kind: ObjectSite.Kind, spot: Vector2i) -> ObjectSite:
@@ -384,26 +372,6 @@ func _free_spot(room: GeneratedRoom) -> Vector2i:
 		if room.sites.all(func(site: ObjectSite) -> bool: return Vector2(site.spot).distance_to(Vector2(spot)) >= SHARED_ROOM_GAP):
 			return spot
 	return _seed_spot(room)
-
-
-## Glade -> Deepwood; an inner Ideal-path Biome -> either neighbour; a Side biome -> its parent.
-## Sealed Biomes neither send nor receive Warp doors.
-func _door_targets(id: StringName) -> Array[StringName]:
-	if plan.biomes[id].resource.sealed:
-		return []
-	if plan.content.parents.has(id):
-		var parent := plan.content.parents[id]
-		if plan.biomes[parent].resource.sealed:
-			return []
-		return [parent]
-	var path := plan.content.ideal_path
-	var index := path.find(id)
-	var out: Array[StringName] = []
-	if index > 0 and not plan.biomes[path[index - 1]].resource.sealed:
-		out.append(path[index - 1])
-	if index < path.size() - 1 and not plan.biomes[path[index + 1]].resource.sealed:
-		out.append(path[index + 1])
-	return out
 
 
 ## The planned Boss or Miniboss nearest the Sign whose leader is the enemy it reveals; "" when it

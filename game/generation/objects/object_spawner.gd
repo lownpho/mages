@@ -1,7 +1,7 @@
 class_name ObjectSpawner
 extends Node
 ## Streams WorldObjects into their scenes, keeps the Run's Object state and carries travellers
-## through Warp doors. Each planned Object is instantiated once while its chunk is loaded, at its
+## through Portals. Each planned Object is instantiated once while its chunk is loaded, at its
 ## spot, tagged with its key as generated_key metadata and configured by setup(data); unloading
 ## frees it.
 ##
@@ -9,11 +9,11 @@ extends Node
 ## entry in states, which outlives the scene, so whatever a reactive NPC writes there is restored on
 ## its next setup, after its chunk reloads or a rebuild. A Professor writes there once it has given
 ## what a finished Bestiary page earned, so the gift comes once a Run and a portal it opened stands
-## again when its chunk returns. Fountains, Signs and Warp doors write nothing: a fountain's cooldown
-## resets when its chunk reloads, and a Sign's reveal belongs to the Map.
+## again when its chunk returns. Fountains and Signs write nothing: a fountain's cooldown resets when
+## its chunk reloads, and a Sign's reveal belongs to the Map.
 ##
-## A Warp door's traveller lands on the door's landing tile, keeping its facing, and the streamer
-## loads the destination at once, as it does for a teleport.
+## A Portal's traveller lands on its landing tile, keeping its facing, and the streamer loads the
+## destination at once, as it does for a teleport.
 
 signal warped(body: Node2D, destination_room: String)
 
@@ -107,7 +107,7 @@ func _on_chunk_unloaded(coord: Vector2i) -> void:
 	_live.erase(coord)
 
 
-## Doors report from inside the physics step, where streaming can't add Objects or enemies.
+## Portals report from inside the physics step, where streaming can't add Objects or enemies.
 func _on_warp_entered(body: Node2D, destination_room: String, landing: Vector2i) -> void:
 	_warp.call_deferred(body, destination_room, landing)
 

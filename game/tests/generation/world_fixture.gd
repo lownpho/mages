@@ -177,7 +177,7 @@ static func graph_snapshot(world_graph: WorldGraph) -> String:
 		lines.append("passage %s %s spot %s point %s width %d" % [key, passage.kind_name(), passage.spot, passage.point, passage.width])
 	for key in world_graph.sites:
 		var site := world_graph.sites[key]
-		lines.append("site %s %s spot %s scene %s sign %s reveals %s door %s %s %s %s" % [key, site.kind_name(), site.spot,
+		lines.append("site %s %s spot %s scene %s sign %s reveals %s portal %s %s %s %s" % [key, site.kind_name(), site.spot,
 				site.scene.resource_path if site.scene else "-", site.sign_resource.text.get_slice("\n", 0) if site.sign_resource else "-",
-				site.reveal_key, site.destination_biome, site.destination_room, site.landing_key, site.door_key])
+				site.reveal_key, site.destination_biome, site.destination_room, site.landing_key, site.portal_key])
 	return "\n".join(lines)

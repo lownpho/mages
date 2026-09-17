@@ -3,10 +3,10 @@ class_name Door
 extends Area2D
 
 ## A walk-in door. A hand-placed one points at a `target_scene` and switches scenes (the tutorial's
-## exit); a Warp door is set up from generated data and asks its ObjectSpawner to move the player to
-## a landing tile in its destination Room. Both are this one scene: only the data differs.
+## exit); a Professor's portal is set up from generated data and asks its ObjectSpawner to move the
+## player to a landing tile in its destination Room. Both are this one scene: only the data differs.
 
-## A Warp door was walked into. Its ObjectSpawner moves `body` to `landing`.
+## A portal was walked into. Its ObjectSpawner moves `body` to `landing`.
 signal warp_entered(body: Node2D, destination_room: String, landing: Vector2i)
 
 ## Art variants packed in doors.png, one 16×16 frame each (left → right). PORTAL has no frame
@@ -24,7 +24,7 @@ const _FRAME_W := 16
 ## a door before its destination exists; it just warns and stays put when used.
 @export var target_scene: PackedScene
 
-## A Warp door ignores `target_scene`: it leads to the landing tile in its destination Room, and
+## A portal ignores `target_scene`: it leads to the landing tile in its destination Room, and
 ## warp_entered asks for the move. Vector2i.MAX = not one.
 var destination_room := ""
 var landing := Vector2i.MAX
@@ -56,8 +56,8 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
 
-## Configure a Warp door from its generated data (ObjectSpawner): its destination Room key, landing
-## tile and the destination Biome's door art. A door keeps no Object state.
+## Configure a portal from its generated data (Professor): its destination Room key, landing tile
+## and the destination Biome's door art. A door keeps no Object state.
 func setup(data: Dictionary) -> void:
 	style = data.art            # setter re-applies the art once in-tree
 	destination_room = data.destination_room

@@ -1,13 +1,13 @@
 class_name ObjectSite
 extends RefCounted
 ## A fixed spot the room graph plans for an Object or a landing, consumed by interiors, Object setup
-## and the Map. Signs, Professors and Warp doors force their Rooms to be Breathers; a WEIGHTED Object
-## is a chance Breather's draw. Landings are clear spots, not Objects, and leave their Rooms' roles
-## alone — a Warp door owns one, and so does a Professor whose gift is a portal onward.
+## and the Map. Signs and Professors force their Rooms to be Breathers; a WEIGHTED Object is a chance
+## Breather's draw. Landings are clear spots, not Objects, and leave their Rooms' roles alone — a
+## Professor whose gift is a portal onward owns one.
 
-enum Kind { SIGN, PROFESSOR, DOOR, LANDING, WEIGHTED }
+enum Kind { SIGN, PROFESSOR, LANDING, WEIGHTED }
 
-const KIND_NAMES: Array[StringName] = [&"sign", &"professor", &"door", &"landing", &"weighted"]
+const KIND_NAMES: Array[StringName] = [&"sign", &"professor", &"landing", &"weighted"]
 
 ## "<room key>/<kind>/<n>", n counting that kind in the Room.
 var key := ""
@@ -26,14 +26,14 @@ var opens_portal := false
 ## An item Professor's gift, drawn once from the Biome onward's drop pool. Null when that Biome
 ## drops nothing, or when this is a portal Professor or another kind of site.
 var reward_item: ItemResource
-## A Warp door's destination Biome, Room and the landing site there. A portal Professor fills the
-## same three in, so its portal leads like any Warp door; destination_biome alone is also the Biome
-## an item Professor's gift comes from, and is &"" when nothing lies onward.
+## A portal Professor's destination Biome, Room and the landing site there, where its portal leads.
+## destination_biome alone is also the Biome an item Professor's gift comes from, and is &"" when
+## nothing lies onward.
 var destination_biome := &""
 var destination_room := ""
 var landing_key := ""
-## A landing's Warp door or portal Professor.
-var door_key := ""
+## A landing's portal Professor.
+var portal_key := ""
 
 
 func is_object() -> bool:

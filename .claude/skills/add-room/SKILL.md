@@ -23,7 +23,7 @@ up as soon as it exists.
 | --- | --- |
 | `world.tres` (`WorldResource`) | topology: the `ideal_path` order and each Side biome with its parent |
 | `challenge_curve.tres` | global encounter density and types per Challenge step, `teach_dip`, `respawn_delay`, `breather_chance` |
-| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster, the one `boss`, the eight shape knobs, `presentation`, decoration density, Professor and Warp-door counts, Signs, Breather Objects |
+| `biomes/<biome>/biome.tres` (`BiomeResource`) | exit Challenge, shared roster, the one `boss`, the eight shape knobs, `presentation`, decoration density, Professor count, Signs, Breather Objects |
 | `biomes/<biome>/zones/<zone>.tres` (`ZoneResource`) | `route_rooms` and `room_count`, additive roster, `minibosses`, `rares`, decoration override, Signs, Breather Objects |
 | `biomes/<biome>/art/` | the Biome's presentation and tilesets (see `biome-scenery`) |
 
@@ -84,14 +84,14 @@ The Biome's eight knobs (Zones inherit them). Ranges are the debug sliders':
 
 Tune them live (below) and let **Save** write them back, rather than guessing numbers in text.
 
-### Objects, Signs, Professors, Warp doors
+### Objects, Signs, Professors
 
 - `breather_objects`: scene → weight, added across the Biome and its Zone; a Breather draws one or
   stays empty. Fountains are `game/objects/fountain/*_fountain.tscn`. An Object scene takes its
   generated data through `setup(data: Dictionary)`.
 - `signs`: `text`, plus `reveals` (an enemy data sheet) when reading it should reveal the nearest
   Boss or Miniboss that enemy leads. Each Sign stands exactly once.
-- `professors` and `warp_doors` counts on the Biome. A Professor (`game/objects/professor/`) reads
+- `professors` count on the Biome. A Professor (`game/objects/professor/`) reads
   the Bestiary page of its own Biome and pays out once a Run when that page is complete. Its kind is
   seeded per site, not authored: half open a portal into the **Biome onward** (the next on the Ideal
   path, or the one after a Side biome's parent), half give up one of the items that drop there. A
@@ -148,7 +148,7 @@ godot --headless --path game res://tests/generation/test_world_plan.tscn    # Zo
 godot --headless --path game res://tests/generation/test_room_graph.tscn    # reachability, roles, isolation, knob sweep
 godot --headless --path game res://tests/generation/test_world_tiles.tscn   # interiors and tiles at knob extremes
 godot --headless --path game res://tests/generation/test_encounters.tscn    # rosters, Teaching rooms, Fixed encounters
-godot --headless --path game res://tests/generation/test_world_objects.tscn # Object sites, Signs, Warp doors
+godot --headless --path game res://tests/generation/test_world_objects.tscn # Object sites, Signs, Portals
 ```
 
 `test_content` also saves the shipped World in place and fails on any file a save would rewrite,

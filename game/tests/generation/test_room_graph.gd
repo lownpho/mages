@@ -2,14 +2,14 @@ extends Node
 ## Headless tests for the room graphs, through WorldGraph's public output: every unsealed Room reachable from
 ## the spawn; exact Zone quotas and roles; route Passages inside and between macro cells; sealed Side
 ## biomes; isolated set pieces owning their protected discs; shortcuts; Passage spots on their
-## borders; Teaching rooms; planned Object sites, reveals, doors and landings with their spacing;
+## borders; Teaching rooms; planned Object sites, reveals, portals and landings with their spacing;
 ## place-derived keys. On the shipped World at three seeds and the small fixture; repeated and
 ## shuffled builds give the same graph; and on the fixture, every spatial knob and set-piece radius
 ## at its slider's ends, then all at minimum and all at maximum. Run:
 ##   godot --headless --path game res://tests/generation/test_room_graph.tscn
 
 const VARIATION_SEEDS := 12
-## The share of two room sizes Signs, Professors, Warp doors and landings keep apart.
+## The share of two room sizes Signs, Professors and landings keep apart.
 const SITE_SPACING := SitePlanner.MIN_SPACING
 ## Samples per ring of a protected disc.
 const DISC_SAMPLES := 16
@@ -48,7 +48,7 @@ static func _name(fixture: WorldFixture) -> String:
 	return fixture.content.root.trim_suffix("/").get_file()
 
 
-## spacing_floor: the share of two room sizes every pair of Signs, Professors, doors and landings must
+## spacing_floor: the share of two room sizes every pair of Signs, Professors and landings must
 ## keep; 0 skips spacing.
 func _check_graph(graph: WorldGraph, label: String, spacing_floor: float) -> void:
 	if graph == null:
@@ -296,10 +296,10 @@ func _check_teaching(graph: WorldGraph, label: String) -> void:
 					"%s: %s is taught at %d, before %s at %d though it becomes eligible later" % [label, order[n][2], order[n][1], order[n - 1][2], order[n - 1][1]])
 
 
-## Every authored Sign stands once, and each Biome's Professors and Warp doors; their Rooms are
-## Breathers that don't teach. Doors land in ordinary non-Breather Rooms of a permitted Biome, and so
-## do the portals of Professors who open one. Every Professor looks one Biome onward, at an unsealed
-## Biome or at nothing, and an item Professor's gift is something that drops there. Signs reveal the
+## Every authored Sign stands once, and each Biome's Professors; their Rooms are Breathers that
+## don't teach. The portals of Professors who open one land in ordinary non-Breather Rooms of the
+## Biome onward. Every Professor looks one Biome onward, at an unsealed Biome or at nothing, and an
+## item Professor's gift is something that drops there. Signs reveal the
 ## nearest Boss their enemy leads. Chance Breathers hold at most one weighted Object from their
 ## choices. Sites own their spots, follow their Rooms' keys, and keep apart.
 func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> void:
@@ -329,10 +329,9 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 			_check(other == site or other.spot != site.spot, "%s: sites %s and %s share spot %s" % [label, key, other.key, site.spot])
 	for id in plan.biomes:
 		var biome := plan.biomes[id]
-		for kind: ObjectSite.Kind in [ObjectSite.Kind.PROFESSOR, ObjectSite.Kind.DOOR]:
-			var placed: Array = by_kind.get(kind, []).filter(func(site: ObjectSite) -> bool: return graph.rooms[site.room_key].plan.biome == id)
-			var authored := biome.resource.professors if kind == ObjectSite.Kind.PROFESSOR else (0 if biome.resource.sealed else biome.resource.warp_doors)
-			_check(placed.size() == authored, "%s: %s has %d %ss, authored %d" % [label, id, placed.size(), ObjectSite.KIND_NAMES[kind], authored])
+		var placed_professors: Array = by_kind.get(ObjectSite.Kind.PROFESSOR, []).filter(func(site: ObjectSite) -> bool: return graph.rooms[site.room_key].plan.biome == id)
+		_check(placed_professors.size() == biome.resource.professors,
+				"%s: %s has %d Professors, authored %d" % [label, id, placed_professors.size(), biome.resource.professors])
 		var signs: Array = biome.resource.signs.duplicate()
 		for zone in biome.zones:
 			signs.append_array(zone.resource.signs)
@@ -366,8 +365,7 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 	var professors: Array = by_kind.get(ObjectSite.Kind.PROFESSOR, [])
 	var portals: Array = professors.filter(func(site: ObjectSite) -> bool: return site.opens_portal and site.destination_biome != &"")
 	var landings: int = by_kind.get(ObjectSite.Kind.LANDING, []).size()
-	var doors: Array = by_kind.get(ObjectSite.Kind.DOOR, [])
-	_check(landings == doors.size() + portals.size(), "%s: %d landings for %d doors and %d portal Professors" % [label, landings, doors.size(), portals.size()])
+	_check(landings == portals.size(), "%s: %d landings for %d portal Professors" % [label, landings, portals.size()])
 	for professor: ObjectSite in professors:
 		var from := graph.rooms[professor.room_key].plan.biome
 		var path := content.ideal_path
@@ -385,29 +383,18 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 					if drop.item != null:
 						pool.append(drop.item)
 			_check(pool.is_empty() or pool.has(professor.reward_item), "%s: Professor %s gives %s, which nothing in %s drops" % [label, professor.key, professor.reward_item, onward])
-	for door: ObjectSite in doors + portals:
-		_check(not plan.biomes[door.destination_biome].resource.sealed, "%s: %s leads to a sealed Biome" % [label, door.key])
-		var from := graph.rooms[door.room_key].plan.biome
-		# A portal Professor's target is the Biome onward, already checked above; a Warp door's is a
-		# neighbour on the Ideal path, or a Side biome's parent.
-		var allowed: Array[StringName] = []
-		if door.kind == ObjectSite.Kind.PROFESSOR:
-			allowed = [door.destination_biome]
-		elif content.parents.has(from):
-			allowed = [content.parents[from]]
-		else:
-			var index := content.ideal_path.find(from)
-			for neighbour in [index - 1, index + 1]:
-				if neighbour >= 0 and neighbour < content.ideal_path.size():
-					allowed.append(content.ideal_path[neighbour])
-		var landing: ObjectSite = graph.sites.get(door.landing_key)
-		_check(allowed.has(door.destination_biome) and landing != null and landing.kind == ObjectSite.Kind.LANDING and landing.door_key == door.key
-				and landing.room_key == door.destination_room and graph.rooms[landing.room_key].plan.biome == door.destination_biome,
-				"%s: %s from %s leads to %s %s, landing %s" % [label, door.key, from, door.destination_biome, door.destination_room, door.landing_key])
+	for portal: ObjectSite in portals:
+		_check(not plan.biomes[portal.destination_biome].resource.sealed, "%s: %s leads to a sealed Biome" % [label, portal.key])
+		var from := graph.rooms[portal.room_key].plan.biome
+		# A portal leads to the Biome onward, which the Professor loop above already checked.
+		var landing: ObjectSite = graph.sites.get(portal.landing_key)
+		_check(landing != null and landing.kind == ObjectSite.Kind.LANDING and landing.portal_key == portal.key
+				and landing.room_key == portal.destination_room and graph.rooms[landing.room_key].plan.biome == portal.destination_biome,
+				"%s: %s from %s leads to %s %s, landing %s" % [label, portal.key, from, portal.destination_biome, portal.destination_room, portal.landing_key])
 	if spacing_floor <= 0.0:
 		return
 	var far: Array = []
-	for kind: ObjectSite.Kind in [ObjectSite.Kind.SIGN, ObjectSite.Kind.PROFESSOR, ObjectSite.Kind.DOOR, ObjectSite.Kind.LANDING]:
+	for kind: ObjectSite.Kind in [ObjectSite.Kind.SIGN, ObjectSite.Kind.PROFESSOR, ObjectSite.Kind.LANDING]:
 		far.append_array(by_kind.get(kind, []))
 	var closest := INF
 	var example := ""

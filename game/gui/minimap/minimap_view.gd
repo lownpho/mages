@@ -17,7 +17,6 @@ const COLOR_ENEMY := Palette.RED
 const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
-const COLOR_DOOR := Palette.BLUE
 const COLOR_SIGN := Palette.GREEN
 const COLOR_NPC := Palette.PURPLE
 const COLOR_PIN := Palette.ORANGE
@@ -131,7 +130,6 @@ func _draw() -> void:
 			MapState.MARKER_BOSS: color = COLOR_BOSS
 			MapState.MARKER_MINIBOSS: color = COLOR_BOSS   # smaller than a Boss, below
 			MapState.MARKER_FOUNTAIN: color = COLOR_FOUNTAIN
-			MapState.MARKER_DOOR: color = COLOR_DOOR
 			MapState.MARKER_SIGN: color = COLOR_SIGN
 			MapState.MARKER_NPC: color = COLOR_NPC
 		_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, color,

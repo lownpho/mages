@@ -218,21 +218,32 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 	GlobalMap.reset()
 
 
+## Arriving through a Portal discovers its Room there and then, without waiting for the Map's next
+## movement poll. Whether a seed planned a landing depends on its Professors' kinds, so this falls
+## back to an ordinary Room's seed tile.
 func _test_warp_arrival(graph: WorldGraph) -> void:
-	var landing: ObjectSite = null
+	var room_key := ""
+	var tile := Vector2i.MAX
 	for site in graph.sites.values():
 		if site.kind == ObjectSite.Kind.LANDING:
-			landing = site
+			room_key = site.room_key
+			tile = site.spot
 			break
-	_check(landing != null, "fixture has a Warp-door landing")
-	if landing == null:
+	if room_key == "":
+		for key in graph.rooms:
+			if graph.rooms[key].is_ordinary():
+				room_key = key
+				tile = graph.tile_of(graph.rooms[key].seed_point)
+				break
+	_check(room_key != "", "fixture has somewhere to arrive")
+	if room_key == "":
 		return
 	var state := _state(graph)
 	GlobalMap.active = state
 	var spawner := ObjectSpawner.new()
 	var body := Node2D.new()
-	spawner._warp(body, landing.room_key, landing.spot)
-	_check(state.entered_rooms.has(landing.room_key), "Warp arrival immediately discovers its Room")
+	spawner._warp(body, room_key, tile)
+	_check(state.entered_rooms.has(room_key), "Portal arrival immediately discovers its Room")
 	body.free()
 	spawner.free()
 	GlobalMap.reset()
@@ -310,8 +321,6 @@ func _expected_kind(site: ObjectSite) -> int:
 			return MapState.MARKER_SIGN
 		ObjectSite.Kind.PROFESSOR:
 			return MapState.MARKER_NPC
-		ObjectSite.Kind.DOOR:
-			return MapState.MARKER_DOOR
 		ObjectSite.Kind.WEIGHTED:
 			var node := site.scene.instantiate()
 			var kind := MapState.MARKER_FOUNTAIN if node is Fountain else MapState.MARKER_NPC

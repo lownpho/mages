@@ -40,7 +40,6 @@ rockiness = 0.0
 presentation = ExtResource("presentation")
 decoration_density = 0.05
 professors = 1
-warp_doors = 1
 signs = Array[ExtResource("sign")]([SubResource("sign_fae")])
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1,

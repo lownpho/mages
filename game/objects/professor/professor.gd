@@ -15,8 +15,7 @@ extends Area2D
 ##
 ## The art is a tinted player frame for now, one tint per kind.
 
-## Relayed from the portal this Professor opens, so ObjectSpawner carries the traveller through it
-## exactly as it does through a Warp door.
+## Relayed from the portal this Professor opens, so ObjectSpawner carries the traveller through it.
 signal warp_entered(body: Node2D, destination_room: String, landing: Vector2i)
 
 const PORTAL_SCENE := preload("res://objects/door/door.tscn")
@@ -97,10 +96,10 @@ func _give() -> void:
 
 
 ## Stands the portal beside the Professor, leading where its generated data points and wearing the
-## door art of the Biome it opens onto, as a Warp door there would. A Door arms only after a physics
-## step with nothing overlapping it, so one appearing under the visitor waits for them to step out
-## and walk back in rather than flinging them off at once. The opening visit happens inside a physics
-## query flush, where an Area2D may not come online, so the portal joins the tree deferred.
+## door art of the Biome it opens onto. A Door arms only after a physics step with nothing
+## overlapping it, so one appearing under the visitor waits for them to step out and walk back in
+## rather than flinging them off at once. The opening visit happens inside a physics query flush,
+## where an Area2D may not come online, so the portal joins the tree deferred.
 func _open_portal() -> void:
 	if is_instance_valid(_portal):
 		return
