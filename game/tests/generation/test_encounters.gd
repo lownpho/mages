@@ -21,6 +21,7 @@ func _ready() -> void:
 	_test_order_independence(small)
 	_test_centre_spread(shipped)
 	_test_weights(small)
+	_test_curve_interpolation()
 	_test_fixed_dictionary_order()
 	_test_fixed_ignores_density(small)
 	_test_decoration_independence(small)
@@ -40,6 +41,18 @@ func _check(condition: bool, message: String) -> void:
 	if not condition:
 		_fails.append(message)
 
+
+## encounters_per_tile ramps between its keys; types_per_encounter, a whole count, still steps.
+func _test_curve_interpolation() -> void:
+	var curve := ChallengeCurveResource.new()
+	curve.encounters_per_tile = {0: 0.002, 4: 0.003, 10: 0.003}
+	curve.types_per_encounter = {0: 1, 5: 3}
+	for at: Array in [[0, 0.002], [2, 0.0025], [4, 0.003], [7, 0.003], [10, 0.003], [99, 0.003]]:
+		_check(is_equal_approx(curve.encounter_density(at[0]), at[1]),
+				"density at Challenge %d is %f, not %f" % [at[0], curve.encounter_density(at[0]), at[1]])
+	for at: Array in [[0, 1], [4, 1], [5, 3], [99, 3]]:
+		_check(curve.encounter_types(at[0]) == at[1],
+				"types at Challenge %d is %d, not %d" % [at[0], curve.encounter_types(at[0]), at[1]])
 
 func _check_world(graph: WorldGraph, label: String) -> void:
 	_check(graph != null, "%s built a graph" % label)

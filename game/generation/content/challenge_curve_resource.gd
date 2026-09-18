@@ -2,10 +2,12 @@ class_name ChallengeCurveResource
 extends Resource
 ## The global Challenge settings in challenge_curve.tres. There are no per-Biome overrides.
 
-## Ordinary encounters per walkable tile. Each key is the Challenge a step begins at; its value holds
-## until the next key. Key 0 is required.
+## Ordinary encounters per walkable tile. Each key is a Challenge the curve passes through; the
+## density ramps linearly between neighbouring keys, so authored keys are corners, not cliffs.
+## Key 0 is required, and Challenges past the last key hold its value.
 @export var encounters_per_tile: Dictionary[int, float] = {}
-## Distinct enemy types per ordinary encounter, stepped like encounters_per_tile.
+## Distinct enemy types per ordinary encounter. A whole count, so this one steps: each key's value
+## holds until the next key.
 @export var types_per_encounter: Dictionary[int, int] = {}
 ## How far below the local Challenge a Teaching room fills its encounters.
 @export_range(1, 10, 1, "or_greater") var teach_dip := 1
@@ -13,24 +15,33 @@ extends Resource
 @export_range(0.0, 3600.0, 1.0, "or_greater", "suffix:s") var respawn_delay := 300.0
 
 
-## The active global density step at Challenge. Challenges below the first step use that first
-## step, which is always the required zero step for valid content.
+## The global density at Challenge, interpolated between the authored keys. Challenges below the
+## first key or above the last take that key's value.
 func encounter_density(challenge: int) -> float:
-	return float(_step(encounters_per_tile, challenge, 0.0))
-
-
-func encounter_types(challenge: int) -> int:
-	return int(_step(types_per_encounter, challenge, 0))
-
-
-static func _step(steps: Dictionary, challenge: int, fallback: Variant) -> Variant:
-	var keys := steps.keys()
+	var keys := encounters_per_tile.keys()
 	if keys.is_empty():
-		return fallback
+		return 0.0
 	keys.sort()
-	var value: Variant = steps[keys[0]]
-	for at in keys:
+	var at := maxi(challenge, keys[0])
+	var low: int = keys[0]
+	for high: int in keys:
+		if high > at:
+			return lerpf(encounters_per_tile[low], encounters_per_tile[high],
+					float(at - low) / float(high - low))
+		low = high
+	return encounters_per_tile[low]
+
+
+## The active step at Challenge. Challenges below the first step use that first step, which is
+## always the required zero step for valid content.
+func encounter_types(challenge: int) -> int:
+	var keys := types_per_encounter.keys()
+	if keys.is_empty():
+		return 0
+	keys.sort()
+	var value: int = types_per_encounter[keys[0]]
+	for at: int in keys:
 		if at > challenge:
 			break
-		value = steps[at]
+		value = types_per_encounter[at]
 	return value

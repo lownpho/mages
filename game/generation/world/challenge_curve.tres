@@ -5,10 +5,9 @@
 [resource]
 script = ExtResource("challenge_curve")
 encounters_per_tile = Dictionary[int, float]({
-0: 0.003,
-4: 0.004,
-10: 0.005,
-14: 0.006
+0: 0.002,
+10: 0.003,
+14: 0.003
 })
 types_per_encounter = Dictionary[int, int]({
 0: 1,
