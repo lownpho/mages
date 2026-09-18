@@ -6,6 +6,11 @@
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
 [ext_resource type="Script" uid="uid://gcuovs25kge0" path="res://generation/content/zone_resource.gd" id="zone"]
 
+[sub_resource type="Resource" id="fae_miniboss"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("5_hs6pn")
+centred = true
+
 [sub_resource type="Resource" id="Resource_t8bd1"]
 script = ExtResource("sign")
 text = "There is an evil Fae lurking
@@ -18,4 +23,5 @@ script = ExtResource("zone")
 spawn = true
 route_rooms = 6
 room_count = 10
+minibosses = Array[ExtResource("fixed_encounter")]([SubResource("fae_miniboss")])
 signs = Array[ExtResource("sign")]([SubResource("Resource_t8bd1")])
