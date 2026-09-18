@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://de6tt8t2m4xfp" path="res://characters/player/spells/nope/nope.tres" id="3_nope"]
 [ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="4_whumf"]
 [ext_resource type="Resource" uid="uid://cedui6u12dxae" path="res://characters/player/spells/poot/poot3.tres" id="9_poot"]
-[ext_resource type="Texture2D" uid="uid://bvhxqu1essvx3" path="res://characters/enemies/mould_golem/mould_golem.png" id="icon_png"]
+[ext_resource type="Texture2D" uid="uid://bvhxqu1essvx3" path="res://characters/enemies/mold_golem/mold_golem.png" id="icon_png"]
 
 [sub_resource type="Resource" id="Drop_nope"]
 script = ExtResource("2_drop")
@@ -31,7 +31,7 @@ region = Rect2(0, 0, 16, 16)
 
 [resource]
 script = ExtResource("1_res")
-display_name = "Mould Golem"
+display_name = "Mold Golem"
 icon = SubResource("AtlasTexture_icon")
 max_health = 560
 kinds = 32

@@ -18,6 +18,8 @@ const RADIUS := 2.0 * GameConstants.PX_PER_TILE
 ## Half a body, added only to the `feeds` query — see the note there.
 const BODY_REACH := 0.5 * GameConstants.PX_PER_TILE
 const TICK_INTERVAL := 0.5
+const TICK_INTERVAL_MS := int(TICK_INTERVAL * 1000.0)
+const LAST_ENEMY_TICK_META := &"last_enemy_spore_tick_ms"
 ## Seconds of die-back animation, taken out of the end of the lifetime.
 const WITHER_TIME := 1.2
 
@@ -59,7 +61,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_tick = 0.0
 	for victim in _victims(target_groups):
-		_hurt(victim, tick_damage)
+		_tick_hurt(victim)
 
 ## True if `point` is inside the patch and there's still something here to light.
 func covers(point: Vector2, slack: float = 0.0) -> bool:
@@ -155,6 +157,15 @@ func _victims(groups: Array) -> Array:
 
 # The victim's own Hurtbox signal — the same one a bullet reaches through — so armour,
 # shields and the floating numbers behave exactly as they do for any other hit.
+func _tick_hurt(node: Node) -> void:
+	if foe:
+		var now := Time.get_ticks_msec()
+		if now - int(node.get_meta(LAST_ENEMY_TICK_META, -TICK_INTERVAL_MS)) \
+				< TICK_INTERVAL_MS:
+			return
+		node.set_meta(LAST_ENEMY_TICK_META, now)
+	_hurt(node, tick_damage)
+
 func _hurt(node: Node, amount: int) -> void:
 	if amount <= 0:
 		return

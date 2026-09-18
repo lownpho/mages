@@ -1,6 +1,8 @@
 [gd_resource type="Resource" script_class="ZoneResource" format=3 uid="uid://blfas6n8uaq7v"]
 
+[ext_resource type="Resource" uid="uid://pbgstoikp5ux" path="res://characters/enemies/viper/viper_data.tres" id="4_elhg1"]
 [ext_resource type="Resource" uid="uid://cuqnush86i5lt" path="res://characters/enemies/fae/fae_data.tres" id="5_hs6pn"]
+[ext_resource type="Resource" uid="uid://mdrkrdata001" path="res://characters/enemies/mandraker/mandraker_data.tres" id="5_vedgk"]
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
 [ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
@@ -10,6 +12,16 @@
 script = ExtResource("fixed_encounter")
 leader = ExtResource("5_hs6pn")
 centred = true
+
+[sub_resource type="Resource" id="Resource_owwce"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("4_elhg1")
+metadata/_custom_type_script = "uid://dif17xbtr55od"
+
+[sub_resource type="Resource" id="Resource_cd60j"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("5_vedgk")
+metadata/_custom_type_script = "uid://dif17xbtr55od"
 
 [sub_resource type="Resource" id="Resource_t8bd1"]
 script = ExtResource("sign")
@@ -24,4 +36,5 @@ spawn = true
 route_rooms = 6
 room_count = 10
 minibosses = Array[ExtResource("fixed_encounter")]([SubResource("fae_miniboss")])
+rares = Array[ExtResource("fixed_encounter")]([SubResource("Resource_owwce"), SubResource("Resource_cd60j")])
 signs = Array[ExtResource("sign")]([SubResource("Resource_t8bd1")])

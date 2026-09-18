@@ -1,18 +1,16 @@
 [gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://34ma27c1xios"]
 
 [ext_resource type="Script" uid="uid://n62cgew2ywo2" path="res://generation/content/biome_resource.gd" id="biome"]
-[ext_resource type="Resource" uid="uid://da1elgts6jnyh" path="res://characters/enemies/bloatcap/bloatcap_data.tres" id="bloatcap"]
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
 [ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="PackedScene" path="res://objects/fountain/mycelium_fountain.tscn" id="fountain"]
-[ext_resource type="Resource" uid="uid://fuj7w7e7wvfv" path="res://characters/enemies/gapcap/gapcap_data.tres" id="gapcap"]
+[ext_resource type="Resource" uid="uid://cuepn5psyh0jq" path="res://characters/enemies/mold_golem/mold_golem_data.tres" id="mold_golem"]
 [ext_resource type="Resource" uid="uid://dsx2ux7qbbmkd" path="res://characters/enemies/normiecap/normiecap_data.tres" id="normiecap"]
 [ext_resource type="Resource" uid="uid://fmyqtx4r3dtg" path="res://generation/world/biomes/mycelium/art/mycelium_presentation.tres" id="presentation"]
 [ext_resource type="Resource" uid="uid://lobqchh5qgn7" path="res://characters/enemies/puffcap/puffcap_data.tres" id="puffcap"]
-[ext_resource type="Resource" uid="uid://bunsxgxjhcm32" path="res://characters/enemies/ringcap/ringcap_data.tres" id="ringcap"]
+[ext_resource type="Resource" uid="uid://coi0mv4wf5ml5" path="res://characters/enemies/rollcap/rollcap_data.tres" id="rollcap"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
-[ext_resource type="Resource" uid="uid://c3vdq0f42mrjd" path="res://characters/enemies/spiralcap/spiralcap_data.tres" id="spiralcap"]
-[ext_resource type="Resource" uid="uid://bwqsr66kgn4ly" path="res://characters/enemies/sporespitter/sporespitter_data.tres" id="sporespitter"]
+[ext_resource type="Resource" uid="uid://ld82nqsdoslj" path="res://characters/enemies/sporefly/sporefly_data.tres" id="sporefly"]
 
 [sub_resource type="Resource" id="boss"]
 script = ExtResource("fixed_encounter")
@@ -27,23 +25,23 @@ script = ExtResource("biome")
 exit_challenge = 12
 roster = Dictionary[ExtResource("creature"), int]({
 ExtResource("puffcap"): 4,
-ExtResource("sporespitter"): 4,
 ExtResource("normiecap"): 4,
-ExtResource("spiralcap"): 4,
-ExtResource("bloatcap"): 4,
-ExtResource("ringcap"): 5,
-ExtResource("gapcap"): 5
+ExtResource("sporefly"): 5,
+ExtResource("rollcap"): 6,
+ExtResource("mold_golem"): 8
 })
 boss = SubResource("boss")
-room_size = 23
+room_size = 26
 border_warp = 18.0
 loops = 0.35
+shortcuts = 0.0
 rockiness = 0.03
-wall_depth = 1.5
+wall_depth = 2.0
 wall_variation = 1.0
 presentation = ExtResource("presentation")
 decoration_density = 0.02
-professors = 3
+breather_chance = 0.4
+professors = 5
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

@@ -833,7 +833,7 @@ enemies:
         - {from: Blam, to: Lob, when: player backs off}
         - {from: Lob, to: Blam, when: player closes}
         - {from: Lob, to: Idle, when: lost sight}
-  - id: mould_golem
+  - id: mold_golem
     description: |
       The slow tank, and the one body in the Mycelium that walks at you rather than waiting.
       Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the

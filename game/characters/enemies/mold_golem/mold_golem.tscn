@@ -1,14 +1,14 @@
 [gd_scene format=3 uid="uid://0hfnknm8njs6"]
 
-[ext_resource type="Resource" uid="uid://cuepn5psyh0jq" path="res://characters/enemies/mould_golem/mould_golem_data.tres" id="1_data"]
+[ext_resource type="Resource" uid="uid://cuepn5psyh0jq" path="res://characters/enemies/mold_golem/mold_golem_data.tres" id="1_data"]
 [ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="2_hbox"]
-[ext_resource type="Texture2D" uid="uid://bvhxqu1essvx3" path="res://characters/enemies/mould_golem/mould_golem.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://bvhxqu1essvx3" path="res://characters/enemies/mold_golem/mold_golem.png" id="3_tex"]
 [ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="4_fsm"]
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_caster"]
-[ext_resource type="Resource" uid="uid://cs11lafhk4aa5" path="res://characters/enemies/mould_golem/mould_golem_shell.tres" id="6_shell"]
-[ext_resource type="Resource" uid="uid://b0mpgv0r3e4ie" path="res://characters/enemies/mould_golem/mould_golem_ring.tres" id="7_ring"]
-[ext_resource type="Resource" uid="uid://ce56tefweq6op" path="res://characters/enemies/mould_golem/mould_golem_wide_ring.tres" id="8_wide_ring"]
+[ext_resource type="Resource" uid="uid://cs11lafhk4aa5" path="res://characters/enemies/mold_golem/mold_golem_shell.tres" id="6_shell"]
+[ext_resource type="Resource" uid="uid://b0mpgv0r3e4ie" path="res://characters/enemies/mold_golem/mold_golem_ring.tres" id="7_ring"]
+[ext_resource type="Resource" uid="uid://ce56tefweq6op" path="res://characters/enemies/mold_golem/mold_golem_wide_ring.tres" id="8_wide_ring"]
 [ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
@@ -153,7 +153,7 @@ animations = [{
 "speed": 6.0
 }]
 
-[node name="MouldGolem" type="CharacterBody2D" unique_id=1559766476 groups=["enemies"]]
+[node name="MoldGolem" type="CharacterBody2D" unique_id=1559766476 groups=["enemies"]]
 collision_layer = 32
 collision_mask = 33
 motion_mode = 1

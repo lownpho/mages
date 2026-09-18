@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="ZoneResource" format=3 uid="uid://d2fchr3u6mb6e"]
+
+[ext_resource type="Resource" uid="uid://gqp7x5o4qrsu" path="res://characters/enemies/burrower/burrower_data.tres" id="burrower"]
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Resource" uid="uid://cf732g6hl37k0" path="res://characters/enemies/deathcap/deathcap_data.tres" id="deathcap"]
+[ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" uid="uid://cw2ixbaslb6eq" path="res://characters/enemies/maulcap/maulcap_data.tres" id="maulcap"]
+[ext_resource type="Resource" uid="uid://lobqchh5qgn7" path="res://characters/enemies/puffcap/puffcap_data.tres" id="puffcap"]
+[ext_resource type="Resource" uid="uid://bunsxgxjhcm32" path="res://characters/enemies/ringcap/ringcap_data.tres" id="ringcap"]
+[ext_resource type="Resource" uid="uid://dnao5j2jt1gu4" path="res://characters/enemies/shellcap/shellcap_data.tres" id="shellcap"]
+[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Resource" uid="uid://c3vdq0f42mrjd" path="res://characters/enemies/spiralcap/spiralcap_data.tres" id="spiralcap"]
+[ext_resource type="Resource" uid="uid://ld82nqsdoslj" path="res://characters/enemies/sporefly/sporefly_data.tres" id="sporefly"]
+[ext_resource type="Resource" uid="uid://bwqsr66kgn4ly" path="res://characters/enemies/sporespitter/sporespitter_data.tres" id="sporespitter"]
+[ext_resource type="Script" uid="uid://gcuovs25kge0" path="res://generation/content/zone_resource.gd" id="zone"]
+
+[sub_resource type="Resource" id="rare_maulcap"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("maulcap")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("sporefly"): 1,
+ExtResource("puffcap"): 3
+})
+
+[sub_resource type="Resource" id="rare_burrower"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("burrower")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("ringcap"): 1,
+ExtResource("puffcap"): 4
+})
+
+[sub_resource type="Resource" id="rare_deathcap"]
+script = ExtResource("fixed_encounter")
+leader = ExtResource("deathcap")
+escorts = Dictionary[ExtResource("creature"), int]({
+ExtResource("sporefly"): 1,
+ExtResource("puffcap"): 4
+})
+
+[resource]
+script = ExtResource("zone")
+route_rooms = 14
+room_count = 56
+roster = Dictionary[ExtResource("creature"), int]({
+ExtResource("ringcap"): 6,
+ExtResource("sporespitter"): 7,
+ExtResource("spiralcap"): 8,
+ExtResource("shellcap"): 9
+})
+rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_maulcap"), SubResource("rare_burrower"), SubResource("rare_deathcap")])

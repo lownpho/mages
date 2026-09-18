@@ -174,6 +174,26 @@ func _test_new_quit_continue() -> void:
 			and GlobalMap.active.entered_rooms.size() == restored.size(),
 			"reload kept the seed and the Run's Map")
 
+	# A death followed by New must bind the fresh minimap to the fresh Run.
+	world._set_flying(false)
+	world._player._die(world._player)
+	title = await _scene_after_change()
+	_check(title != null and title.scene_file_path == TITLE, "death returned to the title")
+	if title == null or title.scene_file_path != TITLE:
+		return
+	backdrop = title.get_node("TitleBackdrop")
+	if backdrop.graph == null:
+		await backdrop.planned
+	title._on_new()
+	world = await _scene_after_change()
+	_check(world != null and world.scene_file_path == "res://scenes/world.tscn",
+			"New after death opened the World")
+	if world == null or world.scene_file_path != "res://scenes/world.tscn":
+		return
+	var minimap: Control = world.get_node("UI/Strip/VBox/MapPanel/Minimap")
+	_check(minimap._state == GlobalMap.active and minimap._player == world._player,
+			"New after death bound the minimap to the fresh Map and player")
+
 
 func _snapshot_state(section: String) -> Dictionary:
 	var out := {}

@@ -68,9 +68,11 @@ biomes:
     name: Mycelium
     tier_label: T3
     intro: >
-      The fungal Side biome hanging off the deepwood, in three Zones: clusters, hollows and
-      sporefields. Spore clouds are the floor both sides fight over.
+      The fungal Side biome hanging off the deepwood, split between the projectile-heavy Barrage
+      and close-fighting Brawl Zones. Spore clouds are the floor both sides fight over.
     enemies_intro: >
       Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers,
       a rot heavy and three rares. Half of them print spore clouds and the other half fight
-      harder while standing in them. All of it spawns, spread over the Mycelium's three Zones.
+      harder while standing in them. Mold golems, rollcaps, puffcaps, normiecaps and sporeflies
+      span both Zones; the remaining commons split by fighting style, while all three rares can
+      appear in either Zone.

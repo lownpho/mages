@@ -21,6 +21,7 @@ var _fails: Array[String] = []
 func _ready() -> void:
 	await _check_field_laid()
 	await _check_ticks()
+	await _check_overlapping_enemy_ticks_land_once()
 	await _check_blast_lands_once()
 	await _check_an_enemy_field_is_inert()
 	await _check_light_lights_it()
@@ -63,6 +64,23 @@ func _check_ticks() -> void:
 		await get_tree().physics_frame
 	if victim.health >= 100:
 		_fails.append("standing in the field cost nothing")
+	victim.free()
+	_clear()
+
+# Enemy patches share a rolling cooldown on their victim. Stagger the second attempt by a
+# frame: frame-only deduplication would let it through, while the victim cooldown refuses it.
+func _check_overlapping_enemy_ticks_land_once() -> void:
+	var victim := _victim(Vector2.ZERO, "player")
+	var first := _cloud(Vector2.ZERO, true, ["player"])
+	await get_tree().physics_frame
+	first._physics_process(SporeCloud.TICK_INTERVAL)
+	await get_tree().physics_frame
+	var second := _cloud(Vector2.ZERO, true, ["player"])
+	await get_tree().physics_frame
+	second._physics_process(SporeCloud.TICK_INTERVAL)
+	if victim.health != 100 - first.tick_damage:
+		_fails.append("staggered enemy clouds dealt %d, one tick is %d"
+			% [100 - victim.health, first.tick_damage])
 	victim.free()
 	_clear()
 

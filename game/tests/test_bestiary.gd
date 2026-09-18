@@ -85,7 +85,7 @@ func _ready() -> void:
 		&"gnarlking",
 	]
 	var want_mycelium: Array[StringName] = [
-		&"bloatcap", &"clustercap", &"gapcap", &"mould_golem", &"normiecap", &"puffcap",
+		&"bloatcap", &"clustercap", &"gapcap", &"mold_golem", &"normiecap", &"puffcap",
 		&"ringcap", &"rollcap", &"shellcap", &"spiralcap", &"sporefly", &"sporespitter",
 		&"burrower", &"deathcap", &"maulcap",
 	]

@@ -42,7 +42,7 @@ extends Node
 
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
 const SPIRALCAP := preload("res://characters/enemies/spiralcap/spiralcap.tscn")
-const GOLEM := preload("res://characters/enemies/mould_golem/mould_golem.tscn")
+const GOLEM := preload("res://characters/enemies/mold_golem/mold_golem.tscn")
 const SPITTER := preload("res://characters/enemies/sporespitter/sporespitter.tscn")
 const BLOATCAP := preload("res://characters/enemies/bloatcap/bloatcap.tscn")
 const CLUSTERCAP := preload("res://characters/enemies/clustercap/clustercap.tscn")
@@ -61,7 +61,7 @@ const MAULCAP := preload("res://characters/enemies/maulcap/maulcap.tscn")
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
 	"spiralcap": SPIRALCAP,
-	"mould_golem": GOLEM,
+	"mold_golem": GOLEM,
 	"sporespitter": SPITTER,
 	"puffcap": preload("res://characters/enemies/puffcap/puffcap.tscn"),
 	"sporefly": preload("res://characters/enemies/sporefly/sporefly.tscn"),
@@ -94,7 +94,7 @@ const SIDE_TIERED := ["pew", "blam", "ring", "snipe"]
 func _ready() -> void:
 	var fails := 0
 	fails += await _ladder_swaps("spiralcap", SPIRALCAP, "TwinSweep", "Sweep", false)
-	fails += await _ladder_swaps("mould_golem", GOLEM, "WideRing", "Ring", true)
+	fails += await _ladder_swaps("mold_golem", GOLEM, "WideRing", "Ring", true)
 	fails += await _ladder_swaps("sporespitter", SPITTER, "WideBlam", "Blam", true)
 	fails += await _ladder_swaps("shellcap", SHELLCAP, "Fan", "Volley", true)
 	fails += await _ladder_swaps("gapcap", GAPCAP, "DoubleCone", "Cone", true)
