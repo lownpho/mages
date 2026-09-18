@@ -11,13 +11,13 @@
 [sub_resource type="Resource" id="Drop_blam"]
 script = ExtResource("2_drop")
 item = ExtResource("3_blam")
-chance = 0.5
+chance = 0.75
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_ring"]
 script = ExtResource("2_drop")
 item = ExtResource("4_ring")
-chance = 0.3
+chance = 1.0
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_5tnxw"]

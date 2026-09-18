@@ -10,7 +10,7 @@
 [sub_resource type="Resource" id="Resource_rune"]
 script = ExtResource("1_dpl6y")
 item = ExtResource("2_rune")
-chance = 0.1
+chance = 0.15
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_zaap"]
@@ -29,3 +29,4 @@ display_name = "Seedling"
 icon = SubResource("AtlasTexture_icon")
 max_health = 45
 drops = Array[ExtResource("1_dpl6y")]([SubResource("Resource_rune"), SubResource("Resource_zaap")])
+weight = 3

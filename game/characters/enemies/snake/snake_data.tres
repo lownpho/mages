@@ -22,3 +22,4 @@ display_name = "Snake"
 icon = SubResource("AtlasTexture_icon")
 max_health = 90
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_zoing")])
+weight = 3

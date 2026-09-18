@@ -11,13 +11,13 @@
 [sub_resource type="Resource" id="Resource_wand"]
 script = ExtResource("2_dpl6y")
 item = ExtResource("3_wand")
-chance = 0.1
+chance = 0.15
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_pew"]
 script = ExtResource("2_dpl6y")
 item = ExtResource("5_pew")
-chance = 0.1
+chance = 0.05
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_zaap"]
@@ -38,3 +38,4 @@ max_health = 18
 kinds = 4
 drops = Array[ExtResource("2_dpl6y")]([SubResource("Resource_wand"), SubResource("Resource_pew"), SubResource("Resource_zaap")])
 group_max = 2
+weight = 4

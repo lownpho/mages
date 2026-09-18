@@ -16,7 +16,7 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 [sub_resource type="Resource" id="Drop_fireball"]
 script = ExtResource("1_35d20")
 item = ExtResource("3_fireball")
-chance = 0.2
+chance = 0.32
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -29,3 +29,4 @@ display_name = "Mandrake"
 icon = SubResource("AtlasTexture_icon")
 max_health = 30
 drops = Array[ExtResource("1_35d20")]([SubResource("Resource_skillhat"), SubResource("Drop_fireball")])
+weight = 3

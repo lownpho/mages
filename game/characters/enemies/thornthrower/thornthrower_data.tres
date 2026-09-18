@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Drop_1"]
 script = ExtResource("1_1p2hq")
 item = ExtResource("drop_1")
-chance = 0.2
+chance = 0.42
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -23,3 +23,4 @@ icon = SubResource("AtlasTexture_icon")
 max_health = 50
 drops = Array[ExtResource("1_1p2hq")]([SubResource("Drop_1")])
 group_max = 2
+weight = 6

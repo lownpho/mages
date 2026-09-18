@@ -10,7 +10,7 @@
 [sub_resource type="Resource" id="Drop_pew"]
 script = ExtResource("2_drop")
 item = ExtResource("3_pew")
-chance = 0.05
+chance = 0.02
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_halp"]
@@ -31,3 +31,4 @@ max_health = 90
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_pew"), SubResource("Drop_halp")])
 group_min = 2
 group_max = 3
+weight = 3

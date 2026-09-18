@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://dcdrdod1cfeqq"]
 
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_nhe04"]
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://bw00mch4rg2t" path="res://characters/player/spells/bwoom/bwoom2.tres" id="3_bwoom"]
@@ -9,13 +10,13 @@
 [sub_resource type="Resource" id="Drop_bwoom"]
 script = ExtResource("2_drop")
 item = ExtResource("3_bwoom")
-chance = 0.05
+chance = 0.13
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Drop_pew"]
 script = ExtResource("2_drop")
 item = ExtResource("4_pew")
-chance = 0.07
+chance = 0.04
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
@@ -28,3 +29,4 @@ display_name = "Owl"
 icon = SubResource("AtlasTexture_icon")
 max_health = 120
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_bwoom"), SubResource("Drop_pew")])
+weight = 4

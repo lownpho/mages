@@ -11,7 +11,7 @@
 [sub_resource type="Resource" id="Drop_blam"]
 script = ExtResource("2_drop")
 item = ExtResource("4_blam")
-chance = 0.3
+chance = 0.5
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="Resource" id="Resource_v6xvd"]
@@ -23,7 +23,7 @@ metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 [sub_resource type="Resource" id="Drop_snipe"]
 script = ExtResource("2_drop")
 item = ExtResource("5_snipe")
-chance = 0.35
+chance = 1.0
 metadata/_custom_type_script = "uid://cevjj2hnv0juj"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]

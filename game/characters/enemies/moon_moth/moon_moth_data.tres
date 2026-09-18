@@ -1,5 +1,6 @@
 [gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://b4n8sxr2wqjy6"]
 
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="1_r8l72"]
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="1_res"]
 [ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="2_drop"]
 [ext_resource type="Resource" uid="uid://xhtt31bw1wvp" path="res://characters/player/spells/ring/ring2.tres" id="3_ring"]
@@ -22,3 +23,4 @@ icon = SubResource("AtlasTexture_icon")
 max_health = 55
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_ring")])
 group_max = 2
+weight = 4

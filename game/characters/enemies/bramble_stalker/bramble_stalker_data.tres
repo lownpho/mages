@@ -23,3 +23,4 @@ icon = SubResource("AtlasTexture_icon")
 max_health = 110
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_ring")])
 group_max = 2
+weight = 4

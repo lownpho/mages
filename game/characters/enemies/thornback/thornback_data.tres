@@ -22,3 +22,4 @@ display_name = "Thornback"
 icon = SubResource("AtlasTexture_icon")
 max_health = 350
 drops = Array[ExtResource("2_drop")]([SubResource("Drop_dash")])
+weight = 2
