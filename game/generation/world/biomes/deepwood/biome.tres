@@ -65,6 +65,7 @@ wall_depth = 3.0
 wall_variation = 4.0
 presentation = ExtResource("presentation")
 decoration_density = 0.04
+breather_chance = 0.4
 professors = 8
 signs = Array[ExtResource("sign")]([SubResource("sign_king"), SubResource("sign_mushroom_dungeon"), SubResource("sign_swarms"), SubResource("sign_feud"), SubResource("sign_bow")])
 breather_objects = Dictionary[PackedScene, int]({

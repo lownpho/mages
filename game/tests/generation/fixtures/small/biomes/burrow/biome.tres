@@ -28,3 +28,4 @@ loops = 0.35
 rockiness = 0.0
 presentation = ExtResource("presentation")
 decoration_density = 0.02
+breather_chance = 0.2

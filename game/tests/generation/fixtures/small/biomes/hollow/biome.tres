@@ -21,3 +21,4 @@ ExtResource("needle_moth"): 4
 })
 boss = SubResource("boss")
 presentation = ExtResource("presentation")
+breather_chance = 0.2

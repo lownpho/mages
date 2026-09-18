@@ -42,11 +42,11 @@ static func teach(graph: WorldGraph) -> void:
 		_teach_route(graph, [plan.biomes[side]])
 
 
-## Non-Teaching ordinary Rooms that hold no Object site become Breathers by the global chance.
+## Non-Teaching ordinary Rooms that hold no Object site become Breathers by their Biome's chance.
 static func breathe(graph: WorldGraph) -> void:
-	var chance := graph.plan.content.curve.breather_chance
 	for key in graph.rooms:
 		var room := graph.rooms[key]
+		var chance := graph.plan.biomes[room.plan.biome].resource.breather_chance
 		if room.role == GeneratedRoom.Role.TESTING and graph.plan.rng(WorldHash.NS_ROLES, "breather/" + key).randf() < chance:
 			room.role = GeneratedRoom.Role.BREATHER
 

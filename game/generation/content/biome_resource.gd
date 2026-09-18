@@ -39,6 +39,8 @@ extends Resource
 @export_range(0.0, 1.0, 0.005) var decoration_density := 0.0
 
 @export_group("Objects")
+## Chance that a non-Teaching ordinary Room becomes a Breather.
+@export_range(0.0, 1.0, 0.01) var breather_chance := 0.15
 @export_range(0, 10, 1, "or_greater") var professors := 0
 @export var signs: Array[SignResource] = []
 ## Scene -> weight for Breather Objects, added to each Zone's own.
