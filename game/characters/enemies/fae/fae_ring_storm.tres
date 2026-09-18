@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="BulletSpellResource" format=3]
+
+[ext_resource type="Script" path="res://characters/player/spells/bullet_spell_resource.gd" id="script"]
+[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="bullets"]
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="bullet"]
+[ext_resource type="Script" path="res://items/bullets/ring_pattern.gd" id="pattern"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/bullet_spell.tscn" id="effect"]
+[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="scaling"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ring"]
+atlas = ExtResource("bullets")
+region = Rect2(16, 24, 8, 8)
+
+[sub_resource type="Resource" id="Resource_ring"]
+script = ExtResource("bullet")
+icon = SubResource("AtlasTexture_ring")
+range_tiles = 8
+speed_tiles = 5
+
+[sub_resource type="Resource" id="ScalingProfile_ring"]
+script = ExtResource("scaling")
+base_damage = 11.0
+
+[sub_resource type="Resource" id="RingPattern_storm"]
+script = ExtResource("pattern")
+num_bullets = 16
+
+[resource]
+script = ExtResource("script")
+fire_pattern = SubResource("RingPattern_storm")
+bullet = SubResource("Resource_ring")
+damage = SubResource("ScalingProfile_ring")
+shot_interval = 0.7
+max_shots = 3
+rotation_per_shot = 11.25
+aim_mode = 2
+effect_scene = ExtResource("effect")
+cast_time = 0.5

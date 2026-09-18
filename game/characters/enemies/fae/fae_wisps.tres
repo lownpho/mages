@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3]
+
+[ext_resource type="Script" path="res://characters/player/spells/summon_resource.gd" id="summon"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/summon_spawner.tscn" id="effect"]
+[ext_resource type="PackedScene" path="res://characters/enemies/wasp/wasp.tscn" id="wasp"]
+
+[resource]
+script = ExtResource("summon")
+minion_scenes = Array[PackedScene]([ExtResource("wasp")])
+count = 4
+spawn_pattern = 1
+spawn_distance = 48.0
+minion_lifetime = 30.0
+minion_group = &"pack_wisp"
+effect_scene = ExtResource("effect")
+cast_time = 1.2

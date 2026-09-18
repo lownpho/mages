@@ -65,7 +65,8 @@ func enter() -> void:
 		_chase.enabled = true
 	if _attack:
 		_attack.enabled = true
-	creature.play(anim)
+	var fight := boss()
+	creature.play(anim, fight.intensity if fight else 1.0)
 	if _timer:
 		_timer.start(duration)
 
@@ -113,8 +114,15 @@ func physics_update(delta: float) -> void:
 				go_to(_lost())
 				return
 
-	creature.velocity = _heading(to_player, delta) * speed
+	creature.velocity = _heading(to_player, delta) * _speed()
 	creature.move_and_slide()
+
+# Movement speed at the fight's current Intensity: a Boss closes while it escalates, so
+# walking away stops being a plan. Capped by the BossController, so the player can still
+# outwalk an escalated Boss rather than be run down.
+func _speed() -> float:
+	var fight := boss()
+	return fight.scale_speed(speed) if fight else speed
 
 func _heading(to_player: Vector2, delta: float) -> Vector2:
 	var forward := to_player.normalized()

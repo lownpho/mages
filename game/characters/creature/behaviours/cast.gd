@@ -94,12 +94,20 @@ func enter() -> void:
 	# started — a rejected cast (spell still cooling, host busy) must NOT leave us in a
 	# telegraph that never resolves, or the beat's wind-up early-out freezes the creature.
 	var player := creature.get_target()
-	var started := _caster.cast(spell, aim_at(player) if player else Vector2.ZERO)
+	# A Boss's Intensity shortens the telegraph — floored, because the beat's Counter is a
+	# positional or timing answer and an unreadable tell would break the promise it makes. A
+	# channel's cap is its own dial, so it is left alone.
+	var boss := boss()
+	var tell := spell.cast_time
+	if boss and not spell.channeled:
+		tell = boss.scale_telegraph(tell)
+	var started := _caster.cast(spell, aim_at(player) if player else Vector2.ZERO,
+			tell / spell.cast_time if spell.cast_time > 0.0 else 1.0)
 	_refused = not started
 	_winding_up = started and spell.cast_time > 0.0
 	if _winding_up:
 		creature.incoming_damage_scale = windup_damage_scale
-		creature.play_fitted(windup_anim if windup_anim != "" else attack_anim, spell.cast_time)
+		creature.play_fitted(windup_anim if windup_anim != "" else attack_anim, tell)
 		if telegraph_color.a > 0.0:
 			creature.telegraph(telegraph_color)
 		_windup_elapsed = 0.0

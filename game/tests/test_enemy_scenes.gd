@@ -27,12 +27,49 @@ func _ready() -> void:
 			print("  FAIL: %s data incomplete (hp/icon)" % id)
 			fails += 1
 		fails += _check_state_names(id, node)
+		fails += _check_boss_phases(id, node)
 	# Two frames so deferred FSM entry and make_timer adds actually execute.
 	await get_tree().process_frame
 	await get_tree().process_frame
 	print("enemy scenes: %d instantiated" % checked)
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit()
+
+## Every Boss Phase declares a Counter. The whole design rests on a Phase being a beat that has
+## to be ANSWERED — a Rotation that ships one with nothing to answer is dead time inside the
+## fight, and this is the rule that cannot be allowed to drift silently. It also pins the shape
+## of a Rotation (4-5 Phases, 1-4 Reps each) and that a priority Phase is marked `once`, so an
+## opener that jumps the queue cannot starve the order it jumps.
+func _check_boss_phases(id: String, node: Node) -> int:
+	var fight := node.get_node_or_null("BossController")
+	if fight == null:
+		return 0
+	if not (fight is BossController):
+		print("  FAIL: %s/BossController does not carry the BossController script" % id)
+		return 1
+	var fsm: FSM = node.get_node_or_null("FSM")
+	var fails := 0
+	var phases: Array = fight.phases
+	if phases.size() < 4 or phases.size() > 5:
+		print("  FAIL: %s runs %d Phases, wanted 4-5" % [id, phases.size()])
+		fails += 1
+	for name in phases:
+		var beat: State = fsm.states.get(name) if fsm else null
+		if not (beat is Behaviour):
+			print("  FAIL: %s/%s is in the Rotation but is not a behaviour" % [id, name])
+			fails += 1
+			continue
+		if beat.counter_kind == Behaviour.Counter.NONE:
+			print("  FAIL: %s/%s is a Phase with no Counter — dead time" % [id, name])
+			fails += 1
+		if beat.reps < 1 or beat.reps > 4:
+			print("  FAIL: %s/%s authors %d Reps, wanted 1-4" % [id, name, beat.reps])
+			fails += 1
+		if beat.priority > 0 and not beat.once:
+			print("  FAIL: %s/%s has priority without `once` — it would starve the Rotation"
+				% [id, name])
+			fails += 1
+	return fails
 
 # Every behaviour hand-off is a state NAME, resolved only when that edge is first taken —
 # so a typo in a rarely-rolled pattern (a boss's low-HP beat) stays invisible until it

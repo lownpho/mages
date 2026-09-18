@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="ChargeDashResource" format=3]
+
+[ext_resource type="Script" path="res://characters/player/spells/charge_dash/charge_dash_resource.gd" id="script"]
+[ext_resource type="Texture2D" path="res://items/bullets/bullets.png" id="bullets"]
+[ext_resource type="Script" path="res://items/bullets/bullet_resource.gd" id="bullet"]
+[ext_resource type="Script" path="res://items/bullets/flank_pattern.gd" id="pattern"]
+[ext_resource type="PackedScene" path="res://characters/player/spells/charge_dash/charge_dash.tscn" id="effect"]
+[ext_resource type="Script" path="res://characters/player/spells/scaling_profile.gd" id="scaling"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bolt"]
+atlas = ExtResource("bullets")
+region = Rect2(16, 24, 8, 8)
+
+[sub_resource type="Resource" id="Resource_bolt"]
+script = ExtResource("bullet")
+icon = SubResource("AtlasTexture_bolt")
+range_tiles = 6
+speed_tiles = 9
+
+[sub_resource type="Resource" id="ScalingProfile_contact"]
+script = ExtResource("scaling")
+base_damage = 20.0
+
+[sub_resource type="Resource" id="ScalingProfile_bolt"]
+script = ExtResource("scaling")
+base_damage = 8.0
+
+[sub_resource type="Resource" id="Pattern_flank"]
+script = ExtResource("pattern")
+
+[resource]
+script = ExtResource("script")
+dash_speed = 150.0
+dash_duration = 0.7
+contact_damage = SubResource("ScalingProfile_contact")
+contact_radius_tiles = 0.7
+fire_pattern = SubResource("Pattern_flank")
+bullet = SubResource("Resource_bolt")
+damage = SubResource("ScalingProfile_bolt")
+max_shots = 2
+effect_scene = ExtResource("effect")
+cast_time = 0.5

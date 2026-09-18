@@ -68,7 +68,9 @@ func _ready() -> void:
 
 func enter() -> void:
 	creature.velocity = Vector2.ZERO
-	creature.play(anim)
+	# A Boss's poses speed up as its Intensity climbs, so the escalation is visible; every
+	# other creature's intensity is 1.0 and this is the plain play() it always was.
+	creature.play(anim, creature.intensity())
 	if _probe:
 		_probe.enabled = true
 	if _lost_probe:

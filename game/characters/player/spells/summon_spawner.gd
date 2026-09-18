@@ -36,6 +36,11 @@ func _ready() -> void:
 			minion.defence = ctx.defence
 			_inject_spell(minion, data.minion_spell)
 			_apply_sheet(minion, data.minion_sheet)
+		# The escort's membership is the seam its summoner gates on, and it has to be true for
+		# an add that brought its own CreatureResource just as much as for a stamped minion:
+		# a boss's adds are roster enemies, and the boss still has to be able to count them.
+		if data.minion_group != &"":
+			minion.add_to_group(data.minion_group)
 		minion.global_position = ctx.origin + _slot(i, perp)
 		# Deferred: a direct add_child to root fails while our own _ready is still
 		# busy adding us to the tree.

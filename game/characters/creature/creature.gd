@@ -196,7 +196,11 @@ func reset_combat() -> void:
 	# start() re-enters the initial state through transition_to, so the beat that was running
 	# gets its exit() and hands back anything it borrowed (armour scale, animation speed).
 	fsm.start()
-
+	# A rewound fight is rewound all the way: a Boss left alone puts its Intensity back to the
+	# opening value too, or walking away and coming back would find the fight half-escalated.
+	var fight := get_node_or_null("BossController")
+	if fight is BossController:
+		fight.reset()
 
 func _drive_dash() -> void:
 	if not is_dashing():
@@ -250,6 +254,13 @@ func get_target() -> Node2D:
 
 func get_aim_direction() -> Vector2:
 	return aim_direction
+
+## The Intensity of the fight this creature is a Boss of, or 1.0 for everything else. The
+## presentation dials (animation speed) read the same scalar the timing dials do, so a boss
+## that got harder also LOOKS harder without every beat having to remember to say so.
+func intensity() -> float:
+	var fight := get_node_or_null("BossController")
+	return (fight as BossController).intensity if fight is BossController else 1.0
 
 func probe_sees(probe: RayCast2D) -> bool:
 	var collider = probe.get_collider()
@@ -320,7 +331,9 @@ func play_fitted(anim: String, duration: float) -> void:
 	var frames := sprite.sprite_frames
 	if duration <= 0.0 or frames == null or not frames.has_animation(anim) \
 			or frames.get_animation_loop(anim):
-		play(anim)
+		# A looping pose has no strike frame to land, so it simply runs for the wind-up — faster
+		# as the fight escalates, so the tell speeds up with its own shortened timer.
+		play(anim, intensity())
 		return
 	var count := frames.get_frame_count(anim)
 	var fps := frames.get_animation_speed(anim)

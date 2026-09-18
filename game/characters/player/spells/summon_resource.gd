@@ -24,7 +24,11 @@ class_name SummonResource
 ## reports. A minion that authors its own beats keeps them (see summon_spawner) — Poot and
 ## Blops name their plain rung here, which is exactly what they fire off coated floor.
 @export var minion_spell: SpellResource
-## The spritesheet for this tier. The minion scene authors the animation layout
+## Group every summoned minion joins, so a boss can gate on its own adds without the add
+## scene having to know it is one (Behaviour.clear_group / the ADDS Counter). Empty for every
+## player summon — a minion is only an escort when something asks it to be.
+@export var minion_group: StringName = &""
+## Spritesheet for this tier. The minion scene authors the animation layout
 ## (regions/frames/durations, identical across a summon's tiers); the spawner swaps
 ## this texture onto it, so one minion scene serves tiers that look different
 ## (e.g. Jimmy's three sizes) without per-tier scenes.

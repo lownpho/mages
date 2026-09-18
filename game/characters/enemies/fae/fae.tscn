@@ -8,10 +8,14 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="5_weap"]
 [ext_resource type="Resource" uid="uid://mdho72nxe2dp" path="res://characters/enemies/fae/fae_rings_spell.tres" id="6_rings"]
 [ext_resource type="Resource" uid="uid://bnpe0duyjmtcb" path="res://characters/enemies/fae/fae_shotgun_spell.tres" id="7_shotgun"]
-[ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
-[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
-[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
-[ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/creature/behaviours/pattern_picker.gd" id="b_pattern"]
+[ext_resource type="Resource" path="res://characters/enemies/fae/fae_flit.tres" id="8_flit"]
+[ext_resource type="Resource" path="res://characters/enemies/fae/fae_wisps.tres" id="9_wisps"]
+[ext_resource type="Resource" path="res://characters/enemies/fae/fae_ring_storm.tres" id="10_storm"]
+[ext_resource type="Script" path="res://characters/creature/boss_controller.gd" id="b_boss"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/charge.gd" id="b_charge"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/cycle.gd" id="b_cycle"]
+[ext_resource type="Script" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fae"]
 radius = 7.0
@@ -143,6 +147,10 @@ position = Vector2(0, -3)
 collision_mask = 256
 radius = 7.0
 
+[node name="BossController" type="Node" parent="."]
+script = ExtResource("b_boss")
+phases = Array[String](["Rings", "Shotgun", "Flit", "Wisps", "RingStorm"])
+
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=1705191339]
 target_position = Vector2(128, 0)
 collision_mask = 17
@@ -151,47 +159,79 @@ collision_mask = 17
 
 [node name="ShotgunCaster" parent="." unique_id=841557569 instance=ExtResource("5_weap")]
 
+[node name="FlitCaster" parent="." unique_id=841557570 instance=ExtResource("5_weap")]
+
 [node name="FSM" parent="." unique_id=1709816967 instance=ExtResource("4_fsm")]
 initial_state = "Idle"
 
 [node name="Idle" type="Node" parent="FSM" unique_id=585433654]
 script = ExtResource("b_hold")
 probe_path = NodePath("../../DetectProbe")
-seen_state = "Pattern"
+seen_state = "Cycle"
 
-[node name="Pattern" type="Node" parent="FSM" unique_id=1593246542]
-script = ExtResource("b_pattern")
+[node name="Cycle" type="Node" parent="FSM" unique_id=1593246542]
+script = ExtResource("b_cycle")
 probe_path = NodePath("../../DetectProbe")
+tail_anim = "rest"
 
 [node name="Rings" type="Node" parent="FSM" unique_id=767149686]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../RingCaster")
 spell = ExtResource("6_rings")
-done_state = "Pattern"
+done_state = "Cycle"
 telegraph_color = Color(0.803922, 0.376471, 0.576471, 1)
-pattern_weight = 4.0
-
-[node name="Rest" type="Node" parent="FSM" unique_id=1595940432]
-script = ExtResource("b_hold")
-anim = "rest"
-min_time = 5.0
-max_time = 5.0
-next_state = "Pattern"
-pattern_weight = 1.0
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.6
 
 [node name="Shotgun" type="Node" parent="FSM" unique_id=1466950279]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../ShotgunCaster")
 spell = ExtResource("7_shotgun")
-done_state = "Pattern"
+done_state = "Cycle"
 attack_anim = "shotgun"
 telegraph_color = Color(0.541176, 0.921569, 0.945098, 1)
-pattern_weight = 3.0
+counter_kind = 1
+reps = 2
+tail = 1.2
+rep_gap = 0.5
 
-[node name="Chase" type="Node" parent="FSM" unique_id=1143798387]
-script = ExtResource("b_approach")
-speed = 28.0
-anim = "idle"
-duration = 3.0
-done_state = "Pattern"
-pattern_weight = 2.0
+[node name="Flit" type="Node" parent="FSM"]
+script = ExtResource("b_charge")
+caster_path = NodePath("../../FlitCaster")
+spell = ExtResource("8_flit")
+done_state = "Cycle"
+windup_anim = "attack"
+attack_anim = "idle"
+telegraph_color = Color(0.803922, 0.376471, 0.576471, 1)
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.6
+
+[node name="Wisps" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../RingCaster")
+spell = ExtResource("9_wisps")
+done_state = "Cycle"
+attack_anim = "summon"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
+clear_group = &"pack_wisp"
+counter_kind = 3
+reps = 2
+tail = 1.2
+rep_gap = 0.8
+
+[node name="RingStorm" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../RingCaster")
+spell = ExtResource("10_storm")
+done_state = "Cycle"
+telegraph_color = Color(0.803922, 0.376471, 0.576471, 1)
+priority = 1
+once = true
+health_max = 0.25
+counter_kind = 4
+reps = 1
+tail = 1.4

@@ -34,7 +34,7 @@ func _ready() -> void:
 ## Cast `spell` now if able. `aim` (non-zero) stamps the host's aim_direction for
 ## casters that aim by direction (creatures); the player leaves it zero and the
 ## effect samples the mouse. Returns true if the cast went off.
-func cast(spell: SpellResource, aim: Vector2 = Vector2.ZERO) -> bool:
+func cast(spell: SpellResource, aim: Vector2 = Vector2.ZERO, time_scale: float = 1.0) -> bool:
 	if spell == null or spell.effect_scene == null:
 		return false
 	if not ready_for(spell) or not _host_ready():
@@ -44,7 +44,9 @@ func cast(spell: SpellResource, aim: Vector2 = Vector2.ZERO) -> bool:
 	if spell.channeled:
 		_begin_channel(spell)
 	elif spell.cast_time > 0.0:
-		_begin_windup(spell)
+		# `time_scale` is a Boss's Intensity shortening its own telegraph; 1.0 for every
+		# other caster in the game.
+		_begin_windup(spell, time_scale)
 	else:
 		var effect := _spawn_effect(spell)
 		# One burst at a time: a new over-time effect cancels any live one (it isn't in
@@ -100,10 +102,10 @@ func _host_ready() -> bool:
 		return false
 	return host.get("can_act") != false
 
-func _begin_windup(spell: SpellResource) -> void:
+func _begin_windup(spell: SpellResource, time_scale: float = 1.0) -> void:
 	_cancel_bursts()
 	_pending_spell = spell
-	_cast_timer.start(spell.cast_time)
+	_cast_timer.start(spell.cast_time * time_scale)
 	cast_started.emit(spell)
 
 func _begin_channel(spell: SpellResource) -> void:

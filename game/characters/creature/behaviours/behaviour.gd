@@ -6,6 +6,28 @@ class_name Behaviour
 
 @onready var creature: Creature = _find_creature()
 
+## What the player has to DO to answer this beat. Declared on the beat, one kind each; every
+## kind reads an event that already exists (see BossController), so a Counter adds no sensing.
+## NONE is a beat with nothing to answer — dead time on a boss, which is why the static check
+## in test_enemy_scenes fails a Rotation Phase that declares none.
+enum Counter { NONE, PUNISH, WALL, ADDS, UNTOUCHED }
+
+## A Counter the player answered landed. Emitted by whoever detects it (BossController) on
+## the beat it was declared on, so feedback can hang off the beat rather than off the boss.
+signal countered(kind: Counter)
+
+@export_group("Phase")
+## The Counter this beat is answered with. See Counter above.
+@export var counter_kind: Counter = Counter.NONE
+## Playthroughs of the beat before the Phase's Tail opens. Reps are IDENTICAL by design —
+## they exist so a beat can be read, not so it can escalate; Intensity is the only dial that
+## does that.
+@export_range(1, 4) var reps: int = 2
+## Recovery after the last Rep: the Phase's punish window. Scaled by Intensity, floored.
+@export var tail: float = 1.0
+## Beat between two Reps of the same Phase. Scaled by Intensity, floored.
+@export var rep_gap: float = 0.6
+
 @export_group("Pattern")
 ## Relative odds of PatternPicker rolling this beat. 0 keeps it out of the pool entirely,
 ## so the ordinary states sharing the FSM (Idle, Chase) are never rolled.
@@ -87,14 +109,9 @@ func physics_update(_delta: float) -> void: pass
 ## drops the beat from a boss's roll through the same seam. Subclasses add their own clause
 ## in `_ready_to_run` rather than overriding this.
 func can_run() -> bool:
-	if once and _spent:
+	if not window_open():
 		return false
-	var frac := 1.0
-	if creature.max_health > 0:
-		frac = float(creature.health) / float(creature.max_health)
-	if frac < health_min or frac > health_max:
-		return false
-	if not _group_clear():
+	if not group_clear():
 		return false
 	if not _in_range():
 		return false
@@ -113,8 +130,26 @@ func _in_range() -> bool:
 	# probe needs no owner state — it's a ruler, not a sensor another beat is holding.
 	return _range_probe != null and creature.look_for_target(_range_probe)
 
-func _group_clear() -> bool:
+## The beat's own window — is this still the fight's business at all? `once` is spent for
+## good and a health window the fight has left does not reopen, so a dispatcher must move on
+## rather than wait out a gate that will never open. Everything else a beat can be shut by (a
+## cooling spell, an escort still standing, a range probe) is temporary and worth the wait.
+func window_open() -> bool:
+	if once and _spent:
+		return false
+	var frac := 1.0
+	if creature.max_health > 0:
+		frac = float(creature.health) / float(creature.max_health)
+	return frac >= health_min and frac <= health_max
+
+## True when nothing of this beat's escort group stands within its radius. Public because
+## the BossController asks the same question to credit an ADDS Counter and to hold the
+## escort's armour — membership is the seam, whether it is read by a beat or by its boss.
+func group_clear() -> bool:
 	if clear_group == &"":
+		return true
+	# Detached (a run ended mid hand-off): nothing is standing as far as the fight goes.
+	if not is_inside_tree():
 		return true
 	var radius := clear_radius_tiles * GameConstants.PX_PER_TILE
 	for node in get_tree().get_nodes_in_group(clear_group):
@@ -130,6 +165,11 @@ func _group_clear() -> bool:
 # Subclass seam for can_run (Cast: is the spell off cooldown).
 func _ready_to_run() -> bool:
 	return true
+
+## The Boss this beat is a Phase of, when it is one. Null for every ordinary enemy — which
+## is what keeps the Intensity dials out of the rest of the roster.
+func boss() -> BossController:
+	return creature.get_node_or_null("BossController") as BossController
 
 func go_to(state: String) -> void:
 	creature.fsm.transition_to(state)
