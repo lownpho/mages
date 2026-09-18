@@ -55,7 +55,7 @@ ExtResource("stalker"): 6,
 ExtResource("moss_golem"): 6
 })
 boss = SubResource("boss")
-room_size = 26
+room_size = 30
 border_warp = 20.0
 loops = 0.2
 shortcuts = 0.0

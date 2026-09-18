@@ -22,8 +22,8 @@ centred = true
 
 [resource]
 script = ExtResource("zone")
-route_rooms = 6
-room_count = 18
+route_rooms = 8
+room_count = 30
 roster = Dictionary[ExtResource("creature"), int]({
 ExtResource("thornthrower"): 1,
 ExtResource("rosebud"): 1
