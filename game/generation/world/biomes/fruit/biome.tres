@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="BiomeResource" format=3]
+[gd_resource type="Resource" script_class="BiomeResource" format=3 uid="uid://mc4lah2p1o53"]
 
-[ext_resource type="Script" path="res://generation/content/biome_resource.gd" id="biome"]
-[ext_resource type="Script" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Script" uid="uid://n62cgew2ywo2" path="res://generation/content/biome_resource.gd" id="biome"]
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
 [ext_resource type="PackedScene" path="res://objects/fountain/glade_fountain.tscn" id="fountain"]
 [ext_resource type="Resource" path="res://generation/world/biomes/fruit/art/fruit_presentation.tres" id="presentation"]
-[ext_resource type="Script" path="res://generation/content/sign_resource.gd" id="sign"]
+[ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
 
 [resource]
 script = ExtResource("biome")
