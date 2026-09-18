@@ -43,7 +43,6 @@ var world_tiles := Vector2i.ZERO
 ## dictionaries directly.
 var entered_rooms: Dictionary[String, bool] = {}
 var revealed_rooms: Dictionary[String, bool] = {}
-var pins: Array = [] # Vector2i World tiles; fog is deliberately allowed.
 var defeated_keys: Dictionary = {} # shared RunDefeats.defeated dictionary when running
 ## Entered Rooms a view drew without their interiors, in request order. GlobalMap hands them to
 ## streaming; take_wanted_interiors() empties it.
@@ -78,28 +77,25 @@ func setup(world_graph: WorldGraph, world_interiors: WorldInteriors, defeated: D
 	_scene_marker_kinds.clear()
 	entered_rooms.clear()
 	revealed_rooms.clear()
-	pins.clear()
 	wanted_interiors.clear()
 	_wanted.clear()
 
 
-func add_pin(world_tile: Vector2i) -> void:
-	if world_tile not in pins:
-		pins.append(world_tile)
-
-
-func remove_pin_near(world_tile: Vector2i, radius_tiles: int) -> bool:
-	var best := -1
+## The nearest discovered Fountain tile within `radius_tiles` of `world_tile`, or Vector2i.MAX.
+## Only entered Rooms mark their Objects, so every hit is somewhere the player has already stood:
+## the Map's recall can never carry them somewhere undiscovered.
+func fountain_near(world_tile: Vector2i, radius_tiles: int) -> Vector2i:
+	var best := Vector2i.MAX
 	var best_d := radius_tiles * radius_tiles + 1
-	for i in pins.size():
-		var d: int = (pins[i] - world_tile).length_squared()
+	for marker in markers:
+		if marker["kind"] != MARKER_FOUNTAIN:
+			continue
+		var tile: Vector2i = marker["tile"]
+		var d: int = (tile - world_tile).length_squared()
 		if d <= radius_tiles * radius_tiles and d < best_d:
 			best_d = d
-			best = i
-	if best >= 0:
-		pins.remove_at(best)
-		return true
-	return false
+			best = tile
+	return best
 
 
 ## Boss or Miniboss reveal by stable Room key. A discovered set piece and a revealed one derive the
@@ -419,7 +415,7 @@ func _leader_defeated(room_key: String) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"world_seed": world_seed, "entered_rooms": entered_rooms.keys(), "pins": pins,
+	return {"world_seed": world_seed, "entered_rooms": entered_rooms.keys(),
 			"revealed_rooms": revealed_rooms.keys()}
 
 
@@ -429,9 +425,6 @@ func restore(dict: Dictionary) -> void:
 	for key in dict.get("entered_rooms", []):
 		if graph.rooms.has(String(key)):
 			entered_rooms[String(key)] = true
-	pins.clear()
-	for pin in dict.get("pins", []):
-		pins.append(pin)
 	for key in dict.get("revealed_rooms", []):
 		reveal_room(String(key))
 	_macro_images.clear()

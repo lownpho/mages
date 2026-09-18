@@ -1,6 +1,7 @@
 extends Node
 ## World Map coverage at the public MapState boundary: Room-key discovery, lazy macro images,
-## Passage stubs, derived markers/reveals/defeats, fog Pins and the two views' edge projection.
+## Passage stubs, derived markers/reveals/defeats, Fountain recall and the two views' edge
+## projection.
 
 const MAP_VIEW := preload("res://gui/map/map_view.gd")
 const MINIMAP_VIEW := preload("res://gui/minimap/minimap_view.gd")
@@ -15,6 +16,7 @@ func _ready() -> void:
 		_test_discovery_images_and_stubs(graph)
 		_test_shortcut_stub()
 		_test_markers(graph)
+		_test_fountain_recall()
 		_test_reveal_defeat_and_save(graph)
 		_test_warp_arrival(graph)
 		_test_projection()
@@ -31,6 +33,35 @@ func _state(graph: WorldGraph, defeated: Dictionary = {}) -> MapState:
 	var state := MapState.new()
 	state.setup(graph,WorldFixture.interiors(graph), defeated)
 	return state
+
+
+## Fountain recall: only entered Rooms mark a Fountain, and fountain_near finds the nearest one
+## within reach and nothing beyond it.
+func _test_fountain_recall() -> void:
+	var fixture := WorldFixture.small()
+	var graph: WorldGraph = null
+	var site: ObjectSite = null
+	for seed in fixture.seeds:
+		var candidate := fixture.graph(seed)
+		for candidate_site: ObjectSite in candidate.sites.values():
+			if candidate_site.kind == ObjectSite.Kind.WEIGHTED and candidate_site.scene != null \
+					and candidate_site.scene.resource_path.contains("fountain"):
+				graph = candidate
+				site = candidate_site
+				break
+		if site != null:
+			break
+	_check(site != null, "some small fixture seed plans a fountain")
+	if site == null:
+		return
+	var state := _state(graph)
+	var tile := site.spot
+	_check(state.fountain_near(tile, 2) == Vector2i.MAX,
+			"a Room not yet entered marks no Fountain to recall to")
+	state.discover_at(tile)
+	_check(state.fountain_near(tile, 2) == tile, "a discovered Fountain is a recall target")
+	_check(state.fountain_near(tile + Vector2i(100, 100), 2) == Vector2i.MAX,
+			"a Fountain out of reach is not recalled to")
 
 
 func _test_discovery_images_and_stubs(graph: WorldGraph) -> void:
@@ -191,21 +222,12 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 	defeated[boss.key() + "/encounter/0/member/0"] = true
 	_check(state.markers.is_empty(), "defeating the Boss leader removes its marker")
 
-	var fog_room: GeneratedRoom = null
-	for room in graph.room_list:
-		if room != boss:
-			fog_room = room
-			break
-	var pin := graph.tile_of(fog_room.seed_point)
-	state.add_pin(pin)
-	_check(state.pins == [pin] and not state.is_tile_discovered(pin), "a Pin may be placed in fog")
 	var saved := state.to_dict()
-	_check(saved.has("entered_rooms") and saved.has("pins") and saved.has("revealed_rooms")
+	_check(saved.has("entered_rooms") and saved.has("revealed_rooms")
 			and not saved.has("markers"), "save exposes records, not generated marker lists")
 	var restored := _state(graph, defeated)
 	restored.restore(saved)
-	_check(restored.pins == [pin] and restored.revealed_rooms.has(boss.key()),
-			"Pins and revealed set-piece keys restore")
+	_check(restored.revealed_rooms.has(boss.key()), "revealed set-piece keys restore")
 	defeated.clear()
 	_check(restored.markers.size() == 1, "restored markers reconstruct from records and defeat keys")
 

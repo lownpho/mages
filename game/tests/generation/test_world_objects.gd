@@ -499,6 +499,9 @@ func _test_warp(rig: Dictionary) -> void:
 		await get_tree().physics_frame
 	_check(arrivals.size() == 1 and arrivals[0][0] == rig.player and arrivals[0][1] == site.destination_room,
 			"walking into %s's portal warps the player once to %s: %s" % [site.key, site.destination_room, arrivals])
+	var poofs: Array = rig.objects.objects_parent.get_children().filter(
+			func(n: Node) -> bool: return n is AnimatedSprite2D and n.animation == &"poof")
+	_check(poofs.size() == 2, "%s's warp left a blink flash at both ends: %d" % [site.key, poofs.size()])
 	var tile := Vector2i((rig.player.global_position / GameConstants.PX_PER_TILE).floor())
 	_check(tile == landing, "%s's portal put the player at %s, not its landing %s" % [site.key, tile, landing])
 	var room: GeneratedRoom = rig.streamer.interiors.owner_at(tile)

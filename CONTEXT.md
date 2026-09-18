@@ -101,10 +101,11 @@ The Biome a Professor's reward points at: the next on the Ideal path, or for a S
 after its parent. A sealed Biome is none, and a Professor with none gives nothing.
 
 **Map**:
-The persistent record of discovered Rooms, Pins, and revealed places in the World.
+The persistent record of discovered Rooms and revealed places in the World.
 
-**Pin**:
-A player-created marker on a free tile of the Map, without a label or type.
+**Recall**:
+Travelling from the Map to a discovered Fountain. Only entered Rooms show a Fountain, so a Recall
+is always to somewhere already reached and never past the Ideal path.
 
 **Run**:
 One attempt through a generated World. Quit/Continue preserves it; death ends it and discards the World, Map, and other run state, while only the Bestiary and Grimoire persist between Runs.

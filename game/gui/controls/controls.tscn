@@ -738,7 +738,7 @@ icon = &"pad_y"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-text = "Pin or unpin a tile"
+text = "Travel to a fountain"
 horizontal_alignment = 1
 
 [node name="Nav" type="HBoxContainer" parent="Margin/Content"]

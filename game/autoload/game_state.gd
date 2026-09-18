@@ -81,9 +81,9 @@ func _ready() -> void:
 	GlobalEvent.slot_updated.connect(func(_slot: GlobalInventory.Slot) -> void:
 		if not _suspend_autosave and is_instance_valid(_tracked_player):
 			persist())
-	# Pins are user-driven and rare (like inventory edits), so persist immediately rather than
-	# waiting for the periodic tick — same tracked-player gate to avoid a position-less write.
-	GlobalMap.pins_changed.connect(func() -> void:
+	# A Sign's reveal is user-driven and rare (like inventory edits), so persist immediately rather
+	# than waiting for the periodic tick — same tracked-player gate to avoid a position-less write.
+	GlobalMap.room_revealed.connect(func(_room_key: String) -> void:
 		if not _suspend_autosave and is_instance_valid(_tracked_player):
 			persist())
 
@@ -214,6 +214,13 @@ func track_player(player: Node2D) -> void:
 func track_world(encounters: EncounterSpawner, objects: ObjectSpawner) -> void:
 	_tracked_encounters = encounters
 	_tracked_objects = objects
+
+
+## The Map's recall: carry the tracked player to a discovered tile. Fountains are the only clickable
+## marks, and MapState marks only entered Rooms, so this can never land somewhere unseen.
+func teleport_to(tile: Vector2i) -> void:
+	if is_instance_valid(_tracked_player) and is_instance_valid(_tracked_objects):
+		_tracked_objects.warp_to(_tracked_player, tile)
 
 
 ## True while a live run is in progress (a player is placed in the world). Loadout

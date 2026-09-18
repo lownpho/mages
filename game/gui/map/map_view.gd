@@ -1,11 +1,11 @@
 extends Control
-## The full-screen map: renders the whole active MapState — the same discovered-world textures,
-## markers and pins the strip minimap uses (via GlobalMap) — but framed to show everything at once,
-## with wheel-zoom (around the cursor), drag-pan, and click-to-pin. On a pad that reads as dpad
-## up/down zoom, right-stick pan, and Y to pin the view centre (which the reticle marks). Opened
-## from the pin button on the HUD strip; Esc / clicking outside closes it (ui.gd, same as the
-## bestiary). Re-fits to the discovered world each time it opens, so it always frames what the
-## player has seen so far.
+## The full-screen map: renders the whole active MapState — the same discovered-world textures and
+## markers the strip minimap uses (via GlobalMap) — but framed to show everything at once, with
+## wheel-zoom (around the cursor), drag-pan, and click-to-recall: clicking a discovered Fountain
+## travels there. On a pad that reads as dpad up/down zoom, right-stick pan, and Y to recall the
+## Fountain under the reticle. Opened from the map button on the HUD strip; Esc / clicking outside
+## closes it (ui.gd, same as the bestiary). Re-fits to the discovered world each time it opens, so
+## it always frames what the player has seen so far.
 
 const COLOR_BG := Palette.BLACK
 const COLOR_PLAYER := Palette.WHITE
@@ -15,11 +15,10 @@ const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
 const COLOR_SIGN := Palette.GREEN
 const COLOR_NPC := Palette.PURPLE
-const COLOR_PIN := Palette.ORANGE
+const COLOR_RETICLE := Palette.ORANGE
 
-const PIN_PX := 3
 const MARKER_PX := 2
-const DRAG_THRESHOLD := 3.0  ## px of motion that turns a click into a pan (so it won't drop a pin)
+const DRAG_THRESHOLD := 3.0  ## px of motion that turns a click into a pan (so it won't recall)
 
 ## Discrete zoom steps in tiles-per-pixel, most-zoomed-out first. Every value is an integer or a
 ## unit fraction, so the world-tile → screen-pixel scale is always exact (N tiles per pixel, or N
@@ -42,7 +41,6 @@ var _pan_residue := Vector2.ZERO   ## sub-pixel-step pad pan carried between fra
 
 func _ready() -> void:
 	GlobalMap.map_changed.connect(_on_map_changed)
-	GlobalMap.pins_changed.connect(queue_redraw)
 	%CloseButton.pressed.connect(_close)
 	if GlobalMap.active != null:
 		_on_map_changed()
@@ -87,7 +85,7 @@ func _process(dt: float) -> void:
 
 ## The pad's answer to drag-pan: the right stick slides the view. Gated on ui_captured — the
 ## HUD only raises that for a pad-opened panel, so the stick never pans the map and aims the
-## mage at the same time. Zoom and the pin button are in _unhandled_input.
+## mage at the same time. Zoom and Y's recall are in _unhandled_input.
 func _pad_pan(dt: float) -> void:
 	if not GlobalInput.ui_captured:
 		return
@@ -144,11 +142,9 @@ func _snap_cam() -> void:
 ## because the HUD releases slot focus while a panel is open. Marked handled so the strip
 ## minimap — which binds the same actions — doesn't zoom underneath the panel as well.
 ##
-## Y pins: with no cursor to aim, the pad pans the map under a fixed reticle and pins what sits
-## at the centre, which is also how it clears a pin (the same toggle the mouse tap uses, so a
-## pin near enough to the centre comes off instead of stacking a second one). Y is the strip
-## minimap's zoom modifier too, but that chord stands down while the HUD holds input — exactly
-## when this panel is open — so the button is free here.
+## Y recalls: with no cursor to aim, the pad pans the map under a fixed reticle and Y recalls the
+## Fountain at its centre. Y is the strip minimap's zoom modifier too, but that chord stands down
+## while the HUD holds input — exactly when this panel is open — so the button is free here.
 func _unhandled_input(event: InputEvent) -> void:
 	if _state == null or not is_visible_in_tree():
 		return
@@ -157,26 +153,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		_zoom(size * 0.5, 1)
 	elif event.is_action_pressed("minimap_zoom_out") or (pad and event.is_action_pressed("ui_down")):
 		_zoom(size * 0.5, -1)
-	elif pad and event.is_action_pressed("map_pin"):
-		_toggle_pin_at(_screen_to_world(_centre_px()))
+	elif pad and event.is_action_pressed("map_recall"):
+		_recall_at(_centre_px())
 	else:
 		return
 	get_viewport().set_input_as_handled()
 
 
 ## The reticle's pixel: the view centre floored onto the pixel grid the map blits to. Both the
-## drawn ticks and Y's pin read this one spot, so the cross marks the tile that gets pinned even
-## when an odd panel size puts the true centre on a half pixel — half a pixel is half a zoom step
-## of world, which at 16 tiles per pixel is eight tiles away from the tile under the cross.
+## drawn ticks and Y's recall read this one spot, so the cross marks the tile that is targeted
+## even when an odd panel size puts the true centre on a half pixel — half a pixel is half a zoom
+## step of world, which at 16 tiles per pixel is eight tiles away from the tile under the cross.
 func _centre_px() -> Vector2:
 	return (size * 0.5).floor()
 
 
-## Drop a pin on the world tile under `world`, or clear one already within reach of it. The
-## reach grows with the zoom, so a pin stays as easy to hit at 16 tiles per pixel as at 4
-## pixels per tile.
-func _toggle_pin_at(world: Vector2) -> void:
-	GlobalMap.toggle_pin(Vector2i(world.floor()), maxi(1, int(ceil(_tpp * 3))))
+## Recall to the discovered Fountain nearest `local` (a screen point) when one sits within reach.
+## The reach grows with the zoom, so a Fountain stays as easy to hit at 16 tiles per pixel as at 4
+## pixels per tile. A click with no Fountain near it does nothing.
+func _recall_at(local: Vector2) -> void:
+	var world := _screen_to_world(local)
+	var tile := _state.fountain_near(Vector2i(world.floor()), maxi(1, int(ceil(_tpp * 3))))
+	if tile != Vector2i.MAX:
+		GameState.teleport_to(tile)
+		_close()
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -196,9 +196,9 @@ func _gui_input(event: InputEvent) -> void:
 				_press_pos = event.position
 			else:
 				_dragging = false
-				if not _drag_moved:   # a tap, not a drag → drop/remove a pin
-					_toggle_pin_at(_screen_to_world(event.position))
-		# Consume every mouse button over the map — zoom, pan and pin alike. Otherwise the wheel
+				if not _drag_moved:   # a tap, not a drag → recall to a Fountain there
+					_recall_at(event.position)
+		# Consume every mouse button over the map — zoom, pan and recall alike. Otherwise the wheel
 		# events leak to ui.gd's _unhandled_input, which reads any press as an outside click and
 		# closes the panel.
 		accept_event()
@@ -262,8 +262,6 @@ func _draw() -> void:
 		var et: Vector2 = e.global_position / GameConstants.PX_PER_TILE
 		if _state.is_tile_discovered(Vector2i(et.floor())):
 			_dot(et, 1, COLOR_ENEMY, false)
-	for p in _state.pins:
-		_dot(Vector2(p) + Vector2(0.5, 0.5), PIN_PX, COLOR_PIN, true)   # pins clamp to the border
 	if _player != null and is_instance_valid(_player):
 		_dot(_player.global_position / GameConstants.PX_PER_TILE, MARKER_PX, COLOR_PLAYER, false)
 	if GlobalInput.ui_captured:
@@ -274,17 +272,17 @@ const RETICLE_ARM := 3   ## length in px of each reticle tick
 const RETICLE_GAP := 2   ## px of clear space between the centre and a tick
 
 ## The pad's stand-in for the cursor: four ticks around the view centre, marking the tile Y
-## would pin. Drawn only while the HUD holds input, since that is the pad-opened case — the
+## would recall. Drawn only while the HUD holds input, since that is the pad-opened case — the
 ## mouse aims with the cursor and would just be reading a cross it can't use. Hollow, so the
-## centre tile and any pin already on it stay visible.
+## centre tile and any marker already on it stay visible.
 func _draw_reticle() -> void:
 	var c := _centre_px()
 	var across := Vector2(RETICLE_ARM, 1.0)
 	var down := Vector2(1.0, RETICLE_ARM)
-	draw_rect(Rect2(c - Vector2(RETICLE_GAP + RETICLE_ARM, 0.0), across), COLOR_PIN)
-	draw_rect(Rect2(c + Vector2(RETICLE_GAP + 1.0, 0.0), across), COLOR_PIN)
-	draw_rect(Rect2(c - Vector2(0.0, RETICLE_GAP + RETICLE_ARM), down), COLOR_PIN)
-	draw_rect(Rect2(c + Vector2(0.0, RETICLE_GAP + 1.0), down), COLOR_PIN)
+	draw_rect(Rect2(c - Vector2(RETICLE_GAP + RETICLE_ARM, 0.0), across), COLOR_RETICLE)
+	draw_rect(Rect2(c + Vector2(RETICLE_GAP + 1.0, 0.0), across), COLOR_RETICLE)
+	draw_rect(Rect2(c - Vector2(0.0, RETICLE_GAP + RETICLE_ARM), down), COLOR_RETICLE)
+	draw_rect(Rect2(c + Vector2(0.0, RETICLE_GAP + 1.0), down), COLOR_RETICLE)
 
 
 ## Blit the world-texture slice visible through `region` (in tiles), clamped to the world so
@@ -315,7 +313,8 @@ func _nearest_wall_level(tpp: float) -> int:
 
 
 ## Draw a marker at a world-tile position. Off-view markers are dropped unless `to_border` is set,
-## in which case they project onto the widget border along their direction (used for pins).
+## in which case they project onto the widget border along their direction (used for a Boss revealed
+## through fog).
 func _dot(world: Vector2, px: int, color: Color, to_border: bool) -> void:
 	var s := _world_to_screen(world)
 	if s.x < 0.0 or s.y < 0.0 or s.x >= size.x or s.y >= size.y:

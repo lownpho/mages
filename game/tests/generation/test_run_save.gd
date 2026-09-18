@@ -138,7 +138,7 @@ func _map_view(map: MapState) -> Dictionary:
 			var cell := map.macro_image(Vector2i(x, y))
 			if cell != null:
 				images[Vector2i(x, y)] = [cell.floor_image.get_data(), cell.wall_image.get_data()]
-	return {"entered": entered, "pins": map.pins.duplicate(), "revealed": revealed,
+	return {"entered": entered, "revealed": revealed,
 			"markers": var_to_str(map.markers), "images": images}
 
 
@@ -227,7 +227,7 @@ func _test_quit_and_continue() -> Node2D:
 		world._set_flying(true)
 		_check(greeter.has_greeted(), "walking into the greeter changed its state")
 
-	# A Pin on fog and a revealed, undiscovered Boss.
+	# A revealed, undiscovered Boss.
 	var revealed_boss := ""
 	for room in graph.room_list:
 		if room.role == GeneratedRoom.Role.BOSS and room.key() != leader.room_key \
@@ -236,7 +236,6 @@ func _test_quit_and_continue() -> Node2D:
 			break
 	_check(revealed_boss != "", "fixture has an undiscovered Boss to reveal")
 	GlobalMap.reveal_room(revealed_boss)
-	GlobalMap.toggle_pin(Vector2i(-3, -3), 0)
 
 	# Where the player stands, hurt, as the Run is quit.
 	await _visit(world, site.spot + BESIDE)
@@ -266,7 +265,7 @@ func _test_quit_and_continue() -> Node2D:
 			% [world._player.health, expected.health])
 	_check(_inventory_paths() == expected.inventory, "Continue restored the inventory")
 	var map_view := _map_view(GlobalMap.active)
-	for part in ["entered", "pins", "revealed", "markers"]:
+	for part in ["entered", "revealed", "markers"]:
 		_check(map_view[part] == expected.map[part], "Continue restored the Map's %s: %s, want %s"
 				% [part, map_view[part], expected.map[part]])
 	_check(map_view.images.keys() == expected.map.images.keys() and map_view.images == expected.map.images,
@@ -329,7 +328,6 @@ func _test_save_restrictions(world: Node2D) -> void:
 	var rockiness: float = layer.tuner.pending[biome][&"rockiness"]
 	layer.tuner.set_knob(biome, &"rockiness", 0.3 if rockiness != 0.3 else 0.2)
 	GlobalInventory.bag_slots.at(0).set_item(load(OTHER_SPELL))
-	GlobalMap.toggle_pin(Vector2i(-5, -5), 0)
 	GameState.persist()
 	_check(not GameState.run_save_eligible and FileAccess.get_file_as_bytes(SAVE) == saved,
 			"a knob edit stopped every Run write")

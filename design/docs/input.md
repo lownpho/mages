@@ -28,7 +28,7 @@ devices are live at all times; nothing needs selecting in a menu.
 | `minimap_zoom_in` | `=` / `+` / KP+ | — | Zoom the strip minimap (or the open map) in | `minimap_view.gd:51`, `map_view.gd:152` |
 | `minimap_zoom_out` | `-` / KP− | — | Zoom the strip minimap (or the open map) out | `minimap_view.gd:51`, `map_view.gd:152` |
 | `minimap_zoom_mod` | — | Y (held) | Modifier: Y + dpad up/down zooms the strip minimap | `minimap_view.gd:71` |
-| `map_pin` | — (LMB on the map) | Y | Pin / unpin the open map's centre tile | `map_view.gd:152` |
+| `map_recall` | — (click a Fountain on the map) | Y | Travel to a discovered Fountain | `map_view.gd:152` |
 | `ui_accept` | Enter, Space | A | Activate the focused slot or button (lift / place an item) | `ui_slot.gd:300` |
 | `ui_cancel` | Escape | B | Put a carried item back; close a panel; leave slot navigation | `ui_slot.gd:300`, `ui.gd:102` |
 | `ui_up` `ui_down` `ui_left` `ui_right` | Arrow keys | Dpad | Move slot focus; page the bestiary and grimoire; zoom the open map | Godot focus nav, `bestiary.gd:30`, `grimoire.gd:33`, `map_view.gd:152` |
@@ -41,7 +41,8 @@ Mouse-only, with no action behind them:
 - **Wheel over the strip minimap** — zoom it (`minimap_view.gd:94`).
 - **Wheel over the open map** — zoom around the cursor (`map_view.gd:182`).
 - **Drag on the open map** — pan. A press that moves less than 3px counts as a tap, not a drag.
-- **Tap on the open map / minimap** — pin or unpin that tile.
+- **Tap a Fountain on the open map or the strip minimap** — travel back to it. Fountains only
+  show once entered, so a recall can never land in fog.
 - **LMB drag between slots** — Godot drag & drop (`ui_slot.gd:261`); **RMB** cancels a carry.
 - **Hover a bar** — swaps the bar for its numeric value (`ui.gd`).
 
@@ -60,7 +61,7 @@ left with Start or B (`ui.gd:141`). It is narrower than it sounds:
   the mage keeps walking while the bag, map, bestiary or grimoire is up. The world doesn't
   pause — there is no pause menu by design — and freezing the player in a live fight to sort
   loot only gets them hit. `test_pad_input.gd` asserts the dpad/stick split that makes this safe.
-- **Panels read it as "a pad opened me"**: the map's stick-pan and pin reticle, the bestiary's
+- **Panels read it as "a pad opened me"**: the map's stick-pan and recall reticle, the bestiary's
   and grimoire's dpad paging, and the map's bare-dpad zoom all gate on it, so none of them
   answer to a mouse session that clicked the panel open.
 
@@ -70,7 +71,7 @@ restores it on close. Because nothing is focused, the button that opened the pan
 focus ring painted on as a normal style (`ui.gd:70`), so a pad player can still see the HUD
 holds the buttons.
 
-**Y is context-split.** While a panel is open it pins the map centre; during play it is the
+**Y is context-split.** While a panel is open it recalls to the Fountain under the map centre; during play it is the
 strip minimap's zoom modifier. They can't collide: the minimap chord stands down whenever
 `ui_captured` is true, which is exactly when a pad has a panel open (`minimap_view.gd:71`).
 
@@ -99,7 +100,7 @@ same idea for the wheel: web reports pixel deltas, so one notch arrives as a bur
 | --- | --- |
 | A / B | `ui_accept` / `ui_cancel` |
 | X | `discard` |
-| Y | `map_pin`, `minimap_zoom_mod` (context-split, above) |
+| Y | `map_recall`, `minimap_zoom_mod` (context-split, above) |
 | L1 / R1 | `cast1` / `cast3` |
 | L2 / R2 | `cast2` / `cast4` |
 | Dpad | `ui_*` — slot focus, bestiary paging, map zoom |

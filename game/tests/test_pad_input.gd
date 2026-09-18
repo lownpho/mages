@@ -10,6 +10,16 @@ extends Node
 const MINIMAP := preload("res://gui/minimap/minimap_view.gd")
 const MAP_VIEW := preload("res://gui/map/map_view.gd")
 
+## A MapState whose recall target is scripted, so the view's reticle-to-tile mapping is exercised
+## without building a World.
+class StubMap:
+	extends MapState
+	var answer := Vector2i.MAX
+	var asked := Vector2i.MAX
+	func fountain_near(tile: Vector2i, _radius: int) -> Vector2i:
+		asked = tile
+		return answer
+
 const R2 := JOY_AXIS_TRIGGER_RIGHT   # cast4
 const L2 := JOY_AXIS_TRIGGER_LEFT    # cast2
 
@@ -96,40 +106,37 @@ func _ready() -> void:
 			if e is InputEventJoypadButton and e.button_index in DPAD:
 				fails.append("%s rides the dpad, which also steps slot focus" % action)
 
-	# --- Y pins the open map's centre, and clears a pin that's already there ---
-	# The pad has no cursor, so the map pans under a fixed reticle and Y toggles whatever tile
-	# sits under it. Driven through the view's own helpers on a bare MapState (pins need no
-	# images), so the reticle-to-tile mapping is exercised, not restated.
-	GlobalMap.active = MapState.new()
+	# --- Y recalls the Fountain under the open map's centre ---
+	# The pad has no cursor, so the map pans under a fixed reticle and Y recalls whatever Fountain
+	# sits under it. Driven through the view's own helpers with a stub state, so the reticle-to-tile
+	# mapping is exercised, not restated. (The recall target itself is MapState.fountain_near,
+	# covered by test_map_markers.)
+	var stub := StubMap.new()
+	stub.answer = Vector2i(123, 456)
 	var map: Control = MAP_VIEW.new()
 	map.size = Vector2(101, 57)   # odd on both axes: the true centre lands on a half pixel
-	map._state = GlobalMap.active
+	map._state = stub
 	for tpp in [1.0, 16.0]:
 		map._tpp = tpp
 		map._cam = Vector2(320, 160)
 		var target := Vector2i(map._screen_to_world(map._centre_px()).floor())
-		map._toggle_pin_at(map._screen_to_world(map._centre_px()))
-		if GlobalMap.active.pins != [target]:
-			fails.append("Y at %s tiles/px pinned %s, expected [%s]"
-					% [tpp, GlobalMap.active.pins, target])
-		map._toggle_pin_at(map._screen_to_world(map._centre_px()))
-		if not GlobalMap.active.pins.is_empty():
-			fails.append("Y on an existing pin at %s tiles/px left %s behind"
-					% [tpp, GlobalMap.active.pins])
+		stub.asked = Vector2i.MAX
+		map._recall_at(map._centre_px())
+		if stub.asked != target:
+			fails.append("Y at %s tiles/px recalled from %s, expected %s" % [tpp, stub.asked, target])
 	map.free()
-	GlobalMap.active = null
 
-	# Y carries the pin and the strip's zoom modifier and nothing else — the premise both rest
+	# Y carries the recall and the strip's zoom modifier and nothing else — the premise both rest
 	# on. A third binding here would fire under one of them without any site knowing.
 	# ui_select is the exception: Godot puts it on Y by default and only Tree, ItemList and
 	# friends consume it. The game has none of those (no .tscn declares one), and a panel is
 	# open with focus released, so it reaches nothing. Add one and this needs revisiting.
 	for action in InputMap.get_actions():
-		if action in [&"map_pin", &"minimap_zoom_mod", &"ui_select"]:
+		if action in [&"map_recall", &"minimap_zoom_mod", &"ui_select"]:
 			continue
 		for e in InputMap.action_get_events(action):
 			if e is InputEventJoypadButton and e.button_index == JOY_BUTTON_Y:
-				fails.append("%s also sits on Y, which pins the map" % action)
+				fails.append("%s also sits on Y, which recalls the map" % action)
 
 	if fails.is_empty():
 		print("ALL PASS")

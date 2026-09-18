@@ -120,7 +120,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Reaching _unhandled_input at all means the click missed every Control (an open
 	# panel included, since its mouse_filter stops input) — so any mouse press here is,
 	# by construction, a click outside the UI. (The map consumes its own clicks for
-	# pins/pan, so only clicks that miss it land here.) Wheel notches don't count as clicks,
+	# recall/pan, so only clicks that miss it land here.) Wheel notches don't count as clicks,
 	# so scrolling — over the map or the strip — never closes an open panel.
 	var outside_click: bool = event is InputEventMouseButton and event.pressed \
 			and event.button_index != MOUSE_BUTTON_WHEEL_UP \

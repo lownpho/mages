@@ -154,7 +154,6 @@ func _test_new_quit_continue() -> void:
 	var rockiness: float = layer.tuner.pending[biome][&"rockiness"]
 	layer.tuner.set_knob(biome, &"rockiness", 0.3 if rockiness != 0.3 else 0.2)
 	GameState.persist()
-	GlobalMap.toggle_pin(Vector2i(2, 2), 0)
 	_check(not GameState.can_save_run() and FileAccess.get_file_as_bytes(SAVE) == saved,
 			"a knob edit stopped every Run write after the cutover")
 

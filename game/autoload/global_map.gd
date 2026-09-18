@@ -2,11 +2,10 @@ extends Node
 
 ## The Run's Map, shared by the strip minimap and the full-screen map and persisted in the save.
 ## Owns the active MapState, drives discovery from the player's position each frame, and rebuilds
-## it from the World's graph plus the saved Room keys, Pins and revealed Rooms — so the whole Map
+## it from the World's graph plus the saved Room keys and revealed Rooms — so the whole Map
 ## is restored from a tiny payload (see GameState).
 
 signal map_changed   ## active MapState was (re)built — views re-bind on this
-signal pins_changed  ## a pin was dropped or removed, or an Object revealed a set piece — non-frame-driven views redraw, save persists
 signal room_revealed(room_key: String)  ## an Object revealed a Boss or Miniboss Room for the first time this Run
 signal discovery_changed(entered_rooms: Dictionary) ## a Room was entered
 
@@ -70,16 +69,6 @@ func discover_at(tile: Vector2i) -> bool:
 	return true
 
 
-## Toggle a pin at a world tile: remove one already within `remove_radius_tiles`, else drop a new
-## one. This is the whole pin UI contract — the minimap and the full map both just call this.
-func toggle_pin(world_tile: Vector2i, remove_radius_tiles: int) -> void:
-	if active == null:
-		return
-	if not active.remove_pin_near(world_tile, remove_radius_tiles):
-		active.add_pin(world_tile)
-	pins_changed.emit()
-
-
 ## Reveals a planned Boss or Miniboss Room before it is found. Any Object may call it; Signs are the
 ## authored source. Revealing the same Room again changes nothing, so walking past the same Sign
 ## again doesn't rewrite the save.
@@ -90,7 +79,6 @@ func reveal_room(room_key: String) -> void:
 		return
 	revealed_room_keys[room_key] = true
 	room_revealed.emit(room_key)
-	pins_changed.emit()
 
 
 ## Minimal save payload for the whole map. Empty when no world is active yet.

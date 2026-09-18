@@ -11,10 +11,10 @@ signal teleport_requested(tile: Vector2i)
 const ROLE_DOT_TILES := 2.5
 const ROLE_DOT_MIN := 1.25
 const ROLE_DOT_MAX := 4.0
-## Minimap marker colours, by MapState marker kind, with pins last.
-const MARKER_NAMES: Array[StringName] = [&"boss", &"miniboss", &"fountain", &"sign", &"npc", &"pin"]
+## Minimap marker colours, by MapState marker kind.
+const MARKER_NAMES: Array[StringName] = [&"boss", &"miniboss", &"fountain", &"sign", &"npc"]
 const MARKER_COLORS: Array[Color] = [Palette.YELLOW, Palette.YELLOW, Palette.PINK, Palette.GREEN,
-		Palette.PURPLE, Palette.ORANGE]
+		Palette.PURPLE]
 ## A marker's side and an enemy dot's radius in tiles, kept between these many map pixels.
 const MARKER_TILES := 3.0
 const MARKER_MIN := 2.0
@@ -254,8 +254,6 @@ func _draw() -> void:
 				var kind: int = GlobalMap.active._marker_kind(site)
 				if kind >= 0:
 					_draw_marker(site.spot, kind, side)
-		for pin: Vector2i in GlobalMap.active.pins:
-			_draw_marker(pin, MARKER_COLORS.size() - 1, side)
 	if overlays.get("enemies", false):
 		var radius := clampf(zoom * ENEMY_TILES, ENEMY_MIN, ENEMY_MAX)
 		for enemy: Node2D in get_tree().get_nodes_in_group("enemies"):

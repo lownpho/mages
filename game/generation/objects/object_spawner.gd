@@ -13,9 +13,12 @@ extends Node
 ## its chunk reloads, and a Sign's reveal belongs to the Map.
 ##
 ## A Portal's traveller lands on its landing tile, keeping its facing, and the streamer loads the
-## destination at once, as it does for a teleport.
+## destination at once, as it does for a teleport. Every Warp leaves Blink's flash at both ends.
 
 signal warped(body: Node2D, destination_room: String)
+
+## Blink's afterimage, left at both ends of a Warp. It owns itself: the animation frees the node.
+const POOF_SCENE := preload("res://characters/player/spells/blink/poof.tscn")
 
 @export var streamer: ChunkStreamer
 @export var objects_parent: Node2D
@@ -112,16 +115,37 @@ func _on_warp_entered(body: Node2D, destination_room: String, landing: Vector2i)
 	_warp.call_deferred(body, destination_room, landing)
 
 
+## Public seam for a warp the Map drives (a Fountain recall): land `body` on `tile`, streaming the
+## destination in. The Door/Portal path reports through `warp_entered`; this one is already out of
+## the physics step, so it runs at once.
+func warp_to(body: Node2D, tile: Vector2i) -> void:
+	_warp(body, "", tile)
+
+
 func _warp(body: Node2D, destination_room: String, landing: Vector2i) -> void:
 	if not is_instance_valid(body):
 		return
+	var from := body.global_position
 	body.global_position = (Vector2(landing) + Vector2(0.5, 0.5)) * GameConstants.PX_PER_TILE
+	_poof(from)
+	_poof(body.global_position)
 	# Arrival is itself entry; record it synchronously instead of waiting for GlobalMap's next
 	# movement poll (which also makes a paused/debug-driven Warp discover the destination).
 	GlobalMap.discover_at(landing)
 	if streamer != null and streamer.graph != null and streamer.target != null:
 		streamer.prepare()
 	warped.emit(body, destination_room)
+
+
+## The blink flash at `at`, under the same parent as the Objects. Frees itself when the effect ends.
+func _poof(at: Vector2) -> void:
+	if objects_parent == null:
+		return
+	var poof := POOF_SCENE.instantiate() as AnimatedSprite2D
+	objects_parent.add_child(poof)
+	poof.global_position = at
+	poof.animation_finished.connect(poof.queue_free)
+	poof.play()
 
 
 func _clear_live() -> void:
