@@ -17,6 +17,10 @@ enum {
 }
 
 const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
+## Macro cells the Map may build past the planned grid: the warp pushes outer Rooms' floor a little
+## past it (at most a Biome's border_warp, well under one cell), where the World still renders and
+## the player can walk, so the Map must cover it too.
+const EDGE_CELLS := 1
 
 
 class MacroImage:
@@ -155,14 +159,15 @@ func is_tile_discovered(world_tile: Vector2i) -> bool:
 func images_in(region: Rect2, wall_tpp: int) -> Array:
 	if graph == null or not region.has_area():
 		return []
-	var first := Vector2i((region.position / WorldPlan.CELL).floor()).max(Vector2i.ZERO)
+	var edge := Vector2i.ONE * EDGE_CELLS
+	var first := Vector2i((region.position / WorldPlan.CELL).floor()).max(-edge)
 	var last := Vector2i(((region.end - Vector2(0.001, 0.001)) / WorldPlan.CELL).floor()) \
-			.min(graph.plan.size - Vector2i.ONE)
+			.min(graph.plan.size - Vector2i.ONE + edge)
 	var out: Array = []
 	for y in range(first.y, last.y + 1):
 		for x in range(first.x, last.x + 1):
 			var coord := Vector2i(x, y)
-			if not graph.plan.cells.has(coord):
+			if not _drawable_cell(coord):
 				continue
 			var cell := macro_image(coord, false)
 			out.append({"world_rect": cell.rect, "floor_texture": cell.floor_texture,
@@ -174,7 +179,7 @@ func images_in(region: Rect2, wall_tpp: int) -> Array:
 ## shows. With build_interiors it builds every entered Room's interior it needs at once; without, a
 ## Room whose interior isn't cached is left out and added on a later request once it is.
 func macro_image(coord: Vector2i, build_interiors := true) -> MacroImage:
-	if graph == null or not graph.plan.cells.has(coord):
+	if graph == null or not _drawable_cell(coord):
 		return null
 	var cell: MacroImage = _macro_images.get(coord)
 	if cell != null:
@@ -258,6 +263,13 @@ func _finish_pending(cell: MacroImage, build_interiors: bool) -> void:
 	cell.floor_texture.update(cell.floor_image)
 	cell.wall_texture.update(cell.wall_image)
 	cell.wall_levels.clear()
+
+
+## Within the planned grid, or the one-cell margin the warped outer Rooms reach into.
+func _drawable_cell(coord: Vector2i) -> bool:
+	var edge := Vector2i.ONE * EDGE_CELLS
+	return coord.x >= -edge.x and coord.y >= -edge.y \
+			and coord.x < graph.plan.size.x + edge.x and coord.y < graph.plan.size.y + edge.y
 
 
 ## Entered Rooms whose tiles or Passage openings reach a cell. A Room belongs to one macro cell but
