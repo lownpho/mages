@@ -216,27 +216,42 @@ enemies:
         - {from: Pattern, to: Idle, when: lost}
   - id: thornmess
     description: |
-      The rooted capstone. It stays on the ground and runs a `PatternPicker`
-      split into two HP-gated pools. It idles until you are in range, then fires thornthrower
-      missiles. If you break range it uproots and sprints to close, where it behaves like a rosebud
-      or fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen,
-      seeds the room with the biome's rooted plants, then returns to the cycle.
+      The rooted capstone. It stays on the ground and runs an ordered Rotation of five Phases,
+      each one a commitment it locks itself into and each one answered by getting CLOSE rather
+      than getting away. Nothing about it moves during a Phase; leave the arena and it uproots
+      and walks after you, slowly, and the Rotation resumes when it arrives.
+
+      - **Rooted Bloom** (`Ring`): rears into a three-second armoured wind-up, then floods the
+        floor with rotating rings. The long recovery is the window.
+      - **Thornfall** (`Volley`): homing missiles from range. Weave them — there is nothing to
+        punish out there.
+      - **Bitter Spit** (`Volley` + `ShotgunPattern`): a tight cone, four volleys, only ever at
+        point-blank range.
+      - **Seedlings**: seeds the room with six rooted plants, and stays armoured while they
+        stand. Clearing the growth is the answer.
+      - **Spore Storm** (`Ring`): below a quarter health, once, a full-arena ring storm.
     art: a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red
       thorn tips (boss sheet).
     casts: [snipe, ring, blam, jimmy]
-    notes: the low-HP phase swaps in a spore and summon wave rather than layering a summon on top.
+    notes: every Phase declares the Counter it is answered with, so the fight is a sequence of
+      things to answer rather than a roll; the 4s Rest is gone and each beat's own recovery is
+      the burn window. Its two HP-gated pools became one HP-gated desperation Phase.
     fsm:
       start: Idle
       transitions:
-        - {from: Idle, to: Missiles, when: in range}
-        - {from: Missiles, to: Uproot, when: player fled}
-        - {from: Uproot, to: Missiles, when: back in range}
-        - {from: Missiles, to: Bloom, when: roll}
-        - {from: Missiles, to: Shotgun, when: roll}
-        - {from: Bloom, to: Missiles}
-        - {from: Shotgun, to: Missiles}
-        - {from: Missiles, to: Desperation, when: low HP}
-        - {from: Desperation, to: Missiles, when: wave placed}
+        - {from: Idle, to: Cycle, when: sees player}
+        - {from: Cycle, to: RootBloom, when: turn 1}
+        - {from: Cycle, to: Thornfall, when: turn 2, in missile range}
+        - {from: Cycle, to: BitterSpit, when: turn 3, point blank}
+        - {from: Cycle, to: Seedlings, when: turn 4}
+        - {from: Cycle, to: SporeStorm, when: turn 5, below a quarter health}
+        - {from: RootBloom, to: Cycle}
+        - {from: Thornfall, to: Cycle}
+        - {from: BitterSpit, to: Cycle}
+        - {from: Seedlings, to: Cycle}
+        - {from: SporeStorm, to: Cycle}
+        - {from: Cycle, to: Uproot, when: out of range}
+        - {from: Uproot, to: Cycle, when: back in range}
   - id: moth
     description: |
       The deepwood's basic flier and its returning face. It flits in on quick wings, pokes twice

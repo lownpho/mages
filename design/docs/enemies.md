@@ -22,7 +22,7 @@ cheap. You can always outrun it, so the threat is the space it fills.
 | Speed | 12 px/s |
 | Range | detect 12, ring 3 |
 | ring | **16** dmg — 2s cd, Ring x6, 2 @ 0.4s, 6 tiles range |
-| Drops | **ring t1** (20%), **nope** (20%) |
+| Drops | **ring t1** (30%), **nope** (40%) |
 
 ```mermaid
 stateDiagram-v2
@@ -48,7 +48,7 @@ crowds your space.
 | Speed | 18 px/s |
 | Range | detect 7, chase 8, attack 3 |
 | attack | **7** dmg — 0.7s cd, Single, 3 @ 0.3s, 5 tiles range |
-| Drops | **pew t1** (15%), **zaap t1** (10%), **blam t1** (10%) |
+| Drops | **pew t1** (8%), **zaap t1** (10%), **blam t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
@@ -76,7 +76,7 @@ are *for*, and they spawn in exactly the clumps that reward one.
 | Speed | 28 px/s |
 | Range | detect 8, chase 12, attack 4 |
 | attack | **12** dmg — 1.2s cd, Single, 6 tiles range |
-| Drops | **blam t1** (20%), **fireball t1** (20%) |
+| Drops | **blam t1** (20%), **fireball t1** (32%) |
 
 ```mermaid
 stateDiagram-v2
@@ -103,7 +103,7 @@ you to read the telegraph instead of face-tanking.
 | HP | 30 |
 | Range | detect 5 |
 | ring | **16** dmg — Ring x8, 4 @ 1s, 8 tiles range |
-| Drops | **ring t1** (10%), **nope** (10%) |
+| Drops | **ring t1** (15%), **nope** (20%) |
 
 **Notes:** Defensive Shell on the windup: wait out the telegraph, then burn during the bloom.
 
@@ -129,7 +129,7 @@ chases. It works as area denial, and it stays a speed bump in both glade flavour
 | HP | 45 |
 | Range | detect 4 |
 | ring | **13** dmg — 3s cd, Ring x6, 6 tiles range |
-| Drops | **ring t1** (10%), **zaap t1** (10%) |
+| Drops | **ring t1** (15%), **zaap t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
@@ -151,7 +151,7 @@ enough to sidestep on reflex, so it teaches that enemies shoot without much risk
 | HP | 25 |
 | Range | detect 7 |
 | attack | **8** dmg — 2s cd, Single, 9 tiles range |
-| Drops | **pew t1** (10%), **zaap t1** (10%) |
+| Drops | **pew t1** (5%) |
 
 ```mermaid
 stateDiagram-v2
@@ -173,7 +173,7 @@ thorn that you have to keep moving to outrun. It is cheap pressure that punishes
 | Speed | 32 px/s |
 | Range | detect 8, chase 12, attack 6 |
 | thorn | **16** dmg — 1s cd, Single, 10 tiles range, homing 120° cone |
-| Drops | **snipe t1** (20%) |
+| Drops | **snipe t1** (42%) |
 
 ```mermaid
 stateDiagram-v2
@@ -200,7 +200,7 @@ side. It also appears in the insect deepwood.
 | Speed | 40 px/s |
 | Range | detect 10, chase 14, attack 3 |
 | attack | **7** dmg — 0.8s cd, Single, 4 tiles range |
-| Drops | **bzzz t1** (10%), **pew t1** (10%), **zaap t1** (10%) |
+| Drops | **bzzz t1** (15%), **pew t1** (5%), **zaap t1** (10%) |
 
 ```mermaid
 stateDiagram-v2
@@ -286,10 +286,12 @@ chip over many cycles.
 | Stat |  |
 |---|---|
 | HP | 1500 |
-| Speed | 28 px/s |
 | Range | detect 16 |
+| flit | **8** dmg — 1s cd, Flank x2, 2 @ 0.25s, 6 tiles range, dash 150 px/s for 0.7s, **20** on contact |
+| ring_storm | **11** dmg — 1s cd, Ring x16, 3 @ 0.7s, 8 tiles range |
 | rings | **11** dmg — 1s cd, Ring x8, 10 @ 0.8s, 7 tiles range |
 | shotgun | **15** dmg — 1s cd, Shotgun x5, 2 @ 0.4s, 8 tiles range |
+| wisps | 1s cd, 4 minions, 8 hp, 30s |
 | Drops | **blam t2** (66%), **ring t2** (66%) |
 
 ```mermaid
@@ -309,11 +311,20 @@ stateDiagram-v2
 
 ### Thornmess *(boss)*
 
-The rooted capstone. It stays on the ground and runs a `PatternPicker`
-split into two HP-gated pools. It idles until you are in range, then fires thornthrower
-missiles. If you break range it uproots and sprints to close, where it behaves like a rosebud
-or fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen,
-seeds the room with the biome's rooted plants, then returns to the cycle.
+The rooted capstone. It stays on the ground and runs an ordered Rotation of five Phases,
+each one a commitment it locks itself into and each one answered by getting CLOSE rather
+than getting away. Nothing about it moves during a Phase; leave the arena and it uproots
+and walks after you, slowly, and the Rotation resumes when it arrives.
+
+- **Rooted Bloom** (`Ring`): rears into a three-second armoured wind-up, then floods the
+  floor with rotating rings. The long recovery is the window.
+- **Thornfall** (`Volley`): homing missiles from range. Weave them — there is nothing to
+  punish out there.
+- **Bitter Spit** (`Volley` + `ShotgunPattern`): a tight cone, four volleys, only ever at
+  point-blank range.
+- **Seedlings**: seeds the room with six rooted plants, and stays armoured while they
+  stand. Clearing the growth is the answer.
+- **Spore Storm** (`Ring`): below a quarter health, once, a full-arena ring storm.
 
 **Art:** a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red thorn tips (boss sheet).
 
@@ -322,27 +333,31 @@ seeds the room with the biome's rooted plants, then returns to the cycle.
 | HP | 2000 |
 | Speed | 32 px/s |
 | Range | detect 22, missile 20, close 4 |
-| bloom | **18** dmg — 7s cd, Ring x12, 5 @ 0.5s, 14 tiles range |
-| missiles | **16** dmg — 3s cd, Single, 4 @ 1s, 12 tiles range, homing 120° cone |
+| bloom | **18** dmg — Ring x12, 5 @ 0.5s, 14 tiles range |
+| missiles | **16** dmg — Single, 4 @ 1s, 12 tiles range, homing 120° cone |
 | shotgun | **15** dmg — 1s cd, Shotgun x4, 4 @ 0.6s, 6 tiles range |
-| spores | **25** dmg — 6s cd, Ring x16, 10 @ 1.5s, 18 tiles range |
-| summon | 6 minions, 8 hp, 0s |
+| spores | **25** dmg — Ring x16, 3 @ 1.5s, 18 tiles range |
+| summon | 6 minions, 8 hp, 20s |
 | Drops | **jimmy t1** (100%), **snipe t2** (66%), **ring t2** (66%) |
 
-**Notes:** the low-HP phase swaps in a spore and summon wave rather than layering a summon on top.
+**Notes:** every Phase declares the Counter it is answered with, so the fight is a sequence of things to answer rather than a roll; the 4s Rest is gone and each beat's own recovery is the burn window. Its two HP-gated pools became one HP-gated desperation Phase.
 
 ```mermaid
 stateDiagram-v2
     [*] --> Idle
-    Idle --> Missiles : in range
-    Missiles --> Uproot : player fled
-    Uproot --> Missiles : back in range
-    Missiles --> Bloom : roll
-    Missiles --> Shotgun : roll
-    Bloom --> Missiles
-    Shotgun --> Missiles
-    Missiles --> Desperation : low HP
-    Desperation --> Missiles : wave placed
+    Idle --> Cycle : sees player
+    Cycle --> RootBloom : turn 1
+    Cycle --> Thornfall : turn 2
+    Cycle --> BitterSpit : turn 3
+    Cycle --> Seedlings : turn 4
+    Cycle --> SporeStorm : turn 5
+    RootBloom --> Cycle
+    Thornfall --> Cycle
+    BitterSpit --> Cycle
+    Seedlings --> Cycle
+    SporeStorm --> Cycle
+    Cycle --> Uproot : out of range
+    Uproot --> Cycle : back in range
 ```
 
 ## Deepwood
@@ -428,7 +443,7 @@ for it, is a pair of dry burr spines in the moss on top.
 | HP | 1 |
 | Range | trigger 2 |
 | ploop | **32** dmg — Ring x6, 3 @ 0.1s, 4 tiles range |
-| Drops | **ploop t2** (4%) |
+| Drops | **ploop t2** (7%) |
 
 **Notes:** it drops the Ploop it fires, the way the cinderstone drops its Oop. Killing it before the fuse lands does NOT set it off.
 
@@ -454,7 +469,7 @@ question is where you are standing when the fuse ends.
 | HP | 1 |
 | Range | trigger 2 |
 | oop | **60** dmg — Single, 0 tiles range, blast 5 tiles (splash only) |
-| Drops | **oop t2** (4%) |
+| Drops | **oop t2** (7%) |
 
 **Notes:** its blast is the Oop cast — an ordinary blast-payload bullet whose burst kills the caster when it ends, which is exactly what the player's Oop mine does from the other side. Killing the cinderstone before the fuse lands does NOT set it off. The mother tree seeds these as mines.
 
@@ -508,7 +523,7 @@ up a shot, and the pack punishes you for focusing one down without a plan for th
 | Speed | 40 px/s |
 | Range | detect 10, chase 13, attack 3 |
 | bolt | **12** dmg — 3.9s cd, Single, 3 @ 0.3s, 10 tiles range |
-| Drops | **pew t2** (5%), **halp t2** (2%) |
+| Drops | **pew t2** (2%), **halp t2** (2%) |
 
 ```mermaid
 stateDiagram-v2
@@ -636,7 +651,7 @@ you moving while heavier things line up.
 | Speed | 44 px/s |
 | Range | detect 13, chase 16, attack 3, retreat 1.25 |
 | dust | **23** dmg — 1.4s cd, Single, 2 @ 0.15s, 5 tiles range |
-| Drops | **pew t2** (5%) |
+| Drops | **pew t2** (2%) |
 
 ```mermaid
 stateDiagram-v2
@@ -697,7 +712,7 @@ its fire.
 | Speed | 46 px/s |
 | Range | detect 18, snipe 10, close 5, retreat 2 |
 | bwoom | **16** dmg — 6.5s cd |
-| Drops | **bwoom t2** (5%), **pew t2** (7%) |
+| Drops | **bwoom t2** (13%), **pew t2** (4%) |
 
 ```mermaid
 stateDiagram-v2
@@ -725,7 +740,7 @@ the blink is its whole movement.
 | Range | detect 12 |
 | blink | 0.6s cd |
 | pew | **20** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
-| Drops | **blink t2** (8%), **pew t3** (5%) |
+| Drops | **blink t2** (6%), **pew t3** (5%) |
 
 **Notes:** the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a landing spot with a wall in the way. The player's own Blink is the same effect with its landing dial on AIM instead of a random bearing.
 
@@ -873,7 +888,7 @@ recruiting.
 | Speed | 54 px/s |
 | Range | detect 18, chase 20, attack 3 |
 | flicker | **8** dmg — 2.7s cd, Single, 3 @ 0.18s, 7 tiles range |
-| Drops | **pew t2** (5%), **halp t2** (2%) |
+| Drops | **pew t2** (3%), **halp t2** (2%) |
 
 **Notes:** pack radius 14 tiles against the grimling's default 8, and the shortest attack probe — it comes all the way in.
 
@@ -935,7 +950,7 @@ fight is about closing the gap between its cycle rather than out-running it.
 | blink | 0.4s cd |
 | seed | **32** dmg — 3.2s cd, Single, 20 tiles range, homing 150° cone |
 | seed_fast | **32** dmg — 2.4s cd, Single, 20 tiles range, homing 150° cone |
-| Drops | **blam t3** (30%), **blink t2** (60%), **snipe t3** (35%) |
+| Drops | **blam t3** (50%), **blink t2** (60%), **snipe t3** (100%) |
 
 **Notes:** below a quarter health the seed's wind-up drops to near-instant — the same beat with a shorter telegraph, swapped in by health window.
 
@@ -968,7 +983,7 @@ whole fight is spent closing.
 | Speed | 42 px/s |
 | Range | detect 28, snipe 24, close 7, retreat 2.5 |
 | bwoom | **18** dmg — 5.2s cd |
-| Drops | **bwoom t2** (80%) |
+| Drops | **bwoom t2** (80%), **snipe t3** (50%) |
 
 **Notes:** guaranteed Bwoom T3 on death.
 
@@ -1002,7 +1017,7 @@ a gauntlet.
 | burst | **13** dmg — Ring x18, 7 tiles range |
 | enrage | **13** dmg — 2.1s cd, Single, 7 @ 0.13s, 10 tiles range |
 | spray | **13** dmg — 3.1s cd, Single, 5 @ 0.26s, 10 tiles range |
-| Drops | **blam t3** (50%), **ring t3** (30%), **halp t2** (20%) |
+| Drops | **blam t3** (75%), **ring t3** (100%), **halp t2** (20%) |
 
 **Notes:** enrage replaces the spray below 30% HP; `RingPattern` death burst. Shares the grimling pack group, so it wakes with them.
 
@@ -1164,7 +1179,7 @@ stateDiagram-v2
 
 ## Mycelium
 
-Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. All of it spawns, spread over the Mycelium's three Zones.
+Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. Mold golems, rollcaps, puffcaps, normiecaps and sporeflies span both Zones; the remaining commons split by fighting style, while all three rares can appear in either Zone.
 
 ### Bloatcap
 
@@ -1277,7 +1292,7 @@ stateDiagram-v2
     Rooted --> Idle : recovered
 ```
 
-### Mould Golem
+### Mold Golem
 
 The slow tank, and the one body in the Mycelium that walks at you rather than waiting.
 Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the
@@ -1519,7 +1534,7 @@ problem rather than a room that fills up and stays filled.
 
 | Stat |  |
 |---|---|
-| Kinds | fungal |
+| Kinds | insect, fungal |
 | HP | 80 |
 | Speed | 44 px/s |
 | Range | detect 12, chase 16, attack 3, retreat 1.25 |

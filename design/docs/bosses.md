@@ -55,8 +55,34 @@ A boss's authored answer to the player running away. One of Siege, Hunter, Snipe
   while it runs, which is what makes it non-counterable pacing rather than a farm window.
 - After the last Phase the Rotation **wraps** to the first. The Intensity carries across the
   wrap; it never resets between loops.
-- 4–5 Phases per Rotation. Rough budget: 4–5 Phases × ~2 Reps × ~8s ≈ 100–120s per Rotation,
-  so 2–3 minutes is one clean Rotation plus a wrapped second one.
+- 3–5 Phases per Rotation. Everything else about the Rotation is the boss's own grammar, not
+  a shared template: Reps run 1–4, Tails 0.5–2.5s, and the length falls out per boss rather
+  than every boss targeting the same 100–120s. A beat said once behind a 2.4s Tail and a beat
+  said four times behind a 1.0s Tail are different fights, and that difference is free.
+
+## Grammars, not templates
+
+The rules above are a shared **vocabulary** — an ordered Rotation, one Counter per beat, a Tail
+as the only soft moment. They are not a shared template. Two bosses built from the same four
+Counter kinds can still be the same fight, and will be, unless each one's grammar differs. Every
+boss must differ from its predecessor on all four of these:
+
+- **Danger range** — where the fight wants the player. Fae wants you *away*: every one of her
+  Phases is answered at distance or by leaving. Thornmess wants you *on top of it*, because a
+  rooted thing's only openings are the commitments it locks itself into. Two bosses may not
+  want the player in the same place.
+- **Counter mix** — which kinds, and how many of each. The mix *is* the question the boss asks
+  (a movement exam, an aggression exam). No two bosses open their Rotation with the same kind,
+  and no boss repeats its predecessor's mix. Counter kind is coupled to range — only a beat
+  that ends with the player adjacent can be PUNISH — so a mix is really a statement about
+  distance.
+- **Tempo** — Rep counts and Tail lengths are character, not padding to reach a length. The
+  same beat said once behind a long Tail is a different beat from one said twice behind a
+  short one. Authors choose these per Phase deliberately; reaching for 2 Reps and a 1.0s Tail
+  everywhere is how a roster of distinct bosses collapses into one.
+- **Movement policy** — never moves, walks after you, or commits to charges. A committed rush
+  in two bosses' Rotations reads as the same beat twice, so whichever boss owns a charge, the
+  next one answers distance a different way.
 
 ## Intensity multiplier
 
@@ -80,7 +106,8 @@ Reps do not escalate, so M is the only escalation axis in the design.
   Movement speed is the one dial bounded upward rather than downward: a boss closes the gap as
   it escalates, but never outruns the player's 80 px/s. It is read by a pursuit (Approach);
   Fae has none — her answer to distance is the Flit rush and her escort — and Gnarlking, the
-  Hunter, is where it will bite.
+  Hunter, is where it will bite. Thornmess's Uproot is the first walk a boss answers distance
+  with, and at 32 px/s it is the slowest thing in the game; it stays that way.
 
   Damage and projectile speed are **never** scaled. Density is **never** scaled.
 - The floors are not optional. The counter model rests on the player being able to read a
@@ -137,6 +164,9 @@ boss becomes a kiteable sponge — Fae is 28 px/s against the player's 80.
 | **Sniper** | far is the losing position: long-range aimed volleys and full-arena patterns |
 
 - Every boss authors **one primary profile**.
+- Answering distance is not always a Phase. A boss may answer it **outside the Rotation** —
+  `Cycle.lost_state` behind a `probe_path` — which is how a rooted boss walks after the player
+  without the walk ever becoming a Phase with nothing to answer.
 - A boss may author **one switch**, engaged at the second loop (M ≥ ~1.6), so the escalation
   can read as *the boss changed its answer to you*, not just faster numbers.
 - Assignments: Fae **Siege → Sniper** (the Siege half is shipped; the Sniper half is not
@@ -189,9 +219,10 @@ A brake the player cannot perceive is not a brake.
   `Behaviour.window_open()` separates a window that has shut for good from a gate worth
   waiting out.
 - **`Cycle`** — a dispatcher replacing `PatternPicker` for bosses: ordered Phases, authored
-  Reps, and the pauses (rep gap, Tail, Free beat) in one state. It hands off to a Phase and the
-  Phase hands back (`done_state = "Cycle"`). `PatternPicker` (roll) and `Gate` (ordered) stay as
-  they are for everything else.
+  Reps, the pauses (rep gap, Tail, Free beat) in one state, and the boss's answer to a player
+  leaving the arena (`probe_path` / `lost_state`, so the walk out of range is not a Phase). It
+  hands off to a Phase and the Phase hands back (`done_state = "Cycle"`). `PatternPicker` (roll)
+  and `Gate` (ordered) stay as they are for everything else.
 - **`Creature.reset_combat`** clears M with the rest of the fight: a rewound fight is a rewound
   fight (the 60s leash).
 
@@ -228,6 +259,57 @@ ported anywhere else.
   authored yet; it needs a long-range beat and a min-Intensity gate, and is worth doing when a
   second boss needs the same switch.
 
+## Reference instance: Thornmess
+
+The second boss, and the proof the skeleton carries two fights that do not look alike: Fae is a
+movement exam you run *away* from, Thornmess is an aggression exam you run *at*. Its Counter mix
+is Fae's inverted, its Reps are uneven where hers are uniform, and its Tails are twice as long.
+
+| Phase | Beat | Counter kind | Reps | Tail |
+|---|---|---|---|---|
+| 1 | Rooted Bloom — 12-ring, 5 pulses, 3s armoured windup | run in and burn the long recovery → **PUNISH** | 1 | 2.4 |
+| 2 | Thornfall — homing missiles, 4 shots | stay untouchable through the volley → **UNTOUCHED** | 2 | 1.0 |
+| 3 | Bitter Spit — shotgun cone, 4 volleys | cross the cone and burn → **PUNISH** | 4 | 1.8 |
+| 4 | Seedlings — 6 rooted plants (seedling / rosebud / thornthrower) | clear the growth → **ADDS** | 1 | 1.6 |
+| 5 | Spore Storm — 16-ring, 3 pulses, ≤25% HP | gap-walk → **UNTOUCHED** | 1 | 2.4 |
+
+- **The mix is the point.** PUNISH ×2 / UNTOUCHED ×2 / ADDS ×1 against Fae's UNTOUCHED ×3 /
+  PUNISH / ADDS — the same four kinds, asking the opposite question. It also **opens** on a
+  different kind from hers (a PUNISH commitment, not a pattern to dodge), because the first
+  thing the fight asks is then the thing it asks all fight: come at it.
+- Free beat: a 1.2s re-rooting pause (the pose is still to be authored; the pause is the
+  mechanic). The 4s `Rest` Phase is **deleted** — every burn window is a beat's own Tail, which
+  is the same trade Fae's rebuild made.
+- **Every Phase is slow and committed**, so the fight is about spending windows rather than
+  dodging. That is why the Reps are `1,2,4,1,1` and not 2 everywhere (the cheap spit repeats,
+  the commitments are said once) and why the Tails run to 2.4s: a rooted half-tonne recovers
+  slowly.
+- **Nothing moves during a Phase.** `Uproot` is deleted as a Phase and becomes the answer to
+  distance instead — `Cycle.lost_state` behind `DetectProbe`, a 32 px/s walk (scaled and capped
+  like any pursuit) that hands back to the Rotation. It starts at the next hand-off, so a Phase
+  is never interrupted by distance: being rooted means committing to whatever it is doing.
+- **A Phase's spell should not author a cooldown.** The Rotation is the pacing, so `cooldown`
+  on a boss's cast is a leftover from the PatternPicker era — and a live hazard, because a
+  cooling beat is overtaken by the next runnable one and the authored order silently drops a
+  Phase. Thornmess's three authored cooldowns (3s, 6s, 7s) are zeroed; what is left is the 1s
+  resource default, which no lap is short enough to notice. Fae never authored one at all.
+- **Spore Storm is cut from its authored 10 pulses to 3.** Legibility, not balance: 15.7s of
+  in-flight 25-damage rings buries its own Tail, so there is no punish window left to open.
+  Fae's Ring Storm is 3 pulses for the same reason.
+- **Rooted Bloom keeps its spell and loses its `health_min`.** Under a Rotation the HP gate
+  belongs to the desperation Phase alone, so the field is dead there and must not be authored.
+- **Seedlings are an escort, not terrain.** `minion_group = &"pack_seed"`,
+  `clear_radius_tiles = 0` (exact), escort armour while they stand, and a **lifetime shorter
+  than a lap** — the summon authors 0 (permanent) today, which would leave a straggler failing
+  the next lap's escort gate for the rest of the fight. The **hold is sized to the escort**, not
+  copied from Fae: six plants average ~40 HP against her four wasps' 18, so it is 12s where hers
+  is 6s, and it has to lapse before the escort's own 20s timer does — otherwise the rollback is
+  handed out by a clock instead of by the player killing anything.
+- **WALL is not here.** A committed charge would be Fae's Flit with a wall, and it contradicts
+  "the rooted capstone. It stays on the ground". The family's home is Gnarlking.
+- Profile stays **Siege**, and that is now a claim the boss can cash: bloom rings reach 14 tiles,
+  spores 18, and the seedlings claim floor. Distance is answered by reach, then by a walk.
+
 ## Settled during implementation
 
 - The 60s `COMBAT_RESET_SECONDS` leash **does** clear M back to 1.0 with the rest of the fight
@@ -244,8 +326,10 @@ ported anywhere else.
   `Behaviour` so a Phase can be eligible only on the second loop.
 - **Audio stings** for a step up and a rollback — needs an audio system and assets; the signals
   are already emitted.
-- **Thormness, then Gnarlking.** Thormmess is a two-resource port. Gnarlking is the hard one:
-  its player-paced ladder (clear the brood, dodge the charge) already encodes escalation, and
-  how that composes with M — rather than replacing one with the other — is the port's hardest
-  call and should be made explicitly.
+- **Gnarlking, and WALL with it.** Thornmess is specified above; it deliberately carries no
+  charge. Gnarlking is the hard one: its player-paced ladder (clear the brood, dodge the charge)
+  already encodes escalation, and how that composes with M — rather than replacing one with the
+  other — is the port's hardest call and should be made explicitly. It is also the first boss
+  that should carry **WALL**, since a charge the player baits into scenery is what its ladder
+  already asks for.
 - hive queen, rotmaw and Mother are prose only; their scenes do not exist yet.

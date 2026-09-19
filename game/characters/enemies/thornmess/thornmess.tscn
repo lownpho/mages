@@ -12,9 +12,10 @@
 [ext_resource type="Resource" uid="uid://thrnmssspr01" path="res://characters/enemies/thornmess/thornmess_spores.tres" id="9_spores"]
 [ext_resource type="Resource" uid="uid://d045854sv14nl" path="res://characters/enemies/thornmess/thornmess_summon.tres" id="21_summon"]
 [ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" uid="uid://b4lrupcmlxdw2" path="res://characters/creature/boss_controller.gd" id="b_boss"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://cky4cwkv2mry5" path="res://characters/creature/behaviours/cycle.gd" id="b_cycle"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
-[ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/creature/behaviours/pattern_picker.gd" id="b_pattern"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_thornmess"]
 radius = 7.0
@@ -195,6 +196,10 @@ position = Vector2(0, -2)
 collision_mask = 256
 radius = 8.0
 
+[node name="BossController" type="Node" parent="."]
+script = ExtResource("b_boss")
+phases = Array[String](["RootBloom", "Thornfall", "BitterSpit", "Seedlings", "SporeStorm"])
+
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=1900000005]
 target_position = Vector2(176, 0)
 collision_mask = 17
@@ -215,73 +220,85 @@ initial_state = "Idle"
 [node name="Idle" type="Node" parent="FSM" unique_id=944305225]
 script = ExtResource("b_hold")
 probe_path = NodePath("../../DetectProbe")
-seen_state = "Pick"
+seen_state = "Cycle"
 
-[node name="Pick" type="Node" parent="FSM" unique_id=1342954753]
-script = ExtResource("b_pattern")
+[node name="Cycle" type="Node" parent="FSM" unique_id=1342954753]
+script = ExtResource("b_cycle")
 probe_path = NodePath("../../DetectProbe")
+lost_state = "Uproot"
+tail_anim = "rest"
+escort_hold = 12.0
 
-[node name="Missiles" type="Node" parent="FSM" unique_id=1545717858]
+[node name="RootBloom" type="Node" parent="FSM" unique_id=530870614]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("8_bloom")
+done_state = "Cycle"
+windup_anim = "guard"
+windup_damage_scale = 0.2
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+counter_kind = 1
+reps = 1
+tail = 2.4
+rep_gap = 0.6
+
+[node name="Thornfall" type="Node" parent="FSM" unique_id=1545717858]
 script = ExtResource("b_cast")
 caster_path = NodePath("../../Caster")
 spell = ExtResource("6_missiles")
-done_state = "Rest"
-attack_probe_path = NodePath("../../MissileProbe")
-out_of_range_state = "Uproot"
-pattern_weight = 4.0
+done_state = "Cycle"
+range_probe_path = NodePath("../../MissileProbe")
 telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.6
+
+[node name="BitterSpit" type="Node" parent="FSM" unique_id=1019023350]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("7_shotgun")
+done_state = "Cycle"
+range_probe_path = NodePath("../../CloseProbe")
+attack_anim = "shotgun"
+counter_kind = 1
+reps = 4
+tail = 1.8
+rep_gap = 0.5
+
+[node name="Seedlings" type="Node" parent="FSM" unique_id=2083584801]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("21_summon")
+done_state = "Cycle"
+attack_anim = "summon"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
+clear_group = &"pack_seed"
+clear_radius_tiles = 0.0
+counter_kind = 3
+reps = 1
+tail = 1.6
+rep_gap = 0.8
+
+[node name="SporeStorm" type="Node" parent="FSM" unique_id=2070405683]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("9_spores")
+done_state = "Cycle"
+attack_anim = "spores"
+telegraph_color = Color(0.713725, 0.835294, 0.235294, 1)
+health_max = 0.25
+priority = 1
+once = true
+counter_kind = 4
+reps = 1
+tail = 2.4
+rep_gap = 0.6
 
 [node name="Uproot" type="Node" parent="FSM" unique_id=1587390997]
 script = ExtResource("b_approach")
 speed = 32.0
-lost_state = "Pick"
-duration = 4.0
-done_state = "Pick"
-attack_probe_path = NodePath("../../CloseProbe")
-attack_state = "Shotgun"
-pattern_weight = 2.0
-health_min = 0.7
-
-[node name="Bloom" type="Node" parent="FSM" unique_id=530870614]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("8_bloom")
-done_state = "Rest"
-windup_anim = "guard"
-windup_damage_scale = 0.2
-pattern_weight = 1.0
-health_min = 0.25
-telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
-
-[node name="Shotgun" type="Node" parent="FSM" unique_id=1019023350]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("7_shotgun")
-done_state = "Rest"
-attack_probe_path = NodePath("../../CloseProbe")
-out_of_range_state = "Uproot"
-attack_anim = "shotgun"
-
-[node name="Spores" type="Node" parent="FSM" unique_id=2070405683]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("9_spores")
-done_state = "Summon"
-attack_anim = "spores"
-pattern_weight = 1.0
-health_max = 0.25
-telegraph_color = Color(0.713725, 0.835294, 0.235294, 1)
-
-[node name="Summon" type="Node" parent="FSM" unique_id=2083584801]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("21_summon")
-done_state = "Rest"
-attack_anim = "summon"
-telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
-
-[node name="Rest" type="Node" parent="FSM" unique_id=15123107]
-script = ExtResource("b_hold")
-anim = "rest"
-min_time = 4.0
-next_state = "Pick"
+lost_state = "Idle"
+done_state = "Cycle"
+attack_probe_path = NodePath("../../MissileProbe")
+attack_state = "Cycle"

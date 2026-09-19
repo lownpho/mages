@@ -628,7 +628,7 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 30,
+      "base": 15,
       "skill": 2,
       "speed": 0,
       "defence": 0
@@ -1859,7 +1859,7 @@
      "spell": "ploop",
      "tier": 2,
      "weakness": null,
-     "chance": 0.04
+     "chance": 0.07
     }
    ],
    "attacks": [
@@ -1945,7 +1945,7 @@
      "spell": "oop",
      "tier": 2,
      "weakness": null,
-     "chance": 0.04
+     "chance": 0.07
     }
    ],
    "attacks": [
@@ -2331,14 +2331,14 @@
      "spell": "ring",
      "tier": 1,
      "weakness": null,
-     "chance": 0.2
+     "chance": 0.3
     },
     {
      "item": "nope",
      "spell": "nope",
      "tier": null,
      "weakness": null,
-     "chance": 0.2
+     "chance": 0.4
     }
    ],
    "attacks": [
@@ -2564,7 +2564,7 @@
      "spell": "pew",
      "tier": 2,
      "weakness": null,
-     "chance": 0.05
+     "chance": 0.02
     },
     {
      "item": "halp2",
@@ -2690,7 +2690,7 @@
      "spell": "pew",
      "tier": 1,
      "weakness": null,
-     "chance": 0.15
+     "chance": 0.075
     },
     {
      "item": "zaap1",
@@ -2820,7 +2820,7 @@
      "spell": "fireball",
      "tier": 1,
      "weakness": null,
-     "chance": 0.2
+     "chance": 0.32
     }
    ],
    "attacks": [
@@ -2908,6 +2908,166 @@
     {
      "id": "glade",
      "name": "Glade"
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/mold_golem/mold_golem_data.tres",
+   "name": "Mold Golem",
+   "rarity": "common",
+   "max_health": 560,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 14,
+   "probes": {
+    "detect": 14,
+    "chase": 17,
+    "attack": 3
+   },
+   "drops": [
+    {
+     "item": "nope",
+     "spell": "nope",
+     "tier": null,
+     "weakness": null,
+     "chance": 0.1
+    },
+    {
+     "item": "whumf3",
+     "spell": "whumf",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    },
+    {
+     "item": "poot3",
+     "spell": "poot",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.01
+    }
+   ],
+   "attacks": [
+    {
+     "cast": "mold_golem_ring",
+     "kind": "bullet",
+     "cooldown": 3.4,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 3,
+      "interval": 0.6
+     },
+     "amount": {
+      "base": 36,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 8,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "name": "ring"
+    },
+    {
+     "cast": "mold_golem_shell",
+     "kind": "nope",
+     "cooldown": 5,
+     "cast_time": 1.3,
+     "channeled": true,
+     "absorb": 90,
+     "name": "shell"
+    },
+    {
+     "cast": "mold_golem_wide_ring",
+     "kind": "bullet",
+     "cooldown": 3.4,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 12,
+      "count": 4,
+      "interval": 0.5
+     },
+     "amount": {
+      "base": 44,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 10,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "name": "wide_ring"
+    }
+   ],
+   "id": "mold_golem",
+   "description": "The slow tank, and the one body in the Mycelium that walks at you rather than waiting.\nVery high HP, a shield it puts up before it commits, and then a ring pulse that fills the\nspace around it three times over, each turn drifting off the last so the gaps never sit\nstill. The shield is the fight: it is a wall of health that arrives on a clock, and\nwhether you burn it down or walk around it decides whether the room is a fight or a\ndetour. It never idles — lose it and it simply keeps coming.\n",
+   "blurb": "The slow tank, and the one body in the Mycelium that walks at you rather than waiting. Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the space around it three times over, each turn drifting off the last so the gaps never sit still. The shield is the fight: it is a wall of health that arrives on a clock, and whether you burn it down or walk around it decides whether the room is a fight or a detour. It never idles — lose it and it simply keeps coming.",
+   "art": "the moss golem gone to rot — pale fungal white where the stone was, and the moss on its crown sagged from a live green to a dead slate one, with the sprouts at its shoulders the only part still growing.",
+   "casts": [
+    "ring",
+    "nope"
+   ],
+   "notes": "the moss golem's scene with the idle beat swapped for a `wander`, so \"never idles\" is a state that walks rather than a dial. The shield is the player's own Nope, channelled — its `cast_time` caps the channel, which is why the golem stands still through the whole wind-up and why the shell pose IS the telegraph.",
+   "fsm": {
+    "start": "Walk",
+    "transitions": [
+     {
+      "from": "Walk",
+      "to": "Chase",
+      "when": "sees player"
+     },
+     {
+      "from": "Chase",
+      "to": "Shell",
+      "when": "in range"
+     },
+     {
+      "from": "Shell",
+      "to": "Ring",
+      "when": "shield up"
+     },
+     {
+      "from": "Ring",
+      "to": "Recover",
+      "when": "pulsed"
+     },
+     {
+      "from": "Recover",
+      "to": "Shell",
+      "when": "clock lapses"
+     },
+     {
+      "from": "Chase",
+      "to": "Walk",
+      "when": "lost"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/mold_golem/mold_golem.png",
+    "region": [
+     0,
+     0,
+     16,
+     16
+    ]
+   },
+   "damage_max": 44,
+   "damage": "36-44",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium"
     }
    ]
   },
@@ -3295,7 +3455,7 @@
      "spell": "pew",
      "tier": 2,
      "weakness": null,
-     "chance": 0.05
+     "chance": 0.02
     }
    ],
    "attacks": [
@@ -3388,166 +3548,6 @@
     {
      "id": "deepwood",
      "name": "Deepwood"
-    }
-   ]
-  },
-  {
-   "source": "game/characters/enemies/mould_golem/mould_golem_data.tres",
-   "name": "Mould Golem",
-   "rarity": "common",
-   "max_health": 560,
-   "kinds": [
-    "fungal"
-   ],
-   "speed_px": 14,
-   "probes": {
-    "detect": 14,
-    "chase": 17,
-    "attack": 3
-   },
-   "drops": [
-    {
-     "item": "nope",
-     "spell": "nope",
-     "tier": null,
-     "weakness": null,
-     "chance": 0.1
-    },
-    {
-     "item": "whumf3",
-     "spell": "whumf",
-     "tier": 3,
-     "weakness": null,
-     "chance": 0.01
-    },
-    {
-     "item": "poot3",
-     "spell": "poot",
-     "tier": 3,
-     "weakness": null,
-     "chance": 0.01
-    }
-   ],
-   "attacks": [
-    {
-     "cast": "mould_golem_ring",
-     "kind": "bullet",
-     "cooldown": 3.4,
-     "cast_time": 0.5,
-     "channeled": false,
-     "shots": {
-      "pattern": "RingPattern",
-      "per_shot": 8,
-      "count": 3,
-      "interval": 0.6
-     },
-     "amount": {
-      "base": 36,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
-     "projectile": {
-      "range_tiles": 8,
-      "speed_tiles": 6,
-      "pierce": false
-     },
-     "name": "ring"
-    },
-    {
-     "cast": "mould_golem_shell",
-     "kind": "nope",
-     "cooldown": 5,
-     "cast_time": 1.3,
-     "channeled": true,
-     "absorb": 90,
-     "name": "shell"
-    },
-    {
-     "cast": "mould_golem_wide_ring",
-     "kind": "bullet",
-     "cooldown": 3.4,
-     "cast_time": 0.5,
-     "channeled": false,
-     "shots": {
-      "pattern": "RingPattern",
-      "per_shot": 12,
-      "count": 4,
-      "interval": 0.5
-     },
-     "amount": {
-      "base": 44,
-      "skill": 0,
-      "speed": 0,
-      "defence": 0
-     },
-     "projectile": {
-      "range_tiles": 10,
-      "speed_tiles": 6,
-      "pierce": false
-     },
-     "name": "wide_ring"
-    }
-   ],
-   "id": "mould_golem",
-   "description": "The slow tank, and the one body in the Mycelium that walks at you rather than waiting.\nVery high HP, a shield it puts up before it commits, and then a ring pulse that fills the\nspace around it three times over, each turn drifting off the last so the gaps never sit\nstill. The shield is the fight: it is a wall of health that arrives on a clock, and\nwhether you burn it down or walk around it decides whether the room is a fight or a\ndetour. It never idles — lose it and it simply keeps coming.\n",
-   "blurb": "The slow tank, and the one body in the Mycelium that walks at you rather than waiting. Very high HP, a shield it puts up before it commits, and then a ring pulse that fills the space around it three times over, each turn drifting off the last so the gaps never sit still. The shield is the fight: it is a wall of health that arrives on a clock, and whether you burn it down or walk around it decides whether the room is a fight or a detour. It never idles — lose it and it simply keeps coming.",
-   "art": "the moss golem gone to rot — pale fungal white where the stone was, and the moss on its crown sagged from a live green to a dead slate one, with the sprouts at its shoulders the only part still growing.",
-   "casts": [
-    "ring",
-    "nope"
-   ],
-   "notes": "the moss golem's scene with the idle beat swapped for a `wander`, so \"never idles\" is a state that walks rather than a dial. The shield is the player's own Nope, channelled — its `cast_time` caps the channel, which is why the golem stands still through the whole wind-up and why the shell pose IS the telegraph.",
-   "fsm": {
-    "start": "Walk",
-    "transitions": [
-     {
-      "from": "Walk",
-      "to": "Chase",
-      "when": "sees player"
-     },
-     {
-      "from": "Chase",
-      "to": "Shell",
-      "when": "in range"
-     },
-     {
-      "from": "Shell",
-      "to": "Ring",
-      "when": "shield up"
-     },
-     {
-      "from": "Ring",
-      "to": "Recover",
-      "when": "pulsed"
-     },
-     {
-      "from": "Recover",
-      "to": "Shell",
-      "when": "clock lapses"
-     },
-     {
-      "from": "Chase",
-      "to": "Walk",
-      "when": "lost"
-     }
-    ]
-   },
-   "icon": {
-    "url": "../../game/characters/enemies/mould_golem/mould_golem.png",
-    "region": [
-     0,
-     0,
-     16,
-     16
-    ]
-   },
-   "damage_max": 44,
-   "damage": "36-44",
-   "biomes": [
-    {
-     "id": "mycelium",
-     "name": "Mycelium"
     }
    ]
   },
@@ -3829,14 +3829,14 @@
      "spell": "bwoom",
      "tier": 2,
      "weakness": null,
-     "chance": 0.05
+     "chance": 0.13
     },
     {
      "item": "pew2",
      "spell": "pew",
      "tier": 2,
      "weakness": null,
-     "chance": 0.07
+     "chance": 0.04
     }
    ],
    "attacks": [
@@ -4210,14 +4210,14 @@
      "spell": "ring",
      "tier": 1,
      "weakness": null,
-     "chance": 0.1
+     "chance": 0.15
     },
     {
      "item": "nope",
      "spell": "nope",
      "tier": null,
      "weakness": null,
-     "chance": 0.1
+     "chance": 0.2
     }
    ],
    "attacks": [
@@ -4308,7 +4308,7 @@
      "spell": "ring",
      "tier": 1,
      "weakness": null,
-     "chance": 0.1
+     "chance": 0.15
     },
     {
      "item": "zaap1",
@@ -4401,7 +4401,7 @@
      "spell": "blink",
      "tier": 2,
      "weakness": null,
-     "chance": 0.08
+     "chance": 0.06
     },
     {
      "item": "pew3",
@@ -4994,6 +4994,7 @@
    "rarity": "common",
    "max_health": 80,
    "kinds": [
+    "insect",
     "fungal"
    ],
    "speed_px": 44,
@@ -5313,14 +5314,7 @@
      "spell": "pew",
      "tier": 1,
      "weakness": null,
-     "chance": 0.1
-    },
-    {
-     "item": "zaap1",
-     "spell": "zaap",
-     "tier": 1,
-     "weakness": null,
-     "chance": 0.1
+     "chance": 0.05
     }
    ],
    "attacks": [
@@ -5635,7 +5629,7 @@
      "spell": "snipe",
      "tier": 1,
      "weakness": null,
-     "chance": 0.2
+     "chance": 0.42
     }
    ],
    "attacks": [
@@ -5744,14 +5738,14 @@
      "spell": "bzzz",
      "tier": 1,
      "weakness": null,
-     "chance": 0.1
+     "chance": 0.15
     },
     {
      "item": "pew1",
      "spell": "pew",
      "tier": 1,
      "weakness": null,
-     "chance": 0.1
+     "chance": 0.05
     },
     {
      "item": "zaap1",
@@ -5867,7 +5861,7 @@
      "spell": "pew",
      "tier": 2,
      "weakness": null,
-     "chance": 0.05
+     "chance": 0.03
     },
     {
      "item": "halp2",
@@ -6395,7 +6389,7 @@
      "spell": "blam",
      "tier": 3,
      "weakness": null,
-     "chance": 0.3
+     "chance": 0.5
     },
     {
      "item": "blink2",
@@ -6409,7 +6403,7 @@
      "spell": "snipe",
      "tier": 3,
      "weakness": null,
-     "chance": 0.35
+     "chance": 1
     }
    ],
    "attacks": [
@@ -6609,6 +6603,13 @@
      "tier": 2,
      "weakness": null,
      "chance": 0.8
+    },
+    {
+     "item": "snipe3",
+     "spell": "snipe",
+     "tier": 3,
+     "weakness": null,
+     "chance": 0.5
     }
    ],
    "attacks": [
@@ -6706,14 +6707,14 @@
      "spell": "blam",
      "tier": 3,
      "weakness": null,
-     "chance": 0.5
+     "chance": 0.75
     },
     {
      "item": "ring3",
      "spell": "ring",
      "tier": 3,
      "weakness": null,
-     "chance": 0.3
+     "chance": 1
     },
     {
      "item": "halp2",
@@ -7524,7 +7525,6 @@
    "rarity": "boss",
    "max_health": 1500,
    "kinds": [],
-   "speed_px": 28,
    "probes": {
     "detect": 16
    },
@@ -7545,6 +7545,66 @@
     }
    ],
    "attacks": [
+    {
+     "cast": "fae_flit",
+     "kind": "bullet",
+     "cooldown": 1,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "FlankPattern",
+      "per_shot": 2,
+      "count": 2,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 9,
+      "pierce": false
+     },
+     "dash": {
+      "speed_px": 150,
+      "duration": 0.7,
+      "contact": {
+       "base": 20,
+       "skill": 0,
+       "speed": 0,
+       "defence": 0
+      }
+     },
+     "name": "flit"
+    },
+    {
+     "cast": "fae_ring_storm",
+     "kind": "bullet",
+     "cooldown": 1,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 16,
+      "count": 3,
+      "interval": 0.7
+     },
+     "amount": {
+      "base": 11,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 8,
+      "speed_tiles": 5,
+      "pierce": false
+     },
+     "name": "ring_storm"
+    },
     {
      "cast": "fae_rings_spell",
      "kind": "bullet",
@@ -7595,6 +7655,19 @@
       "pierce": false
      },
      "name": "shotgun"
+    },
+    {
+     "cast": "fae_wisps",
+     "kind": "summon",
+     "cooldown": 1,
+     "cast_time": 1.2,
+     "channeled": false,
+     "minion": {
+      "count": 4,
+      "health": 8,
+      "lifetime": 30
+     },
+     "name": "wisps"
     }
    ],
    "id": "fae",
@@ -7668,7 +7741,7 @@
     ]
    },
    "damage_max": 15,
-   "damage": "11-15",
+   "damage": "8-15",
    "biomes": [
     {
      "id": "glade",
@@ -8044,7 +8117,7 @@
     {
      "cast": "thornmess_bloom",
      "kind": "bullet",
-     "cooldown": 7,
+     "cooldown": 0,
      "cast_time": 3,
      "channeled": false,
      "shots": {
@@ -8069,7 +8142,7 @@
     {
      "cast": "thornmess_missiles",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 0,
      "cast_time": 0.5,
      "channeled": false,
      "shots": {
@@ -8128,13 +8201,13 @@
     {
      "cast": "thornmess_spores",
      "kind": "bullet",
-     "cooldown": 6,
+     "cooldown": 0,
      "cast_time": 0.7,
      "channeled": false,
      "shots": {
       "pattern": "RingPattern",
       "per_shot": 16,
-      "count": 10,
+      "count": 3,
       "interval": 1.5
      },
      "amount": {
@@ -8159,14 +8232,14 @@
      "minion": {
       "count": 6,
       "health": 8,
-      "lifetime": 0
+      "lifetime": 20
      },
      "name": "summon"
     }
    ],
    "id": "thornmess",
-   "description": "The rooted capstone. It stays on the ground and runs a `PatternPicker`\nsplit into two HP-gated pools. It idles until you are in range, then fires thornthrower\nmissiles. If you break range it uproots and sprints to close, where it behaves like a rosebud\nor fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen,\nseeds the room with the biome's rooted plants, then returns to the cycle.\n",
-   "blurb": "The rooted capstone. It stays on the ground and runs a `PatternPicker` split into two HP-gated pools. It idles until you are in range, then fires thornthrower missiles. If you break range it uproots and sprints to close, where it behaves like a rosebud or fires shotgun volleys. At low health it phase-shifts: it throws spores that fill the screen, seeds the room with the biome's rooted plants, then returns to the cycle.",
+   "description": "The rooted capstone. It stays on the ground and runs an ordered Rotation of five Phases,\neach one a commitment it locks itself into and each one answered by getting CLOSE rather\nthan getting away. Nothing about it moves during a Phase; leave the arena and it uproots\nand walks after you, slowly, and the Rotation resumes when it arrives.\n\n- **Rooted Bloom** (`Ring`): rears into a three-second armoured wind-up, then floods the\n  floor with rotating rings. The long recovery is the window.\n- **Thornfall** (`Volley`): homing missiles from range. Weave them — there is nothing to\n  punish out there.\n- **Bitter Spit** (`Volley` + `ShotgunPattern`): a tight cone, four volleys, only ever at\n  point-blank range.\n- **Seedlings**: seeds the room with six rooted plants, and stays armoured while they\n  stand. Clearing the growth is the answer.\n- **Spore Storm** (`Ring`): below a quarter health, once, a full-arena ring storm.\n",
+   "blurb": "The rooted capstone. It stays on the ground and runs an ordered Rotation of five Phases, each one a commitment it locks itself into and each one answered by getting CLOSE rather than getting away. Nothing about it moves during a Phase; leave the arena and it uproots and walks after you, slowly, and the Rotation resumes when it arrives.",
    "art": "a massive tangled thorn-mass with a screaming maw and root legs, glade greens with red thorn tips (boss sheet).",
    "casts": [
     "snipe",
@@ -8174,52 +8247,72 @@
     "blam",
     "jimmy"
    ],
-   "notes": "the low-HP phase swaps in a spore and summon wave rather than layering a summon on top.",
+   "notes": "every Phase declares the Counter it is answered with, so the fight is a sequence of things to answer rather than a roll; the 4s Rest is gone and each beat's own recovery is the burn window. Its two HP-gated pools became one HP-gated desperation Phase.",
    "fsm": {
     "start": "Idle",
     "transitions": [
      {
       "from": "Idle",
-      "to": "Missiles",
-      "when": "in range"
+      "to": "Cycle",
+      "when": "sees player"
      },
      {
-      "from": "Missiles",
+      "from": "Cycle",
+      "to": "RootBloom",
+      "when": "turn 1"
+     },
+     {
+      "from": "Cycle",
+      "to": "Thornfall",
+      "when": "turn 2",
+      "in missile range": null
+     },
+     {
+      "from": "Cycle",
+      "to": "BitterSpit",
+      "when": "turn 3",
+      "point blank": null
+     },
+     {
+      "from": "Cycle",
+      "to": "Seedlings",
+      "when": "turn 4"
+     },
+     {
+      "from": "Cycle",
+      "to": "SporeStorm",
+      "when": "turn 5",
+      "below a quarter health": null
+     },
+     {
+      "from": "RootBloom",
+      "to": "Cycle"
+     },
+     {
+      "from": "Thornfall",
+      "to": "Cycle"
+     },
+     {
+      "from": "BitterSpit",
+      "to": "Cycle"
+     },
+     {
+      "from": "Seedlings",
+      "to": "Cycle"
+     },
+     {
+      "from": "SporeStorm",
+      "to": "Cycle"
+     },
+     {
+      "from": "Cycle",
       "to": "Uproot",
-      "when": "player fled"
+      "when": "out of range"
      },
      {
       "from": "Uproot",
-      "to": "Missiles",
+      "to": "Cycle",
       "when": "back in range"
-     },
-     {
-      "from": "Missiles",
-      "to": "Bloom",
-      "when": "roll"
-     },
-     {
-      "from": "Missiles",
-      "to": "Shotgun",
-      "when": "roll"
-     },
-     {
-      "from": "Bloom",
-      "to": "Missiles"
-     },
-     {
-      "from": "Shotgun",
-      "to": "Missiles"
-     },
-     {
-      "from": "Missiles",
-      "to": "Desperation",
-      "when": "low HP"
-     },
-     {
-      "from": "Desperation",
-      "to": "Missiles",
-      "when": "wave placed"
      }
     ]
    },
@@ -8329,14 +8422,14 @@
    "source": "game/generation/world/biomes/mycelium/biome.tres",
    "name": "Mycelium",
    "tier_label": "T3",
-   "intro": "The fungal Side biome hanging off the deepwood, in three Zones: clusters, hollows and sporefields. Spore clouds are the floor both sides fight over.",
-   "enemies_intro": "Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. All of it spawns, spread over the Mycelium's three Zones.",
+   "intro": "The fungal Side biome hanging off the deepwood, split between the projectile-heavy Barrage and close-fighting Brawl Zones. Spore clouds are the floor both sides fight over.",
+   "enemies_intro": "Fifteen bodies, all built, all fungal: five rooted turrets, three splitters, three movers, a rot heavy and three rares. Half of them print spore clouds and the other half fight harder while standing in them. Mold golems, rollcaps, puffcaps, normiecaps and sporeflies span both Zones; the remaining commons split by fighting style, while all three rares can appear in either Zone.",
    "zones": [],
    "roster": [
     "bloatcap",
     "clustercap",
     "gapcap",
-    "mould_golem",
+    "mold_golem",
     "normiecap",
     "puffcap",
     "ringcap",

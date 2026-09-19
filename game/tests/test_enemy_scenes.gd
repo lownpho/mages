@@ -38,8 +38,8 @@ func _ready() -> void:
 ## Every Boss Phase declares a Counter. The whole design rests on a Phase being a beat that has
 ## to be ANSWERED — a Rotation that ships one with nothing to answer is dead time inside the
 ## fight, and this is the rule that cannot be allowed to drift silently. It also pins the shape
-## of a Rotation (4-5 Phases, 1-4 Reps each) and that a priority Phase is marked `once`, so an
-## opener that jumps the queue cannot starve the order it jumps.
+## of a Rotation (3-5 Phases, 1-4 Reps each, a Tail of 0.5-2.5s) and that a priority Phase is
+## marked `once`, so an opener that jumps the queue cannot starve the order it jumps.
 func _check_boss_phases(id: String, node: Node) -> int:
 	var fight := node.get_node_or_null("BossController")
 	if fight == null:
@@ -50,8 +50,8 @@ func _check_boss_phases(id: String, node: Node) -> int:
 	var fsm: FSM = node.get_node_or_null("FSM")
 	var fails := 0
 	var phases: Array = fight.phases
-	if phases.size() < 4 or phases.size() > 5:
-		print("  FAIL: %s runs %d Phases, wanted 4-5" % [id, phases.size()])
+	if phases.size() < 3 or phases.size() > 5:
+		print("  FAIL: %s runs %d Phases, wanted 3-5" % [id, phases.size()])
 		fails += 1
 	for name in phases:
 		var beat: State = fsm.states.get(name) if fsm else null
@@ -64,6 +64,11 @@ func _check_boss_phases(id: String, node: Node) -> int:
 			fails += 1
 		if beat.reps < 1 or beat.reps > 4:
 			print("  FAIL: %s/%s authors %d Reps, wanted 1-4" % [id, name, beat.reps])
+			fails += 1
+		# Reps and Tails are the boss's Tempo, and Tempo is authored per Phase rather than
+		# templated — but a Tail outside this band is either no window at all or a farm.
+		if beat.tail < 0.5 or beat.tail > 2.5:
+			print("  FAIL: %s/%s authors a %0.1fs Tail, wanted 0.5-2.5" % [id, name, beat.tail])
 			fails += 1
 		if beat.priority > 0 and not beat.once:
 			print("  FAIL: %s/%s has priority without `once` — it would starve the Rotation"

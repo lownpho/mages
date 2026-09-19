@@ -35,5 +35,5 @@ shot_interval = 0.5
 max_shots = 5
 rotation_per_shot = 15.0
 effect_scene = ExtResource("99_effect")
-cooldown = 7.0
+cooldown = 0.0
 cast_time = 3.0

@@ -74,6 +74,9 @@ func _ready() -> void:
 	fails += await _telegraph()
 	fails += await _puffcap_chain()
 	fails += await _rotation()
+	fails += await _grammar()
+	fails += await _thornmess_escort()
+	fails += await _thornmess_distance()
 	fails += await _counters()
 	fails += await _escort_cheese()
 	fails += await _escort_hold()
@@ -230,11 +233,9 @@ func _halp_queue() -> int:
 	await get_tree().physics_frame
 	return fails
 
-# The health-window replacement for the old phase_states: which beats a boss's dispatcher
-# will consider is exactly Behaviour.can_run, so assert it directly at two health levels
-# rather than waiting on lucky rolls. Below 25% the desperation moves (Spores, and Summon it
-# chains to) must be eligible and the healthy-phase beats (Bloom, Uproot) must drop out;
-# above it, the reverse.
+# The health window under a Rotation: HP does NOT drive which Phase plays, Intensity does. The
+# one beat a window touches is the HP-gated desperation Phase — the rest of the Rotation is
+# played at every health level, which is exactly what the old two-pool swap stopped doing.
 func _phase_swap() -> int:
 	var enemy: Creature = load(CASES["thornmess"]["scene"]).instantiate()
 	add_child(enemy)
@@ -243,19 +244,17 @@ func _phase_swap() -> int:
 	var beats := enemy.fsm.states
 	var fails := 0
 
-	enemy.health = enemy.max_health  # healthy phase
-	fails += _expect("Bloom eligible when healthy", beats["Bloom"].can_run())
-	fails += _expect("Uproot eligible when healthy", beats["Uproot"].can_run())
-	fails += _expect("Spores NOT eligible when healthy", not beats["Spores"].can_run())
+	enemy.health = enemy.max_health  # healthy fight
+	fails += _expect("RootBloom eligible when healthy", beats["RootBloom"].can_run())
+	fails += _expect("SporeStorm NOT eligible when healthy", not beats["SporeStorm"].can_run())
 
-	enemy.health = int(enemy.max_health * 0.2)  # desperation phase
-	fails += _expect("Spores eligible below 25%", beats["Spores"].can_run())
-	fails += _expect("Missiles eligible below 25%", beats["Missiles"].can_run())
-	fails += _expect("Bloom dropped below 25%", not beats["Bloom"].can_run())
-	fails += _expect("Uproot dropped below 25%", not beats["Uproot"].can_run())
+	enemy.health = int(enemy.max_health * 0.2)  # desperation window
+	fails += _expect("SporeStorm eligible below 25%", beats["SporeStorm"].can_run())
+	fails += _expect("...and the rest of the Rotation is untouched by HP",
+		beats["RootBloom"].can_run() and beats["Seedlings"].can_run())
 
 	if fails == 0:
-		print("  ok: thornmess phase swap — health windows gate the roll pool both ways")
+		print("  ok: thornmess hp overlay — a window opens the desperation Phase, nothing else")
 	enemy.queue_free()
 	await get_tree().physics_frame
 	return fails
@@ -688,15 +687,22 @@ func _pump(arena: Dictionary, until: Callable, clear_escorts: bool = true) -> Ar
 # The ordered Rotation: each Phase plays its authored Reps, then the next Phase in the authored
 # list takes over, and after the last one the Rotation wraps back onto the first. Order is the
 # whole point of the skeleton — a boss that rolls is what this feature exists to delete.
+# Both bosses run through it, because the ORDER is the shared skeleton while the mix, the Reps
+# and the Tails inside it are each boss's own grammar (see _grammar).
 func _rotation() -> int:
-	var arena := await _boss_arena(CASES["fae"]["scene"])
+	var fails := await _rotation_case("fae", "RingStorm")
+	fails += await _rotation_case("thornmess", "SporeStorm")
+	return fails
+
+func _rotation_case(id: String, desperation: String) -> int:
+	var arena := await _boss_arena(CASES[id]["scene"])
 	var enemy: Creature = arena["enemy"]
 	var boss: BossController = enemy.get_node("BossController")
 	var phases: Array[String] = boss.phases
 	var fails := 0
 
-	fails += _expect("the Rotation is 4-5 Phases (%d)" % phases.size(),
-		phases.size() >= 4 and phases.size() <= 5)
+	fails += _expect("the Rotation is 3-5 Phases (%d)" % phases.size(),
+		phases.size() >= 3 and phases.size() <= 5)
 	for name in phases:
 		var beat: Behaviour = enemy.fsm.states.get(name)
 		fails += _expect("%s is a real FSM state in the Rotation" % name, beat != null)
@@ -708,20 +714,22 @@ func _rotation() -> int:
 	# skipped and the wrap lands straight back on the first Phase.
 	var expected: Array[String] = []
 	for name in phases:
-		if name == "RingStorm":
+		if name == desperation:
 			continue
 		var beat: Behaviour = enemy.fsm.states[name]
 		for _rep in beat.reps:
 			expected.append(name)
-	expected.append(phases[0])
-	expected.append(phases[0])
+	# ...and wraps onto the first Phase, which then plays its own Reps like any other visit.
+	var first: Behaviour = enemy.fsm.states[phases[0]]
+	for _rep in first.reps:
+		expected.append(phases[0])
 
 	var seen: Array[String] = await _pump(arena, func(list: Array) -> bool:
 		return list.size() >= expected.size())
 	fails += _expect("the Rotation runs its Phases in order, for their Reps, and wraps (%s)"
 		% [seen], seen == expected)
 	fails += _expect("the HP-gated desperation Phase stays out of a healthy lap",
-		not seen.has("RingStorm"))
+		not seen.has(desperation))
 	fails += _expect("the wrap leaves Intensity at or above its opening value (%0.2f)" % boss.intensity,
 		boss.intensity >= BossController.MIN_INTENSITY)
 	fails += _expect("a Phase's Tail is shut while its beat is live (%d frames)" % _tail_breaks,
@@ -729,9 +737,182 @@ func _rotation() -> int:
 	fails += _expect("the Tail opens after a Phase's last Rep (%d frames)" % _tail_opens,
 		_tail_opens > 0)
 	if fails == 0:
-		print("  ok: fae rotation — %s" % [seen])
+		print("  ok: %s rotation — %s" % [id, seen])
 	await _close_arena(arena)
 	return fails
+
+# The grammar rule the doc gained after the second boss: the skeleton is a shared vocabulary,
+# not a shared template. Two bosses built from the same four Counter kinds still have to ask
+# different questions, or the roster is one fight with the nouns swapped. Asserted across both
+# bosses rather than per-scene, because it is a rule about the roster.
+func _grammar() -> int:
+	var fails := 0
+	var mixes := {}
+	var rep_counts := {}
+	var tail_max := {}
+	var rushes := {}
+	var opens := {}
+	for id: String in ["fae", "thornmess"]:
+		var enemy: Creature = load(CASES[id]["scene"]).instantiate()
+		add_child(enemy)
+		await get_tree().physics_frame
+		var boss: BossController = enemy.get_node("BossController")
+		var mix: Array[int] = []
+		var reps: Array[int] = []
+		var tails: Array[float] = []
+		var charges := 0
+		for name in boss.phases:
+			var beat: Behaviour = enemy.fsm.states[name]
+			mix.append(beat.counter_kind)
+			reps.append(beat.reps)
+			tails.append(beat.tail)
+			if beat is Charge:
+				charges += 1
+		mixes[id] = mix
+		opens[id] = mix[0]
+		rep_counts[id] = reps
+		tail_max[id] = tails.max()
+		rushes[id] = charges
+		# One Counter kind repeated down the Rotation is a template, not a grammar: it is the
+		# same beat five times whatever the spells are called.
+		var kinds := {}
+		for kind in mix:
+			kinds[kind] = true
+		fails += _expect("%s asks more than one question (%d Counter kinds)" % [id, kinds.size()],
+			kinds.size() >= 3)
+		# Tempo is authored per Phase, not defaulted: one Tail length everywhere is the other
+		# half of a templated fight.
+		var lengths := {}
+		for tail in tails:
+			lengths[tail] = true
+		fails += _expect("%s authors its Tails per Phase (%s)" % [id, tails], lengths.size() >= 2)
+		remove_child(enemy)
+		enemy.queue_free()
+		await get_tree().physics_frame
+
+	fails += _expect("the two bosses do not open with the same Counter kind (%d vs %d)"
+		% [opens["fae"], opens["thornmess"]], opens["fae"] != opens["thornmess"])
+	fails += _expect("...nor repeat each other's mix (%s vs %s)" % [mixes["fae"], mixes["thornmess"]],
+		mixes["fae"] != mixes["thornmess"])
+	fails += _expect("...nor run to the same Tempo (%s vs %s)"
+		% [rep_counts["fae"], rep_counts["thornmess"]],
+		rep_counts["fae"] != rep_counts["thornmess"])
+	fails += _expect("...and one of them recovers far more slowly (%0.1fs vs %0.1fs)"
+		% [tail_max["fae"], tail_max["thornmess"]], tail_max["fae"] != tail_max["thornmess"])
+	# Movement policy: a committed rush is one boss's dialect. Fae flits; Thornmess is rooted and
+	# answers distance with a walk outside the Rotation instead.
+	fails += _expect("only one boss owns a committed rush (%d vs %d)"
+		% [rushes["fae"], rushes["thornmess"]],
+		rushes["fae"] > 0 and rushes["thornmess"] == 0)
+	if fails == 0:
+		print("  ok: grammar — two bosses, two questions (%s vs %s)"
+			% [mixes["fae"], mixes["thornmess"]])
+	return fails
+
+# Thornmess's escort is its OWN summons, so the wiring Fae's wisps follow has to hold for six
+# plants of three species: the group the boss gates on is the group its summon stamps, the
+# membership is exact, and the escort does not outlive the lap it was called in (a straggler
+# left standing fails the NEXT lap's escort gate, which is a fight that never ends).
+func _thornmess_escort() -> int:
+	var arena := await _boss_arena(CASES["thornmess"]["scene"], true)
+	var enemy: Creature = arena["enemy"]
+	var boss: BossController = enemy.get_node("BossController")
+	var seedlings: Behaviour = enemy.fsm.states["Seedlings"]
+	var cycle: Cycle = enemy.fsm.states["Cycle"]
+	var summon := (seedlings as Cast).spell as SummonResource
+	var fails := 0
+
+	fails += _expect("the summon stamps the group the boss gates on (%s)" % summon.minion_group,
+		summon.minion_group != &"" and summon.minion_group == seedlings.clear_group)
+	fails += _expect("an escort the boss called is counted exactly, wherever it stands",
+		seedlings.clear_radius_tiles <= 0.0)
+	fails += _expect("the escort does not outlive a lap (%0.1fs)" % summon.minion_lifetime,
+		summon.minion_lifetime > 0.0 and summon.minion_lifetime < 40.0)
+	# Six plants is three times the HP of Fae's four wasps, so the hold that bounds the gate has
+	# to be sized to the escort — and it has to lapse before the escort's own timer does, or the
+	# rollback is handed out by a clock rather than by the player killing anything.
+	fails += _expect("the escort hold is sized to the escort, not to Fae's (%0.1fs)" % cycle.escort_hold,
+		cycle.escort_hold >= 6.0 and cycle.escort_hold < summon.minion_lifetime)
+
+	# Live: the armour and the rollback land on this boss's own group, not on Fae's.
+	boss.intensity = 1.5
+	boss.begin_phase(seedlings)
+	var plant: Creature = load("res://characters/enemies/seedling/seedling.tscn").instantiate()
+	plant.global_position = Vector2(64, 0)
+	plant.add_to_group("pack_seed")
+	add_child(plant)
+	await get_tree().physics_frame
+	fails += _expect("a standing escort armours the boss",
+		is_equal_approx(enemy.incoming_damage_scale, boss.escort_armour))
+	fails += _expect("...and has not credited yet", is_equal_approx(boss.intensity, 1.5))
+	plant.queue_free()
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	fails += _expect("clearing the growth credits ADDS",
+		is_equal_approx(boss.intensity, 1.5 - BossController.STEP))
+	fails += _expect("the armour comes off with it",
+		is_equal_approx(enemy.incoming_damage_scale, 1.0))
+	boss.end_phase()
+	if fails == 0:
+		print("  ok: thornmess escort — six plants, one exact group, gone before the next lap")
+	await _close_arena(arena)
+	return fails
+
+# A rooted boss answers distance outside the Rotation: the walk lives on the Cycle's own range
+# probe, so the boss can close without the walk ever becoming a Phase with nothing to answer.
+# This is the one boss whose movement is neither a charge nor a Phase, and the kiting risk is
+# real — a Siege boss that stands still while you walk off is the sponge the profile exists to
+# prevent.
+func _thornmess_distance() -> int:
+	var arena := await _boss_arena(CASES["thornmess"]["scene"])
+	var enemy: Creature = arena["enemy"]
+	var boss: BossController = enemy.get_node("BossController")
+	var cycle: Cycle = enemy.fsm.states["Cycle"]
+	var fails := 0
+
+	fails += _expect("the Cycle watches a range probe of its own (%s)" % cycle.probe_path,
+		cycle.probe_path != NodePath())
+	fails += _expect("the answer to distance is not a Phase (%s)" % cycle.lost_state,
+		cycle.lost_state != "" and not boss.phases.has(cycle.lost_state))
+	var walk: Behaviour = enemy.fsm.states.get(cycle.lost_state)
+	fails += _expect("...it is a real state, and a walk", walk is Approach)
+	if walk is Approach:
+		fails += _expect("...that hands back to the Rotation (%s)" % (walk as Approach).done_state,
+			(walk as Approach).done_state == "Cycle")
+
+	# Engage, then leave the arena: the Rotation is left behind for the walk.
+	await _wait_for(func() -> bool: return boss.live_phase() != null)
+	var engaged: Vector2 = enemy.global_position
+	arena["target"].position = Vector2(300, 0)
+	await _wait_for(func() -> bool:
+		return enemy.fsm.current_state != null \
+			and String(enemy.fsm.current_state.name) == cycle.lost_state, 1800)
+	fails += _expect("leaving the arena hands the fight to the walk (%s)"
+		% enemy.fsm.current_state.name,
+		String(enemy.fsm.current_state.name) == cycle.lost_state)
+	await _wait_for(func() -> bool: return false, 40)
+	fails += _expect("...and it closes the gap while it walks (%0.1f px)"
+		% enemy.global_position.distance_to(engaged),
+		enemy.global_position.distance_to(engaged) > 4.0)
+
+	# Coming back re-enters the Rotation rather than stranding the boss in the walk.
+	arena["target"].position = Vector2(24, 0)
+	await _wait_for(func() -> bool: return boss.live_phase() != null, 300)
+	fails += _expect("coming back re-enters the Rotation (%s)" % enemy.fsm.current_state.name,
+		boss.live_phase() != null)
+	if fails == 0:
+		print("  ok: thornmess distance — a rooted walk outside the Rotation")
+	await _close_arena(arena)
+	return fails
+
+# Run a live FSM until a predicate holds (or a frame budget lapses). The boss cases that must
+# NOT hand-drive the machine wait on it through here.
+func _wait_for(until: Callable, frames: int = 600) -> bool:
+	for _i in frames:
+		if until.call():
+			return true
+		await get_tree().physics_frame
+	return until.call()
 
 # Each Counter kind credits on the event it names, does NOT credit on an event it did not ask
 # for, and can only ever credit once per Phase (the latch that stops one Phase undoing two

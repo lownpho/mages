@@ -21,14 +21,14 @@ Brings in the plant roster: thornthrower and rosebud join the Glade's own, and t
 
 | Enemy | Items dropped |
 |---|---|
-| Dirt Golem | **ring t1** (20%), **nope** (20%) |
-| Hopper | **pew t1** (15%), **zaap t1** (10%), **blam t1** (10%) |
-| Mandrake | **blam t1** (20%), **fireball t1** (20%) |
-| Rosebud | **ring t1** (10%), **nope** (10%) |
-| Seedling | **ring t1** (10%), **zaap t1** (10%) |
-| Sproutling | **pew t1** (10%), **zaap t1** (10%) |
-| Thornthrower | **snipe t1** (20%) |
-| Wasp | **bzzz t1** (10%), **pew t1** (10%), **zaap t1** (10%) |
+| Dirt Golem | **ring t1** (30%), **nope** (40%) |
+| Hopper | **pew t1** (8%), **zaap t1** (10%), **blam t1** (10%) |
+| Mandrake | **blam t1** (20%), **fireball t1** (32%) |
+| Rosebud | **ring t1** (15%), **nope** (20%) |
+| Seedling | **ring t1** (15%), **zaap t1** (10%) |
+| Sproutling | **pew t1** (5%) |
+| Thornthrower | **snipe t1** (42%) |
+| Wasp | **bzzz t1** (15%), **pew t1** (5%), **zaap t1** (10%) |
 | Mandraker *(rare)* | **fireball t1** (50%), **blam t2** (30%) |
 | Viper *(rare)* | **blam t2** (50%) |
 | Fae *(boss)* | **blam t2** (66%), **ring t2** (66%) |
@@ -52,33 +52,33 @@ A small pocket of props with eyes: the bush that reveals, the harasser that blin
 |---|---|
 | Ash Snake | **zoing t2** (5%) |
 | Bramble Stalker | **ring t2** (6%) |
-| Bristlestone | **ploop t2** (4%) |
-| Cinderstone | **oop t2** (4%) |
+| Bristlestone | **ploop t2** (7%) |
+| Cinderstone | **oop t2** (7%) |
 | Coral Snake | **zoing t2** (5%) |
-| Grimling | **pew t2** (5%), **halp t2** (2%) |
+| Grimling | **pew t2** (2%), **halp t2** (2%) |
 | Mole | **ring t2** (10%) |
 | Moon Moth | **ring t2** (5%) |
 | Moss Golem | **ring t2** (8%), **nope** (30%) |
-| Moth | **pew t2** (5%) |
+| Moth | **pew t2** (2%) |
 | Needle Moth | **snipe t2** (10%) |
-| Owl | **bwoom t2** (5%), **pew t2** (7%) |
-| Shade | **blink t2** (8%), **pew t3** (5%) |
+| Owl | **bwoom t2** (13%), **pew t2** (4%) |
+| Shade | **blink t2** (6%), **pew t3** (5%) |
 | Shard Grimling | **blam t2** (5%), **halp t2** (2%) |
 | Snake | **zoing t2** (5%) |
 | Stalker | **blam t2** (5%) |
 | Thornback | **charge_dash t2** (10%) |
-| Wisp Grimling | **pew t2** (5%), **halp t2** (2%) |
+| Wisp Grimling | **pew t2** (3%), **halp t2** (2%) |
 | Adder *(rare)* | **zoing t2** (50%) |
-| Elder Stalker *(rare)* | **blam t3** (30%), **blink t2** (60%), **snipe t3** (35%) |
-| Great Owl *(rare)* | **bwoom t2** (80%) |
-| Grimlord *(rare)* | **blam t3** (50%), **ring t3** (30%), **halp t2** (20%) |
+| Elder Stalker *(rare)* | **blam t3** (50%), **blink t2** (60%), **snipe t3** (100%) |
+| Great Owl *(rare)* | **bwoom t2** (80%), **snipe t3** (50%) |
+| Grimlord *(rare)* | **blam t3** (75%), **ring t3** (100%), **halp t2** (20%) |
 | Razorback *(rare)* | **charge_dash t2** (50%) |
 | Umbra *(rare)* | **blink t2** (50%), **pew t3** (30%) |
 | Gnarlking *(boss)* | **thwomp t3** (100%), **halp t2** (60%), **blam t3** (100%), **charge_dash t2** (60%) |
 
 ## Mycelium (T3)
 
-The fungal Side biome hanging off the deepwood, in three Zones: clusters, hollows and sporefields. Spore clouds are the floor both sides fight over.
+The fungal Side biome hanging off the deepwood, split between the projectile-heavy Barrage and close-fighting Brawl Zones. Spore clouds are the floor both sides fight over.
 
 ### Mycelium drops
 
@@ -87,7 +87,7 @@ The fungal Side biome hanging off the deepwood, in three Zones: clusters, hollow
 | Bloatcap | **whumf t3** (1%), **poot t3** (1%) |
 | Clustercap | **whumf t3** (1%), **poot t3** (1%) |
 | Gapcap | **blam t3** *(insect)* (3%) |
-| Mould Golem | **nope** (10%), **whumf t3** (1%), **poot t3** (1%) |
+| Mold Golem | **nope** (10%), **whumf t3** (1%), **poot t3** (1%) |
 | Normiecap | **pew t3** *(insect)* (3%) |
 | Puffcap | **poot t3** (1%) |
 | Ringcap | **ring t3** *(insect)* (3%), **blops t3** (1%) |

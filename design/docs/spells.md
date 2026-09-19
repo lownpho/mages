@@ -284,7 +284,7 @@ One of the openers, and the baseline every other nuke is read against — a fres
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | 0.5s | Single | 30 + 2×skill = **80** | 12 | skill +15 |
+| T1 | 4s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +15 |
 
 **Also:** blast 5 tiles (splash only).
 
