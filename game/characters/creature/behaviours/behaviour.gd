@@ -142,17 +142,26 @@ func window_open() -> bool:
 		frac = float(creature.health) / float(creature.max_health)
 	return frac >= health_min and frac <= health_max
 
-## True when nothing of this beat's escort group stands within its radius. Public because
-## the BossController asks the same question to credit an ADDS Counter and to hold the
-## escort's armour — membership is the seam, whether it is read by a beat or by its boss.
+## True when nothing of this beat's escort group is left. Public because the BossController asks
+## the same question to credit an ADDS Counter and to hold the escort's armour — membership is
+## the seam, whether it is read by a beat or by its boss.
+##
+## `clear_radius_tiles` of 0 means the GROUP IS THE ESCORT and every member counts wherever it
+## stands. That is what a boss's own summons author: the radius the default exists for is a
+## world-pack concern (streaming keeps a neighbouring room's pack loaded, so a straggler three
+## rooms away must not pin a fight), and an escort the boss itself called is not that — a live
+## add that has been led out of range is not a dead one.
 func group_clear() -> bool:
 	if clear_group == &"":
 		return true
 	# Detached (a run ended mid hand-off): nothing is standing as far as the fight goes.
 	if not is_inside_tree():
 		return true
+	var members := get_tree().get_nodes_in_group(clear_group)
+	if clear_radius_tiles <= 0.0:
+		return members.is_empty()
 	var radius := clear_radius_tiles * GameConstants.PX_PER_TILE
-	for node in get_tree().get_nodes_in_group(clear_group):
+	for node in members:
 		# The group is authored on the Pack component, which hangs off the creature and has
 		# no position of its own.
 		var body := node as Node2D

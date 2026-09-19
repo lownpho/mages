@@ -218,6 +218,7 @@ done_state = "Cycle"
 attack_anim = "summon"
 telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
 clear_group = &"pack_wisp"
+clear_radius_tiles = 0.0
 counter_kind = 3
 reps = 2
 tail = 1.2

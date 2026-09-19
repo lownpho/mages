@@ -73,6 +73,9 @@ var _armoured: bool = false
 ## escort CLEARING, which is not the same as there being none yet: the boss spends its summon
 ## wind-up with an empty floor, and crediting that would hand the player a rollback for nothing.
 var _adds_seen: bool = false
+## True once the Rotation has given up waiting on the escort. The Phase is then no longer
+## answered by the adds at all: no rollback, and no armour stood on their behalf.
+var _escort_done: bool = false
 
 func _ready() -> void:
 	# Children are ready before their parent, so the creature's @onready refs aren't assigned
@@ -112,6 +115,7 @@ func reset() -> void:
 	_credited = false
 	_player_hurt = false
 	_adds_seen = false
+	_escort_done = false
 	intensity_changed.emit(intensity)
 
 # --- the Phase lifecycle (driven by Cycle) ---------------------------------------------
@@ -124,6 +128,7 @@ func begin_phase(beat: Behaviour) -> void:
 	_credited = false
 	_player_hurt = false
 	_adds_seen = false
+	_escort_done = false
 	_watch_player(_player_hurtbox())
 
 ## The Phase's last Rep is done. UNTOUCHED is settled here rather than at the end of the Tail,
@@ -134,6 +139,14 @@ func finish_phase() -> void:
 		return
 	if _phase.counter_kind == Behaviour.Counter.UNTOUCHED and not _player_hurt:
 		_credit()
+
+## The Rotation has given up waiting on this Phase's escort (an add it can neither see nor
+## reach — no line of sight, no pathing). The Phase is over as far as the adds are concerned:
+## the player forfeits the rollback and the boss stops being armoured on their behalf.
+func abandon_escort() -> void:
+	_escort_done = true
+	_adds_seen = false
+	_set_armour(false)
 
 ## The Phase is over: no Counter can land on it any more, and nothing it borrowed is still
 ## held (the escort armour, the player's hurt signal).
@@ -182,7 +195,7 @@ func _physics_process(_delta: float) -> void:
 	# is armoured (clearing them is the answer, not a chore beside it), and the moment they come
 	# down the Counter lands. "Come down" and not "are absent" — the summon wind-up runs with an
 	# empty floor, and only an escort that has been seen standing can be cleared.
-	if _phase.counter_kind != Behaviour.Counter.ADDS:
+	if _phase.counter_kind != Behaviour.Counter.ADDS or _escort_done:
 		return
 	var adds_up := not _phase.group_clear()
 	_set_armour(adds_up)

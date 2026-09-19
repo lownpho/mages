@@ -21,12 +21,16 @@ class_name Cycle
 ## Non-counterable pause between Phases. Capped at BossController.FREE_BEAT_CAP — pacing, never
 ## a free damage window.
 @export_range(0.0, BossController.FREE_BEAT_CAP) var free_beat: float = 1.2
+## Seconds the Rotation will wait on a Phase's escort before giving up on it. Clearing the adds
+## is a Counter, not a hostage situation: an add parked behind scenery has no line of sight and
+## no way round, so it must cost the player the rollback rather than pin the fight.
+@export var escort_hold: float = 6.0
 ## Pose held during a Phase's Tail (the punish window).
 @export var tail_anim: String = "idle"
 
 ## What Cycle is doing between beats. WAIT kinds resolve when the world changes (a cooldown
 ## lapses, an escort dies) rather than on their own clock.
-enum Pause { NONE, REP_GAP, TAIL, FREE, REP_WAIT, ADDS_WAIT }
+enum Pause { NONE, REP_GAP, TAIL, FREE, REP_WAIT, ESCORT_WAIT }
 
 var _boss: BossController
 ## The Phase being fought, and whether Cycle is currently waiting on a beat it handed off to.
@@ -34,6 +38,9 @@ var _beat: Behaviour
 var _pause: Pause = Pause.NONE
 var _left: float = 0.0
 var _dispatched: bool = false
+## True once the Rotation has given up waiting on this Phase's escort — no Counter for it, and
+## no armour held on its behalf.
+var _escort_lost: bool = false
 
 func _ready() -> void:
 	super()
@@ -58,10 +65,18 @@ func physics_update(delta: float) -> void:
 			if _beat and _beat.can_run():
 				_pause = Pause.NONE
 				_play()
-		Pause.ADDS_WAIT:
-			# The adds ARE the Phase's answer: it is not over until they are down.
-			if _beat and _beat.group_clear():
+		Pause.ESCORT_WAIT:
+			_left -= delta
+			if _beat == null:
 				_pause = Pause.NONE
+			elif _beat.group_clear():
+				# The adds are down inside the hold: the Phase carries on with its Counter.
+				_pause = Pause.NONE
+				_play()
+			elif _left <= 0.0:
+				_pause = Pause.NONE
+				_escort_lost = true
+				_boss.abandon_escort()
 				_close_phase()
 		_:
 			_left -= delta
@@ -95,6 +110,8 @@ func _dispatch() -> void:
 # Take up the Phase the cursor points at (the first one, or wherever the fight had got to).
 func _load_phase() -> void:
 	_pause = Pause.NONE
+	_escort_lost = false
+	_left = 0.0
 	_beat = _phase_beat(_boss.cursor_phase_name())
 	if _beat:
 		_boss.begin_phase(_beat)
@@ -108,12 +125,13 @@ func _beat_done() -> void:
 	_close_phase()
 
 # Everything the Phase is going to do has been done: open its Tail. An ADDS Phase holds here
-# until its escort is down, which is what makes clearing the adds the answer.
+# until its escort is down — on a clock, because an add the player can neither see nor reach
+# must not hold the fight hostage.
 func _close_phase() -> void:
 	if _beat == null:
 		return
-	if _beat.counter_kind == Behaviour.Counter.ADDS and not _beat.group_clear():
-		_pause = Pause.ADDS_WAIT
+	if _beat.counter_kind == Behaviour.Counter.ADDS and not _escort_lost and not _beat.group_clear():
+		_escort_gate()
 		return
 	_boss.finish_phase()
 	_boss.open_tail()
@@ -124,16 +142,29 @@ func _close_phase() -> void:
 func _play() -> void:
 	if _beat == null:
 		return
-	if not _beat.can_run():
-		# A window that has shut for good is a Phase that is over, not one to wait out; a
-		# cooling spell or a standing escort is worth the wait.
-		if not _beat.window_open():
-			_close_phase()
-			return
-		_pause = Pause.REP_WAIT
+	if _beat.can_run():
+		_dispatched = true
+		go_to(_beat.name)
 		return
-	_dispatched = true
-	go_to(_beat.name)
+	# Not runnable. A window that has shut for good is a Phase that is over; so is one whose
+	# escort has been given up on, since the escort is the only thing still gating it.
+	if not _beat.window_open() or _escort_lost:
+		_close_phase()
+		return
+	# The escort is the one gate that can refuse forever, so it is the one gate with a clock.
+	if not _beat.group_clear():
+		_escort_gate()
+		return
+	# Everything else that can floor a beat (a cooling spell) lapses on its own; the Phase
+	# waits it out.
+	_pause = Pause.REP_WAIT
+
+# Hold the Rotation on the escort, on a clock. One clock per Phase: a wait that resolved and
+# then went back to waiting does not hand the escort a fresh window each time.
+func _escort_gate() -> void:
+	if _pause != Pause.ESCORT_WAIT:
+		_left = maxf(escort_hold, 0.0)
+	_pause = Pause.ESCORT_WAIT
 
 # Move the Rotation on: a Phase whose window just opened jumps the queue, otherwise the next
 # Phase in the authored order (wrapping to the first).
@@ -145,6 +176,8 @@ func _advance() -> void:
 		return
 	_beat = pick
 	_boss.jump_to(pick.name)
+	_escort_lost = false
+	_left = 0.0
 	_start_pause(Pause.FREE, minf(free_beat, BossController.FREE_BEAT_CAP))
 
 # The next Phase in the Rotation that is willing to run, skipping any whose window has shut

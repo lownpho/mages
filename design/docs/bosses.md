@@ -98,9 +98,14 @@ already exists — no new sensing.
 |---|---|---|
 | **PUNISH** | the boss takes damage during its Tail | `incoming_damage_scale` under 1 |
 | **WALL** | the boss slams head-on into a wall mid-charge | `Creature.dash_blocked` |
-| **ADDS** | the boss's escort group clears | `clear_group` membership |
+| **ADDS** | the boss's escort group clears | `clear_group` membership (exact — see below) |
 | **UNTOUCHED** | the player took zero damage across the Phase | the player's `hurt` signal |
 
+- An escort the boss itself called is counted **exactly**: every member, wherever it stands
+  (`clear_radius_tiles = 0`). The radius the default exists for is a world-pack concern —
+  streaming keeps a neighbouring room's pack loaded, so a straggler three rooms away must not
+  pin a fight — and reading an escort with it is a cheese, because one live add led out of
+  range then reads as a cleared one.
 - A Counter credits **once per Phase** (a latch), so a Phase can only ever undo one step of M.
   UNTOUCHED counts damage from the Phase's own adds — the clause is "the player took none",
   and a boss whose add Phase is ADDS never asks the question. It is settled when the Phase's
@@ -209,7 +214,11 @@ ported anywhere else.
 - HP stays 1500. Ring Pulse keeps its authored 10-pulse burst, so the Ring beat is the long one.
 - Adds are 4 × `wasp.tscn` (18 HP) — an enemy already on the glade's Bestiary page. They join
   `pack_wisp` (a SummonResource `minion_group`), which is what the Phase gates on: the Rotation
-  stalls and Fae stays armoured at ×0.25 until they are dead.
+  waits and Fae stays armoured at ×0.25 until they are dead.
+- That wait is **bounded** (`Cycle.escort_hold`, 6s). A wasp parked behind scenery has no line
+  of sight and no pathing round it, so an unbounded gate is a soft-lock; when the hold lapses
+  Fae resumes, the armour comes off and the Phase's Counter is forfeit. Ignoring the adds costs
+  the player the rollback, not the fight — and one live add can never read as a cleared one.
 - Flit is a `ChargeDashResource` tuned down to Fae's size (150 px/s for 0.7s, 20 contact
   damage, two weak flank bolts) rather than a plain approach, because an UNTOUCHED Counter
   needs a beat that can actually touch you.

@@ -75,6 +75,8 @@ func _ready() -> void:
 	fails += await _puffcap_chain()
 	fails += await _rotation()
 	fails += await _counters()
+	fails += await _escort_cheese()
+	fails += await _escort_hold()
 	fails += await _intensity()
 	fails += await _timing()
 	fails += await _desperation()
@@ -120,10 +122,11 @@ func _run(id: String, spec: Dictionary) -> int:
 		_states.append(cur.name))
 
 	# Generous: a case exits the moment it meets both minimums, so this only bounds the
-	# failure path. A boss with long telegraphs (the gnarlking calls a brood, then rears for
-	# a slam, before anything resembling a bullet appears) sat right on a 20s wire and
-	# failed intermittently.
-	var deadline := Time.get_ticks_msec() + 35000
+	# failure path. It has to clear the slowest honest loop rather than the sloppiest: the owl
+	# fires one Bwoom per 6.5s cooldown plus a 2.5s channel, so its second ball lands around
+	# 30s, and a boss with long telegraphs (the gnarlking calls a brood, then rears for a slam,
+	# before anything resembling a bullet appears) sat right on a 20s wire.
+	var deadline := Time.get_ticks_msec() + 60000
 	while Time.get_ticks_msec() < deadline \
 			and (_bullets < spec["min_bullets"] or _states.size() < spec["min_changes"]):
 		await get_tree().physics_frame
@@ -641,7 +644,7 @@ func _close_arena(arena: Dictionary) -> void:
 # transition the beat makes when its burst ends) and burn whatever pause the Cycle is running.
 # Fae's ring burst is eight seconds long on its own, so waiting out a lap of this Rotation is
 # minutes of wall clock — what these cases pin is ORDER, Reps and the dials, not her tuning.
-func _pump(arena: Dictionary, until: Callable) -> Array[String]:
+func _pump(arena: Dictionary, until: Callable, clear_escorts: bool = true) -> Array[String]:
 	var enemy: Creature = arena["enemy"]
 	var boss: BossController = enemy.get_node("BossController")
 	var cycle: Cycle = enemy.fsm.states["Cycle"]
@@ -657,9 +660,11 @@ func _pump(arena: Dictionary, until: Callable) -> Array[String]:
 	while not until.call(seen) and guard < 6000:
 		guard += 1
 		# An ADDS Phase is gated on its escort: clearing the brood every frame is the player
-		# killing them, which is what keeps a lap moving.
-		for node in get_tree().get_nodes_in_group("pack_wisp"):
-			node.get_parent().queue_free()
+		# killing them, which is what keeps a lap moving. A case that wants the escort left
+		# standing (the unreachable-add case) turns this off.
+		if clear_escorts:
+			for node in get_tree().get_nodes_in_group("pack_wisp"):
+				node.get_parent().queue_free()
 		var cur: State = enemy.fsm.current_state
 		if cur and String(cur.name) in boss.phases:
 			# The Tail is the promise a Phase makes: shut while its beat is live, open only
@@ -820,6 +825,86 @@ func _counters() -> int:
 
 	if fails == 0:
 		print("  ok: counters — punish, wall, adds and untouched each credit once")
+	await _close_arena(arena)
+	return fails
+
+# An escort is the boss's OWN summons, so membership is exact: a live wasp the player has led out
+# of range is not a dead one. The radius the world's packs author is for streaming, and reading
+# an escort with it is the cheese this pins — ignore one add, walk away, and the Phase reads
+# clear. Asserted on the beat the boss actually gates on.
+func _escort_cheese() -> int:
+	var arena := await _boss_arena(CASES["fae"]["scene"], true)
+	var enemy: Creature = arena["enemy"]
+	var boss: BossController = enemy.get_node("BossController")
+	var wisps: Behaviour = enemy.fsm.states["Wisps"]
+	var fails := 0
+
+	fails += _expect("Fae's Wisp Call authors an exact escort", wisps.clear_radius_tiles <= 0.0)
+	var far: Creature = load("res://characters/enemies/wasp/wasp.tscn").instantiate()
+	far.global_position = Vector2(2000, 0)  # far past any radius the packs would use
+	far.add_to_group("pack_wisp")
+	add_child(far)
+	await get_tree().physics_frame
+	fails += _expect("a live escort counts wherever it stands", not wisps.group_clear())
+
+	boss.intensity = 1.5
+	boss.begin_phase(wisps)
+	await get_tree().physics_frame
+	fails += _expect("...so a wasp ignored out of range is not the Counter",
+		is_equal_approx(boss.intensity, 1.5))
+	fails += _expect("...and the boss stays armoured on its behalf",
+		is_equal_approx(enemy.incoming_damage_scale, boss.escort_armour))
+	far.queue_free()
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	fails += _expect("an escort that IS down credits the Counter",
+		is_equal_approx(boss.intensity, 1.5 - BossController.STEP))
+	boss.end_phase()
+	if fails == 0:
+		print("  ok: escort membership — an escort is exactly its members, near or far")
+	await _close_arena(arena)
+	return fails
+
+# And the other half of it: an add the player can neither see nor reach (a wasp parked behind
+# scenery has no line of sight and no pathing round it) must cost them the Counter, not the
+# fight. The Rotation gives up on the escort after `escort_hold` and moves on.
+func _escort_hold() -> int:
+	var arena := await _boss_arena(CASES["fae"]["scene"])
+	var enemy: Creature = arena["enemy"]
+	var boss: BossController = enemy.get_node("BossController")
+	var cycle: Cycle = enemy.fsm.states["Cycle"]
+	var fails := 0
+	var kinds: Array[int] = []
+	boss.countered.connect(func(kind: int) -> void: kinds.append(kind))
+
+	fails += _expect("the escort hold is authored (%0.1fs)" % cycle.escort_hold,
+		cycle.escort_hold > 0.0)
+	# Drive the Rotation with the escort left standing, and park one more the moment the ADDS
+	# Phase starts so nothing the Phase itself summons can expire out from under the case.
+	var seen: Array[String] = await _pump(arena, func(list: Array) -> bool:
+		return list.has("Wisps"), false)
+	fails += _expect("the Rotation reaches the ADDS Phase", seen.has("Wisps"))
+	var parked: Creature = load("res://characters/enemies/wasp/wasp.tscn").instantiate()
+	parked.global_position = Vector2(1600, 0)
+	parked.add_to_group("pack_wisp")
+	add_child(parked)
+	await get_tree().physics_frame
+
+	# Two Phases past the ADDS Phase means it let go of the escort and went back to the top:
+	# an escort that never clears cannot pin the Rotation.
+	var rest: Array[String] = await _pump(arena, func(list: Array) -> bool:
+		return list.size() >= 2, false)
+	fails += _expect("the Rotation moves on past an escort that never clears (%s)" % [rest],
+		rest.size() >= 2)
+	fails += _expect("...the escort is still standing (%d)"
+		% get_tree().get_nodes_in_group("pack_wisp").size(),
+		get_tree().get_nodes_in_group("pack_wisp").size() > 0)
+	fails += _expect("...the boss is no longer armoured for it",
+		is_equal_approx(enemy.incoming_damage_scale, 1.0))
+	fails += _expect("...and the Counter was forfeit, not credited (%s)" % [kinds],
+		not kinds.has(Behaviour.Counter.ADDS))
+	if fails == 0:
+		print("  ok: escort hold — an unreachable add costs the rollback, not the fight")
 	await _close_arena(arena)
 	return fails
 
