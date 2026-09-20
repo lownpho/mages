@@ -51,6 +51,7 @@ func _ready() -> void:
 	await _test_channel_cancels_burst()
 	await _test_burst_rotation()
 	await _test_homing_lock()
+	await _test_hold_repeats()
 	_test_nope_leech()
 
 	# Leave no equipment behind for a later scene run in the same session.
@@ -275,6 +276,26 @@ func _test_homing_lock() -> void:
 		fails.append("homing bullet did not lock the hostile in its cone")
 	dummy.queue_free()
 	rig.queue_free()
+
+# Holding a cast action re-fires the spell the moment it's ready again — one press, two
+# bursts. Released at the end so nothing downstream inherits a stuck button.
+func _test_hold_repeats() -> void:
+	await _wait_off_cooldown(pew1)
+	spawned.clear()
+	Input.action_press(&"cast1")
+	input._repeating[0] = true  # what the press event would have armed
+	var burst := pew1.shot_interval * pew1.max_shots
+	await _wait(burst + pew1.cooldown + burst * 0.5)
+	if _count(pew1) <= pew1.max_shots:
+		fails.append("held cast fired %d bullets, want more than one burst (%d)" % [
+			_count(pew1), pew1.max_shots])
+	Input.action_release(&"cast1")
+	await get_tree().physics_frame
+	var after_release := _count(pew1)
+	await _wait(burst + pew1.cooldown + 0.2)
+	if _count(pew1) > after_release + pew1.max_shots:
+		fails.append("released cast kept repeating")
+	await _wait_off_cooldown(pew1)
 
 func _deg_between(from: Vector2, to: Vector2) -> float:
 	return rad_to_deg(from.angle_to(to))

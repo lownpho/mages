@@ -39,7 +39,6 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.2
 max_shots = 2
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
 blurb = "Pretty strong but I need to get close."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 9

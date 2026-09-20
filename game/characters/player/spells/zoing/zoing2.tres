@@ -29,8 +29,8 @@ behaviours = Array[ExtResource("1_bh_base")]([SubResource("Bounce_1")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 5.0
-skill_scaling = 0.25
+base_damage = 3.0
+skill_scaling = 0.15
 
 [sub_resource type="Resource" id="Resource_u5747"]
 script = ExtResource("7_1jbqi")
@@ -48,7 +48,7 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.2
 max_shots = 5
 effect_scene = ExtResource("3_scene")
-cooldown = 4.0
+cooldown = 2.0
 blurb = "Bouncing against walls gives it power. Goes well with magic skills."
 icon = SubResource("AtlasTexture_icon")
 skill_modifier = 8

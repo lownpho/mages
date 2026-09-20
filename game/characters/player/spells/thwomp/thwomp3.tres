@@ -7,8 +7,8 @@
 
 [sub_resource type="Resource" id="ScalingProfile_pulse"]
 script = ExtResource("bh_scaling")
-base_damage = 15.0
-defence_scaling = 1.5
+base_damage = 12.0
+defence_scaling = 1.1
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
@@ -21,7 +21,7 @@ knockback_force = 600.0
 damage = SubResource("ScalingProfile_pulse")
 edge_damage = 0.5
 effect_scene = ExtResource("3_scene")
-cooldown = 4.0
+cooldown = 3.0
 cast_time = 0.2
 blurb = "Panic button. Works better if my defences are high."
 icon = SubResource("AtlasTexture_icon")

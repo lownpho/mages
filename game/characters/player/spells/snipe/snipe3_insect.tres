@@ -28,8 +28,8 @@ behaviours = Array[ExtResource("1_wp0kv")]([SubResource("Resource_kxhox")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("5_hg2q0")
-base_damage = 4.0
-skill_scaling = 0.3
+base_damage = 3.0
+skill_scaling = 0.2
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("7_0kx33")
@@ -46,7 +46,7 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.1
 max_shots = 7
 effect_scene = ExtResource("6_ibvgv")
-cooldown = 3.0
+cooldown = 2.0
 weakness = 4
 blurb = "No aim required. Now with spores."
 icon = SubResource("AtlasTexture_icon")

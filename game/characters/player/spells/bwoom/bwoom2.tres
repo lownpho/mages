@@ -16,12 +16,11 @@ region = Rect2(40, 64, 8, 8)
 
 [resource]
 script = ExtResource("1_script")
-max_ticks = 4
+max_ticks = 5
 speed_tiles = 18.0
 damage = SubResource("ScalingProfile_tick")
 range_tiles = 26.0
 effect_scene = ExtResource("3_scene")
-cooldown = 3.0
 cast_time = 1.0
 channeled = true
 blurb = "It takes a lot of effort to channel your defence into an attack."

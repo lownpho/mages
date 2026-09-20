@@ -41,7 +41,6 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.15
 max_shots = 3
 effect_scene = ExtResource("3_scene")
-cooldown = 2.0
 weakness = 4
 blurb = "Pretty strong but I need to get close. Infused with insect killing spores."
 icon = SubResource("AtlasTexture_icon")

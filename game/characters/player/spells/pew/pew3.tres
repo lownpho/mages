@@ -21,8 +21,8 @@ speed_tiles = 14
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 7.0
-speed_scaling = 0.75
+base_damage = 6.0
+speed_scaling = 0.6
 
 [sub_resource type="Resource" id="SinglePattern_1"]
 script = ExtResource("4_pattern")
@@ -39,6 +39,7 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.18
 max_shots = 10
 effect_scene = ExtResource("3_scene")
+cooldown = 0.5
 blurb = "Pew pew pew! Works better if I'm fast."
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 10

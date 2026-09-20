@@ -14,6 +14,11 @@ const SPELL_ACTIONS = ["cast1", "cast2", "cast3", "cast4"]
 # The action holding an active channel, polled for release; "" when not channeling.
 var _channel_action: String = ""
 
+# Action indices held down since a press this node actually saw, re-tried every physics
+# frame so a held key casts again the moment the spell leaves cooldown. Armed at press
+# rather than polled blind, so a click the HUD swallowed can't start a repeat.
+var _repeating: Dictionary = {}
+
 func _ready() -> void:
 	caster.cast_started.connect(func(_spell: SpellResource) -> void:
 		player.fsm.transition_to("Cast"))
@@ -32,6 +37,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	# report the action pressed on every step of the pull.
 	for i in SPELL_ACTIONS.size():
 		if GlobalInput.fresh_press(event, SPELL_ACTIONS[i]):
+			_repeating[i] = true
 			_try_cast(i)
 			return
 
@@ -48,6 +54,14 @@ func _try_cast(action_index: int) -> void:
 		_channel_action = SPELL_ACTIONS[action_index]
 
 # Hold-to-channel: release (or the engine's cap, via channel_ended) ends it.
+# Hold-to-repeat: a still-held cast action re-casts as soon as cast() will take it —
+# every guard (cooldown, live burst, mid wind-up, can_act) lives in there, so retrying
+# every frame is free and the spell goes off the instant it's ready.
 func _physics_process(_delta: float) -> void:
 	if _channel_action != "" and not Input.is_action_pressed(_channel_action):
 		caster.end_channel()
+	for i: int in _repeating.keys():
+		if not Input.is_action_pressed(SPELL_ACTIONS[i]):
+			_repeating.erase(i)
+		elif not GlobalInput.ui_captured:
+			_try_cast(i)

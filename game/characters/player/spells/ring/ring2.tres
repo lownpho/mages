@@ -21,8 +21,8 @@ speed_tiles = 16
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 12.0
-defence_scaling = 0.6
+base_damage = 9.0
+defence_scaling = 0.5
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
@@ -40,7 +40,7 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.6
 max_shots = 4
 effect_scene = ExtResource("3_scene")
-cooldown = 3.0
+cooldown = 2.0
 blurb = "Channels the strenght of my body into energy."
 icon = SubResource("AtlasTexture_icon")
 speed_modifier = 5
