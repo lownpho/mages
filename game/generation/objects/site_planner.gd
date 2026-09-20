@@ -40,6 +40,13 @@ var _candidates: Dictionary[ObjectSite, Array] = {}
 ## Portal Professor -> its landing.
 var _landings: Dictionary[ObjectSite, ObjectSite] = {}
 var _seed_spots: Dictionary[GeneratedRoom, Vector2i] = {}
+## _spaced's spots and their Biomes' room sizes, flat for the spreading passes' inner loop: the
+## spacing scan runs over every pair on every pass, and the Room and Biome lookups behind
+## spacing() cost more than the arithmetic. _track() keeps them in step with _spaced.
+var _spots := PackedVector2Array()
+var _sizes := PackedFloat32Array()
+## Biome -> its Rooms' size.
+var _room_sizes: Dictionary[StringName, float] = {}
 
 
 func _init(world_graph: WorldGraph) -> void:
@@ -109,7 +116,27 @@ func place_weighted() -> void:
 
 ## Two room sizes: the larger of the two Rooms' Biomes'.
 func spacing(a: GeneratedRoom, b: GeneratedRoom) -> float:
-	return 2.0 * maxi(plan.biomes[a.plan.biome].resource.room_size, plan.biomes[b.plan.biome].resource.room_size)
+	return 2.0 * maxf(_size_of(a), _size_of(b))
+
+
+func _size_of(room: GeneratedRoom) -> float:
+	var size: float = _room_sizes.get(room.plan.biome, 0.0)
+	if size == 0.0:
+		size = float(plan.biomes[room.plan.biome].resource.room_size)
+		_room_sizes[room.plan.biome] = size
+	return size
+
+
+## Records a site's spot and size, appending it to _spaced the first time.
+func _track(site: ObjectSite) -> void:
+	var index := _spaced.find(site)
+	if index < 0:
+		index = _spaced.size()
+		_spaced.append(site)
+		_spots.append(Vector2.ZERO)
+		_sizes.append(0.0)
+	_spots[index] = Vector2(site.spot)
+	_sizes[index] = _size_of(graph.rooms[site.room_key])
 
 
 func _place_sign(biome: BiomePlan, zone: ZonePlan, sign_resource: SignResource, unit: String) -> void:
@@ -195,7 +222,7 @@ func _place(candidates: Array[GeneratedRoom], kind: ObjectSite.Kind, unit: Strin
 	if best == null:
 		return null
 	var site := _add_site(best, kind, _free_spot(best))
-	_spaced.append(site)
+	_track(site)
 	_candidates[site] = candidates
 	return site
 
@@ -209,19 +236,32 @@ func _can_hold(kind: ObjectSite.Kind, room: GeneratedRoom, moving: ObjectSite) -
 		return site == moving or site.kind != ObjectSite.Kind.LANDING)
 
 
-## The least share of two room sizes a spot keeps from the other spaced sites.
-func _ratio(site: ObjectSite, spot: Vector2, room: GeneratedRoom) -> float:
+## The least share of two room sizes a spot keeps from the other spaced sites. A caller that only
+## wants to know whether the spot beats a ratio it already has passes it as least_wanted, and the
+## scan stops at the first pair below it: the answer is then a lower bound, exact only when it comes
+## back above least_wanted.
+func _ratio(site: ObjectSite, spot: Vector2, room: GeneratedRoom, least_wanted := -INF) -> float:
+	var size := _size_of(room)
+	var point := Vector2(spot)
 	var least := INF
-	for other in _spaced:
-		if other != site:
-			least = minf(least, Vector2(spot).distance_to(Vector2(other.spot)) / spacing(room, graph.rooms[other.room_key]))
+	for n in _spaced.size():
+		if _spaced[n] == site:
+			continue
+		var ratio := point.distance_to(_spots[n]) / (2.0 * maxf(size, _sizes[n]))
+		if ratio < least:
+			least = ratio
+			if least <= least_wanted:
+				return least
 	return least
 
 
 ## Moves each site short of two room sizes to the free candidate Room keeping it farthest from the
 ## others, when that keeps it farther than where it stands.
+## A pass that moves nothing leaves the layout it read, so the passes after it would move nothing
+## either: both loops stop there.
 func _spread() -> void:
 	for _pass in SPREAD_PASSES:
+		var moved := false
 		for site in _spaced:
 			var room := graph.rooms[site.room_key]
 			var best_ratio := _ratio(site, site.spot, room)
@@ -231,19 +271,25 @@ func _spread() -> void:
 			for candidate: GeneratedRoom in _candidates[site]:
 				if candidate == room or not candidate.sites.is_empty() or not _can_hold(site.kind, candidate, site):
 					continue
-				var ratio := _ratio(site, _seed_spot(candidate), candidate)
+				var ratio := _ratio(site, _seed_spot(candidate), candidate, best_ratio + 0.01)
 				if ratio > best_ratio + 0.01:
 					best_ratio = ratio
 					best = candidate
 			if best != null:
 				_move(site, best)
+				moved = true
+		if not moved:
+			break
 	for _pass in SPREAD_PASSES:
-		_spread_spots()
+		if not _spread_spots():
+			break
 
 
 ## Improves the least spacing involving each site without changing its Room. Because a move is kept
 ## only when that site's least pairwise spacing improves, the World's least spacing never regresses.
-func _spread_spots() -> void:
+## Whether any site moved.
+func _spread_spots() -> bool:
+	var moved := false
 	for site in _spaced:
 		var room := graph.rooms[site.room_key]
 		var before := _ratio(site, site.spot, room)
@@ -252,6 +298,9 @@ func _spread_spots() -> void:
 		var choice := _best_spot(room, site)
 		if choice[1] > before + 0.01:
 			site.spot = choice[0]
+			_track(site)
+			moved = true
+	return moved
 
 
 func _move(site: ObjectSite, room: GeneratedRoom) -> void:
@@ -263,6 +312,7 @@ func _move(site: ObjectSite, room: GeneratedRoom) -> void:
 	site.key = _site_key(room, site.kind)
 	room.sites.append(site)
 	graph.sites[site.key] = site
+	_track(site)
 	for portal in _landings:
 		if portal == site or _landings[portal] == site:
 			_link(portal)
