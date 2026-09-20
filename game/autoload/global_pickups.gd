@@ -8,6 +8,12 @@ extends Node
 
 const _PICKUP_SCENE: PackedScene = preload("res://items/pickup_item.tscn")
 
+## Physics layer 1, the walls and rocks the player can't walk through.
+const _TERRAIN_MASK := 1
+## How far out a drop aimed into terrain may be nudged to find floor, in pixels.
+const _NUDGE_RINGS: Array[float] = [6.0, 12.0, 18.0, 24.0]
+const _NUDGE_STEPS := 8
+
 func _ready() -> void:
 	GlobalEvent.item_dropped.connect(_on_item_dropped)
 	GlobalEvent.loot_dropped.connect(_on_loot_dropped)
@@ -33,11 +39,34 @@ func _spawn(item: ItemResource, at: Vector2) -> void:
 		return
 	var pickup := _PICKUP_SCENE.instantiate()
 	pickup.item = item
-	pickup.global_position = at
 	# Loot often drops from a death handled inside a bullet's collision callback, i.e.
 	# while the physics server is flushing queries — bringing the pickup's Area2D online
-	# then is illegal, so defer the add until the flush completes.
-	container.add_child.call_deferred(pickup)
+	# then is illegal, and so is asking the space state where the walls are, so both the
+	# add and the search for open ground wait for the flush to complete.
+	_place.call_deferred(container, pickup, at)
+
+# Puts the pickup down where the player can actually reach it. A drop aimed into terrain (a
+# creature dying against a tree line, a gift handed out beside one) walks outward in rings
+# until it finds open floor; a spot fully walled in keeps what it was aimed at.
+func _place(container: Node, pickup: Node2D, at: Vector2) -> void:
+	if not is_instance_valid(container):
+		pickup.free()
+		return
+	container.add_child(pickup)
+	pickup.global_position = _open_spot(pickup.get_world_2d().direct_space_state, at)
+
+func _open_spot(space: PhysicsDirectSpaceState2D, at: Vector2) -> Vector2:
+	var query := PhysicsPointQueryParameters2D.new()
+	query.collision_mask = _TERRAIN_MASK
+	query.position = at
+	if space.intersect_point(query, 1).is_empty():
+		return at
+	for radius in _NUDGE_RINGS:
+		for step in _NUDGE_STEPS:
+			query.position = at + Vector2.RIGHT.rotated(TAU * step / _NUDGE_STEPS) * radius
+			if space.intersect_point(query, 1).is_empty():
+				return query.position
+	return at
 
 # Random nudge within a tile so simultaneous drops don't stack on the same pixel.
 func _scatter() -> Vector2:

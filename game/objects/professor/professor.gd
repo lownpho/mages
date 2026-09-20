@@ -25,8 +25,9 @@ const PORTAL_SCENE := preload("res://objects/door/door.tscn")
 ## around an Object spot, and far enough out that walking up to the Professor isn't already walking
 ## into it.
 const PORTAL_OFFSET := Vector2(24, 0)
-## Where a gift lands. Below the Professor, clear of the spot the visitor is standing on.
-const GIFT_OFFSET := Vector2(0, 24)
+## Where a gift lands. Below the Professor, and inside the disc the interior stamps clear around an
+## Object spot (RoomInterior.SITE_CLEAR, 2.5 tiles) — a step further and the gift is in the trees.
+const GIFT_OFFSET := Vector2(0, 16)
 
 ## What they say, line by line. The note is a progress line and a promise line, joined. {biome} is
 ## the page they read, {next} the Biome onward, {seen} and {total} the page's count.
