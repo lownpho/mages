@@ -35,4 +35,4 @@ damage = SubResource("ScalingProfile_shot")
 shot_interval = 0.2
 max_shots = 4
 effect_scene = ExtResource("5_scene")
-cooldown = 0.35
+cooldown = 3.0

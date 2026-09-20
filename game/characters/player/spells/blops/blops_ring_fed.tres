@@ -36,4 +36,4 @@ max_shots = 5
 rotation_per_shot = 15.0
 aim_mode = 2
 effect_scene = ExtResource("5_scene")
-cooldown = 2.5
+cooldown = 3.0

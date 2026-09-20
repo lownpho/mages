@@ -20,8 +20,8 @@ speed_tiles = 14
 
 [sub_resource type="Resource" id="ScalingProfile_shot"]
 script = ExtResource("7_scaling")
-base_damage = 6.0
-skill_scaling = 0.25
+base_damage = 4.0
+skill_scaling = 0.2
 
 [sub_resource type="Resource" id="SinglePattern_shot"]
 script = ExtResource("6_pattern")
@@ -33,3 +33,4 @@ bullet = SubResource("Bullet_pod")
 damage = SubResource("ScalingProfile_shot")
 max_shots = 4
 effect_scene = ExtResource("5_scene")
+cooldown = 3.0
