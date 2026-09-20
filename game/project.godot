@@ -19,6 +19,8 @@ run/main_scene="res://scenes/title.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="uid://bcfc6y0mj5eou"
 config/windows_native_icon="res://icon.ico"
+boot_splash/show_image=false
+boot_splash/bg_color=Color(0.188235, 0.172549, 0.180392, 1)
 
 [autoload]
 
