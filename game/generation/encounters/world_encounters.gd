@@ -199,7 +199,7 @@ func _build(room: GeneratedRoom) -> void:
 	var out: Array[GeneratedEncounter] = []
 	var room_hazards: Array[EncounterMember] = []
 	match room.role:
-		GeneratedRoom.Role.SPAWN, GeneratedRoom.Role.BREATHER:
+		GeneratedRoom.Role.SPAWN:
 			pass
 		GeneratedRoom.Role.BOSS, GeneratedRoom.Role.MINIBOSS, GeneratedRoom.Role.RARE:
 			out.append(_fixed(room))

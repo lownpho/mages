@@ -65,7 +65,7 @@ A Room that introduces a newly eligible enemy in every encounter while dipping t
 An ordinary combat Room populated from its roster at the local Challenge.
 
 **Breather**:
-A Room with no encounters that may hold one or more Objects.
+A Testing room that also draws one of its Biome's Breather Objects.
 
 **Set-piece room**:
 A guaranteed spacious Room reserved for a Boss, Miniboss, or Rare and never used for Objects.
@@ -82,7 +82,7 @@ A Biome's authored optional Fixed encounter in a Set-piece room near the end of 
 ## Objects and discovery
 
 **Object**:
-An interactive or reactive world entity placed in a Breather, except where its kind defines another location.
+An interactive or reactive world entity placed in an ordinary Room, alongside whatever it fights, except where its kind defines another location.
 
 **Sign**:
 An Object with authored text, placed once, that may reveal a Boss or Miniboss on the Map.

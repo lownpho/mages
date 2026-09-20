@@ -319,9 +319,10 @@ func _check_sites(graph: WorldGraph, label: String, spacing_floor: float) -> voi
 		if site.kind == ObjectSite.Kind.LANDING:
 			_check(room.role != GeneratedRoom.Role.BREATHER, "%s: landing %s is in a Breather" % [label, key])
 		else:
-			_check(room.role == GeneratedRoom.Role.BREATHER, "%s: Object %s stands in a %s room" % [label, key, room.role_name()])
+			_check(room.role != GeneratedRoom.Role.TEACHING, "%s: Object %s stands in a %s room" % [label, key, room.role_name()])
 		if site.kind == ObjectSite.Kind.WEIGHTED:
-			_check(room.sites.size() == 1, "%s: weighted Object %s shares its Breather" % [label, key])
+			_check(room.role == GeneratedRoom.Role.BREATHER and room.sites.size() == 1,
+					"%s: weighted Object %s shares its Breather" % [label, key])
 			var zone := plan.biomes[room.plan.biome].zone(room.plan.zone)
 			_check(plan.biomes[room.plan.biome].resource.breather_objects.has(site.scene) or zone.resource.breather_objects.has(site.scene),
 					"%s: weighted Object %s isn't one of its Room's choices" % [label, key])

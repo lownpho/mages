@@ -68,7 +68,7 @@ func _check_world(graph: WorldGraph, label: String) -> void:
 			_check(not room_encounters.is_empty(), "%s: Teaching room %s has no encounter" % [label, room.key()])
 		_check_hazards(graph, generated, room, label)
 		_check_apart(generated, room, label)
-		if room.role in [GeneratedRoom.Role.SPAWN, GeneratedRoom.Role.BREATHER]:
+		if room.role == GeneratedRoom.Role.SPAWN:
 			_check(room_encounters.is_empty(), "%s: %s %s has encounters" % [label, room.role_name(), room.key()])
 			continue
 		if room.is_set_piece():
@@ -163,7 +163,7 @@ func _check_ordinary(graph: WorldGraph, room: GeneratedRoom, encounter: Generate
 ## seeded density, clear of Object sites, keyed by Room and enemy, and belong to no encounter.
 func _check_hazards(graph: WorldGraph, generated: WorldEncounters, room: GeneratedRoom, label: String) -> void:
 	var hazards := generated.hazards_for_room(room)
-	if room.role not in [GeneratedRoom.Role.TESTING, GeneratedRoom.Role.TEACHING]:
+	if room.role not in [GeneratedRoom.Role.TESTING, GeneratedRoom.Role.TEACHING, GeneratedRoom.Role.BREATHER]:
 		_check(hazards.is_empty(), "%s: %s %s has Hazards" % [label, room.role_name(), room.key()])
 		return
 	var counts: Dictionary[CreatureResource, int] = {}

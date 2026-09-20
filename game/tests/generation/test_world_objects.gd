@@ -69,7 +69,7 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, label: String) ->
 			continue
 		var count_key := "%s/%s" % [room.plan.biome, site.kind_name()]
 		placed[count_key] = placed.get(count_key, 0) + 1
-		_check(room.role == GeneratedRoom.Role.BREATHER, "%s: Object %s stands in a %s Room" % [label, key, room.role_name()])
+		_check(room.role != GeneratedRoom.Role.TEACHING, "%s: Object %s stands in a %s Room" % [label, key, room.role_name()])
 		match site.kind:
 			ObjectSite.Kind.SIGN:
 				_check(objects.scene_for(site) == WorldObjects.SIGN_SCENE and data.text == site.sign_resource.text,

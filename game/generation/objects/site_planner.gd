@@ -3,7 +3,8 @@ extends RefCounted
 ## Plans a WorldGraph's Object sites once Teaching rooms and chance Breathers are known.
 ##
 ## Every authored Sign stands once, in its Biome, or in its Zone when a Zone authors it; each Biome
-## places its Professor count. Those Rooms must not teach and become Breathers. Each Professor takes
+## places its Professor count. Those Rooms must not teach; they keep their roles and their
+## encounters, so an Object stands among the enemies rather than emptying a Room. Each Professor takes
 ## a seeded kind and looks one Biome onward (the next on the Ideal path, or the one after its parent
 ## for a Side biome, and nothing when that is sealed or the path ends): a portal Professor takes a
 ## landing in an ordinary Room there that isn't a Breather, and an item Professor draws its gift from
@@ -38,17 +39,12 @@ var _spaced: Array[ObjectSite] = []
 var _candidates: Dictionary[ObjectSite, Array] = {}
 ## Portal Professor -> its landing.
 var _landings: Dictionary[ObjectSite, ObjectSite] = {}
-## The Breathers the chance picked before any site forced one.
-var _chance: Dictionary[GeneratedRoom, bool] = {}
 var _seed_spots: Dictionary[GeneratedRoom, Vector2i] = {}
 
 
 func _init(world_graph: WorldGraph) -> void:
 	graph = world_graph
 	plan = world_graph.plan
-	for key in graph.rooms:
-		if graph.rooms[key].role == GeneratedRoom.Role.BREATHER:
-			_chance[graph.rooms[key]] = true
 
 
 ## Signs and Professors with their portals' landings, spread apart, with Sign reveals. False means
@@ -122,8 +118,8 @@ func _place_sign(biome: BiomePlan, zone: ZonePlan, sign_resource: SignResource, 
 		site.sign_resource = sign_resource
 
 
-## In a Room of the Biome, or of the Zone when given, that doesn't teach or hold a landing; the Room
-## becomes a Breather.
+## In a Room of the Biome, or of the Zone when given, that doesn't teach or hold a landing. The Room
+## keeps its role.
 func _place_forced(biome: BiomePlan, zone: ZonePlan, kind: ObjectSite.Kind, unit: String) -> ObjectSite:
 	var candidates: Array[GeneratedRoom] = []
 	for room_plan in (zone.rooms if zone != null else biome.rooms):
@@ -133,8 +129,6 @@ func _place_forced(biome: BiomePlan, zone: ZonePlan, kind: ObjectSite.Kind, unit
 	var site := _place(candidates, kind, unit)
 	if site == null:
 		push_error("World seed %d: no Room in %s can hold %s" % [plan.world_seed, zone.id if zone else biome.id, unit])
-		return null
-	graph.rooms[site.room_key].role = GeneratedRoom.Role.BREATHER
 	return site
 
 
@@ -206,8 +200,8 @@ func _place(candidates: Array[GeneratedRoom], kind: ObjectSite.Kind, unit: Strin
 	return site
 
 
-## Signs and Professors need a Room that is no landing's; landings a Room that no forced site made a
-## Breather and the chance didn't either.
+## Signs and Professors need a Room that is no landing's; landings a Room the chance didn't make a
+## Breather, so a portal never arrives on top of a Breather's Object.
 func _can_hold(kind: ObjectSite.Kind, room: GeneratedRoom, moving: ObjectSite) -> bool:
 	if kind == ObjectSite.Kind.LANDING:
 		return room.role != GeneratedRoom.Role.BREATHER
@@ -269,10 +263,6 @@ func _move(site: ObjectSite, room: GeneratedRoom) -> void:
 	site.key = _site_key(room, site.kind)
 	room.sites.append(site)
 	graph.sites[site.key] = site
-	if site.kind != ObjectSite.Kind.LANDING:
-		room.role = GeneratedRoom.Role.BREATHER
-		var forced := old.sites.any(func(other: ObjectSite) -> bool: return other.kind != ObjectSite.Kind.LANDING)
-		old.role = GeneratedRoom.Role.BREATHER if forced or _chance.has(old) else GeneratedRoom.Role.TESTING
 	for portal in _landings:
 		if portal == site or _landings[portal] == site:
 			_link(portal)

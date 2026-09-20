@@ -38,8 +38,9 @@ needs a `world.tres` entry, a Boss and art — a bigger job than a Room.
   Zone owns, route Rooms included.
 - Roles fill the quota: a Teaching room for each enemy at its first eligible route position, the
   set pieces (the Biome's Boss in its last Zone, the Zone's Minibosses and Rares), then Testing
-  rooms. A non-Teaching ordinary Room becomes a Breather with the curve's `breather_chance`, and
-  every Object site forces one.
+  rooms. A non-Teaching ordinary Room becomes a Breather with the curve's `breather_chance`, which
+  only means it draws a Breather Object — it still fights. Signs and Professors stand in ordinary
+  Rooms of any role and leave their encounters alone.
 - Set-piece rooms are spacious, off-route, have exactly one Passage and never hold Objects. The
   Boss sits near the end of its Ideal path or Side route, Minibosses late in their Zone, and Rares
   move with the seed.

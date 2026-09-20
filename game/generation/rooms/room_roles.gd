@@ -42,7 +42,8 @@ static func teach(graph: WorldGraph) -> void:
 		_teach_route(graph, [plan.biomes[side]])
 
 
-## Non-Teaching ordinary Rooms that hold no Object site become Breathers by their Biome's chance.
+## Non-Teaching ordinary Rooms become Breathers by their Biome's chance. A Breather still fights;
+## the role only marks the Room as drawing one of its Biome's Breather Objects.
 static func breathe(graph: WorldGraph) -> void:
 	for key in graph.rooms:
 		var room := graph.rooms[key]

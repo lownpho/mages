@@ -1,9 +1,9 @@
 class_name ObjectSite
 extends RefCounted
 ## A fixed spot the room graph plans for an Object or a landing, consumed by interiors, Object setup
-## and the Map. Signs and Professors force their Rooms to be Breathers; a WEIGHTED Object is a chance
-## Breather's draw. Landings are clear spots, not Objects, and leave their Rooms' roles alone — a
-## Professor whose gift is a portal onward owns one.
+## and the Map. Signs and Professors stand in ordinary Rooms of any role, encounters and all; a
+## WEIGHTED Object is a chance Breather's draw. Landings are clear spots, not Objects — a Professor
+## whose gift is a portal onward owns one.
 
 enum Kind { SIGN, PROFESSOR, LANDING, WEIGHTED }
 
