@@ -22,7 +22,7 @@ func _export_begin(_features: PackedStringArray, _is_debug: bool, _path: String,
 static func stamp() -> String:
 	var output: Array = []
 	var described := ""
-	if OS.execute("git", ["-C", ProjectSettings.globalize_path("res://"), "describe", "--always", "--dirty"], output) == 0 \
+	if OS.execute("git", ["-C", ProjectSettings.globalize_path("res://"), "describe", "--tags", "--always", "--dirty"], output) == 0 \
 			and not output.is_empty():
 		described = String(output[0]).strip_edges()
 	var time := Time.get_datetime_string_from_system(true).replace(":", "")
