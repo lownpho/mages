@@ -18,6 +18,14 @@ class_name Cycle
 ## Where the beat's own `can_run` questions are asked from. Empty = fire from anywhere.
 @export var probe_path: NodePath
 @export var lost_state: String = "Idle"
+## The boss's answer to the player standing on top of it: a beat played INSTEAD of the Free
+## beat when the reaction probe sees them. Not a Phase — no Rep, no Counter, no cursor move —
+## so a Rotation can say "charge if you flee, slam if you crowd" without either answer becoming
+## a step of the authored order. Empty = the boss has no reaction.
+@export var reaction_state: String = ""
+## Probe the player must be inside for the reaction to fire. The same ruler the beat gates
+## itself on, so a reaction is never authored past its own reach.
+@export var reaction_probe_path: NodePath
 ## Non-counterable pause between Phases. Capped at BossController.FREE_BEAT_CAP — pacing, never
 ## a free damage window.
 @export_range(0.0, BossController.FREE_BEAT_CAP) var free_beat: float = 1.2
@@ -38,6 +46,12 @@ var _beat: Behaviour
 var _pause: Pause = Pause.NONE
 var _left: float = 0.0
 var _dispatched: bool = false
+## True while the reaction beat is out. It never claimed a Rep or moved the cursor, so the
+## boundary it interrupted is still owed when it comes back.
+var _reaction: bool = false
+## True when the escort wait was entered because the Phase had nothing left to play. See
+## Pause.ESCORT_WAIT.
+var _escort_closing: bool = false
 ## True once the Rotation has given up waiting on this Phase's escort — no Counter for it, and
 ## no armour held on its behalf.
 var _escort_lost: bool = false
@@ -70,9 +84,16 @@ func physics_update(delta: float) -> void:
 			if _beat == null:
 				_pause = Pause.NONE
 			elif _beat.group_clear():
-				# The adds are down inside the hold: the Phase carries on with its Counter.
+				# The adds are down inside the hold. What the wait owes depends on where it was
+				# entered: a Phase whose last Rep was already in has nothing left to play, so it
+				# opens its Tail; one still owed a Rep carries on. Replaying the beat instead is
+				# how an ADDS Phase summons its escort forever — clearing it just buys the next
+				# summon, and the Phase never ends.
 				_pause = Pause.NONE
-				_play()
+				if _escort_closing:
+					_open_tail()
+				else:
+					_play()
 			elif _left <= 0.0:
 				_pause = Pause.NONE
 				_escort_lost = true
@@ -87,6 +108,13 @@ func _dispatch() -> void:
 	# The hand-off was queued a frame ago; if the scene was torn down in between (the player
 	# died and the run bounced to the title) there is nothing left to dispatch into.
 	if not is_inside_tree() or _boss == null:
+		return
+	# A reaction beat has come back. It was never a Rep and never moved the cursor, so the
+	# Phase boundary it interrupted is still owed: the Rotation advances.
+	if _reaction:
+		_reaction = false
+		_dispatched = false
+		_advance()
 		return
 	if probe_path != NodePath():
 		var probe: RayCast2D = get_node(probe_path)
@@ -131,7 +159,14 @@ func _close_phase() -> void:
 	if _beat == null:
 		return
 	if _beat.counter_kind == Behaviour.Counter.ADDS and not _escort_lost and not _beat.group_clear():
-		_escort_gate()
+		_escort_gate(true)
+		return
+	_open_tail()
+
+# The last Rep is in and nothing is still owed: the Phase's punish window opens. It is also
+# where an escort that has just come down lands, which is why it is its own seam.
+func _open_tail() -> void:
+	if _beat == null:
 		return
 	_boss.finish_phase()
 	_boss.open_tail()
@@ -153,18 +188,29 @@ func _play() -> void:
 		return
 	# The escort is the one gate that can refuse forever, so it is the one gate with a clock.
 	if not _beat.group_clear():
-		_escort_gate()
+		_escort_gate(false)
 		return
 	# Everything else that can floor a beat (a cooling spell) lapses on its own; the Phase
-	# waits it out.
+	# waits it out. RANGE does not: the player is its clock, so a Phase held out of reach hands
+	# off to the boss's answer to distance rather than standing in the Rotation waiting for
+	# someone who walked away. `_beat` is dropped with it so the Phase is loaded fresh when the
+	# boss actually arrives — a new Counter latch and a new UNTOUCHED watch rather than one
+	# armed across the whole walk.
+	if not _beat.range_open() and lost_state != "":
+		_beat = null
+		_pause = Pause.NONE
+		go_to(lost_state)
+		return
 	_pause = Pause.REP_WAIT
 
 # Hold the Rotation on the escort, on a clock. One clock per Phase: a wait that resolved and
-# then went back to waiting does not hand the escort a fresh window each time.
-func _escort_gate() -> void:
+# then went back to waiting does not hand the escort a fresh window each time. `closing` is
+# what the wait owes when the escort comes down (see Pause.ESCORT_WAIT).
+func _escort_gate(closing: bool) -> void:
 	if _pause != Pause.ESCORT_WAIT:
 		_left = maxf(escort_hold, 0.0)
 	_pause = Pause.ESCORT_WAIT
+	_escort_closing = closing
 
 # Move the Rotation on: a Phase whose window just opened jumps the queue, otherwise the next
 # Phase in the authored order (wrapping to the first).
@@ -226,7 +272,8 @@ func _resolve_pause() -> void:
 			_pause = Pause.NONE
 			_boss.close_tail()
 			_boss.end_phase()
-			_advance()
+			if not _reaction_ready():
+				_advance()
 		_:
 			_pause = Pause.NONE
 
@@ -236,3 +283,24 @@ func _start_pause(kind: Pause, seconds: float) -> void:
 
 func _phase_beat(name: String) -> Behaviour:
 	return creature.fsm.states.get(name) as Behaviour
+
+# The boundary the Rotation has just reached is where a boss answers the player standing on top
+# of it: a beat played instead of the Free beat. Asked HERE, after the Tail has shut, and never
+# inside one — a reaction that could interrupt the Tail would eat the only burn window a PUNISH
+# Phase has.
+#
+# The beat declares its own eligibility like any other, so a reaction out of its own reach, or
+# still cooling, simply does not fire and the Rotation carries on. That is the throttle; the
+# reaction needs no latch of its own.
+func _reaction_ready() -> bool:
+	if reaction_state == "" or reaction_probe_path == NodePath():
+		return false
+	var probe := get_node_or_null(reaction_probe_path) as RayCast2D
+	var beat := _phase_beat(reaction_state)
+	if probe == null or beat == null or not beat.can_run():
+		return false
+	if not creature.look_for_target(probe):
+		return false
+	_reaction = true
+	go_to(reaction_state)
+	return true

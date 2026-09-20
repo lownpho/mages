@@ -23,7 +23,7 @@ One beat in the Rotation, played for its authored Reps, followed by its recovery
 _Avoid_: stage
 
 **Rep**:
-One playthrough of a Phase's beat. Reps of a Phase are identical. 1–4, authored per Phase,
+One playthrough of a Phase's beat. Reps of a Phase are identical. 1–8, authored per Phase,
 default 2.
 
 **Tail**:
@@ -55,8 +55,9 @@ A boss's authored answer to the player running away. One of Siege, Hunter, Snipe
   while it runs, which is what makes it non-counterable pacing rather than a farm window.
 - After the last Phase the Rotation **wraps** to the first. The Intensity carries across the
   wrap; it never resets between loops.
-- 3–5 Phases per Rotation. Everything else about the Rotation is the boss's own grammar, not
-  a shared template: Reps run 1–4, Tails 0.5–2.5s, and the length falls out per boss rather
+- 3–6 Phases per Rotation (the ceiling is Gnarlking's, whose sixth is a `once` desperation
+  Phase: the loop the player actually reads is still five). Everything else about the Rotation is the boss's own grammar, not
+  a shared template: Reps run 1–8, Tails 0.5–2.5s, and the length falls out per boss rather
   than every boss targeting the same 100–120s. A beat said once behind a 2.4s Tail and a beat
   said four times behind a 1.0s Tail are different fights, and that difference is free.
 
@@ -167,6 +168,17 @@ boss becomes a kiteable sponge — Fae is 28 px/s against the player's 80.
 - Answering distance is not always a Phase. A boss may answer it **outside the Rotation** —
   `Cycle.lost_state` behind a `probe_path` — which is how a rooted boss walks after the player
   without the walk ever becoming a Phase with nothing to answer.
+- The mirror of that is the **Reaction**: a beat played from the Phase boundary the Rotation has
+  just reached, when the player is standing inside the boss's own reach. It is not a Phase — no
+  Counter, no Reps, no move of the cursor — it takes the Free beat's slot and the order resumes
+  where it was, which is what lets a boss say *charge if you leave, slam if you crowd* without
+  either answer becoming a step of the sequence. Authored in one place on the Cycle
+  (`reaction_state`, `reaction_probe_path`), and the beat it names keeps declaring its own
+  reach: a reaction that cannot land does not fire, and the Rotation carries on. Its home is
+  Gnarlking, whose slam is the two-tile answer to a player standing on it.
+- Range is the one gate a Rotation cannot wait out — a cooldown lapses on its own and an escort
+  dies on its own, but the player is range's clock — so a Phase held out of reach hands off to
+  the walk rather than standing there (`Behaviour.range_open()`).
 - A boss may author **one switch**, engaged at the second loop (M ≥ ~1.6), so the escalation
   can read as *the boss changed its answer to you*, not just faster numbers.
 - Assignments: Fae **Siege → Sniper** (the Siege half is shipped; the Sniper half is not
@@ -223,6 +235,13 @@ A brake the player cannot perceive is not a brake.
   leaving the arena (`probe_path` / `lost_state`, so the walk out of range is not a Phase). It
   hands off to a Phase and the Phase hands back (`done_state = "Cycle"`). `PatternPicker` (roll)
   and `Gate` (ordered) stay as they are for everything else.
+- **`Cycle.reaction_state` / `.reaction_probe_path`** — the proximity answer, mirror of
+  `lost_state`'s distance answer: the beat to play instead of the Free beat at a Phase boundary,
+  and the probe the player must be inside for it to fire. A reaction claims no Rep, declares no
+  Counter and moves no cursor, so it can neither be farmed nor spend a Phase's punish Tail.
+- **`Behaviour.range_open()`** — the range gate asked on its own, so a dispatcher knows the
+  difference between a Phase that is waiting (a cooldown) and one that is never coming back on
+  its own (the player left).
 - **`Creature.reset_combat`** clears M with the rest of the fight: a rewound fight is a rewound
   fight (the 60s leash).
 
@@ -310,6 +329,80 @@ is Fae's inverted, its Reps are uneven where hers are uniform, and its Tails are
 - Profile stays **Siege**, and that is now a claim the boss can cash: bloom rings reach 14 tiles,
   spores 18, and the seedlings claim floor. Distance is answered by reach, then by a walk.
 
+## Reference instance: Gnarlking
+
+The third boss, and the first to carry **WALL** — the one Counter that needs the arena to answer
+back. Almost all of it was already in its old FSM; what the port changed is *what pays*.
+
+| Phase | Beat | Counter kind | Reps | Tail |
+|---|---|---|---|---|
+| 1 | Charge — a committed rush, a short stalk, then a second dash | bait it into scenery → **WALL** | 1 | 2.0 |
+| 2 | Volley — a 4-pellet aimed cone | cross the cone sideways → **UNTOUCHED** | 5 | 0.8 |
+| 3 | Blast — one 7-pellet cone, 60° wide, thrown 18 tiles at 7 tiles/s | leave the cone before it arrives → **UNTOUCHED** | 5 | 1.6 |
+| 4 | Call — 6 grimlings of three species (90 HP each) | clear the brood → **ADDS** | 1 | 1.6 |
+| 5 | Spiral — a 4.8s sweep of 24 unaimed seeds, 27° apart, from its own bearing | read the gap and walk it → **UNTOUCHED** | 2 | 1.2 |
+| 6 | Call Big — 3 grimlords, ≤25% HP | burn the long, loud summon → **PUNISH** | 1 | 2.2 |
+
+- **Its ladder IS the Rotation, and its player-paced half becomes the Counter.** The old FSM
+  already ran an authored order — rear, call the brood, hunt, charge, wind down — advancing on
+  *the player's* pacing: clear the adds, survive the charge. That order is kept, and the pacing
+  is spent as Counter credit instead of as a ladder step: clearing the brood is ADDS, putting
+  the charge into a wall is WALL, and each credit is what steps M back down. M stays the only
+  escalation axis and the ladder is only grammar — the boss does not escalate two ways.
+- **The `Rest` states are deleted.** `Winded` (5s), `WindedShort` (3s) and `Brace` (2s) were
+  windows with nothing to answer; every burn window is now a beat's own Tail, the same trade
+  Fae's and Thornmess's rebuilds made.
+- **`Stagger` is deleted as a state and becomes the charge's payoff.** A head-on wall slam used
+  to park the boss in a 3.5s rest at ×1.6 and then restart the *whole ladder* from the top, so
+  the best the player could do with the knockdown was reset the fight's state. It now ends the
+  rush and opens the Phase's Tail, which is where the WALL rollback and its damage both land:
+  `Charge.blocked_state` points straight at the Cycle.
+- **Its three authored cooldowns (charge 5s, slam 6s, volley 4s) are zeroed** — same reason as
+  Thornmess's: a cooling beat is overtaken by the next runnable one and the authored order
+  silently drops a Phase. The Rotation is the pacing.
+- **The slam is the Reaction, not a Phase.** Gnarlking is the argument that a boss can want the
+  player at *both* ends: it charges when you leave and slams when you crowd, and the slam fires
+  from the Phase boundary — the Free beat's slot — with `SlamProbe` (3 tiles) deciding. Putting
+  it in the Rotation instead would have to choose between a slam lobbed from across the arena
+  (a 6-tile pulse landing on nothing: dead time) and a Phase the player can farm; `Slam`
+  therefore declares no Counter, and a reaction that whiffs simply does not fire.
+- **Its three range probes are kept, and split by what they are for.** `VolleyProbe` (4 tiles)
+  keeps the cone from being fired into the void, and `SlamProbe` is what makes *any* PUNISH
+  coupling legal — only a beat that ends with the player adjacent can be punished. But a Phase
+  the Rotation cannot reach is not a wait, so it hands off to `lost_state` rather than standing
+  there: `Close` is the walk (52 px/s, scaled and capped, handing back at the volley's own
+  range).
+- **`Stalk`'s authored 82 px/s is lowered to 60.** It was already past the 75 cap, so Intensity
+  had no dial left to turn on the Hunter's pursuit — the one dial the doc says Gnarlking is
+  where it bites.
+- **Call Big was already the HP-gated desperation Phase** (`health_max` 0.25). It is now last in
+  the Rotation and `priority` + `once`, `Call`'s old `health_min` is dead under a Rotation and
+  is gone, and the brood authors `minion_group = &"pack_brood"` with `clear_radius_tiles = 0`
+  (exact) so ADDS counts its own summons and nobody else's. The hold is 16s against Thornmess's
+  12s — six 90 HP grimlings are more than twice six plants — and still lapses well inside the
+  escort's own 22s lifetime, so the rollback is never handed out by a clock.
+- **The two ranged Phases are the distance half of the same argument.** Charge answers a player
+  who leaves by going and getting them; Blast and Spiral answer one who *stays* out there.
+  Blast is aimed and committed — one loud 1.4s tell, a cone that reaches almost the whole arena
+  but crawls at 7 tiles/s, so it is read and left rather than dodged on reflex, and eating it
+  is the fight's single biggest hit. Spiral is the opposite: `aim_mode = INDEPENDENT`, so it
+  ignores the player entirely and paints the floor from its own bearing, 27° per shot so the
+  lanes never repeat (the spiralcap's sweep, slowed and shortened for an arena). Neither can be
+  out-waited by standing still, which is what stops the Hunter profile from being kiteable.
+- **The ranged Phases are the long ones, and that is where the Rep cap moved.** Gnarlking's
+  bullet beats are said until the player has actually learnt them — Volley ×5, Blast ×5, Spiral
+  ×2 of a 4.8s sweep, each around 10–15s — which is what pushed Reps from 1–4 to 1–8. The summon
+  Phases are untouched: an ADDS Phase is already paced by the escort it has to outlive, and a
+  second Rep of a summon is a second brood, not a second reading of the same beat.
+- **A long Phase makes its UNTOUCHED dearer, on purpose.** The Counter asks for the whole Phase
+  clean, so a 12s Volley is a much harder rollback than a 3s one — which is the trade: the
+  ranged half of the fight now ratchets M up unless the player really can read it.
+- **Blast gates on `DetectProbe` (22 tiles), not a probe of its own** — it is the beat whose
+  reach IS the arena, so the only range question it has is whether the boss can see anyone at
+  all. Spiral gates on nothing: an unaimed spray has nowhere to be out of range of.
+- Profile stays **Hunter**: `Close` and `Stalk` close and stay, and the charge crosses 26 tiles
+  at 300 px/s. Distance is answered by pursuit, then by a rush — never by reach.
+
 ## Settled during implementation
 
 - The 60s `COMBAT_RESET_SECONDS` leash **does** clear M back to 1.0 with the rest of the fight
@@ -319,6 +412,15 @@ is Fae's inverted, its Reps are uneven where hers are uniform, and its Tails are
 - Fae's per-beat numbers: her two authored casts were left alone, Reps are 2 everywhere except
   the desperation Phase, and the Tails are 1.0–1.4s. The fight's length now comes from the
   Rotation rather than a Rest Phase.
+- **Gnarlking's ladder does not compose with M as a second axis; it is the Rotation's order and
+  the Counters that brake M** (see its reference instance). This was the port's stated hard call
+  and it is settled by making the player-paced half the *answer* rather than the *difficulty*:
+  nothing the boss used to ask has been dropped, but clearing the brood or baiting the charge
+  now pays a rollback instead of advancing a ladder nothing else could see.
+- An ADDS Phase's escort hold **closes the Phase when it resolves at the end of a Phase**, and
+  resumes the Rotation when it resolves mid-Phase. Replaying the beat was the same action for
+  both, which meant every cleared escort bought the next summon: an ADDS Phase could summon
+  forever as long as the player kept killing what it called.
 
 ## Open, not yet specified
 
@@ -326,10 +428,4 @@ is Fae's inverted, its Reps are uneven where hers are uniform, and its Tails are
   `Behaviour` so a Phase can be eligible only on the second loop.
 - **Audio stings** for a step up and a rollback — needs an audio system and assets; the signals
   are already emitted.
-- **Gnarlking, and WALL with it.** Thornmess is specified above; it deliberately carries no
-  charge. Gnarlking is the hard one: its player-paced ladder (clear the brood, dodge the charge)
-  already encodes escalation, and how that composes with M — rather than replacing one with the
-  other — is the port's hardest call and should be made explicitly. It is also the first boss
-  that should carry **WALL**, since a charge the player baits into scenery is what its ladder
-  already asks for.
 - hive queen, rotmaw and Mother are prose only; their scenes do not exist yet.

@@ -15,5 +15,4 @@ knockback_force = 1400.0
 damage = SubResource("ScalingProfile_slam")
 edge_damage = 0.3
 effect_scene = ExtResource("2_scene")
-cooldown = 6.0
 cast_time = 1.5

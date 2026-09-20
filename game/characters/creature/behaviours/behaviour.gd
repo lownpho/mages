@@ -22,7 +22,7 @@ signal countered(kind: Counter)
 ## Playthroughs of the beat before the Phase's Tail opens. Reps are IDENTICAL by design —
 ## they exist so a beat can be read, not so it can escalate; Intensity is the only dial that
 ## does that.
-@export_range(1, 4) var reps: int = 2
+@export_range(1, 8) var reps: int = 2
 ## Recovery after the last Rep: the Phase's punish window. Scaled by Intensity, floored.
 @export var tail: float = 1.0
 ## Beat between two Reps of the same Phase. Scaled by Intensity, floored.
@@ -120,6 +120,14 @@ func can_run() -> bool:
 	if refuses_cloud and SporeCloud.feeds(creature):
 		return false
 	return _ready_to_run()
+
+## Whether the beat's own RANGE gate is satisfied. Range is the one gate a Rotation cannot
+## wait out: a cooling spell lapses on its own and an escort dies on its own, but a target
+## standing out of reach comes back only when the boss goes and gets them. Asked separately
+## from `can_run` for that reason — a dispatcher waiting on a cooldown should wait, and one
+## waiting on range should close the gap (see Cycle._play).
+func range_open() -> bool:
+	return _in_range()
 
 func _in_range() -> bool:
 	if range_probe_path == NodePath():

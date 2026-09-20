@@ -69,17 +69,22 @@ func _ready() -> void:
 		fails += await _run(id, CASES[id])
 	fails += await _phase_swap()
 	fails += await _halp_queue()
-	fails += await _brood_gate()
-	fails += await _enrage_lap()
+	fails += await _escort_case("thornmess", "Seedlings", "pack_seed",
+		"res://characters/enemies/seedling/seedling.tscn")
+	fails += await _escort_case("gnarlking", "Call", "pack_brood",
+		"res://characters/enemies/grimling/grimling.tscn")
+	fails += await _gnarlking_range()
+	fails += await _gnarlking_lap()
+	fails += await _gnarlking_reaction()
 	fails += await _telegraph()
 	fails += await _puffcap_chain()
 	fails += await _rotation()
 	fails += await _grammar()
-	fails += await _thornmess_escort()
 	fails += await _thornmess_distance()
 	fails += await _counters()
 	fails += await _escort_cheese()
 	fails += await _escort_hold()
+	fails += await _escort_cleared()
 	fails += await _intensity()
 	fails += await _timing()
 	fails += await _desperation()
@@ -259,73 +264,114 @@ func _phase_swap() -> int:
 	await get_tree().physics_frame
 	return fails
 
-# The gnarlking is the one boss whose next beat is decided by the arena rather than by a
-# roll: its charge sits behind Behaviour.clear_group, so the brood standing between you and
-# it is what keeps the fight in its armoured hunt phase. Assert the clause directly, both
-# that a live packmate closes the gate and that DISTANCE reopens it — streaming keeps other
-# rooms' packs in the tree, and a global count would pin the fight on a grimling three rooms
-# away.
-func _brood_gate() -> int:
-	# The smoke case above left its own brood standing at the origin — minions outlive the
-	# boss that called them — and this check is about exactly that group.
-	await _clear_pack()
-
-	var enemy: Creature = load(CASES["gnarlking"]["scene"]).instantiate()
-	add_child(enemy)
-	var add: Creature = load("res://characters/enemies/grimling/grimling.tscn").instantiate()
-	add_child(add)
-	# Its melee kit is range-gated, so the ladder only answers meaningfully with a target
-	# somewhere — the distance to it is half of what decides the next beat.
-	var target := CharacterBody2D.new()
-	target.collision_layer = 16
-	var shape := CollisionShape2D.new()
-	shape.shape = CircleShape2D.new()
-	target.add_child(shape)
-	target.add_to_group("player")
-	add_child(target)
-	target.global_position = Vector2(30, 0)  # inside the slam's own reach
-	await get_tree().physics_frame
-
-	var beats := enemy.fsm.states
+# The gnarlking's distance kit, live. Its old ladder decided the next beat from the arena
+# rather than from an order — the charge sat behind Behaviour.clear_group, so the brood
+# standing between you and it is what kept the fight in its armoured hunt. Under the Rotation
+# that question MOVES: the brood is a Phase of the order (ADDS) and clearing it is the Counter,
+# and the two range-gated beats are held to the separation the doc asks for — the shotgun shuts
+# at distance because a cone fired into the void is dead time, while the charge carries 26
+# tiles of dash and so stays the Hunter's answer to someone walking off.
+func _gnarlking_range() -> int:
+	var arena := await _boss_arena(CASES["gnarlking"]["scene"])
+	var enemy: Creature = arena["enemy"]
+	var beats: Dictionary = enemy.fsm.states
 	var fails := 0
 
-	add.global_position = Vector2(40, 0)
-	fails += _expect("charge gated while the brood stands", not beats["Charge"].can_run())
-	fails += _expect("in reach, the ladder falls to the slam while the brood stands",
-		beats["Hunt"]._first_ready() == "Slam")
+	# Standing in its face: both close-range beats are reachable, and the slam is the one that
+	# answers crowding.
+	fails += _expect("the volley is in reach up close", beats["Volley"].can_run())
+	fails += _expect("the slam is in reach up close", beats["Slam"].can_run())
 
-	# Out past both weapons: a close-range fighter's answer to distance is to walk it down,
-	# never to rear into a slam that lands on nothing.
-	target.global_position = Vector2(300, 0)
+	arena["target"].position = Vector2(300, 0)
 	await get_tree().physics_frame
-	fails += _expect("slam drops out of the ladder out of reach", not beats["Slam"].can_run())
-	fails += _expect("volley drops out of the ladder out of reach", not beats["Volley"].can_run())
-	fails += _expect("out of reach, the ladder closes the distance",
-		beats["Hunt"]._first_ready() == "Close")
-	target.global_position = Vector2(30, 0)
 	await get_tree().physics_frame
-
-	add.global_position = Vector2(400, 0)  # past clear_radius_tiles
-	fails += _expect("a distant pack doesn't gate the charge", beats["Charge"].can_run())
-
-	await _clear_pack()
-	fails += _expect("charge opens once the brood is dead", beats["Charge"].can_run())
-	fails += _expect("the ladder leads with the charge once clear",
-		beats["Hunt"]._first_ready() == "Charge")
-
-	target.queue_free()
+	fails += _expect("the volley drops out of reach", not beats["Volley"].can_run())
+	fails += _expect("...and asks the Cycle for the distance answer, not a wait",
+		not beats["Volley"].range_open())
+	fails += _expect("the slam drops out of reach too", not beats["Slam"].can_run())
+	fails += _expect("the charge, which crosses the arena, does not", beats["Charge"].can_run())
 	if fails == 0:
-		print("  ok: gnarlking brood gate — pack and range decide the next beat")
-	enemy.queue_free()
-	await get_tree().physics_frame
+		print("  ok: gnarlking range — the shotgun shuts at distance, the charge does not")
+	await _close_arena(arena)
 	return fails
 
-# The enrage half of that fight never runs in the smoke case above, because nothing there
-# kills the brood — so drive the lap the player's own clear produces and assert the whole
-# chain hands off. Everything past the charge is a sequence with no dispatcher to fall back
-# on (Charge -> Stalk -> Charge2 -> Breathe -> Winded -> Summon), which is exactly where a
-# mis-wired done_state parks the boss forever.
-func _enrage_lap() -> int:
+# The Reaction: a boss's OTHER answer to distance. Gnarlking charges when you leave and slams
+# when you crowd, and the slam is deliberately NOT a Phase — it fires at the Phase boundary the
+# Rotation has just reached, instead of the Free beat, and the order resumes where it was. Not
+# a Phase means no Rep, no cursor move, and no Counter (a beat with nothing to answer is dead
+# time inside a Rotation) — which is what stops it being farmable, and stops it eating the only
+# burn window a PUNISH Phase has.
+func _gnarlking_reaction() -> int:
+	var arena := await _boss_arena(CASES["gnarlking"]["scene"], true)
+	var enemy: Creature = arena["enemy"]
+	var boss: BossController = enemy.get_node("BossController")
+	var cycle: Cycle = enemy.fsm.states["Cycle"]
+	var beats := enemy.fsm.states
+	var slam: Behaviour = beats[cycle.reaction_state]
+	var fails := 0
+
+	fails += _expect("the Cycle authors a reaction (%s)" % cycle.reaction_state,
+		cycle.reaction_state != "" and cycle.reaction_probe_path != NodePath())
+	fails += _expect("...on a beat that is NOT a Phase (%s)" % [boss.phases],
+		not boss.phases.has(cycle.reaction_state))
+	fails += _expect("...so it declares no Counter — that declaration is what a Phase is",
+		slam.counter_kind == Behaviour.Counter.NONE)
+	fails += _expect("...and it hands back to the Rotation (%s)" % (slam as Cast).done_state,
+		(slam as Cast).done_state == "Cycle")
+
+	# Crowding the boss at a Phase boundary: the slam, not the next Phase. The frame between the
+	# move and the check is not optional — a raycast answers from the physics server's own copy
+	# of the target, which lags a teleport by a step.
+	arena["target"].global_position = enemy.global_position + Vector2(6, 0)
+	await get_tree().physics_frame
+	boss.reset()
+	boss.jump_to("Volley")
+	boss.begin_phase(beats["Volley"])
+	cycle._beat = beats["Volley"]
+	cycle._pause = Cycle.Pause.TAIL
+	cycle._resolve_pause()
+	fails += _expect("crowding the boss at a boundary plays the reaction (%s)"
+		% enemy.fsm.current_state.name,
+		String(enemy.fsm.current_state.name) == cycle.reaction_state)
+	fails += _expect("...without claiming a Rep (%d)" % boss.reps, boss.reps == 0)
+	fails += _expect("...and running outside the Phase machinery entirely (live=%s, tail=%s)"
+		% [boss.live_phase(), boss.tail_open],
+		boss.live_phase() == null and not boss.tail_open)
+	fails += _expect("...and without moving the Rotation on (%s)" % boss.cursor_phase_name(),
+		boss.cursor_phase_name() == "Volley")
+
+	# Coming back from it: the boundary it stood in for is still owed, so the order advances
+	# exactly once.
+	cycle._dispatch()
+	var after_volley: String = boss.phases[(boss.phases.find("Volley") + 1) % boss.phases.size()]
+	fails += _expect("the reaction hands the Rotation on one Phase (%s)" % boss.cursor_phase_name(),
+		boss.cursor_phase_name() == after_volley)
+
+	# Out past its own reach the same boundary is just the Free beat, and the order moves on: a
+	# reaction that cannot fire must never be a stall. (The FSM's current state is a leftover of
+	# the hand-driven half above — what a hand-drive changes is the Cycle's own pause.)
+	arena["target"].global_position = enemy.global_position + Vector2(200, 0)
+	await get_tree().physics_frame
+	boss.jump_to("Volley")
+	boss.begin_phase(beats["Volley"])
+	cycle._beat = beats["Volley"]
+	cycle._pause = Cycle.Pause.TAIL
+	cycle._resolve_pause()
+	fails += _expect("out of reach the boundary is just the Free beat (%d)" % cycle._pause,
+		cycle._pause == Cycle.Pause.FREE and not cycle._reaction)
+	fails += _expect("...and the Rotation still advances (%s)" % boss.cursor_phase_name(),
+		boss.cursor_phase_name() != "Volley")
+	if fails == 0:
+		print("  ok: gnarlking reaction — a slam at the boundary, never a Phase of the order")
+	await _close_arena(arena)
+	return fails
+
+# The live lap, with the FSM driving itself rather than the hand-driven pump. Everything past
+# the dispatcher is a chain with no fallback of its own (Charge -> Stalk -> Charge2 -> Cycle),
+# and a mis-wired done_state parks the boss there forever. The target is glued inside the
+# slam's own reach, which is also the one place a charge's overshoot cannot shake it: the boss
+# walks back onto it, so Stalk feeds Charge2 rather than timing out.
+func _gnarlking_lap() -> int:
 	_states = []
 	var target := CharacterBody2D.new()
 	target.collision_layer = 16
@@ -346,30 +392,26 @@ func _enrage_lap() -> int:
 	enemy.fsm.state_changed.connect(func(_prev: State, cur: State) -> void:
 		_states.append(cur.name))
 
-	# Stand in for a player who clears the adds the instant they land and then stays in
-	# melee — the charge overshoots by design, so gluing the target to the boss is what
-	# drives Stalk into the second charge rather than out to Winded. Both branches are
-	# authored; this is the one whose wiring can strand the boss.
+	# Stand in for a player who clears the brood the instant it lands and then stays in melee.
 	var seen := {}
-	var deadline := Time.get_ticks_msec() + 40000
-	while Time.get_ticks_msec() < deadline and not seen.has("Summon2"):
-		target.global_position = enemy.global_position + Vector2(20, 0)
-		for node in get_tree().get_nodes_in_group("pack_grimling"):
+	var deadline := Time.get_ticks_msec() + 60000
+	while Time.get_ticks_msec() < deadline and not seen.has("Call"):
+		target.global_position = enemy.global_position + Vector2(10, 0)
+		for node in get_tree().get_nodes_in_group("pack_brood"):
 			node.get_parent().queue_free()
 		for s in _states:
 			seen[s] = true
-		# A second Summon means the lap closed rather than merely started.
-		if seen.has("Charge") and _states.count("Summon") > 1:
-			seen["Summon2"] = true
 		await get_tree().physics_frame
 
 	var fails := 0
-	fails += _expect("enrage opens once the adds are cleared", seen.has("Charge"))
+	fails += _expect("the lap opens on the charge", seen.has("Charge"))
 	fails += _expect("the charge hands off into the stalk", seen.has("Stalk"))
 	fails += _expect("a target still in reach chains the second charge", seen.has("Charge2"))
-	fails += _expect("the lap closes back onto the brood call", seen.has("Summon2"))
+	fails += _expect("the lap reaches the volley", seen.has("Volley"))
+	fails += _expect("the lap reaches the brood call", seen.has("Call"))
+	fails += _expect("a boundary the player crowded is answered with the slam", seen.has("Slam"))
 	if fails == 0:
-		print("  ok: gnarlking enrage lap — %s" % [seen.keys()])
+		print("  ok: gnarlking lap — %s" % [seen.keys()])
 	else:
 		print("  saw: %s" % [_states])
 	enemy.queue_free()
@@ -483,12 +525,6 @@ func _puffcap_chain() -> int:
 	target.queue_free()
 	await get_tree().physics_frame
 	return fails
-
-func _clear_pack() -> void:
-	for node in get_tree().get_nodes_in_group("pack_grimling"):
-		node.get_parent().queue_free()
-	await get_tree().physics_frame
-	await get_tree().process_frame
 
 # The out-of-combat reset: a boss or rare left alone for COMBAT_RESET_SECONDS heals to full
 # and goes home, a common never does. The clock is wall-time, so the case ages the creature's
@@ -662,8 +698,9 @@ func _pump(arena: Dictionary, until: Callable, clear_escorts: bool = true) -> Ar
 		# killing them, which is what keeps a lap moving. A case that wants the escort left
 		# standing (the unreachable-add case) turns this off.
 		if clear_escorts:
-			for node in get_tree().get_nodes_in_group("pack_wisp"):
-				node.get_parent().queue_free()
+			for group in ["pack_wisp", "pack_seed", "pack_brood"]:
+				for node in get_tree().get_nodes_in_group(group):
+					node.get_parent().queue_free()
 		var cur: State = enemy.fsm.current_state
 		if cur and String(cur.name) in boss.phases:
 			# The Tail is the promise a Phase makes: shut while its beat is live, open only
@@ -687,11 +724,12 @@ func _pump(arena: Dictionary, until: Callable, clear_escorts: bool = true) -> Ar
 # The ordered Rotation: each Phase plays its authored Reps, then the next Phase in the authored
 # list takes over, and after the last one the Rotation wraps back onto the first. Order is the
 # whole point of the skeleton — a boss that rolls is what this feature exists to delete.
-# Both bosses run through it, because the ORDER is the shared skeleton while the mix, the Reps
+# Every boss runs through it, because the ORDER is the shared skeleton while the mix, the Reps
 # and the Tails inside it are each boss's own grammar (see _grammar).
 func _rotation() -> int:
 	var fails := await _rotation_case("fae", "RingStorm")
 	fails += await _rotation_case("thornmess", "SporeStorm")
+	fails += await _rotation_case("gnarlking", "CallBig")
 	return fails
 
 func _rotation_case(id: String, desperation: String) -> int:
@@ -701,14 +739,14 @@ func _rotation_case(id: String, desperation: String) -> int:
 	var phases: Array[String] = boss.phases
 	var fails := 0
 
-	fails += _expect("the Rotation is 3-5 Phases (%d)" % phases.size(),
-		phases.size() >= 3 and phases.size() <= 5)
+	fails += _expect("the Rotation is 3-6 Phases (%d)" % phases.size(),
+		phases.size() >= 3 and phases.size() <= 6)
 	for name in phases:
 		var beat: Behaviour = enemy.fsm.states.get(name)
 		fails += _expect("%s is a real FSM state in the Rotation" % name, beat != null)
 		if beat:
-			fails += _expect("%s authors 1-4 Reps (%d)" % [name, beat.reps],
-				beat.reps >= 1 and beat.reps <= 4)
+			fails += _expect("%s authors 1-8 Reps (%d)" % [name, beat.reps],
+				beat.reps >= 1 and beat.reps <= 8)
 
 	# A healthy lap: the desperation Phase is last and gated on a quarter health, so it is
 	# skipped and the wrap lands straight back on the first Phase.
@@ -743,16 +781,17 @@ func _rotation_case(id: String, desperation: String) -> int:
 
 # The grammar rule the doc gained after the second boss: the skeleton is a shared vocabulary,
 # not a shared template. Two bosses built from the same four Counter kinds still have to ask
-# different questions, or the roster is one fight with the nouns swapped. Asserted across both
-# bosses rather than per-scene, because it is a rule about the roster.
+# different questions, or the roster is one fight with the nouns swapped. Asserted across the
+# whole roster rather than per-scene, because it is a rule about the roster.
 func _grammar() -> int:
 	var fails := 0
+	var ids := ["fae", "thornmess", "gnarlking"]
 	var mixes := {}
 	var rep_counts := {}
 	var tail_max := {}
-	var rushes := {}
+	var rush_kinds := {}
 	var opens := {}
-	for id: String in ["fae", "thornmess"]:
+	for id: String in ids:
 		var enemy: Creature = load(CASES[id]["scene"]).instantiate()
 		add_child(enemy)
 		await get_tree().physics_frame
@@ -760,19 +799,19 @@ func _grammar() -> int:
 		var mix: Array[int] = []
 		var reps: Array[int] = []
 		var tails: Array[float] = []
-		var charges := 0
+		var rushes: Array[int] = []
 		for name in boss.phases:
 			var beat: Behaviour = enemy.fsm.states[name]
 			mix.append(beat.counter_kind)
 			reps.append(beat.reps)
 			tails.append(beat.tail)
 			if beat is Charge:
-				charges += 1
+				rushes.append(beat.counter_kind)
 		mixes[id] = mix
 		opens[id] = mix[0]
 		rep_counts[id] = reps
 		tail_max[id] = tails.max()
-		rushes[id] = charges
+		rush_kinds[id] = rushes
 		# One Counter kind repeated down the Rotation is a template, not a grammar: it is the
 		# same beat five times whatever the spells are called.
 		var kinds := {}
@@ -790,71 +829,88 @@ func _grammar() -> int:
 		enemy.queue_free()
 		await get_tree().physics_frame
 
-	fails += _expect("the two bosses do not open with the same Counter kind (%d vs %d)"
-		% [opens["fae"], opens["thornmess"]], opens["fae"] != opens["thornmess"])
-	fails += _expect("...nor repeat each other's mix (%s vs %s)" % [mixes["fae"], mixes["thornmess"]],
-		mixes["fae"] != mixes["thornmess"])
-	fails += _expect("...nor run to the same Tempo (%s vs %s)"
-		% [rep_counts["fae"], rep_counts["thornmess"]],
-		rep_counts["fae"] != rep_counts["thornmess"])
-	fails += _expect("...and one of them recovers far more slowly (%0.1fs vs %0.1fs)"
-		% [tail_max["fae"], tail_max["thornmess"]], tail_max["fae"] != tail_max["thornmess"])
-	# Movement policy: a committed rush is one boss's dialect. Fae flits; Thornmess is rooted and
-	# answers distance with a walk outside the Rotation instead.
-	fails += _expect("only one boss owns a committed rush (%d vs %d)"
-		% [rushes["fae"], rushes["thornmess"]],
-		rushes["fae"] > 0 and rushes["thornmess"] == 0)
+	# Pairwise, across every pair: the order is shared, the fight is not. No two bosses may open
+	# on the same Counter kind, repeat each other's mix or Tempo, or recover at the same pace.
+	for i in ids.size():
+		for j in range(i + 1, ids.size()):
+			var a: String = ids[i]
+			var b: String = ids[j]
+			fails += _expect("%s and %s do not open on the same Counter kind (%d vs %d)"
+				% [a, b, opens[a], opens[b]], opens[a] != opens[b])
+			fails += _expect("%s and %s do not repeat each other's mix (%s vs %s)"
+				% [a, b, mixes[a], mixes[b]], mixes[a] != mixes[b])
+			fails += _expect("%s and %s do not run to the same Tempo (%s vs %s)"
+				% [a, b, rep_counts[a], rep_counts[b]], rep_counts[a] != rep_counts[b])
+			fails += _expect("%s and %s do not recover at the same pace (%0.1fs vs %0.1fs)"
+				% [a, b, tail_max[a], tail_max[b]], tail_max[a] != tail_max[b])
+	# Movement policy: two bosses own a committed rush, and they are not the same beat twice
+	# because they ask opposite questions of it — Fae's Flit is a rush you DODGE, Gnarlking's
+	# charge is the only one in the roster you can put into scenery, which is what WALL is for.
+	# The rooted boss owns no rush at all.
+	var baitable := 0
+	for id: String in ids:
+		var rushes: Array = rush_kinds[id]
+		if rushes.has(Behaviour.Counter.WALL):
+			baitable += 1
+		if id == "thornmess":
+			fails += _expect("the rooted boss owns no rush at all (%s)" % [rushes], rushes.is_empty())
+	fails += _expect("a dodgeable rush and a baitable one are two questions, not one beat twice (%d)"
+		% baitable, baitable == 1)
 	if fails == 0:
-		print("  ok: grammar — two bosses, two questions (%s vs %s)"
-			% [mixes["fae"], mixes["thornmess"]])
+		print("  ok: grammar — three bosses, three questions (%s / %s / %s)"
+			% [mixes["fae"], mixes["thornmess"], mixes["gnarlking"]])
 	return fails
 
-# Thornmess's escort is its OWN summons, so the wiring Fae's wisps follow has to hold for six
-# plants of three species: the group the boss gates on is the group its summon stamps, the
+# A boss's escort is its OWN summons, so the wiring Fae's wisps follow has to hold for every
+# boss that calls one: the group the boss gates on is the group its summon stamps, the
 # membership is exact, and the escort does not outlive the lap it was called in (a straggler
-# left standing fails the NEXT lap's escort gate, which is a fight that never ends).
-func _thornmess_escort() -> int:
-	var arena := await _boss_arena(CASES["thornmess"]["scene"], true)
+# left standing fails the NEXT lap's escort gate, which is a fight that never ends). Six plants
+# of three species and six grimlings of three species are three times Fae's four wasps each, so
+# the hold that bounds the gate has to be sized to the escort — and it has to lapse before the
+# escort's own timer does, or the rollback is handed out by a clock rather than by the player
+# killing anything.
+func _escort_case(id: String, phase: String, group: String, add_scene: String) -> int:
+	var arena := await _boss_arena(CASES[id]["scene"], true)
 	var enemy: Creature = arena["enemy"]
 	var boss: BossController = enemy.get_node("BossController")
-	var seedlings: Behaviour = enemy.fsm.states["Seedlings"]
+	var call: Behaviour = enemy.fsm.states[phase]
 	var cycle: Cycle = enemy.fsm.states["Cycle"]
-	var summon := (seedlings as Cast).spell as SummonResource
+	var summon := (call as Cast).spell as SummonResource
 	var fails := 0
 
-	fails += _expect("the summon stamps the group the boss gates on (%s)" % summon.minion_group,
-		summon.minion_group != &"" and summon.minion_group == seedlings.clear_group)
-	fails += _expect("an escort the boss called is counted exactly, wherever it stands",
-		seedlings.clear_radius_tiles <= 0.0)
-	fails += _expect("the escort does not outlive a lap (%0.1fs)" % summon.minion_lifetime,
+	fails += _expect("%s: the summon stamps the group the boss gates on (%s)"
+		% [id, summon.minion_group],
+		summon.minion_group != &"" and summon.minion_group == call.clear_group)
+	fails += _expect("%s: an escort the boss called is counted exactly, wherever it stands" % id,
+		call.clear_radius_tiles <= 0.0)
+	fails += _expect("%s: the escort does not outlive a lap (%0.1fs)"
+		% [id, summon.minion_lifetime],
 		summon.minion_lifetime > 0.0 and summon.minion_lifetime < 40.0)
-	# Six plants is three times the HP of Fae's four wasps, so the hold that bounds the gate has
-	# to be sized to the escort — and it has to lapse before the escort's own timer does, or the
-	# rollback is handed out by a clock rather than by the player killing anything.
-	fails += _expect("the escort hold is sized to the escort, not to Fae's (%0.1fs)" % cycle.escort_hold,
+	fails += _expect("%s: the escort hold is sized to the escort (%0.1fs)"
+		% [id, cycle.escort_hold],
 		cycle.escort_hold >= 6.0 and cycle.escort_hold < summon.minion_lifetime)
 
-	# Live: the armour and the rollback land on this boss's own group, not on Fae's.
+	# Live: the armour and the rollback land on this boss's own group, not on another's.
 	boss.intensity = 1.5
-	boss.begin_phase(seedlings)
-	var plant: Creature = load("res://characters/enemies/seedling/seedling.tscn").instantiate()
-	plant.global_position = Vector2(64, 0)
-	plant.add_to_group("pack_seed")
-	add_child(plant)
+	boss.begin_phase(call)
+	var add: Creature = load(add_scene).instantiate()
+	add.global_position = Vector2(64, 0)
+	add.add_to_group(group)
+	add_child(add)
 	await get_tree().physics_frame
-	fails += _expect("a standing escort armours the boss",
+	fails += _expect("%s: a standing escort armours the boss" % id,
 		is_equal_approx(enemy.incoming_damage_scale, boss.escort_armour))
-	fails += _expect("...and has not credited yet", is_equal_approx(boss.intensity, 1.5))
-	plant.queue_free()
+	fails += _expect("%s: ...and has not credited yet" % id, is_equal_approx(boss.intensity, 1.5))
+	add.queue_free()
 	await get_tree().physics_frame
 	await get_tree().process_frame
-	fails += _expect("clearing the growth credits ADDS",
+	fails += _expect("%s: clearing the escort credits ADDS" % id,
 		is_equal_approx(boss.intensity, 1.5 - BossController.STEP))
-	fails += _expect("the armour comes off with it",
+	fails += _expect("%s: the armour comes off with it" % id,
 		is_equal_approx(enemy.incoming_damage_scale, 1.0))
 	boss.end_phase()
 	if fails == 0:
-		print("  ok: thornmess escort — six plants, one exact group, gone before the next lap")
+		print("  ok: %s escort — one exact group (%s), gone before the next lap" % [id, group])
 	await _close_arena(arena)
 	return fails
 
@@ -1086,6 +1142,52 @@ func _escort_hold() -> int:
 		not kinds.has(Behaviour.Counter.ADDS))
 	if fails == 0:
 		print("  ok: escort hold — an unreachable add costs the rollback, not the fight")
+	await _close_arena(arena)
+	return fails
+
+# And the other end of the same clock: an escort that DOES come down inside the hold closes the
+# Phase it gates. What the wait owes depends on where it was entered — a Phase whose last Rep is
+# already in opens its Tail, one still owed a Rep carries on — and replaying the beat in both
+# cases is how an ADDS Phase summons its escort for as long as the player keeps clearing it.
+func _escort_cleared() -> int:
+	var arena := await _boss_arena(CASES["fae"]["scene"], true)
+	var enemy: Creature = arena["enemy"]
+	var boss: BossController = enemy.get_node("BossController")
+	var cycle: Cycle = enemy.fsm.states["Cycle"]
+	var wisps: Behaviour = enemy.fsm.states["Wisps"]
+	var fails := 0
+
+	var add: Creature = load("res://characters/enemies/wasp/wasp.tscn").instantiate()
+	add.global_position = Vector2(48, 0)
+	add.add_to_group("pack_wisp")
+	add_child(add)
+	await get_tree().physics_frame
+
+	# The last Rep is in and the escort is still standing: this is the wait _close_phase opens.
+	boss.reset()
+	boss.begin_phase(wisps)
+	boss.reps = wisps.reps
+	cycle._beat = wisps
+	cycle._escort_gate(true)
+	add.queue_free()
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	cycle.physics_update(0.0)
+	fails += _expect("a cleared escort opens the Tail the Phase was waiting for (%s)"
+		% cycle._pause, cycle._pause == Cycle.Pause.TAIL and boss.tail_open)
+
+	# ...where a wait that was only short a Rep carries on with the Rotation instead.
+	boss.end_phase()
+	boss.begin_phase(wisps)
+	cycle._beat = wisps
+	cycle._escort_gate(false)
+	cycle.physics_update(0.0)
+	fails += _expect("a cleared escort mid-Phase carries on with the Rep (%s)"
+		% enemy.fsm.current_state.name,
+		String(enemy.fsm.current_state.name) == wisps.name and not boss.tail_open)
+	boss.end_phase()
+	if fails == 0:
+		print("  ok: escort cleared — the wait closes a finished Phase, and resumes a live one")
 	await _close_arena(arena)
 	return fails
 

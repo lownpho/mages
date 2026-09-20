@@ -18,16 +18,16 @@ icon = SubResource("AtlasTexture_bark")
 range_tiles = 6
 speed_tiles = 12
 
+[sub_resource type="Resource" id="ScalingProfile_contact"]
+script = ExtResource("bh_scaling")
+base_damage = 26.0
+
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
 base_damage = 26.0
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
-
-[sub_resource type="Resource" id="ScalingProfile_contact"]
-script = ExtResource("bh_scaling")
-base_damage = 26.0
 
 [resource]
 script = ExtResource("1_script")
@@ -40,5 +40,4 @@ damage = SubResource("ScalingProfile_bullet")
 shot_interval = 0.045
 max_shots = 16
 effect_scene = ExtResource("99_effect")
-cooldown = 5.0
 cast_time = 1.5

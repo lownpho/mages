@@ -12,10 +12,13 @@
 [ext_resource type="Resource" uid="uid://cspv0ip7cspua" path="res://characters/enemies/gnarlking/gnarlking_volley.tres" id="10_volley"]
 [ext_resource type="Resource" uid="uid://cspv0ip6ra80o" path="res://characters/enemies/gnarlking/gnarlking_charge.tres" id="11_charge"]
 [ext_resource type="Resource" uid="uid://cspv0ip6ra81x" path="res://characters/enemies/gnarlking/gnarlking_charge_chain.tres" id="12_charge2"]
+[ext_resource type="Resource" uid="uid://cspv0ip6ra82b" path="res://characters/enemies/gnarlking/gnarlking_blast.tres" id="13_blast"]
+[ext_resource type="Resource" uid="uid://cspv0ip6ra83c" path="res://characters/enemies/gnarlking/gnarlking_spiral.tres" id="14_spiral"]
 [ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Script" uid="uid://b4lrupcmlxdw2" path="res://characters/creature/boss_controller.gd" id="b_boss"]
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://bch4rg3b3h4v0" path="res://characters/creature/behaviours/charge.gd" id="b_charge"]
-[ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
+[ext_resource type="Script" uid="uid://cky4cwkv2mry5" path="res://characters/creature/behaviours/cycle.gd" id="b_cycle"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gnarlking"]
@@ -201,6 +204,10 @@ position = Vector2(0, -6)
 collision_mask = 256
 radius = 9.0
 
+[node name="BossController" type="Node" parent="." unique_id=472159880]
+script = ExtResource("b_boss")
+phases = Array[String](["Charge", "Volley", "Blast", "Call", "Spiral", "CallBig"])
+
 [node name="DetectProbe" type="RayCast2D" parent="." unique_id=155360496]
 target_position = Vector2(176, 0)
 collision_mask = 17
@@ -210,7 +217,7 @@ target_position = Vector2(48, 0)
 collision_mask = 17
 
 [node name="SlamProbe" type="RayCast2D" parent="." unique_id=155360498]
-target_position = Vector2(16, 0)
+target_position = Vector2(24, 0)
 collision_mask = 17
 
 [node name="VolleyProbe" type="RayCast2D" parent="." unique_id=155360499]
@@ -227,128 +234,129 @@ script = ExtResource("b_hold")
 min_time = 1.0
 max_time = 2.0
 probe_path = NodePath("../../DetectProbe")
-seen_state = "Summon"
+seen_state = "Cycle"
 alert_on_hit = true
 
-[node name="Summon" type="Node" parent="FSM" unique_id=1415459637]
-script = ExtResource("b_gate")
-beats = Array[String](["CallBig", "Call"])
+[node name="Cycle" type="Node" parent="FSM" unique_id=1900001001]
+script = ExtResource("b_cycle")
 probe_path = NodePath("../../DetectProbe")
-
-[node name="Call" type="Node" parent="FSM" unique_id=1596127954]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("8_brood")
-done_state = "Hunt"
-windup_anim = "summon"
-attack_anim = "idle"
-telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
-health_min = 0.25
-
-[node name="CallBig" type="Node" parent="FSM" unique_id=908002753]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("9_brood_big")
-done_state = "Hunt"
-windup_anim = "summon"
-attack_anim = "idle"
-telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
-health_max = 0.25
-
-[node name="Hunt" type="Node" parent="FSM" unique_id=1286401136]
-script = ExtResource("b_gate")
-beats = Array[String](["Charge", "Slam", "Volley", "Close", "Brace"])
-probe_path = NodePath("../../DetectProbe")
-
-[node name="Slam" type="Node" parent="FSM" unique_id=1532291633]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("6_slam")
-done_state = "Hunt"
-windup_anim = "slam"
-attack_anim = "idle"
-telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
-range_probe_path = NodePath("../../SlamProbe")
-damage_scale = 0.35
-
-[node name="Volley" type="Node" parent="FSM" unique_id=1396486471]
-script = ExtResource("b_cast")
-caster_path = NodePath("../../Caster")
-spell = ExtResource("10_volley")
-done_state = "Hunt"
-telegraph_color = Color(0.956863, 0.705882, 0.105882, 1)
-range_probe_path = NodePath("../../VolleyProbe")
-damage_scale = 0.35
-
-[node name="Close" type="Node" parent="FSM" unique_id=149517132]
-script = ExtResource("b_approach")
-speed = 52.0
-duration = 3.0
-done_state = "Hunt"
-attack_probe_path = NodePath("../../VolleyProbe")
-attack_state = "Volley"
-wait_state = "Brace"
-damage_scale = 0.35
-
-[node name="Brace" type="Node" parent="FSM" unique_id=1444770956]
-script = ExtResource("b_hold")
-max_time = 2.0
-next_state = "Hunt"
-damage_scale = 0.35
+lost_state = "Close"
+reaction_state = "Slam"
+reaction_probe_path = NodePath("../../SlamProbe")
+escort_hold = 16.0
+tail_anim = "rest"
 
 [node name="Charge" type="Node" parent="FSM" unique_id=149517126]
 script = ExtResource("b_charge")
-blocked_state = "Stagger"
+blocked_state = "Cycle"
 caster_path = NodePath("../../Caster")
 spell = ExtResource("11_charge")
 done_state = "Stalk"
 windup_anim = "attack"
 attack_anim = "run"
 telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)
-clear_group = &"pack_grimling"
+counter_kind = 2
+reps = 1
+tail = 2.0
 
 [node name="Stalk" type="Node" parent="FSM" unique_id=40807750]
 script = ExtResource("b_approach")
-speed = 82.0
+speed = 60.0
 duration = 3.0
-done_state = "Breathe"
+done_state = "Cycle"
 attack_probe_path = NodePath("../../CloseProbe")
 attack_state = "Charge2"
 
 [node name="Charge2" type="Node" parent="FSM" unique_id=149517127]
 script = ExtResource("b_charge")
-blocked_state = "Stagger"
+blocked_state = "Cycle"
 caster_path = NodePath("../../Caster")
 spell = ExtResource("12_charge2")
-done_state = "Breathe"
+done_state = "Cycle"
 windup_anim = "attack"
 attack_anim = "run"
 telegraph_color = Color(0.956863, 0.494118, 0.105882, 1)
 
-[node name="Stagger" type="Node" parent="FSM" unique_id=149517128]
-script = ExtResource("b_hold")
-anim = "rest"
-min_time = 3.5
-max_time = 3.5
-next_state = "Summon"
-damage_scale = 1.6
+[node name="Volley" type="Node" parent="FSM" unique_id=1396486471]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("10_volley")
+done_state = "Cycle"
+telegraph_color = Color(0.956863, 0.705882, 0.105882, 1)
+counter_kind = 4
+reps = 5
+tail = 0.8
+rep_gap = 0.5
+range_probe_path = NodePath("../../VolleyProbe")
+damage_scale = 0.35
 
-[node name="Breathe" type="Node" parent="FSM" unique_id=149517129]
-script = ExtResource("b_gate")
-beats = Array[String](["WindedShort", "Winded"])
+[node name="Blast" type="Node" parent="FSM" unique_id=1900001002]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("13_blast")
+done_state = "Cycle"
+telegraph_color = Color(0.6666667, 0.76862746, 0.24705882, 1)
+counter_kind = 4
+reps = 5
+tail = 1.6
+rep_gap = 0.8
+range_probe_path = NodePath("../../DetectProbe")
 
-[node name="Winded" type="Node" parent="FSM" unique_id=149517130]
-script = ExtResource("b_hold")
-anim = "rest"
-min_time = 5.0
-max_time = 5.0
-next_state = "Summon"
-health_min = 0.25
+[node name="Spiral" type="Node" parent="FSM" unique_id=1900001003]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("14_spiral")
+done_state = "Cycle"
+telegraph_color = Color(0.541176, 0.921569, 0.945098, 1)
+counter_kind = 4
+tail = 1.2
+rep_gap = 0.8
 
-[node name="WindedShort" type="Node" parent="FSM" unique_id=149517131]
-script = ExtResource("b_hold")
-anim = "rest"
-min_time = 3.0
-max_time = 3.0
-next_state = "Summon"
+[node name="Call" type="Node" parent="FSM" unique_id=1596127954]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("8_brood")
+done_state = "Cycle"
+windup_anim = "summon"
+attack_anim = "idle"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
+counter_kind = 3
+reps = 1
+tail = 1.6
+rep_gap = 0.8
+clear_group = &"pack_brood"
+clear_radius_tiles = 0.0
+
+[node name="CallBig" type="Node" parent="FSM" unique_id=908002753]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("9_brood_big")
+done_state = "Cycle"
+windup_anim = "summon"
+attack_anim = "idle"
+telegraph_color = Color(0.443137, 0.666667, 0.203922, 1)
+counter_kind = 1
+reps = 1
+tail = 2.2
 health_max = 0.25
+priority = 1
+once = true
+
+[node name="Slam" type="Node" parent="FSM" unique_id=1532291633]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("6_slam")
+done_state = "Cycle"
+windup_anim = "slam"
+attack_anim = "idle"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+range_probe_path = NodePath("../../SlamProbe")
+damage_scale = 0.35
+
+[node name="Close" type="Node" parent="FSM" unique_id=149517132]
+script = ExtResource("b_approach")
+speed = 52.0
+lost_state = "Idle"
+done_state = "Cycle"
+attack_probe_path = NodePath("../../VolleyProbe")
+attack_state = "Cycle"
