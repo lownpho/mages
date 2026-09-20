@@ -21,8 +21,8 @@ speed_tiles = 16
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 5.0
-skill_scaling = 0.25
+base_damage = 12.0
+defence_scaling = 0.6
 
 [sub_resource type="Resource" id="Pattern_1"]
 script = ExtResource("4_pattern")
@@ -41,7 +41,7 @@ shot_interval = 0.6
 max_shots = 4
 effect_scene = ExtResource("3_scene")
 cooldown = 3.0
-blurb = "Being skilled in magic helps."
+blurb = "Channels the strenght of my body into energy."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 6
+speed_modifier = 5
 max_health_modifier = 30

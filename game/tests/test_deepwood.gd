@@ -579,7 +579,7 @@ func _oop_mine_arms_and_blows() -> int:
 	add_child(caster)
 	var spell_caster := SpellCaster.new()
 	caster.add_child(spell_caster)
-	var foe := _foe(AWAY + Vector2(60, 0))   # well outside the trigger to start with
+	var foe := _foe(AWAY + Vector2(120, 0))  # well outside every scattered trigger
 	await get_tree().physics_frame
 
 	var fails := _expect("the cast went off", spell_caster.cast(OOP))
@@ -594,9 +594,22 @@ func _oop_mine_arms_and_blows() -> int:
 		foe.queue_free()
 		await get_tree().physics_frame
 		return fails
-	# stub_caster aims RIGHT, so the drop lands one tile east of the caster.
-	var drop := AWAY + Vector2(GameConstants.PX_PER_TILE, 0)
-	fails += _expect("the mine landed a tile along the aim", mine.global_position == drop)
+	# One cast, three mines: the first one scatters the set and drops the other two. They
+	# land on random bearings a tile or two out, spread apart rather than stacked.
+	var mines: Array[Node2D] = []
+	for child in get_tree().root.get_children():
+		if child.scene_file_path == mine.scene_file_path:
+			mines.append(child)
+	fails += _expect("the cast dropped three mines", mines.size() == 3)
+	for dropped in mines:
+		var reach := dropped.global_position.distance_to(AWAY) / GameConstants.PX_PER_TILE
+		fails += _expect("a mine landed within reach of the caster (%.2f tiles)" % reach,
+			reach >= 1.0 - 0.01 and reach <= 2.0 + 0.01)
+	for other in mines:
+		if other != mine:
+			fails += _expect("the mines landed apart",
+				mine.global_position.distance_to(other.global_position) > 0.0)
+	var drop := mine.global_position
 
 	# Armed, with the enemy across the room: a mine waits, it does not hunt.
 	var settle := Time.get_ticks_msec() + 1500
@@ -624,7 +637,7 @@ func _oop_mine_arms_and_blows() -> int:
 	fails += _expect("the mine went up with its blast", not is_instance_valid(mine))
 
 	if fails == 0:
-		print("  ok: oop — the mine drops a tile ahead, waits, and goes off on contact")
+		print("  ok: oop — a cast scatters three mines, which wait and go off on contact")
 	foe.queue_free()
 	caster.queue_free()
 	await get_tree().physics_frame

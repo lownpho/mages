@@ -695,6 +695,9 @@
        "type": "chain",
        "bounces": 8,
        "bounce_range_tiles": 6
+      },
+      {
+       "type": "SporeDetonator"
       }
      ]
     },

@@ -7,12 +7,16 @@
 [ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="3_6owkn"]
 [ext_resource type="PackedScene" uid="uid://dndkbslvojyw4" path="res://characters/player/spells/bullet_spell.tscn" id="3_scene"]
 [ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="4_2annv"]
+[ext_resource type="Script" uid="uid://b8r1pk2325fyt" path="res://items/bullets/behaviours/spore_detonator.gd" id="5_spore"]
 [ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="6_scaling"]
 [ext_resource type="Script" uid="uid://dfn61d454fxbp" path="res://items/bullets/single_pattern.gd" id="9_pattern"]
 
 [sub_resource type="Resource" id="Resource_gmtb4"]
 script = ExtResource("2_g7xr2")
 bounces = 8
+
+[sub_resource type="Resource" id="Resource_spore"]
+script = ExtResource("5_spore")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8itw1"]
 atlas = ExtResource("3_6owkn")
@@ -23,7 +27,7 @@ script = ExtResource("4_2annv")
 icon = SubResource("AtlasTexture_8itw1")
 range_tiles = 12
 speed_tiles = 32
-behaviours = Array[ExtResource("1_mfdnx")]([SubResource("Resource_gmtb4")])
+behaviours = Array[ExtResource("1_mfdnx")]([SubResource("Resource_gmtb4"), SubResource("Resource_spore")])
 
 [sub_resource type="Resource" id="ScalingProfile_zaap"]
 script = ExtResource("6_scaling")

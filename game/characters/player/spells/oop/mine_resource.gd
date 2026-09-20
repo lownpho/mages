@@ -12,5 +12,6 @@ class_name MineResource
 ## Seconds before it becomes live. A mine dropped under a chasing enemy shouldn't go off in
 ## its face — the delay is what makes it a placement rather than an attack.
 @export var arm_time: float = 0.6
-## Seconds it sits there before it rots away.
-@export var lifetime: float = 12.0
+## Seconds it sits there before it rots away. Short enough that a cast is a play on the
+## fight in front of you, not three traps you left lying for later.
+@export var lifetime: float = 8.0

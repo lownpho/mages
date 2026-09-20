@@ -52,6 +52,11 @@ func _destination(attempt: int) -> Vector2:
 	return _caster.global_position + aim * distance
 
 func _clear(to: Vector2) -> bool:
+	# A hop crosses the tree line between two Rooms, never the one between two Biomes: the way
+	# into a Biome is its Passage (or, for a sealed one, the Professor's portal), and a wall
+	# thin enough to blink is no reason to arrive somewhere the World never let you walk.
+	if _biome_at(to) != _biome_at(_caster.global_position):
+		return false
 	# Terrain only (physics layer 1), and only where it lands: what stands between here and
 	# there is exactly what a blink is for. A point rather than the body's own shape — a
 	# landing that clips an edge is depenetrated on the next move, and demanding a whole
@@ -60,3 +65,12 @@ func _clear(to: Vector2) -> bool:
 	query.position = to
 	query.collision_mask = 1
 	return _caster.get_world_2d().direct_space_state.intersect_point(query, 1).is_empty()
+
+
+## The Biome owning a point, or &"" off the World — and &"" in a test without one, where every
+## point agrees and the check falls away.
+func _biome_at(point: Vector2) -> StringName:
+	if GlobalMap.active == null or GlobalMap.active.graph == null:
+		return &""
+	var room := GlobalMap.active.graph.owner_at(Vector2i((point / GameConstants.PX_PER_TILE).floor()))
+	return room.plan.biome if room else &""
