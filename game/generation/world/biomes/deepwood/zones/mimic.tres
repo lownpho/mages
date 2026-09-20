@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
 [ext_resource type="Resource" uid="uid://dr8b2c0mqhvve" path="res://characters/enemies/elder_stalker/elder_stalker_data.tres" id="elder_stalker"]
 [ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
+[ext_resource type="Resource" uid="uid://cspv0ip6swyd0" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="gnarlking"]
 [ext_resource type="Resource" uid="uid://cv7p6bgvawwaa" path="res://characters/enemies/grimlord/grimlord_data.tres" id="grimlord"]
 [ext_resource type="Resource" uid="uid://beuu464rwm8t" path="res://characters/enemies/shade/shade_data.tres" id="shade"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
@@ -38,6 +39,16 @@ ExtResource("cinderstone"): 2
 script = ExtResource("fixed_encounter")
 leader = ExtResource("grimlord")
 
+[sub_resource type="Resource" id="sign_round"]
+script = ExtResource("sign")
+text = "Yes I'm looking for something round.
+If someone has it that must be the King."
+reveals = ExtResource("gnarlking")
+
+[sub_resource type="Resource" id="sign_teleporting_trees"]
+script = ExtResource("sign")
+text = "Teleporting trees? Now I've seen everything."
+
 [resource]
 script = ExtResource("zone")
 route_rooms = 16
@@ -49,3 +60,4 @@ ExtResource("bristlestone"): 7,
 ExtResource("cinderstone"): 7
 })
 rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_elder_stalker"), SubResource("rare_umbra"), SubResource("rare_adder"), SubResource("rare_grimlord")])
+signs = Array[ExtResource("sign")]([SubResource("sign_round"), SubResource("sign_teleporting_trees")])

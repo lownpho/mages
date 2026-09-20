@@ -23,12 +23,20 @@ script = ExtResource("fixed_encounter")
 leader = ExtResource("5_vedgk")
 metadata/_custom_type_script = "uid://dif17xbtr55od"
 
-[sub_resource type="Resource" id="Resource_t8bd1"]
+[sub_resource type="Resource" id="sign_fae_home"]
 script = ExtResource("sign")
-text = "There is an evil Fae lurking
-around this enchanted glade."
+text = "I think that a Fae lives around here.
+Maybe she knows what I lost."
 reveals = ExtResource("5_hs6pn")
-metadata/_custom_type_script = "uid://clnrrbvcsksbf"
+
+[sub_resource type="Resource" id="sign_fae_corner"]
+script = ExtResource("sign")
+text = "Fae? Yes right around the corner."
+reveals = ExtResource("5_hs6pn")
+
+[sub_resource type="Resource" id="sign_lost_here"]
+script = ExtResource("sign")
+text = "What am I doing here? Not sure..."
 
 [resource]
 script = ExtResource("zone")
@@ -37,4 +45,4 @@ route_rooms = 6
 room_count = 10
 minibosses = Array[ExtResource("fixed_encounter")]([SubResource("fae_miniboss")])
 rares = Array[ExtResource("fixed_encounter")]([SubResource("Resource_owwce"), SubResource("Resource_cd60j")])
-signs = Array[ExtResource("sign")]([SubResource("Resource_t8bd1")])
+signs = Array[ExtResource("sign")]([SubResource("sign_fae_home"), SubResource("sign_fae_corner"), SubResource("sign_lost_here")])

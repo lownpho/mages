@@ -33,6 +33,28 @@ ExtResource("grimling"): 2
 script = ExtResource("fixed_encounter")
 leader = ExtResource("razorback")
 
+[sub_resource type="Resource" id="sign_stolen"]
+script = ExtResource("sign")
+text = "Ah yes! I am looking for something
+and maybe someone took it from me."
+
+[sub_resource type="Resource" id="sign_stolen_thing"]
+script = ExtResource("sign")
+text = "I think I'm here to look for something that got stolen."
+
+[sub_resource type="Resource" id="sign_gem"]
+script = ExtResource("sign")
+text = "Was it a precious gem? A ring maybe?"
+
+[sub_resource type="Resource" id="sign_scary_trees"]
+script = ExtResource("sign")
+text = "Woah those trees are scary."
+
+[sub_resource type="Resource" id="sign_careful"]
+script = ExtResource("sign")
+text = "There are not what they look like,
+I have to be careful what I step on."
+
 [resource]
 script = ExtResource("zone")
 route_rooms = 20
@@ -49,3 +71,4 @@ ExtResource("shard_grimling"): 9,
 ExtResource("wisp_grimling"): 9
 })
 rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_great_owl"), SubResource("rare_grimlord"), SubResource("rare_razorback")])
+signs = Array[ExtResource("sign")]([SubResource("sign_stolen"), SubResource("sign_stolen_thing"), SubResource("sign_gem"), SubResource("sign_scary_trees"), SubResource("sign_careful")])

@@ -82,6 +82,13 @@ func _check_setup_data(fixture: WorldFixture, world_seed: int, label: String) ->
 					_check(revealed != null and revealed.role in [GeneratedRoom.Role.BOSS, GeneratedRoom.Role.MINIBOSS] \
 							and revealed.plan.encounter.leader == reveals,
 							"%s: Sign %s reveals %s, not a Boss or Miniboss led by %s" % [label, key, data.reveal_key, reveals.resource_path])
+				var entrance: GeneratedRoom = graph.rooms.get(data.reveal_biome_key)
+				if site.sign_resource.reveals_biome == null:
+					_check(data.reveal_biome_key == "", "%s: Sign %s marks a Biome entrance it doesn't name" % [label, key])
+				else:
+					_check(entrance != null and entrance.plan.route_index == 0
+							and content.biomes[entrance.plan.biome] == site.sign_resource.reveals_biome,
+							"%s: Sign %s doesn't reveal the first Room of its Biome" % [label, key])
 			ObjectSite.Kind.PROFESSOR:
 				_check(objects.scene_for(site) == WorldObjects.PROFESSOR_SCENE, "%s: Professor %s doesn't use the Professor scene" % [label, key])
 				# A sealed placeholder Biome fields no enemies yet, so its page is empty and a Professor

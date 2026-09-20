@@ -219,6 +219,23 @@ func _test_reveal_defeat_and_save(graph: WorldGraph) -> void:
 				"an undiscovered revealed Miniboss is marked for edge projection as a Miniboss")
 		state.revealed_rooms.erase(miniboss.key())
 
+	# A Sign may also point at a Biome's first Room, which wears its own marker kind and goes once entered.
+	var entrance: GeneratedRoom = null
+	for room in graph.room_list:
+		if room.plan.route_index == 0 and room.role != GeneratedRoom.Role.SPAWN:
+			entrance = room
+			break
+	if entrance != null:
+		_check(state.reveal_room(entrance.key()), "an Object can reveal a Biome's first Room")
+		var pointed: Array = state.markers.filter(func(marker: Dictionary) -> bool: return marker.room_key == entrance.key())
+		_check(pointed.size() == 1 and pointed[0].kind == MapState.MARKER_BIOME and pointed[0].project,
+				"a revealed Biome entrance is marked for edge projection as its own kind")
+		state.entered_rooms[entrance.key()] = true
+		_check(state.markers.all(func(marker: Dictionary) -> bool: return marker.kind != MapState.MARKER_BIOME),
+				"entering a Biome entrance drops its marker")
+		state.entered_rooms.erase(entrance.key())
+		state.revealed_rooms.erase(entrance.key())
+
 	defeated[boss.key() + "/encounter/0/member/0"] = true
 	_check(state.markers.is_empty(), "defeating the Boss leader removes its marker")
 

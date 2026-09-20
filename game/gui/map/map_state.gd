@@ -14,6 +14,7 @@ enum {
 	MARKER_FOUNTAIN,
 	MARKER_SIGN,
 	MARKER_NPC,
+	MARKER_BIOME,  ## the first Room of a Biome a Sign pointed at
 }
 
 const ZOOM_TILES_PER_PX: Array[int] = [1, 2, 4, 8, 16, 32]
@@ -104,7 +105,7 @@ func reveal_room(room_key: String) -> bool:
 	if graph == null:
 		return false
 	var room: GeneratedRoom = graph.rooms.get(room_key)
-	if room == null or not _marked_role(room) or revealed_rooms.has(room_key):
+	if room == null or not (_marked_role(room) or _is_entrance(room)) or revealed_rooms.has(room_key):
 		return false
 	revealed_rooms[room_key] = true
 	return true
@@ -376,6 +377,9 @@ func _markers() -> Array:
 			out.append({"tile": graph.tile_of(room.seed_point),
 					"kind": MARKER_BOSS if room.role == GeneratedRoom.Role.BOSS else MARKER_MINIBOSS,
 					"room_key": key, "project": revealed_rooms.has(key) and not entered})
+		elif _is_entrance(room) and revealed_rooms.has(key) and not entered:
+			out.append({"tile": graph.tile_of(room.seed_point), "kind": MARKER_BIOME,
+					"room_key": key, "project": true})
 		if not entered:
 			continue
 		for site in room.sites:
@@ -408,6 +412,11 @@ func _marker_kind(site: ObjectSite) -> int:
 ## The set-piece Rooms that carry a marker of their own: a Sign may reveal either.
 func _marked_role(room: GeneratedRoom) -> bool:
 	return room.role == GeneratedRoom.Role.BOSS or room.role == GeneratedRoom.Role.MINIBOSS
+
+
+## A Biome's first route Room, which a Sign can point at.
+func _is_entrance(room: GeneratedRoom) -> bool:
+	return room.plan.route_index == 0
 
 
 func _leader_defeated(room_key: String) -> bool:

@@ -21,39 +21,29 @@ centred = true
 
 [sub_resource type="Resource" id="sign_memory"]
 script = ExtResource("sign")
-text = "Reading a sign can awaken your memory.
-Keep an eye on your map."
+text = "It looks like reading a sign can remind me of where things are.
+I should keep an eye on the map after reading about something,
+maybe I get some memories back."
 
-[sub_resource type="Resource" id="sign_twisted"]
+[sub_resource type="Resource" id="sign_fountains"]
 script = ExtResource("sign")
-text = "Some creatures are so twisted that even reading
-about them can reveal their location."
-
-[sub_resource type="Resource" id="sign_maps"]
-script = ExtResource("sign")
-text = "Modern maps are marvelous.
-You can place dots on them as a reminder for later."
-
-[sub_resource type="Resource" id="sign_fae"]
-script = ExtResource("sign")
-text = "What happens when plants fuse together?
-Hope you'll never find out."
-reveals = ExtResource("2_rpto3")
+text = "Seeing a fountain allows me to teleport there.
+I just have to click on it from the map."
 
 [sub_resource type="Resource" id="sign_throw_away"]
 script = ExtResource("sign")
-text = "Feel free to throw away spells you don't like:
-they do not harm the environment."
+text = "Throwing away spells does not harm the environment.
+I can't keep them all."
 
 [sub_resource type="Resource" id="sign_rare_creatures"]
 script = ExtResource("sign")
 text = "Some creatures are rarer than others,
 but it is easier to learn spells from them."
 
-[sub_resource type="Resource" id="sign_portals"]
+[sub_resource type="Resource" id="sign_researchers"]
 script = ExtResource("sign")
-text = "A portal is a gift, not a mercy: it opens
-onto somewhere you may not be ready for."
+text = "Friendly researches are apparently all over the place,
+what are they looking for?"
 
 [resource]
 script = ExtResource("biome")
@@ -78,7 +68,7 @@ presentation = ExtResource("presentation")
 decoration_density = 0.05
 breather_chance = 0.3
 professors = 6
-signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_twisted"), SubResource("sign_maps"), SubResource("sign_fae"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_portals")])
+signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_fountains"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_researchers")])
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

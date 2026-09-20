@@ -20,6 +20,11 @@ ExtResource("puffcap"): 4
 })
 centred = true
 
+[sub_resource type="Resource" id="sign_lonfo"]
+script = ExtResource("sign")
+text = "The old ammagelluted lonfo is working hard
+but he hasn't tested this biome yet."
+
 [resource]
 script = ExtResource("biome")
 exit_challenge = 12
@@ -42,6 +47,7 @@ presentation = ExtResource("presentation")
 decoration_density = 0.02
 breather_chance = 0.4
 professors = 5
+signs = Array[ExtResource("sign")]([SubResource("sign_lonfo")])
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

@@ -6,3 +6,6 @@ extends Resource
 @export_multiline var text := ""
 ## Reading the Sign reveals the nearest Boss or Miniboss led by this enemy. Must lead one of them.
 @export var reveals: CreatureResource
+## Reading the Sign marks the first Room of this Biome on the Map, in its own colour. Independent of
+## `reveals`.
+@export var reveals_biome: BiomeResource

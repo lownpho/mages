@@ -20,6 +20,8 @@ var scene: PackedScene
 var sign_resource: SignResource
 ## The Room a Sign reveals: the nearest planned Boss or Miniboss its enemy leads.
 var reveal_key := ""
+## The first Room of the Biome a Sign points at, marked on the Map in its own colour.
+var reveal_biome_key := ""
 ## A Professor's kind: a portal Professor opens a way into the Biome onward, an item Professor gives
 ## up one of the things that drop there. Seeded per site.
 var opens_portal := false

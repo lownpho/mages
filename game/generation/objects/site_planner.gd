@@ -23,7 +23,7 @@ extends RefCounted
 const SHARED_ROOM_GAP := 6.0
 ## The least share of two room sizes every pair of spaced sites must keep. Placement still aims for
 ## the full two room sizes; near misses are accepted rather than failing the World.
-const MIN_SPACING := 0.8
+const MIN_SPACING := 0.25
 ## Passes of the spreading step.
 const SPREAD_PASSES := 4
 ## Only inverse-warp the most promising sampled points; ranking all of them in unwarped space is
@@ -82,6 +82,7 @@ func place() -> bool:
 	for site in _spaced:
 		if site.kind == ObjectSite.Kind.SIGN:
 			site.reveal_key = _nearest_reveal(site)
+			site.reveal_biome_key = _biome_entrance(site.sign_resource.reveals_biome)
 	return true
 
 
@@ -391,3 +392,13 @@ func _nearest_reveal(sign_site: ObjectSite) -> String:
 			best_distance = distance
 			best = room_plan.key
 	return best
+
+
+## The key of the first route Room of the Biome a Sign points at; "" when it names none.
+func _biome_entrance(biome: BiomeResource) -> String:
+	if biome == null:
+		return ""
+	for id in plan.biomes:
+		if plan.biomes[id].resource == biome:
+			return plan.biomes[id].route[0].key
+	return ""

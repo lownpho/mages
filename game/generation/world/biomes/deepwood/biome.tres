@@ -6,8 +6,10 @@
 [ext_resource type="PackedScene" path="res://objects/fountain/deepwood_fountain.tscn" id="fountain"]
 [ext_resource type="Resource" uid="uid://cspv0ip6swyd0" path="res://characters/enemies/gnarlking/gnarlking_data.tres" id="gnarlking"]
 [ext_resource type="Resource" uid="uid://cgqp1m8vtdn7y" path="res://characters/enemies/grimling/grimling_data.tres" id="grimling"]
+[ext_resource type="Resource" uid="uid://cgnn5vfeav6cb" path="res://generation/world/biomes/hive/biome.tres" id="hive"]
 [ext_resource type="Resource" uid="uid://c8yvmqr2wdkn3" path="res://characters/enemies/moss_golem/moss_golem_data.tres" id="moss_golem"]
 [ext_resource type="Resource" uid="uid://bqm7yv4x0nwdl" path="res://characters/enemies/moth/moth_data.tres" id="moth"]
+[ext_resource type="Resource" uid="uid://34ma27c1xios" path="res://generation/world/biomes/mycelium/biome.tres" id="mycelium"]
 [ext_resource type="Resource" uid="uid://cfp7eapvlt2rp" path="res://generation/world/biomes/deepwood/art/deepwood_presentation.tres" id="presentation"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
 [ext_resource type="Resource" uid="uid://b3lqxwn8vd0tr" path="res://characters/enemies/snake/snake_data.tres" id="snake"]
@@ -18,26 +20,53 @@ script = ExtResource("fixed_encounter")
 leader = ExtResource("gnarlking")
 centred = true
 
+[sub_resource type="Resource" id="sign_professors"]
+script = ExtResource("sign")
+text = "This place is full of old professors too."
+
+[sub_resource type="Resource" id="sign_gifts"]
+script = ExtResource("sign")
+text = "Why do researchers keep giving me stuff?"
+
+[sub_resource type="Resource" id="sign_teleport"]
+script = ExtResource("sign")
+text = "Fountain teleport is the best invention ever!
+These clickable maps are awesome!"
+
+[sub_resource type="Resource" id="sign_mushrooms"]
+script = ExtResource("sign")
+text = "I smell mushrooms. Am I hungry?"
+
+[sub_resource type="Resource" id="sign_mycelium"]
+script = ExtResource("sign")
+text = "If what I'm looking for is not here
+I'll have to see if it's in the Mycelium."
+reveals_biome = ExtResource("mycelium")
+
+[sub_resource type="Resource" id="sign_mushroom_kingdom"]
+script = ExtResource("sign")
+text = "Mushroom Kingdom? Mycelium?"
+
+[sub_resource type="Resource" id="sign_swarms"]
+script = ExtResource("sign")
+text = "I've heard of terrible swarms living beneath these woods."
+
+[sub_resource type="Resource" id="sign_hive"]
+script = ExtResource("sign")
+text = "If what I'm looking for is not here
+I'll have to see if it's in the Hive. I don't like insects"
+reveals_biome = ExtResource("hive")
+
+[sub_resource type="Resource" id="sign_feud"]
+script = ExtResource("sign")
+text = "For some reason mushrooms and insects hate each other.
+This can be useful later."
+
 [sub_resource type="Resource" id="sign_king"]
 script = ExtResource("sign")
 text = "All the creatures of this wood obey one king.
 Finding him means finding death."
 reveals = ExtResource("gnarlking")
-
-[sub_resource type="Resource" id="sign_mushroom_dungeon"]
-script = ExtResource("sign")
-text = "Evil mushrooms retreated in a dungeon underground.
-Watch out."
-
-[sub_resource type="Resource" id="sign_swarms"]
-script = ExtResource("sign")
-text = "Watch out. There are terrible swarms
-living beneath these woods."
-
-[sub_resource type="Resource" id="sign_feud"]
-script = ExtResource("sign")
-text = "For some reason mushrooms and insects
-hate each other."
 
 [sub_resource type="Resource" id="sign_bow"]
 script = ExtResource("sign")
@@ -67,7 +96,7 @@ presentation = ExtResource("presentation")
 decoration_density = 0.04
 breather_chance = 0.4
 professors = 8
-signs = Array[ExtResource("sign")]([SubResource("sign_king"), SubResource("sign_mushroom_dungeon"), SubResource("sign_swarms"), SubResource("sign_feud"), SubResource("sign_bow")])
+signs = Array[ExtResource("sign")]([SubResource("sign_professors"), SubResource("sign_gifts"), SubResource("sign_teleport"), SubResource("sign_mushrooms"), SubResource("sign_mycelium"), SubResource("sign_mushroom_kingdom"), SubResource("sign_swarms"), SubResource("sign_hive"), SubResource("sign_feud"), SubResource("sign_king"), SubResource("sign_bow")])
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })

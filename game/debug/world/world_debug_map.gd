@@ -12,9 +12,9 @@ const ROLE_DOT_TILES := 2.5
 const ROLE_DOT_MIN := 1.25
 const ROLE_DOT_MAX := 4.0
 ## Minimap marker colours, by MapState marker kind.
-const MARKER_NAMES: Array[StringName] = [&"boss", &"miniboss", &"fountain", &"sign", &"npc"]
+const MARKER_NAMES: Array[StringName] = [&"boss", &"miniboss", &"fountain", &"sign", &"npc", &"biome"]
 const MARKER_COLORS: Array[Color] = [Palette.YELLOW, Palette.YELLOW, Palette.PINK, Palette.GREEN,
-		Palette.PURPLE]
+		Palette.PURPLE, Palette.SKY]
 ## A marker's side and an enemy dot's radius in tiles, kept between these many map pixels.
 const MARKER_TILES := 3.0
 const MARKER_MIN := 2.0

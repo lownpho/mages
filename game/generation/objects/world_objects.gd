@@ -6,7 +6,7 @@ extends RefCounted
 ## nothing.
 ##
 ## Setup data always holds the Object's "key" (its site key, derived from its place), "kind" and
-## "room_key". A Sign adds "text" and "reveal_key". A Professor adds "biome" and "page" (the enemy
+## "room_key". A Sign adds "text", "reveal_key" and "reveal_biome_key". A Professor adds "biome" and "page" (the enemy
 ## ids on the Bestiary page it reads), "next_biome" (&"" when nothing lies onward), "opens_portal"
 ## and, by that kind, either "reward_item" or a portal's "destination_room", "landing" (a tile) and
 ## "art" (a Door.Style). ObjectSpawner adds the Object's own "state".
@@ -59,6 +59,7 @@ func setup_data(site: ObjectSite) -> Dictionary:
 		ObjectSite.Kind.SIGN:
 			data.text = site.sign_resource.text
 			data.reveal_key = site.reveal_key
+			data.reveal_biome_key = site.reveal_biome_key
 		ObjectSite.Kind.PROFESSOR:
 			var biome_id: StringName = graph.rooms[site.room_key].plan.biome
 			data.biome = biome_id

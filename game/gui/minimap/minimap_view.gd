@@ -18,6 +18,7 @@ const COLOR_BOSS := Palette.YELLOW
 const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
 const COLOR_SIGN := Palette.GREEN
+const COLOR_BIOME := Palette.SKY
 const COLOR_NPC := Palette.PURPLE
 
 var _state: MapState = null
@@ -132,6 +133,7 @@ func _draw() -> void:
 			MapState.MARKER_FOUNTAIN: color = COLOR_FOUNTAIN
 			MapState.MARKER_SIGN: color = COLOR_SIGN
 			MapState.MARKER_NPC: color = COLOR_NPC
+			MapState.MARKER_BIOME: color = COLOR_BIOME
 		_draw_marker(Vector2(m["tile"]) + Vector2(0.5, 0.5), region, tpp, color,
 				2 if m["kind"] == MapState.MARKER_BOSS else 1, m.get("project", false))
 	if tpp <= ENEMIES_MAX_TPP:

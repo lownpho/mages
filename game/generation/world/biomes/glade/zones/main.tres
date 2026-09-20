@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ZoneResource" format=3 uid="uid://gv255uiq7a4g"]
 
 [ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="creature"]
+[ext_resource type="Resource" uid="uid://bwk6lekk3h5ip" path="res://generation/world/biomes/deepwood/biome.tres" id="deepwood"]
 [ext_resource type="Script" uid="uid://dif17xbtr55od" path="res://generation/content/fixed_encounter_resource.gd" id="fixed_encounter"]
 [ext_resource type="Resource" uid="uid://mdrkrdata001" path="res://characters/enemies/mandraker/mandraker_data.tres" id="mandraker"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
@@ -15,8 +16,19 @@ leader = ExtResource("mandraker")
 script = ExtResource("fixed_encounter")
 leader = ExtResource("viper")
 
+[sub_resource type="Resource" id="sign_lost_something"]
+script = ExtResource("sign")
+text = "I lost something but I have no clue what it is.
+Let's search for it."
+
+[sub_resource type="Resource" id="sign_deeper"]
+script = ExtResource("sign")
+text = "If I remember correctly the woods get deeper later."
+reveals_biome = ExtResource("deepwood")
+
 [resource]
 script = ExtResource("zone")
 route_rooms = 10
 room_count = 30
 rares = Array[ExtResource("fixed_encounter")]([SubResource("rare_mandraker"), SubResource("rare_viper")])
+signs = Array[ExtResource("sign")]([SubResource("sign_lost_something"), SubResource("sign_deeper")])

@@ -15,6 +15,8 @@ extends Area2D
 
 ## The Boss or Miniboss Room key reading this Sign reveals on the Map. "" = it marks nothing.
 var reveal_key := ""
+## The first Room of a Biome this Sign points at, marked on the Map in another colour. "" = none.
+var reveal_biome_key := ""
 
 @onready var _label: Label = $Label
 
@@ -33,12 +35,15 @@ func _ready() -> void:
 func setup(data: Dictionary) -> void:
 	message = data.text
 	reveal_key = data.reveal_key
+	reveal_biome_key = data.reveal_biome_key
 
 
 func _on_body_entered(_body: Node2D) -> void:
 	_label.visible = true
 	if reveal_key != "":
 		GlobalMap.reveal_room(reveal_key)
+	if reveal_biome_key != "":
+		GlobalMap.reveal_room(reveal_biome_key)
 
 
 func _on_body_exited(_body: Node2D) -> void:

@@ -15,6 +15,7 @@ const COLOR_FEATURE := Palette.CYAN
 const COLOR_FOUNTAIN := Palette.PINK
 const COLOR_SIGN := Palette.GREEN
 const COLOR_NPC := Palette.PURPLE
+const COLOR_BIOME := Palette.SKY
 const COLOR_RETICLE := Palette.ORANGE
 
 const MARKER_PX := 2
@@ -254,6 +255,7 @@ func _draw() -> void:
 			MapState.MARKER_FOUNTAIN: c = COLOR_FOUNTAIN
 			MapState.MARKER_SIGN: c = COLOR_SIGN
 			MapState.MARKER_NPC: c = COLOR_NPC
+			MapState.MARKER_BIOME: c = COLOR_BIOME
 		# A Miniboss wears the Boss colour a pixel smaller, so the two read apart at a glance.
 		_dot(Vector2(m["tile"]) + Vector2(0.5, 0.5),
 				MARKER_PX - 1 if m["kind"] == MapState.MARKER_MINIBOSS else MARKER_PX, c,
