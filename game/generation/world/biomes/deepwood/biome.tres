@@ -46,10 +46,12 @@ reveals_biome = ExtResource("mycelium")
 [sub_resource type="Resource" id="sign_mushroom_kingdom"]
 script = ExtResource("sign")
 text = "Mushroom Kingdom? Mycelium?"
+reveals_biome = ExtResource("mycelium")
 
 [sub_resource type="Resource" id="sign_swarms"]
 script = ExtResource("sign")
 text = "I've heard of terrible swarms living beneath these woods."
+reveals_biome = ExtResource("hive")
 
 [sub_resource type="Resource" id="sign_hive"]
 script = ExtResource("sign")

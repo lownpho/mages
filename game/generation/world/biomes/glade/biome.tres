@@ -45,6 +45,11 @@ script = ExtResource("sign")
 text = "Friendly researches are apparently all over the place,
 what are they looking for?"
 
+[sub_resource type="Resource" id="Resource_1ajny"]
+script = ExtResource("sign")
+text = "Fountains hold some kind of spatial magic. If I click on them from the map I'll return to them."
+metadata/_custom_type_script = "uid://clnrrbvcsksbf"
+
 [resource]
 script = ExtResource("biome")
 exit_challenge = 4
@@ -68,7 +73,7 @@ presentation = ExtResource("presentation")
 decoration_density = 0.05
 breather_chance = 0.3
 professors = 6
-signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_fountains"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_researchers")])
+signs = Array[ExtResource("sign")]([SubResource("sign_memory"), SubResource("sign_fountains"), SubResource("sign_throw_away"), SubResource("sign_rare_creatures"), SubResource("sign_researchers"), SubResource("Resource_1ajny")])
 breather_objects = Dictionary[PackedScene, int]({
 ExtResource("fountain"): 1
 })
