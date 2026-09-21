@@ -28,7 +28,7 @@ behaviours = Array[ExtResource("1_1ajny")]([SubResource("Resource_kxhox")])
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]
 script = ExtResource("bh_scaling")
-base_damage = 3.0
+base_damage = 2.0
 skill_scaling = 0.2
 
 [sub_resource type="Resource" id="SinglePattern_1"]
