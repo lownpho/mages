@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Texture2D" path="res://characters/enemies/gapcap/gapcap_fed.png" id="fed_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gapcap"]
 radius = 3.0
@@ -63,6 +64,66 @@ region = Rect2(16, 8, 8, 8)
 [sub_resource type="AtlasTexture" id="AT_run3"]
 atlas = ExtResource("3_tex")
 region = Rect2(24, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="F_AT_atk1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 24, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_atk2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 24, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_atk3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 24, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_atk0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 24, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_run0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_run1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_run2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_run3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gapcap"]
 animations = [{
@@ -128,6 +189,70 @@ animations = [{
 }],
 "loop": 1,
 "name": &"run",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_atk1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_atk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_atk3")
+}],
+"loop": 0,
+"name": &"fed_attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_atk0")
+}],
+"loop": 1,
+"name": &"fed_crouch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle3")
+}],
+"loop": 1,
+"name": &"fed_idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_atk1")
+}],
+"loop": 1,
+"name": &"fed_root",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_run0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_run1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_run2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_run3")
+}],
+"loop": 1,
+"name": &"fed_run",
 "speed": 12.0
 }]
 

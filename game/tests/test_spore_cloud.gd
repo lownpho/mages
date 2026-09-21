@@ -10,6 +10,7 @@ const WHUMF_DIR := "res://characters/player/spells/whumf/"
 const CLOUD := preload("res://characters/player/spells/whumf/spore_cloud.tscn")
 const VICTIM := preload("res://tests/support/thwomp_victim.gd")
 const PUFFCAP := preload("res://characters/enemies/puffcap/puffcap.tscn")
+const NORMIECAP := preload("res://characters/enemies/normiecap/normiecap.tscn")
 const SPITTER := preload("res://characters/enemies/sporespitter/sporespitter.tscn")
 
 const SKILL := 7
@@ -28,6 +29,7 @@ func _ready() -> void:
 	await _check_a_blink_lights_it()
 	await _check_a_puffcap_is_its_own_payload()
 	await _check_a_lob_plants_where_it_lands()
+	await _check_fed_look_swaps()
 
 	if _fails.is_empty():
 		print("ALL PASS")
@@ -329,3 +331,31 @@ func _clouds() -> Array:
 func _clear() -> void:
 	for cloud in _clouds():
 		cloud.free()
+
+# The fed look is presentation only, so its one claim is the boundary: stepping into its own
+# field swaps a walking normiecap to its fed_ art mid-cycle, and stepping out swaps it back.
+# The player's field must not do it — that's the same side rule feeds() owns.
+func _check_fed_look_swaps() -> void:
+	var cap: Creature = NORMIECAP.instantiate()
+	cap.position = Vector2(500, 500)
+	add_child(cap)
+	await get_tree().process_frame
+	cap.play("run")
+	var theirs := _cloud(Vector2(500, 500), false, ["enemies"])
+	cap._tick_fed_look()
+	if cap.sprite.animation != &"run":
+		_fails.append("the player's field fed a normiecap's look")
+	theirs.free()
+	var own := _cloud(Vector2(500, 500), true, ["player"])
+	cap._tick_fed_look()
+	if cap.sprite.animation != &"fed_run":
+		_fails.append("normiecap in its own spores shows %s, not fed_run" % cap.sprite.animation)
+	cap.play("idle")
+	if cap.sprite.animation != &"fed_idle":
+		_fails.append("a new beat in spores played %s, not fed_idle" % cap.sprite.animation)
+	own.free()
+	cap._tick_fed_look()
+	if cap.sprite.animation != &"idle":
+		_fails.append("normiecap out of spores still shows %s" % cap.sprite.animation)
+	cap.free()
+	_clear()

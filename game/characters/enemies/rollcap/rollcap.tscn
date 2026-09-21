@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="6_caster"]
 [ext_resource type="Resource" uid="uid://4imtq0omsd67" path="res://characters/enemies/rollcap/rollcap_pew.tres" id="7_pew"]
 [ext_resource type="Script" uid="uid://0q1bgeashmik" path="res://characters/enemies/rollcap/roll.gd" id="b_roll"]
+[ext_resource type="Texture2D" path="res://characters/enemies/rollcap/rollcap_fed.png" id="fed_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rollcap"]
 radius = 3.0
@@ -45,6 +46,38 @@ region = Rect2(16, 0, 8, 8)
 atlas = ExtResource("3_tex")
 region = Rect2(24, 0, 8, 8)
 
+[sub_resource type="AtlasTexture" id="F_AT_bounce0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_bounce1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_bounce2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_bounce3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_roll0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_roll1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_roll2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="F_AT_roll3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 0, 12, 12)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_rollcap"]
 animations = [{
 "frames": [{
@@ -79,6 +112,40 @@ animations = [{
 }],
 "loop": 1,
 "name": &"roll",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_bounce0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_bounce1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_bounce2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_bounce3")
+}],
+"loop": 0,
+"name": &"fed_bounce",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_roll0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_roll1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_roll2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_roll3")
+}],
+"loop": 1,
+"name": &"fed_roll",
 "speed": 6.0
 }]
 

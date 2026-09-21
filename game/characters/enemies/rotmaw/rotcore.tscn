@@ -16,6 +16,7 @@
 [ext_resource type="Resource" uid="uid://b0x3edfork6" path="res://characters/enemies/rotmaw/rotcore_sweep_fed.tres" id="rotcore_sweep_fed"]
 [ext_resource type="Resource" uid="uid://bxf7sgb5260" path="res://characters/enemies/rotmaw/rotcore_gorge.tres" id="rotcore_gorge"]
 [ext_resource type="Resource" uid="uid://bxvrr71tvbt" path="res://characters/enemies/rotmaw/rotcore_gorge_fed.tres" id="rotcore_gorge_fed"]
+[ext_resource type="Texture2D" path="res://characters/enemies/rotmaw/rotcore_fed.png" id="fed_tex"]
 
 [sub_resource type="CircleShape2D" id="Shape"]
 radius = 5.0
@@ -68,6 +69,66 @@ region = Rect2(24, 24, 12, 12)
 atlas = ExtResource("rotcore_png")
 region = Rect2(36, 24, 12, 12)
 
+[sub_resource type="AtlasTexture" id="F_AT_idle0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 0, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(18, 0, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 0, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(54, 0, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_carpet0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 18, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_carpet1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(18, 18, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_carpet2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 18, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_carpet3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(54, 18, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_gorge0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 36, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_gorge1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(18, 36, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_gorge2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 36, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
+[sub_resource type="AtlasTexture" id="F_AT_gorge3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(54, 36, 18, 18)
+margin = Rect2(0, 0, 0, 6)
+
 [sub_resource type="SpriteFrames" id="Frames"]
 animations = [{
 "frames": [{
@@ -119,6 +180,57 @@ animations = [{
 }],
 "loop": 0,
 "name": &"gorge",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle3")
+}],
+"loop": 1,
+"name": &"fed_idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_carpet0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_carpet1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_carpet2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_carpet3")
+}],
+"loop": 0,
+"name": &"fed_carpet",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_gorge0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_gorge1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_gorge2")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_gorge3")
+}],
+"loop": 0,
+"name": &"fed_gorge",
 "speed": 6.0
 }]
 

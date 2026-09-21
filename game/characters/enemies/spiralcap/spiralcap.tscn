@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
 [ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Texture2D" uid="uid://0iji8la1b8km" path="res://characters/enemies/spiralcap/spiralcap_fed.png" id="fed_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_spiralcap"]
 radius = 3.0
@@ -47,6 +48,46 @@ region = Rect2(16, 0, 8, 8)
 atlas = ExtResource("3_tex")
 region = Rect2(24, 0, 8, 8)
 
+[sub_resource type="AtlasTexture" id="AT_fi0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fi1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fi2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fi3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fa0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fa1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fa2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="AT_fa3"]
+atlas = ExtResource("fed_tex")
+region = Rect2(36, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_spiralcap"]
 animations = [{
 "frames": [{
@@ -81,6 +122,40 @@ animations = [{
 }],
 "loop": 1,
 "name": &"idle",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fa0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fa1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fa2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fa3")
+}],
+"loop": 1,
+"name": &"fed_attack",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fi0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fi1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fi2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fi3")
+}],
+"loop": 1,
+"name": &"fed_idle",
 "speed": 2.0
 }]
 

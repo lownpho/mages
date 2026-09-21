@@ -110,6 +110,10 @@ const TELEGRAPH_FLASH := 0.12
 const _FLATTEN := preload("res://gui/flatten.gdshader")
 var _telegraph_tween: Tween
 
+var _has_fed_look := false
+var _fed := false
+var _requested_anim := ""
+
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var hurtbox = $Hurtbox
 @onready var fsm: FSM = $FSM
@@ -120,6 +124,10 @@ func _ready() -> void:
 		drops = data.drops
 	health = max_health
 	_home_position = global_position
+	# Only creatures with fed_ art pay for the per-frame spore query.
+	if sprite.sprite_frames:
+		_has_fed_look = Array(sprite.sprite_frames.get_animation_names()).any(
+				func(n: StringName) -> bool: return n.begins_with("fed_"))
 	hurtbox.hurt.connect(_on_hurt)
 	# Sleep while off-screen: disable the whole creature (AI, physics, timers, hurtbox)
 	# when it leaves the screen and wake it when it returns, so a large world only ticks
@@ -165,6 +173,8 @@ func is_dying() -> bool:
 
 func _physics_process(delta: float) -> void:
 	_tick_combat_reset()
+	if _has_fed_look:
+		_tick_fed_look()
 	if _dash_until_ms > 0:
 		_drive_dash()
 	if _knockback == Vector2.ZERO:
@@ -313,12 +323,43 @@ func telegraph_off() -> void:
 	sprite.material = null
 
 func play(anim: String, speed_scale: float = 1.0) -> void:
+	_requested_anim = anim
 	# A summon may lack an animation a behaviour asks for (e.g. a static turret with no
 	# idle tag). Rather than error on the missing anim, lock in place on the current frame.
 	sprite.speed_scale = speed_scale
-	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim):
-		sprite.play(anim)
+	var shown := _fed_variant(anim)
+	if sprite.sprite_frames and sprite.sprite_frames.has_animation(shown):
+		sprite.play(shown)
 	else:
+		sprite.pause()
+
+## The Mycelium's fed look: while standing in its own spores a creature plays `fed_<anim>`
+## wherever its SpriteFrames has one, and its plain `<anim>` otherwise — so an enemy opts in
+## by authoring fed_ tags, and no behaviour has to know. Same naming the summons' fed beats
+## already use, which is why asking for "fed_idle" outright still resolves to itself.
+func _fed_variant(anim: String) -> String:
+	var fed := "fed_" + anim
+	if _fed and sprite.sprite_frames and sprite.sprite_frames.has_animation(fed):
+		return fed
+	return anim
+
+# Swap the look the moment the creature steps in or out, mid-animation: same frame, same
+# progress, still paused if it was, so a walk cycle doesn't restart on the boundary.
+func _tick_fed_look() -> void:
+	var fed := SporeCloud.feeds(self)
+	if fed == _fed:
+		return
+	_fed = fed
+	var shown := _fed_variant(_requested_anim)
+	if shown == sprite.animation or not sprite.sprite_frames.has_animation(shown):
+		return
+	var frame := sprite.frame
+	var progress := sprite.frame_progress
+	var playing := sprite.is_playing()
+	sprite.play(shown)
+	sprite.set_frame_and_progress(mini(frame, sprite.sprite_frames.get_frame_count(shown) - 1),
+			progress)
+	if not playing:
 		sprite.pause()
 
 ## Play `anim` so its strike (final) frame lands exactly `duration` seconds in. A wind-up

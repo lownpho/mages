@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://2n6lu5mgcdm5" path="res://characters/creature/behaviours/gate.gd" id="b_gate"]
 [ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
 [ext_resource type="Script" uid="uid://dw4nder8h4v10" path="res://characters/creature/behaviours/wander.gd" id="b_wander"]
+[ext_resource type="Texture2D" path="res://characters/enemies/burrower/burrower_fed.png" id="fed_tex"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_burrower"]
 radius = 3.5
@@ -52,6 +53,51 @@ region = Rect2(8, 0, 8, 8)
 [sub_resource type="AtlasTexture" id="AT_mound0"]
 atlas = ExtResource("3_tex")
 region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="F_AT_burrow0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_burrow1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_burrow2"]
+atlas = ExtResource("fed_tex")
+region = Rect2(24, 12, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_dive0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 36, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_dive1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 36, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 24, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_idle1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 24, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_mound1"]
+atlas = ExtResource("fed_tex")
+region = Rect2(12, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
+
+[sub_resource type="AtlasTexture" id="F_AT_mound0"]
+atlas = ExtResource("fed_tex")
+region = Rect2(0, 0, 12, 12)
+margin = Rect2(0, 0, 0, 4)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_burrower"]
 animations = [{
@@ -100,6 +146,53 @@ animations = [{
 }],
 "loop": 0,
 "name": &"surface",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_burrow0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_burrow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_burrow2")
+}],
+"loop": 1,
+"name": &"fed_burrow",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_dive0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_dive1")
+}],
+"loop": 0,
+"name": &"fed_dive",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_idle1")
+}],
+"loop": 1,
+"name": &"fed_idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("F_AT_mound1")
+}, {
+"duration": 1.0,
+"texture": SubResource("F_AT_mound0")
+}],
+"loop": 0,
+"name": &"fed_surface",
 "speed": 6.0
 }]
 
