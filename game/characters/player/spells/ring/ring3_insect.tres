@@ -44,5 +44,5 @@ cooldown = 2.0
 weakness = 4
 blurb = "Channels the strenght of my body into energy. This one has insect killing spores in it."
 icon = SubResource("AtlasTexture_icon")
-skill_modifier = 10
+speed_modifier = 8
 max_health_modifier = 40

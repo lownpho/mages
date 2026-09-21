@@ -226,10 +226,10 @@ One burst of single bullets at the cursor, then cooldown, rather than a sustaine
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 1s | instant | Single, 6 @ 0.25s | 3 + 0.5×speed = **43** | 8 | speed +5 |
-| T2 | 1s | instant | Single, 8 @ 0.2s | 5 + 0.6×speed = **53** | 8 | speed +8 |
-| T3 | 1s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
-| T3 *(insect)* | 1s | instant | Single, 10 @ 0.18s | 7 + 0.75×speed = **67** | 9 | speed +10 |
+| T1 | 0.5s | instant | Single, 6 @ 0.25s | 2 + 0.4×speed = **34** | 8 | speed +5 |
+| T2 | 0.5s | instant | Single, 8 @ 0.2s | 4 + 0.45×speed = **40** | 8 | speed +8 |
+| T3 | 0.5s | instant | Single, 9 @ 0.18s | 5 + 0.5×speed = **45** | 9 | speed +10 |
+| T3 *(insect)* | 0.5s | instant | Single, 9 @ 0.18s | 5 + 0.5×speed = **45** | 9 | speed +10 |
 
 ### Snipe
 
@@ -239,10 +239,10 @@ A few homing bullets toward the first enemy in the cursor direction. They all la
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | instant | Single, 3 @ 0.1s | 4 + 0.2×skill = **9** | 18 | skill +5 |
-| T2 | 4s | instant | Single, 5 @ 0.1s | 5 + 0.25×skill = **11** | 18 | skill +8 |
-| T3 | 4s | instant | Single, 7 @ 0.1s | 6 + 0.3×skill = **14** | 18 | skill +8 |
-| T3 *(insect)* | 4s | instant | Single, 7 @ 0.1s | 6 + 0.3×skill = **14** | 18 | skill +8 |
+| T1 | 2s | instant | Single, 3 @ 0.1s | 3 + 0.2×skill = **8** | 18 | skill +5 |
+| T2 | 2s | instant | Single, 5 @ 0.1s | 2 + 0.2×skill = **7** | 18 | skill +8 |
+| T3 | 2s | instant | Single, 6 @ 0.1s | 2 + 0.25×skill = **8** | 18 | skill +8 |
+| T3 *(insect)* | 2s | instant | Single, 6 @ 0.1s | 2 + 0.25×skill = **8** | 18 | skill +8 |
 
 **Also:** homing 90° cone.
 
@@ -254,23 +254,23 @@ Two shotgun blasts back-to-back at the cursor, then cooldown: a double barrel, c
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | instant | Shotgun x3, 2 @ 0.2s | 4 + 0.2×skill = **9** | 4 | skill +5, defence +4 |
-| T2 | 2s | instant | Shotgun x3, 2 @ 0.2s | 6 + 0.25×skill = **12** | 4 | skill +9, defence +6 |
-| T3 | 2s | instant | Shotgun x5, 3 @ 0.15s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
-| T3 *(insect)* | 2s | instant | Shotgun x5, 3 @ 0.15s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
+| T1 | 1s | instant | Shotgun x3, 2 @ 0.2s | 4 + 0.2×skill = **9** | 4 | skill +5, defence +4 |
+| T2 | 1s | instant | Shotgun x3, 2 @ 0.2s | 5 + 0.25×skill = **11** | 4 | skill +9, defence +6 |
+| T3 | 1s | instant | Shotgun x5, 2 @ 0.15s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
+| T3 *(insect)* | 1s | instant | Shotgun x5, 2 @ 0.15s | 8 + 0.3×skill = **16** | 4 | skill +13, defence +9 |
 
 ### Ring
 
 A few fast rings of bullets pulsed out of the caster. Every pulse spawns at the caster's exact centre and expands outward, and each one is rotated off the last, so the gaps between bullets in one ring are covered by the next. There is no aim: the spell is pure area denial around your own body. Walk into a crowd and let the pulses do the sorting.
 
-**Scaling:** skill · **Per tier:** damage, bullet count, pulses
+**Scaling:** defence · **Per tier:** damage, bullet count, pulses
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 3s | instant | Ring x8, 3 @ 0.6s | 5 + 0.2×skill = **10** | 6 | skill +4, max_health +20 |
-| T2 | 3s | instant | Ring x10, 4 @ 0.6s | 5 + 0.25×skill = **11** | 6 | skill +6, max_health +30 |
-| T3 | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 7 | skill +10, max_health +40 |
-| T3 *(insect)* | 3s | instant | Ring x12, 5 @ 0.6s | 8 + 0.3×skill = **16** | 7 | skill +10, max_health +40 |
+| T1 | 2s | instant | Ring x8, 3 @ 0.6s | 4 + 0.4×defence = **4** | 6 | speed +2, max_health +20 |
+| T2 | 2s | instant | Ring x10, 4 @ 0.6s | 8 + 0.45×defence = **8** | 6 | speed +5, max_health +30 |
+| T3 | 2s | instant | Ring x12, 5 @ 0.6s | 7 + 0.45×defence = **7** | 7 | speed +8, max_health +40 |
+| T3 *(insect)* | 2s | instant | Ring x12, 5 @ 0.6s | 7 + 0.45×defence = **7** | 7 | speed +8, max_health +40 |
 
 ## Nukes
 
@@ -284,7 +284,7 @@ One of the openers, and the baseline every other nuke is read against — a fres
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 4s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +15 |
+| T1 | 2s | 0.5s | Single | 15 + 2×skill = **65** | 12 | skill +15 |
 
 **Also:** blast 5 tiles (splash only).
 
@@ -296,8 +296,8 @@ An instant chain-lightning bolt that leaps between packed enemies; one lone targ
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T1 | 2s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +8 |
-| T2 | 2s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +12 |
+| T1 | 1.5s | instant | Single | 5 + 0.8×speed = **69** | 12 | speed +8 |
+| T2 | 1.5s | instant | Single | 8 + 1.1×speed = **96** | 12 | speed +12 |
 
 **Also:** SporeDetonator, chains 16x, chains 8x.
 
@@ -309,7 +309,7 @@ A fast piercing bullet that ricochets off walls; each bounce is a fresh leg of t
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 4s | instant | Single, 5 @ 0.2s | 5 + 0.25×skill = **11** | 30 | skill +8, speed +3 |
+| T2 | 2s | instant | Single, 5 @ 0.2s | 3 + 0.15×skill = **7** | 30 | skill +8, speed +3 |
 
 **Also:** BounceBehaviour, pierces.
 
@@ -321,7 +321,7 @@ Charges in front of the caster while held, growing per tick; on release it fires
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 3s | 1s | — | 6 + 0.5×defence = **6** | — | defence +8 |
+| T2 | 1s | 1s | — | 6 + 0.5×defence = **6** | — | defence +8 |
 
 ## Summon
 
@@ -399,7 +399,7 @@ Charges in a direction for a short duration at high speed. Sends bullets at 90 d
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T2 | 6s | 0.3s | Flank x2, 9 @ 0.1s | 10 + 0.6×skill + 1.2×speed = **121** | 8 | skill +8, speed +3 |
+| T2 | 4s | 0.3s | Flank x2, 9 @ 0.1s | 7 + 0.45×skill + 0.85×speed = **86** | 8 | skill +8, speed +3 |
 
 **Also:** dash 80 px/s for 1s.
 
@@ -411,7 +411,7 @@ An instant radial knockback pulse; more damage the closer the enemy, chip at the
 
 | Tier | Cooldown | Cast | Burst | Amount | Range | Grants |
 |---|---|---|---|---|---|---|
-| T3 | 4s | 0.2s | — | 15 + 1.5×defence = **15** | — | max_health +30, defence +9 |
+| T3 | 3s | 0.2s | — | 12 + 1.1×defence = **12** | — | max_health +30, defence +9 |
 
 ### Blink
 

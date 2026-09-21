@@ -1376,7 +1376,7 @@ them off from range and keep the floor, because shooting one dead never sets it 
 you carry cleans the floor afterwards either — the Mycelium's spores are inert terrain, and
 only your own answer to light.
 
-**Art:** a squat round puffball, pale bone with rot specks and no eyes at all — the same cap the fungal decor scatters, so it reads as scenery until it draws breath; a deep inhale frame swells it past its own width before the pop.
+**Art:** a small teardrop puffball (5×5 in its 8×8 frame) with a pointed tip, dull ash-grey with one bone highlight, a rot speck and no eyes at all — kept small and muted so a field of them reads as floor clutter, not a threat, until one draws breath; the inhale swells it to fill the frame before the pop.
 
 | Stat |  |
 |---|---|
