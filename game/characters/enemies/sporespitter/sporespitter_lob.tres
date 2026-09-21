@@ -19,7 +19,7 @@ region = Rect2(24, 48, 8, 8)
 [sub_resource type="Resource" id="Bullet_blob"]
 script = ExtResource("4_bullet")
 icon = SubResource("AtlasTexture_blob")
-range_tiles = 9
+range_tiles = 13
 speed_tiles = 11
 behaviours = Array[ExtResource("1_bh_base")]([SubResource("SporePayload_lob")])
 

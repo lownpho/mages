@@ -52,6 +52,13 @@ signal countered(kind: Counter)
 ## away must not pin the fight.
 @export var clear_group: StringName = &""
 @export var clear_radius_tiles: float = 14.0
+## Whether the escort is this beat's CUE or merely its ARMOUR. A boss that summons its own
+## adds must not call a second brood while the first stands, so waiting is the default. A boss
+## that stands behind an escort it never summoned is the other case — rotmaw's core is ringed
+## by wardens two corpses left, and gating on them it would never act at all: the curtains it
+## throws WHILE they stand are the whole finale. Cleared of the gate, the group still answers
+## for the ADDS Counter and the escort armour, which read `group_clear()` directly.
+@export var waits_for_escort: bool = true
 
 @export_group("Range")
 ## Probe the target must be inside for this beat to be eligible. Range is a question the
@@ -109,11 +116,17 @@ func physics_update(_delta: float) -> void: pass
 ## drops the beat from a boss's roll through the same seam. Subclasses add their own clause
 ## in `_ready_to_run` rather than overriding this.
 func can_run() -> bool:
+	return _in_range() and runnable_but_for_range()
+
+## Every gate except RANGE. Split out because a dispatcher answers the two differently: a beat
+## shut only by distance is answered by going and getting the player, and one shut by anything
+## else is answered by waiting or by moving on. Asking `can_run()` alone cannot tell them
+## apart, which is how an authored Rotation silently drops its close-quarters Phase against a
+## player who simply keeps their distance.
+func runnable_but_for_range() -> bool:
 	if not window_open():
 		return false
-	if not group_clear():
-		return false
-	if not _in_range():
+	if waits_for_escort and not group_clear():
 		return false
 	if needs_cloud and not SporeCloud.feeds(creature):
 		return false

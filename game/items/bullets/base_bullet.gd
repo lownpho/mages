@@ -68,17 +68,17 @@ func _ready() -> void:
 	if collision_layer & GameConstants.LAYER_ENEMY_BULLETS:
 		collision_mask |= GameConstants.LAYER_SPELL_BARRIER
 
-	for b in data.behaviours:
-		if b.suppresses_contact():
-			_deals_contact_damage = false
-		b.on_ready(self)
-
 	lifetime_timer = Timer.new()
 	lifetime_timer.one_shot = true
 	lifetime_timer.wait_time = lifetime
 	lifetime_timer.autostart = true
 	lifetime_timer.timeout.connect(expire)
 	add_child(lifetime_timer)
+
+	for b in data.behaviours:
+		if b.suppresses_contact():
+			_deals_contact_damage = false
+		b.on_ready(self)
 
 	velocity = base_direction * speed_px()
 	face_velocity()

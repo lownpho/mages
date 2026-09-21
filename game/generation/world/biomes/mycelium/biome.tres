@@ -8,16 +8,14 @@
 [ext_resource type="Resource" uid="uid://dsx2ux7qbbmkd" path="res://characters/enemies/normiecap/normiecap_data.tres" id="normiecap"]
 [ext_resource type="Resource" uid="uid://fmyqtx4r3dtg" path="res://generation/world/biomes/mycelium/art/mycelium_presentation.tres" id="presentation"]
 [ext_resource type="Resource" uid="uid://lobqchh5qgn7" path="res://characters/enemies/puffcap/puffcap_data.tres" id="puffcap"]
+[ext_resource type="Resource" uid="uid://bie4fo0yw5i" path="res://characters/enemies/rotmaw/rotmaw_data.tres" id="rotmaw"]
 [ext_resource type="Resource" uid="uid://coi0mv4wf5ml5" path="res://characters/enemies/rollcap/rollcap_data.tres" id="rollcap"]
 [ext_resource type="Script" uid="uid://clnrrbvcsksbf" path="res://generation/content/sign_resource.gd" id="sign"]
 [ext_resource type="Resource" uid="uid://ld82nqsdoslj" path="res://characters/enemies/sporefly/sporefly_data.tres" id="sporefly"]
 
 [sub_resource type="Resource" id="boss"]
 script = ExtResource("fixed_encounter")
-leader = ExtResource("puffcap")
-escorts = Dictionary[ExtResource("creature"), int]({
-ExtResource("puffcap"): 4
-})
+leader = ExtResource("rotmaw")
 centred = true
 
 [sub_resource type="Resource" id="sign_lonfo"]

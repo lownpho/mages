@@ -41,7 +41,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/pew/pew1.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 0.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -54,9 +54,9 @@
       "interval": 0.25
      },
      "amount": {
-      "base": 3,
+      "base": 2,
       "skill": 0,
-      "speed": 0.5,
+      "speed": 0.4,
       "defence": 0
      },
      "projectile": {
@@ -69,7 +69,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/pew/pew2.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 0.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -82,9 +82,9 @@
       "interval": 0.2
      },
      "amount": {
-      "base": 5,
+      "base": 4,
       "skill": 0,
-      "speed": 0.6,
+      "speed": 0.45,
       "defence": 0
      },
      "projectile": {
@@ -97,7 +97,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/pew/pew3.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 0.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -106,13 +106,13 @@
      "shots": {
       "pattern": "SinglePattern",
       "per_shot": 1,
-      "count": 10,
+      "count": 9,
       "interval": 0.18
      },
      "amount": {
-      "base": 7,
+      "base": 5,
       "skill": 0,
-      "speed": 0.75,
+      "speed": 0.5,
       "defence": 0
      },
      "projectile": {
@@ -125,7 +125,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/pew/pew3_insect.tres",
      "kind": "bullet",
-     "cooldown": 1,
+     "cooldown": 0.5,
      "cast_time": 0,
      "channeled": false,
      "weakness": [
@@ -137,13 +137,13 @@
      "shots": {
       "pattern": "SinglePattern",
       "per_shot": 1,
-      "count": 10,
+      "count": 9,
       "interval": 0.18
      },
      "amount": {
-      "base": 7,
+      "base": 5,
       "skill": 0,
-      "speed": 0.75,
+      "speed": 0.5,
       "defence": 0
      },
      "projectile": {
@@ -173,7 +173,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/snipe/snipe1.tres",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -186,7 +186,7 @@
       "interval": 0.1
      },
      "amount": {
-      "base": 4,
+      "base": 3,
       "skill": 0.2,
       "speed": 0,
       "defence": 0
@@ -209,7 +209,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/snipe/snipe2.tres",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -222,8 +222,8 @@
       "interval": 0.1
      },
      "amount": {
-      "base": 5,
-      "skill": 0.25,
+      "base": 2,
+      "skill": 0.2,
       "speed": 0,
       "defence": 0
      },
@@ -245,7 +245,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/snipe/snipe3.tres",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -254,12 +254,12 @@
      "shots": {
       "pattern": "SinglePattern",
       "per_shot": 1,
-      "count": 7,
+      "count": 6,
       "interval": 0.1
      },
      "amount": {
-      "base": 6,
-      "skill": 0.3,
+      "base": 2,
+      "skill": 0.25,
       "speed": 0,
       "defence": 0
      },
@@ -281,7 +281,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/snipe/snipe3_insect.tres",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "weakness": [
@@ -293,12 +293,12 @@
      "shots": {
       "pattern": "SinglePattern",
       "per_shot": 1,
-      "count": 7,
+      "count": 6,
       "interval": 0.1
      },
      "amount": {
-      "base": 6,
-      "skill": 0.3,
+      "base": 2,
+      "skill": 0.25,
       "speed": 0,
       "defence": 0
      },
@@ -338,7 +338,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/blam/blam1.tres",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -368,7 +368,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/blam/blam2.tres",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -383,7 +383,7 @@
       "interval": 0.2
      },
      "amount": {
-      "base": 6,
+      "base": 5,
       "skill": 0.25,
       "speed": 0,
       "defence": 0
@@ -398,7 +398,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/blam/blam3.tres",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -409,7 +409,7 @@
       "pattern": "ShotgunPattern",
       "per_shot": 5,
       "spread_deg": 26,
-      "count": 3,
+      "count": 2,
       "interval": 0.15
      },
      "amount": {
@@ -428,7 +428,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/blam/blam3_insect.tres",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 1,
      "cast_time": 0,
      "channeled": false,
      "weakness": [
@@ -442,7 +442,7 @@
       "pattern": "ShotgunPattern",
       "per_shot": 5,
       "spread_deg": 26,
-      "count": 3,
+      "count": 2,
       "interval": 0.15
      },
      "amount": {
@@ -468,22 +468,22 @@
    "kind": "bullet",
    "hold": "no",
    "scaling": [
-    "skill"
+    "defence"
    ],
    "grants": [
     "max_health",
-    "skill"
+    "speed"
    ],
    "tiers": [
     {
      "tier": 1,
      "source": "game/characters/player/spells/ring/ring1.tres",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 4,
+      "speed": 2,
       "max_health": 20
      },
      "shots": {
@@ -493,10 +493,10 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 5,
-      "skill": 0.2,
+      "base": 4,
+      "skill": 0,
       "speed": 0,
-      "defence": 0
+      "defence": 0.4
      },
      "projectile": {
       "range_tiles": 6,
@@ -508,11 +508,11 @@
      "tier": 2,
      "source": "game/characters/player/spells/ring/ring2.tres",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 6,
+      "speed": 5,
       "max_health": 30
      },
      "shots": {
@@ -522,10 +522,10 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 5,
-      "skill": 0.25,
+      "base": 8,
+      "skill": 0,
       "speed": 0,
-      "defence": 0
+      "defence": 0.45
      },
      "projectile": {
       "range_tiles": 6,
@@ -537,11 +537,11 @@
      "tier": 3,
      "source": "game/characters/player/spells/ring/ring3.tres",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
-      "skill": 10,
+      "speed": 8,
       "max_health": 40
      },
      "shots": {
@@ -551,10 +551,10 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 8,
-      "skill": 0.3,
+      "base": 7,
+      "skill": 0,
       "speed": 0,
-      "defence": 0
+      "defence": 0.45
      },
      "projectile": {
       "range_tiles": 7,
@@ -566,14 +566,14 @@
      "tier": 3,
      "source": "game/characters/player/spells/ring/ring3_insect.tres",
      "kind": "bullet",
-     "cooldown": 3,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "weakness": [
       "insect"
      ],
      "grants": {
-      "skill": 10,
+      "speed": 8,
       "max_health": 40
      },
      "shots": {
@@ -583,10 +583,10 @@
       "interval": 0.6
      },
      "amount": {
-      "base": 8,
-      "skill": 0.3,
+      "base": 7,
+      "skill": 0,
       "speed": 0,
-      "defence": 0
+      "defence": 0.45
      },
      "projectile": {
       "range_tiles": 7,
@@ -615,7 +615,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/fireball/fireball1.tres",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 2,
      "cast_time": 0.5,
      "channeled": false,
      "grants": {
@@ -667,7 +667,7 @@
      "tier": 1,
      "source": "game/characters/player/spells/zaap/zaap1.tres",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 1.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -705,7 +705,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/zaap/zaap2.tres",
      "kind": "bullet",
-     "cooldown": 2,
+     "cooldown": 1.5,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -761,7 +761,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/zoing/zoing2.tres",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 2,
      "cast_time": 0,
      "channeled": false,
      "grants": {
@@ -775,8 +775,8 @@
       "interval": 0.2
      },
      "amount": {
-      "base": 5,
-      "skill": 0.25,
+      "base": 3,
+      "skill": 0.15,
       "speed": 0,
       "defence": 0
      },
@@ -812,7 +812,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/bwoom/bwoom2.tres",
      "kind": "effect",
-     "cooldown": 3,
+     "cooldown": 1,
      "cast_time": 1,
      "channeled": true,
      "grants": {
@@ -1027,7 +1027,7 @@
       "lifetime": 20
      },
      "minion_cast": {
-      "cooldown": 1,
+      "cooldown": 3,
       "shots": {
        "pattern": "SinglePattern",
        "per_shot": 1,
@@ -1035,8 +1035,8 @@
        "interval": 0.25
       },
       "amount": {
-       "base": 6,
-       "skill": 0.25,
+       "base": 4,
+       "skill": 0.2,
        "speed": 0,
        "defence": 0
       },
@@ -1082,7 +1082,7 @@
       "lifetime": 20
      },
      "minion_cast": {
-      "cooldown": 2.5,
+      "cooldown": 3,
       "shots": {
        "pattern": "RingPattern",
        "per_shot": 8,
@@ -1125,7 +1125,7 @@
      "tier": 2,
      "source": "game/characters/player/spells/charge_dash/charge_dash2.tres",
      "kind": "bullet",
-     "cooldown": 6,
+     "cooldown": 4,
      "cast_time": 0.3,
      "channeled": false,
      "grants": {
@@ -1139,9 +1139,9 @@
       "interval": 0.1
      },
      "amount": {
-      "base": 10,
-      "skill": 0.6,
-      "speed": 1.2,
+      "base": 7,
+      "skill": 0.45,
+      "speed": 0.85,
       "defence": 0
      },
      "projectile": {
@@ -1176,7 +1176,7 @@
      "tier": 3,
      "source": "game/characters/player/spells/thwomp/thwomp3.tres",
      "kind": "effect",
-     "cooldown": 4,
+     "cooldown": 3,
      "cast_time": 0.2,
      "channeled": false,
      "grants": {
@@ -1184,10 +1184,10 @@
       "defence": 9
      },
      "amount": {
-      "base": 15,
+      "base": 12,
       "skill": 0,
       "speed": 0,
-      "defence": 1.5
+      "defence": 1.1
      }
     }
    ]
@@ -1275,7 +1275,7 @@
      ],
      "mine": {
       "arm_time": 0.6,
-      "lifetime": 12
+      "lifetime": 8
      }
     }
    ]
@@ -1324,7 +1324,7 @@
      },
      "mine": {
       "arm_time": 0.6,
-      "lifetime": 12
+      "lifetime": 8
      }
     }
    ]
@@ -1606,7 +1606,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 2,
+      "range_tiles": 4,
       "speed_tiles": 6,
       "pierce": false
      },
@@ -1774,7 +1774,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 5,
+      "range_tiles": 9,
       "speed_tiles": 9,
       "pierce": false
      },
@@ -2075,7 +2075,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 14,
+      "range_tiles": 16,
       "speed_tiles": 8,
       "pierce": false
      },
@@ -3230,7 +3230,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 3,
+      "range_tiles": 4,
       "speed_tiles": 9,
       "pierce": false
      },
@@ -3918,7 +3918,7 @@
    "source": "game/characters/enemies/puffcap/puffcap_data.tres",
    "name": "Puffcap",
    "rarity": "common",
-   "max_health": 40,
+   "max_health": 12,
    "kinds": [
     "fungal"
    ],
@@ -4442,7 +4442,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 12,
+      "range_tiles": 14,
       "speed_tiles": 16,
       "pierce": false
      },
@@ -4554,7 +4554,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 12,
+      "range_tiles": 13,
       "speed_tiles": 13,
       "pierce": false
      },
@@ -4680,7 +4680,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 16,
+      "range_tiles": 18,
       "speed_tiles": 10,
       "pierce": false
      },
@@ -4705,7 +4705,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 16,
+      "range_tiles": 18,
       "speed_tiles": 10,
       "pierce": false
      },
@@ -4906,8 +4906,8 @@
      "cast_time": 0,
      "channeled": false,
      "shots": {
-      "pattern": "SinglePattern",
-      "per_shot": 1,
+      "pattern": "RingPattern",
+      "per_shot": 2,
       "count": 40,
       "interval": 0.25
      },
@@ -4932,7 +4932,7 @@
      "channeled": false,
      "shots": {
       "pattern": "RingPattern",
-      "per_shot": 2,
+      "per_shot": 4,
       "count": 40,
       "interval": 0.25
      },
@@ -4951,8 +4951,8 @@
     }
    ],
    "id": "spiralcap",
-   "description": "The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that\nlays one slow lane of spores and winds it around the room like a lighthouse — it never\naims at you, never looks for you, and never reacts to being shot. The lane is a fact\nabout the room rather than an attack on you: you read where it is going and walk the gap,\nand because the shots are slow and the bearing drifts every one of them, the arm behind\nit curls into a spiral you have to cross rather than a wall you wait out. Two of them\nturning opposite ways is a floor all by itself.\n",
-   "blurb": "The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that lays one slow lane of spores and winds it around the room like a lighthouse — it never aims at you, never looks for you, and never reacts to being shot. The lane is a fact about the room rather than an attack on you: you read where it is going and walk the gap, and because the shots are slow and the bearing drifts every one of them, the arm behind it curls into a spiral you have to cross rather than a wall you wait out. Two of them turning opposite ways is a floor all by itself.",
+   "description": "The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that\nlays two opposed lanes of spores and winds them around the room like a lighthouse — it never\naims at you, never looks for you, and never reacts to being shot. The lane is a fact\nabout the room rather than an attack on you: you read where it is going and walk the gap,\nand because the shots are slow and the bearing drifts every one of them, the arms behind\nit curl into a spiral you have to cross rather than a wall you wait out. Two of them\nturning opposite ways is a floor all by itself.\n",
+   "blurb": "The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that lays two opposed lanes of spores and winds them around the room like a lighthouse — it never aims at you, never looks for you, and never reacts to being shot. The lane is a fact about the room rather than an attack on you: you read where it is going and walk the gap, and because the shots are slow and the bearing drifts every one of them, the arms behind it curl into a spiral you have to cross rather than a wall you wait out. Two of them turning opposite ways is a floor all by itself.",
    "art": "a tall thin stalk in pale bone under a drooping magenta cap with a lime gill band, the rim curling past the gills; no eyes at all, because it is an object rather than an animal. The attack row tips the cap hard to each side and bends the stalk with it, so the lean says which way the lane is pointing.",
    "casts": [
     "ring"
@@ -5182,7 +5182,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 4,
+      "range_tiles": 5,
       "speed_tiles": 14,
       "pierce": false
      },
@@ -5207,7 +5207,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 9,
+      "range_tiles": 13,
       "speed_tiles": 11,
       "pierce": false
      },
@@ -5430,7 +5430,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 4,
+      "range_tiles": 5,
       "speed_tiles": 9,
       "pierce": false
      },
@@ -5778,7 +5778,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 4,
+      "range_tiles": 5,
       "speed_tiles": 12,
       "pierce": false
      },
@@ -6170,7 +6170,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 4,
+      "range_tiles": 8,
       "speed_tiles": 11,
       "pierce": false
      },
@@ -6295,7 +6295,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 16,
+      "range_tiles": 20,
       "speed_tiles": 10,
       "pierce": false
      },
@@ -6320,7 +6320,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 16,
+      "range_tiles": 20,
       "speed_tiles": 10,
       "pierce": false
      },
@@ -6430,7 +6430,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 5,
+      "range_tiles": 7,
       "speed_tiles": 10,
       "pierce": false
      },
@@ -6938,7 +6938,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 6,
+      "range_tiles": 11,
       "speed_tiles": 12,
       "pierce": false
      },
@@ -7360,7 +7360,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 12,
+      "range_tiles": 14,
       "speed_tiles": 16,
       "pierce": false
      },
@@ -7758,11 +7758,11 @@
    "rarity": "boss",
    "max_health": 5000,
    "kinds": [],
-   "speed_px": 82,
+   "speed_px": 60,
    "probes": {
     "detect": 22,
     "close": 6,
-    "slam": 2,
+    "slam": 3,
     "volley": 4
    },
    "drops": [
@@ -7797,6 +7797,32 @@
    ],
    "attacks": [
     {
+     "cast": "gnarlking_blast",
+     "kind": "bullet",
+     "cooldown": 1,
+     "cast_time": 1.4,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 7,
+      "spread_deg": 60,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 36,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 24,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "name": "blast"
+    },
+    {
      "cast": "gnarlking_brood",
      "kind": "summon",
      "cooldown": 0,
@@ -7805,7 +7831,7 @@
      "minion": {
       "count": 6,
       "health": 8,
-      "lifetime": 26
+      "lifetime": 22
      },
      "name": "brood"
     },
@@ -7825,7 +7851,7 @@
     {
      "cast": "gnarlking_charge",
      "kind": "bullet",
-     "cooldown": 5,
+     "cooldown": 1,
      "cast_time": 1.5,
      "channeled": false,
      "shots": {
@@ -7895,7 +7921,7 @@
     {
      "cast": "gnarlking_slam",
      "kind": "effect",
-     "cooldown": 6,
+     "cooldown": 1,
      "cast_time": 1.5,
      "channeled": false,
      "amount": {
@@ -7907,9 +7933,34 @@
      "name": "slam"
     },
     {
+     "cast": "gnarlking_spiral",
+     "kind": "bullet",
+     "cooldown": 1,
+     "cast_time": 0.8,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 2,
+      "count": 24,
+      "interval": 0.2
+     },
+     "amount": {
+      "base": 22,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 9,
+      "pierce": false
+     },
+     "name": "spiral"
+    },
+    {
      "cast": "gnarlking_volley",
      "kind": "bullet",
-     "cooldown": 4,
+     "cooldown": 1,
      "cast_time": 0.9,
      "channeled": false,
      "shots": {
@@ -8073,11 +8124,667 @@
     ]
    },
    "damage_max": 48,
-   "damage": "24-48",
+   "damage": "22-48",
    "biomes": [
     {
      "id": "deepwood",
      "name": "Deepwood"
+    }
+   ]
+  },
+  {
+   "source": "game/characters/enemies/rotmaw/rotmaw_data.tres",
+   "name": "Rotmaw",
+   "rarity": "boss",
+   "max_health": 1800,
+   "kinds": [
+    "fungal"
+   ],
+   "speed_px": 26,
+   "probes": {
+    "detect": 22,
+    "gape": 4
+   },
+   "drops": [],
+   "attacks": [
+    {
+     "cast": "gnawer_erupt",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.35,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 3,
+      "spread_deg": 60,
+      "count": 1,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 14,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 12,
+      "pierce": false
+     },
+     "name": "gnawer_erupt"
+    },
+    {
+     "cast": "gnawer_gnash",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.4,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 3,
+      "spread_deg": 50,
+      "count": 3,
+      "interval": 0.25
+     },
+     "amount": {
+      "base": 12,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 16,
+      "pierce": false
+     },
+     "name": "gnawer_gnash"
+    },
+    {
+     "cast": "gnawer_gnash_fed",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.4,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 3,
+      "spread_deg": 60,
+      "count": 4,
+      "interval": 0.22
+     },
+     "amount": {
+      "base": 13,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 5,
+      "speed_tiles": 16,
+      "pierce": false
+     },
+     "name": "gnawer_gnash_fed"
+    },
+    {
+     "cast": "gnawer_lunge",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 1,
+     "channeled": false,
+     "shots": {
+      "pattern": "FlankPattern",
+      "per_shot": 2,
+      "count": 9,
+      "interval": 0.06
+     },
+     "amount": {
+      "base": 10,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 11,
+      "pierce": false
+     },
+     "dash": {
+      "speed_px": 280,
+      "duration": 0.55,
+      "contact": {
+       "base": 26,
+       "skill": 0,
+       "speed": 0,
+       "defence": 0
+      }
+     },
+     "name": "gnawer_lunge"
+    },
+    {
+     "cast": "gnawer_lunge_fed",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.7,
+     "channeled": false,
+     "shots": {
+      "pattern": "FlankPattern",
+      "per_shot": 2,
+      "count": 13,
+      "interval": 0.06
+     },
+     "amount": {
+      "base": 11,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 4,
+      "speed_tiles": 11,
+      "pierce": false
+     },
+     "dash": {
+      "speed_px": 300,
+      "duration": 0.8,
+      "contact": {
+       "base": 27,
+       "skill": 0,
+       "speed": 0,
+       "defence": 0
+      }
+     },
+     "name": "gnawer_lunge_fed"
+    },
+    {
+     "cast": "rotcore_bloom",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 1,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 16,
+      "count": 4,
+      "interval": 0.45
+     },
+     "amount": {
+      "base": 16,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 16,
+      "speed_tiles": 8,
+      "pierce": false
+     },
+     "name": "rotcore_bloom"
+    },
+    {
+     "cast": "rotcore_bloom_fed",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 1,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 24,
+      "count": 6,
+      "interval": 0.4
+     },
+     "amount": {
+      "base": 18,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 16,
+      "speed_tiles": 8,
+      "pierce": false
+     },
+     "name": "rotcore_bloom_fed"
+    },
+    {
+     "cast": "rotcore_gorge",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 2.2,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 20,
+      "count": 2,
+      "interval": 0.6
+     },
+     "amount": {
+      "base": 20,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 9,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "blast",
+       "radius_tiles": 2,
+       "blast_only": false
+      }
+     ],
+     "name": "rotcore_gorge"
+    },
+    {
+     "cast": "rotcore_gorge_fed",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 2.2,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 28,
+      "count": 3,
+      "interval": 0.55
+     },
+     "amount": {
+      "base": 24,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 10,
+      "speed_tiles": 6,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "blast",
+       "radius_tiles": 2.5,
+       "blast_only": false
+      }
+     ],
+     "name": "rotcore_gorge_fed"
+    },
+    {
+     "cast": "rotcore_sweep",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.9,
+     "channeled": false,
+     "shots": {
+      "pattern": "ParallelPattern",
+      "per_shot": 3,
+      "count": 20,
+      "interval": 0.15
+     },
+     "amount": {
+      "base": 16,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 18,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "rotcore_sweep"
+    },
+    {
+     "cast": "rotcore_sweep_fed",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.9,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 3,
+      "count": 26,
+      "interval": 0.13
+     },
+     "amount": {
+      "base": 18,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 18,
+      "speed_tiles": 10,
+      "pierce": false
+     },
+     "name": "rotcore_sweep_fed"
+    },
+    {
+     "cast": "rotmaw_gape",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 6,
+      "spread_deg": 45,
+      "count": 2,
+      "interval": 0.35
+     },
+     "amount": {
+      "base": 14,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 6,
+      "speed_tiles": 13,
+      "pierce": false
+     },
+     "name": "gape"
+    },
+    {
+     "cast": "rotmaw_ring",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.9,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 12,
+      "count": 5,
+      "interval": 0.5
+     },
+     "amount": {
+      "base": 15,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 14,
+      "speed_tiles": 9,
+      "pierce": false
+     },
+     "name": "ring"
+    },
+    {
+     "cast": "rotmaw_spiral",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.8,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 4,
+      "count": 24,
+      "interval": 0.166
+     },
+     "amount": {
+      "base": 18,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 14,
+      "speed_tiles": 9,
+      "pierce": false
+     },
+     "name": "spiral"
+    },
+    {
+     "cast": "rotwarden_lane",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.6,
+     "channeled": false,
+     "shots": {
+      "pattern": "ParallelPattern",
+      "per_shot": 2,
+      "count": 16,
+      "interval": 0.2
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 14,
+      "speed_tiles": 9,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "rotwarden_lane"
+    },
+    {
+     "cast": "rotwarden_ring",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.7,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 8,
+      "count": 4,
+      "interval": 0.5
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 10,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "rotwarden_ring"
+    },
+    {
+     "cast": "rotwarden_volley",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.5,
+     "channeled": false,
+     "shots": {
+      "pattern": "ShotgunPattern",
+      "per_shot": 3,
+      "spread_deg": 20,
+      "count": 6,
+      "interval": 0.3
+     },
+     "amount": {
+      "base": 9,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 11,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "rotwarden_volley"
+    },
+    {
+     "cast": "sporemother_bloom",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 1,
+     "channeled": false,
+     "shots": {
+      "pattern": "RingPattern",
+      "per_shot": 10,
+      "count": 4,
+      "interval": 0.7
+     },
+     "amount": {
+      "base": 8,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 10,
+      "speed_tiles": 5,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "sporemother_bloom"
+    },
+    {
+     "cast": "sporemother_seeding",
+     "kind": "bullet",
+     "cooldown": 0,
+     "cast_time": 0.6,
+     "channeled": false,
+     "shots": {
+      "pattern": "SinglePattern",
+      "per_shot": 1,
+      "count": 10,
+      "interval": 0.45
+     },
+     "amount": {
+      "base": 6,
+      "skill": 0,
+      "speed": 0,
+      "defence": 0
+     },
+     "projectile": {
+      "range_tiles": 12,
+      "speed_tiles": 7,
+      "pierce": false
+     },
+     "behaviours": [
+      {
+       "type": "SporePayload"
+      }
+     ],
+     "name": "sporemother_seeding"
+    },
+    {
+     "cast": "sporemother_spitters",
+     "kind": "summon",
+     "cooldown": 40,
+     "cast_time": 0.8,
+     "channeled": false,
+     "minion": {
+      "count": 3,
+      "health": 55,
+      "lifetime": 16
+     },
+     "name": "sporemother_spitters"
+    }
+   ],
+   "id": "rotmaw",
+   "description": "**The fight is three fights, and killing the boss is the middle of it.** The maw the\nplayer walks in on is a short, deliberately ordinary boss — a shotgun, a spiral, a ring,\nand less HP than anything with a boss frame has a right to. It dies early and it is\n*supposed* to, because what it leaves standing is the actual encounter: two halves with\nopposite jobs, and then four rooted caps that turn the floor those halves laid into the\nlast curtain. Every other boss in the game is one body with a Rotation. This one is three\nRotations on six bodies, and the thing that carries between them is not HP — it is **the\nfloor**.\n\nThe Mycelium spent a whole Biome teaching one rule: spores are terrain both sides use,\nand whoever stands in them fights a tier above their stat sheet. rotmaw is that rule\nasked as a question three times. Stage one is fought on clean floor so the player sees\nthe arena bare. Stage two coats it. Stage three eats it.\n\n- **Stage 1 — the maw.** **Sniper**, and conventional on purpose: a boss the player has\n  already learned how to fight, which is the whole setup. **Gape** is a 6-pellet spore\n  shotgun answered by crossing the cone and burning the recovery (**PUNISH**, ×2);\n  **Spiral** is a four-armed spiral, 24 unaimed shots per arm from its own bearing that cannot be out-waited by\n  standing still (**UNTOUCHED**, ×2); **Ring** is a 12-bullet ring, 5 pulses\n  (**UNTOUCHED**, ×2). Nothing in this Rotation prints, so the opening is the only part\n  of the fight where the ground is just ground. It has **no desperation Phase** — its\n  desperation is that it gets back up as two things, and it spends the one HP-gated Phase\n  the rules allow on the split, at zero rather than at a quarter.\n- **Stage 2 — the halves.** The maw's corpse leaves two bodies with opposite jobs, and\n  **the question is which one you kill first.** The **sporemother** is rooted, **Siege**,\n  and does 4–8 a hit: she calls three armoured sporespitters (**ADDS**), lobs seeding\n  shells that plant where they land (**UNTOUCHED**), and blooms a slow ring whose every\n  bolt leaves a cloud (**UNTOUCHED**). She is a printer and never feeds on her own floor.\n  The **gnawer** is **Hunter** and the only body in the fight empowered by spores: every\n  one of its beats is a fed/plain pair, so on coated floor it is simply a harder creature\n  — a dive that surfaces twice (**UNTOUCHED**), a longer lunge off a shorter windup\n  (**WALL**), a four-bite flurry instead of three (**PUNISH**). It never prints. Killing\n  the gnawer first means doing it on floor that keeps thickening; killing the seeder\n  first means eating everything the gnawer has while you do it.\n- **Stage 3 — the ring.** Only once **both** halves are down: the first to fall leaves\n  nothing, and the last leaves the **core** and three **wardens**. The wardens\n  are turrets and **every bullet they fire leaves a spore patch where it expires** —\n  shooting at the player *is* the refuelling, so the longer they live the thicker the\n  floor under the core gets. The core is rooted, armoured while any warden stands, and\n  recharges off that floor: fed, it throws the fight's biggest curtains; starved, it\n  throws a weak one. Every one of its Phases declares **ADDS**, which is what keeps the\n  armour up across the whole Rotation rather than one Phase in three, and the Counter\n  credits exactly once — the moment the last warden falls.\n\n**The floor you saved is the floor it eats.** Burn the arena during stage two and the\nfinale is a starved core behind three turrets; save it, and it is the hardest curtain in\nthe game. Neither is the right answer and neither is gated on owning Zaap — the Counter\nis *kill the wardens*, positional and spell-blind. The cloud economy is the pressure,\nnever the gate.\n",
+   "blurb": "**The fight is three fights, and killing the boss is the middle of it.** The maw the player walks in on is a short, deliberately ordinary boss — a shotgun, a spiral, a ring, and less HP than anything with a boss frame has a right to. It dies early and it is *supposed* to, because what it leaves standing is the actual encounter: two halves with opposite jobs, and then four rooted caps that turn the floor those halves laid into the last curtain. Every other boss in the game is one body with a Rotation. This one is three Rotations on six bodies, and the thing that carries between them is not HP — it is **the floor**.",
+   "art": "a wide pale cap over a stout stem, its whole underside a lightless mouth of white teeth; the split frames crack it down the middle (boss sheet). The two halves and the four caps are the half sheet recoloured apart — the sporemother silver under plum gills, the gnawer near-black under a red crown with the maw's teeth kept, the core a dark husk under a band brighter than anything else in the biome, the wardens the core with every tone stepped down.",
+   "casts": [
+    "whumf",
+    "poot",
+    "blops"
+   ],
+   "notes": "The first multi-body fight, and the rules for one are in `bosses.md`: one Rotation and one\nIntensity per body, a distance profile per body, and a stat sheet on every body that still\nhas to split (`death_spawns` only fires when `data` is set, which is why a clusterling\ncannot re-split). All six bodies live under `rotmaw/`, so the Bestiary files one rotmaw and\nthe halves and wardens are in no roster.\n\nA fed/plain pair is two **adjacent Phases**, not a `Gate` inside one Phase slot: `Cycle`\nresolves a Phase to a named `Behaviour` and counts its Reps on it, so a `Gate` there would\nhand off twice. Exactly one of a pair is ever eligible and `_next_phase` skips the other.\n\nThe core is why `Behaviour.waits_for_escort` exists. `clear_group` means \"refuse to run\nwhile these stand\", which is right for a boss that summoned its own adds and wrong for one\nringed by wardens two corpses left — gated on them it would stand still through its entire\nfinale. Cleared of the gate, the group still answers for the ADDS Counter and the escort\narmour.\n\nIt bends one rule: `bosses.md` says no two bosses open their Rotation with the same\nCounter kind, and Gape is **PUNISH**, which is Thornmess's opener. It stands because the\ntwo ask opposite questions at opposite ranges — Thornmess is a rooted half-tonne that\npunishes you for *not* coming in, the maw is a shotgun that punishes you for being close\nand then never lets you leave — and because rotmaw is the first boss whose fight-level\nopener is a stage rather than a Phase. The literal-rule alternative was a fourth\npuffcap-calling Phase on the maw, which costs stage one its whole point: being short.\n\nThe **Drops** row below is empty and the **HP** row is the maw's, because both are read\noff `rotmaw_data.tres` and the fight's payout and its other five health pools live on the\nbodies it leaves: sporemother 1200, gnawer 1400, core 1600, wardens 200 each, and the whole\nset piece (Whumf, Poot and Blops, plus insect side tiers) on the core.\n\nTwo things the design asks for that the implementation reads differently. Stage three is\ngated on both halves through `DeathSpawn.after_group`: each carries the whole ring, and a\ncorpse whose sibling still stands leaves nothing, so the four caps land together off the\nlast one. And the fed Sweep is three arms rotating the\n*other* way rather than two counter-rotating lanes — one spell cannot rotate two ways at\nonce, and a pattern that could is more code than the read is worth.\n",
+   "fsm": {
+    "start": "Idle",
+    "transitions": [
+     {
+      "from": "Idle",
+      "to": "Cycle",
+      "when": "sees player"
+     },
+     {
+      "from": "Cycle",
+      "to": "Gape",
+      "when": "within 4"
+     },
+     {
+      "from": "Cycle",
+      "to": "Spiral"
+     },
+     {
+      "from": "Cycle",
+      "to": "Ring"
+     },
+     {
+      "from": "Cycle",
+      "to": "Drift",
+      "when": "out of reach"
+     },
+     {
+      "from": "Drift",
+      "to": "Cycle",
+      "when": "arrived"
+     },
+     {
+      "from": "Gape",
+      "to": "Cycle"
+     },
+     {
+      "from": "Spiral",
+      "to": "Cycle"
+     },
+     {
+      "from": "Ring",
+      "to": "Cycle"
+     },
+     {
+      "from": "Cycle",
+      "to": "Split",
+      "when": "killed"
+     },
+     {
+      "from": "Split",
+      "to": "Halves",
+      "when": "two bodies stand up"
+     },
+     {
+      "from": "Halves",
+      "to": "Ring4",
+      "when": "both halves fall"
+     }
+    ]
+   },
+   "icon": {
+    "url": "../../game/characters/enemies/rotmaw/rotmaw.png",
+    "region": [
+     0,
+     0,
+     24,
+     24
+    ]
+   },
+   "damage_max": 24,
+   "damage": "6-24",
+   "biomes": [
+    {
+     "id": "mycelium",
+     "name": "Mycelium"
     }
    ]
   },
@@ -8161,7 +8868,7 @@
       "defence": 0
      },
      "projectile": {
-      "range_tiles": 12,
+      "range_tiles": 22,
       "speed_tiles": 10,
       "pierce": false
      },
@@ -8443,7 +9150,8 @@
     "sporespitter",
     "burrower",
     "deathcap",
-    "maulcap"
+    "maulcap",
+    "rotmaw"
    ]
   }
  ],

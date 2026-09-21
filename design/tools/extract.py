@@ -425,7 +425,9 @@ def enemies(d: Defaults) -> dict[str, dict]:
         entry["attacks"] = [
             {"cast": p.stem, **_spell_record(tres.load(p), d)}
             for p in sorted(folder.glob("*.tres"))
-            if p != data_path
+            # A multi-body fight keeps every body's stat sheet in the boss's own folder
+            # (rotmaw's halves and its ring), and a stat sheet is not a cast.
+            if not p.name.endswith("_data.tres")
         ]
         out[folder.name] = entry
     return out

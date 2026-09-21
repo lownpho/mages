@@ -99,6 +99,7 @@ The fungal Side biome hanging off the deepwood, split between the projectile-hea
 | Burrower *(rare)* | **zaap t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
 | Deathcap *(rare)* | **snipe t3** *(insect)* (40%) |
 | Maulcap *(rare)* | **blam t3** *(insect)* (40%) |
+| Rotmaw *(boss)* | — |
 
 <!-- END GENERATED CATALOGUE -->
 

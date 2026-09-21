@@ -21,6 +21,7 @@ region = Rect2(0, 72, 8, 8)
 
 [sub_resource type="Resource" id="Bullet_dart"]
 script = ExtResource("4_bullet")
+range_tiles = 20
 icon = SubResource("AtlasTexture_dart")
 speed_tiles = 10
 behaviours = Array[ExtResource("1_bh_base")]([SubResource("Homing_volley")])

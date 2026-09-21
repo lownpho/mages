@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://bg1oeux84ci"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="cres"]
+[ext_resource type="Texture2D" uid="uid://b68mn7ws005" path="res://characters/enemies/rotmaw/rotcore.png" id="rotcore_png"]
+[ext_resource type="Script" uid="uid://cevjj2hnv0juj" path="res://items/loot_drop.gd" id="drop"]
+[ext_resource type="Resource" uid="uid://cnf1b2f0qddls" path="res://characters/player/spells/whumf/whumf3.tres" id="whumf3"]
+[ext_resource type="Resource" uid="uid://cedui6u12dxae" path="res://characters/player/spells/poot/poot3.tres" id="poot3"]
+[ext_resource type="Resource" uid="uid://kclx66ur1dx3" path="res://characters/player/spells/blops/blops3.tres" id="blops3"]
+[ext_resource type="Resource" uid="uid://bxm3pkf11x32w" path="res://characters/player/spells/blam/blam3_insect.tres" id="blam_i"]
+[ext_resource type="Resource" uid="uid://dubim7aw265so" path="res://characters/player/spells/ring/ring3_insect.tres" id="ring_i"]
+
+[sub_resource type="Resource" id="Drop_0"]
+script = ExtResource("drop")
+item = ExtResource("whumf3")
+chance = 1.0
+
+[sub_resource type="Resource" id="Drop_1"]
+script = ExtResource("drop")
+item = ExtResource("poot3")
+chance = 1.0
+
+[sub_resource type="Resource" id="Drop_2"]
+script = ExtResource("drop")
+item = ExtResource("blops3")
+chance = 1.0
+
+[sub_resource type="Resource" id="Drop_3"]
+script = ExtResource("drop")
+item = ExtResource("blam_i")
+chance = 0.2
+
+[sub_resource type="Resource" id="Drop_4"]
+script = ExtResource("drop")
+item = ExtResource("ring_i")
+chance = 0.2
+
+[sub_resource type="AtlasTexture" id="AT_icon"]
+atlas = ExtResource("rotcore_png")
+region = Rect2(0, 0, 12, 12)
+
+[resource]
+script = ExtResource("cres")
+display_name = "Rot Core"
+icon = SubResource("AT_icon")
+rarity = 2
+max_health = 1600
+kinds = 32
+drops = Array[ExtResource("drop")]([SubResource("Drop_0"), SubResource("Drop_1"), SubResource("Drop_2"), SubResource("Drop_3"), SubResource("Drop_4")])

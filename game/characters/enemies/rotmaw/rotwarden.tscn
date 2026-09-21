@@ -1,0 +1,203 @@
+[gd_scene format=3 uid="uid://cc0egke003w"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="hbox"]
+[ext_resource type="Texture2D" uid="uid://bi3la8pru3g" path="res://characters/enemies/rotmaw/rotwarden.png" id="rotwarden_png"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="caster"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://dijmtw6mh7nsw" path="res://characters/creature/behaviours/pattern_picker.gd" id="b_pattern"]
+[ext_resource type="Resource" uid="uid://ce3hc4fs1ma" path="res://characters/enemies/rotmaw/rotwarden_ring.tres" id="rotwarden_ring"]
+[ext_resource type="Resource" uid="uid://bj48ad0g7lh" path="res://characters/enemies/rotmaw/rotwarden_lane.tres" id="rotwarden_lane"]
+[ext_resource type="Resource" uid="uid://bx82h6l6yi4" path="res://characters/enemies/rotmaw/rotwarden_volley.tres" id="rotwarden_volley"]
+
+[sub_resource type="CircleShape2D" id="Shape"]
+radius = 4.0
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(36, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_fire0"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(0, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_fire1"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(12, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_fire2"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(24, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_fire3"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(36, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_flare0"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(0, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_flare1"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(12, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_flare2"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(24, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_flare3"]
+atlas = ExtResource("rotwarden_png")
+region = Rect2(36, 24, 12, 12)
+
+[sub_resource type="SpriteFrames" id="Frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_fire0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fire1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fire2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_fire3")
+}],
+"loop": 0,
+"name": &"fire",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_flare0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_flare1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_flare2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_flare3")
+}],
+"loop": 0,
+"name": &"flare",
+"speed": 6.0
+}]
+
+[node name="Rotwarden" type="CharacterBody2D" groups=["enemies", "pack_rot"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("creature")
+max_health = 200
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("Frames")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -3)
+
+[node name="Hurtbox" parent="." instance=ExtResource("hbox")]
+position = Vector2(0, -3)
+collision_mask = 256
+radius = 5.0
+
+[node name="DetectProbe" type="RayCast2D" parent="."]
+target_position = Vector2(160, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." instance=ExtResource("caster")]
+
+[node name="FSM" parent="." instance=ExtResource("fsm")]
+initial_state = "Rooted"
+
+[node name="Rooted" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 0.4
+max_time = 1.0
+next_state = "Rooted"
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Pick"
+alert_on_hit = true
+react_min = 0.0
+react_max = 0.8
+
+[node name="Pick" type="Node" parent="FSM"]
+script = ExtResource("b_pattern")
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Rooted"
+
+[node name="Curtain" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("rotwarden_ring")
+done_state = "Recover"
+windup_anim = "fire"
+attack_anim = "fire"
+telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+pattern_weight = 1.0
+
+[node name="Lane" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("rotwarden_lane")
+done_state = "Recover"
+windup_anim = "fire"
+attack_anim = "fire"
+telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+pattern_weight = 1.0
+
+[node name="Volley" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("rotwarden_volley")
+done_state = "Recover"
+windup_anim = "flare"
+attack_anim = "flare"
+pattern_weight = 1.0
+
+[node name="Recover" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+anim = "idle"
+min_time = 0.0
+max_time = 0.0
+next_state = "Pick"
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Rooted"
+lost_margin = 16.0

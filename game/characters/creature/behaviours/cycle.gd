@@ -158,7 +158,8 @@ func _beat_done() -> void:
 func _close_phase() -> void:
 	if _beat == null:
 		return
-	if _beat.counter_kind == Behaviour.Counter.ADDS and not _escort_lost and not _beat.group_clear():
+	if _beat.counter_kind == Behaviour.Counter.ADDS and _beat.waits_for_escort \
+			and not _escort_lost and not _beat.group_clear():
 		_escort_gate(true)
 		return
 	_open_tail()
@@ -187,7 +188,8 @@ func _play() -> void:
 		_close_phase()
 		return
 	# The escort is the one gate that can refuse forever, so it is the one gate with a clock.
-	if not _beat.group_clear():
+	# A beat only armoured by its escort was never gated on it, so it has nothing to wait for.
+	if _beat.waits_for_escort and not _beat.group_clear():
 		_escort_gate(false)
 		return
 	# Everything else that can floor a beat (a cooling spell) lapses on its own; the Phase
@@ -240,6 +242,13 @@ func _next_phase() -> Behaviour:
 		if beat == null:
 			continue
 		if beat.can_run():
+			return beat
+		# Out of reach is not "not this lap's business". Every other gate lapses on its own, so
+		# a Phase shut by one is rightly overtaken by the next runnable beat — but the player is
+		# range's only clock, and a boss whose close-quarters Phase is skipped every time they
+		# stand off never plays it at all. Take it, and let _play hand off to the walk: that is
+		# the boss going to get them, and the Rotation resumes on this Phase when it arrives.
+		if lost_state != "" and not beat.range_open() and beat.runnable_but_for_range():
 			return beat
 		if waiting == null and beat.window_open():
 			waiting = beat

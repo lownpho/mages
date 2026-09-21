@@ -57,6 +57,11 @@ const NORMIECAP := preload("res://characters/enemies/normiecap/normiecap.tscn")
 const BURROWER := preload("res://characters/enemies/burrower/burrower.tscn")
 const DEATHCAP := preload("res://characters/enemies/deathcap/deathcap.tscn")
 const MAULCAP := preload("res://characters/enemies/maulcap/maulcap.tscn")
+const ROTMAW := preload("res://characters/enemies/rotmaw/rotmaw.tscn")
+const SPOREMOTHER := preload("res://characters/enemies/rotmaw/sporemother.tscn")
+const GNAWER := preload("res://characters/enemies/rotmaw/gnawer.tscn")
+const ROTCORE := preload("res://characters/enemies/rotmaw/rotcore.tscn")
+const ROTWARDEN := preload("res://characters/enemies/rotmaw/rotwarden.tscn")
 # The whole built roster, printers included — the lint's claim is about which beats did NOT
 # get an empowered twin, so leaving the pure printers out would leave it unproven.
 const ROSTER := {
@@ -80,6 +85,13 @@ const ROSTER := {
 	# same two rules have to hold for them or the rules aren't rules.
 	"myceling": MYCELING,
 	"clusterling": CLUSTERLING,
+	# The boss is six bodies across three stages, four of which cast. Its halves and its ring
+	# are no more roster entries than the broods are, and the same two rules hold for them.
+	"rotmaw": ROTMAW,
+	"sporemother": SPOREMOTHER,
+	"gnawer": GNAWER,
+	"rotcore": ROTCORE,
+	"rotwarden": ROTWARDEN,
 }
 # The only insect the game ships, and so the only thing an insect side tier can be proven on.
 const WASP := preload("res://characters/enemies/wasp/wasp.tscn")
@@ -127,6 +139,11 @@ func _ready() -> void:
 	fails += _pays_the_badged_tier()
 	fails += await _turret_reads_the_floor("poot", POOT, "FedShot", "Shot")
 	fails += await _turret_reads_the_floor("blops", BLOPS, "HardRing", "Ring")
+	fails += await _rotation_walks("rotmaw", ROTMAW, ["Gape", "Spiral", "Ring"], 40)
+	fails += await _rotation_walks("gnawer", GNAWER, ["Dive", "Lunge", "Gnash", "Surface"], 40)
+	fails += await _rotmaw_chains_three_stages()
+	fails += await _core_fights_behind_its_wardens()
+	fails += await _seeds_scatter()
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit(0 if fails == 0 else 1)
 
@@ -445,13 +462,37 @@ func _ladders_are_ladders() -> int:
 					% [id, fed.name, _power(fed.spell), beat.name, _power(beat.spell)],
 					_power(fed.spell) > _power(beat.spell))
 				fed = null
+		# A Boss's fed/plain pairs are two ADJACENT Phases of its Rotation rather than two rungs
+		# of a Gate: Cycle resolves a Phase to a named Behaviour and counts its Reps on it, so a
+		# Gate in a Phase slot would hand off twice. Exactly one of a pair is ever eligible and
+		# _next_phase skips the other, so the authored order IS the ladder — and the plain rung
+		# has to sit right before the fed one, or the Rotation steps M twice to say one thing.
+		var fight: BossController = body.get_node_or_null("BossController")
+		if fight:
+			listed.append_array(fight.phases)
+			for i in fight.phases.size():
+				var fed_beat := fsm.get_node_or_null(String(fight.phases[i])) as Behaviour
+				if fed_beat == null or not fed_beat.needs_cloud:
+					continue
+				var plain: Behaviour = null
+				if i > 0:
+					plain = fsm.get_node_or_null(String(fight.phases[i - 1])) as Behaviour
+				fails += _expect("%s/%s must follow the plain Phase it replaces, in %s"
+					% [id, fed_beat.name, fight.phases], plain != null and plain.refuses_cloud)
+				if not (fed_beat is Cast) or not (plain is Cast):
+					continue
+				fails += _expect("%s/%s reuses %s's own spell instead of its own numbers"
+					% [id, fed_beat.name, plain.name], fed_beat.spell != plain.spell)
+				fails += _expect("%s/%s (%d) is no stronger than %s (%d)"
+					% [id, fed_beat.name, _power(fed_beat.spell), plain.name, _power(plain.spell)],
+					_power(fed_beat.spell) > _power(plain.spell))
 		for beat in fsm.get_children():
 			if beat is Behaviour and beat.needs_cloud:
-				fails += _expect("%s/%s is gated on spores but no Gate lists it"
+				fails += _expect("%s/%s is gated on spores but nothing dispatches it"
 					% [id, beat.name], beat.name in listed)
 		body.free()
 	if fails == 0:
-		print("  ok: ladders — every empowered rung leads a Gate with a plain fallback")
+		print("  ok: ladders — every empowered rung has a plain fallback that dispatches it")
 	return fails
 
 # Kill a splitter and collect what stood up, holding it to both promises its stat sheet makes:
@@ -754,6 +795,144 @@ func _await_spawns(scene: PackedScene, want: int, ms: int = 8000) -> Array[Creat
 				found.append(child)
 	return found
 
+# A Rotation that reaches one Phase and stalls looks exactly like a Rotation: the boss is
+# plainly attacking, and the two or three beats it never gets to are invisible. Both ways it
+# stalls here are silent — a Phase held out of its own reach hands off to the walk and the walk
+# has to hand back, and a Phase whose beat chains through other states (the gnawer submerges,
+# crosses and surfaces) only counts a Rep if the chain finds its way home to Cycle. So this
+# drives a real body at a real target and watches for every beat it owes.
+func _rotation_walks(id: String, scene: PackedScene, want: Array, seconds: float) -> int:
+	var target := _target(Vector2(0, 0))
+	var body := await _spawn(scene, Vector2(40, 0))
+	var seen := {}
+	var deadline := Time.get_ticks_msec() + int(seconds * 1000.0)
+	while Time.get_ticks_msec() < deadline and seen.size() < want.size():
+		await get_tree().physics_frame
+		var beat := _state(body)
+		if beat in want:
+			seen[beat] = true
+	var missed: Array = want.filter(func(beat: String) -> bool: return not seen.has(beat))
+	var fails := _expect("%s never reached %s in %.0fs — its Rotation stalls"
+		% [id, missed, seconds], missed.is_empty())
+	body.queue_free()
+	target.queue_free()
+	_clear()
+	_clear_bullets()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: %s — walks its whole Rotation (%s)" % [id, ", ".join(want)])
+	return fails
+
+# Three stages, six bodies, and what carries between them is not HP but the bodies themselves:
+# the maw comes apart into two halves with opposite jobs, and the halves between them leave the
+# ring. Stage three is gated on BOTH halves: each carries the whole ring behind `after_group`, so
+# the first corpse leaves nothing and the last leaves the core and all three wardens — without
+# the gate the ring arrives piecemeal alongside whichever half still stands. It fails silently in
+# the usual splitter way (a body that spawns nothing on death is only a body that died) and in
+# two more: a ring that split again would never stop, and a gate that leaks is two rings.
+func _rotmaw_chains_three_stages() -> int:
+	var fails := 0
+	var maw := await _spawn(ROTMAW, Vector2(6400, 0))
+	fails += _expect("the maw carries no stat sheet, so it can never split", maw.data != null)
+	maw.die()
+	var halves := await _await_spawns(SPOREMOTHER, 1) + await _await_spawns(GNAWER, 1)
+	fails += _expect("a dead maw left %d halves, expected the sporemother and the gnawer"
+		% halves.size(), halves.size() == 2)
+	# Both halves still have to split, so both carry a sheet — death_spawns only fires when
+	# `data` is set, which is exactly why a clusterling cannot re-split.
+	for half in halves:
+		_wake(half)
+		fails += _expect("a half came up dead", half.health > 0)
+		fails += _expect("a half carries no stat sheet, so the ring would never arrive",
+			half.data != null)
+	halves[0].die()
+	var early := await _await_spawns(ROTCORE, 1, 1000) + await _await_spawns(ROTWARDEN, 1, 1000)
+	fails += _expect("the first half to fall left %d caps while its sibling stands, expected none"
+		% early.size(), early.is_empty())
+	halves[1].die()
+	var ring := await _await_spawns(ROTCORE, 1)
+	var wardens := await _await_spawns(ROTWARDEN, 3)
+	fails += _expect("the halves left %d cores, expected exactly one" % ring.size(),
+		ring.size() == 1)
+	fails += _expect("the halves left %d wardens, expected three" % wardens.size(),
+		wardens.size() == 3)
+	for cap in ring + wardens:
+		_wake(cap)
+		fails += _expect("a cap came up dead", cap.health > 0)
+	for warden in wardens:
+		fails += _expect("a warden carries a stat sheet, so the ring can split a fourth time",
+			warden.data == null)
+		fails += _expect("a warden is not in the group the core is armoured by",
+			warden.is_in_group(&"pack_rot"))
+	for cap in ring + wardens:
+		cap.queue_free()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: rotmaw — maw to two halves to one core behind three wardens, and no further")
+	return fails
+
+# A rooted printer fires the same pattern from the same spot, so a shot that always flew its full
+# range would stack every cloud on the same ring of points. The sporemother's shells fall short
+# by a per-bullet roll instead, and the failure is silent — the floor just fills unevenly.
+func _seeds_scatter() -> int:
+	var fails := 0
+	var spell: BulletSpellResource = load("res://characters/enemies/rotmaw/sporemother_seeding.tres")
+	var full := float(spell.bullet.range_tiles) / spell.bullet.speed_tiles
+	var legs := {}
+	for _i in 8:
+		var bullet: BaseBullet = preload("res://items/bullets/base_bullet.tscn").instantiate()
+		bullet.data = spell.bullet
+		bullet.position = Vector2(7200, 0)
+		add_child(bullet)
+		var leg := bullet.lifetime_timer.wait_time
+		fails += _expect("a shell flew %.2fs, outside [%.2f, %.2f]" % [leg, full * 0.4, full],
+			leg >= full * 0.4 - 0.001 and leg <= full + 0.001)
+		legs[snappedf(leg, 0.01)] = true
+		bullet.free()
+	fails += _expect("8 shells flew only %d distinct ranges" % legs.size(), legs.size() > 1)
+	if fails == 0:
+		print("  ok: sporemother — shells land anywhere from 40%% to 100%% of their range")
+	return fails
+
+# The wardens are the core's ARMOUR, not its cue. Every one of its Phases declares ADDS, so the
+# armour is up across the whole Rotation rather than one Phase in three, and every one of them
+# clears `waits_for_escort` — a beat gated on an escort it never summoned would stand there
+# through its own finale waiting for the player to kill its protection for it. Both halves of
+# that break silently: armour that never comes on is just a squishy boss, and a gate nobody can
+# see is a boss that appears to have no attacks at all.
+func _core_fights_behind_its_wardens() -> int:
+	var fails := 0
+	var target := _target(Vector2(6830, 0))
+	var core := await _spawn(ROTCORE, Vector2(6800, 0))
+	var warden := await _spawn(ROTWARDEN, Vector2(6820, 0))
+	var fight: BossController = core.get_node("BossController")
+	# It has to reach a Phase AT ALL while the warden stands — that is the whole claim.
+	var beat := await _await_beat(core, fight.phases, 6000)
+	fails += _expect("the core settled in %s instead of fighting behind its warden" % beat,
+		beat in fight.phases)
+	fails += _expect("the core takes full damage while a warden stands (armour %.2f)"
+		% core.incoming_damage_scale, is_equal_approx(core.incoming_damage_scale, 0.25))
+	var credited: Array = []
+	fight.countered.connect(func(kind: Behaviour.Counter) -> void: credited.append(kind))
+	warden.queue_free()
+	# The Counter credits the moment the last warden falls, once, and the armour comes off
+	# with it.
+	for _i in 20:
+		await get_tree().physics_frame
+	fails += _expect("the last warden fell and the core stayed armoured (%.2f)"
+		% core.incoming_damage_scale, is_equal_approx(core.incoming_damage_scale, 1.0))
+	fails += _expect("clearing the wardens credited %s, expected one ADDS" % [credited],
+		credited == [Behaviour.Counter.ADDS])
+	core.queue_free()
+	target.queue_free()
+	_clear()
+	_clear_bullets()
+	await get_tree().physics_frame
+	if fails == 0:
+		print("  ok: rotmaw core — throws its curtains while the wardens stand, and unarmours"
+			+ " the moment they do not")
+	return fails
+
 # A cast lays floor if it IS the field (Whumf) or if its shot leaves one where it stops.
 func _prints(spell: SpellResource) -> bool:
 	if spell is WhumfResource:
@@ -808,7 +987,8 @@ func _weakness_doubles() -> int:
 	var source := DamageZone.new()
 	source.weakness = GameConstants.KIND_INSECT
 	# Well under the wasp's own health, or the doubling would be hidden by the floor at 0.
-	for probe in [["wasp", WASP, 10], ["sporefly", ROSTER["sporefly"], 5]]:
+	for probe in [["wasp", WASP, 10], ["sporefly", ROSTER["sporefly"], 10],
+			["sporespitter", SPITTER, 5]]:
 		var body := await _spawn(probe[1], Vector2.ZERO)
 		var before: int = body.health
 		body.hurtbox.hurt.emit(5, source)
@@ -819,7 +999,7 @@ func _weakness_doubles() -> int:
 		await get_tree().physics_frame
 	source.free()
 	if fails == 0:
-		print("  ok: weakness — insect doubles on the wasp, flat on everything else")
+		print("  ok: weakness — insect doubles on the wasp and the fly, flat on the cap")
 	return fails
 
 # The set's two turrets, from the player's side of the same seam: planted where you aimed,

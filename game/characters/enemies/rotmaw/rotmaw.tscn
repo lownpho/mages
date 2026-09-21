@@ -1,0 +1,360 @@
+[gd_scene format=3 uid="uid://b7p40ukigl8"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="hbox"]
+[ext_resource type="Texture2D" uid="uid://cfnjpiskyfqdu" path="res://characters/enemies/rotmaw/rotmaw.png" id="rotmaw_png"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="caster"]
+[ext_resource type="Script" uid="uid://b4lrupcmlxdw2" path="res://characters/creature/boss_controller.gd" id="boss"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://cky4cwkv2mry5" path="res://characters/creature/behaviours/cycle.gd" id="b_cycle"]
+[ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Resource" uid="uid://bie4fo0yw5i" path="res://characters/enemies/rotmaw/rotmaw_data.tres" id="rotmaw_data"]
+[ext_resource type="Resource" uid="uid://bl3ldpsvg14" path="res://characters/enemies/rotmaw/rotmaw_gape.tres" id="rotmaw_gape"]
+[ext_resource type="Resource" uid="uid://bshh5uvdmb8" path="res://characters/enemies/rotmaw/rotmaw_spiral.tres" id="rotmaw_spiral"]
+[ext_resource type="Resource" uid="uid://bpj08cyd0nn" path="res://characters/enemies/rotmaw/rotmaw_ring.tres" id="rotmaw_ring"]
+
+[sub_resource type="CircleShape2D" id="Shape"]
+radius = 9.0
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_carpet0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_carpet1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_carpet2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_carpet3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_brood0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_brood1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_brood2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_brood3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_drain0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_drain1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_drain2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_drain3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 72, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_burrow0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 96, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_burrow1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 96, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_burrow2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 96, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_burrow3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 96, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_resurface0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 120, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_resurface1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 120, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_resurface2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 120, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_resurface3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 120, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_split0"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(0, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_split1"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(24, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_split2"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(48, 144, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AT_split3"]
+atlas = ExtResource("rotmaw_png")
+region = Rect2(72, 144, 24, 24)
+
+[sub_resource type="SpriteFrames" id="Frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_carpet0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_carpet1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_carpet2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_carpet3")
+}],
+"loop": 0,
+"name": &"carpet",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_brood0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_brood1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_brood2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_brood3")
+}],
+"loop": 0,
+"name": &"brood",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_drain0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_drain1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_drain2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_drain3")
+}],
+"loop": 1,
+"name": &"drain",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_burrow0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow3")
+}],
+"loop": 0,
+"name": &"burrow",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_resurface0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_resurface1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_resurface2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_resurface3")
+}],
+"loop": 0,
+"name": &"resurface",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_split0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_split1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_split2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_split3")
+}],
+"loop": 0,
+"name": &"split",
+"speed": 6.0
+}]
+
+[node name="Rotmaw" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("creature")
+data = ExtResource("rotmaw_data")
+death_state = "Split"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("Frames")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -8)
+
+[node name="Hurtbox" parent="." instance=ExtResource("hbox")]
+position = Vector2(0, -8)
+collision_mask = 256
+radius = 10.0
+
+[node name="BossController" type="Node" parent="."]
+script = ExtResource("boss")
+phases = Array[String](["Gape", "Spiral", "Ring"])
+
+[node name="DetectProbe" type="RayCast2D" parent="."]
+target_position = Vector2(176, 0)
+collision_mask = 17
+
+[node name="GapeProbe" type="RayCast2D" parent="."]
+target_position = Vector2(32, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." instance=ExtResource("caster")]
+
+[node name="FSM" parent="." instance=ExtResource("fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 1.0
+max_time = 2.0
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Cycle"
+alert_on_hit = true
+
+[node name="Cycle" type="Node" parent="FSM"]
+script = ExtResource("b_cycle")
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Drift"
+free_beat = 1.0
+tail_anim = "drain"
+
+[node name="Gape" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("rotmaw_gape")
+done_state = "Cycle"
+windup_anim = "brood"
+attack_anim = "brood"
+telegraph_color = Color(0.713726, 0.835294, 0.235294, 1)
+counter_kind = 1
+reps = 2
+tail = 1.2
+rep_gap = 0.5
+range_probe_path = NodePath("../../GapeProbe")
+
+[node name="Spiral" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("rotmaw_spiral")
+done_state = "Cycle"
+windup_anim = "carpet"
+attack_anim = "carpet"
+telegraph_color = Color(0.87451, 0.964706, 0.960784, 1)
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.8
+
+[node name="Ring" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("rotmaw_ring")
+done_state = "Cycle"
+windup_anim = "carpet"
+attack_anim = "carpet"
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.8
+
+[node name="Drift" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
+speed = 26.0
+lost_state = "Idle"
+done_state = "Cycle"
+attack_probe_path = NodePath("../../GapeProbe")
+attack_state = "Cycle"
+
+[node name="Split" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+anim = "split"
+min_time = 0.8
+max_time = 0.8

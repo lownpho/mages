@@ -1,0 +1,365 @@
+[gd_scene format=3 uid="uid://blnk3gex77c"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="hbox"]
+[ext_resource type="Texture2D" uid="uid://bw2ejsdu410" path="res://characters/enemies/rotmaw/gnawer.png" id="gnawer_png"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="caster"]
+[ext_resource type="Script" uid="uid://b4lrupcmlxdw2" path="res://characters/creature/boss_controller.gd" id="boss"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://bch4rg3b3h4v0" path="res://characters/creature/behaviours/charge.gd" id="b_charge"]
+[ext_resource type="Script" uid="uid://cky4cwkv2mry5" path="res://characters/creature/behaviours/cycle.gd" id="b_cycle"]
+[ext_resource type="Script" uid="uid://dbahub6oqyost" path="res://characters/creature/behaviours/approach.gd" id="b_approach"]
+[ext_resource type="Resource" uid="uid://bwxe6x1l05y" path="res://characters/enemies/rotmaw/gnawer_data.tres" id="gnawer_data"]
+[ext_resource type="Resource" uid="uid://bh55rl3ens7" path="res://characters/enemies/rotmaw/gnawer_erupt.tres" id="gnawer_erupt"]
+[ext_resource type="Resource" uid="uid://b58epw31qth" path="res://characters/enemies/rotmaw/gnawer_gnash.tres" id="gnawer_gnash"]
+[ext_resource type="Resource" uid="uid://belu48odvjj" path="res://characters/enemies/rotmaw/gnawer_gnash_fed.tres" id="gnawer_gnash_fed"]
+[ext_resource type="Resource" uid="uid://b65m3ccl42v" path="res://characters/enemies/rotmaw/gnawer_lunge.tres" id="gnawer_lunge"]
+[ext_resource type="Resource" uid="uid://bph3guk05rw" path="res://characters/enemies/rotmaw/gnawer_lunge_fed.tres" id="gnawer_lunge_fed"]
+
+[sub_resource type="CircleShape2D" id="Shape"]
+radius = 5.0
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(36, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_bite0"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(0, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_bite1"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(12, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_bite2"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(24, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_bite3"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(36, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_burrow0"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(0, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_burrow1"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(12, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_burrow2"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(24, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_burrow3"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(36, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_surface0"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(0, 36, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_surface1"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(12, 36, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_surface2"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(24, 36, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_surface3"]
+atlas = ExtResource("gnawer_png")
+region = Rect2(36, 36, 12, 12)
+
+[sub_resource type="SpriteFrames" id="Frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_bite0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bite1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bite2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_bite3")
+}],
+"loop": 0,
+"name": &"bite",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_burrow0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_burrow3")
+}],
+"loop": 1,
+"name": &"burrow",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_surface0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_surface1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_surface2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_surface3")
+}],
+"loop": 0,
+"name": &"surface",
+"speed": 8.0
+}]
+
+[node name="Gnawer" type="CharacterBody2D" groups=["enemies", "rotmaw_half"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("creature")
+data = ExtResource("gnawer_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("Frames")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -3)
+
+[node name="Hurtbox" parent="." instance=ExtResource("hbox")]
+position = Vector2(0, -3)
+collision_mask = 256
+radius = 6.0
+
+[node name="BossController" type="Node" parent="."]
+script = ExtResource("boss")
+phases = Array[String](["Dive", "DiveFed", "Lunge", "LungeFed", "Gnash", "GnashFed"])
+
+[node name="DetectProbe" type="RayCast2D" parent="."]
+target_position = Vector2(176, 0)
+collision_mask = 17
+
+[node name="ChaseProbe" type="RayCast2D" parent="."]
+target_position = Vector2(144, 0)
+collision_mask = 17
+
+[node name="EruptProbe" type="RayCast2D" parent="."]
+target_position = Vector2(20, 0)
+collision_mask = 17
+
+[node name="GnashProbe" type="RayCast2D" parent="."]
+target_position = Vector2(20, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." instance=ExtResource("caster")]
+
+[node name="FSM" parent="." instance=ExtResource("fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 0.6
+max_time = 1.2
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Cycle"
+alert_on_hit = true
+
+[node name="Cycle" type="Node" parent="FSM"]
+script = ExtResource("b_cycle")
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Close"
+free_beat = 1.0
+tail_anim = "idle"
+
+[node name="Dive" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+anim = "burrow"
+min_time = 0.45
+max_time = 0.45
+next_state = "Tunnel"
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.6
+refuses_cloud = true
+
+[node name="Tunnel" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
+speed = 44.0
+anim = "burrow"
+chase_probe_path = NodePath("../../ChaseProbe")
+lost_state = "Surface"
+lost_grace = 1.2
+attack_probe_path = NodePath("../../EruptProbe")
+attack_state = "Surface"
+damage_scale = 0.0
+
+[node name="Surface" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_erupt")
+done_state = "Cycle"
+windup_anim = "surface"
+attack_anim = "bite"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+
+[node name="DiveFed" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+anim = "burrow"
+min_time = 0.4
+max_time = 0.4
+next_state = "TunnelFed"
+counter_kind = 4
+reps = 2
+tail = 1.0
+rep_gap = 0.6
+needs_cloud = true
+
+[node name="TunnelFed" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
+speed = 52.0
+anim = "burrow"
+chase_probe_path = NodePath("../../ChaseProbe")
+lost_state = "SurfaceFed"
+lost_grace = 1.2
+attack_probe_path = NodePath("../../EruptProbe")
+attack_state = "SurfaceFed"
+damage_scale = 0.0
+
+[node name="SurfaceFed" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_erupt")
+done_state = "TunnelAgain"
+windup_anim = "surface"
+attack_anim = "bite"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+
+[node name="TunnelAgain" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
+speed = 52.0
+anim = "burrow"
+duration = 1.1
+done_state = "SurfaceAgain"
+attack_probe_path = NodePath("../../EruptProbe")
+attack_state = "SurfaceAgain"
+damage_scale = 0.0
+
+[node name="SurfaceAgain" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_erupt")
+done_state = "Cycle"
+windup_anim = "surface"
+attack_anim = "bite"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+
+[node name="Lunge" type="Node" parent="FSM"]
+script = ExtResource("b_charge")
+blocked_state = "Cycle"
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_lunge")
+done_state = "Cycle"
+windup_anim = "bite"
+attack_anim = "bite"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+counter_kind = 2
+reps = 1
+tail = 2.0
+refuses_cloud = true
+
+[node name="LungeFed" type="Node" parent="FSM"]
+script = ExtResource("b_charge")
+blocked_state = "Cycle"
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_lunge_fed")
+done_state = "Cycle"
+windup_anim = "bite"
+attack_anim = "bite"
+telegraph_color = Color(0.901961, 0.282353, 0.180392, 1)
+counter_kind = 2
+reps = 1
+tail = 2.0
+needs_cloud = true
+
+[node name="Gnash" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_gnash")
+done_state = "Cycle"
+windup_anim = "bite"
+attack_anim = "bite"
+counter_kind = 1
+reps = 3
+tail = 1.4
+rep_gap = 0.4
+range_probe_path = NodePath("../../GnashProbe")
+refuses_cloud = true
+
+[node name="GnashFed" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("gnawer_gnash_fed")
+done_state = "Cycle"
+windup_anim = "bite"
+attack_anim = "bite"
+counter_kind = 1
+reps = 3
+tail = 1.4
+rep_gap = 0.4
+range_probe_path = NodePath("../../GnashProbe")
+needs_cloud = true
+
+[node name="Close" type="Node" parent="FSM"]
+script = ExtResource("b_approach")
+speed = 46.0
+lost_state = "Idle"
+done_state = "Cycle"
+attack_probe_path = NodePath("../../GnashProbe")
+attack_state = "Cycle"

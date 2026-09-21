@@ -900,11 +900,11 @@ enemies:
   - id: spiralcap
     description: |
       The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that
-      lays one slow lane of spores and winds it around the room like a lighthouse — it never
+      lays two opposed lanes of spores and winds them around the room like a lighthouse — it never
       aims at you, never looks for you, and never reacts to being shot. The lane is a fact
       about the room rather than an attack on you: you read where it is going and walk the gap,
-      and because the shots are slow and the bearing drifts every one of them, the arm behind
-      it curls into a spiral you have to cross rather than a wall you wait out. Two of them
+      and because the shots are slow and the bearing drifts every one of them, the arms behind
+      it curl into a spiral you have to cross rather than a wall you wait out. Two of them
       turning opposite ways is a floor all by itself.
     art: a tall thin stalk in pale bone under a drooping magenta cap with a lime gill band, the
       rim curling past the gills; no eyes at all, because it is an object rather than an animal.
@@ -1201,3 +1201,112 @@ enemies:
         - {from: Lunge, to: Cone, when: in range}
         - {from: Cone, to: Root, when: shot away}
         - {from: Root, to: Idle, when: recovered}
+  - id: rotmaw
+    description: |
+      **The fight is three fights, and killing the boss is the middle of it.** The maw the
+      player walks in on is a short, deliberately ordinary boss — a shotgun, a spiral, a ring,
+      and less HP than anything with a boss frame has a right to. It dies early and it is
+      *supposed* to, because what it leaves standing is the actual encounter: two halves with
+      opposite jobs, and then four rooted caps that turn the floor those halves laid into the
+      last curtain. Every other boss in the game is one body with a Rotation. This one is three
+      Rotations on six bodies, and the thing that carries between them is not HP — it is **the
+      floor**.
+
+      The Mycelium spent a whole Biome teaching one rule: spores are terrain both sides use,
+      and whoever stands in them fights a tier above their stat sheet. rotmaw is that rule
+      asked as a question three times. Stage one is fought on clean floor so the player sees
+      the arena bare. Stage two coats it. Stage three eats it.
+
+      - **Stage 1 — the maw.** **Sniper**, and conventional on purpose: a boss the player has
+        already learned how to fight, which is the whole setup. **Gape** is a 6-pellet spore
+        shotgun answered by crossing the cone and burning the recovery (**PUNISH**, ×2);
+        **Spiral** is a four-armed spiral, 24 unaimed shots per arm from its own bearing that cannot be out-waited by
+        standing still (**UNTOUCHED**, ×2); **Ring** is a 12-bullet ring, 5 pulses
+        (**UNTOUCHED**, ×2). Nothing in this Rotation prints, so the opening is the only part
+        of the fight where the ground is just ground. It has **no desperation Phase** — its
+        desperation is that it gets back up as two things, and it spends the one HP-gated Phase
+        the rules allow on the split, at zero rather than at a quarter.
+      - **Stage 2 — the halves.** The maw's corpse leaves two bodies with opposite jobs, and
+        **the question is which one you kill first.** The **sporemother** is rooted, **Siege**,
+        and does 4–8 a hit: she calls three armoured sporespitters (**ADDS**), lobs seeding
+        shells that plant where they land (**UNTOUCHED**), and blooms a slow ring whose every
+        bolt leaves a cloud (**UNTOUCHED**). She is a printer and never feeds on her own floor.
+        The **gnawer** is **Hunter** and the only body in the fight empowered by spores: every
+        one of its beats is a fed/plain pair, so on coated floor it is simply a harder creature
+        — a dive that surfaces twice (**UNTOUCHED**), a longer lunge off a shorter windup
+        (**WALL**), a four-bite flurry instead of three (**PUNISH**). It never prints. Killing
+        the gnawer first means doing it on floor that keeps thickening; killing the seeder
+        first means eating everything the gnawer has while you do it.
+      - **Stage 3 — the ring.** Only once **both** halves are down: the first to fall leaves
+        nothing, and the last leaves the **core** and three **wardens**. The wardens
+        are turrets and **every bullet they fire leaves a spore patch where it expires** —
+        shooting at the player *is* the refuelling, so the longer they live the thicker the
+        floor under the core gets. The core is rooted, armoured while any warden stands, and
+        recharges off that floor: fed, it throws the fight's biggest curtains; starved, it
+        throws a weak one. Every one of its Phases declares **ADDS**, which is what keeps the
+        armour up across the whole Rotation rather than one Phase in three, and the Counter
+        credits exactly once — the moment the last warden falls.
+
+      **The floor you saved is the floor it eats.** Burn the arena during stage two and the
+      finale is a starved core behind three turrets; save it, and it is the hardest curtain in
+      the game. Neither is the right answer and neither is gated on owning Zaap — the Counter
+      is *kill the wardens*, positional and spell-blind. The cloud economy is the pressure,
+      never the gate.
+    art: a wide pale cap over a stout stem, its whole underside a lightless mouth of white
+      teeth; the split frames crack it down the middle (boss sheet). The two halves and the
+      four caps are the half sheet recoloured apart — the sporemother silver under plum gills,
+      the gnawer near-black under a red crown with the maw's teeth kept, the core a dark husk
+      under a band brighter than anything else in the biome, the wardens the core with every
+      tone stepped down.
+    casts: [whumf, poot, blops]
+    notes: |
+      The first multi-body fight, and the rules for one are in `bosses.md`: one Rotation and one
+      Intensity per body, a distance profile per body, and a stat sheet on every body that still
+      has to split (`death_spawns` only fires when `data` is set, which is why a clusterling
+      cannot re-split). All six bodies live under `rotmaw/`, so the Bestiary files one rotmaw and
+      the halves and wardens are in no roster.
+
+      A fed/plain pair is two **adjacent Phases**, not a `Gate` inside one Phase slot: `Cycle`
+      resolves a Phase to a named `Behaviour` and counts its Reps on it, so a `Gate` there would
+      hand off twice. Exactly one of a pair is ever eligible and `_next_phase` skips the other.
+
+      The core is why `Behaviour.waits_for_escort` exists. `clear_group` means "refuse to run
+      while these stand", which is right for a boss that summoned its own adds and wrong for one
+      ringed by wardens two corpses left — gated on them it would stand still through its entire
+      finale. Cleared of the gate, the group still answers for the ADDS Counter and the escort
+      armour.
+
+      It bends one rule: `bosses.md` says no two bosses open their Rotation with the same
+      Counter kind, and Gape is **PUNISH**, which is Thornmess's opener. It stands because the
+      two ask opposite questions at opposite ranges — Thornmess is a rooted half-tonne that
+      punishes you for *not* coming in, the maw is a shotgun that punishes you for being close
+      and then never lets you leave — and because rotmaw is the first boss whose fight-level
+      opener is a stage rather than a Phase. The literal-rule alternative was a fourth
+      puffcap-calling Phase on the maw, which costs stage one its whole point: being short.
+
+      The **Drops** row below is empty and the **HP** row is the maw's, because both are read
+      off `rotmaw_data.tres` and the fight's payout and its other five health pools live on the
+      bodies it leaves: sporemother 1200, gnawer 1400, core 1600, wardens 200 each, and the whole
+      set piece (Whumf, Poot and Blops, plus insect side tiers) on the core.
+
+      Two things the design asks for that the implementation reads differently. Stage three is
+      gated on both halves through `DeathSpawn.after_group`: each carries the whole ring, and a
+      corpse whose sibling still stands leaves nothing, so the four caps land together off the
+      last one. And the fed Sweep is three arms rotating the
+      *other* way rather than two counter-rotating lanes — one spell cannot rotate two ways at
+      once, and a pattern that could is more code than the read is worth.
+    fsm:
+      start: Idle
+      transitions:
+        - {from: Idle, to: Cycle, when: sees player}
+        - {from: Cycle, to: Gape, when: within 4}
+        - {from: Cycle, to: Spiral}
+        - {from: Cycle, to: Ring}
+        - {from: Cycle, to: Drift, when: out of reach}
+        - {from: Drift, to: Cycle, when: arrived}
+        - {from: Gape, to: Cycle}
+        - {from: Spiral, to: Cycle}
+        - {from: Ring, to: Cycle}
+        - {from: Cycle, to: Split, when: killed}
+        - {from: Split, to: Halves, when: two bodies stand up}
+        - {from: Halves, to: Ring4, when: both halves fall}

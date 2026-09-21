@@ -4,6 +4,8 @@ extends Node
 ## of on first spawn in-game. Run as a scene (autoloads):
 ##   godot --headless --path game res://tests/test_enemy_scenes.tscn
 
+var _fails := 0
+
 func _ready() -> void:
 	var fails := 0
 	var checked := 0
@@ -28,12 +30,80 @@ func _ready() -> void:
 			fails += 1
 		fails += _check_state_names(id, node)
 		fails += _check_boss_phases(id, node)
+		fails += _check_bullet_reach(id, node)
+		checked += _check_siblings(id)
 	# Two frames so deferred FSM entry and make_timer adds actually execute.
 	await get_tree().process_frame
 	await get_tree().process_frame
+	fails += _fails
 	print("enemy scenes: %d instantiated" % checked)
 	print("ALL PASS" if fails == 0 else "FAILED: %d" % fails)
 	get_tree().quit()
+
+## The other bodies in an enemy's folder: a splitter's brood, and every body of a multi-body
+## Boss fight (rotmaw's two halves, its core and its wardens all live under rotmaw/). They are
+## real scenes the player meets, and until this walked them the only thing linted in a
+## three-Rotation fight was stage one. They carry no stat sheet of their own — a leaf body
+## authors max_health on the scene, and a body that still has to split files its sheet beside
+## the boss's — so the data checks above are the boss's alone and these get the wiring ones.
+func _check_siblings(id: String) -> int:
+	var found := 0
+	for file in DirAccess.get_files_at("res://characters/enemies/%s" % id):
+		if not file.ends_with(".tscn") or file == "%s.tscn" % id:
+			continue
+		var scene := load("res://characters/enemies/%s/%s" % [id, file]) as PackedScene
+		if scene == null:
+			print("  FAIL: %s/%s does not load" % [id, file])
+			continue
+		var body: Node = scene.instantiate()
+		add_child(body)
+		found += 1
+		var body_id := file.get_basename()
+		_fails += _check_state_names(body_id, body)
+		_fails += _check_boss_phases(body_id, body)
+		_fails += _check_bullet_reach(body_id, body)
+	return found
+
+## A shot has to outlast the distance it starts firing from, by 2 tiles: an enemy that opens up
+## at 3 tiles with 3-tile bullets never reaches a player who takes one step back. That distance
+## is the probe that decides the beat fires — its own attack probe (plus the exit margin), else
+## the range probe that makes it eligible, else the attack probe of the pursuit that hands off
+## to it. A beat with none of them fires at whatever range it was dispatched at, so it has no
+## distance to be held to. Exempt too: a mine (no range or no speed) never flies, and a charge
+## carries its shots with the body.
+const REACH_MARGIN_TILES := 2
+
+func _check_bullet_reach(id: String, node: Node) -> int:
+	var fsm := node.get_node_or_null("FSM")
+	if fsm == null:
+		return 0
+	var arrive := {}
+	for state in fsm.get_children():
+		if state is Approach and state.attack_probe_path != NodePath():
+			arrive[state.attack_state] = _probe_px(state, state.attack_probe_path)
+	var fails := 0
+	for state in fsm.get_children():
+		if not (state is Cast) or not (state.spell is BulletSpellResource) \
+				or state.spell is ChargeDashResource:
+			continue
+		var bullet: BulletResource = state.spell.bullet
+		if bullet == null or bullet.range_tiles <= 0 or bullet.speed_tiles <= 0:
+			continue
+		var from: float = arrive.get(String(state.name), 0.0)
+		if state.attack_probe_path != NodePath():
+			from = _probe_px(state, state.attack_probe_path) + state.exit_margin
+		elif state.range_probe_path != NodePath():
+			from = _probe_px(state, state.range_probe_path)
+		var need := ceili(from / GameConstants.PX_PER_TILE) + REACH_MARGIN_TILES
+		if from > 0.0 and bullet.range_tiles < need:
+			print("  FAIL: %s/%s fires from %d tiles but its bullets fly %d, need %d"
+				% [id, state.name, ceili(from / GameConstants.PX_PER_TILE), bullet.range_tiles, need])
+			fails += 1
+	return fails
+
+func _probe_px(from: Node, path: NodePath) -> float:
+	var probe := from.get_node_or_null(path) as RayCast2D
+	return probe.target_position.length() if probe else 0.0
 
 ## Every Boss Phase declares a Counter. The whole design rests on a Phase being a beat that has
 ## to be ANSWERED — a Rotation that ships one with nothing to answer is dead time inside the

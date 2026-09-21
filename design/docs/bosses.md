@@ -74,7 +74,9 @@ boss must differ from its predecessor on all four of these:
   want the player in the same place.
 - **Counter mix** — which kinds, and how many of each. The mix *is* the question the boss asks
   (a movement exam, an aggression exam). No two bosses open their Rotation with the same kind,
-  and no boss repeats its predecessor's mix. Counter kind is coupled to range — only a beat
+  and no boss repeats its predecessor's mix. rotmaw is the one exception on the shipped roster
+  and it is an argued one: its Gape is Thornmess's PUNISH opener asked at the opposite range,
+  and rotmaw is the first boss whose fight-level opener is a stage rather than a Phase. Counter kind is coupled to range — only a beat
   that ends with the player adjacent can be PUNISH — so a mix is really a statement about
   distance.
 - **Tempo** — Rep counts and Tail lengths are character, not padding to reach a length. The
@@ -183,7 +185,43 @@ boss becomes a kiteable sponge — Fae is 28 px/s against the player's 80.
   can read as *the boss changed its answer to you*, not just faster numbers.
 - Assignments: Fae **Siege → Sniper** (the Siege half is shipped; the Sniper half is not
   authored yet — see the reference instance), Thornmess **Siege**, Gnarlking **Hunter**,
-  hive queen **Siege → Sniper**, rotmaw **Hunter** (via burrow), Mother **Sniper**.
+  hive queen **Siege → Sniper**, Mother **Sniper**. rotmaw authors one per body rather than
+  one per fight — maw **Sniper**, sporemother **Siege**, gnawer **Hunter** (via burrow), the ring
+  **Siege** — which is what a multi-body fight buys instead of a switch.
+
+## Multi-body fights
+
+Everything above assumes one boss: one Rotation, one M, one corpse. A fight may instead be
+several bodies in sequence, where killing one is what starts the next. `Cycle` and
+`BossController` are per-scene, so this needs nothing new — but the rules read differently and
+the differences are authored, not discovered:
+
+- **One Rotation per body**, each obeying the whole contract on its own: 3–6 Phases, a Counter
+  on every Phase, its own Tails and Reps.
+- **One M per body.** A body's escalation dies with it, which is the point: killing one of two
+  concurrent bodies retires its pressure as well as its damage, and that is the reward for
+  reading which one to kill.
+- **One HP-gated desperation Phase per body still**, and a body may spend it instead on the
+  split — at zero rather than at a quarter.
+- **Distance profile is per body**, not per fight. A fight that walks, then roots, then never
+  moves again is a legitimate arc and a cheaper one than authoring a switch.
+- The chain is `CreatureResource.death_spawns`, so **every body that still has to split needs
+  its own `data`**. A body without a stat sheet is a leaf.
+- An escort a body did not summon is its **armour**, not its cue. `clear_group` means "refuse
+  to run while these stand", which is right for a boss holding its next brood back and wrong
+  for one ringed by caps two corpses left: gated on them it would stand still through its own
+  finale. `Behaviour.waits_for_escort` clears the gate while leaving the group answering for
+  the ADDS Counter and the escort armour, which read `group_clear()` directly.
+- A fed/plain pair is two **adjacent Phases**, not a `Gate` inside one Phase slot. `Cycle`
+  resolves a Phase to a named `Behaviour` and counts its Reps on it, so a `Gate` there would
+  hand off twice. Adjacent Phases cost nothing: exactly one of the pair is ever eligible,
+  `_next_phase` skips the other, and M steps once.
+- **A stage that follows concurrent bodies is gated on all of them.** Each carries the whole
+  next stage on a `DeathSpawn` with the same `after_group`, and they share that group: a corpse
+  with a sibling still standing leaves nothing, so the last to fall leaves it all. rotmaw's
+  halves are `rotmaw_half`, and the ring arrives whole — core and three wardens — only after
+  both. Without the gate each corpse fires its own share and the stages overlap.
+- rotmaw is the first, and is built. The hive queen is expected to be the second.
 
 ## Failure and damage
 
@@ -428,4 +466,4 @@ back. Almost all of it was already in its old FSM; what the port changed is *wha
   `Behaviour` so a Phase can be eligible only on the second loop.
 - **Audio stings** for a step up and a rollback — needs an audio system and assets; the signals
   are already emitted.
-- hive queen, rotmaw and Mother are prose only; their scenes do not exist yet.
+- hive queen and Mother are prose only; their scenes do not exist yet.

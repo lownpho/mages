@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="CreatureResource" format=3 uid="uid://btuidy1vq1m"]
+
+[ext_resource type="Script" uid="uid://bg12j4jq6rx2l" path="res://characters/creature/creature_resource.gd" id="cres"]
+[ext_resource type="Texture2D" uid="uid://bl2livubc0j" path="res://characters/enemies/rotmaw/sporemother.png" id="sporemother_png"]
+[ext_resource type="Script" uid="uid://dlvb0brjwuw64" path="res://characters/creature/death_spawn.gd" id="spawn"]
+[ext_resource type="PackedScene" uid="uid://b656s1bw18y" path="res://characters/enemies/rotmaw/rotcore.tscn" id="rotcore_scn"]
+[ext_resource type="PackedScene" uid="uid://cc0egke003w" path="res://characters/enemies/rotmaw/rotwarden.tscn" id="rotwarden_scn"]
+
+[sub_resource type="Resource" id="Spawn_0"]
+script = ExtResource("spawn")
+scene = ExtResource("rotcore_scn")
+count = 1
+spread_tiles = 0.0
+after_group = &"rotmaw_half"
+
+[sub_resource type="Resource" id="Spawn_1"]
+script = ExtResource("spawn")
+scene = ExtResource("rotwarden_scn")
+count = 3
+spread_tiles = 4.0
+after_group = &"rotmaw_half"
+
+[sub_resource type="AtlasTexture" id="AT_icon"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(0, 0, 12, 12)
+
+[resource]
+script = ExtResource("cres")
+display_name = "Sporemother"
+icon = SubResource("AT_icon")
+rarity = 2
+max_health = 1200
+kinds = 32
+death_spawns = Array[ExtResource("spawn")]([SubResource("Spawn_0"), SubResource("Spawn_1")])

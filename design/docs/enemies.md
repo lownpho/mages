@@ -199,7 +199,7 @@ side. It also appears in the insect deepwood.
 | HP | 18 |
 | Speed | 40 px/s |
 | Range | detect 10, chase 14, attack 3 |
-| attack | **7** dmg — 0.8s cd, Single, 4 tiles range |
+| attack | **7** dmg — 0.8s cd, Single, 5 tiles range |
 | Drops | **bzzz t1** (15%), **pew t1** (5%), **zaap t1** (10%) |
 
 ```mermaid
@@ -224,7 +224,7 @@ Rare mandrake that casts fireball
 | HP | 200 |
 | Speed | 28 px/s |
 | Range | detect 8, chase 16, attack 4, fireball 9 |
-| fireball | **30** dmg — 6s cd, Single, 6 tiles range, blast 3 tiles (splash only) |
+| fireball | **30** dmg — 6s cd, Single, 11 tiles range, blast 3 tiles (splash only) |
 | attack | **15** dmg — 2s cd, Single, 7 tiles range |
 | Drops | **fireball t1** (50%), **blam t2** (30%) |
 
@@ -334,7 +334,7 @@ and walks after you, slowly, and the Rotation resumes when it arrives.
 | Speed | 32 px/s |
 | Range | detect 22, missile 20, close 4 |
 | bloom | **18** dmg — Ring x12, 5 @ 0.5s, 14 tiles range |
-| missiles | **16** dmg — Single, 4 @ 1s, 12 tiles range, homing 120° cone |
+| missiles | **16** dmg — Single, 4 @ 1s, 22 tiles range, homing 120° cone |
 | shotgun | **15** dmg — 1s cd, Shotgun x4, 4 @ 0.6s, 6 tiles range |
 | spores | **25** dmg — Ring x16, 3 @ 1.5s, 18 tiles range |
 | summon | 6 minions, 8 hp, 20s |
@@ -408,7 +408,7 @@ stop letting it arrive.
 | HP | 110 |
 | Speed | 40 px/s |
 | Range | detect 3, chase 12, attack 5 |
-| ring | **16** dmg — 2.2s cd, Ring x8, 2 @ 0.4s, 5 tiles range |
+| ring | **16** dmg — 2.2s cd, Ring x8, 2 @ 0.4s, 9 tiles range |
 | Drops | **ring t2** (6%) |
 
 ```mermaid
@@ -585,7 +585,7 @@ through it.
 | HP | 55 |
 | Speed | 44 px/s |
 | Range | detect 12, chase 15, attack 2, retreat 1.5 |
-| scales | **18** dmg — 1.7s cd, Ring x6, 2 @ 0.22s, 3 tiles range |
+| scales | **18** dmg — 1.7s cd, Ring x6, 2 @ 0.22s, 4 tiles range |
 | Drops | **ring t2** (5%) |
 
 **Notes:** the shortest attack probe of the three (2 tiles) and the shortest retreat — its poke only works point-blank, so it re-closes fastest.
@@ -739,7 +739,7 @@ the blink is its whole movement.
 | HP | 70 |
 | Range | detect 12 |
 | blink | 0.6s cd |
-| pew | **20** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
+| pew | **20** dmg — 1.1s cd, Single, 3 @ 0.16s, 14 tiles range |
 | Drops | **blink t2** (6%), **pew t3** (5%) |
 
 **Notes:** the blink is a teleport cast, not a bullet spell — it moves its caster and refuses a landing spot with a wall in the way. The player's own Blink is the same effect with its landing dial on AIM instead of a random bearing.
@@ -769,7 +769,7 @@ of sight on, never the one you trade with at range.
 | HP | 110 |
 | Speed | 30 px/s |
 | Range | detect 12, chase 16, attack 8 |
-| shards | **13** dmg — 3.6s cd, Shotgun x3, 12 tiles range |
+| shards | **13** dmg — 3.6s cd, Shotgun x3, 13 tiles range |
 | Drops | **blam t2** (5%), **halp t2** (2%) |
 
 **Notes:** the longest attack probe of the three (9 tiles) and the longest wind-up — it never closes to the range the others fight at, and it keeps firing while they do.
@@ -829,7 +829,7 @@ between shots. Lose it and it becomes a prop again. Introduces **prop disguise**
 | HP | 150 |
 | Speed | 36 px/s |
 | Range | detect 5, chase 16, attack 3 |
-| blast | **24** dmg — 2.6s cd, Shotgun x4, 4 tiles range |
+| blast | **24** dmg — 2.6s cd, Shotgun x4, 5 tiles range |
 | Drops | **blam t2** (5%) |
 
 ```mermaid
@@ -946,7 +946,7 @@ fight is about closing the gap between its cycle rather than out-running it.
 |---|---|
 | HP | 260 |
 | Range | detect 22, blast 5 |
-| blast | **24** dmg — 1.6s cd, Shotgun x5, 5 tiles range |
+| blast | **24** dmg — 1.6s cd, Shotgun x5, 7 tiles range |
 | blink | 0.4s cd |
 | seed | **32** dmg — 3.2s cd, Single, 20 tiles range, homing 150° cone |
 | seed_fast | **32** dmg — 2.4s cd, Single, 20 tiles range, homing 150° cone |
@@ -1084,7 +1084,7 @@ you to make. Clear it first, or fight it with a wall behind you.
 | HP | 200 |
 | Range | detect 12 |
 | blink | 0.6s cd |
-| pew | **22** dmg — 1.1s cd, Single, 3 @ 0.16s, 12 tiles range |
+| pew | **22** dmg — 1.1s cd, Single, 3 @ 0.16s, 14 tiles range |
 | Drops | **blink t2** (50%), **pew t3** (30%) |
 
 **Notes:** the same Blink cast as the shade, with the landing spot taken past the target instead of on a random bearing — the dial the player's tiers leave on AIM.
@@ -1135,14 +1135,16 @@ are ground down while the boss walks into your face anyway.
 | Stat |  |
 |---|---|
 | HP | 5000 |
-| Speed | 82 px/s |
-| Range | detect 22, close 6, slam 2, volley 4 |
-| brood | 6 minions, 8 hp, 26s |
+| Speed | 60 px/s |
+| Range | detect 22, close 6, slam 3, volley 4 |
+| blast | **36** dmg — 1s cd, Shotgun x7, 24 tiles range |
+| brood | 6 minions, 8 hp, 22s |
 | brood_big | 3 minions, 8 hp, 20s |
-| charge | **26** dmg — 5s cd, Flank x2, 16 @ 0.045s, 6 tiles range, dash 300 px/s for 0.7s, **26** on contact |
+| charge | **26** dmg — 1s cd, Flank x2, 16 @ 0.045s, 6 tiles range, dash 300 px/s for 0.7s, **26** on contact |
 | charge_chain | **26** dmg — Flank x2, 13 @ 0.045s, 6 tiles range, dash 300 px/s for 0.6s, **26** on contact |
-| slam | **48** dmg — 6s cd |
-| volley | **24** dmg — 4s cd, Shotgun x4, 4 @ 0.55s, 6 tiles range |
+| slam | **48** dmg — 1s cd |
+| spiral | **22** dmg — 1s cd, Ring x2, 24 @ 0.2s, 12 tiles range |
+| volley | **24** dmg — 1s cd, Shotgun x4, 4 @ 0.55s, 6 tiles range |
 | Drops | **thwomp t3** (100%), **halp t2** (60%), **blam t3** (100%), **charge_dash t2** (60%) |
 
 **Notes:** one Thwomp only — no bigger low-HP variant. Below a quarter health it calls three grimlords instead of six grimlings (on a shorter 20s leash), and Winded shrinks from 5s to 3s. `clear_group` on the charge is what makes the brood, not a timer, the phase gate.
@@ -1199,7 +1201,7 @@ already written off, or shoot it where you were about to stand and lose the floo
 | Speed | 24 px/s |
 | Range | detect 9, chase 12, attack 1.75 |
 | burst |  |
-| nudge | **6** dmg — 2.1s cd, Single, 2 tiles range |
+| nudge | **6** dmg — 2.1s cd, Single, 4 tiles range |
 | myceling_burst | **5** dmg — Ring x6, 4 tiles range |
 | myceling_pop |  |
 | myceling_wide_burst | **8** dmg — Ring x8, 2 @ 0.12s, 6 tiles range |
@@ -1237,7 +1239,7 @@ again — one death, one multiplication, and the room ends.
 | HP | 150 |
 | Speed | 20 px/s |
 | Range | detect 14, chase 16 |
-| lob | **24** dmg — 3.9s cd, Single, 14 tiles range, SporePayload |
+| lob | **24** dmg — 3.9s cd, Single, 16 tiles range, SporePayload |
 | clusterling_pop | **24** dmg — Ring x8, 2 @ 0.25s, 5 tiles range |
 | clusterling_wide_pop | **48** dmg — Ring x10, 3 @ 0.12s, 7 tiles range |
 | Drops | **whumf t3** (1%), **poot t3** (1%) |
@@ -1379,7 +1381,7 @@ only your own answer to light.
 | Stat |  |
 |---|---|
 | Kinds | fungal |
-| HP | 40 |
+| HP | 12 |
 | Range | trigger 2 |
 | pop |  |
 | Drops | **poot t3** (1%) |
@@ -1479,8 +1481,8 @@ else painted — the turret is the body that most repays letting a printer work.
 | Kinds | fungal |
 | HP | 160 |
 | Range | room 16 |
-| fan | **32** dmg — 3.9s cd, Shotgun x3, 5 @ 0.35s, 16 tiles range |
-| volley | **26** dmg — 3.9s cd, Single, 3 @ 0.35s, 16 tiles range, homing 70° cone |
+| fan | **32** dmg — 3.9s cd, Shotgun x3, 5 @ 0.35s, 18 tiles range |
+| volley | **26** dmg — 3.9s cd, Single, 3 @ 0.35s, 18 tiles range, homing 70° cone |
 | Drops | **snipe t3** *(insect)* (3%), **blops t3** (1%) |
 
 **Notes:** pure composition — a `cast` behind a room-length `range_probe`, so the dispatcher answers "can it even reach you" before it commits rather than rearing into a slam at nothing. The empowered rung is the ordinary `needs_cloud` first rung of its `Gate`, and the only thing that changes is the spell's fire pattern, which is the spell's business and not the beat's.
@@ -1495,11 +1497,11 @@ stateDiagram-v2
 ### Spiralcap
 
 The line turret, and the purest bullet-hell object in the game. A tall rooted stalk that
-lays one slow lane of spores and winds it around the room like a lighthouse — it never
+lays two opposed lanes of spores and winds them around the room like a lighthouse — it never
 aims at you, never looks for you, and never reacts to being shot. The lane is a fact
 about the room rather than an attack on you: you read where it is going and walk the gap,
-and because the shots are slow and the bearing drifts every one of them, the arm behind
-it curls into a spiral you have to cross rather than a wall you wait out. Two of them
+and because the shots are slow and the bearing drifts every one of them, the arms behind
+it curl into a spiral you have to cross rather than a wall you wait out. Two of them
 turning opposite ways is a floor all by itself.
 
 **Art:** a tall thin stalk in pale bone under a drooping magenta cap with a lime gill band, the rim curling past the gills; no eyes at all, because it is an object rather than an animal. The attack row tips the cap hard to each side and bends the stalk with it, so the lean says which way the lane is pointing.
@@ -1508,8 +1510,8 @@ turning opposite ways is a floor all by itself.
 |---|---|
 | Kinds | fungal |
 | HP | 90 |
-| sweep | **32** dmg — Single, 40 @ 0.25s, 10 tiles range |
-| twin_sweep | **40** dmg — Ring x2, 40 @ 0.25s, 12 tiles range |
+| sweep | **32** dmg — Ring x2, 40 @ 0.25s, 10 tiles range |
+| twin_sweep | **40** dmg — Ring x4, 40 @ 0.25s, 12 tiles range |
 | Drops | **ring t3** *(insect)* (3%), **blops t3** (1%) |
 
 **Notes:** no probes and no detection — the sweep is one `cast()` whose spell owns everything, with `aim_mode` on INDEPENDENT so the burst commits to its own random bearing and `rotation_per_shot` walking that bearing a full turn over the burst. The rest between revolutions is an ordinary `hold`, and is the only window it ever gives you.
@@ -1571,8 +1573,8 @@ own spores answer to light.
 | Kinds | fungal |
 | HP | 55 |
 | Range | detect 11, close 3 |
-| blam | **24** dmg — 3.3s cd, Shotgun x3, 2 @ 0.4s, 4 tiles range |
-| lob | **4** dmg — 2.6s cd, Single, 9 tiles range, SporePayload |
+| blam | **24** dmg — 3.3s cd, Shotgun x3, 2 @ 0.4s, 5 tiles range |
+| lob | **4** dmg — 2.6s cd, Single, 13 tiles range, SporePayload |
 | wide_blam | **30** dmg — 3.3s cd, Shotgun x5, 3 @ 0.35s, 5 tiles range |
 | Drops | **blam t3** *(insect)* (3%), **whumf t3** (1%), **poot t3** (1%), **blops t3** (1%) |
 
@@ -1611,7 +1613,7 @@ that punishes you for letting its own leftovers sit.
 | Range | detect 14, spray 6 |
 | ring | **20** dmg — 1s cd, Ring x10, 2 @ 0.35s, 6 tiles range |
 | spores |  |
-| spray | **18** dmg — 1s cd, Shotgun x4, 4 tiles range |
+| spray | **18** dmg — 1s cd, Shotgun x4, 8 tiles range |
 | Drops | **zaap t2** (2%), **whumf t3** (1%), **poot t3** (1%) |
 
 **Notes:** pure composition. The crossing is a `wander` at `damage_scale = 0` — a random heading on a clock is exactly "surfaces somewhere you are not", and the armour dial is what makes it unseen without a second mechanism. The spray is the plain rung of a two-rung `Gate` and the ring the `needs_cloud` one; the cloud is a `cast` after both, which is where the printer rule ends up being an ordering rather than a flag.
@@ -1648,8 +1650,8 @@ at all — it only shortens the window you were crossing in.
 | Kinds | fungal |
 | HP | 340 |
 | Range | room 18 |
-| fan | **28** dmg — 3.4s cd, Shotgun x5, 6 @ 0.3s, 16 tiles range |
-| volley | **20** dmg — 3.4s cd, Single, 4 @ 0.3s, 16 tiles range, homing 80° cone |
+| fan | **28** dmg — 3.4s cd, Shotgun x5, 6 @ 0.3s, 20 tiles range |
+| volley | **20** dmg — 3.4s cd, Single, 4 @ 0.3s, 20 tiles range, homing 80° cone |
 | Drops | **snipe t3** *(insect)* (40%) |
 
 **Notes:** a straight copy of the shellcap's wiring with its own numbers, down to the `range_probe` on both rungs; the only structural difference is a shorter reload.
@@ -1690,6 +1692,142 @@ stateDiagram-v2
     Lunge --> Cone : in range
     Cone --> Root : shot away
     Root --> Idle : recovered
+```
+
+### Rotmaw *(boss)*
+
+**The fight is three fights, and killing the boss is the middle of it.** The maw the
+player walks in on is a short, deliberately ordinary boss — a shotgun, a spiral, a ring,
+and less HP than anything with a boss frame has a right to. It dies early and it is
+*supposed* to, because what it leaves standing is the actual encounter: two halves with
+opposite jobs, and then four rooted caps that turn the floor those halves laid into the
+last curtain. Every other boss in the game is one body with a Rotation. This one is three
+Rotations on six bodies, and the thing that carries between them is not HP — it is **the
+floor**.
+
+The Mycelium spent a whole Biome teaching one rule: spores are terrain both sides use,
+and whoever stands in them fights a tier above their stat sheet. rotmaw is that rule
+asked as a question three times. Stage one is fought on clean floor so the player sees
+the arena bare. Stage two coats it. Stage three eats it.
+
+- **Stage 1 — the maw.** **Sniper**, and conventional on purpose: a boss the player has
+  already learned how to fight, which is the whole setup. **Gape** is a 6-pellet spore
+  shotgun answered by crossing the cone and burning the recovery (**PUNISH**, ×2);
+  **Spiral** is a four-armed spiral, 24 unaimed shots per arm from its own bearing that cannot be out-waited by
+  standing still (**UNTOUCHED**, ×2); **Ring** is a 12-bullet ring, 5 pulses
+  (**UNTOUCHED**, ×2). Nothing in this Rotation prints, so the opening is the only part
+  of the fight where the ground is just ground. It has **no desperation Phase** — its
+  desperation is that it gets back up as two things, and it spends the one HP-gated Phase
+  the rules allow on the split, at zero rather than at a quarter.
+- **Stage 2 — the halves.** The maw's corpse leaves two bodies with opposite jobs, and
+  **the question is which one you kill first.** The **sporemother** is rooted, **Siege**,
+  and does 4–8 a hit: she calls three armoured sporespitters (**ADDS**), lobs seeding
+  shells that plant where they land (**UNTOUCHED**), and blooms a slow ring whose every
+  bolt leaves a cloud (**UNTOUCHED**). She is a printer and never feeds on her own floor.
+  The **gnawer** is **Hunter** and the only body in the fight empowered by spores: every
+  one of its beats is a fed/plain pair, so on coated floor it is simply a harder creature
+  — a dive that surfaces twice (**UNTOUCHED**), a longer lunge off a shorter windup
+  (**WALL**), a four-bite flurry instead of three (**PUNISH**). It never prints. Killing
+  the gnawer first means doing it on floor that keeps thickening; killing the seeder
+  first means eating everything the gnawer has while you do it.
+- **Stage 3 — the ring.** Only once **both** halves are down: the first to fall leaves
+  nothing, and the last leaves the **core** and three **wardens**. The wardens
+  are turrets and **every bullet they fire leaves a spore patch where it expires** —
+  shooting at the player *is* the refuelling, so the longer they live the thicker the
+  floor under the core gets. The core is rooted, armoured while any warden stands, and
+  recharges off that floor: fed, it throws the fight's biggest curtains; starved, it
+  throws a weak one. Every one of its Phases declares **ADDS**, which is what keeps the
+  armour up across the whole Rotation rather than one Phase in three, and the Counter
+  credits exactly once — the moment the last warden falls.
+
+**The floor you saved is the floor it eats.** Burn the arena during stage two and the
+finale is a starved core behind three turrets; save it, and it is the hardest curtain in
+the game. Neither is the right answer and neither is gated on owning Zaap — the Counter
+is *kill the wardens*, positional and spell-blind. The cloud economy is the pressure,
+never the gate.
+
+**Art:** a wide pale cap over a stout stem, its whole underside a lightless mouth of white teeth; the split frames crack it down the middle (boss sheet). The two halves and the four caps are the half sheet recoloured apart — the sporemother silver under plum gills, the gnawer near-black under a red crown with the maw's teeth kept, the core a dark husk under a band brighter than anything else in the biome, the wardens the core with every tone stepped down.
+
+| Stat |  |
+|---|---|
+| Kinds | fungal |
+| HP | 1800 |
+| Speed | 26 px/s |
+| Range | detect 22, gape 4 |
+| gnawer_erupt | **14** dmg — Shotgun x3, 5 tiles range |
+| gnawer_gnash | **12** dmg — Shotgun x3, 3 @ 0.25s, 5 tiles range |
+| gnawer_gnash_fed | **13** dmg — Shotgun x3, 4 @ 0.22s, 5 tiles range |
+| gnawer_lunge | **10** dmg — Flank x2, 9 @ 0.06s, 4 tiles range, dash 280 px/s for 0.55s, **26** on contact |
+| gnawer_lunge_fed | **11** dmg — Flank x2, 13 @ 0.06s, 4 tiles range, dash 300 px/s for 0.8s, **27** on contact |
+| rotcore_bloom | **16** dmg — Ring x16, 4 @ 0.45s, 16 tiles range |
+| rotcore_bloom_fed | **18** dmg — Ring x24, 6 @ 0.4s, 16 tiles range |
+| rotcore_gorge | **20** dmg — Ring x20, 2 @ 0.6s, 9 tiles range, blast 2 tiles |
+| rotcore_gorge_fed | **24** dmg — Ring x28, 3 @ 0.55s, 10 tiles range, blast 2.5 tiles |
+| rotcore_sweep | **16** dmg — Parallel x3, 20 @ 0.15s, 18 tiles range |
+| rotcore_sweep_fed | **18** dmg — Ring x3, 26 @ 0.13s, 18 tiles range |
+| gape | **14** dmg — Shotgun x6, 2 @ 0.35s, 6 tiles range |
+| ring | **15** dmg — Ring x12, 5 @ 0.5s, 14 tiles range |
+| spiral | **18** dmg — Ring x4, 24 @ 0.166s, 14 tiles range |
+| rotwarden_lane | **8** dmg — Parallel x2, 16 @ 0.2s, 14 tiles range, SporePayload |
+| rotwarden_ring | **8** dmg — Ring x8, 4 @ 0.5s, 10 tiles range, SporePayload |
+| rotwarden_volley | **9** dmg — Shotgun x3, 6 @ 0.3s, 12 tiles range, SporePayload |
+| sporemother_bloom | **8** dmg — Ring x10, 4 @ 0.7s, 10 tiles range, SporePayload |
+| sporemother_seeding | **6** dmg — Single, 10 @ 0.45s, 12 tiles range, SporePayload |
+| sporemother_spitters | 40s cd, 3 minions, 55 hp, 16s |
+| Drops | — |
+
+**Notes:** The first multi-body fight, and the rules for one are in `bosses.md`: one Rotation and one
+Intensity per body, a distance profile per body, and a stat sheet on every body that still
+has to split (`death_spawns` only fires when `data` is set, which is why a clusterling
+cannot re-split). All six bodies live under `rotmaw/`, so the Bestiary files one rotmaw and
+the halves and wardens are in no roster.
+
+A fed/plain pair is two **adjacent Phases**, not a `Gate` inside one Phase slot: `Cycle`
+resolves a Phase to a named `Behaviour` and counts its Reps on it, so a `Gate` there would
+hand off twice. Exactly one of a pair is ever eligible and `_next_phase` skips the other.
+
+The core is why `Behaviour.waits_for_escort` exists. `clear_group` means "refuse to run
+while these stand", which is right for a boss that summoned its own adds and wrong for one
+ringed by wardens two corpses left — gated on them it would stand still through its entire
+finale. Cleared of the gate, the group still answers for the ADDS Counter and the escort
+armour.
+
+It bends one rule: `bosses.md` says no two bosses open their Rotation with the same
+Counter kind, and Gape is **PUNISH**, which is Thornmess's opener. It stands because the
+two ask opposite questions at opposite ranges — Thornmess is a rooted half-tonne that
+punishes you for *not* coming in, the maw is a shotgun that punishes you for being close
+and then never lets you leave — and because rotmaw is the first boss whose fight-level
+opener is a stage rather than a Phase. The literal-rule alternative was a fourth
+puffcap-calling Phase on the maw, which costs stage one its whole point: being short.
+
+The **Drops** row below is empty and the **HP** row is the maw's, because both are read
+off `rotmaw_data.tres` and the fight's payout and its other five health pools live on the
+bodies it leaves: sporemother 1200, gnawer 1400, core 1600, wardens 200 each, and the whole
+set piece (Whumf, Poot and Blops, plus insect side tiers) on the core.
+
+Two things the design asks for that the implementation reads differently. Stage three is
+gated on both halves through `DeathSpawn.after_group`: each carries the whole ring, and a
+corpse whose sibling still stands leaves nothing, so the four caps land together off the
+last one. And the fed Sweep is three arms rotating the
+*other* way rather than two counter-rotating lanes — one spell cannot rotate two ways at
+once, and a pattern that could is more code than the read is worth.
+
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Cycle : sees player
+    Cycle --> Gape : within 4
+    Cycle --> Spiral
+    Cycle --> Ring
+    Cycle --> Drift : out of reach
+    Drift --> Cycle : arrived
+    Gape --> Cycle
+    Spiral --> Cycle
+    Ring --> Cycle
+    Cycle --> Split : killed
+    Split --> Halves : two bodies stand up
+    Halves --> Ring4 : both halves fall
 ```
 
 <!-- END GENERATED CATALOGUE -->
@@ -2228,59 +2366,9 @@ stateDiagram-v2
 
 ### rotmaw *(boss, fungal)*
 
-A bullet-hell capstone on a **`Gate`** rather than a roll — a rotation you can learn, because
-you will fight it more than once. It is rooted for most of the fight and the arena is the
-opponent.
-
-1. **Spiral** — a ring-with-drift of spore shots that winds outward, the classic curtain. Each
-   shot that lands leaves a cloud, so the pattern builds its own floor. This is its printing
-   cast, so it is the one beat that never empowers.
-2. **Lanes** — two sweeping spiralcap-style lines from opposite walls, closing.
-3. **Brood** *(below half)* — a wave of mycelings that sprint and burst, replacing clean floor.
-4. **Burrow** *(only while you are far)* — dives and resurfaces underneath you. Range is not a
-   place you get to stand.
-5. **Rest** — the floor of the ladder, always eligible. Your burn window.
-
-The fight's lever is the one the rest of the Mycelium spent teaching, and the printer rule is
-what sharpens it: the arena fills with clouds the maw itself laid, and **everything that
-crosses them fights harder except the maw**. Lanes, burrow and the brood all come out
-empowered on coated floor; the spiral does not. So leaving the field standing does not feed
-the boss, it feeds four of its five beats and its adds — and detonating it costs you the
-ammunition you were saving. At quarter health it **splits into two half-HP maws**, each
-running Spiral and Rest only — desperation replaces the puzzle with two bodies and a clock
-rather than stacking a third thing on top.
-
-**Art:** a huge split-capped fungus with a toothy maw between the halves, pale flesh and
-rot-green gills (boss sheet); `rotmaw_half` for the split.
-
-| Stat | |
-|---|---|
-| Kinds | fungal |
-| HP | very high (boss) |
-| Speed | rooted mid-beat; submerged dashes between |
-| Detection | the arena |
-| Attack | spiral curtain / closing lanes / myceling waves / burrow |
-| In a cloud | every beat but the spiral, and the whole brood |
-| Casts | Whumf, brood |
-| Drops | **the set piece you are missing** (Whumf, Poot, Blops), then insect side tiers once the set is done |
-
-```mermaid
-stateDiagram-v2
-    [*] --> Idle
-    Idle --> Gate : sees player
-    Gate --> Burrow : player far
-    Gate --> Brood : below half
-    Gate --> Spiral : roll of the ladder
-    Gate --> Lanes : roll of the ladder
-    Gate --> Rest : nothing else eligible
-    Spiral --> Gate
-    Lanes --> Gate
-    Brood --> Gate : cleared
-    Burrow --> Gate
-    Rest --> Gate
-    Gate --> Split : quarter health
-    Split --> Gate : as two maws (spiral + rest)
-```
+**Built.** The design moved into the generated catalogue above with the fight itself — see
+*Mycelium → rotmaw*, whose numbers are read out of the game rather than restated here. It is
+the roster's first multi-body fight; `bosses.md` carries the rules for one.
 
 ### the Mother *(secret boss, fungal)*
 

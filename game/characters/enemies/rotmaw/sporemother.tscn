@@ -1,0 +1,210 @@
+[gd_scene format=3 uid="uid://b4g6jmmkygn"]
+
+[ext_resource type="Script" uid="uid://cen3myb0dy7x0" path="res://characters/creature/creature.gd" id="creature"]
+[ext_resource type="PackedScene" uid="uid://dlopyrxmowwhk" path="res://components/hurtbox.tscn" id="hbox"]
+[ext_resource type="Texture2D" uid="uid://bl2livubc0j" path="res://characters/enemies/rotmaw/sporemother.png" id="sporemother_png"]
+[ext_resource type="PackedScene" uid="uid://dwcx7ak7tsow2" path="res://components/fsm.tscn" id="fsm"]
+[ext_resource type="PackedScene" uid="uid://cefyxecdo6155" path="res://characters/creature/creature_caster.tscn" id="caster"]
+[ext_resource type="Script" uid="uid://b4lrupcmlxdw2" path="res://characters/creature/boss_controller.gd" id="boss"]
+[ext_resource type="Script" uid="uid://b5wp52hn2u5pw" path="res://characters/creature/behaviours/hold.gd" id="b_hold"]
+[ext_resource type="Script" uid="uid://b6n5nitchjtgt" path="res://characters/creature/behaviours/cast.gd" id="b_cast"]
+[ext_resource type="Script" uid="uid://cky4cwkv2mry5" path="res://characters/creature/behaviours/cycle.gd" id="b_cycle"]
+[ext_resource type="Resource" uid="uid://btuidy1vq1m" path="res://characters/enemies/rotmaw/sporemother_data.tres" id="sporemother_data"]
+[ext_resource type="Resource" uid="uid://b2jdtp6wsyy" path="res://characters/enemies/rotmaw/sporemother_spitters.tres" id="sporemother_spitters"]
+[ext_resource type="Resource" uid="uid://bxo5p84414b" path="res://characters/enemies/rotmaw/sporemother_seeding.tres" id="sporemother_seeding"]
+[ext_resource type="Resource" uid="uid://br2nnfaff8a" path="res://characters/enemies/rotmaw/sporemother_bloom.tres" id="sporemother_bloom"]
+
+[sub_resource type="CircleShape2D" id="Shape"]
+radius = 5.0
+
+[sub_resource type="AtlasTexture" id="AT_idle0"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle1"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle2"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_idle3"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(36, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_carpet0"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(0, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_carpet1"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(12, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_carpet2"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(24, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_carpet3"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(36, 12, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_brood0"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(0, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_brood1"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(12, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_brood2"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(24, 24, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AT_brood3"]
+atlas = ExtResource("sporemother_png")
+region = Rect2(36, 24, 12, 12)
+
+[sub_resource type="SpriteFrames" id="Frames"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_idle0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_idle3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_carpet0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_carpet1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_carpet2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_carpet3")
+}],
+"loop": 0,
+"name": &"carpet",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AT_brood0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_brood1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_brood2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AT_brood3")
+}],
+"loop": 0,
+"name": &"brood",
+"speed": 6.0
+}]
+
+[node name="Sporemother" type="CharacterBody2D" groups=["enemies", "rotmaw_half"]]
+collision_layer = 32
+collision_mask = 33
+motion_mode = 1
+script = ExtResource("creature")
+data = ExtResource("sporemother_data")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("Shape")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("Frames")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -3)
+
+[node name="Hurtbox" parent="." instance=ExtResource("hbox")]
+position = Vector2(0, -3)
+collision_mask = 256
+radius = 6.0
+
+[node name="BossController" type="Node" parent="."]
+script = ExtResource("boss")
+phases = Array[String](["Spitters", "Seeding", "Bloom"])
+
+[node name="DetectProbe" type="RayCast2D" parent="."]
+target_position = Vector2(176, 0)
+collision_mask = 17
+
+[node name="Caster" parent="." instance=ExtResource("caster")]
+
+[node name="FSM" parent="." instance=ExtResource("fsm")]
+initial_state = "Idle"
+
+[node name="Idle" type="Node" parent="FSM"]
+script = ExtResource("b_hold")
+min_time = 0.6
+max_time = 1.2
+probe_path = NodePath("../../DetectProbe")
+seen_state = "Cycle"
+alert_on_hit = true
+
+[node name="Cycle" type="Node" parent="FSM"]
+script = ExtResource("b_cycle")
+probe_path = NodePath("../../DetectProbe")
+lost_state = "Idle"
+free_beat = 1.2
+escort_hold = 10.0
+tail_anim = "idle"
+
+[node name="Spitters" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("sporemother_spitters")
+done_state = "Cycle"
+windup_anim = "brood"
+attack_anim = "idle"
+telegraph_color = Color(0.803922, 0.376471, 0.576471, 1)
+counter_kind = 3
+reps = 1
+tail = 1.6
+rep_gap = 0.8
+clear_group = &"pack_spore"
+clear_radius_tiles = 0.0
+
+[node name="Seeding" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("sporemother_seeding")
+done_state = "Cycle"
+windup_anim = "carpet"
+attack_anim = "carpet"
+counter_kind = 4
+reps = 2
+tail = 1.4
+rep_gap = 0.6
+
+[node name="Bloom" type="Node" parent="FSM"]
+script = ExtResource("b_cast")
+caster_path = NodePath("../../Caster")
+spell = ExtResource("sporemother_bloom")
+done_state = "Cycle"
+windup_anim = "carpet"
+attack_anim = "carpet"
+telegraph_color = Color(0.803922, 0.376471, 0.576471, 1)
+counter_kind = 4
+reps = 2
+tail = 1.4
+rep_gap = 0.6

@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="ChargeDashResource" format=3 uid="uid://b65m3ccl42v"]
+
+[ext_resource type="Script" uid="uid://cbl8ahc2xacm8" path="res://characters/player/spells/charge_dash/charge_dash_resource.gd" id="dash_res"]
+[ext_resource type="PackedScene" uid="uid://77lwlu8qw4gv" path="res://characters/player/spells/charge_dash/charge_dash.tscn" id="dash_scene"]
+[ext_resource type="Script" uid="uid://bmfyfdoqimogh" path="res://items/bullets/bullet_resource.gd" id="bullet"]
+[ext_resource type="Script" uid="uid://2mc55bq36fox" path="res://characters/player/spells/scaling_profile.gd" id="scaling"]
+[ext_resource type="Script" uid="uid://bfl4nkp4tt3rn" path="res://items/bullets/flank_pattern.gd" id="p_flank"]
+[ext_resource type="Texture2D" uid="uid://cyabg8jmah4nq" path="res://items/bullets/bullets.png" id="bullets_png"]
+
+[sub_resource type="AtlasTexture" id="AT_shot"]
+atlas = ExtResource("bullets_png")
+region = Rect2(8, 32, 8, 8)
+
+[sub_resource type="Resource" id="Bullet"]
+script = ExtResource("bullet")
+icon = SubResource("AT_shot")
+range_tiles = 4
+speed_tiles = 11
+
+[sub_resource type="Resource" id="Contact"]
+script = ExtResource("scaling")
+base_damage = 26.0
+
+[sub_resource type="Resource" id="Damage"]
+script = ExtResource("scaling")
+base_damage = 10.0
+
+[sub_resource type="Resource" id="Pattern"]
+script = ExtResource("p_flank")
+
+[resource]
+script = ExtResource("dash_res")
+dash_speed = 280.0
+dash_duration = 0.55
+contact_damage = SubResource("Contact")
+fire_pattern = SubResource("Pattern")
+bullet = SubResource("Bullet")
+damage = SubResource("Damage")
+shot_interval = 0.06
+max_shots = 9
+effect_scene = ExtResource("dash_scene")
+cooldown = 0.0
+cast_time = 1.00

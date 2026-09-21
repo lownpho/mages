@@ -385,7 +385,8 @@ func _finish_death() -> void:
 	if data:
 		GlobalEvent.creature_died.emit(data, global_position)
 		for spawn in data.death_spawns:
-			spawn.spawn(get_parent(), global_position)
+			if not spawn.held_back(self):
+				spawn.spawn(get_parent(), global_position)
 	for drop in drops:
 		if drop.roll():
 			GlobalEvent.loot_dropped.emit(drop.item, global_position)

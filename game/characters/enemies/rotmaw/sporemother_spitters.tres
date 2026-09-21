@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SummonResource" format=3 uid="uid://b2jdtp6wsyy"]
+
+[ext_resource type="Script" uid="uid://dahp65g32iupj" path="res://characters/player/spells/summon_resource.gd" id="summon_res"]
+[ext_resource type="PackedScene" uid="uid://cnkywqd7j5i1o" path="res://characters/player/spells/summon_spawner.tscn" id="summon_scene"]
+[ext_resource type="PackedScene" uid="uid://b11y5xewg5dxg" path="res://characters/enemies/sporespitter/sporespitter.tscn" id="sporespitter"]
+
+[resource]
+script = ExtResource("summon_res")
+cast_time = 0.8
+minion_scenes = Array[PackedScene]([ExtResource("sporespitter")])
+count = 3
+spawn_pattern = 1
+spawn_distance = 40.0
+minion_health = 55
+minion_lifetime = 16.0
+minion_group = &"pack_spore"
+effect_scene = ExtResource("summon_scene")
+cooldown = 40.0

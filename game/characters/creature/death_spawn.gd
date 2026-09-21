@@ -9,6 +9,19 @@ class_name DeathSpawn
 @export var count: int = 1
 ## Radius (tiles) around the corpse the brood scatters inside. 0 stacks them on the spot.
 @export var spread_tiles: float = 1.0
+## Siblings that fall together: while any other member of this group still stands the corpse
+## leaves nothing, so the last of them leaves the whole payload. Empty spawns unconditionally.
+@export var after_group: StringName = &""
+
+## Whether a sibling still standing holds this spawn back. A sibling already freed (dying the
+## same frame, earlier in the queue) no longer counts, so exactly one corpse fires it.
+func held_back(corpse: Node) -> bool:
+	if after_group == &"":
+		return false
+	for other in corpse.get_tree().get_nodes_in_group(after_group):
+		if other != corpse and not other.is_queued_for_deletion():
+			return true
+	return false
 
 func spawn(into: Node, at: Vector2) -> void:
 	if scene == null or into == null:

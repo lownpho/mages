@@ -88,6 +88,7 @@ func _ready() -> void:
 		&"bloatcap", &"clustercap", &"gapcap", &"mold_golem", &"normiecap", &"puffcap",
 		&"ringcap", &"rollcap", &"shellcap", &"spiralcap", &"sporefly", &"sporespitter",
 		&"burrower", &"deathcap", &"maulcap",
+		&"rotmaw",                # the boss closes the page
 	]
 	var want_pages := [want_glade, want_deepwood, want_mycelium]
 	if ported.size() != want_pages.size():

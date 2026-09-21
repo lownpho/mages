@@ -22,7 +22,7 @@ region = Rect2(32, 48, 8, 8)
 [sub_resource type="Resource" id="Resource_jx4ga"]
 script = ExtResource("4_piprh")
 icon = SubResource("AtlasTexture_govck")
-range_tiles = 12
+range_tiles = 22
 speed_tiles = 10
 behaviours = Array[ExtResource("1_xo82i")]([SubResource("Resource_wst21")])
 

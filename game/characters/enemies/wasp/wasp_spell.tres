@@ -15,7 +15,7 @@ region = Rect2(8, 16, 8, 8)
 [sub_resource type="Resource" id="Resource_52f0g"]
 script = ExtResource("3_hg2rn")
 icon = SubResource("AtlasTexture_2glay")
-range_tiles = 4
+range_tiles = 5
 speed_tiles = 12
 
 [sub_resource type="Resource" id="ScalingProfile_bullet"]

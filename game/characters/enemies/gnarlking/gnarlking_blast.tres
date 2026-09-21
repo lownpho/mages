@@ -15,7 +15,7 @@ region = Rect2(24, 32, 8, 8)
 [sub_resource type="Resource" id="Bullet_pellet"]
 script = ExtResource("3_bullet")
 icon = SubResource("AtlasTexture_pellet")
-range_tiles = 18
+range_tiles = 24
 speed_tiles = 7
 
 [sub_resource type="Resource" id="ScalingProfile_blast"]

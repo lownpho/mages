@@ -15,7 +15,7 @@ region = Rect2(24, 48, 8, 8)
 [sub_resource type="Resource" id="Bullet_spore"]
 script = ExtResource("4_bullet")
 icon = SubResource("AtlasTexture_spore")
-range_tiles = 4
+range_tiles = 8
 speed_tiles = 11
 
 [sub_resource type="Resource" id="ScalingProfile_spray"]
